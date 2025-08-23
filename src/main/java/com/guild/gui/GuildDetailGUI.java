@@ -223,7 +223,7 @@ public class GuildDetailGUI implements GUI {
     
     private String formatTime(java.time.LocalDateTime dateTime) {
         if (dateTime == null) return "未知";
-        return dateTime.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return dateTime.format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
     }
     
     private String getRoleDisplayName(GuildMember.Role role) {

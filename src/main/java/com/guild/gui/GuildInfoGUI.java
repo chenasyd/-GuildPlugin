@@ -3,6 +3,7 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.GUIUtils;
 import com.guild.core.utils.PlaceholderUtils;
 import com.guild.models.Guild;
@@ -81,14 +82,14 @@ public class GuildInfoGUI implements GUI {
             if (!name.isEmpty()) {
                 // 使用GUIUtils处理变量
                 GUIUtils.processGUIVariablesAsync(name, guild, player, plugin).thenAccept(processedName -> {
-                    Bukkit.getScheduler().runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, () -> {
                         meta.setDisplayName(processedName);
                         
                         // 设置描述
                         List<String> lore = itemConfig.getStringList("lore");
                         if (!lore.isEmpty()) {
                             GUIUtils.processGUILoreAsync(lore, guild, player, plugin).thenAccept(processedLore -> {
-                                Bukkit.getScheduler().runTask(plugin, () -> {
+                                CompatibleScheduler.runTask(plugin, () -> {
                                     meta.setLore(processedLore);
                                     item.setItemMeta(meta);
                                     inventory.setItem(slot, item);
@@ -104,13 +105,13 @@ public class GuildInfoGUI implements GUI {
                 // 如果没有名称，直接设置描述
                 List<String> lore = itemConfig.getStringList("lore");
                 if (!lore.isEmpty()) {
-                    GUIUtils.processGUILoreAsync(lore, guild, player, plugin).thenAccept(processedLore -> {
-                        Bukkit.getScheduler().runTask(plugin, () -> {
-                            meta.setLore(processedLore);
-                            item.setItemMeta(meta);
-                            inventory.setItem(slot, item);
-                        });
+                                    GUIUtils.processGUILoreAsync(lore, guild, player, plugin).thenAccept(processedLore -> {
+                    CompatibleScheduler.runTask(plugin, () -> {
+                        meta.setLore(processedLore);
+                        item.setItemMeta(meta);
+                        inventory.setItem(slot, item);
                     });
+                });
                 } else {
                     item.setItemMeta(meta);
                     inventory.setItem(slot, item);
@@ -148,7 +149,7 @@ public class GuildInfoGUI implements GUI {
         
         // 成员数量 - 使用异步方法
         plugin.getGuildService().getGuildMemberCountAsync(guild.getId()).thenAccept(memberCount -> {
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 ItemStack memberItem = createItem(Material.PLAYER_HEAD, "§6成员数量", 
                     "§e" + memberCount + "/" + guild.getMaxMembers() + " 人");
                 inventory.setItem(28, memberItem);
@@ -167,10 +168,11 @@ public class GuildInfoGUI implements GUI {
             "§7等级升级需要: " + getNextLevelRequirement(guild.getLevel()));
         inventory.setItem(32, balanceItem);
         
-        // 创建时间
-        String createdTime = guild.getCreatedAt().toString();
-        ItemStack timeItem = createItem(Material.CLOCK, "§6创建时间", 
-            "§e" + createdTime);
+        // 创建时间（使用现实时间格式）
+        String createdTime = guild.getCreatedAt() != null
+            ? guild.getCreatedAt().format(com.guild.core.time.TimeProvider.FULL_FORMATTER)
+            : "未知";
+        ItemStack timeItem = createItem(Material.CLOCK, "§6创建时间", "§e" + createdTime);
         inventory.setItem(34, timeItem);
         
         // 工会状态

@@ -9,6 +9,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import com.guild.core.utils.CompatibleScheduler;
+
 /**
  * 玩家事件监听器
  */
@@ -39,7 +41,7 @@ public class PlayerListener implements Listener {
                 // 检查工会的所有关系
                 plugin.getGuildService().getGuildRelationsAsync(guild.getId()).thenAccept(relations -> {
                     // 确保在主线程中执行
-                    Bukkit.getScheduler().runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, () -> {
                         for (com.guild.models.GuildRelation relation : relations) {
                             if (relation.isWar()) {
                                 String message = plugin.getConfigManager().getMessagesConfig().getString("relations.war-notification", "&4[工会战争] &c您的工会与 {guild} 处于开战状态！");
@@ -78,7 +80,7 @@ public class PlayerListener implements Listener {
             
             // 处理输入 - 在主线程中执行
             String input = event.getMessage();
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 try {
                     guiManager.handleInput(event.getPlayer(), input);
                 } catch (Exception e) {

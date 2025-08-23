@@ -128,7 +128,7 @@ public class MemberDetailsGUI implements GUI {
             
             // 格式化加入时间
             if (member.getJoinedAt() != null) {
-                String joinTime = member.getJoinedAt().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                String joinTime = member.getJoinedAt().format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
                 lore.add(ColorUtils.colorize("&7加入时间: &f" + joinTime));
             } else {
                 lore.add(ColorUtils.colorize("&7加入时间: &f未知"));
@@ -399,7 +399,7 @@ public class MemberDetailsGUI implements GUI {
      */
     private String formatTime(java.time.LocalDateTime dateTime) {
         if (dateTime == null) return "未知";
-        return dateTime.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return dateTime.format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
     }
     
     /**

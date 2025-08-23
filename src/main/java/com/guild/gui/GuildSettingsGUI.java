@@ -3,6 +3,7 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import org.bukkit.Bukkit;
@@ -31,7 +32,8 @@ public class GuildSettingsGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.title", "&6工会设置"));
+        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.title", "&6工会设置 - {guild_name}")
+            .replace("{guild_name}", guild.getName() != null ? guild.getName() : "未知工会"));
     }
     
     @Override
@@ -57,7 +59,10 @@ public class GuildSettingsGUI implements GUI {
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 10: // 修改描述
+            case 10: // 修改名称
+                handleChangeName(player);
+                break;
+            case 11: // 修改描述
                 handleChangeDescription(player);
                 break;
             case 12: // 修改标签
@@ -124,13 +129,21 @@ public class GuildSettingsGUI implements GUI {
      * 设置设置按钮
      */
     private void setupSettingsButtons(Inventory inventory) {
+        // 修改名称按钮
+        ItemStack changeName = createItem(
+            Material.NAME_TAG,
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-name.name", "&e修改名称")),
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-name.lore.1", "&7修改工会名称"))
+        );
+        inventory.setItem(10, changeName);
+        
         // 修改描述按钮
         ItemStack changeDescription = createItem(
             Material.BOOK,
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-description.name", "&e修改描述")),
             ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-description.lore.1", "&7修改工会描述"))
         );
-        inventory.setItem(10, changeDescription);
+        inventory.setItem(11, changeDescription);
         
         // 修改标签按钮
         ItemStack changeTag = createItem(
@@ -257,6 +270,14 @@ public class GuildSettingsGUI implements GUI {
      * 显示当前设置信息
      */
     private void displayCurrentSettings(Inventory inventory) {
+        // 当前名称
+        ItemStack currentName = createItem(
+            Material.NAME_TAG,
+            ColorUtils.colorize("&e当前名称"),
+            ColorUtils.colorize("&7" + (guild.getName() != null ? guild.getName() : "无名称"))
+        );
+        inventory.setItem(10, currentName);
+        
         // 当前描述
         ItemStack currentDescription = createItem(
             Material.BOOK,
@@ -291,6 +312,22 @@ public class GuildSettingsGUI implements GUI {
             ColorUtils.colorize("&7成员: 基础权限")
         );
         inventory.setItem(17, currentPermissions);
+    }
+    
+    /**
+     * 处理修改名称
+     */
+    private void handleChangeName(Player player) {
+        // 检查权限（只有会长可以修改名称）
+        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
+        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
+            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            player.sendMessage(ColorUtils.colorize(message));
+            return;
+        }
+        
+        // 打开名称输入GUI
+        plugin.getGuiManager().openGUI(player, new GuildNameInputGUI(plugin, guild, player));
     }
     
     /**
@@ -495,7 +532,7 @@ public class GuildSettingsGUI implements GUI {
         // 传送到工会家
         plugin.getGuildService().getGuildHomeAsync(guild.getId()).thenAccept(location -> {
             // 确保在主线程中执行传送操作
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (location != null) {
                     player.teleport(location);
                     String message = plugin.getConfigManager().getMessagesConfig().getString("home.success", "&a已传送到工会家！");

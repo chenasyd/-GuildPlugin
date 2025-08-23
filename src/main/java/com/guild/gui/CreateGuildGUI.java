@@ -15,6 +15,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
+import com.guild.core.utils.CompatibleScheduler;
+
 /**
  * 创建工会GUI
  */
@@ -213,7 +215,7 @@ public class CreateGuildGUI implements GUI {
         plugin.getGuiManager().closeGUI(player);
         
         // 延迟设置输入模式，确保GUI完全关闭
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        CompatibleScheduler.runTaskLater(plugin, () -> {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() < 3) {
@@ -256,7 +258,7 @@ public class CreateGuildGUI implements GUI {
         plugin.getGuiManager().closeGUI(player);
         
         // 延迟设置输入模式，确保GUI完全关闭
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        CompatibleScheduler.runTaskLater(plugin, () -> {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() > 6) {
@@ -292,7 +294,7 @@ public class CreateGuildGUI implements GUI {
         plugin.getGuiManager().closeGUI(player);
         
         // 延迟设置输入模式，确保GUI完全关闭
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        CompatibleScheduler.runTaskLater(plugin, () -> {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() > 100) {
@@ -382,7 +384,7 @@ public class CreateGuildGUI implements GUI {
         
         plugin.getGuildService().createGuildAsync(guildName, finalTag, finalDescription, player.getUniqueId(), player.getName()).thenAccept(success -> {
             // 确保在主线程中执行GUI操作
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("create.success", "&a工会 {name} 创建成功！");
                     message = message.replace("{name}", guildName);

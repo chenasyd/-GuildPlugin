@@ -7,6 +7,7 @@ import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.models.GuildRelation;
 import com.guild.services.GuildService;
+import com.guild.core.utils.CompatibleScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -105,6 +106,9 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             case "placeholder":
                 handlePlaceholder(player, args);
                 break;
+            case "time":
+                handleTime(player);
+                break;
             case "help":
                 handleHelp(player);
                 break;
@@ -122,7 +126,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         
         if (args.length == 1) {
             List<String> subCommands = Arrays.asList(
-                "create", "info", "members", "invite", "kick", "promote", "demote", "accept", "decline", "leave", "delete", "sethome", "home", "relation", "economy", "deposit", "withdraw", "transfer", "logs", "placeholder", "help"
+                "create", "info", "members", "invite", "kick", "promote", "demote", "accept", "decline", "leave", "delete", "sethome", "home", "relation", "economy", "deposit", "withdraw", "transfer", "logs", "placeholder", "time", "help"
             );
             
             for (String subCommand : subCommands) {
@@ -324,7 +328,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(ColorUtils.colorize(reason1));
                     player.sendMessage(ColorUtils.colorize(reason2));
                 }
-            }, runnable -> Bukkit.getScheduler().runTask(plugin, runnable));
+            }, runnable -> CompatibleScheduler.runTask(plugin, runnable));
     }
     
     /**
@@ -374,8 +378,11 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         String roleMessage = plugin.getConfigManager().getMessagesConfig().getString("info.role", "&e您的角色: &f{role}");
         player.sendMessage(ColorUtils.colorize(roleMessage.replace("{role}", member.getRole().getDisplayName())));
         
+        // 统一使用 TimeProvider 的现实时间格式
+        java.time.format.DateTimeFormatter TF = com.guild.core.time.TimeProvider.FULL_FORMATTER;
         String createdMessage = plugin.getConfigManager().getMessagesConfig().getString("info.created", "&e创建时间: &f{date}");
-        player.sendMessage(ColorUtils.colorize(createdMessage.replace("{date}", guild.getCreatedAt().toString())));
+        String createdFormatted = guild.getCreatedAt() != null ? guild.getCreatedAt().format(TF) : "未知";
+        player.sendMessage(ColorUtils.colorize(createdMessage.replace("{date}", createdFormatted)));
     }
     
     /**
@@ -516,7 +523,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.already-invited", "&c{player} 已经收到了邀请！");
                     player.sendMessage(ColorUtils.colorize(failMessage.replace("{player}", targetPlayerName)));
                 }
-            }, runnable -> Bukkit.getScheduler().runTask(plugin, runnable));
+            }, runnable -> CompatibleScheduler.runTask(plugin, runnable));
     }
     
     /**
@@ -730,7 +737,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("sethome.failed", "&c设置工会家失败！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
-            }, runnable -> Bukkit.getScheduler().runTask(plugin, runnable));
+            }, runnable -> CompatibleScheduler.runTask(plugin, runnable));
     }
     
     /**
@@ -771,7 +778,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 player.teleport(homeLocation);
                 String message = plugin.getConfigManager().getMessagesConfig().getString("home.success", "&a已传送到工会家！");
                 player.sendMessage(ColorUtils.colorize(message));
-            }, runnable -> Bukkit.getScheduler().runTask(plugin, runnable));
+            }, runnable -> CompatibleScheduler.runTask(plugin, runnable));
     }
     
     /**
@@ -807,7 +814,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             return;
         }
         
-        // 已通过节点校验，按配置驱动，不再强制“仅会长”
+        // 已通过节点校验，按配置驱动，不再强制"仅会长"
         
         // 查找目标玩家
         Player targetPlayer = Bukkit.getPlayer(targetPlayerName);
@@ -895,7 +902,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             return;
         }
         
-        // 已通过节点校验，按配置驱动，不再强制“仅会长”
+        // 已通过节点校验，按配置驱动，不再强制"仅会长"
         
         // 查找目标玩家
         Player targetPlayer = Bukkit.getPlayer(targetPlayerName);
@@ -1657,5 +1664,22 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         player.sendMessage(ColorUtils.colorize("&e变量: &f" + placeholder));
         player.sendMessage(ColorUtils.colorize("&e结果: &f" + result));
         player.sendMessage(ColorUtils.colorize("&6========================"));
+    }
+    
+    /**
+     * /guild time：显示现实系统时间与当前世界游戏内时间
+     */
+    private void handleTime(Player player) {
+        String title = plugin.getConfigManager().getMessagesConfig().getString("time.title", "&6=== 时间测试 ===");
+        String realNow = com.guild.core.time.TimeProvider.nowString();
+        // Minecraft 世界时间（白天循环 0-23999 ticks）
+        long ticks = player.getWorld().getTime() % 24000L;
+        int hours = (int)((ticks / 1000L + 6) % 24); // 0 tick 对应 06:00
+        int minutes = (int)((ticks % 1000L) * 60L / 1000L);
+        String gameTime = String.format("%02d:%02d", hours, minutes);
+        String ticksStr = String.valueOf(ticks);
+        player.sendMessage(ColorUtils.colorize(title));
+        player.sendMessage(ColorUtils.colorize("&e现实时间: &f" + realNow));
+        player.sendMessage(ColorUtils.colorize("&e游戏时间: &f" + gameTime + " &7(" + ticksStr + " ticks)"));
     }
 }

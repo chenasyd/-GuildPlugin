@@ -8,6 +8,8 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.util.logging.Logger;
 
+import com.guild.core.utils.CompatibleScheduler;
+
 /**
  * 经济管理器 - 管理Vault经济系统集成
  */
@@ -135,7 +137,7 @@ public class EconomyManager {
         }
         
         // 确保在主线程中执行
-        if (!Bukkit.isPrimaryThread()) {
+        if (!CompatibleScheduler.isPrimaryThread()) {
             return false;
         }
         
@@ -151,7 +153,7 @@ public class EconomyManager {
         }
         
         // 确保在主线程中执行
-        if (!Bukkit.isPrimaryThread()) {
+        if (!CompatibleScheduler.isPrimaryThread()) {
             return false;
         }
         
@@ -167,7 +169,7 @@ public class EconomyManager {
         }
         
         // 确保在主线程中执行
-        if (!Bukkit.isPrimaryThread()) {
+        if (!CompatibleScheduler.isPrimaryThread()) {
             return false;
         }
         

@@ -5,6 +5,7 @@ import com.guild.models.GuildMember;
 import org.bukkit.entity.Player;
 
 import java.time.format.DateTimeFormatter;
+import com.guild.core.time.TimeProvider;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -13,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class PlaceholderUtils {
     
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DATE_FORMATTER = TimeProvider.FULL_FORMATTER;
     
     /**
      * 替换工会相关占位符

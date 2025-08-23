@@ -15,6 +15,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
+import com.guild.core.utils.CompatibleScheduler;
+
 /**
  * 主工会GUI - 六个主要入口
  */
@@ -139,7 +141,7 @@ public class MainGuildGUI implements GUI {
         // 检查玩家是否有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在主线程中执行GUI操作
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -160,7 +162,7 @@ public class MainGuildGUI implements GUI {
         // 检查玩家是否有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在主线程中执行GUI操作
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -181,7 +183,7 @@ public class MainGuildGUI implements GUI {
         // 检查玩家是否有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在主线程中执行GUI操作
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -191,7 +193,7 @@ public class MainGuildGUI implements GUI {
                 // 检查权限
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
                     // 确保在主线程中执行GUI操作
-                    Bukkit.getScheduler().runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null || !member.getRole().canInvite()) {
                             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
                             player.sendMessage(ColorUtils.colorize(message));
@@ -214,7 +216,7 @@ public class MainGuildGUI implements GUI {
         // 检查玩家是否有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在主线程中执行GUI操作
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -224,7 +226,7 @@ public class MainGuildGUI implements GUI {
                 // 检查权限
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
                     // 确保在主线程中执行GUI操作
-                    Bukkit.getScheduler().runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null || member.getRole() != com.guild.models.GuildMember.Role.LEADER) {
                             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
                             player.sendMessage(ColorUtils.colorize(message));
@@ -256,7 +258,7 @@ public class MainGuildGUI implements GUI {
         // 检查玩家是否有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在主线程中执行GUI操作
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -266,7 +268,7 @@ public class MainGuildGUI implements GUI {
                 // 检查权限
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
                     // 确保在主线程中执行GUI操作
-                    Bukkit.getScheduler().runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null || member.getRole() != com.guild.models.GuildMember.Role.LEADER) {
                             String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能管理关系");
                             player.sendMessage(ColorUtils.colorize(message));
@@ -289,7 +291,7 @@ public class MainGuildGUI implements GUI {
         // 检查玩家是否已有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在主线程中执行GUI操作
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (guild != null) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("create.already-in-guild", "&c您已经在一个工会中了！");
                     player.sendMessage(ColorUtils.colorize(message));

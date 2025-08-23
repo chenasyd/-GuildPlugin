@@ -3,6 +3,7 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
 import com.guild.models.GuildLog;
 import org.bukkit.Bukkit;
@@ -59,14 +60,14 @@ public class GuildLogsGUI implements GUI {
         loadLogsAsync().thenAccept(success -> {
             if (success) {
                 // 在主线程中设置物品和完整的导航按钮
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, () -> {
                     setupLogItems(inventory);
                     setupBasicNavigationButtons(inventory);
                     setupFullNavigationButtons(inventory);
                 });
             } else {
                 // 如果加载失败，在主线程中显示错误信息
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, () -> {
                     ItemStack errorItem = createItem(
                         Material.BARRIER,
                         ColorUtils.colorize("&c加载失败"),
@@ -120,11 +121,14 @@ public class GuildLogsGUI implements GUI {
      * 设置日志物品
      */
     private void setupLogItems(Inventory inventory) {
+        plugin.getLogger().info("设置日志物品，logs大小: " + (logs != null ? logs.size() : "null"));
+        
         if (logs == null) {
             logs = new java.util.ArrayList<>(); // 确保logs不为null
         }
         
         if (logs.isEmpty()) {
+            plugin.getLogger().info("日志列表为空，显示无日志信息");
             // 显示无日志信息
             ItemStack noLogs = createItem(
                 Material.BARRIER,
@@ -136,10 +140,14 @@ public class GuildLogsGUI implements GUI {
             return;
         }
         
+        plugin.getLogger().info("开始显示 " + logs.size() + " 条日志记录");
+        
         // 显示日志列表
         for (int i = 0; i < Math.min(logs.size(), itemsPerPage); i++) {
             GuildLog log = logs.get(i);
             int slot = getLogSlot(i);
+            
+            plugin.getLogger().info("设置日志项目 " + i + " 到槽位 " + slot + ": " + log.getLogType().getDisplayName());
             
             ItemStack logItem = createLogItem(log);
             inventory.setItem(slot, logItem);
@@ -177,6 +185,7 @@ public class GuildLogsGUI implements GUI {
             case MEMBER_JOINED:
                 return Material.EMERALD;
             case MEMBER_LEFT:
+                return Material.REDSTONE;
             case MEMBER_KICKED:
                 return Material.REDSTONE;
             case MEMBER_PROMOTED:
@@ -217,12 +226,12 @@ public class GuildLogsGUI implements GUI {
     }
     
     /**
-     * 获取日志物品的槽位
+     * 获取日志物品的槽位 - 修复后的计算逻辑
      */
     private int getLogSlot(int index) {
         int row = index / 7; // 7列
         int col = index % 7;
-        return (row + 2) * 9 + (col + 1); // 从第2行第1列开始
+        return (row + 1) * 9 + (col + 1); // 从第1行第1列开始 (slots 10-43)
     }
     
     /**
@@ -280,22 +289,101 @@ public class GuildLogsGUI implements GUI {
         inventory.setItem(51, refreshButton);
     }
     
+    @Override
+    public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
+        if (clickedItem == null || !clickedItem.hasItemMeta()) return;
+        
+        String itemName = clickedItem.getItemMeta().getDisplayName();
+        
+        // 返回按钮
+        if (itemName.contains("返回")) {
+            // 返回到工会信息GUI
+            GuildInfoGUI guildInfoGUI = new GuildInfoGUI(plugin, player, guild);
+            plugin.getGuiManager().openGUI(player, guildInfoGUI);
+            return;
+        }
+        
+        // 上一页按钮
+        if (itemName.contains("上一页")) {
+            if (page > 0) {
+                GuildLogsGUI prevPageGUI = new GuildLogsGUI(plugin, guild, player, page - 1);
+                plugin.getGuiManager().openGUI(player, prevPageGUI);
+            }
+            return;
+        }
+        
+        // 下一页按钮
+        if (itemName.contains("下一页")) {
+            if ((page + 1) * itemsPerPage < totalLogs) {
+                GuildLogsGUI nextPageGUI = new GuildLogsGUI(plugin, guild, player, page + 1);
+                plugin.getGuiManager().openGUI(player, nextPageGUI);
+            }
+            return;
+        }
+        
+        // 刷新按钮
+        if (itemName.contains("刷新")) {
+            GuildLogsGUI refreshGUI = new GuildLogsGUI(plugin, guild, player, page);
+            plugin.getGuiManager().openGUI(player, refreshGUI);
+            return;
+        }
+        
+        // 日志项目点击 - 检查是否在日志显示区域
+        if (slot >= 10 && slot <= 43) {
+            int row = slot / 9;
+            int col = slot % 9;
+            if (row >= 1 && row <= 4 && col >= 1 && col <= 7) {
+                int relativeIndex = (row - 1) * 7 + (col - 1);
+                int logIndex = (page * itemsPerPage) + relativeIndex;
+                if (logIndex < logs.size()) {
+                    GuildLog log = logs.get(logIndex);
+                    handleLogClick(player, log);
+                }
+            }
+        }
+    }
+    
+    /**
+     * 处理日志点击
+     */
+    private void handleLogClick(Player player, GuildLog log) {
+        // 显示日志详细信息
+        String message = ColorUtils.colorize("&6=== 日志详情 ===");
+        player.sendMessage(message);
+        player.sendMessage(ColorUtils.colorize("&7类型: &f" + log.getLogType().getDisplayName()));
+        player.sendMessage(ColorUtils.colorize("&7操作者: &f" + log.getPlayerName()));
+        player.sendMessage(ColorUtils.colorize("&7时间: &f" + log.getSimpleTime()));
+        player.sendMessage(ColorUtils.colorize("&7描述: &f" + log.getDescription()));
+        if (log.getDetails() != null && !log.getDetails().isEmpty()) {
+            player.sendMessage(ColorUtils.colorize("&7详情: &f" + log.getDetails()));
+        }
+        player.sendMessage(ColorUtils.colorize("&6=================="));
+    }
+    
+    @Override
+    public void onClose(Player player) {
+        // 关闭时的处理
+    }
+    
+    @Override
+    public void refresh(Player player) {
+        // 刷新GUI
+        GuildLogsGUI refreshGUI = new GuildLogsGUI(plugin, guild, player, page);
+        plugin.getGuiManager().openGUI(player, refreshGUI);
+    }
+    
     /**
      * 填充边框
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        
-        // 填充第一行和最后一行
         for (int i = 0; i < 9; i++) {
             inventory.setItem(i, border);
-            inventory.setItem(45 + i, border);
+            inventory.setItem(i + 45, border);
         }
-        
-        // 填充第一列和最后一列
-        for (int i = 0; i < 6; i++) {
-            inventory.setItem(i * 9, border);
-            inventory.setItem(i * 9 + 8, border);
+        for (int i = 9; i < 45; i += 9) {
+            inventory.setItem(i, border);
+            inventory.setItem(i + 8, border);
         }
     }
     
@@ -315,98 +403,5 @@ public class GuildLogsGUI implements GUI {
         }
         
         return item;
-    }
-    
-    @Override
-    public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 检查是否点击了边框（但允许底部导航按钮）
-        if (slot < 9 || (slot >= 54) || slot % 9 == 0 || slot % 9 == 8) {
-            return;
-        }
-        
-        // 检查点击的物品是否为空
-        if (clickedItem == null || clickedItem.getType() == Material.AIR) {
-            return;
-        }
-        
-        try {
-            // 处理导航按钮
-            switch (slot) {
-                case 45: // 上一页
-                    if (page > 0) {
-                        plugin.getGuiManager().openGUI(player, new GuildLogsGUI(plugin, guild, player, page - 1));
-                    }
-                    break;
-                case 47: // 页码信息（无操作）
-                    break;
-                case 49: // 返回按钮
-                    plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
-                    break;
-                case 51: // 刷新按钮
-                    // 使用GUIManager的内置刷新方法
-                    plugin.getGuiManager().refreshGUI(player);
-                    break;
-                case 53: // 下一页
-                    if ((page + 1) * itemsPerPage < totalLogs) {
-                        plugin.getGuiManager().openGUI(player, new GuildLogsGUI(plugin, guild, player, page + 1));
-                    }
-                    break;
-                default:
-                    // 检查是否点击了日志物品
-                    int logIndex = getLogIndex(slot);
-                    if (logIndex >= 0 && logs != null && logIndex < logs.size()) {
-                        GuildLog log = logs.get(logIndex);
-                        showLogDetails(player, log);
-                    }
-                    break;
-            }
-        } catch (Exception e) {
-            plugin.getLogger().severe("处理GUI点击事件时发生错误: " + e.getMessage());
-            e.printStackTrace();
-            player.sendMessage(ColorUtils.colorize("&c处理操作时发生错误，请重试"));
-        }
-    }
-    
-    /**
-     * 获取日志索引
-     */
-    private int getLogIndex(int slot) {
-        int row = slot / 9 - 2; // 减去第一行和边框
-        int col = slot % 9 - 1; // 减去第一列边框
-        if (row < 0 || col < 0 || col >= 7) {
-            return -1;
-        }
-        return row * 7 + col;
-    }
-    
-    /**
-     * 显示日志详情
-     */
-    private void showLogDetails(Player player, GuildLog log) {
-        String message = plugin.getConfigManager().getMessagesConfig().getString("log-details", "&6=== 日志详情 ===");
-        player.sendMessage(ColorUtils.colorize(message));
-        
-        String[] details = {
-            "&e操作类型: &f" + log.getLogType().getDisplayName(),
-            "&e操作者: &f" + log.getPlayerName(),
-            "&e时间: &f" + log.getFormattedTime(),
-            "&e描述: &f" + log.getDescription()
-        };
-        
-        for (String detail : details) {
-            player.sendMessage(ColorUtils.colorize(detail));
-        }
-        
-        if (log.getDetails() != null && !log.getDetails().isEmpty()) {
-            player.sendMessage(ColorUtils.colorize("&e详情: &f" + log.getDetails()));
-        }
-        
-        player.sendMessage(ColorUtils.colorize("&6=================="));
-    }
-    
-    @Override
-    public void onClose(Player player) {
-        // GUI关闭时的清理工作
-        plugin.getLogger().info("玩家 " + player.getName() + " 关闭了工会日志GUI");
     }
 }

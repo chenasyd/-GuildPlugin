@@ -1,6 +1,7 @@
 package com.guild.core.gui;
 
 import com.guild.GuildPlugin;
+import com.guild.gui.GuildNameInputGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,6 +16,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.function.Function;
+
+import com.guild.core.utils.CompatibleScheduler;
 
 /**
  * GUI管理器 - 管理所有GUI界面
@@ -45,8 +48,8 @@ public class GUIManager implements Listener {
      */
     public void openGUI(Player player, GUI gui) {
         // 确保在主线程中执行
-        if (!Bukkit.isPrimaryThread()) {
-            Bukkit.getScheduler().runTask(plugin, () -> openGUI(player, gui));
+        if (!CompatibleScheduler.isPrimaryThread()) {
+            CompatibleScheduler.runTask(plugin, () -> openGUI(player, gui));
             return;
         }
         
@@ -78,8 +81,8 @@ public class GUIManager implements Listener {
      */
     public void closeGUI(Player player) {
         // 确保在主线程中执行
-        if (!Bukkit.isPrimaryThread()) {
-            Bukkit.getScheduler().runTask(plugin, () -> closeGUI(player));
+        if (!CompatibleScheduler.isPrimaryThread()) {
+            CompatibleScheduler.runTask(plugin, () -> closeGUI(player));
             return;
         }
         
@@ -144,6 +147,9 @@ public class GUIManager implements Listener {
             int slot = event.getRawSlot();
             ItemStack clickedItem = event.getCurrentItem();
             
+            // 添加调试日志
+            logger.info("玩家 " + player.getName() + " 点击了GUI: " + gui.getClass().getSimpleName() + " 槽位: " + slot);
+            
             // 处理所有点击，包括空物品的点击
             gui.onClick(player, slot, clickedItem, event.getClick());
         } catch (Exception e) {
@@ -166,8 +172,10 @@ public class GUIManager implements Listener {
         try {
             GUI gui = openGuis.remove(player.getUniqueId());
             if (gui != null) {
-                // 清除输入模式
-                clearInputMode(player);
+                // 只有在玩家确实在输入模式时才清理
+                if (inputModes.containsKey(player.getUniqueId())) {
+                    clearInputMode(player);
+                }
                 
                 gui.onClose(player);
                 logger.info("玩家 " + player.getName() + " 关闭了GUI: " + gui.getClass().getSimpleName());
@@ -183,8 +191,8 @@ public class GUIManager implements Listener {
      */
     public void refreshGUI(Player player) {
         // 确保在主线程中执行
-        if (!Bukkit.isPrimaryThread()) {
-            Bukkit.getScheduler().runTask(plugin, () -> refreshGUI(player));
+        if (!CompatibleScheduler.isPrimaryThread()) {
+            CompatibleScheduler.runTask(plugin, () -> refreshGUI(player));
             return;
         }
         
@@ -210,8 +218,8 @@ public class GUIManager implements Listener {
      */
     public void closeAllGUIs() {
         // 确保在主线程中执行
-        if (!Bukkit.isPrimaryThread()) {
-            Bukkit.getScheduler().runTask(plugin, this::closeAllGUIs);
+        if (!CompatibleScheduler.isPrimaryThread()) {
+            CompatibleScheduler.runTask(plugin, this::closeAllGUIs);
             return;
         }
         
@@ -242,8 +250,8 @@ public class GUIManager implements Listener {
      */
     public void setInputMode(Player player, Function<String, Boolean> inputHandler) {
         // 确保在主线程中执行
-        if (!Bukkit.isPrimaryThread()) {
-            Bukkit.getScheduler().runTask(plugin, () -> setInputMode(player, inputHandler));
+        if (!CompatibleScheduler.isPrimaryThread()) {
+            CompatibleScheduler.runTask(plugin, () -> setInputMode(player, inputHandler));
             return;
         }
         
@@ -257,12 +265,44 @@ public class GUIManager implements Listener {
     }
     
     /**
+     * 设置玩家输入模式（带GUI对象）
+     */
+    public void setInputMode(Player player, String mode, GUI gui) {
+        // 确保在主线程中执行
+        if (!CompatibleScheduler.isPrimaryThread()) {
+            CompatibleScheduler.runTask(plugin, () -> setInputMode(player, mode, gui));
+            return;
+        }
+        
+        try {
+            // 为工会名称输入创建特殊的输入处理器
+            if ("guild_name_input".equals(mode) && gui instanceof GuildNameInputGUI) {
+                GuildNameInputGUI nameInputGUI = (GuildNameInputGUI) gui;
+                inputModes.put(player.getUniqueId(), input -> {
+                    if ("取消".equals(input.trim())) {
+                        nameInputGUI.handleCancel(player);
+                        return true;
+                    }
+                    nameInputGUI.handleInputComplete(player, input);
+                    return true;
+                });
+                logger.info("玩家 " + player.getName() + " 进入工会名称输入模式");
+            } else {
+                logger.warning("未知的输入模式: " + mode);
+            }
+        } catch (Exception e) {
+            logger.severe("设置输入模式时发生错误: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
      * 清除玩家输入模式
      */
     public void clearInputMode(Player player) {
         // 确保在主线程中执行
-        if (!Bukkit.isPrimaryThread()) {
-            Bukkit.getScheduler().runTask(plugin, () -> clearInputMode(player));
+        if (!CompatibleScheduler.isPrimaryThread()) {
+            CompatibleScheduler.runTask(plugin, () -> clearInputMode(player));
             return;
         }
         

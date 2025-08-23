@@ -111,6 +111,7 @@ public class GuildLog {
     public enum LogType {
         GUILD_CREATED("工会创建"),
         GUILD_DISSOLVED("工会解散"),
+        GUILD_RENAMED("工会改名"),
         MEMBER_JOINED("成员加入"),
         MEMBER_LEFT("成员退出"),
         MEMBER_KICKED("成员被踢出"),
@@ -150,7 +151,7 @@ public class GuildLog {
      */
     public String getFormattedTime() {
         if (createdAt == null) return "未知";
-        return createdAt.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        return createdAt.format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
     }
 
     /**

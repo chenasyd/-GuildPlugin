@@ -3,6 +3,7 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
 import com.guild.models.GuildRelation;
 import org.bukkit.Bukkit;
@@ -58,7 +59,7 @@ public class CreateRelationGUI implements GUI {
             this.availableGuilds = guilds;
             
             // 确保在主线程中执行GUI操作
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 // 显示关系类型选择
                 displayRelationTypes(inventory);
                 
@@ -335,7 +336,7 @@ public class CreateRelationGUI implements GUI {
         // 检查是否已有关系
         plugin.getGuildService().getGuildRelationAsync(guild.getId(), targetGuild[0].getId())
             .thenAccept(existingRelation -> {
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, () -> {
                     if (existingRelation != null) {
                         String message = plugin.getConfigManager().getMessagesConfig().getString("relations.already-exists", "&c与 {guild} 的关系已存在！");
                         message = message.replace("{guild}", targetGuildName);
@@ -349,7 +350,7 @@ public class CreateRelationGUI implements GUI {
                         guild.getName(), targetGuild[0].getName(),
                         selectedType, player.getUniqueId(), player.getName()
                     ).thenAccept(success -> {
-                        Bukkit.getScheduler().runTask(plugin, () -> {
+                        CompatibleScheduler.runTask(plugin, () -> {
                             if (success) {
                                 String message = plugin.getConfigManager().getMessagesConfig().getString("relations.create-success", "&a已向 {guild} 发送 {type} 关系请求！");
                                 message = message.replace("{guild}", targetGuildName)

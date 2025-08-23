@@ -3,6 +3,7 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import org.bukkit.Bukkit;
@@ -133,7 +134,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
                 String message = plugin.getConfigManager().getMessagesConfig().getString("delete.success", "&a工会 &e{guild} &a已被删除！")
                     .replace("{guild}", guild.getName());
                 // 回到主线程进行界面操作
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, () -> {
                     player.sendMessage(ColorUtils.colorize(message));
                     // 使用GUIManager以确保主线程安全关闭与打开
                     plugin.getGuiManager().closeGUI(player);

@@ -13,6 +13,9 @@ import com.guild.commands.GuildAdminCommand;
 import com.guild.listeners.PlayerListener;
 import com.guild.listeners.GuildListener;
 import com.guild.services.GuildService;
+import com.guild.core.utils.ServerUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.TestUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -36,6 +39,19 @@ public class GuildPlugin extends JavaPlugin {
         Logger logger = getLogger();
         
         logger.info("正在启动工会插件...");
+        logger.info("检测到服务器类型: " + ServerUtils.getServerType());
+        logger.info("服务器版本: " + ServerUtils.getServerVersion());
+        
+        // 检查API版本兼容性
+        if (!ServerUtils.supportsApiVersion("1.21")) {
+            logger.severe("此插件需要1.21或更高版本！当前版本: " + ServerUtils.getServerVersion());
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        
+        // 运行兼容性测试
+        TestUtils.testCompatibility();
+        TestUtils.testSchedulerCompatibility();
         
         try {
             // 初始化服务容器
@@ -86,6 +102,7 @@ public class GuildPlugin extends JavaPlugin {
             startServices();
             
             logger.info("工会插件启动成功！");
+            logger.info("兼容模式: " + (ServerUtils.isFolia() ? "Folia" : "Spigot"));
             
         } catch (Exception e) {
             logger.severe("工会插件启动失败: " + e.getMessage());

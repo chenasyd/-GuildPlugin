@@ -15,11 +15,14 @@ import org.bukkit.entity.Player;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import com.guild.core.time.TimeProvider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
+
+import com.guild.core.utils.CompatibleScheduler;
 
 public class GuildService {
     
@@ -32,6 +35,11 @@ public class GuildService {
         this.databaseManager = plugin.getDatabaseManager();
         this.logger = plugin.getLogger();
     }
+    
+    // 时间工具：统一使用操作系统本地时间字符串（yyyy-MM-dd HH:mm:ss）
+    private String nowString() { return TimeProvider.nowString(); }
+    private String plusMinutesString(int minutes) { return TimeProvider.plusMinutesString(minutes); }
+    private String plusDaysString(int days) { return TimeProvider.plusDaysString(days); }
     
     /**
      * 创建工会 (异步)
@@ -49,11 +57,7 @@ public class GuildService {
                 
                 return CompletableFuture.supplyAsync(() -> {
                     try {
-                        String sql = "INSERT INTO guilds (name, tag, description, leader_uuid, leader_name, balance, level, max_members, frozen, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 0.0, 1, 6, 0, " +
-                                    (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                                     "datetime('now')" : "NOW()") + ", " +
-                                    (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                                     "datetime('now')" : "NOW()") + ")";
+                        String sql = "INSERT INTO guilds (name, tag, description, leader_uuid, leader_name, balance, level, max_members, frozen, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 0.0, 1, 6, 0, ?, ?)";
                         
                         try (Connection conn = databaseManager.getConnection();
                              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -64,6 +68,8 @@ public class GuildService {
                             stmt.setString(4, leaderUuid.toString());
                             stmt.setString(5, leaderName);
                             
+                            stmt.setString(6, nowString());
+                            stmt.setString(7, nowString());
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
                                 try (ResultSet rs = stmt.getGeneratedKeys()) {
@@ -226,9 +232,7 @@ public class GuildService {
                         
                         return CompletableFuture.supplyAsync(() -> {
                             try {
-                                String sql = "UPDATE guilds SET name = COALESCE(?, name), tag = COALESCE(?, tag), description = COALESCE(?, description), updated_at = " +
-                                            (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                                             "datetime('now')" : "NOW()") + " WHERE id = ?";
+                                String sql = "UPDATE guilds SET name = COALESCE(?, name), tag = COALESCE(?, tag), description = COALESCE(?, description), updated_at = ? WHERE id = ?";
                                 
                                 try (Connection conn = databaseManager.getConnection();
                                      PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -236,7 +240,8 @@ public class GuildService {
                                     stmt.setString(1, name);
                                     stmt.setString(2, tag);
                                     stmt.setString(3, description);
-                                    stmt.setInt(4, guildId);
+                                    stmt.setString(4, nowString());
+                                    stmt.setInt(5, guildId);
                                     
                                     int affectedRows = stmt.executeUpdate();
                                     if (affectedRows > 0) {
@@ -278,9 +283,7 @@ public class GuildService {
             return CompletableFuture.supplyAsync(() -> {
                 try {
                 
-                String sql = "INSERT INTO guild_members (guild_id, player_uuid, player_name, role, joined_at) VALUES (?, ?, ?, ?, " +
-                            (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                             "datetime('now')" : "NOW()") + ")";
+                String sql = "INSERT INTO guild_members (guild_id, player_uuid, player_name, role, joined_at) VALUES (?, ?, ?, ?, ?)";
                 
                 try (Connection conn = databaseManager.getConnection();
                      PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -289,6 +292,7 @@ public class GuildService {
                     stmt.setString(2, playerUuid.toString());
                     stmt.setString(3, playerName);
                     stmt.setString(4, role.name());
+                    stmt.setString(5, nowString());
                     
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
@@ -795,6 +799,14 @@ public class GuildService {
     }
     
     /**
+     * 检查是否为指定工会的会长
+     */
+    public boolean isGuildLeader(UUID playerUuid, int guildId) {
+        GuildMember member = getGuildMember(playerUuid);
+        return member != null && member.getGuildId() == guildId && member.getRole() == GuildMember.Role.LEADER;
+    }
+    
+    /**
      * 检查是否为工会官员
      */
     public boolean isGuildOfficer(UUID playerUuid) {
@@ -890,24 +902,28 @@ public class GuildService {
      * 解析时间戳
      */
     private java.time.LocalDateTime parseTimestamp(ResultSet rs, String columnName) throws SQLException {
-        try {
-            Timestamp timestamp = rs.getTimestamp(columnName);
-            if (timestamp != null) {
-                return timestamp.toLocalDateTime();
-            }
-        } catch (SQLException e) {
-            // 如果getTimestamp失败，尝试获取字符串并解析
-            String timestampStr = rs.getString(columnName);
-            if (timestampStr != null && !timestampStr.isEmpty()) {
+        // 优先以字符串按统一格式解析，避免驱动按时区转换导致偏差
+        String s = rs.getString(columnName);
+        if (s != null && !s.isEmpty()) {
+            try {
+                return LocalDateTime.parse(s, com.guild.core.time.TimeProvider.FULL_FORMATTER);
+            } catch (Exception ignore) {
                 try {
-                    return LocalDateTime.parse(timestampStr.replace(" ", "T"));
+                    return LocalDateTime.parse(s.replace(" ", "T"));
                 } catch (Exception ex) {
-                    logger.warning("无法解析时间戳: " + timestampStr);
+                    logger.warning("无法解析时间戳: " + s);
                 }
             }
         }
+        // 回退：使用驱动时间戳
+        try {
+            Timestamp ts = rs.getTimestamp(columnName);
+            if (ts != null) return ts.toLocalDateTime();
+        } catch (SQLException ignore) {}
         return LocalDateTime.now();
     }
+
+    
     
     /**
      * 提交申请 (异步)
@@ -920,9 +936,7 @@ public class GuildService {
                     return false;
                 }
                 
-                String sql = "INSERT INTO guild_applications (guild_id, player_uuid, player_name, message, status, created_at) VALUES (?, ?, ?, ?, ?, " +
-                            (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                             "datetime('now')" : "NOW()") + ")";
+                String sql = "INSERT INTO guild_applications (guild_id, player_uuid, player_name, message, status, created_at) VALUES (?, ?, ?, ?, ?, ?)";
                 
                 try (Connection conn = databaseManager.getConnection();
                      PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -932,6 +946,7 @@ public class GuildService {
                     stmt.setString(3, playerName);
                     stmt.setString(4, message);
                     stmt.setString(5, GuildApplication.ApplicationStatus.PENDING.name());
+                    stmt.setString(6, nowString());
                     
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
@@ -1231,9 +1246,7 @@ public class GuildService {
                  
                  return CompletableFuture.supplyAsync(() -> {
                      try {
-                         String sql = "UPDATE guilds SET home_world = ?, home_x = ?, home_y = ?, home_z = ?, home_yaw = ?, home_pitch = ?, updated_at = " +
-                                     (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                                      "datetime('now')" : "NOW()") + " WHERE id = ?";
+                         String sql = "UPDATE guilds SET home_world = ?, home_x = ?, home_y = ?, home_z = ?, home_yaw = ?, home_pitch = ?, updated_at = ? WHERE id = ?";
                          
                          try (Connection conn = databaseManager.getConnection();
                               PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -1244,7 +1257,8 @@ public class GuildService {
                              stmt.setDouble(4, location.getZ());
                              stmt.setFloat(5, location.getYaw());
                              stmt.setFloat(6, location.getPitch());
-                             stmt.setInt(7, guildId);
+                             stmt.setString(7, nowString());
+                             stmt.setInt(8, guildId);
                              
                              int affectedRows = stmt.executeUpdate();
                              if (affectedRows > 0) {
@@ -1322,22 +1336,20 @@ public class GuildService {
                  
                  return CompletableFuture.supplyAsync(() -> {
                      try {
-                         String sql = "INSERT INTO guild_invites (guild_id, player_uuid, player_name, inviter_uuid, inviter_name, status, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?, " +
-                                     (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                                      "datetime('now', '+30 minutes')" : "DATE_ADD(NOW(), INTERVAL 30 MINUTE)") + ", " +
-                                     (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                                      "datetime('now')" : "NOW()") + ")";
+                         String sql = "INSERT INTO guild_invites (guild_id, player_uuid, player_name, inviter_uuid, inviter_name, status, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                          
                          try (Connection conn = databaseManager.getConnection();
                               PreparedStatement stmt = conn.prepareStatement(sql)) {
-                             
+                         
                              stmt.setInt(1, guildId);
                              stmt.setString(2, targetUuid.toString());
                              stmt.setString(3, targetName);
                              stmt.setString(4, inviterUuid.toString());
                              stmt.setString(5, inviterName);
                              stmt.setString(6, "PENDING");
-                             
+                             stmt.setString(7, plusMinutesString(30));
+                             stmt.setString(8, nowString());
+                         
                              int affectedRows = stmt.executeUpdate();
                              if (affectedRows > 0) {
                                  logger.info("邀请发送成功: " + inviterName + " -> " + targetName + " (工会ID: " + guildId + ")");
@@ -1425,16 +1437,15 @@ public class GuildService {
      public CompletableFuture<GuildInvitation> getPendingInvitationAsync(UUID targetUuid, UUID inviterUuid) {
          return CompletableFuture.supplyAsync(() -> {
              try {
-                 String sql = "SELECT * FROM guild_invites WHERE player_uuid = ? AND inviter_uuid = ? AND status = 'PENDING' AND expires_at > " +
-                             (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                              "datetime('now')" : "NOW()") + " ORDER BY created_at DESC LIMIT 1";
+                 String sql = "SELECT * FROM guild_invites WHERE player_uuid = ? AND inviter_uuid = ? AND status = 'PENDING' AND expires_at > ? ORDER BY created_at DESC LIMIT 1";
                  
                  try (Connection conn = databaseManager.getConnection();
                       PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
+                 
                      stmt.setString(1, targetUuid.toString());
                      stmt.setString(2, inviterUuid.toString());
-                     
+                     stmt.setString(3, nowString());
+                 
                      try (ResultSet rs = stmt.executeQuery()) {
                          if (rs.next()) {
                              return createGuildInvitationFromResultSet(rs);
@@ -1442,7 +1453,7 @@ public class GuildService {
                      }
                  }
              } catch (SQLException e) {
-                 logger.severe("获取邀请时发生错误: " + e.getMessage());
+                 logger.severe("获取待处理邀请时发生错误: " + e.getMessage());
              }
              return null;
          });
@@ -1466,16 +1477,15 @@ public class GuildService {
      public CompletableFuture<GuildInvitation> getPendingInvitationAsync(UUID targetUuid, int guildId) {
          return CompletableFuture.supplyAsync(() -> {
              try {
-                 String sql = "SELECT * FROM guild_invites WHERE player_uuid = ? AND guild_id = ? AND status = 'PENDING' AND expires_at > " +
-                             (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                              "datetime('now')" : "NOW()") + " ORDER BY created_at DESC LIMIT 1";
+                 String sql = "SELECT * FROM guild_invites WHERE player_uuid = ? AND guild_id = ? AND status = 'PENDING' AND expires_at > ? ORDER BY created_at DESC LIMIT 1";
                  
                  try (Connection conn = databaseManager.getConnection();
                       PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
+                 
                      stmt.setString(1, targetUuid.toString());
                      stmt.setInt(2, guildId);
-                     
+                     stmt.setString(3, nowString());
+                 
                      try (ResultSet rs = stmt.executeQuery()) {
                          if (rs.next()) {
                              return createGuildInvitationFromResultSet(rs);
@@ -1632,14 +1642,11 @@ public class GuildService {
                                                               GuildRelation.RelationType type, UUID initiatorUuid, String initiatorName) {
          return CompletableFuture.supplyAsync(() -> {
              try {
-                 String sql = "INSERT INTO guild_relations (guild1_id, guild2_id, guild1_name, guild2_name, relation_type, " +
-                             "initiator_uuid, initiator_name, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, " +
-                             (databaseManager.getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                              "datetime('now', '+7 days')" : "DATE_ADD(NOW(), INTERVAL 7 DAY)") + ")";
+                 String sql = "INSERT INTO guild_relations (guild1_id, guild2_id, guild1_name, guild2_name, relation_type, initiator_uuid, initiator_name, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                  
                  try (Connection conn = databaseManager.getConnection();
                       PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
+                 
                      stmt.setInt(1, guild1Id);
                      stmt.setInt(2, guild2Id);
                      stmt.setString(3, guild1Name);
@@ -1647,6 +1654,7 @@ public class GuildService {
                      stmt.setString(5, type.name());
                      stmt.setString(6, initiatorUuid.toString());
                      stmt.setString(7, initiatorName);
+                     stmt.setString(8, plusDaysString(7));
                      
                      int rowsAffected = stmt.executeUpdate();
                      return rowsAffected > 0;
@@ -1664,16 +1672,15 @@ public class GuildService {
      public CompletableFuture<Boolean> updateGuildRelationStatusAsync(int relationId, GuildRelation.RelationStatus status) {
          return CompletableFuture.supplyAsync(() -> {
              try {
-                 String sql = "UPDATE guild_relations SET status = ?, updated_at = " +
-                             (databaseManager.getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                              "datetime('now')" : "NOW()") + " WHERE id = ?";
+                 String sql = "UPDATE guild_relations SET status = ?, updated_at = ? WHERE id = ?";
                  
                  try (Connection conn = databaseManager.getConnection();
                       PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
+                 
                      stmt.setString(1, status.name());
-                     stmt.setInt(2, relationId);
-                     
+                     stmt.setString(2, nowString());
+                     stmt.setInt(3, relationId);
+                 
                      int rowsAffected = stmt.executeUpdate();
                      return rowsAffected > 0;
                  }
@@ -1822,20 +1829,19 @@ public class GuildService {
      public CompletableFuture<Boolean> updateGuildEconomyAsync(int guildId, double balance, int level, double experience, double maxExperience, int maxMembers) {
          return CompletableFuture.supplyAsync(() -> {
              try {
-                 String sql = "UPDATE guild_economy SET balance = ?, level = ?, experience = ?, max_experience = ?, max_members = ?, " +
-                             "last_updated = " + (databaseManager.getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                              "datetime('now')" : "NOW()") + " WHERE guild_id = ?";
+                 String sql = "UPDATE guild_economy SET balance = ?, level = ?, experience = ?, max_experience = ?, max_members = ?, last_updated = ? WHERE guild_id = ?";
                  
                  try (Connection conn = databaseManager.getConnection();
                       PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
+                 
                      stmt.setDouble(1, balance);
                      stmt.setInt(2, level);
                      stmt.setDouble(3, experience);
                      stmt.setDouble(4, maxExperience);
                      stmt.setInt(5, maxMembers);
-                     stmt.setInt(6, guildId);
-                     
+                     stmt.setString(6, nowString());
+                     stmt.setInt(7, guildId);
+                 
                      int rowsAffected = stmt.executeUpdate();
                      return rowsAffected > 0;
                  }
@@ -1993,48 +1999,47 @@ public class GuildService {
              
              return CompletableFuture.supplyAsync(() -> {
                  try {
-                     String sql = "UPDATE guilds SET balance = ?, updated_at = " +
-                                 (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                                  "datetime('now')" : "NOW()") + " WHERE id = ?";
+                     String sql = "UPDATE guilds SET balance = ?, updated_at = ? WHERE id = ?";
                      
                      try (Connection conn = databaseManager.getConnection();
                           PreparedStatement stmt = conn.prepareStatement(sql)) {
-                         
-                        stmt.setDouble(1, balance);
-                        stmt.setInt(2, guildId);
-                        
-                        int affectedRows = stmt.executeUpdate();
-                        if (affectedRows > 0) {
-                            logger.info("工会余额更新成功: " + guild.getName() + " (ID: " + guildId + ") 新余额: " + balance);
-                            
-                            // 异步检查是否需要自动升级，不阻塞当前操作
-                            CompletableFuture.runAsync(() -> {
-                                checkAndUpgradeGuildLevel(guildId, balance);
-                            });
-                            
-                            // 记录资金变更日志
-                            double oldBalance = guild.getBalance();
-                            double change = balance - oldBalance;
-                            if (change != 0) {
-                                GuildLog.LogType logType = change > 0 ? GuildLog.LogType.FUND_DEPOSITED : GuildLog.LogType.FUND_WITHDRAWN;
-                                String description = change > 0 ? "资金存入" : "资金取出";
-                                String details = "变更金额: " + (change > 0 ? "+" : "") + change + " 金币, 新余额: " + balance + " 金币";
-                                
-                                // 这里需要获取操作者信息，暂时使用系统记录
-                                logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
-                                    logType, description, details);
-                            }
-                            
-                            return true;
-                        }
-                    }
-                } catch (SQLException e) {
-                    logger.severe("更新工会余额时发生错误: " + e.getMessage());
-                }
-                return false;
-            });
-        });
-    }
+                     
+                         stmt.setDouble(1, balance);
+                         stmt.setString(2, nowString());
+                         stmt.setInt(3, guildId);
+                     
+                         int affectedRows = stmt.executeUpdate();
+                         if (affectedRows > 0) {
+                             logger.info("工会余额更新成功: " + guild.getName() + " (ID: " + guildId + ") 新余额: " + balance);
+                             
+                             // 异步检查是否需要自动升级，不阻塞当前操作
+                             CompletableFuture.runAsync(() -> {
+                                 checkAndUpgradeGuildLevel(guildId, balance);
+                             });
+                             
+                             // 记录资金变更日志
+                             double oldBalance = guild.getBalance();
+                             double change = balance - oldBalance;
+                             if (change != 0) {
+                                 GuildLog.LogType logType = change > 0 ? GuildLog.LogType.FUND_DEPOSITED : GuildLog.LogType.FUND_WITHDRAWN;
+                                 String description = change > 0 ? "资金存入" : "资金取出";
+                                 String details = "变更金额: " + (change > 0 ? "+" : "") + change + " 金币, 新余额: " + balance + " 金币";
+                                 
+                                 // 这里需要获取操作者信息，暂时使用系统记录
+                                 logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
+                                     logType, description, details);
+                             }
+                             
+                             return true;
+                         }
+                     }
+                 } catch (SQLException e) {
+                     logger.severe("更新工会余额时发生错误: " + e.getMessage());
+                 }
+                 return false;
+             });
+         });
+     }
     
     /**
      * 更新工会等级 (异步)
@@ -2130,14 +2135,14 @@ public class GuildService {
     private CompletableFuture<Boolean> addGuildMemberDirectAsync(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                String sql = "INSERT INTO guild_members (guild_id, player_uuid, player_name, role, joined_at) VALUES (?, ?, ?, ?, " +
-                        (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? "datetime('now')" : "NOW()") + ")";
+                String sql = "INSERT INTO guild_members (guild_id, player_uuid, player_name, role, joined_at) VALUES (?, ?, ?, ?, ?)";
                 try (Connection conn = databaseManager.getConnection();
                      PreparedStatement stmt = conn.prepareStatement(sql)) {
                     stmt.setInt(1, guildId);
                     stmt.setString(2, playerUuid.toString());
                     stmt.setString(3, playerName);
                     stmt.setString(4, role.name());
+                    stmt.setString(5, nowString());
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
                         try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
@@ -2170,32 +2175,29 @@ public class GuildService {
                 
                 CompletableFuture.supplyAsync(() -> {
                     try {
-                        String sql = "UPDATE guilds SET level = ?, max_members = ?, updated_at = " +
-                                    (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                                     "datetime('now')" : "NOW()") + " WHERE id = ?";
+                        String sql = "UPDATE guilds SET level = ?, max_members = ?, updated_at = ? WHERE id = ?";
                         
                         try (Connection conn = databaseManager.getConnection();
                              PreparedStatement stmt = conn.prepareStatement(sql)) {
                             
                             stmt.setInt(1, newLevel);
                             stmt.setInt(2, newMaxMembers);
-                            stmt.setInt(3, guildId);
+                            stmt.setString(3, nowString());
+                            stmt.setInt(4, guildId);
                             
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
                                 logger.info("工会自动升级成功: " + guild.getName() + " (ID: " + guildId + ") 等级: " + currentLevel + " -> " + newLevel);
                                 
-                                // 记录工会升级日志
+                                // 记录升级日志
                                 logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
-                                    GuildLog.LogType.GUILD_LEVEL_UP, "工会升级", "等级: " + currentLevel + " -> " + newLevel + ", 最大成员数: " + newMaxMembers);
+                                    GuildLog.LogType.GUILD_LEVEL_UP, "工会升级", "新等级: " + newLevel + ", 新最大成员数: " + newMaxMembers);
                                 
-                                // 通知工会成员升级成功
-                                notifyGuildMembersOfUpgrade(guildId, newLevel, newMaxMembers);
                                 return true;
                             }
                         }
                     } catch (SQLException e) {
-                        logger.severe("工会自动升级时发生错误: " + e.getMessage());
+                        logger.severe("自动升级工会时发生错误: " + e.getMessage());
                     }
                     return false;
                 });
@@ -2253,7 +2255,7 @@ public class GuildService {
                 .replace("{max_members}", String.valueOf(newMaxMembers));
             
             // 在主线程中发送消息
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 for (GuildMember member : members) {
                     Player player = Bukkit.getPlayer(member.getPlayerUuid());
                     if (player != null && player.isOnline()) {
@@ -2277,24 +2279,23 @@ public class GuildService {
                                                         String description, String details) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                String sql = "INSERT INTO guild_logs (guild_id, guild_name, player_uuid, player_name, log_type, description, details, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, " +
-                            (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE ? 
-                             "datetime('now')" : "NOW()") + ")";
+                String sql = "INSERT INTO guild_logs (guild_id, guild_name, player_uuid, player_name, log_type, description, details, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                 
                 try (Connection conn = databaseManager.getConnection();
                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, guildId);
-                    stmt.setString(2, guildName);
-                    stmt.setString(3, playerUuid);
-                    stmt.setString(4, playerName);
-                    stmt.setString(5, logType.name());
-                    stmt.setString(6, description);
-                    stmt.setString(7, details);
-                    
-                    int affectedRows = stmt.executeUpdate();
-                    return affectedRows > 0;
-                }
+                 
+                     stmt.setInt(1, guildId);
+                     stmt.setString(2, guildName);
+                     stmt.setString(3, playerUuid);
+                     stmt.setString(4, playerName);
+                     stmt.setString(5, logType.name());
+                     stmt.setString(6, description);
+                     stmt.setString(7, details);
+                     stmt.setString(8, nowString());
+                 
+                     int affectedRows = stmt.executeUpdate();
+                     return affectedRows > 0;
+                 }
             } catch (SQLException e) {
                 logger.severe("记录工会日志时发生错误: " + e.getMessage());
                 return false;
@@ -2413,8 +2414,7 @@ public class GuildService {
         if (createdAtStr != null) {
             try {
                 if (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE) {
-                    log.setCreatedAt(LocalDateTime.parse(createdAtStr, 
-                        java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                    log.setCreatedAt(LocalDateTime.parse(createdAtStr, com.guild.core.time.TimeProvider.FULL_FORMATTER));
                 } else {
                     log.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 }
@@ -2432,16 +2432,16 @@ public class GuildService {
     public CompletableFuture<Integer> cleanOldLogsAsync(int daysToKeep) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                String sql;
-                if (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE) {
-                    sql = "DELETE FROM guild_logs WHERE created_at < datetime('now', '-" + daysToKeep + " days')";
-                } else {
-                    sql = "DELETE FROM guild_logs WHERE created_at < DATE_SUB(NOW(), INTERVAL " + daysToKeep + " DAY)";
-                }
+                // 统一使用参数绑定的阈值时间（字符串），避免数据库侧时区差异
+                String sql = "DELETE FROM guild_logs WHERE created_at < ?";
                 
                 try (Connection conn = databaseManager.getConnection();
                      PreparedStatement stmt = conn.prepareStatement(sql)) {
                     
+                    // 计算阈值字符串：当前系统时间减去 daysToKeep 天，格式 yyyy-MM-dd HH:mm:ss
+                    String threshold = com.guild.core.time.TimeProvider.nowLocalDateTime().minusDays(daysToKeep)
+                        .format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
+                    stmt.setString(1, threshold);
                     int affectedRows = stmt.executeUpdate();
                     logger.info("清理了 " + affectedRows + " 条旧日志记录");
                     return affectedRows;

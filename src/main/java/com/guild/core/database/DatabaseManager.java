@@ -162,8 +162,8 @@ public class DatabaseManager {
                 home_z REAL,
                 home_yaw REAL,
                 home_pitch REAL,
-                created_at TEXT DEFAULT (datetime('now')),
-                updated_at TEXT DEFAULT (datetime('now'))
+                created_at TEXT DEFAULT (datetime('now','localtime')),
+                updated_at TEXT DEFAULT (datetime('now','localtime'))
             )
         """);
         
@@ -175,7 +175,7 @@ public class DatabaseManager {
                 player_uuid TEXT NOT NULL,
                 player_name TEXT NOT NULL,
                 role TEXT DEFAULT 'MEMBER',
-                joined_at TEXT DEFAULT (datetime('now')),
+                joined_at TEXT DEFAULT (datetime('now','localtime')),
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE,
                 UNIQUE(guild_id, player_uuid)
             )
@@ -190,7 +190,7 @@ public class DatabaseManager {
                 player_name TEXT NOT NULL,
                 message TEXT,
                 status TEXT DEFAULT 'PENDING',
-                created_at TEXT DEFAULT (datetime('now')),
+                created_at TEXT DEFAULT (datetime('now','localtime')),
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
@@ -206,7 +206,7 @@ public class DatabaseManager {
                 inviter_name TEXT NOT NULL,
                 status TEXT DEFAULT 'PENDING',
                 expires_at TEXT,
-                created_at TEXT DEFAULT (datetime('now')),
+                created_at TEXT DEFAULT (datetime('now','localtime')),
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
@@ -223,8 +223,8 @@ public class DatabaseManager {
                 status TEXT DEFAULT 'PENDING',
                 initiator_uuid TEXT NOT NULL,
                 initiator_name TEXT NOT NULL,
-                created_at TEXT DEFAULT (datetime('now')),
-                updated_at TEXT DEFAULT (datetime('now')),
+                created_at TEXT DEFAULT (datetime('now','localtime')),
+                updated_at TEXT DEFAULT (datetime('now','localtime')),
                 expires_at TEXT,
                 FOREIGN KEY (guild1_id) REFERENCES guilds(id) ON DELETE CASCADE,
                 FOREIGN KEY (guild2_id) REFERENCES guilds(id) ON DELETE CASCADE,
@@ -242,7 +242,7 @@ public class DatabaseManager {
                 experience REAL DEFAULT 0.0,
                 max_experience REAL DEFAULT 5000.0,
                 max_members INTEGER DEFAULT 6,
-                last_updated TEXT DEFAULT (datetime('now')),
+                last_updated TEXT DEFAULT (datetime('now','localtime')),
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
@@ -257,7 +257,7 @@ public class DatabaseManager {
                 amount REAL NOT NULL,
                 contribution_type TEXT NOT NULL,
                 description TEXT,
-                created_at TEXT DEFAULT (datetime('now')),
+                created_at TEXT DEFAULT (datetime('now','localtime')),
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
@@ -273,7 +273,7 @@ public class DatabaseManager {
                 log_type TEXT NOT NULL,
                 description TEXT NOT NULL,
                 details TEXT,
-                created_at TEXT DEFAULT (datetime('now')),
+                created_at TEXT DEFAULT (datetime('now','localtime')),
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);

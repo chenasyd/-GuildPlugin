@@ -4,6 +4,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.PlaceholderUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.models.GuildRelation;
@@ -58,7 +59,7 @@ public class GuildRelationsGUI implements GUI {
             this.relations = relationsList;
             
             // 确保在主线程中执行GUI操作
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 // 显示关系列表
                 displayRelations(inventory);
                 
@@ -228,7 +229,7 @@ public class GuildRelationsGUI implements GUI {
      */
     private String formatDateTime(java.time.LocalDateTime dateTime) {
         if (dateTime == null) return "未知";
-        return dateTime.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        return dateTime.format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
     }
     
     /**
@@ -342,7 +343,7 @@ public class GuildRelationsGUI implements GUI {
     private void acceptRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.ACTIVE)
             .thenAccept(success -> {
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
                         String message = plugin.getConfigManager().getMessagesConfig().getString("relations.accept-success", "&a已接受与 {guild} 的关系！");
                         message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
@@ -362,7 +363,7 @@ public class GuildRelationsGUI implements GUI {
     private void rejectRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.CANCELLED)
             .thenAccept(success -> {
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
                         String message = plugin.getConfigManager().getMessagesConfig().getString("relations.reject-success", "&c已拒绝与 {guild} 的关系！");
                         message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
@@ -382,7 +383,7 @@ public class GuildRelationsGUI implements GUI {
     private void cancelRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.CANCELLED)
             .thenAccept(success -> {
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
                         String message = plugin.getConfigManager().getMessagesConfig().getString("relations.cancel-success", "&c已取消与 {guild} 的关系！");
                         message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
@@ -412,7 +413,7 @@ public class GuildRelationsGUI implements GUI {
             newRelation.getGuild1Name(), newRelation.getGuild2Name(),
             newRelation.getType(), newRelation.getInitiatorUuid(), newRelation.getInitiatorName()
         ).thenAccept(success -> {
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
                     // 删除旧的停战关系
                     plugin.getGuildService().deleteGuildRelationAsync(relation.getId());
@@ -445,7 +446,7 @@ public class GuildRelationsGUI implements GUI {
             truceRelation.getGuild1Name(), truceRelation.getGuild2Name(),
             truceRelation.getType(), truceRelation.getInitiatorUuid(), truceRelation.getInitiatorName()
         ).thenAccept(success -> {
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("relations.truce-proposed", "&e已向 {guild} 提议停战！");
                     message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
@@ -465,7 +466,7 @@ public class GuildRelationsGUI implements GUI {
     private void deleteRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().deleteGuildRelationAsync(relation.getId())
             .thenAccept(success -> {
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
                         String message = plugin.getConfigManager().getMessagesConfig().getString("relations.delete-success", "&a已删除与 {guild} 的关系！");
                         message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));

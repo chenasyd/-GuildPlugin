@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.format.DateTimeFormatter;
+import com.guild.core.time.TimeProvider;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -221,7 +222,7 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
             if (member == null || member.getJoinedAt() == null) return "";
-            return member.getJoinedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            return member.getJoinedAt().format(TimeProvider.FULL_FORMATTER);
         } catch (Exception e) {
             return "";
         }

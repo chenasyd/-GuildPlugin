@@ -175,7 +175,7 @@ public class RelationManagementGUI implements GUI {
     
     private String formatDateTime(java.time.LocalDateTime dateTime) {
         if (dateTime == null) return "未知";
-        return dateTime.format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        return dateTime.format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
     }
     
     private void setupPaginationButtons(Inventory inventory) {

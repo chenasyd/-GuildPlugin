@@ -3,6 +3,7 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PlaceholderUtils;
 import com.guild.models.Guild;
 import org.bukkit.Material;
@@ -131,42 +132,45 @@ public class GuildListGUI implements GUI {
      */
     private void loadGuilds(Inventory inventory) {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            if (guilds == null || guilds.isEmpty()) {
-                // 显示无工会信息
-                ItemStack noGuilds = createItem(
-                    Material.BARRIER,
-                    ColorUtils.colorize("&c暂无工会"),
-                    ColorUtils.colorize("&7服务器中还没有工会")
-                );
-                inventory.setItem(22, noGuilds);
-                return;
-            }
-            
-            // 应用搜索和筛选
-            List<Guild> filteredGuilds = filterGuilds(guilds);
-            
-            if (filteredGuilds.isEmpty()) {
-                // 显示无搜索结果
-                ItemStack noResults = createItem(
-                    Material.BARRIER,
-                    ColorUtils.colorize("&c无搜索结果"),
-                    ColorUtils.colorize("&7没有找到匹配的工会")
-                );
-                inventory.setItem(22, noResults);
-                return;
-            }
-            
-            // 计算分页
-            int totalPages = (filteredGuilds.size() - 1) / GUILDS_PER_PAGE;
-            if (currentPage > totalPages) {
-                currentPage = totalPages;
-            }
-            
-            // 设置分页按钮
-            setupPaginationButtons(inventory, totalPages);
-            
-            // 显示当前页的工会
-            displayGuilds(inventory, filteredGuilds);
+            // 确保在主线程中更新GUI
+            CompatibleScheduler.runTask(plugin, () -> {
+                if (guilds == null || guilds.isEmpty()) {
+                    // 显示无工会信息
+                    ItemStack noGuilds = createItem(
+                        Material.BARRIER,
+                        ColorUtils.colorize("&c暂无工会"),
+                        ColorUtils.colorize("&7服务器中还没有工会")
+                    );
+                    inventory.setItem(22, noGuilds);
+                    return;
+                }
+                
+                // 应用搜索和筛选
+                List<Guild> filteredGuilds = filterGuilds(guilds);
+                
+                if (filteredGuilds.isEmpty()) {
+                    // 显示无搜索结果
+                    ItemStack noResults = createItem(
+                        Material.BARRIER,
+                        ColorUtils.colorize("&c无搜索结果"),
+                        ColorUtils.colorize("&7没有找到匹配的工会")
+                    );
+                    inventory.setItem(22, noResults);
+                    return;
+                }
+                
+                // 计算分页
+                int totalPages = (filteredGuilds.size() - 1) / GUILDS_PER_PAGE;
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
+                
+                // 设置分页按钮
+                setupPaginationButtons(inventory, totalPages);
+                
+                // 显示当前页的工会
+                displayGuilds(inventory, filteredGuilds);
+            });
         });
     }
     
@@ -228,7 +232,7 @@ public class GuildListGUI implements GUI {
             CompletableFuture<Void> future = plugin.getGuildService().getGuildMemberCountAsync(guild.getId())
                 .thenAccept(memberCount -> {
                     // 在主线程中更新GUI
-                    plugin.getServer().getScheduler().runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, () -> {
                         ItemStack guildItem = createGuildItemWithMemberCount(guild, memberCount);
                         inventory.setItem(finalSlotIndex, guildItem);
                     });
@@ -400,38 +404,8 @@ public class GuildListGUI implements GUI {
     private void handleViewGuildDetails(Player player, int slot) {
         // 获取当前页的工会列表
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            if (guilds == null || guilds.isEmpty()) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guilds", "&c没有找到工会");
-                player.sendMessage(ColorUtils.colorize(message));
-                return;
-            }
-            
-            // 计算工会在列表中的索引
-            int guildIndex = currentPage * GUILDS_PER_PAGE + (slot - 10);
-            if (guildIndex >= 0 && guildIndex < guilds.size()) {
-                Guild guild = guilds.get(guildIndex);
-                
-                // 打开工会信息GUI
-                GuildInfoGUI guildInfoGUI = new GuildInfoGUI(plugin, player, guild);
-                plugin.getGuiManager().openGUI(player, guildInfoGUI);
-            }
-        });
-    }
-    
-    /**
-     * 处理申请加入工会
-     */
-    private void handleApplyToGuild(Player player, int slot) {
-        // 检查玩家是否已有工会
-        plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(playerGuild -> {
-            if (playerGuild != null) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("create.already-in-guild", "&c您已经在一个工会中了！");
-                player.sendMessage(ColorUtils.colorize(message));
-                return;
-            }
-            
-            // 获取当前页的工会列表
-            plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
+            // 确保在主线程中执行GUI操作
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (guilds == null || guilds.isEmpty()) {
                     String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guilds", "&c没有找到工会");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -443,26 +417,71 @@ public class GuildListGUI implements GUI {
                 if (guildIndex >= 0 && guildIndex < guilds.size()) {
                     Guild guild = guilds.get(guildIndex);
                     
-                    // 检查是否已有待处理申请
-                    plugin.getGuildService().hasPendingApplicationAsync(player.getUniqueId(), guild.getId()).thenAccept(hasPending -> {
-                        if (hasPending) {
-                            String message = plugin.getConfigManager().getMessagesConfig().getString("apply.already-applied", "&c您已经申请过这个工会了！");
+                    // 打开工会信息GUI
+                    GuildInfoGUI guildInfoGUI = new GuildInfoGUI(plugin, player, guild);
+                    plugin.getGuiManager().openGUI(player, guildInfoGUI);
+                }
+            });
+        });
+    }
+    
+    /**
+     * 处理申请加入工会
+     */
+    private void handleApplyToGuild(Player player, int slot) {
+        // 检查玩家是否已有工会
+        plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(playerGuild -> {
+            // 确保在主线程中执行GUI操作
+            CompatibleScheduler.runTask(plugin, () -> {
+                if (playerGuild != null) {
+                    String message = plugin.getConfigManager().getMessagesConfig().getString("create.already-in-guild", "&c您已经在一个工会中了！");
+                    player.sendMessage(ColorUtils.colorize(message));
+                    return;
+                }
+                
+                // 获取当前页的工会列表
+                plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
+                    // 确保在主线程中执行GUI操作
+                    CompatibleScheduler.runTask(plugin, () -> {
+                        if (guilds == null || guilds.isEmpty()) {
+                            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guilds", "&c没有找到工会");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
                         
-                        // 提交申请
-                        plugin.getGuildService().submitApplicationAsync(guild.getId(), player.getUniqueId(), player.getName(), "").thenAccept(success -> {
-                            if (success) {
-                                String message = plugin.getConfigManager().getMessagesConfig().getString("apply.success", "&a申请已提交！");
-                                player.sendMessage(ColorUtils.colorize(message));
-                            } else {
-                                String message = plugin.getConfigManager().getMessagesConfig().getString("apply.failed", "&c申请提交失败！");
-                                player.sendMessage(ColorUtils.colorize(message));
-                            }
-                        });
+                        // 计算工会在列表中的索引
+                        int guildIndex = currentPage * GUILDS_PER_PAGE + (slot - 10);
+                        if (guildIndex >= 0 && guildIndex < guilds.size()) {
+                            Guild guild = guilds.get(guildIndex);
+                            
+                            // 检查是否已有待处理申请
+                            plugin.getGuildService().hasPendingApplicationAsync(player.getUniqueId(), guild.getId()).thenAccept(hasPending -> {
+                                // 确保在主线程中执行GUI操作
+                                CompatibleScheduler.runTask(plugin, () -> {
+                                    if (hasPending) {
+                                        String message = plugin.getConfigManager().getMessagesConfig().getString("apply.already-applied", "&c您已经申请过这个工会了！");
+                                        player.sendMessage(ColorUtils.colorize(message));
+                                        return;
+                                    }
+                                    
+                                    // 提交申请
+                                    plugin.getGuildService().submitApplicationAsync(guild.getId(), player.getUniqueId(), player.getName(), "").thenAccept(success -> {
+                                        // 确保在主线程中执行GUI操作
+                                        CompatibleScheduler.runTask(plugin, () -> {
+                                            if (success) {
+                                                String message = plugin.getConfigManager().getMessagesConfig().getString("apply.success", "&a申请已提交！");
+                                                player.sendMessage(ColorUtils.colorize(message));
+                                            } else {
+                                                String message = plugin.getConfigManager().getMessagesConfig().getString("apply.failed", "&c申请提交失败！");
+                                                player.sendMessage(ColorUtils.colorize(message));
+                                            }
+                                        });
+                                    });
+                                });
+                            });
+                        }
                     });
-                }
+                });
             });
         });
     }
