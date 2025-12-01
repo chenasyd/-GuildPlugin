@@ -3,71 +3,71 @@ version: 1.2.4
 main: com.guild.GuildPlugin
 api-version: '1.21'
 authors: [chenasyd]
-description: 一个功能完整的我的世界工会插件，支持Spigot和Folia
+description: W pełni funkcjonalny plugin gildyjny dla Minecrafta, wspierający Spigot i Folia
 website: https://github.com/chenasyd
 softdepend: [PlaceholderAPI, Vault]
 
-# 支持的最低版本
+# Minimalna obsługiwana wersja
 load: POSTWORLD
 
-# Folia支持标记
+# Oznaczenie wsparcia dla Folia
 folia-supported: true
 
 commands:
   guild:
-    description: 工会系统主命令
+    description: Główne polecenie systemu gildii
     usage: /guild help
-    aliases: [g, 工会]
+    aliases: [g, gildia]
     permission: guild.use
   guildadmin:
-    description: 工会管理员命令
+    description: Polecenie administratora gildii
     usage: /guildadmin help
-    aliases: [ga, 工会管理]
+    aliases: [ga, gadmin, zarzadzaniegildia]
     permission: guild.admin
 
 permissions:
   guild.use:
-    description: 允许使用工会系统
+    description: Pozwala na używanie systemu gildii
     default: true
   guild.admin:
-    description: 工会管理员权限
+    description: Uprawnienia administratora gildii
     default: op
   guild.create:
-    description: 允许创建工会
+    description: Pozwala na tworzenie gildii
     default: true
   guild.invite:
-    description: 允许邀请玩家加入工会
+    description: Pozwala na zapraszanie graczy do gildii
     default: true
   guild.kick:
-    description: 允许踢出工会成员
+    description: Pozwala na wyrzucanie członków gildii
     default: true
   guild.promote:
-    description: 允许提升工会成员
+    description: Pozwala na awansowanie członków gildii
     default: true
   guild.demote:
-    description: 允许降级工会成员
+    description: Pozwala na degradowanie członków gildii
     default: true
   guild.delete:
-    description: 允许删除工会
+    description: Pozwala na usuwanie gildii
     default: op
   guild.sethome:
-    description: 允许设置工会家
+    description: Pozwala na ustawianie domu gildii
     default: true
   guild.home:
-    description: 允许传送到工会家
+    description: Pozwala na teleportację do domu gildii
     default: true
   guild.relation:
-    description: 允许管理工会关系
+    description: Pozwala na zarządzanie relacjami gildii
     default: true
   guild.economy:
-    description: 允许管理工会经济
+    description: Pozwala na zarządzanie ekonomią gildii
     default: true
   guild.deposit:
-    description: 允许向工会存入资金
+    description: Pozwala na wpłacanie funduszy do gildii
     default: true
   guild.withdraw:
-    description: 允许从工会取出资金
+    description: Pozwala na wypłacanie funduszy z gildii
     default: true
   guild.transfer:
-    description: 允许向其他工会转账
+    description: Pozwala na przelewanie środków do innych gildii
     default: true

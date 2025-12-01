@@ -3,8 +3,8 @@ package com.guild.models;
 import java.time.LocalDateTime;
 
 /**
- * 工会日志模型
- * 用于记录工会的各种操作历史
+ * Model dziennika gildii
+ * Służy do rejestrowania historii różnych operacji gildii
  */
 public class GuildLog {
     private int id;
@@ -20,7 +20,7 @@ public class GuildLog {
     public GuildLog() {
     }
 
-    public GuildLog(int guildId, String guildName, String playerUuid, String playerName, 
+    public GuildLog(int guildId, String guildName, String playerUuid, String playerName,
                    LogType logType, String description, String details) {
         this.guildId = guildId;
         this.guildName = guildName;
@@ -106,34 +106,34 @@ public class GuildLog {
     }
 
     /**
-     * 日志类型枚举
+     * Enumeracja typu dziennika
      */
     public enum LogType {
-        GUILD_CREATED("工会创建"),
-        GUILD_DISSOLVED("工会解散"),
-        GUILD_RENAMED("工会改名"),
-        MEMBER_JOINED("成员加入"),
-        MEMBER_LEFT("成员退出"),
-        MEMBER_KICKED("成员被踢出"),
-        MEMBER_PROMOTED("成员升职"),
-        MEMBER_DEMOTED("成员降职"),
-        LEADER_TRANSFERRED("会长转让"),
-        FUND_DEPOSITED("资金存入"),
-        FUND_WITHDRAWN("资金取出"),
-        FUND_TRANSFERRED("资金转账"),
-        RELATION_CREATED("关系建立"),
-        RELATION_DELETED("关系删除"),
-        RELATION_ACCEPTED("关系接受"),
-        RELATION_REJECTED("关系拒绝"),
-        GUILD_FROZEN("工会冻结"),
-        GUILD_UNFROZEN("工会解冻"),
-        GUILD_LEVEL_UP("工会升级"),
-        APPLICATION_SUBMITTED("申请提交"),
-        APPLICATION_ACCEPTED("申请接受"),
-        APPLICATION_REJECTED("申请拒绝"),
-        INVITATION_SENT("邀请发送"),
-        INVITATION_ACCEPTED("邀请接受"),
-        INVITATION_REJECTED("邀请拒绝");
+        GUILD_CREATED("Utworzenie gildii"),
+        GUILD_DISSOLVED("Rozwiązanie gildii"),
+        GUILD_RENAMED("Zmiana nazwy gildii"),
+        MEMBER_JOINED("Dołączenie członka"),
+        MEMBER_LEFT("Opuszczenie członka"),
+        MEMBER_KICKED("Wyrzucenie członka"),
+        MEMBER_PROMOTED("Awans członka"),
+        MEMBER_DEMOTED("Degradacja członka"),
+        LEADER_TRANSFERRED("Przekazanie lidera"),
+        FUND_DEPOSITED("Wpłata funduszy"),
+        FUND_WITHDRAWN("Wypłata funduszy"),
+        FUND_TRANSFERRED("Przelew funduszy"),
+        RELATION_CREATED("Utworzenie relacji"),
+        RELATION_DELETED("Usunięcie relacji"),
+        RELATION_ACCEPTED("Akceptacja relacji"),
+        RELATION_REJECTED("Odrzucenie relacji"),
+        GUILD_FROZEN("Zamrożenie gildii"),
+        GUILD_UNFROZEN("Odmrożenie gildii"),
+        GUILD_LEVEL_UP("Awans gildii"),
+        APPLICATION_SUBMITTED("Złożenie aplikacji"),
+        APPLICATION_ACCEPTED("Akceptacja aplikacji"),
+        APPLICATION_REJECTED("Odrzucenie aplikacji"),
+        INVITATION_SENT("Wysłanie zaproszenia"),
+        INVITATION_ACCEPTED("Akceptacja zaproszenia"),
+        INVITATION_REJECTED("Odrzucenie zaproszenia");
 
         private final String displayName;
 
@@ -147,33 +147,33 @@ public class GuildLog {
     }
 
     /**
-     * 获取格式化的时间字符串
+     * Pobierz sformatowany ciąg czasu
      */
     public String getFormattedTime() {
-        if (createdAt == null) return "未知";
+        if (createdAt == null) return "Nieznany";
         return createdAt.format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
     }
 
     /**
-     * 获取简化的时间字符串（用于显示）
+     * Pobierz uproszczony ciąg czasu (do wyświetlania)
      */
     public String getSimpleTime() {
-        if (createdAt == null) return "未知";
+        if (createdAt == null) return "Nieznany";
         LocalDateTime now = LocalDateTime.now();
         java.time.Duration duration = java.time.Duration.between(createdAt, now);
-        
+
         long days = duration.toDays();
         long hours = duration.toHours() % 24;
         long minutes = duration.toMinutes() % 60;
-        
+
         if (days > 0) {
-            return days + "天前";
+            return days + " dni temu";
         } else if (hours > 0) {
-            return hours + "小时前";
+            return hours + " godz. temu";
         } else if (minutes > 0) {
-            return minutes + "分钟前";
+            return minutes + " min. temu";
         } else {
-            return "刚刚";
+            return "Przed chwilą";
         }
     }
 }

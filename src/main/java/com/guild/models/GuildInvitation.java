@@ -4,10 +4,10 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * 工会邀请数据模型
+ * Model danych zaproszenia do gildii
  */
 public class GuildInvitation {
-    
+
     private int id;
     private int guildId;
     private UUID inviterUuid;
@@ -17,9 +17,9 @@ public class GuildInvitation {
     private LocalDateTime invitedAt;
     private LocalDateTime expiresAt;
     private InvitationStatus status;
-    
+
     public GuildInvitation() {}
-    
+
     public GuildInvitation(int guildId, UUID inviterUuid, String inviterName, UUID targetUuid, String targetName) {
         this.guildId = guildId;
         this.inviterUuid = inviterUuid;
@@ -27,107 +27,107 @@ public class GuildInvitation {
         this.targetUuid = targetUuid;
         this.targetName = targetName;
         this.invitedAt = LocalDateTime.now();
-        this.expiresAt = LocalDateTime.now().plusMinutes(30); // 30分钟过期
+        this.expiresAt = LocalDateTime.now().plusMinutes(30); // wygasa za 30 minut
         this.status = InvitationStatus.PENDING;
     }
-    
+
     // Getters and Setters
     public int getId() {
         return id;
     }
-    
+
     public void setId(int id) {
         this.id = id;
     }
-    
+
     public int getGuildId() {
         return guildId;
     }
-    
+
     public void setGuildId(int guildId) {
         this.guildId = guildId;
     }
-    
+
     public UUID getInviterUuid() {
         return inviterUuid;
     }
-    
+
     public void setInviterUuid(UUID inviterUuid) {
         this.inviterUuid = inviterUuid;
     }
-    
+
     public String getInviterName() {
         return inviterName;
     }
-    
+
     public void setInviterName(String inviterName) {
         this.inviterName = inviterName;
     }
-    
+
     public UUID getTargetUuid() {
         return targetUuid;
     }
-    
+
     public void setTargetUuid(UUID targetUuid) {
         this.targetUuid = targetUuid;
     }
-    
+
     public String getTargetName() {
         return targetName;
     }
-    
+
     public void setTargetName(String targetName) {
         this.targetName = targetName;
     }
-    
+
     public LocalDateTime getInvitedAt() {
         return invitedAt;
     }
-    
+
     public void setInvitedAt(LocalDateTime invitedAt) {
         this.invitedAt = invitedAt;
     }
-    
+
     public LocalDateTime getExpiresAt() {
         return expiresAt;
     }
-    
+
     public void setExpiresAt(LocalDateTime expiresAt) {
         this.expiresAt = expiresAt;
     }
-    
+
     public InvitationStatus getStatus() {
         return status;
     }
-    
+
     public void setStatus(InvitationStatus status) {
         this.status = status;
     }
-    
+
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiresAt);
     }
-    
+
     /**
-     * 邀请状态枚举
+     * Enumeracja statusu zaproszenia
      */
     public enum InvitationStatus {
-        PENDING("待处理"),
-        ACCEPTED("已接受"),
-        DECLINED("已拒绝"),
-        EXPIRED("已过期");
-        
+        PENDING("Oczekujące"),
+        ACCEPTED("Zaakceptowane"),
+        DECLINED("Odrzucone"),
+        EXPIRED("Wygasłe");
+
         private final String displayName;
-        
+
         InvitationStatus(String displayName) {
             this.displayName = displayName;
         }
-        
+
         public String getDisplayName() {
             return displayName;
         }
     }
-    
+
     @Override
     public String toString() {
         return "GuildInvitation{" +

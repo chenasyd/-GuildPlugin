@@ -11,55 +11,55 @@ import java.util.logging.Logger;
 import com.guild.core.utils.CompatibleScheduler;
 
 /**
- * 经济管理器 - 管理Vault经济系统集成
+ * Menedżer ekonomii - zarządza integracją z systemem ekonomii Vault
  */
 public class EconomyManager {
-    
+
     private final GuildPlugin plugin;
     private final Logger logger;
     private Economy economy;
     private boolean vaultAvailable = false;
-    
+
     public EconomyManager(GuildPlugin plugin) {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
         setupEconomy();
     }
-    
+
     /**
-     * 设置经济系统
+     * Skonfiguruj system ekonomii
      */
     private void setupEconomy() {
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
-            logger.warning("Vault插件未找到，经济功能将被禁用！");
+            logger.warning("Nie znaleziono pluginu Vault, funkcje ekonomii zostaną wyłączone!");
             return;
         }
-        
+
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
-            logger.warning("未找到经济服务提供者，经济功能将被禁用！");
+            logger.warning("Nie znaleziono dostawcy usług ekonomii, funkcje ekonomii zostaną wyłączone!");
             return;
         }
-        
+
         economy = rsp.getProvider();
         if (economy == null) {
-            logger.warning("经济服务提供者初始化失败，经济功能将被禁用！");
+            logger.warning("Inicjalizacja dostawcy usług ekonomii nie powiodła się, funkcje ekonomii zostaną wyłączone!");
             return;
         }
-        
+
         vaultAvailable = true;
-        logger.info("经济系统初始化成功！");
+        logger.info("System ekonomii zainicjalizowany pomyślnie!");
     }
-    
+
     /**
-     * 检查Vault是否可用
+     * Sprawdź czy Vault jest dostępny
      */
     public boolean isVaultAvailable() {
         return vaultAvailable && economy != null;
     }
-    
+
     /**
-     * 获取玩家余额
+     * Pobierz saldo gracza
      */
     public double getBalance(Player player) {
         if (!isVaultAvailable()) {
@@ -67,9 +67,9 @@ public class EconomyManager {
         }
         return economy.getBalance(player);
     }
-    
+
     /**
-     * 检查玩家是否有足够的余额
+     * Sprawdź czy gracz ma wystarczające środki
      */
     public boolean hasBalance(Player player, double amount) {
         if (!isVaultAvailable()) {
@@ -77,9 +77,9 @@ public class EconomyManager {
         }
         return economy.has(player, amount);
     }
-    
+
     /**
-     * 扣除玩家余额
+     * Pobierz środki od gracza
      */
     public boolean withdraw(Player player, double amount) {
         if (!isVaultAvailable()) {
@@ -87,9 +87,9 @@ public class EconomyManager {
         }
         return economy.withdrawPlayer(player, amount).transactionSuccess();
     }
-    
+
     /**
-     * 增加玩家余额
+     * Dodaj środki graczowi
      */
     public boolean deposit(Player player, double amount) {
         if (!isVaultAvailable()) {
@@ -97,9 +97,9 @@ public class EconomyManager {
         }
         return economy.depositPlayer(player, amount).transactionSuccess();
     }
-    
+
     /**
-     * 格式化货币
+     * Formatuj walutę
      */
     public String format(double amount) {
         if (!isVaultAvailable()) {
@@ -107,77 +107,77 @@ public class EconomyManager {
         }
         return economy.format(amount);
     }
-    
+
     /**
-     * 获取货币名称
+     * Pobierz nazwę waluty
      */
     public String getCurrencyName() {
         if (!isVaultAvailable()) {
-            return "金币";
+            return "Monety";
         }
         return economy.currencyNamePlural();
     }
-    
+
     /**
-     * 获取货币单数名称
+     * Pobierz nazwę waluty w liczbie pojedynczej
      */
     public String getCurrencyNameSingular() {
         if (!isVaultAvailable()) {
-            return "金币";
+            return "Moneta";
         }
         return economy.currencyNameSingular();
     }
-    
+
     /**
-     * 检查玩家是否有足够的余额（异步）
+     * Sprawdź czy gracz ma wystarczające środki (asynchronicznie)
      */
     public boolean hasBalanceAsync(Player player, double amount) {
         if (!isVaultAvailable()) {
             return false;
         }
-        
-        // 确保在主线程中执行
+
+        // Upewnij się, że wykonujesz w głównym wątku
         if (!CompatibleScheduler.isPrimaryThread()) {
             return false;
         }
-        
+
         return economy.has(player, amount);
     }
-    
+
     /**
-     * 扣除玩家余额（异步）
+     * Pobierz środki od gracza (asynchronicznie)
      */
     public boolean withdrawAsync(Player player, double amount) {
         if (!isVaultAvailable()) {
             return false;
         }
-        
-        // 确保在主线程中执行
+
+        // Upewnij się, że wykonujesz w głównym wątku
         if (!CompatibleScheduler.isPrimaryThread()) {
             return false;
         }
-        
+
         return economy.withdrawPlayer(player, amount).transactionSuccess();
     }
-    
+
     /**
-     * 增加玩家余额（异步）
+     * Dodaj środki graczowi (asynchronicznie)
      */
     public boolean depositAsync(Player player, double amount) {
         if (!isVaultAvailable()) {
             return false;
         }
-        
-        // 确保在主线程中执行
+
+        // Upewnij się, że wykonujesz w głównym wątku
         if (!CompatibleScheduler.isPrimaryThread()) {
             return false;
         }
-        
+
         return economy.depositPlayer(player, amount).transactionSuccess();
     }
-    
+
     /**
-     * 获取经济实例
+     * Pobierz instancję ekonomii
      */
     public Economy getEconomy() {
         return economy;

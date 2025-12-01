@@ -16,54 +16,54 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 /**
- * 确认删除工会GUI
+ * GUI Potwierdzenia Usunięcia Gildii
  */
 public class ConfirmDeleteGuildGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
-    
+
     public ConfirmDeleteGuildGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
         this.guild = guild;
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&4确认删除工会");
+        return ColorUtils.colorize("&4Potwierdź usunięcie gildii");
     }
-    
+
     @Override
     public int getSize() {
         return 27;
     }
-    
+
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Wypełnij obramowanie
         fillBorder(inventory);
-        
-        // 显示确认信息
+
+        // Wyświetl informacje potwierdzające
         displayConfirmInfo(inventory);
-        
-        // 添加确认和取消按钮
+
+        // Skonfiguruj przyciski
         setupButtons(inventory);
     }
-    
+
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 11: // 确认删除
+            case 11: // Potwierdź usunięcie
                 handleConfirmDelete(player);
                 break;
-            case 15: // 取消
+            case 15: // Anuluj
                 handleCancel(player);
                 break;
         }
     }
-    
+
     /**
-     * 填充边框
+     * Wypełnij obramowanie
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -76,91 +76,91 @@ public class ConfirmDeleteGuildGUI implements GUI {
             inventory.setItem(i + 8, border);
         }
     }
-    
+
     /**
-     * 显示确认信息
+     * Wyświetl informacje potwierdzające
      */
     private void displayConfirmInfo(Inventory inventory) {
         ItemStack info = createItem(
             Material.BOOK,
-            ColorUtils.colorize("&4确认删除工会"),
-            ColorUtils.colorize("&7工会: &e" + guild.getName()),
-            ColorUtils.colorize("&7你确定要删除这个工会吗？"),
-            ColorUtils.colorize("&c此操作将永久删除工会！"),
-            ColorUtils.colorize("&c所有成员将被移除！"),
-            ColorUtils.colorize("&c此操作不可撤销！")
+            ColorUtils.colorize("&4Potwierdź usunięcie gildii"),
+            ColorUtils.colorize("&7Gildia: &e" + guild.getName()),
+            ColorUtils.colorize("&7Czy na pewno chcesz usunąć tę gildię?"),
+            ColorUtils.colorize("&cTa operacja trwale usunie gildię!"),
+            ColorUtils.colorize("&cWszyscy członkowie zostaną usunięci!"),
+            ColorUtils.colorize("&cTej operacji nie można cofnąć!")
         );
         inventory.setItem(13, info);
     }
-    
+
     /**
-     * 设置按钮
+     * Skonfiguruj przyciski
      */
     private void setupButtons(Inventory inventory) {
-        // 确认删除按钮
+        // Przycisk potwierdzenia usunięcia
         ItemStack confirm = createItem(
             Material.TNT,
-            ColorUtils.colorize("&4确认删除"),
-            ColorUtils.colorize("&7点击确认删除工会"),
-            ColorUtils.colorize("&c此操作不可撤销！")
+            ColorUtils.colorize("&4Potwierdź usunięcie"),
+            ColorUtils.colorize("&7Kliknij, aby potwierdzić usunięcie gildii"),
+            ColorUtils.colorize("&cTej operacji nie można cofnąć!")
         );
         inventory.setItem(11, confirm);
-        
-        // 取消按钮
+
+        // Przycisk anulowania
         ItemStack cancel = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize("&a取消"),
-            ColorUtils.colorize("&7取消删除工会")
+            ColorUtils.colorize("&aAnuluj"),
+            ColorUtils.colorize("&7Anuluj usuwanie gildii")
         );
         inventory.setItem(15, cancel);
     }
-    
+
     /**
-     * 处理确认删除
+     * Obsługa potwierdzenia usunięcia
      */
     private void handleConfirmDelete(Player player) {
-        // 检查权限（只有当前工会会长可以删除）
+        // Sprawdź uprawnienia (tylko lider gildii może usunąć)
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getGuildId() != guild.getId() || member.getRole() != GuildMember.Role.LEADER) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&cTylko lider gildii może wykonać tę operację");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
-        // 删除工会
+
+        // Usuń gildię
         plugin.getGuildService().deleteGuildAsync(guild.getId(), player.getUniqueId()).thenAccept(success -> {
             if (success) {
-                String template = plugin.getConfigManager().getMessagesConfig().getString("delete.success", "&a工会 &e{guild} &a已被删除！");
-                // 回到主线程进行界面操作
+                String template = plugin.getConfigManager().getMessagesConfig().getString("delete.success", "&aGildia &e{guild} &azostała usunięta!");
+                // Wróć do głównego wątku w celu operacji na interfejsie
                 CompatibleScheduler.runTask(plugin, () -> {
                     String rendered = ColorUtils.replaceWithColorIsolation(template, "{guild}", guild.getName());
                     player.sendMessage(rendered);
-                    // 使用GUIManager以确保主线程安全关闭与打开
+                    // Użyj GUIManager, aby zapewnić bezpieczne zamykanie i otwieranie w głównym wątku
                     plugin.getGuiManager().closeGUI(player);
                     plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
                 });
             } else {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("delete.failed", "&c删除工会失败！");
+                String message = plugin.getConfigManager().getMessagesConfig().getString("delete.failed", "&cUsunięcie gildii nie powiodło się!");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
     }
-    
+
     /**
-     * 处理取消
+     * Obsługa anulowania
      */
     private void handleCancel(Player player) {
-        // 返回工会设置GUI
+        // Powrót do GUI ustawień gildii
         plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
     }
-    
+
     /**
-     * 创建物品
+     * Utwórz przedmiot
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        
+
         if (meta != null) {
             meta.setDisplayName(name);
             if (lore.length > 0) {
@@ -168,7 +168,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
             }
             item.setItemMeta(meta);
         }
-        
+
         return item;
     }
 }

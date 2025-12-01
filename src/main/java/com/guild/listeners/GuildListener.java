@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChatEvent;
 
 /**
- * 工会事件监听器
+ * Słuchacz zdarzeń gildii
  */
 public class GuildListener implements Listener {
     
@@ -17,11 +17,11 @@ public class GuildListener implements Listener {
     }
     
     /**
-     * 玩家聊天事件（可以用于工会聊天功能）
+     * Zdarzenie czatu gracza (może być użyte do funkcji czatu gildii)
      */
     @EventHandler
     public void onPlayerChat(PlayerChatEvent event) {
-        // 这里可以添加工会聊天功能
-        // 比如检测工会前缀、处理工会聊天等
+        // Tutaj można dodać funkcję czatu gildii
+        // Na przykład wykrywanie prefiksu gildii, obsługa czatu gildii itp.
     }
 }

@@ -12,39 +12,39 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import com.guild.core.utils.CompatibleScheduler;
 
 /**
- * 玩家事件监听器
+ * Słuchacz zdarzeń gracza
  */
 public class PlayerListener implements Listener {
-    
+
     private final GuildPlugin plugin;
-    
+
     public PlayerListener(GuildPlugin plugin) {
         this.plugin = plugin;
     }
-    
+
     /**
-     * 玩家加入服务器事件
+     * Zdarzenie dołączenia gracza do serwera
      */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        // 检查工会战争状态
+        // Sprawdź status wojny gildii
         checkWarStatus(event.getPlayer());
     }
-    
+
     /**
-     * 检查工会战争状态并发送通知
+     * Sprawdź status wojny gildii i wyślij powiadomienie
      */
     private void checkWarStatus(org.bukkit.entity.Player player) {
-        // 异步检查玩家的工会
+        // Asynchronicznie sprawdź gildię gracza
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             if (guild != null) {
-                // 检查工会的所有关系
+                // Sprawdź wszystkie relacje gildii
                 plugin.getGuildService().getGuildRelationsAsync(guild.getId()).thenAccept(relations -> {
-                    // 确保在主线程中执行
+                    // Upewnij się, że wykonujesz w głównym wątku
                     CompatibleScheduler.runTask(plugin, () -> {
                         for (com.guild.models.GuildRelation relation : relations) {
                             if (relation.isWar()) {
-                                String message = plugin.getConfigManager().getMessagesConfig().getString("relations.war-notification", "&4[工会战争] &c您的工会与 {guild} 处于开战状态！");
+                                String message = plugin.getConfigManager().getMessagesConfig().getString("relations.war-notification", "&4[Wojna Gildii] &cTwoja gildia jest w stanie wojny z {guild}!");
                                 message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
                                 player.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                             }
@@ -54,39 +54,39 @@ public class PlayerListener implements Listener {
             }
         });
     }
-    
+
     /**
-     * 玩家离开服务器事件
+     * Zdarzenie opuszczenia serwera przez gracza
      */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        // 清理玩家的GUI状态
+        // Wyczyść stan GUI gracza
         GUIManager guiManager = plugin.getGuiManager();
         if (guiManager != null) {
             guiManager.closeGUI(event.getPlayer());
         }
     }
-    
+
     /**
-     * 处理聊天输入事件（用于GUI输入模式）
+     * Obsłuż zdarzenie wejścia czatu (używane w trybie wprowadzania GUI)
      */
     @EventHandler
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         GUIManager guiManager = plugin.getGuiManager();
-        
+
         if (guiManager != null && guiManager.isInInputMode(event.getPlayer())) {
-            // 取消事件，防止消息发送到聊天
+            // Anuluj zdarzenie, aby zapobiec wysyłaniu wiadomości na czat
             event.setCancelled(true);
-            
-            // 处理输入 - 在主线程中执行
+
+            // Przetwórz wejście - wykonaj w głównym wątku
             String input = event.getMessage();
             CompatibleScheduler.runTask(plugin, () -> {
                 try {
                     guiManager.handleInput(event.getPlayer(), input);
                 } catch (Exception e) {
-                    plugin.getLogger().severe("处理GUI输入时发生错误: " + e.getMessage());
+                    plugin.getLogger().severe("Błąd podczas przetwarzania wejścia GUI: " + e.getMessage());
                     e.printStackTrace();
-                    // 发生错误时清除输入模式
+                    // Wyczyść tryb wprowadzania w przypadku błędu
                     guiManager.clearInputMode(event.getPlayer());
                 }
             });
