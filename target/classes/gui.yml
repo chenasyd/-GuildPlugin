@@ -1,0 +1,716 @@
+# GUI配置文件
+
+# 主界面配置 - 六个主要入口
+main-menu:
+  title: "&6工会系统"
+  size: 54
+  items:
+    guild-info:
+      slot: 20
+      material: BOOK
+      name: "&e工会信息"
+      lore:
+        - "&7查看工会详细信息"
+        - "&7包括基本信息、统计等"
+      glow: false
+
+    member-management:
+      slot: 22
+      material: PLAYER_HEAD
+      name: "&e成员管理"
+      lore:
+        - "&7管理工会成员"
+        - "&7邀请、踢出、权限管理"
+      glow: false
+
+    application-management:
+      slot: 24
+      material: PAPER
+      name: "&e申请管理"
+      lore:
+        - "&7处理加入申请"
+        - "&7查看申请历史"
+      glow: false
+
+    guild-settings:
+      slot: 30
+      material: COMPASS
+      name: "&e工会设置"
+      lore:
+        - "&7修改工会设置"
+        - "&7描述、标签、权限等"
+      glow: false
+
+    guild-list:
+      slot: 32
+      material: BOOKSHELF
+      name: "&e工会列表"
+      lore:
+        - "&7查看所有工会"
+        - "&7搜索、筛选功能"
+      glow: false
+
+    guild-relations:
+      slot: 34
+      material: RED_WOOL
+      name: "&e工会关系"
+      lore:
+        - "&7管理工会关系"
+        - "&7盟友、敌对等"
+      glow: false
+
+    create-guild:
+      slot: 48
+      material: EMERALD_BLOCK
+      name: "&a创建工会"
+      lore:
+        - "&7创建新的工会"
+        - "&7需要消耗金币"
+      glow: true
+
+# 工会信息界面
+guild-info:
+  title: "&6工会信息"
+  size: 54
+  items:
+    guild-name:
+      slot: 10
+      material: NAME_TAG
+      name: "&e工会名称"
+      lore:
+        - "&f{guild_name}"
+        - "&7工会ID: {guild_id}"
+
+    guild-tag:
+      slot: 12
+      material: OAK_SIGN
+      name: "&e工会标签"
+      lore:
+        - "&f{guild_tag}"
+        - "&7标签用于快速识别"
+
+    guild-description:
+      slot: 14
+      material: BOOK
+      name: "&e工会描述"
+      lore:
+        - "&f{guild_description}"
+        - "&7工会的详细介绍"
+
+    guild-leader:
+      slot: 16
+      material: GOLDEN_HELMET
+      name: "&e工会会长"
+      lore:
+        - "&f{leader_name}"
+        - "&7会长拥有所有权限"
+
+    guild-home:
+      slot: 19
+      material: COMPASS
+      name: "&e工会家"
+      lore:
+        - "&f{guild_home_location}"
+        - "&7成员可传送到此处"
+
+    member-count:
+      slot: 28
+      material: PLAYER_HEAD
+      name: "&e成员数量"
+      lore:
+        - "&f{member_count}/{guild_max_members} 人"
+        - "&7在线: {online_member_count} 人"
+
+    guild-level:
+      slot: 30
+      material: EXPERIENCE_BOTTLE
+      name: "&e工会等级"
+      lore:
+        - "&f等级 {guild_level}"
+        - "&7最大成员: {guild_max_members} 人"
+        - "&7升级进度: {guild_level_progress}"
+
+    guild-balance:
+      slot: 32
+      material: GOLD_INGOT
+      name: "&e工会资金"
+      lore:
+        - "&f{guild_balance_formatted}"
+        - "&7升级需要: {guild_next_level_requirement}"
+
+    created-date:
+      slot: 34
+      material: CLOCK
+      name: "&e创建时间"
+      lore:
+        - "&f{guild_created_date}"
+        - "&7{guild_created_time}"
+
+    guild-status:
+      slot: 36
+      material: BEACON
+      name: "&e工会状态"
+      lore:
+        - "&f{guild_frozen}"
+        - "&7工会当前状态"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&7返回"
+      lore:
+        - "&7返回主菜单"
+
+# 成员管理界面
+member-management:
+  title: "&6成员管理"
+  size: 54
+  items:
+    invite-member:
+      slot: 45
+      material: EMERALD_BLOCK
+      name: "&a邀请成员"
+      lore:
+        - "&7邀请新成员加入"
+        - "&7当前成员: {member_count} 人"
+
+    kick-member:
+      slot: 47
+      material: REDSTONE_BLOCK
+      name: "&c踢出成员"
+      lore:
+        - "&7踢出工会成员"
+        - "&7需要官员或更高权限"
+
+    promote-member:
+      slot: 49
+      material: GOLD_INGOT
+      name: "&6提升成员"
+      lore:
+        - "&7提升成员职位"
+        - "&7只有会长可以操作"
+
+    demote-member:
+      slot: 51
+      material: IRON_INGOT
+      name: "&7降级成员"
+      lore:
+        - "&7降级成员职位"
+        - "&7只有会长可以操作"
+
+    back:
+      slot: 53
+      material: ARROW
+      name: "&7返回"
+      lore:
+        - "&7返回主菜单"
+
+    next-page:
+      slot: 26
+      material: ARROW
+      name: "&a下一页"
+      lore:
+        - "&7查看下一页"
+
+    previous-page:
+      slot: 18
+      material: ARROW
+      name: "&c上一页"
+      lore:
+        - "&7查看上一页"
+
+# 成员详情界面
+member-details:
+  title: "&6成员详情 - {member_name}"
+  size: 54
+
+# 申请管理界面
+application-management:
+  title: "&6申请管理"
+  size: 54
+  items:
+    pending-applications:
+      slot: 20
+      material: PAPER
+      name: "&e待处理申请"
+      lore:
+        - "&7查看待处理的申请"
+        - "&f{pending_count} 个申请"
+        - "&7需要及时处理"
+
+    application-history:
+      slot: 24
+      material: BOOK
+      name: "&e申请历史"
+      lore:
+        - "&7查看申请历史记录"
+        - "&7已处理的申请"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&7返回"
+      lore:
+        - "&7返回主菜单"
+
+    next-page:
+      slot: 26
+      material: ARROW
+      name: "&a下一页"
+      lore:
+        - "&7查看下一页"
+
+    previous-page:
+      slot: 18
+      material: ARROW
+      name: "&c上一页"
+      lore:
+        - "&7查看上一页"
+
+# 工会设置界面
+guild-settings:
+  title: "&6工会设置"
+  size: 54
+  items:
+    change-description:
+      slot: 20
+      material: BOOK
+      name: "&e修改描述"
+      lore:
+        - "&7修改工会描述"
+        - "&7当前: {guild_description}"
+
+    change-tag:
+      slot: 22
+      material: OAK_SIGN
+      name: "&e修改标签"
+      lore:
+        - "&7修改工会标签"
+        - "&7当前: {guild_tag}"
+
+    set-home:
+      slot: 24
+      material: COMPASS
+      name: "&e设置工会家"
+      lore:
+        - "&7设置工会传送点"
+        - "&7当前: {guild_home_location}"
+
+    permissions:
+      slot: 30
+      material: SHIELD
+      name: "&e权限设置"
+      lore:
+        - "&7管理成员权限"
+        - "&7角色权限管理"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&7返回"
+      lore:
+        - "&7返回主菜单"
+
+# 工会列表界面
+guild-list:
+  title: "&6工会列表"
+  size: 54
+  items:
+    search:
+      slot: 45
+      material: COMPASS
+      name: "&e搜索工会"
+      lore:
+        - "&7搜索特定工会"
+        - "&7当前搜索: {search_query}"
+
+    filter:
+      slot: 47
+      material: HOPPER
+      name: "&e筛选"
+      lore:
+        - "&7按条件筛选工会"
+        - "&7当前筛选: {filter_type}"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&7返回"
+      lore:
+        - "&7返回主菜单"
+
+    next-page:
+      slot: 26
+      material: ARROW
+      name: "&a下一页"
+      lore:
+        - "&7查看下一页"
+
+    previous-page:
+      slot: 18
+      material: ARROW
+      name: "&c上一页"
+      lore:
+        - "&7查看上一页"
+
+# 工会关系界面
+guild-relations:
+  title: "&6工会关系"
+  size: 54
+  items:
+    allies:
+      slot: 20
+      material: GREEN_WOOL
+      name: "&a盟友工会"
+      lore:
+        - "&7查看盟友工会"
+        - "&7管理盟友关系"
+
+    enemies:
+      slot: 24
+      material: RED_WOOL
+      name: "&c敌对工会"
+      lore:
+        - "&7查看敌对工会"
+        - "&7管理敌对关系"
+
+    war:
+      slot: 28
+      material: NETHERITE_SWORD
+      name: "&4开战工会"
+      lore:
+        - "&7查看开战工会"
+        - "&7管理战争状态"
+
+    neutral:
+      slot: 32
+      material: GRAY_WOOL
+      name: "&7中立工会"
+      lore:
+        - "&7查看中立工会"
+        - "&7管理中立关系"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&7返回"
+      lore:
+        - "&7返回主菜单"
+
+# 成员信息显示
+member-display:
+  leader:
+    material: GOLDEN_HELMET
+    name: "&c{player_name}"
+    lore:
+      - "&7角色: &c会长"
+      - "&7加入时间: {joined_date}"
+      - "&7权限: 所有权限"
+
+  officer:
+    material: GOLDEN_HELMET
+    name: "&6{player_name}"
+    lore:
+      - "&7角色: &6官员"
+      - "&7加入时间: {joined_date}"
+      - "&7权限: 邀请、踢出"
+
+  member:
+    material: PLAYER_HEAD
+    name: "&f{player_name}"
+    lore:
+      - "&7角色: &f成员"
+      - "&7加入时间: {joined_date}"
+      - "&7权限: 基础权限"
+
+# 申请信息显示
+application-display:
+  pending:
+    material: YELLOW_WOOL
+    name: "&e{player_name} 的申请"
+    lore:
+      - "&7状态: &e待处理"
+      - "&7申请时间: {apply_date}"
+      - "&7消息: {message}"
+      - ""
+      - "&a左键: 接受"
+      - "&c右键: 拒绝"
+
+  accepted:
+    material: GREEN_WOOL
+    name: "&a{player_name} 的申请"
+    lore:
+      - "&7状态: &a已接受"
+      - "&7处理时间: {process_date}"
+      - "&7处理人: {processor}"
+
+  rejected:
+    material: RED_WOOL
+    name: "&c{player_name} 的申请"
+    lore:
+      - "&7状态: &c已拒绝"
+      - "&7处理时间: {process_date}"
+      - "&7处理人: {processor}"
+
+# 工会信息显示
+guild-display:
+  material: SHIELD
+  name: "&e{guild_name}"
+  lore:
+    - "&7标签: {guild_tag}"
+    - "&7会长: {guild_leader}"
+    - "&7成员: {member_count}/{max_members}"
+    - "&7创建时间: {created_date}"
+    - ""
+    - "&a左键: 查看详情"
+    - "&e右键: 申请加入"
+
+# 创建工会界面
+create-guild:
+  title: "&6创建工会"
+  size: 54
+  items:
+    name-input:
+      slot: 20
+      material: NAME_TAG
+      name: "&e工会名称"
+      lore:
+        - "&7点击输入工会名称"
+        - "&7长度: 3-20 字符"
+        - "&7当前: {guild_name}"
+
+    tag-input:
+      slot: 22
+      material: OAK_SIGN
+      name: "&e工会标签"
+      lore:
+        - "&7点击输入工会标签"
+        - "&7长度: 最多6字符"
+        - "&7可选"
+        - "&7当前: {guild_tag}"
+
+    description-input:
+      slot: 24
+      material: BOOK
+      name: "&e工会描述"
+      lore:
+        - "&7点击输入工会描述"
+        - "&7长度: 最多100字符"
+        - "&7可选"
+        - "&7当前: {guild_description}"
+
+    confirm:
+      slot: 39
+      material: EMERALD_BLOCK
+      name: "&a确认创建"
+      lore:
+        - "&7确认创建工会"
+        - "&7费用: {cost} 金币"
+        - "&7创建者: {player_name}"
+      glow: true
+
+    cancel:
+      slot: 41
+      material: REDSTONE_BLOCK
+      name: "&c取消"
+      lore:
+        - "&7取消创建工会"
+
+# 邀请界面
+invite-player:
+  title: "&6邀请玩家"
+  size: 54
+  items:
+    player-input:
+      slot: 22
+      material: PLAYER_HEAD
+      name: "&e选择玩家"
+      lore:
+        - "&7点击选择要邀请的玩家"
+
+    confirm:
+      slot: 39
+      material: EMERALD_BLOCK
+      name: "&a发送邀请"
+      lore:
+        - "&7确认发送邀请"
+      glow: true
+
+    cancel:
+      slot: 41
+      material: REDSTONE_BLOCK
+      name: "&c取消"
+      lore:
+        - "&7取消邀请"
+
+# 确认界面
+confirm:
+  title: "&6确认操作"
+  size: 27
+  items:
+    confirm:
+      slot: 11
+      material: EMERALD_BLOCK
+      name: "&a确认"
+      lore:
+        - "&7确认执行此操作"
+      glow: true
+
+    cancel:
+      slot: 15
+      material: REDSTONE_BLOCK
+      name: "&c取消"
+      lore:
+        - "&7取消操作"
+
+# 装饰物品
+decorations:
+  border:
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+
+  info:
+    material: LIGHT_BLUE_STAINED_GLASS_PANE
+    name: "&b工会系统"
+    lore:
+      - "&7功能强大的工会插件"
+
+# 管理员GUI
+admin-gui:
+  title: "&4工会管理"
+  size: 54
+  items:
+    guild-list:
+      slot: 20
+      material: BOOKSHELF
+      name: "&e工会列表管理"
+      lore:
+        - "&7查看和管理所有工会"
+        - "&7包括删除、冻结等操作"
+        - "&e左键: 查看详情"
+        - "&c右键: 删除工会"
+        - "&6中键: 冻结/解冻"
+
+    economy:
+      slot: 22
+      material: GOLD_INGOT
+      name: "&e经济管理"
+      lore:
+        - "&7管理工会经济系统"
+        - "&7设置资金、查看贡献等"
+        - "&e左键: 设置资金"
+        - "&a右键: 增加资金"
+        - "&c中键: 减少资金"
+
+    relations:
+      slot: 24
+      material: RED_WOOL
+      name: "&e关系管理"
+      lore:
+        - "&7管理工会关系"
+        - "&7盟友、敌对、开战等"
+        - "&c左键: 删除关系"
+        - "&e右键: 查看详情"
+
+    statistics:
+      slot: 29
+      material: PAPER
+      name: "&e统计信息"
+      lore:
+        - "&7查看工会统计信息"
+        - "&7成员数量、经济状况等"
+        - "&e点击查看详细统计"
+
+    settings:
+      slot: 31
+      material: COMPASS
+      name: "&e系统设置"
+      lore:
+        - "&7管理系统设置"
+        - "&7重载配置、权限设置等"
+        - "&e点击进入设置"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&c返回"
+      lore:
+        - "&7返回主菜单"
+
+
+
+# 工会经济GUI
+guild-economy:
+  title: "&6工会经济"
+  size: 54
+  items:
+    balance:
+      slot: 20
+      material: GOLD_INGOT
+      name: "&e当前资金"
+      lore:
+        - "&7工会当前资金"
+        - "&f{balance} 金币"
+
+    deposit:
+      slot: 22
+      material: EMERALD_BLOCK
+      name: "&a存入资金"
+      lore:
+        - "&7向工会存入资金"
+        - "&7点击输入金额"
+
+    withdraw:
+      slot: 24
+      material: REDSTONE_BLOCK
+      name: "&c取出资金"
+      lore:
+        - "&7从工会取出资金"
+        - "&7点击输入金额"
+
+    level:
+      slot: 29
+      material: EXPERIENCE_BOTTLE
+      name: "&e工会等级"
+      lore:
+        - "&7当前等级: {level}"
+        - "&7升级进度: {progress}%"
+        - "&7最大成员: {max_members}"
+
+    contributions:
+      slot: 31
+      material: BOOK
+      name: "&e贡献记录"
+      lore:
+        - "&7查看贡献记录"
+        - "&7您的贡献: {contribution}"
+
+    transfer:
+      slot: 33
+      material: DIAMOND
+      name: "&b转账"
+      lore:
+        - "&7向其他工会转账"
+        - "&7点击选择目标工会"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&c返回"
+      lore:
+        - "&7返回上级菜单"
+
+# 工会详情界面
+guild-detail:
+  title: "&6工会详情 - {guild_name}"
+  size: 54
+
+# 系统设置界面
+system-settings:
+  title: "&4系统设置"
+  size: 54
+
+# 工会日志界面
+guild-logs:
+  title: "&6工会日志 - {guild_name}"
+  size: 54

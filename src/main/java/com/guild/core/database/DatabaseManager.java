@@ -13,52 +13,52 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 /**
- * 数据库管理器 - 管理数据库连接和操作
+ * Menedżer bazy danych - zarządza połączeniami z bazą danych i operacjami
  */
 public class DatabaseManager {
-    
+
     private final GuildPlugin plugin;
     private final Logger logger;
     private HikariDataSource dataSource;
     private DatabaseType databaseType;
-    
+
     public DatabaseManager(GuildPlugin plugin) {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
     }
-    
+
     /**
-     * 初始化数据库连接
+     * Zainicjuj połączenie z bazą danych
      */
     public void initialize() {
         FileConfiguration config = plugin.getConfigManager().getDatabaseConfig();
-        // 兼容两种结构：root 与 database. 前缀
+        // Kompatybilność z dwoma strukturami: root i prefiks database.
         String type = config.getString("type", config.getString("database.type", "sqlite")).toLowerCase();
-        
+
         try {
             if ("mysql".equals(type)) {
                 initializeMySQL(config);
             } else {
                 initializeSQLite(config);
             }
-            
-            // 创建数据表
+
+            // Utwórz tabele danych
             createTables();
-            
-            logger.info("数据库连接初始化成功: " + databaseType);
-            
+
+            logger.info("Pomyślnie zainicjowano połączenie z bazą danych: " + databaseType);
+
         } catch (Exception e) {
-            logger.severe("数据库连接初始化失败: " + e.getMessage());
-            throw new RuntimeException("数据库连接失败", e);
+            logger.severe("Błąd inicjalizacji połączenia z bazą danych: " + e.getMessage());
+            throw new RuntimeException("Nie udało się połączyć z bazą danych", e);
         }
     }
-    
+
     /**
-     * 初始化MySQL连接
+     * Zainicjuj połączenie MySQL
      */
     private void initializeMySQL(FileConfiguration config) {
         databaseType = DatabaseType.MYSQL;
-        
+
         HikariConfig hikariConfig = new HikariConfig();
         String host = config.getString("mysql.host", config.getString("database.mysql.host", "localhost"));
         int port = config.getInt("mysql.port", config.getInt("database.mysql.port", 3306));
@@ -67,7 +67,7 @@ public class DatabaseManager {
                 "&serverTimezone=" + config.getString("mysql.timezone", config.getString("database.mysql.timezone", "UTC")) +
                 "&characterEncoding=" + config.getString("mysql.character-encoding", config.getString("database.mysql.character-encoding", "UTF-8"));
         hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + params);
-        
+
         hikariConfig.setUsername(config.getString("mysql.username", config.getString("database.mysql.username", "root")));
         hikariConfig.setPassword(config.getString("mysql.password", config.getString("database.mysql.password", "")));
         hikariConfig.setMaximumPoolSize(config.getInt("mysql.pool-size", config.getInt("database.mysql.pool-size", 20)));
@@ -75,16 +75,16 @@ public class DatabaseManager {
         hikariConfig.setConnectionTimeout(config.getLong("mysql.connection-timeout", config.getLong("database.mysql.connection-timeout", 60000)));
         hikariConfig.setIdleTimeout(config.getLong("mysql.idle-timeout", config.getLong("database.mysql.idle-timeout", 600000)));
         hikariConfig.setMaxLifetime(config.getLong("mysql.max-lifetime", config.getLong("database.mysql.max-lifetime", 1800000)));
-        
+
         dataSource = new HikariDataSource(hikariConfig);
     }
-    
+
     /**
-     * 初始化SQLite连接
+     * Zainicjuj połączenie SQLite
      */
     private void initializeSQLite(FileConfiguration config) {
         databaseType = DatabaseType.SQLITE;
-        
+
         HikariConfig hikariConfig = new HikariConfig();
         String fileName = config.getString("sqlite.file", config.getString("database.sqlite.file", "guild.db"));
         String dbPath = plugin.getDataFolder() + "/" + fileName;
@@ -99,7 +99,7 @@ public class DatabaseManager {
         long maxLifetime = config.getLong("connection-pool.max-lifetime", 1800000);
         hikariConfig.setMaxLifetime(maxLifetime);
 
-        // SQLite优化：根据配置设置PRAGMA，减少锁等待与提升并发读
+        // Optymalizacja SQLite: ustaw PRAGMA na podstawie konfiguracji, aby zmniejszyć oczekiwanie na blokady i poprawić współbieżny odczyt
         boolean walMode = config.getBoolean("sqlite.wal-mode", true);
         String synchronous = config.getString("sqlite.synchronous", "NORMAL");
         boolean foreignKeys = config.getBoolean("sqlite.foreign-keys", true);
@@ -116,12 +116,12 @@ public class DatabaseManager {
         initSql.append("PRAGMA cache_size=").append(cacheSize).append(";");
         initSql.append("PRAGMA busy_timeout=").append(busyTimeoutMs).append(";");
         hikariConfig.setConnectionInitSql(initSql.toString());
-        
+
         dataSource = new HikariDataSource(hikariConfig);
     }
-    
+
     /**
-     * 创建数据表
+     * Utwórz tabele danych
      */
     private void createTables() {
         if (databaseType == DatabaseType.SQLITE) {
@@ -129,25 +129,25 @@ public class DatabaseManager {
         } else {
             createMySQLTables();
         }
-        
-        // 异步检查并添加缺失的列，避免阻塞启动
+
+        // Asynchronicznie sprawdź i dodaj brakujące kolumny, aby uniknąć blokowania startu
         CompletableFuture.runAsync(() -> {
             try {
-                Thread.sleep(1000); // 等待1秒确保数据库连接稳定
+                Thread.sleep(1000); // Poczekaj 1 sekundę, aby upewnić się, że połączenie z bazą danych jest stabilne
                 checkAndAddMissingColumns();
             } catch (Exception e) {
-                logger.warning("异步检查数据库列时发生错误: " + e.getMessage());
+                logger.warning("Błąd podczas asynchronicznego sprawdzania kolumn bazy danych: " + e.getMessage());
             }
         });
-        
-        logger.info("数据表创建完成");
+
+        logger.info("Utworzono tabele danych");
     }
-    
+
     /**
-     * 创建SQLite数据表
+     * Utwórz tabele danych SQLite
      */
     private void createSQLiteTables() {
-        // 工会表
+        // Tabela gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guilds (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -166,8 +166,8 @@ public class DatabaseManager {
                 updated_at TEXT DEFAULT (datetime('now','localtime'))
             )
         """);
-        
-        // 工会成员表
+
+        // Tabela członków gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_members (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -180,8 +180,8 @@ public class DatabaseManager {
                 UNIQUE(guild_id, player_uuid)
             )
         """);
-        
-        // 工会申请表
+
+        // Tabela aplikacji do gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_applications (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -194,8 +194,8 @@ public class DatabaseManager {
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
-        
-        // 工会邀请表
+
+        // Tabela zaproszeń do gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_invites (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -210,8 +210,8 @@ public class DatabaseManager {
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
-        
-        // 工会关系表
+
+        // Tabela relacji gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_relations (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -231,8 +231,8 @@ public class DatabaseManager {
                 UNIQUE(guild1_id, guild2_id)
             )
         """);
-        
-        // 工会经济表
+
+        // Tabela ekonomii gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_economy (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -246,8 +246,8 @@ public class DatabaseManager {
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
-        
-        // 工会贡献记录表
+
+        // Tabela rejestru wkładów gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_contributions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -261,8 +261,8 @@ public class DatabaseManager {
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
-        
-        // 工会日志表
+
+        // Tabela dziennika gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_logs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -278,12 +278,12 @@ public class DatabaseManager {
             )
         """);
     }
-    
+
     /**
-     * 创建MySQL数据表
+     * Utwórz tabele danych MySQL
      */
     private void createMySQLTables() {
-        // 工会表
+        // Tabela gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guilds (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -302,8 +302,8 @@ public class DatabaseManager {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
         """);
-        
-        // 工会成员表
+
+        // Tabela członków gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_members (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -316,8 +316,8 @@ public class DatabaseManager {
                 UNIQUE KEY unique_guild_player (guild_id, player_uuid)
             )
         """);
-        
-        // 工会申请表
+
+        // Tabela aplikacji do gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_applications (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -330,8 +330,8 @@ public class DatabaseManager {
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
-        
-        // 工会邀请表
+
+        // Tabela zaproszeń do gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_invites (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -346,8 +346,8 @@ public class DatabaseManager {
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
-        
-        // 工会关系表
+
+        // Tabela relacji gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_relations (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -367,8 +367,8 @@ public class DatabaseManager {
                 UNIQUE KEY unique_guild_relation (guild1_id, guild2_id)
             )
         """);
-        
-        // 工会经济表
+
+        // Tabela ekonomii gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_economy (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -382,8 +382,8 @@ public class DatabaseManager {
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
-        
-        // 工会贡献记录表
+
+        // Tabela rejestru wkładów gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_contributions (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -397,8 +397,8 @@ public class DatabaseManager {
                 FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
             )
         """);
-        
-        // 工会日志表
+
+        // Tabela dziennika gildii
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_logs (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -414,85 +414,89 @@ public class DatabaseManager {
             )
         """);
     }
-    
+
     /**
-     * 获取数据库连接
+     * Pobierz połączenie z bazą danych
      */
     public Connection getConnection() throws SQLException {
         if (dataSource == null) {
-            throw new SQLException("数据库连接未初始化");
+            throw new SQLException("Połączenie z bazą danych nie zostało zainicjowane");
         }
         return dataSource.getConnection();
     }
-    
+
     /**
-     * 执行更新操作
+     * Wykonaj operację aktualizacji
      */
     public int executeUpdate(String sql, Object... params) {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             for (int i = 0; i < params.length; i++) {
                 stmt.setObject(i + 1, params[i]);
             }
-            
+
             return stmt.executeUpdate();
-            
+
         } catch (SQLException e) {
-            logger.severe("执行更新操作失败: " + e.getMessage());
-            throw new RuntimeException("数据库操作失败", e);
+            logger.severe("Nie udało się wykonać operacji aktualizacji: " + e.getMessage());
+            throw new RuntimeException("Operacja bazy danych nie powiodła się", e);
         }
     }
-    
+
     /**
-     * 异步执行更新操作
+     * Asynchronicznie wykonaj operację aktualizacji
      */
     public CompletableFuture<Integer> executeUpdateAsync(String sql, Object... params) {
         return CompletableFuture.supplyAsync(() -> executeUpdate(sql, params));
     }
-    
+
     /**
-     * 执行查询操作
+     * Wykonaj operację zapytania
      */
     public ResultSet executeQuery(String sql, Object... params) {
         try {
             Connection conn = getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql);
-            
+
             for (int i = 0; i < params.length; i++) {
                 stmt.setObject(i + 1, params[i]);
             }
-            
+
             return stmt.executeQuery();
-            
+
         } catch (SQLException e) {
-            logger.severe("执行查询操作失败: " + e.getMessage());
-            throw new RuntimeException("数据库操作失败", e);
+            logger.severe("Nie udało się wykonać operacji zapytania: " + e.getMessage());
+            throw new RuntimeException("Operacja bazy danych nie powiodła się", e);
         }
     }
-    
+
     /**
-     * 关闭数据库连接
+     * Zamknij połączenie z bazą danych
      */
     public void close() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
-            logger.info("数据库连接已关闭");
+            logger.info("Połączenie z bazą danych zostało zamknięte");
         }
     }
-    
+
     /**
-     * 获取数据库类型
+     * Pobierz typ bazy danych
      */
     public DatabaseType getDatabaseType() {
         return databaseType;
     }
-    
+
     /**
-     * 数据库类型枚举
+     * Enumeracja typu bazy danych
      */
+    public enum DatabaseType {
+        MYSQL, SQLITE
+    }
+
     /**
-     * 检查并添加缺失的列
+     * Sprawdź i dodaj brakujące kolumny
      */
     private void checkAndAddMissingColumns() {
         try {
@@ -501,23 +505,23 @@ public class DatabaseManager {
             } else {
                 checkAndAddMySQLColumns();
             }
-            logger.info("数据库列检查完成");
+            logger.info("Sprawdzanie kolumn bazy danych zakończone");
         } catch (Exception e) {
-            logger.warning("检查数据库列时发生错误: " + e.getMessage());
+            logger.warning("Błąd podczas sprawdzania kolumn bazy danych: " + e.getMessage());
         }
     }
-    
+
     /**
-     * 检查并添加SQLite缺失的列
+     * Sprawdź i dodaj brakujące kolumny SQLite
      */
     private void checkAndAddSQLiteColumns() {
         try (Connection conn = getConnection()) {
-            conn.setAutoCommit(false); // 开启事务以提高性能
-            
-            // 检查guilds表是否有home相关列
+            conn.setAutoCommit(false); // Włącz transakcje dla lepszej wydajności
+
+            // Sprawdź czy tabela guilds ma kolumny związane z domem
             try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "home_world")) {
                 if (!rs.next()) {
-                    // 添加home相关列
+                    // Dodaj kolumny związane z domem
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_world TEXT")) {
                         stmt.executeUpdate();
                     }
@@ -536,14 +540,14 @@ public class DatabaseManager {
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_pitch REAL")) {
                         stmt.executeUpdate();
                     }
-                    logger.info("已为guilds表添加home相关列");
+                    logger.info("Dodano kolumny związane z domem do tabeli guilds");
                 }
             }
-            
-            // 检查guilds表是否有economy相关列
+
+            // Sprawdź czy tabela guilds ma kolumny związane z ekonomią
             try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "balance")) {
                 if (!rs.next()) {
-                    // 添加economy相关列
+                    // Dodaj kolumny związane z ekonomią
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN balance REAL DEFAULT 0.0")) {
                         stmt.executeUpdate();
                     }
@@ -556,27 +560,27 @@ public class DatabaseManager {
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN frozen INTEGER DEFAULT 0")) {
                         stmt.executeUpdate();
                     }
-                    logger.info("已为guilds表添加economy相关列");
+                    logger.info("Dodano kolumny związane z ekonomią do tabeli guilds");
                 }
             }
-            
-            conn.commit(); // 提交事务
+
+            conn.commit(); // Zatwierdź transakcję
         } catch (SQLException e) {
-            logger.warning("检查SQLite列时发生错误: " + e.getMessage());
+            logger.warning("Błąd podczas sprawdzania kolumn SQLite: " + e.getMessage());
         }
     }
-    
+
     /**
-     * 检查并添加MySQL缺失的列
+     * Sprawdź i dodaj brakujące kolumny MySQL
      */
     private void checkAndAddMySQLColumns() {
         try (Connection conn = getConnection()) {
-            conn.setAutoCommit(false); // 开启事务以提高性能
-            
-            // 检查guilds表是否有home相关列
+            conn.setAutoCommit(false); // Włącz transakcje dla lepszej wydajności
+
+            // Sprawdź czy tabela guilds ma kolumny związane z domem
             try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "home_world")) {
                 if (!rs.next()) {
-                    // 添加home相关列
+                    // Dodaj kolumny związane z domem
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_world VARCHAR(100)")) {
                         stmt.executeUpdate();
                     }
@@ -595,14 +599,14 @@ public class DatabaseManager {
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_pitch FLOAT")) {
                         stmt.executeUpdate();
                     }
-                    logger.info("已为guilds表添加home相关列");
+                    logger.info("Dodano kolumny związane z domem do tabeli guilds");
                 }
             }
-            
-            // 检查guilds表是否有economy相关列
+
+            // Sprawdź czy tabela guilds ma kolumny związane z ekonomią
             try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "balance")) {
                 if (!rs.next()) {
-                    // 添加economy相关列
+                    // Dodaj kolumny związane z ekonomią
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN balance DOUBLE DEFAULT 0.0")) {
                         stmt.executeUpdate();
                     }
@@ -615,17 +619,13 @@ public class DatabaseManager {
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN frozen BOOLEAN DEFAULT FALSE")) {
                         stmt.executeUpdate();
                     }
-                    logger.info("已为guilds表添加economy相关列");
+                    logger.info("Dodano kolumny związane z ekonomią do tabeli guilds");
                 }
             }
-            
-            conn.commit(); // 提交事务
+
+            conn.commit(); // Zatwierdź transakcję
         } catch (SQLException e) {
-            logger.warning("检查MySQL列时发生错误: " + e.getMessage());
+            logger.warning("Błąd podczas sprawdzania kolumn MySQL: " + e.getMessage());
         }
-    }
-    
-    public enum DatabaseType {
-        MYSQL, SQLITE
     }
 }

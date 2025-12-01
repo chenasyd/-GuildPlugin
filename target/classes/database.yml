@@ -1,0 +1,108 @@
+# 数据库配置文件
+
+# 数据库类型: mysql 或 sqlite
+type: sqlite
+
+# MySQL配置（当type为mysql时使用）
+mysql:
+  # 数据库主机地址
+  host: localhost
+  # 数据库端口
+  port: 3306
+  # 数据库名称
+  database: guild
+  # 数据库用户名
+  username: root
+  # 数据库密码
+  password: ""
+  # 连接池大小
+  pool-size: 10
+  # 最小空闲连接数
+  min-idle: 5
+  # 连接超时时间（毫秒）
+  connection-timeout: 30000
+  # 空闲超时时间（毫秒）
+  idle-timeout: 600000
+  # 连接最大生命周期（毫秒）
+  max-lifetime: 1800000
+  # 是否使用SSL
+  use-ssl: false
+  # 字符编码
+  character-encoding: UTF-8
+  # 时区
+  timezone: UTC
+
+# SQLite配置（当type为sqlite时使用）
+sqlite:
+  # 数据库文件路径（相对于插件数据文件夹）
+  file: guild.db
+  # 是否启用WAL模式
+  wal-mode: true
+  # 同步模式: OFF, NORMAL, FULL
+  synchronous: NORMAL
+  # 缓存大小（KB）
+  cache-size: 2000
+  # 页面大小（字节）
+  page-size: 4096
+  # 是否启用外键约束
+  foreign-keys: true
+
+# 连接池配置
+connection-pool:
+  # 最大连接数
+  maximum-pool-size: 10
+  # 最小空闲连接数
+  minimum-idle: 5
+  # 连接超时时间（毫秒）
+  connection-timeout: 30000
+  # 空闲超时时间（毫秒）
+  idle-timeout: 600000
+  # 连接最大生命周期（毫秒）
+  max-lifetime: 1800000
+  # 连接测试查询
+  connection-test-query: "SELECT 1"
+  # 连接验证超时时间（毫秒）
+  validation-timeout: 5000
+  # 是否在连接池启动时验证连接
+  validate-on-start: true
+
+# 数据库表配置
+tables:
+  # 工会表
+  guilds:
+    name: guilds
+    # 是否自动创建表
+    auto-create: true
+    # 表结构版本
+    version: 1
+
+  # 工会成员表
+  guild_members:
+    name: guild_members
+    auto-create: true
+    version: 1
+
+  # 工会申请表
+  guild_applications:
+    name: guild_applications
+    auto-create: true
+    version: 1
+
+  # 工会邀请表
+  guild_invites:
+    name: guild_invites
+    auto-create: true
+    version: 1
+
+# 备份配置
+backup:
+  # 是否启用自动备份
+  enabled: false
+  # 备份间隔（小时）
+  interval: 24
+  # 备份保留天数
+  retention-days: 7
+  # 备份文件路径
+  path: "backups/"
+  # 备份文件格式
+  format: "yyyy-MM-dd_HH-mm-ss"

@@ -1,0 +1,124 @@
+# 工会插件主配置文件
+
+# 工会配置
+guild:
+  # 工会名称最小长度
+  min-name-length: 3
+  # 工会名称最大长度
+  max-name-length: 20
+  # 工会标签最大长度
+  max-tag-length: 6
+  # 工会描述最大长度
+  max-description-length: 100
+  # 工会最大成员数量
+  max-members: 50
+  # 创建工会所需费用（需要Vault）
+  creation-cost: 1000.0
+  # 工会标签颜色
+  tag-color: "&6"
+  # 工会名称颜色
+  name-color: "&e"
+
+# 显示配置
+display:
+  # 职位颜色（可自定义）
+  role-colors:
+    leader: "&6"    # 会长：金色
+    officer: "&b"   # 官员：亮蓝色
+    member: "&7"    # 成员：灰色
+  # 职位左侧分隔符配置
+  role-separator:
+    enabled: true
+    text: " | "
+    color-per-role: true      # 分隔符是否跟随职位颜色
+    default-color: "&7"      # 无职位或未入会时的默认颜色（一般不会使用）
+
+# 权限配置
+permissions:
+  # 默认权限
+  default:
+    can-create: true         # 允许创建工会（未入会时）
+    can-invite: false        # 非成员默认不可邀请
+    can-kick: false          # 非成员默认不可踢人
+    can-promote: false       # 非成员默认不可升职
+    can-demote: false        # 非成员默认不可降职
+    can-delete: false        # 非成员默认不可删会
+
+  # 会长权限（若缺省则视为全开）
+  leader:
+    can-create: true
+    can-invite: true
+    can-kick: true
+    can-promote: true
+    can-demote: true
+    can-delete: true
+
+  # 官员权限
+  officer:
+    can-create: true         # 允许代操作与创建
+    can-invite: true
+    can-kick: true
+    can-promote: false       # 是否允许升职成员（通常只会长）
+    can-demote: false        # 是否允许降职成员（通常只会长）
+    can-delete: false        # 是否允许删除工会（通常只会长）
+
+  # 成员权限
+  member:
+    can-create: true         # 允许退会后再创建新工会
+    can-invite: false
+    can-kick: false
+    can-promote: false
+    can-demote: false
+    can-delete: false
+
+# 消息配置
+messages:
+  # 是否启用消息
+  enabled: true
+  # 消息前缀
+  prefix: "&6[工会] &r"
+  # 消息颜色
+  colors:
+    success: "&a"
+    error: "&c"
+    info: "&e"
+    warning: "&6"
+
+# GUI配置
+gui:
+  # 是否启用GUI
+  enabled: true
+  # GUI标题
+  title: "&6工会系统"
+  # GUI大小（必须是9的倍数）
+  size: 54
+  # 是否显示工会标签
+  show-tag: true
+  # 是否显示工会描述
+  show-description: true
+
+# 占位符配置
+placeholders:
+  # 是否启用占位符
+  enabled: true
+  # 占位符前缀
+  prefix: "guild_"
+  # 是否缓存占位符
+  cache-enabled: true
+  # 缓存时间（秒）
+  cache-time: 30
+
+# 日志配置
+logging:
+  # 是否启用日志
+  enabled: true
+  # 日志级别: DEBUG, INFO, WARN, ERROR
+  level: INFO
+  # 是否记录到文件
+  file-logging: true
+  # 日志文件路径
+  log-file: "logs/guild.log"
+  # 最大日志文件大小（MB）
+  max-file-size: 10
+  # 保留的日志文件数量
+  max-files: 5

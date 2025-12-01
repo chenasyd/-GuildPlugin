@@ -22,85 +22,85 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 工会关系GUI - 管理工会关系
+ * GUI Relacji Gildii - Zarządzanie relacjami
  */
 public class GuildRelationsGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
     private final Player player;
     private int currentPage = 0;
-    private final int itemsPerPage = 28; // 每页显示28个关系 (7列 × 4行)
+    private final int itemsPerPage = 28; // 28 relacji na stronę (7 kolumn x 4 rzędy)
     private List<GuildRelation> relations = new ArrayList<>();
-    
+
     public GuildRelationsGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.guild = guild;
         this.player = player;
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-relations.title", "&6工会关系"));
+        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-relations.title", "&6Relacje gildii"));
     }
-    
+
     @Override
     public int getSize() {
         return plugin.getConfigManager().getGuiConfig().getInt("guild-relations.size", 54);
     }
-    
+
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Wypełnij obramowanie
         fillBorder(inventory);
-        
-        // 加载关系数据
+
+        // Załaduj dane relacji
         loadRelations().thenAccept(relationsList -> {
             this.relations = relationsList;
-            
-            // 确保在主线程中执行GUI操作
+
+            // Upewnij się, że operacje GUI są wykonywane w głównym wątku
             CompatibleScheduler.runTask(plugin, () -> {
-                // 显示关系列表
+                // Wyświetl listę relacji
                 displayRelations(inventory);
-                
-                // 添加功能按钮
+
+                // Dodaj przyciski funkcyjne
                 addFunctionButtons(inventory);
-                
-                // 添加分页按钮
+
+                // Dodaj przyciski paginacji
                 addPaginationButtons(inventory);
             });
         });
     }
-    
+
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (clickedItem == null || !clickedItem.hasItemMeta()) return;
-        
+
         String itemName = clickedItem.getItemMeta().getDisplayName();
-        
-        // 返回按钮
-        if (itemName.contains("返回")) {
+
+        // Przycisk powrotu
+        if (itemName.contains("Powrót")) {
             MainGuildGUI mainGUI = new MainGuildGUI(plugin);
             plugin.getGuiManager().openGUI(player, mainGUI);
             return;
         }
-        
-        // 创建关系按钮
-        if (itemName.contains("创建关系")) {
+
+        // Przycisk tworzenia relacji
+        if (itemName.contains("Stwórz relację")) {
             openCreateRelationGUI(player);
             return;
         }
-        
-        // 分页按钮
-        if (itemName.contains("上一页")) {
+
+        // Przyciski paginacji
+        if (itemName.contains("Poprzednia strona")) {
             if (currentPage > 0) {
                 currentPage--;
                 refreshInventory(player);
             }
             return;
         }
-        
-        if (itemName.contains("下一页")) {
+
+        if (itemName.contains("Następna strona")) {
             int maxPage = (relations.size() - 1) / itemsPerPage;
             if (currentPage < maxPage) {
                 currentPage++;
@@ -108,8 +108,8 @@ public class GuildRelationsGUI implements GUI {
             }
             return;
         }
-        
-        // 关系项目点击 - 检查是否在2-8列，2-5行范围内
+
+        // Kliknięcie w element relacji - sprawdź czy jest w zakresie 2-8 kolumn, 2-5 rzędów
         if (slot >= 10 && slot <= 43) {
             int row = slot / 9;
             int col = slot % 9;
@@ -123,82 +123,82 @@ public class GuildRelationsGUI implements GUI {
             }
         }
     }
-    
+
     /**
-     * 加载工会关系数据
+     * Załaduj dane relacji gildii
      */
     private CompletableFuture<List<GuildRelation>> loadRelations() {
         return plugin.getGuildService().getGuildRelationsAsync(guild.getId());
     }
-    
+
     /**
-     * 显示关系列表
+     * Wyświetl listę relacji
      */
     private void displayRelations(Inventory inventory) {
         int startIndex = currentPage * itemsPerPage;
         int endIndex = Math.min(startIndex + itemsPerPage, relations.size());
-        
+
         for (int i = startIndex; i < endIndex; i++) {
             GuildRelation relation = relations.get(i);
             int relativeIndex = i - startIndex;
-            
-            // 计算在2-8列，2-5行的位置 (slots 10-43)
-            int row = (relativeIndex / 7) + 1; // 2-5行
-            int col = (relativeIndex % 7) + 1; // 2-8列
+
+            // Oblicz pozycję w 2-8 kolumnach, 2-5 rzędach (sloty 10-43)
+            int row = (relativeIndex / 7) + 1; // 2-5 rzędy
+            int col = (relativeIndex % 7) + 1; // 2-8 kolumny
             int slot = row * 9 + col;
-            
+
             ItemStack relationItem = createRelationItem(relation);
             inventory.setItem(slot, relationItem);
         }
     }
-    
+
     /**
-     * 创建关系显示物品
+     * Utwórz przedmiot wyświetlający relację
      */
     private ItemStack createRelationItem(GuildRelation relation) {
         String otherGuildName = relation.getOtherGuildName(guild.getId());
         GuildRelation.RelationType type = relation.getType();
         GuildRelation.RelationStatus status = relation.getStatus();
-        
+
         Material material = getRelationMaterial(type);
         String color = type.getColor();
         String displayName = color + otherGuildName + " - " + type.getDisplayName();
-        
+
         List<String> lore = new ArrayList<>();
-        lore.add(ColorUtils.colorize("&7关系类型: " + color + type.getDisplayName()));
-        lore.add(ColorUtils.colorize("&7状态: " + getStatusColor(status) + status.getDisplayName()));
-        lore.add(ColorUtils.colorize("&7发起人: " + relation.getInitiatorName()));
-        lore.add(ColorUtils.colorize("&7创建时间: " + formatDateTime(relation.getCreatedAt())));
-        
+        lore.add(ColorUtils.colorize("&7Typ relacji: " + color + type.getDisplayName()));
+        lore.add(ColorUtils.colorize("&7Status: " + getStatusColor(status) + status.getDisplayName()));
+        lore.add(ColorUtils.colorize("&7Inicjator: " + relation.getInitiatorName()));
+        lore.add(ColorUtils.colorize("&7Utworzono: " + formatDateTime(relation.getCreatedAt())));
+
         if (relation.getExpiresAt() != null) {
-            lore.add(ColorUtils.colorize("&7过期时间: " + formatDateTime(relation.getExpiresAt())));
+            lore.add(ColorUtils.colorize("&7Wygasa: " + formatDateTime(relation.getExpiresAt())));
         }
-        
+
         lore.add("");
-        
-        // 根据关系类型和状态添加操作提示
+
+        // Dodaj wskazówki operacji w zależności od typu i statusu relacji
         if (status == GuildRelation.RelationStatus.PENDING) {
             if (relation.getInitiatorUuid().equals(player.getUniqueId())) {
-                lore.add(ColorUtils.colorize("&c右键: 取消关系"));
+                lore.add(ColorUtils.colorize("&cPrawy przycisk: Anuluj relację"));
             } else {
-                lore.add(ColorUtils.colorize("&a左键: 接受关系"));
-                lore.add(ColorUtils.colorize("&c右键: 拒绝关系"));
+                lore.add(ColorUtils.colorize("&aLewy przycisk: Zaakceptuj relację"));
+                lore.add(ColorUtils.colorize("&cPrawy przycisk: Odrzuć relację"));
             }
         } else if (status == GuildRelation.RelationStatus.ACTIVE) {
             if (type == GuildRelation.RelationType.TRUCE) {
-                lore.add(ColorUtils.colorize("&e左键: 结束停战"));
+                lore.add(ColorUtils.colorize("&eLewy przycisk: Zakończ rozejm"));
             } else if (type == GuildRelation.RelationType.WAR) {
-                lore.add(ColorUtils.colorize("&e左键: 提议停战"));
+                lore.add(ColorUtils.colorize("&eLewy przycisk: Zaproponuj rozejm"));
             } else {
-                lore.add(ColorUtils.colorize("&c右键: 删除关系"));
+                lore.add(ColorUtils.colorize("&cPrawy przycisk: Usuń relację"));
             }
         }
-        
+
         return createItem(material, displayName, lore.toArray(new String[0]));
     }
-    
+
     /**
-     * 获取关系类型对应的材料
+     * Pobierz materiał odpowiadający typowi relacji
      */
     private Material getRelationMaterial(GuildRelation.RelationType type) {
         switch (type) {
@@ -210,9 +210,9 @@ public class GuildRelationsGUI implements GUI {
             default: return Material.WHITE_WOOL;
         }
     }
-    
+
     /**
-     * 获取状态颜色
+     * Pobierz kolor statusu
      */
     private String getStatusColor(GuildRelation.RelationStatus status) {
         switch (status) {
@@ -223,97 +223,97 @@ public class GuildRelationsGUI implements GUI {
             default: return "&f";
         }
     }
-    
+
     /**
-     * 格式化日期时间
+     * Formatuj datę i czas
      */
     private String formatDateTime(java.time.LocalDateTime dateTime) {
-        if (dateTime == null) return "未知";
+        if (dateTime == null) return "Nieznany";
         return dateTime.format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
     }
-    
+
     /**
-     * 添加功能按钮
+     * Dodaj przyciski funkcyjne
      */
     private void addFunctionButtons(Inventory inventory) {
-        // 创建关系按钮
+        // Przycisk tworzenia relacji
         ItemStack createRelation = createItem(
             Material.EMERALD,
-            ColorUtils.colorize("&a创建关系"),
-            ColorUtils.colorize("&7创建新的工会关系"),
-            ColorUtils.colorize("&7盟友、敌对、开战等")
+            ColorUtils.colorize("&aStwórz relację"),
+            ColorUtils.colorize("&7Stwórz nową relację gildii"),
+            ColorUtils.colorize("&7Sojusznicy, wrogowie, wojna itp.")
         );
         inventory.setItem(45, createRelation);
-        
-        // 关系统计按钮
+
+        // Przycisk statystyk relacji
         ItemStack statistics = createItem(
             Material.BOOK,
-            ColorUtils.colorize("&e关系统计"),
-            ColorUtils.colorize("&7查看关系统计信息"),
-            ColorUtils.colorize("&7盟友数、敌对数等")
+            ColorUtils.colorize("&eStatystyki relacji"),
+            ColorUtils.colorize("&7Zobacz statystyki relacji"),
+            ColorUtils.colorize("&7Liczba sojuszników, wrogów itp.")
         );
         inventory.setItem(47, statistics);
     }
-    
+
     /**
-     * 添加分页按钮
+     * Dodaj przyciski paginacji
      */
     private void addPaginationButtons(Inventory inventory) {
         int maxPage = (relations.size() - 1) / itemsPerPage;
-        
-        // 上一页按钮
+
+        // Przycisk poprzedniej strony
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&c上一页"),
-                ColorUtils.colorize("&7查看上一页")
+                ColorUtils.colorize("&cPoprzednia strona"),
+                ColorUtils.colorize("&7Zobacz poprzednią stronę")
             );
             inventory.setItem(45, previousPage);
         }
-        
-        // 下一页按钮
+
+        // Przycisk następnej strony
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&a下一页"),
-                ColorUtils.colorize("&7查看下一页")
+                ColorUtils.colorize("&aNastępna strona"),
+                ColorUtils.colorize("&7Zobacz następną stronę")
             );
             inventory.setItem(53, nextPage);
         }
-        
-        // 返回按钮
+
+        // Przycisk powrotu
         ItemStack backButton = createItem(
             Material.BARRIER,
-            ColorUtils.colorize("&c返回"),
-            ColorUtils.colorize("&7返回主菜单")
+            ColorUtils.colorize("&cPowrót"),
+            ColorUtils.colorize("&7Powrót do głównego menu")
         );
         inventory.setItem(49, backButton);
-        
-        // 页码显示
+
+        // Informacja o stronie
         ItemStack pageInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize("&e第 " + (currentPage + 1) + " 页"),
-            ColorUtils.colorize("&7共 " + (maxPage + 1) + " 页"),
-            ColorUtils.colorize("&7总计 " + relations.size() + " 个关系")
+            ColorUtils.colorize("&eStrona " + (currentPage + 1)),
+            ColorUtils.colorize("&7Wszystkich stron " + (maxPage + 1)),
+            ColorUtils.colorize("&7Wszystkich relacji " + relations.size())
         );
         inventory.setItem(47, pageInfo);
     }
-    
+
     /**
-     * 处理关系点击
+     * Obsługa kliknięcia relacji
      */
     private void handleRelationClick(Player player, GuildRelation relation, ClickType clickType) {
         GuildRelation.RelationStatus status = relation.getStatus();
         GuildRelation.RelationType type = relation.getType();
-        
+
         if (status == GuildRelation.RelationStatus.PENDING) {
             if (relation.getInitiatorUuid().equals(player.getUniqueId())) {
-                // 发起人取消关系
+                // Inicjator anuluje relację
                 if (clickType == ClickType.RIGHT) {
                     cancelRelation(player, relation);
                 }
             } else {
-                // 对方处理关系
+                // Druga strona przetwarza relację
                 if (clickType == ClickType.LEFT) {
                     acceptRelation(player, relation);
                 } else if (clickType == ClickType.RIGHT) {
@@ -336,78 +336,78 @@ public class GuildRelationsGUI implements GUI {
             }
         }
     }
-    
+
     /**
-     * 接受关系
+     * Zaakceptuj relację
      */
     private void acceptRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.ACTIVE)
             .thenAccept(success -> {
                 CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
-                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.accept-success", "&a已接受与 {guild} 的关系！");
+                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.accept-success", "&aZaakceptowano relację z gildią {guild}!");
                         message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));
                         refreshInventory(player);
                     } else {
-                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.accept-failed", "&c接受关系失败！");
+                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.accept-failed", "&cZaakceptowanie relacji nie powiodło się!");
                         player.sendMessage(ColorUtils.colorize(message));
                     }
                 });
             });
     }
-    
+
     /**
-     * 拒绝关系
+     * Odrzuć relację
      */
     private void rejectRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.CANCELLED)
             .thenAccept(success -> {
                 CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
-                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.reject-success", "&c已拒绝与 {guild} 的关系！");
+                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.reject-success", "&cOdrzucono relację z gildią {guild}!");
                         message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));
                         refreshInventory(player);
                     } else {
-                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.reject-failed", "&c拒绝关系失败！");
+                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.reject-failed", "&cOdrzucenie relacji nie powiodło się!");
                         player.sendMessage(ColorUtils.colorize(message));
                     }
                 });
             });
     }
-    
+
     /**
-     * 取消关系
+     * Anuluj relację
      */
     private void cancelRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.CANCELLED)
             .thenAccept(success -> {
                 CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
-                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.cancel-success", "&c已取消与 {guild} 的关系！");
+                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.cancel-success", "&cAnulowano relację z gildią {guild}!");
                         message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));
                         refreshInventory(player);
                     } else {
-                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.cancel-failed", "&c取消关系失败！");
+                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.cancel-failed", "&cAnulowanie relacji nie powiodło się!");
                         player.sendMessage(ColorUtils.colorize(message));
                     }
                 });
             });
     }
-    
+
     /**
-     * 结束停战
+     * Zakończ rozejm
      */
     private void endTruce(Player player, GuildRelation relation) {
-        // 结束停战，改为中立关系
+        // Zakończ rozejm, zmień na relację neutralną
         GuildRelation newRelation = new GuildRelation(
             relation.getGuild1Id(), relation.getGuild2Id(),
             relation.getGuild1Name(), relation.getGuild2Name(),
             GuildRelation.RelationType.NEUTRAL, player.getUniqueId(), player.getName()
         );
-        
+
         plugin.getGuildService().createGuildRelationAsync(
             newRelation.getGuild1Id(), newRelation.getGuild2Id(),
             newRelation.getGuild1Name(), newRelation.getGuild2Name(),
@@ -415,32 +415,32 @@ public class GuildRelationsGUI implements GUI {
         ).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
-                    // 删除旧的停战关系
+                    // Usuń starą relację rozejmu
                     plugin.getGuildService().deleteGuildRelationAsync(relation.getId());
-                    
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("relations.truce-end", "&a与 {guild} 的停战已结束，关系转为中立！");
+
+                    String message = plugin.getConfigManager().getMessagesConfig().getString("relations.truce-end", "&aRozejm z gildią {guild} zakończony, relacja zmieniona na neutralną!");
                     message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
                     player.sendMessage(ColorUtils.colorize(message));
                     refreshInventory(player);
                 } else {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("relations.truce-end-failed", "&c结束停战失败！");
+                    String message = plugin.getConfigManager().getMessagesConfig().getString("relations.truce-end-failed", "&cZakończenie rozejmu nie powiodło się!");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
         });
     }
-    
+
     /**
-     * 提议停战
+     * Zaproponuj rozejm
      */
     private void proposeTruce(Player player, GuildRelation relation) {
-        // 创建停战提议
+        // Utwórz propozycję rozejmu
         GuildRelation truceRelation = new GuildRelation(
             relation.getGuild1Id(), relation.getGuild2Id(),
             relation.getGuild1Name(), relation.getGuild2Name(),
             GuildRelation.RelationType.TRUCE, player.getUniqueId(), player.getName()
         );
-        
+
         plugin.getGuildService().createGuildRelationAsync(
             truceRelation.getGuild1Id(), truceRelation.getGuild2Id(),
             truceRelation.getGuild1Name(), truceRelation.getGuild2Name(),
@@ -448,57 +448,57 @@ public class GuildRelationsGUI implements GUI {
         ).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("relations.truce-proposed", "&e已向 {guild} 提议停战！");
+                    String message = plugin.getConfigManager().getMessagesConfig().getString("relations.truce-proposed", "&eZaproponowano rozejm gildii {guild}!");
                     message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
                     player.sendMessage(ColorUtils.colorize(message));
                     refreshInventory(player);
                 } else {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("relations.truce-propose-failed", "&c提议停战失败！");
+                    String message = plugin.getConfigManager().getMessagesConfig().getString("relations.truce-propose-failed", "&cPropozycja rozejmu nie powiodła się!");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
         });
     }
-    
+
     /**
-     * 删除关系
+     * Usuń relację
      */
     private void deleteRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().deleteGuildRelationAsync(relation.getId())
             .thenAccept(success -> {
                 CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
-                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.delete-success", "&a已删除与 {guild} 的关系！");
+                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.delete-success", "&aUsunięto relację z gildią {guild}!");
                         message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));
                         refreshInventory(player);
                     } else {
-                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.delete-failed", "&c删除关系失败！");
+                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.delete-failed", "&cUsunięcie relacji nie powiodło się!");
                         player.sendMessage(ColorUtils.colorize(message));
                     }
                 });
             });
     }
-    
+
     /**
-     * 打开创建关系GUI
+     * Otwórz GUI tworzenia relacji
      */
     private void openCreateRelationGUI(Player player) {
         CreateRelationGUI createRelationGUI = new CreateRelationGUI(plugin, guild, player);
         plugin.getGuiManager().openGUI(player, createRelationGUI);
     }
-    
+
     /**
-     * 刷新库存
+     * Odśwież ekwipunek
      */
     private void refreshInventory(Player player) {
         if (player.isOnline()) {
             plugin.getGuiManager().refreshGUI(player);
         }
     }
-    
+
     /**
-     * 填充边框
+     * Wypełnij obramowanie
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -511,14 +511,14 @@ public class GuildRelationsGUI implements GUI {
             inventory.setItem(i + 8, border);
         }
     }
-    
+
     /**
-     * 创建物品
+     * Utwórz przedmiot
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        
+
         if (meta != null) {
             meta.setDisplayName(name);
             if (lore.length > 0) {
@@ -526,7 +526,7 @@ public class GuildRelationsGUI implements GUI {
             }
             item.setItemMeta(meta);
         }
-        
+
         return item;
     }
 }

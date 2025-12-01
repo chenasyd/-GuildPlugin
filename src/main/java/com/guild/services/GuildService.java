@@ -36,13 +36,13 @@ public class GuildService {
         this.logger = plugin.getLogger();
     }
     
-    // 时间工具：统一使用操作系统本地时间字符串（yyyy-MM-dd HH:mm:ss）
+    // Narzędzie czasu: użyj ujednoliconego ciągu czasu lokalnego systemu operacyjnego (yyyy-MM-dd HH:mm:ss)
     private String nowString() { return TimeProvider.nowString(); }
     private String plusMinutesString(int minutes) { return TimeProvider.plusMinutesString(minutes); }
     private String plusDaysString(int days) { return TimeProvider.plusDaysString(days); }
     
     /**
-     * 创建工会 (异步)
+     * Utwórz gildię (asynchronicznie)
      */
     public CompletableFuture<Boolean> createGuildAsync(String name, String tag, String description, UUID leaderUuid, String leaderName) {
         return getGuildByNameAsync(name).thenCompose(existingGuildByName -> {
@@ -75,25 +75,25 @@ public class GuildService {
                                 try (ResultSet rs = stmt.getGeneratedKeys()) {
                                     if (rs.next()) {
                                         int guildId = rs.getInt(1);
-                                        logger.info("工会创建成功: " + name + " (ID: " + guildId + ")");
+                                        logger.info("Utworzono gildię: " + name + " (ID: " + guildId + ")");
                                         return guildId;
                                     }
                                 }
                             }
                         }
                     } catch (SQLException e) {
-                        logger.severe("创建工会时发生错误: " + e.getMessage());
+                        logger.severe("Błąd podczas tworzenia gildii: " + e.getMessage());
                     }
                     return -1;
                 }).thenCompose(guildId -> {
                     if ((Integer) guildId > 0) {
-                        // 添加会长为工会成员（避免重复查询）
+                        // Dodaj lidera jako członka gildii (bezpośrednio)
                         return addGuildMemberDirectAsync((Integer) guildId, leaderUuid, leaderName, GuildMember.Role.LEADER)
                             .thenCompose(success -> {
                                 if (success) {
-                                    // 记录工会创建日志
+                                    // Zaloguj utworzenie gildii
                                     return logGuildActionAsync((Integer) guildId, name, leaderUuid.toString(), leaderName,
-                                        GuildLog.LogType.GUILD_CREATED, "创建工会", "工会名称: " + name + ", 标签: " + tag)
+                                        GuildLog.LogType.GUILD_CREATED, "Utworzenie gildii", "Nazwa: " + name + ", Tag: " + tag)
                                         .thenApply(logSuccess -> success);
                                 }
                                 return CompletableFuture.completedFuture(success);
@@ -106,19 +106,19 @@ public class GuildService {
     }
     
     /**
-     * 创建工会 (同步包装器)
+     * Utwórz gildię (synchronicznie)
      */
     public boolean createGuild(String name, String tag, String description, UUID leaderUuid, String leaderName) {
         try {
             return createGuildAsync(name, tag, description, leaderUuid, leaderName).get();
         } catch (Exception e) {
-            logger.severe("创建工会时发生异常: " + e.getMessage());
+            logger.severe("Wyjątek podczas tworzenia gildii: " + e.getMessage());
             return false;
         }
     }
     
     /**
-     * 删除工会 (异步)
+     * Usuń gildię (asynchronicznie)
      */
     public CompletableFuture<Boolean> deleteGuildAsync(int guildId, UUID requesterUuid) {
         return getGuildByIdAsync(guildId).thenCompose(guild -> {
@@ -127,17 +127,17 @@ public class GuildService {
             }
             
             return getGuildMemberAsync(requesterUuid).thenCompose(member -> {
-                // 检查权限
+                // Sprawdź uprawnienia
                 if (member == null || member.getGuildId() != guildId || member.getRole() != GuildMember.Role.LEADER) {
                     return CompletableFuture.completedFuture(false);
                 }
                 
                 return CompletableFuture.supplyAsync(() -> {
                     try {
-                        // 获取工会余额用于退款
+                        // Pobierz saldo gildii do zwrotu
                         double guildBalance = guild.getBalance();
                         
-                        // 删除所有工会成员
+                        // Usuń wszystkich członków gildii
                         String deleteMembersSql = "DELETE FROM guild_members WHERE guild_id = ?";
                         try (Connection conn = databaseManager.getConnection();
                              PreparedStatement stmt = conn.prepareStatement(deleteMembersSql)) {
@@ -145,39 +145,39 @@ public class GuildService {
                             stmt.executeUpdate();
                         }
                         
-                        // 删除工会
+                        // Usuń gildię
                         String deleteGuildSql = "DELETE FROM guilds WHERE id = ?";
                         try (Connection conn = databaseManager.getConnection();
                              PreparedStatement stmt = conn.prepareStatement(deleteGuildSql)) {
                             stmt.setInt(1, guildId);
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
-                                logger.info("工会删除成功: " + guild.getName() + " (ID: " + guildId + ")");
+                                logger.info("Usunięto gildię: " + guild.getName() + " (ID: " + guildId + ")");
                                 
-                                // 退款给会长（如果经济系统可用）
+                                // Zwrot dla lidera (jeśli Vault jest dostępny)
                                 if (guildBalance > 0 && plugin.getEconomyManager().isVaultAvailable()) {
                                     try {
                                         org.bukkit.entity.Player leaderPlayer = org.bukkit.Bukkit.getPlayer(guild.getLeaderUuid());
                                         if (leaderPlayer != null && leaderPlayer.isOnline()) {
                                             plugin.getEconomyManager().deposit(leaderPlayer, guildBalance);
-                                            String message = plugin.getConfigManager().getMessagesConfig().getString("economy.disband-compensation", "&a工会解散，您获得了 {amount} 金币补偿！")
+                                            String message = plugin.getConfigManager().getMessagesConfig().getString("economy.disband-compensation", "&aGildia rozwiązana, otrzymałeś rekompensatę w wysokości {amount} monet!")
                                                 .replace("{amount}", plugin.getEconomyManager().format(guildBalance));
                                             leaderPlayer.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                                         }
                                     } catch (Exception e) {
-                                        logger.warning("退款给会长时发生错误: " + e.getMessage());
+                                        logger.warning("Błąd podczas zwrotu dla lidera: " + e.getMessage());
                                     }
                                 }
                                 
-                                // 记录工会解散日志
+                                // Zaloguj rozwiązanie gildii
                                 logGuildActionAsync(guildId, guild.getName(), guild.getLeaderUuid().toString(), guild.getLeaderName(),
-                                    GuildLog.LogType.GUILD_DISSOLVED, "工会解散", "工会余额: " + guildBalance + " 金币");
+                                    GuildLog.LogType.GUILD_DISSOLVED, "Rozwiązanie gildii", "Saldo: " + guildBalance);
                                 
                                 return true;
                             }
                         }
                     } catch (SQLException e) {
-                        logger.severe("删除工会时发生错误: " + e.getMessage());
+                        logger.severe("Błąd podczas usuwania gildii: " + e.getMessage());
                     }
                     return false;
                 });
@@ -186,19 +186,19 @@ public class GuildService {
     }
     
     /**
-     * 删除工会 (同步包装器)
+     * Usuń gildię (synchronicznie)
      */
     public boolean deleteGuild(int guildId, UUID requesterUuid) {
         try {
             return deleteGuildAsync(guildId, requesterUuid).get();
         } catch (Exception e) {
-            logger.severe("删除工会时发生异常: " + e.getMessage());
+            logger.severe("Wyjątek podczas usuwania gildii: " + e.getMessage());
             return false;
         }
     }
     
     /**
-     * 更新工会信息 (异步)
+     * Zaktualizuj informacje o gildii (asynchronicznie)
      */
     public CompletableFuture<Boolean> updateGuildAsync(int guildId, String name, String tag, String description, UUID requesterUuid) {
         return getGuildByIdAsync(guildId).thenCompose(guild -> {
@@ -207,13 +207,13 @@ public class GuildService {
             }
             
             return getGuildMemberAsync(requesterUuid).thenCompose(member -> {
-                // 检查权限
+                // Sprawdź uprawnienia
                 if (member == null || member.getGuildId() != guildId || 
                     (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
                     return CompletableFuture.completedFuture(false);
                 }
                 
-                // 检查名称和标签是否与其他工会冲突
+                // Sprawdź czy nazwa i tag kolidują z innymi gildiami
                 CompletableFuture<Boolean> nameCheck = CompletableFuture.completedFuture(true);
                 if (name != null && !name.equals(guild.getName())) {
                     nameCheck = getGuildByNameAsync(name).thenApply(existingGuild -> existingGuild == null);
@@ -245,12 +245,12 @@ public class GuildService {
                                     
                                     int affectedRows = stmt.executeUpdate();
                                     if (affectedRows > 0) {
-                                        logger.info("工会信息更新成功: " + guild.getName() + " (ID: " + guildId + ")");
+                                        logger.info("Zaktualizowano gildię: " + guild.getName() + " (ID: " + guildId + ")");
                                         return true;
                                     }
                                 }
                             } catch (SQLException e) {
-                                logger.severe("更新工会信息时发生错误: " + e.getMessage());
+                                logger.severe("Błąd podczas aktualizacji gildii: " + e.getMessage());
                             }
                             return false;
                         });
@@ -260,19 +260,19 @@ public class GuildService {
     }
     
     /**
-     * 更新工会信息 (同步包装器)
+     * Zaktualizuj informacje o gildii (synchronicznie)
      */
     public boolean updateGuild(int guildId, String name, String tag, String description, UUID requesterUuid) {
         try {
             return updateGuildAsync(guildId, name, tag, description, requesterUuid).get();
         } catch (Exception e) {
-            logger.severe("更新工会信息时发生异常: " + e.getMessage());
+            logger.severe("Wyjątek podczas aktualizacji gildii: " + e.getMessage());
             return false;
         }
     }
     
     /**
-     * 添加工会成员 (异步)
+     * Dodaj członka gildii (asynchronicznie)
      */
     public CompletableFuture<Boolean> addGuildMemberAsync(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
         return getPlayerGuildAsync(playerUuid).thenCompose(existingGuild -> {
@@ -296,15 +296,15 @@ public class GuildService {
                     
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
-                        logger.info("玩家 " + playerName + " 加入工会 (ID: " + guildId + ")");
-                        // 更新内置权限缓存
+                        logger.info("Gracz " + playerName + " dołączył do gildii (ID: " + guildId + ")");
+                        // Zaktualizuj cache uprawnień
                         try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
                         
-                        // 记录成员加入日志
+                        // Zaloguj dołączenie członka
                         getGuildByIdAsync(guildId).thenAccept(guild -> {
                             if (guild != null) {
                                 logGuildActionAsync(guildId, guild.getName(), playerUuid.toString(), playerName,
-                                    GuildLog.LogType.MEMBER_JOINED, "成员加入", "玩家: " + playerName + ", 职位: " + role.getDisplayName());
+                                    GuildLog.LogType.MEMBER_JOINED, "Dołączenie członka", "Gracz: " + playerName + ", Rola: " + role.getDisplayName());
                             }
                         });
                         
@@ -312,7 +312,7 @@ public class GuildService {
                     }
                 }
             } catch (SQLException e) {
-                logger.severe("添加工会成员时发生错误: " + e.getMessage());
+                logger.severe("Błąd podczas dodawania członka gildii: " + e.getMessage());
             }
             return false;
         });
@@ -320,19 +320,19 @@ public class GuildService {
     }
     
     /**
-     * 添加工会成员 (同步包装器)
+     * Dodaj członka gildii (synchronicznie)
      */
     public boolean addGuildMember(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
         try {
             return addGuildMemberAsync(guildId, playerUuid, playerName, role).get();
         } catch (Exception e) {
-            logger.severe("添加工会成员时发生异常: " + e.getMessage());
+            logger.severe("Wyjątek podczas dodawania członka gildii: " + e.getMessage());
             return false;
         }
     }
     
     /**
-     * 移除工会成员 (异步)
+     * Usuń członka gildii (asynchronicznie)
      */
     public CompletableFuture<Boolean> removeGuildMemberAsync(UUID playerUuid, UUID requesterUuid) {
         return getGuildMemberAsync(playerUuid).thenCompose(member -> {
@@ -341,17 +341,17 @@ public class GuildService {
             }
             
             return getGuildMemberAsync(requesterUuid).thenCompose(requester -> {
-                // 检查权限
+                // Sprawdź uprawnienia
                 if (requester == null || requester.getGuildId() != member.getGuildId()) {
                     return CompletableFuture.completedFuture(false);
                 }
                 
-                // 会长不能被踢出，除非是自我离开
+                // Lider nie może zostać wyrzucony, chyba że sam opuszcza gildię
                 if (member.getRole() == GuildMember.Role.LEADER && !playerUuid.equals(requesterUuid)) {
                     return CompletableFuture.completedFuture(false);
                 }
                 
-                // 只有会长和官员可以踢出成员
+                // Tylko lider i oficerowie mogą wyrzucać członków
                 if (!playerUuid.equals(requesterUuid) && 
                     requester.getRole() != GuildMember.Role.LEADER && 
                     requester.getRole() != GuildMember.Role.OFFICER) {
@@ -369,18 +369,18 @@ public class GuildService {
                             
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
-                                logger.info("玩家 " + member.getPlayerName() + " 离开工会 (ID: " + member.getGuildId() + ")");
-                                // 更新内置权限缓存
+                                logger.info("Gracz " + member.getPlayerName() + " opuścił gildię (ID: " + member.getGuildId() + ")");
+                                // Zaktualizuj cache uprawnień
                                 try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
                                 
-                                // 记录成员离开日志
+                                // Zaloguj opuszczenie członka
                                 getGuildByIdAsync(member.getGuildId()).thenAccept(guild -> {
                                     if (guild != null) {
                                         GuildLog.LogType logType = playerUuid.equals(requesterUuid) ? 
                                             GuildLog.LogType.MEMBER_LEFT : GuildLog.LogType.MEMBER_KICKED;
-                                        String description = playerUuid.equals(requesterUuid) ? "成员主动离开" : "成员被踢出";
-                                        String details = "玩家: " + member.getPlayerName() + 
-                                            (playerUuid.equals(requesterUuid) ? "" : ", 操作者: " + requester.getPlayerName());
+                                        String description = playerUuid.equals(requesterUuid) ? "Członek opuścił" : "Członek wyrzucony";
+                                        String details = "Gracz: " + member.getPlayerName() +
+                                            (playerUuid.equals(requesterUuid) ? "" : ", Operator: " + requester.getPlayerName());
                                         
                                         logGuildActionAsync(member.getGuildId(), guild.getName(), 
                                             requesterUuid.toString(), requester.getPlayerName(),
@@ -392,7 +392,7 @@ public class GuildService {
                             }
                         }
                     } catch (SQLException e) {
-                        logger.severe("移除工会成员时发生错误: " + e.getMessage());
+                        logger.severe("Błąd podczas usuwania członka gildii: " + e.getMessage());
                     }
                     return false;
                 });
@@ -401,19 +401,19 @@ public class GuildService {
     }
     
     /**
-     * 移除工会成员 (同步包装器)
+     * Usuń członka gildii (synchronicznie)
      */
     public boolean removeGuildMember(UUID playerUuid, UUID requesterUuid) {
         try {
             return removeGuildMemberAsync(playerUuid, requesterUuid).get();
         } catch (Exception e) {
-            logger.severe("移除工会成员时发生异常: " + e.getMessage());
+            logger.severe("Wyjątek podczas usuwania członka gildii: " + e.getMessage());
             return false;
         }
     }
     
     /**
-     * 更新成员角色 (异步)
+     * Zaktualizuj rolę członka (asynchronicznie)
      */
     public CompletableFuture<Boolean> updateMemberRoleAsync(UUID playerUuid, GuildMember.Role newRole, UUID requesterUuid) {
         return getGuildMemberAsync(playerUuid).thenCompose(member -> {
@@ -422,7 +422,7 @@ public class GuildService {
             }
             
             return getGuildMemberAsync(requesterUuid).thenCompose(requester -> {
-                // 检查权限 - 只有会长可以更改角色
+                // Sprawdź uprawnienia - tylko lider może zmieniać role
                 if (requester == null || requester.getGuildId() != member.getGuildId() || 
                     requester.getRole() != GuildMember.Role.LEADER) {
                     return CompletableFuture.completedFuture(false);
@@ -440,20 +440,20 @@ public class GuildService {
                             
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
-                                logger.info("玩家 " + member.getPlayerName() + " 角色更新为: " + newRole.name());
-                                // 更新内置权限缓存
+                                logger.info("Zaktualizowano rolę gracza " + member.getPlayerName() + " na: " + newRole.name());
+                                // Zaktualizuj cache uprawnień
                                 try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
                                 
-                                // 记录角色变更日志
+                                // Zaloguj zmianę roli
                                 getGuildByIdAsync(member.getGuildId()).thenAccept(guild -> {
                                     if (guild != null) {
                                         GuildLog.LogType logType = newRole == GuildMember.Role.LEADER ? 
                                             GuildLog.LogType.LEADER_TRANSFERRED : 
                                             (newRole == GuildMember.Role.OFFICER ? GuildLog.LogType.MEMBER_PROMOTED : GuildLog.LogType.MEMBER_DEMOTED);
-                                        String description = newRole == GuildMember.Role.LEADER ? "会长转让" : 
-                                            (newRole == GuildMember.Role.OFFICER ? "成员升职" : "成员降职");
-                                        String details = "玩家: " + member.getPlayerName() + ", 新职位: " + newRole.getDisplayName() + 
-                                            ", 操作者: " + requester.getPlayerName();
+                                        String description = newRole == GuildMember.Role.LEADER ? "Przekazanie lidera" :
+                                            (newRole == GuildMember.Role.OFFICER ? "Awans członka" : "Degradacja członka");
+                                        String details = "Gracz: " + member.getPlayerName() + ", Nowa rola: " + newRole.getDisplayName() +
+                                            ", Operator: " + requester.getPlayerName();
                                         
                                         logGuildActionAsync(member.getGuildId(), guild.getName(), 
                                             requesterUuid.toString(), requester.getPlayerName(),
@@ -465,7 +465,7 @@ public class GuildService {
                             }
                         }
                     } catch (SQLException e) {
-                        logger.severe("更新成员角色时发生错误: " + e.getMessage());
+                        logger.severe("Błąd podczas aktualizacji roli członka: " + e.getMessage());
                     }
                     return false;
                 });
@@ -474,13 +474,13 @@ public class GuildService {
     }
     
     /**
-     * 更新成员角色 (同步包装器)
+     * Zaktualizuj rolę członka (synchronicznie)
      */
     public boolean updateMemberRole(UUID playerUuid, GuildMember.Role newRole, UUID requesterUuid) {
         try {
             return updateMemberRoleAsync(playerUuid, newRole, requesterUuid).get();
         } catch (Exception e) {
-            logger.severe("更新成员角色时发生异常: " + e.getMessage());
+            logger.severe("Wyjątek podczas aktualizacji roli członka: " + e.getMessage());
             return false;
         }
     }

@@ -1,50 +1,50 @@
-# 工会插件主配置文件
+# Główny plik konfiguracyjny pluginu gildii
 
-# 工会配置
+# Konfiguracja gildii
 guild:
-  # 工会名称最小长度
+  # Minimalna długość nazwy gildii
   min-name-length: 3
-  # 工会名称最大长度
+  # Maksymalna długość nazwy gildii
   max-name-length: 20
-  # 工会标签最大长度
+  # Maksymalna długość tagu gildii
   max-tag-length: 6
-  # 工会描述最大长度
+  # Maksymalna długość opisu gildii
   max-description-length: 100
-  # 工会最大成员数量
+  # Maksymalna liczba członków gildii
   max-members: 50
-  # 创建工会所需费用（需要Vault）
+  # Koszt utworzenia gildii (wymaga Vault)
   creation-cost: 1000.0
-  # 工会标签颜色
+  # Kolor tagu gildii
   tag-color: "&6"
-  # 工会名称颜色
+  # Kolor nazwy gildii
   name-color: "&e"
 
-# 显示配置
+# Konfiguracja wyświetlania
 display:
-  # 职位颜色（可自定义）
+  # Kolory rang (można dostosować)
   role-colors:
-    leader: "&6"    # 会长：金色
-    officer: "&b"   # 官员：亮蓝色
-    member: "&7"    # 成员：灰色
-  # 职位左侧分隔符配置
+    leader: "&6"    # Lider: Złoty
+    officer: "&b"   # Oficer: Jasnoniebieski
+    member: "&7"    # Członek: Szary
+  # Konfiguracja separatora po lewej stronie rangi
   role-separator:
     enabled: true
     text: " | "
-    color-per-role: true      # 分隔符是否跟随职位颜色
-    default-color: "&7"      # 无职位或未入会时的默认颜色（一般不会使用）
+    color-per-role: true      # Czy separator ma mieć kolor rangi
+    default-color: "&7"      # Domyślny kolor bez rangi lub gildii (zazwyczaj nieużywany)
 
-# 权限配置
+# Konfiguracja uprawnień
 permissions:
-  # 默认权限
+  # Domyślne uprawnienia
   default:
-    can-create: true         # 允许创建工会（未入会时）
-    can-invite: false        # 非成员默认不可邀请
-    can-kick: false          # 非成员默认不可踢人
-    can-promote: false       # 非成员默认不可升职
-    can-demote: false        # 非成员默认不可降职
-    can-delete: false        # 非成员默认不可删会
-  
-  # 会长权限（若缺省则视为全开）
+    can-create: true         # Pozwól na tworzenie gildii (gdy nie w gildii)
+    can-invite: false        # Nie-członek domyślnie nie może zapraszać
+    can-kick: false          # Nie-członek domyślnie nie może wyrzucać
+    can-promote: false       # Nie-członek domyślnie nie może awansować
+    can-demote: false        # Nie-członek domyślnie nie może degradować
+    can-delete: false        # Nie-członek domyślnie nie może usuwać gildii
+
+  # Uprawnienia lidera (jeśli pominięte, zakłada się pełne uprawnienia)
   leader:
     can-create: true
     can-invite: true
@@ -53,72 +53,72 @@ permissions:
     can-demote: true
     can-delete: true
 
-  # 官员权限
+  # Uprawnienia oficera
   officer:
-    can-create: true         # 允许代操作与创建
+    can-create: true         # Pozwól na operacje zastępcze i tworzenie
     can-invite: true
     can-kick: true
-    can-promote: false       # 是否允许升职成员（通常只会长）
-    can-demote: false        # 是否允许降职成员（通常只会长）
-    can-delete: false        # 是否允许删除工会（通常只会长）
-  
-  # 成员权限
+    can-promote: false       # Czy może awansować członków (zazwyczaj tylko lider)
+    can-demote: false        # Czy może degradować członków (zazwyczaj tylko lider)
+    can-delete: false        # Czy może usunąć gildię (zazwyczaj tylko lider)
+
+  # Uprawnienia członka
   member:
-    can-create: true         # 允许退会后再创建新工会
+    can-create: true         # Pozwól na utworzenie nowej gildii po opuszczeniu obecnej
     can-invite: false
     can-kick: false
     can-promote: false
     can-demote: false
     can-delete: false
 
-# 消息配置
+# Konfiguracja wiadomości
 messages:
-  # 是否启用消息
+  # Czy włączyć wiadomości
   enabled: true
-  # 消息前缀
-  prefix: "&6[工会] &r"
-  # 消息颜色
+  # Prefiks wiadomości
+  prefix: "&6[Gildia] &r"
+  # Kolory wiadomości
   colors:
     success: "&a"
     error: "&c"
     info: "&e"
     warning: "&6"
 
-# GUI配置
+# Konfiguracja GUI
 gui:
-  # 是否启用GUI
+  # Czy włączyć GUI
   enabled: true
-  # GUI标题
-  title: "&6工会系统"
-  # GUI大小（必须是9的倍数）
+  # Tytuł GUI
+  title: "&6System Gildii"
+  # Rozmiar GUI (musi być wielokrotnością 9)
   size: 54
-  # 是否显示工会标签
+  # Czy pokazywać tag gildii
   show-tag: true
-  # 是否显示工会描述
+  # Czy pokazywać opis gildii
   show-description: true
 
-# 占位符配置
+# Konfiguracja placeholderów
 placeholders:
-  # 是否启用占位符
+  # Czy włączyć placeholdery
   enabled: true
-  # 占位符前缀
+  # Prefiks placeholderów
   prefix: "guild_"
-  # 是否缓存占位符
+  # Czy buforować placeholdery
   cache-enabled: true
-  # 缓存时间（秒）
+  # Czas buforowania (sekundy)
   cache-time: 30
 
-# 日志配置
+# Konfiguracja logowania
 logging:
-  # 是否启用日志
+  # Czy włączyć logowanie
   enabled: true
-  # 日志级别: DEBUG, INFO, WARN, ERROR
+  # Poziom logowania: DEBUG, INFO, WARN, ERROR
   level: INFO
-  # 是否记录到文件
+  # Czy zapisywać logi do pliku
   file-logging: true
-  # 日志文件路径
+  # Ścieżka do pliku logów
   log-file: "logs/guild.log"
-  # 最大日志文件大小（MB）
+  # Maksymalny rozmiar pliku logów (MB)
   max-file-size: 10
-  # 保留的日志文件数量
+  # Liczba przechowywanych plików logów
   max-files: 5

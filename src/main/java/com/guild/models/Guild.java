@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 
 /**
- * 工会数据模型
+ * Model danych gildii
  */
 public class Guild {
     
@@ -105,7 +105,7 @@ public class Guild {
         this.updatedAt = updatedAt;
     }
     
-    // 家的位置相关方法
+    // Metody związane z lokalizacją domu
     public String getHomeWorld() {
         return homeWorld;
     }
@@ -187,14 +187,14 @@ public class Guild {
     }
     
     /**
-     * 检查工会是否设置了家
+     * Sprawdź, czy gildia ma ustawiony dom
      */
     public boolean hasHome() {
         return homeWorld != null && !homeWorld.isEmpty();
     }
     
     /**
-     * 设置家的位置
+     * Ustaw lokalizację domu
      */
     public void setHome(Location location) {
         this.homeWorld = location.getWorld().getName();
@@ -206,7 +206,7 @@ public class Guild {
     }
     
     /**
-     * 获取家的位置（需要传入世界对象）
+     * Pobierz lokalizację domu (wymaga obiektu świata)
      */
     public Location getHomeLocation(org.bukkit.World world) {
         if (!hasHome() || world == null) {

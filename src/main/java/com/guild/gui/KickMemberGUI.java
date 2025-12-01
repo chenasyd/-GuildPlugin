@@ -18,23 +18,23 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 踢出成员GUI
+ * GUI Wyrzucania Członków
  */
 public class KickMemberGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
     private int currentPage = 0;
     private List<GuildMember> members;
-    
+
     public KickMemberGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
         this.guild = guild;
-        // 初始化时获取成员列表
+        // Inicjalizacja listy członków
         this.members = List.of();
         loadMembers();
     }
-    
+
     private void loadMembers() {
         plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(memberList -> {
             this.members = memberList.stream()
@@ -42,59 +42,59 @@ public class KickMemberGUI implements GUI {
                 .collect(java.util.stream.Collectors.toList());
         });
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6踢出成员 - 第" + (currentPage + 1) + "页");
+        return ColorUtils.colorize("&6Wyrzuć członka - Strona " + (currentPage + 1));
     }
-    
+
     @Override
     public int getSize() {
         return 54;
     }
-    
+
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Wypełnij obramowanie
         fillBorder(inventory);
-        
-        // 显示成员列表
+
+        // Wyświetl listę członków
         displayMembers(inventory);
-        
-        // 添加导航按钮
+
+        // Dodaj przyciski nawigacyjne
         setupNavigationButtons(inventory);
     }
-    
+
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot >= 9 && slot < 45) {
-            // 成员头像区域
+            // Obszar głów członków
             int memberIndex = slot - 9 + (currentPage * 36);
             if (memberIndex < members.size()) {
                 GuildMember member = members.get(memberIndex);
                 handleKickMember(player, member);
             }
         } else if (slot == 45) {
-            // 上一页
+            // Poprzednia strona
             if (currentPage > 0) {
                 currentPage--;
                 plugin.getGuiManager().refreshGUI(player);
             }
         } else if (slot == 53) {
-            // 下一页
+            // Następna strona
             int maxPage = (members.size() - 1) / 36;
             if (currentPage < maxPage) {
                 currentPage++;
                 plugin.getGuiManager().refreshGUI(player);
             }
         } else if (slot == 49) {
-            // 返回
+            // Powrót
             plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
         }
     }
-    
+
     /**
-     * 填充边框
+     * Wypełnij obramowanie
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -107,119 +107,119 @@ public class KickMemberGUI implements GUI {
             inventory.setItem(i + 8, border);
         }
     }
-    
+
     /**
-     * 显示成员列表
+     * Wyświetl listę członków
      */
     private void displayMembers(Inventory inventory) {
         int startIndex = currentPage * 36;
         int endIndex = Math.min(startIndex + 36, members.size());
-        
+
         for (int i = startIndex; i < endIndex; i++) {
             GuildMember member = members.get(i);
             int slot = 9 + (i - startIndex);
-            
+
             ItemStack memberHead = createMemberHead(member);
             inventory.setItem(slot, memberHead);
         }
     }
-    
+
     /**
-     * 设置导航按钮
+     * Skonfiguruj przyciski nawigacyjne
      */
     private void setupNavigationButtons(Inventory inventory) {
-        // 上一页按钮
+        // Przycisk poprzedniej strony
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&e上一页"),
-                ColorUtils.colorize("&7点击查看上一页")
+                ColorUtils.colorize("&ePoprzednia strona"),
+                ColorUtils.colorize("&7Kliknij, aby zobaczyć poprzednią stronę")
             );
             inventory.setItem(45, prevPage);
         }
-        
-        // 下一页按钮
+
+        // Przycisk następnej strony
         int maxPage = (members.size() - 1) / 36;
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&e下一页"),
-                ColorUtils.colorize("&7点击查看下一页")
+                ColorUtils.colorize("&eNastępna strona"),
+                ColorUtils.colorize("&7Kliknij, aby zobaczyć następną stronę")
             );
             inventory.setItem(53, nextPage);
         }
-        
-        // 返回按钮
+
+        // Przycisk powrotu
         ItemStack back = createItem(
             Material.BARRIER,
-            ColorUtils.colorize("&c返回"),
-            ColorUtils.colorize("&7返回工会设置")
+            ColorUtils.colorize("&cPowrót"),
+            ColorUtils.colorize("&7Powrót do ustawień gildii")
         );
         inventory.setItem(49, back);
     }
-    
+
     /**
-     * 创建成员头像
+     * Utwórz głowę członka
      */
     private ItemStack createMemberHead(GuildMember member) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
-        
+
         if (meta != null) {
             meta.setDisplayName(ColorUtils.colorize("&c" + member.getPlayerName()));
             meta.setLore(Arrays.asList(
-                ColorUtils.colorize("&7职位: &e" + member.getRole().getDisplayName()),
-                ColorUtils.colorize("&7加入时间: &e" + member.getJoinedAt()),
-                ColorUtils.colorize("&c点击踢出该成员")
+                ColorUtils.colorize("&7Rola: &e" + member.getRole().getDisplayName()),
+                ColorUtils.colorize("&7Dołączył: &e" + member.getJoinedAt()),
+                ColorUtils.colorize("&cKliknij, aby wyrzucić tego członka")
             ));
             head.setItemMeta(meta);
         }
-        
+
         return head;
     }
-    
+
     /**
-     * 处理踢出成员
+     * Obsługa wyrzucenia członka
      */
     private void handleKickMember(Player kicker, GuildMember member) {
-        // 检查权限
+        // Sprawdź uprawnienia
         if (!kicker.hasPermission("guild.kick")) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&cBrak uprawnień");
             kicker.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
-        // 踢出成员
+
+        // Wyrzuć członka
         plugin.getGuildService().removeGuildMemberAsync(member.getPlayerUuid(), kicker.getUniqueId()).thenAccept(success -> {
             if (success) {
-                String kickerMessage = plugin.getConfigManager().getMessagesConfig().getString("kick.success", "&a已踢出成员 &e{player} &a！")
+                String kickerMessage = plugin.getConfigManager().getMessagesConfig().getString("kick.success", "&aWyrzucono członka &e{player}&a!")
                     .replace("{player}", member.getPlayerName());
                 kicker.sendMessage(ColorUtils.colorize(kickerMessage));
-                
-                // 通知被踢出的玩家
+
+                // Powiadom wyrzuconego gracza
                 Player kickedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
                 if (kickedPlayer != null) {
-                    String kickedMessage = plugin.getConfigManager().getMessagesConfig().getString("kick.kicked", "&c你被踢出了工会 &e{guild} &c！")
+                    String kickedMessage = plugin.getConfigManager().getMessagesConfig().getString("kick.kicked", "&cZostałeś wyrzucony z gildii &e{guild}&c!")
                         .replace("{guild}", guild.getName());
                     kickedPlayer.sendMessage(ColorUtils.colorize(kickedMessage));
                 }
-                
-                // 刷新GUI
+
+                // Odśwież GUI
                 plugin.getGuiManager().openGUI(kicker, new KickMemberGUI(plugin, guild));
             } else {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("kick.failed", "&c踢出成员失败！");
+                String message = plugin.getConfigManager().getMessagesConfig().getString("kick.failed", "&cWyrzucenie członka nie powiodło się!");
                 kicker.sendMessage(ColorUtils.colorize(message));
             }
         });
     }
-    
+
     /**
-     * 创建物品
+     * Utwórz przedmiot
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        
+
         if (meta != null) {
             meta.setDisplayName(name);
             if (lore.length > 0) {
@@ -227,7 +227,7 @@ public class KickMemberGUI implements GUI {
             }
             item.setItemMeta(meta);
         }
-        
+
         return item;
     }
 }

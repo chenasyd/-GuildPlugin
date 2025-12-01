@@ -14,54 +14,54 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 /**
- * 确认离开工会GUI
+ * GUI Potwierdzenia Opuszczenia Gildii
  */
 public class ConfirmLeaveGuildGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
-    
+
     public ConfirmLeaveGuildGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
         this.guild = guild;
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&c确认离开工会");
+        return ColorUtils.colorize("&cPotwierdź opuszczenie gildii");
     }
-    
+
     @Override
     public int getSize() {
         return 27;
     }
-    
+
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Wypełnij obramowanie
         fillBorder(inventory);
-        
-        // 显示确认信息
+
+        // Wyświetl informacje potwierdzające
         displayConfirmInfo(inventory);
-        
-        // 添加确认和取消按钮
+
+        // Skonfiguruj przyciski
         setupButtons(inventory);
     }
-    
+
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 11: // 确认离开
+            case 11: // Potwierdź opuszczenie
                 handleConfirmLeave(player);
                 break;
-            case 15: // 取消
+            case 15: // Anuluj
                 handleCancel(player);
                 break;
         }
     }
-    
+
     /**
-     * 填充边框
+     * Wypełnij obramowanie
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -74,84 +74,84 @@ public class ConfirmLeaveGuildGUI implements GUI {
             inventory.setItem(i + 8, border);
         }
     }
-    
+
     /**
-     * 显示确认信息
+     * Wyświetl informacje potwierdzające
      */
     private void displayConfirmInfo(Inventory inventory) {
         ItemStack info = createItem(
             Material.BOOK,
-            ColorUtils.colorize("&c确认离开工会"),
-            ColorUtils.colorize("&7工会: &e" + guild.getName()),
-            ColorUtils.colorize("&7你确定要离开这个工会吗？"),
-            ColorUtils.colorize("&c此操作不可撤销！")
+            ColorUtils.colorize("&cPotwierdź opuszczenie gildii"),
+            ColorUtils.colorize("&7Gildia: &e" + guild.getName()),
+            ColorUtils.colorize("&7Czy na pewno chcesz opuścić tę gildię?"),
+            ColorUtils.colorize("&cTej operacji nie można cofnąć!")
         );
         inventory.setItem(13, info);
     }
-    
+
     /**
-     * 设置按钮
+     * Skonfiguruj przyciski
      */
     private void setupButtons(Inventory inventory) {
-        // 确认离开按钮
+        // Przycisk potwierdzenia opuszczenia
         ItemStack confirm = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize("&c确认离开"),
-            ColorUtils.colorize("&7点击确认离开工会")
+            ColorUtils.colorize("&cPotwierdź opuszczenie"),
+            ColorUtils.colorize("&7Kliknij, aby potwierdzić opuszczenie gildii")
         );
         inventory.setItem(11, confirm);
-        
-        // 取消按钮
+
+        // Przycisk anulowania
         ItemStack cancel = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize("&a取消"),
-            ColorUtils.colorize("&7取消离开工会")
+            ColorUtils.colorize("&aAnuluj"),
+            ColorUtils.colorize("&7Anuluj opuszczenie gildii")
         );
         inventory.setItem(15, cancel);
     }
-    
+
     /**
-     * 处理确认离开
+     * Obsługa potwierdzenia opuszczenia
      */
     private void handleConfirmLeave(Player player) {
-        // 检查是否是会长
+        // Sprawdź, czy gracz jest liderem
         if (player.getUniqueId().equals(guild.getLeaderUuid())) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("leave.leader-cannot-leave", "&c工会会长不能离开工会！请先转让会长职位或删除工会。");
+            String message = plugin.getConfigManager().getMessagesConfig().getString("leave.leader-cannot-leave", "&cLider gildii nie może opuścić gildii! Proszę najpierw przekazać przywództwo lub usunąć gildię.");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
-        // 离开工会
+
+        // Opuść gildię
         plugin.getGuildService().removeGuildMemberAsync(player.getUniqueId(), player.getUniqueId()).thenAccept(success -> {
             if (success) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("leave.success", "&a你已成功离开工会 &e{guild} &a！")
+                String message = plugin.getConfigManager().getMessagesConfig().getString("leave.success", "&aPomyślnie opuściłeś gildię &e{guild} &a!")
                     .replace("{guild}", guild.getName());
                 player.sendMessage(ColorUtils.colorize(message));
-                
-                // 关闭GUI
+
+                // Zamknij GUI
                 player.closeInventory();
             } else {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("leave.failed", "&c离开工会失败！");
+                String message = plugin.getConfigManager().getMessagesConfig().getString("leave.failed", "&cOpuszczenie gildii nie powiodło się!");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
     }
-    
+
     /**
-     * 处理取消
+     * Obsługa anulowania
      */
     private void handleCancel(Player player) {
-        // 返回工会设置GUI
+        // Powrót do GUI ustawień gildii
         plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
     }
-    
+
     /**
-     * 创建物品
+     * Utwórz przedmiot
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        
+
         if (meta != null) {
             meta.setDisplayName(name);
             if (lore.length > 0) {
@@ -159,7 +159,7 @@ public class ConfirmLeaveGuildGUI implements GUI {
             }
             item.setItemMeta(meta);
         }
-        
+
         return item;
     }
 }
