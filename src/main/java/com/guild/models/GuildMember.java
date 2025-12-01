@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * 工会成员数据模型
+ * Model danych członka gildii
  */
 public class GuildMember {
     

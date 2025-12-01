@@ -10,91 +10,91 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * GUI工具类 - 统一处理GUI中的变量替换和颜色代码
+ * Narzędzia GUI - ujednolicone przetwarzanie zmiennych i kodów kolorów w GUI
  */
 public class GUIUtils {
-    
+
     /**
-     * 处理GUI配置中的变量替换
-     * @param text 原始文本
-     * @param guild 工会对象
-     * @param player 玩家对象
-     * @return 替换后的文本
+     * Przetwórz zmienne w konfiguracji GUI
+     * @param text Oryginalny tekst
+     * @param guild Obiekt gildii
+     * @param player Obiekt gracza
+     * @return Tekst po zamianie
      */
     public static String processGUIVariables(String text, Guild guild, Player player) {
         if (text == null) {
             return "";
         }
-        
-        // 使用PlaceholderUtils处理基础变量
+
+        // Użyj PlaceholderUtils do obsługi podstawowych zmiennych
         String result = PlaceholderUtils.replaceGuildPlaceholders(text, guild, player);
-        
-        // 确保颜色代码正确应用
+
+        // Upewnij się, że kody kolorów są poprawnie zastosowane
         return ColorUtils.colorize(result);
     }
-    
+
     /**
-     * 异步处理GUI配置中的变量替换（包含动态数据）
-     * @param text 原始文本
-     * @param guild 工会对象
-     * @param player 玩家对象
-     * @param plugin 插件实例
-     * @return 替换后的文本的CompletableFuture
+     * Asynchronicznie przetwórz zmienne w konfiguracji GUI (w tym dane dynamiczne)
+     * @param text Oryginalny tekst
+     * @param guild Obiekt gildii
+     * @param player Obiekt gracza
+     * @param plugin Instancja pluginu
+     * @return CompletableFuture z tekstem po zamianie
      */
     public static CompletableFuture<String> processGUIVariablesAsync(String text, Guild guild, Player player, GuildPlugin plugin) {
         if (text == null) {
             return CompletableFuture.completedFuture("");
         }
-        
-        // 先处理静态变量
+
+        // Najpierw przetwórz zmienne statyczne
         String result = processGUIVariables(text, guild, player);
-        
-        // 异步获取动态数据
+
+        // Asynchronicznie pobierz dane dynamiczne
         return plugin.getGuildService().getGuildMemberCountAsync(guild.getId()).thenApply(memberCount -> {
             return result
                 .replace("{member_count}", String.valueOf(memberCount))
-                .replace("{online_member_count}", String.valueOf(memberCount)); // 暂时使用总成员数
+                .replace("{online_member_count}", String.valueOf(memberCount)); // Tymczasowo użyj całkowitej liczby członków
         });
     }
-    
+
     /**
-     * 处理GUI配置中的物品描述列表
-     * @param loreList 原始描述列表
-     * @param guild 工会对象
-     * @param player 玩家对象
-     * @return 处理后的描述列表
+     * Przetwórz listę opisów przedmiotów w konfiguracji GUI
+     * @param loreList Oryginalna lista opisów
+     * @param guild Obiekt gildii
+     * @param player Obiekt gracza
+     * @return Przetworzona lista opisów
      */
     public static List<String> processGUILore(List<String> loreList, Guild guild, Player player) {
         List<String> processedLore = new ArrayList<>();
-        
+
         if (loreList != null) {
             for (String line : loreList) {
                 processedLore.add(processGUIVariables(line, guild, player));
             }
         }
-        
+
         return processedLore;
     }
-    
+
     /**
-     * 异步处理GUI配置中的物品描述列表（包含动态数据）
-     * @param loreList 原始描述列表
-     * @param guild 工会对象
-     * @param player 玩家对象
-     * @param plugin 插件实例
-     * @return 处理后的描述列表的CompletableFuture
+     * Asynchronicznie przetwórz listę opisów przedmiotów w konfiguracji GUI (w tym dane dynamiczne)
+     * @param loreList Oryginalna lista opisów
+     * @param guild Obiekt gildii
+     * @param player Obiekt gracza
+     * @param plugin Instancja pluginu
+     * @return CompletableFuture z przetworzoną listą opisów
      */
     public static CompletableFuture<List<String>> processGUILoreAsync(List<String> loreList, Guild guild, Player player, GuildPlugin plugin) {
         if (loreList == null || loreList.isEmpty()) {
             return CompletableFuture.completedFuture(new ArrayList<>());
         }
-        
+
         List<CompletableFuture<String>> futures = new ArrayList<>();
-        
+
         for (String line : loreList) {
             futures.add(processGUIVariablesAsync(line, guild, player, plugin));
         }
-        
+
         return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
             .thenApply(v -> {
                 List<String> processedLore = new ArrayList<>();
@@ -102,56 +102,56 @@ public class GUIUtils {
                     try {
                         processedLore.add(future.get());
                     } catch (Exception e) {
-                        plugin.getLogger().warning("处理GUI描述时发生错误: " + e.getMessage());
-                        processedLore.add("&c错误");
+                        plugin.getLogger().warning("Błąd podczas przetwarzania opisu GUI: " + e.getMessage());
+                        processedLore.add("&cBłąd");
                     }
                 }
                 return processedLore;
             });
     }
-    
+
     /**
-     * 处理成员相关的GUI变量
-     * @param text 原始文本
-     * @param member 成员对象
-     * @param guild 工会对象
-     * @return 替换后的文本
+     * Przetwórz zmienne GUI związane z członkami
+     * @param text Oryginalny tekst
+     * @param member Obiekt członka
+     * @param guild Obiekt gildii
+     * @return Tekst po zamianie
      */
     public static String processMemberGUIVariables(String text, GuildMember member, Guild guild) {
         if (text == null) {
             return "";
         }
-        
+
         return PlaceholderUtils.replaceMemberPlaceholders(text, member, guild);
     }
-    
+
     /**
-     * 验证变量是否被正确替换
-     * @param text 要检查的文本
-     * @return 是否包含未替换的变量
+     * Sprawdź, czy zmienne zostały poprawnie zastąpione
+     * @param text Tekst do sprawdzenia
+     * @return Czy zawiera niezastąpione zmienne
      */
     public static boolean hasUnresolvedVariables(String text) {
         if (text == null) {
             return false;
         }
-        
-        // 检查是否包含未替换的变量占位符
+
+        // Sprawdź czy zawiera niezastąpione placeholdery zmiennych
         return text.contains("{") && text.contains("}");
     }
-    
+
     /**
-     * 获取未替换的变量列表
-     * @param text 要检查的文本
-     * @return 未替换的变量列表
+     * Pobierz listę niezastąpionych zmiennych
+     * @param text Tekst do sprawdzenia
+     * @return Lista niezastąpionych zmiennych
      */
     public static List<String> getUnresolvedVariables(String text) {
         List<String> unresolved = new ArrayList<>();
-        
+
         if (text == null) {
             return unresolved;
         }
-        
-        // 简单的变量检测（可以扩展为更复杂的正则表达式）
+
+        // Proste wykrywanie zmiennych (można rozszerzyć o bardziej złożone wyrażenia regularne)
         String[] parts = text.split("\\{");
         for (int i = 1; i < parts.length; i++) {
             String part = parts[i];
@@ -161,7 +161,7 @@ public class GUIUtils {
                 unresolved.add("{" + variable + "}");
             }
         }
-        
+
         return unresolved;
     }
 }

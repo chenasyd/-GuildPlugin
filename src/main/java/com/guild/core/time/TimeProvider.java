@@ -6,9 +6,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 时间提供器：统一获取“现实中的时间”（操作系统时间）。
- * 默认使用服务器操作系统的本地时区。
- * 后续如需支持“按玩家时区显示”，可在此类扩展按玩家ID读取/缓存时区。
+ * Dostawca czasu: ujednolica pobieranie "rzeczywistego czasu" (czas systemu operacyjnego).
+ * Domyślnie używa lokalnej strefy czasowej systemu operacyjnego serwera.
+ * Jeśli w przyszłości zajdzie potrzeba obsługi "wyświetlania według strefy czasowej gracza", można rozszerzyć tę klasę o odczyt/buforowanie strefy czasowej według ID gracza.
  */
 public final class TimeProvider {
 

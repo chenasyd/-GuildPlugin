@@ -6,53 +6,53 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * GUI接口 - 定义GUI的基本方法
+ * Interfejs GUI - definiuje podstawowe metody GUI
  */
 public interface GUI {
-    
+
     /**
-     * 获取GUI标题
+     * Pobierz tytuł GUI
      */
     String getTitle();
-    
+
     /**
-     * 获取GUI大小（必须是9的倍数）
+     * Pobierz rozmiar GUI (musi być wielokrotnością 9)
      */
     int getSize();
-    
+
     /**
-     * 设置GUI内容
+     * Ustaw zawartość GUI
      */
     void setupInventory(Inventory inventory);
-    
+
     /**
-     * 处理GUI点击事件
+     * Obsłuż zdarzenie kliknięcia GUI
      */
     void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType);
-    
+
     /**
-     * 处理GUI关闭事件
+     * Obsłuż zdarzenie zamknięcia GUI
      */
     default void onClose(Player player) {
-        // 默认实现为空
+        // Domyślna implementacja jest pusta
     }
-    
+
     /**
-     * 刷新GUI
+     * Odśwież GUI
      */
     default void refresh(Player player) {
-        // 默认实现为空
+        // Domyślna implementacja jest pusta
     }
-    
+
     /**
-     * 检查GUI是否有效
+     * Sprawdź, czy GUI jest ważne
      */
     default boolean isValid() {
         return true;
     }
-    
+
     /**
-     * 获取GUI类型标识
+     * Pobierz identyfikator typu GUI
      */
     default String getGuiType() {
         return this.getClass().getSimpleName();

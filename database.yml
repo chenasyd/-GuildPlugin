@@ -1,108 +1,108 @@
-# 数据库配置文件
+# Plik konfiguracyjny bazy danych
 
-# 数据库类型: mysql 或 sqlite
+# Typ bazy danych: mysql lub sqlite
 type: sqlite
 
-# MySQL配置（当type为mysql时使用）
+# Konfiguracja MySQL (używana, gdy type to mysql)
 mysql:
-  # 数据库主机地址
+  # Adres hosta bazy danych
   host: localhost
-  # 数据库端口
+  # Port bazy danych
   port: 3306
-  # 数据库名称
+  # Nazwa bazy danych
   database: guild
-  # 数据库用户名
+  # Nazwa użytkownika bazy danych
   username: root
-  # 数据库密码
+  # Hasło bazy danych
   password: ""
-  # 连接池大小
+  # Rozmiar puli połączeń
   pool-size: 10
-  # 最小空闲连接数
+  # Minimalna liczba bezczynnych połączeń
   min-idle: 5
-  # 连接超时时间（毫秒）
+  # Czas oczekiwania na połączenie (milisekundy)
   connection-timeout: 30000
-  # 空闲超时时间（毫秒）
+  # Czas bezczynności (milisekundy)
   idle-timeout: 600000
-  # 连接最大生命周期（毫秒）
+  # Maksymalny czas życia połączenia (milisekundy)
   max-lifetime: 1800000
-  # 是否使用SSL
+  # Czy używać SSL
   use-ssl: false
-  # 字符编码
+  # Kodowanie znaków
   character-encoding: UTF-8
-  # 时区
+  # Strefa czasowa
   timezone: UTC
 
-# SQLite配置（当type为sqlite时使用）
+# Konfiguracja SQLite (używana, gdy type to sqlite)
 sqlite:
-  # 数据库文件路径（相对于插件数据文件夹）
+  # Ścieżka do pliku bazy danych (względem folderu danych pluginu)
   file: guild.db
-  # 是否启用WAL模式
+  # Czy włączyć tryb WAL
   wal-mode: true
-  # 同步模式: OFF, NORMAL, FULL
+  # Tryb synchronizacji: OFF, NORMAL, FULL
   synchronous: NORMAL
-  # 缓存大小（KB）
+  # Rozmiar pamięci podręcznej (KB)
   cache-size: 2000
-  # 页面大小（字节）
+  # Rozmiar strony (bajty)
   page-size: 4096
-  # 是否启用外键约束
+  # Czy włączyć klucze obce
   foreign-keys: true
 
-# 连接池配置
+# Konfiguracja puli połączeń
 connection-pool:
-  # 最大连接数
+  # Maksymalny rozmiar puli
   maximum-pool-size: 10
-  # 最小空闲连接数
+  # Minimalna liczba bezczynnych połączeń
   minimum-idle: 5
-  # 连接超时时间（毫秒）
+  # Czas oczekiwania na połączenie (milisekundy)
   connection-timeout: 30000
-  # 空闲超时时间（毫秒）
+  # Czas bezczynności (milisekundy)
   idle-timeout: 600000
-  # 连接最大生命周期（毫秒）
+  # Maksymalny czas życia połączenia (milisekundy)
   max-lifetime: 1800000
-  # 连接测试查询
+  # Zapytanie testujące połączenie
   connection-test-query: "SELECT 1"
-  # 连接验证超时时间（毫秒）
+  # Czas oczekiwania na walidację (milisekundy)
   validation-timeout: 5000
-  # 是否在连接池启动时验证连接
+  # Czy walidować połączenie przy starcie
   validate-on-start: true
 
-# 数据库表配置
+# Konfiguracja tabel bazy danych
 tables:
-  # 工会表
+  # Tabela gildii
   guilds:
     name: guilds
-    # 是否自动创建表
+    # Czy automatycznie tworzyć tabelę
     auto-create: true
-    # 表结构版本
+    # Wersja struktury tabeli
     version: 1
-  
-  # 工会成员表
+
+  # Tabela członków gildii
   guild_members:
     name: guild_members
     auto-create: true
     version: 1
-  
-  # 工会申请表
+
+  # Tabela aplikacji do gildii
   guild_applications:
     name: guild_applications
     auto-create: true
     version: 1
-  
-  # 工会邀请表
+
+  # Tabela zaproszeń do gildii
   guild_invites:
     name: guild_invites
     auto-create: true
     version: 1
 
-# 备份配置
+# Konfiguracja kopii zapasowych
 backup:
-  # 是否启用自动备份
+  # Czy włączyć automatyczne kopie zapasowe
   enabled: false
-  # 备份间隔（小时）
+  # Interwał kopii zapasowych (godziny)
   interval: 24
-  # 备份保留天数
+  # Liczba dni przechowywania kopii zapasowych
   retention-days: 7
-  # 备份文件路径
+  # Ścieżka do plików kopii zapasowych
   path: "backups/"
-  # 备份文件格式
+  # Format pliku kopii zapasowej
   format: "yyyy-MM-dd_HH-mm-ss"

@@ -19,70 +19,70 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 工会列表GUI
+ * GUI Listy Gildii
  */
 public class GuildListGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private int currentPage = 0;
-    private static final int GUILDS_PER_PAGE = 28; // 4行7列，除去边框
+    private static final int GUILDS_PER_PAGE = 28; // 4 rzędy po 7 kolumn, bez obramowania
     private String searchQuery = "";
     private String filterType = "all"; // all, name, tag
-    
+
     public GuildListGUI(GuildPlugin plugin) {
         this.plugin = plugin;
     }
-    
+
     public GuildListGUI(GuildPlugin plugin, String searchQuery, String filterType) {
         this.plugin = plugin;
         this.searchQuery = searchQuery;
         this.filterType = filterType;
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.title", "&6工会列表"));
+        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.title", "&6Lista gildii"));
     }
-    
+
     @Override
     public int getSize() {
         return plugin.getConfigManager().getGuiConfig().getInt("guild-list.size", 54);
     }
-    
+
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Wypełnij obramowanie
         fillBorder(inventory);
-        
-        // 添加功能按钮
+
+        // Dodaj przyciski funkcyjne
         setupFunctionButtons(inventory);
-        
-        // 加载工会列表
+
+        // Załaduj listę gildii
         loadGuilds(inventory);
     }
-    
+
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 检查是否是功能按钮
+        // Sprawdź czy to przycisk funkcyjny
         if (isFunctionButton(slot)) {
             handleFunctionButton(player, slot);
             return;
         }
-        
-        // 检查是否是分页按钮
+
+        // Sprawdź czy to przycisk paginacji
         if (isPaginationButton(slot)) {
             handlePaginationButton(player, slot);
             return;
         }
-        
-        // 检查是否是工会按钮
+
+        // Sprawdź czy to slot gildii
         if (isGuildSlot(slot)) {
             handleGuildClick(player, slot, clickedItem, clickType);
         }
     }
-    
+
     /**
-     * 填充边框
+     * Wypełnij obramowanie
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -95,95 +95,95 @@ public class GuildListGUI implements GUI {
             inventory.setItem(i + 8, border);
         }
     }
-    
+
     /**
-     * 设置功能按钮
+     * Skonfiguruj przyciski funkcyjne
      */
     private void setupFunctionButtons(Inventory inventory) {
-        // 搜索按钮
+        // Przycisk wyszukiwania
         ItemStack search = createItem(
             Material.COMPASS,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.search.name", "&e搜索工会")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.search.lore.1", "&7搜索特定工会")),
-            ColorUtils.colorize("&7当前搜索: " + (searchQuery.isEmpty() ? "无" : searchQuery))
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.search.name", "&eSzukaj gildii")),
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.search.lore.1", "&7Wyszukaj konkretną gildię")),
+            ColorUtils.colorize("&7Obecne wyszukiwanie: " + (searchQuery.isEmpty() ? "Brak" : searchQuery))
         );
         inventory.setItem(45, search);
-        
-        // 筛选按钮
+
+        // Przycisk filtrowania
         ItemStack filter = createItem(
             Material.HOPPER,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.filter.name", "&e筛选")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.filter.lore.1", "&7按条件筛选工会")),
-            ColorUtils.colorize("&7当前筛选: " + getFilterDisplayName())
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.filter.name", "&eFiltrowanie")),
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.filter.lore.1", "&7Filtruj gildie według kryteriów")),
+            ColorUtils.colorize("&7Obecny filtr: " + getFilterDisplayName())
         );
         inventory.setItem(47, filter);
-        
-        // 返回按钮
+
+        // Przycisk powrotu
         ItemStack back = createItem(
             Material.ARROW,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.back.name", "&7返回")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.back.lore.1", "&7返回主菜单"))
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.back.name", "&7Powrót")),
+            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.back.lore.1", "&7Powrót do menu głównego"))
         );
         inventory.setItem(49, back);
     }
-    
+
     /**
-     * 加载工会列表
+     * Załaduj listę gildii
      */
     private void loadGuilds(Inventory inventory) {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            // 确保在主线程中更新GUI
+            // Upewnij się, że aktualizacja GUI odbywa się w głównym wątku
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guilds == null || guilds.isEmpty()) {
-                    // 显示无工会信息
+                    // Wyświetl informację o braku gildii
                     ItemStack noGuilds = createItem(
                         Material.BARRIER,
-                        ColorUtils.colorize("&c暂无工会"),
-                        ColorUtils.colorize("&7服务器中还没有工会")
+                        ColorUtils.colorize("&cBrak gildii"),
+                        ColorUtils.colorize("&7Na serwerze nie ma jeszcze żadnych gildii")
                     );
                     inventory.setItem(22, noGuilds);
                     return;
                 }
-                
-                // 应用搜索和筛选
+
+                // Zastosuj wyszukiwanie i filtrowanie
                 List<Guild> filteredGuilds = filterGuilds(guilds);
-                
+
                 if (filteredGuilds.isEmpty()) {
-                    // 显示无搜索结果
+                    // Wyświetl brak wyników wyszukiwania
                     ItemStack noResults = createItem(
                         Material.BARRIER,
-                        ColorUtils.colorize("&c无搜索结果"),
-                        ColorUtils.colorize("&7没有找到匹配的工会")
+                        ColorUtils.colorize("&cBrak wyników"),
+                        ColorUtils.colorize("&7Nie znaleziono pasujących gildii")
                     );
                     inventory.setItem(22, noResults);
                     return;
                 }
-                
-                // 计算分页
+
+                // Oblicz paginację
                 int totalPages = (filteredGuilds.size() - 1) / GUILDS_PER_PAGE;
                 if (currentPage > totalPages) {
                     currentPage = totalPages;
                 }
-                
-                // 设置分页按钮
+
+                // Skonfiguruj przyciski paginacji
                 setupPaginationButtons(inventory, totalPages);
-                
-                // 显示当前页的工会
+
+                // Wyświetl gildie na bieżącej stronie
                 displayGuilds(inventory, filteredGuilds);
             });
         });
     }
-    
+
     /**
-     * 筛选工会
+     * Filtruj gildie
      */
     private List<Guild> filterGuilds(List<Guild> guilds) {
         List<Guild> filtered = new ArrayList<>();
-        
+
         for (Guild guild : guilds) {
             boolean matches = true;
-            
-            // 应用搜索
+
+            // Zastosuj wyszukiwanie
             if (!searchQuery.isEmpty()) {
                 switch (filterType) {
                     case "name":
@@ -202,277 +202,277 @@ public class GuildListGUI implements GUI {
                         break;
                 }
             }
-            
+
             if (matches) {
                 filtered.add(guild);
             }
         }
-        
+
         return filtered;
     }
-    
+
     /**
-     * 显示工会列表
+     * Wyświetl listę gildii
      */
     private void displayGuilds(Inventory inventory, List<Guild> guilds) {
         int startIndex = currentPage * GUILDS_PER_PAGE;
         int endIndex = Math.min(startIndex + GUILDS_PER_PAGE, guilds.size());
-        
-        // 创建所有工会的异步任务
+
+        // Lista asynchronicznych zadań dla wszystkich gildii
         List<CompletableFuture<Void>> futures = new ArrayList<>();
-        
-        int slotIndex = 10; // 从第2行第2列开始
+
+        int slotIndex = 10; // Rozpocznij od 2 rzędu, 2 kolumny
         for (int i = startIndex; i < endIndex; i++) {
             Guild guild = guilds.get(i);
-            if (slotIndex >= 44) break; // 避免超出显示区域
-            
+            if (slotIndex >= 44) break; // Unikaj wyjścia poza obszar wyświetlania
+
             final int finalSlotIndex = slotIndex;
-            
-            // 异步获取成员数量并创建物品
+
+            // Asynchronicznie pobierz liczbę członków i utwórz przedmiot
             CompletableFuture<Void> future = plugin.getGuildService().getGuildMemberCountAsync(guild.getId())
                 .thenAccept(memberCount -> {
-                    // 在主线程中更新GUI
+                    // Aktualizuj GUI w głównym wątku
                     CompatibleScheduler.runTask(plugin, () -> {
                         ItemStack guildItem = createGuildItemWithMemberCount(guild, memberCount);
                         inventory.setItem(finalSlotIndex, guildItem);
                     });
                 });
-            
+
             futures.add(future);
-            
+
             slotIndex++;
-            if (slotIndex % 9 == 8) { // 跳过边框
+            if (slotIndex % 9 == 8) { // Pomiń obramowanie
                 slotIndex += 2;
             }
         }
-        
-        // 等待所有异步任务完成
+
+        // Poczekaj na zakończenie wszystkich zadań asynchronicznych
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
     }
-    
+
     /**
-     * 设置分页按钮
+     * Skonfiguruj przyciski paginacji
      */
     private void setupPaginationButtons(Inventory inventory, int totalPages) {
-        // 上一页按钮
+        // Przycisk poprzedniej strony
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.previous-page.name", "&c上一页")),
-                ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.previous-page.lore.1", "&7查看上一页"))
+                ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.previous-page.name", "&cPoprzednia strona")),
+                ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.previous-page.lore.1", "&7Zobacz poprzednią stronę"))
             );
             inventory.setItem(18, previousPage);
         }
-        
-        // 下一页按钮
+
+        // Przycisk następnej strony
         if (currentPage < totalPages) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.next-page.name", "&a下一页")),
-                ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.next-page.lore.1", "&7查看下一页"))
+                ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.next-page.name", "&aNastępna strona")),
+                ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-list.items.next-page.lore.1", "&7Zobacz następną stronę"))
             );
             inventory.setItem(26, nextPage);
         }
     }
-    
+
     /**
-     * 创建工会物品（带成员数量）
+     * Utwórz przedmiot gildii (z liczbą członków)
      */
     private ItemStack createGuildItemWithMemberCount(Guild guild, int memberCount) {
         List<String> lore = new ArrayList<>();
-        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7标签: {guild_tag}", guild, null));
-        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7会长: {leader_name}", guild, null));
-        lore.add(ColorUtils.colorize("&7成员: " + memberCount));
-        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7创建时间: {guild_created_time}", guild, null));
+        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7Tag: {guild_tag}", guild, null));
+        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7Lider: {leader_name}", guild, null));
+        lore.add(ColorUtils.colorize("&7Członkowie: " + memberCount));
+        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7Data utworzenia: {guild_created_time}", guild, null));
         lore.add("");
-        lore.add(ColorUtils.colorize("&a左键: 查看详情"));
-        lore.add(ColorUtils.colorize("&e右键: 申请加入"));
-        
+        lore.add(ColorUtils.colorize("&aLewy przycisk: Zobacz szczegóły"));
+        lore.add(ColorUtils.colorize("&ePrawy przycisk: Aplikuj"));
+
         return createItem(
             Material.SHIELD,
             PlaceholderUtils.replaceGuildPlaceholders("&e{guild_name}", guild, null),
             lore.toArray(new String[0])
         );
     }
-    
+
     /**
-     * 创建工会物品（原始方法，用于兼容性）
+     * Utwórz przedmiot gildii (oryginalna metoda dla kompatybilności)
      */
     private ItemStack createGuildItem(Guild guild) {
-        return createGuildItemWithMemberCount(guild, 0); // 使用默认值
+        return createGuildItemWithMemberCount(guild, 0); // Użyj wartości domyślnej
     }
-    
+
     /**
-     * 获取筛选显示名称
+     * Pobierz wyświetlaną nazwę filtra
      */
     private String getFilterDisplayName() {
         switch (filterType) {
             case "name":
-                return "按名称";
+                return "Według nazwy";
             case "tag":
-                return "按标签";
+                return "Według tagu";
             default:
-                return "全部";
+                return "Wszystkie";
         }
     }
-    
+
     /**
-     * 检查是否是功能按钮
+     * Sprawdź czy to przycisk funkcyjny
      */
     private boolean isFunctionButton(int slot) {
         return slot == 45 || slot == 47 || slot == 49;
     }
-    
+
     /**
-     * 检查是否是分页按钮
+     * Sprawdź czy to przycisk paginacji
      */
     private boolean isPaginationButton(int slot) {
         return slot == 18 || slot == 26;
     }
-    
+
     /**
-     * 检查是否是工会槽位
+     * Sprawdź czy to slot gildii
      */
     private boolean isGuildSlot(int slot) {
         return slot >= 10 && slot <= 44 && slot % 9 != 0 && slot % 9 != 8;
     }
-    
+
     /**
-     * 处理功能按钮点击
+     * Obsługa kliknięcia przycisku funkcyjnego
      */
     private void handleFunctionButton(Player player, int slot) {
         switch (slot) {
-            case 45: // 搜索
+            case 45: // Szukaj
                 handleSearch(player);
                 break;
-            case 47: // 筛选
+            case 47: // Filtruj
                 handleFilter(player);
                 break;
-            case 49: // 返回
+            case 49: // Powrót
                 plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
                 break;
         }
     }
-    
+
     /**
-     * 处理分页按钮点击
+     * Obsługa kliknięcia przycisku paginacji
      */
     private void handlePaginationButton(Player player, int slot) {
-        if (slot == 18) { // 上一页
+        if (slot == 18) { // Poprzednia strona
             if (currentPage > 0) {
                 currentPage--;
                 refreshInventory(player);
             }
-        } else if (slot == 26) { // 下一页
+        } else if (slot == 26) { // Następna strona
             currentPage++;
             refreshInventory(player);
         }
     }
-    
+
     /**
-     * 处理工会点击
+     * Obsługa kliknięcia gildii
      */
     private void handleGuildClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (clickType == ClickType.LEFT) {
-            // 查看详情
+            // Zobacz szczegóły
             handleViewGuildDetails(player, slot);
         } else if (clickType == ClickType.RIGHT) {
-            // 申请加入
+            // Aplikuj o dołączenie
             handleApplyToGuild(player, slot);
         }
     }
-    
+
     /**
-     * 处理搜索
+     * Obsługa wyszukiwania
      */
     private void handleSearch(Player player) {
-        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.search-dev", "&a搜索功能正在开发中...");
+        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.search-dev", "&aFunkcja wyszukiwania jest w trakcie tworzenia...");
         player.sendMessage(ColorUtils.colorize(message));
     }
-    
+
     /**
-     * 处理筛选
+     * Obsługa filtrowania
      */
     private void handleFilter(Player player) {
-        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.filter-dev", "&a筛选功能正在开发中...");
+        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.filter-dev", "&aFunkcja filtrowania jest w trakcie tworzenia...");
         player.sendMessage(ColorUtils.colorize(message));
     }
-    
+
     /**
-     * 处理查看工会详情
+     * Obsługa przeglądania szczegółów gildii
      */
     private void handleViewGuildDetails(Player player, int slot) {
-        // 获取当前页的工会列表
+        // Pobierz listę gildii na bieżącej stronie
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            // 确保在主线程中执行GUI操作
+            // Upewnij się, że operacje GUI są wykonywane w głównym wątku
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guilds == null || guilds.isEmpty()) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guilds", "&c没有找到工会");
+                    String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guilds", "&cNie znaleziono gildii");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
-                
-                // 计算工会在列表中的索引
+
+                // Oblicz indeks gildii na liście
                 int guildIndex = currentPage * GUILDS_PER_PAGE + (slot - 10);
                 if (guildIndex >= 0 && guildIndex < guilds.size()) {
                     Guild guild = guilds.get(guildIndex);
-                    
-                    // 打开工会信息GUI
+
+                    // Otwórz GUI informacji o gildii
                     GuildInfoGUI guildInfoGUI = new GuildInfoGUI(plugin, player, guild);
                     plugin.getGuiManager().openGUI(player, guildInfoGUI);
                 }
             });
         });
     }
-    
+
     /**
-     * 处理申请加入工会
+     * Obsługa aplikacji o dołączenie do gildii
      */
     private void handleApplyToGuild(Player player, int slot) {
-        // 检查玩家是否已有工会
+        // Sprawdź czy gracz już należy do gildii
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(playerGuild -> {
-            // 确保在主线程中执行GUI操作
+            // Upewnij się, że operacje GUI są wykonywane w głównym wątku
             CompatibleScheduler.runTask(plugin, () -> {
                 if (playerGuild != null) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("create.already-in-guild", "&c您已经在一个工会中了！");
+                    String message = plugin.getConfigManager().getMessagesConfig().getString("create.already-in-guild", "&cJesteś już w gildii!");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
-                
-                // 获取当前页的工会列表
+
+                // Pobierz listę gildii na bieżącej stronie
                 plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-                    // 确保在主线程中执行GUI操作
+                    // Upewnij się, że operacje GUI są wykonywane w głównym wątku
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (guilds == null || guilds.isEmpty()) {
-                            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guilds", "&c没有找到工会");
+                            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guilds", "&cNie znaleziono gildii");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
-                        
-                        // 计算工会在列表中的索引
+
+                        // Oblicz indeks gildii na liście
                         int guildIndex = currentPage * GUILDS_PER_PAGE + (slot - 10);
                         if (guildIndex >= 0 && guildIndex < guilds.size()) {
                             Guild guild = guilds.get(guildIndex);
-                            
-                            // 检查是否已有待处理申请
+
+                            // Sprawdź czy już wysłano aplikację
                             plugin.getGuildService().hasPendingApplicationAsync(player.getUniqueId(), guild.getId()).thenAccept(hasPending -> {
-                                // 确保在主线程中执行GUI操作
+                                // Upewnij się, że operacje GUI są wykonywane w głównym wątku
                                 CompatibleScheduler.runTask(plugin, () -> {
                                     if (hasPending) {
-                                        String message = plugin.getConfigManager().getMessagesConfig().getString("apply.already-applied", "&c您已经申请过这个工会了！");
+                                        String message = plugin.getConfigManager().getMessagesConfig().getString("apply.already-applied", "&cJuż aplikowałeś do tej gildii!");
                                         player.sendMessage(ColorUtils.colorize(message));
                                         return;
                                     }
-                                    
-                                    // 提交申请
+
+                                    // Wyślij aplikację
                                     plugin.getGuildService().submitApplicationAsync(guild.getId(), player.getUniqueId(), player.getName(), "").thenAccept(success -> {
-                                        // 确保在主线程中执行GUI操作
+                                        // Upewnij się, że operacje GUI są wykonywane w głównym wątku
                                         CompatibleScheduler.runTask(plugin, () -> {
                                             if (success) {
-                                                String message = plugin.getConfigManager().getMessagesConfig().getString("apply.success", "&a申请已提交！");
+                                                String message = plugin.getConfigManager().getMessagesConfig().getString("apply.success", "&aAplikacja wysłana!");
                                                 player.sendMessage(ColorUtils.colorize(message));
                                             } else {
-                                                String message = plugin.getConfigManager().getMessagesConfig().getString("apply.failed", "&c申请提交失败！");
+                                                String message = plugin.getConfigManager().getMessagesConfig().getString("apply.failed", "&cWysłanie aplikacji nie powiodło się!");
                                                 player.sendMessage(ColorUtils.colorize(message));
                                             }
                                         });
@@ -485,21 +485,21 @@ public class GuildListGUI implements GUI {
             });
         });
     }
-    
+
     /**
-     * 刷新库存
+     * Odśwież ekwipunek
      */
     private void refreshInventory(Player player) {
         plugin.getGuiManager().refreshGUI(player);
     }
-    
+
     /**
-     * 创建物品
+     * Utwórz przedmiot
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        
+
         if (meta != null) {
             meta.setDisplayName(name);
             if (lore.length > 0) {
@@ -507,7 +507,7 @@ public class GuildListGUI implements GUI {
             }
             item.setItemMeta(meta);
         }
-        
+
         return item;
     }
 }
