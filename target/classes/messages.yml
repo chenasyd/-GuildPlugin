@@ -1,0 +1,540 @@
+# 工会插件消息配置文件
+
+# 通用消息
+general:
+  prefix: "&6[工会] &r"
+  no-permission: "&c您没有权限执行此操作！"
+  player-only: "&c此命令只能由玩家执行！"
+  player-not-found: "&c玩家 {player} 未找到！"
+  guild-not-found: "&c工会 {guild} 未找到！"
+  invalid-arguments: "&c参数无效！"
+  error-occurred: "&c发生错误：{error}"
+  service-error: "&c工会服务未初始化！"
+  unknown-command: "&c未知命令！使用 /guild help 查看帮助。"
+
+# 工会创建相关消息
+create:
+  success: "&a工会 {name} 创建成功！"
+  name-too-short: "&c工会名称太短！最少需要 {min} 个字符。"
+  name-too-long: "&c工会名称太长！最多只能有 {max} 个字符。"
+  name-exists: "&c工会名称 {name} 已存在！"
+  name-required: "&c请先输入工会名称！"
+  tag-exists: "&c工会标签 {tag} 已存在！"
+  tag-too-long: "&c工会标签太长！最多只能有 {max} 个字符。"
+  already-in-guild: "&c您已经在一个工会中了！"
+  insufficient-funds: "&c您的余额不足！创建工会需要 {cost} 金币。"
+  usage: "&e用法: /guild create <名称> [标签] [描述]"
+  description-too-long: "&c工会描述不能超过100个字符！"
+  failed: "&c工会创建失败！可能的原因："
+  failed-reason-1: "&c- 工会名称或标签已存在"
+  failed-reason-2: "&c- 您已经加入了其他工会"
+  name-info: "&e工会名称: {name}"
+  tag-info: "&e工会标签: [{tag}]"
+  description-info: "&e工会描述: {description}"
+  economy-not-available: "&c经济系统不可用，无法创建工会！"
+  payment-failed: "&c扣除创建费用失败！"
+  payment-refunded: "&e已退还创建费用 {cost} 金币。"
+  cost-info: "&e创建费用: {amount}"
+
+# 工会信息相关消息
+info:
+  title: "&6=== 工会信息 ==="
+  name: "&e名称: &f{name}"
+  tag: "&e标签: &f{tag}"
+  description: "&e描述: &f{description}"
+  leader: "&e会长: &f{leader}"
+  members: "&e成员数量: &f{count}/{max}"
+  created: "&e创建时间: &f{date}"
+  no-guild: "&c您还没有加入任何工会！"
+  role: "&e您的角色: &f{role}"
+
+# 工会成员相关消息
+members:
+  title: "&6=== 工会成员 ==="
+  leader: "&c{name} &7(会长)"
+  officer: "&6{name} &7(官员)"
+  member: "&f{name} &7(成员)"
+  joined: "&7加入时间: {date}"
+  no-members: "&c工会中没有成员！"
+  member-format: "&e{role} {name} &7- {status}"
+  total: "&e总计: {count} 人"
+
+# 邀请相关消息
+invite:
+  sent: "&a已向 {player} 发送工会邀请！"
+  received: "&e{inviter} 邀请您加入工会: {guild}"
+  accepted: "&a您已接受 {guild} 的邀请！"
+  declined: "&c您已拒绝 {guild} 的邀请！"
+  expired: "&c工会邀请已过期！"
+  already-invited: "&c{player} 已经收到了邀请！"
+  no-permission: "&c您没有权限邀请玩家！"
+  usage: "&e用法: /guild invite <玩家>"
+  title: "&6=== 工会邀请 ==="
+  guild-tag: "&e工会标签: [{tag}]"
+  accept-command: "&e输入 &a/guild accept {inviter} &e接受邀请"
+  decline-command: "&e输入 &c/guild decline {inviter} &e拒绝邀请"
+  already-in-guild: "&c玩家 {player} 已经加入了其他工会！"
+  cannot-invite-self: "&c您不能邀请自己！"
+
+# 踢出相关消息
+kick:
+  success: "&a已将 {player} 踢出工会！"
+  kicked: "&c您已被踢出工会 {guild}！"
+  no-permission: "&c您没有权限踢出玩家！"
+  cannot-kick-leader: "&c不能踢出工会会长！"
+  usage: "&e用法: /guild kick <玩家>"
+  player-not-found: "&c玩家 {player} 不在线！"
+  not-in-guild: "&c玩家 {player} 不在您的工会中！"
+  cannot-kick-self: "&c您不能踢出自己！使用 /guild leave 离开工会。"
+  failed: "&c踢出玩家失败！"
+
+# 离开工会相关消息
+leave:
+  success: "&a您已离开工会！"
+  leader-cannot-leave: "&c工会会长不能离开工会！请先转让会长职位或删除工会。"
+  confirm: "&c您确定要离开工会吗？使用 /guild leave confirm 确认。"
+  member-error: "&c工会成员信息错误！"
+  success-with-guild: "&a您已成功离开工会: {guild}"
+  failed: "&c离开工会失败！"
+  use-delete: "&c如果您想解散工会，请使用 /guild delete 命令。"
+
+# 删除工会相关消息
+delete:
+  success: "&a工会 {guild} 已删除！"
+  no-permission: "&c您没有权限删除工会！"
+  confirm: "&c您确定要删除工会吗？这将解散整个工会！使用 /guild delete confirm 确认。"
+  only-leader: "&c只有工会会长才能删除工会！"
+  warning: "&c警告：删除工会将永久解散工会，所有成员将被移除！"
+  confirm-command: "&c如果您确定要删除工会，请再次输入: /guild delete confirm"
+  cancel-command: "&c或者输入: /guild delete cancel 取消操作"
+
+# 工会家相关消息
+sethome:
+  success: "&a工会家设置成功！"
+  failed: "&c设置工会家失败！"
+  only-leader: "&c只有工会会长才能设置工会家！"
+  no-permission: "&c您没有权限设置工会家！"
+home:
+  success: "&a已传送到工会家！"
+  not-set: "&c工会家尚未设置！"
+  no-permission: "&c您没有权限传送到工会家！"
+  teleport-failed: "&c传送到工会家失败！"
+
+# 申请相关消息
+application:
+  sent: "&a您的申请已发送给 {guild}！"
+  received: "&a收到来自 {player} 的申请！"
+  accepted: "&a您的申请已被 {guild} 接受！"
+  declined: "&c您的申请已被 {guild} 拒绝！"
+  already-applied: "&c您已经向 {guild} 申请过了！"
+  usage: "&e用法: /guild apply <工会> [消息]"
+
+# 申请相关消息（GUI使用）
+apply:
+  success: "&a申请已提交！"
+  failed: "&c申请提交失败！"
+  already-applied: "&c您已经申请过这个工会了！"
+
+# 工会关系相关消息
+relation:
+  no-guild: "&c您还没有加入工会！"
+  only-leader: "&c只有工会会长才能管理工会关系！"
+  help-title: "&6=== 工会关系管理 ==="
+  help-list: "&e/guild relation list &7- 查看所有关系"
+  help-create: "&e/guild relation create <工会> <类型> &7- 创建关系"
+  help-delete: "&e/guild relation delete <工会> &7- 删除关系"
+  help-accept: "&e/guild relation accept <工会> &7- 接受关系请求"
+  help-reject: "&e/guild relation reject <工会> &7- 拒绝关系请求"
+  help-types: "&7关系类型: &eally(盟友), enemy(敌对), war(开战), truce(停战), neutral(中立)"
+  create-usage: "&e用法: /guild relation create <目标工会> <关系类型>"
+  delete-usage: "&e用法: /guild relation delete <目标工会>"
+  accept-usage: "&e用法: /guild relation accept <目标工会>"
+  reject-usage: "&e用法: /guild relation reject <目标工会>"
+  unknown-subcommand: "&c未知的子命令！使用 /guild relation 查看帮助。"
+  no-relations: "&7您的工会还没有任何关系。"
+  list-title: "&6=== 工会关系列表 ==="
+  list-format: "&e{other_guild} &7- {type} ({status})"
+  invalid-type: "&c无效的关系类型！有效类型: ally, enemy, war, truce, neutral"
+  target-not-found: "&c目标工会 {guild} 不存在！"
+  cannot-relation-self: "&c不能与自己建立关系！"
+  create-success: "&a已向 {guild} 发送 {type} 关系请求！"
+  create-failed: "&c创建关系失败！可能已经存在关系。"
+  delete-success: "&a已删除与 {guild} 的关系！"
+  delete-failed: "&c删除关系失败！可能关系不存在。"
+  accept-success: "&a已接受 {guild} 的关系请求！"
+  accept-failed: "&c接受关系失败！可能没有待处理的关系请求。"
+  reject-success: "&c已拒绝 {guild} 的关系请求！"
+  reject-failed: "&c拒绝关系失败！可能没有待处理的关系请求。"
+
+# 权限相关消息
+permissions:
+  promote:
+    success: "&a已将 {player} 提升为 {role}！"
+    no-permission: "&c您没有权限提升玩家！"
+    cannot-promote: "&c无法提升该玩家！"
+    usage: "&e用法: /guild promote <玩家>"
+    player-not-found: "&c玩家 {player} 不在线！"
+    not-in-guild: "&c玩家 {player} 不在您的工会中！"
+    already-highest: "&c玩家 {player} 已经是最高职位！"
+    cannot-promote-self: "&c您不能提升自己！"
+  demote:
+    success: "&a已将 {player} 降级为 {role}！"
+    no-permission: "&c您没有权限降级玩家！"
+    cannot-demote: "&c无法降级该玩家！"
+    usage: "&e用法: /guild demote <玩家>"
+    player-not-found: "&c玩家 {player} 不在线！"
+    not-in-guild: "&c玩家 {player} 不在您的工会中！"
+    already-lowest: "&c玩家 {player} 已经是最低职位！"
+    cannot-demote-self: "&c您不能降级自己！"
+    cannot-demote-leader: "&c不能降级工会会长！"
+
+# 管理员命令消息
+admin:
+  no-permission: "&c您没有管理员权限！"
+  unknown-command: "&c未知命令！使用 /guildadmin help 查看帮助。"
+  reload:
+    success: "&a配置重载成功！"
+    error: "&c配置重载失败：{error}"
+  list:
+    title: "&6=== 工会列表 ==="
+    entry: "&e{guild} &7- {count} 成员"
+    empty: "&c没有找到任何工会！"
+    total: "&e总计: {count} 个工会"
+  info:
+    title: "&6=== 工会详细信息 ==="
+    id: "&eID: &f{id}"
+    name: "&e名称: &f{name}"
+    tag: "&e标签: &f{tag}"
+    description: "&e描述: &f{description}"
+    leader: "&e会长: &f{leader}"
+    member-count: "&e成员数量: &f{count}"
+    created: "&e创建时间: &f{created}"
+    updated: "&e更新时间: &f{updated}"
+    usage: "&e用法: /guildadmin info <工会名称>"
+    not-found: "&c工会 {guild} 不存在！"
+    members-title: "&6=== 成员列表 ==="
+  delete:
+    success: "&a工会 {guild} 已被管理员删除！"
+    error: "&c删除工会失败：{error}"
+    usage: "&e用法: /guildadmin delete <工会名称>"
+    not-found: "&c工会 {guild} 不存在！"
+    warning: "&c警告：删除工会将永久解散工会，所有成员将被移除！"
+    confirm: "&c如果您确定要删除工会，请使用: /guildadmin delete {guild} confirm"
+    success-with-name: "&a已成功删除工会: {guild}"
+    failed: "&c删除工会失败！"
+  kick:
+    success: "&a已将 {player} 从 {guild} 踢出！"
+    error: "&c踢出玩家失败：{error}"
+    usage: "&e用法: /guildadmin kick <玩家名称> <工会名称>"
+    guild-not-found: "&c工会 {guild} 不存在！"
+    player-not-found: "&c玩家 {player} 不在线！"
+    player-not-in-guild: "&c玩家 {player} 不在工会 {guild} 中！"
+    cannot-kick-leader: "&c不能踢出工会会长！请先转让会长职位或删除工会。"
+    success-with-names: "&a已成功从工会 {guild} 踢出玩家 {player}！"
+    kicked-by-admin: "&c您已被管理员从工会 {guild} 踢出！"
+    failed: "&c踢出玩家失败！"
+  help:
+    title: "&6=== 工会管理员命令帮助 ==="
+    reload: "&e/guildadmin reload &7- 重载配置文件"
+    list: "&e/guildadmin list &7- 列出所有工会"
+    info: "&e/guildadmin info <工会名称> &7- 查看工会详细信息"
+    delete: "&e/guildadmin delete <工会名称> &7- 删除指定工会"
+    kick: "&e/guildadmin kick <玩家> <工会> &7- 从工会踢出玩家"
+    help: "&e/guildadmin help &7- 显示此帮助信息"
+
+# GUI相关消息
+gui:
+  title: "&6工会系统"
+  create-guild: "&a创建工会"
+  guild-info: "&e工会信息"
+  member-management: "&e成员管理"
+  application-management: "&e申请管理"
+  guild-settings: "&e工会设置"
+  guild-list: "&e工会列表"
+  guild-relations: "&e工会关系"
+  invite-player: "&e邀请玩家"
+  leave-guild: "&c离开工会"
+  delete-guild: "&4删除工会"
+  confirm: "&a确认"
+  cancel: "&c取消"
+  back: "&7返回"
+  next-page: "&a下一页"
+  previous-page: "&c上一页"
+  no-guild: "&c您还没有工会"
+  no-permission: "&c权限不足"
+  opening: "&a正在打开工会系统GUI..."
+
+  # 主界面功能
+  create-guild-success: "&a创建工会功能已就绪"
+  guild-info-success: "&a工会信息功能已就绪"
+  member-management-success: "&a成员管理功能已就绪"
+  application-management-success: "&a申请管理功能已就绪"
+  guild-settings-success: "&a工会设置功能已就绪"
+  guild-list-success: "&a工会列表功能已就绪"
+  guild-relations-success: "&a工会关系功能已就绪"
+
+  # 功能消息
+  invite-member-success: "&a邀请成员功能已就绪"
+  kick-member-success: "&a踢出成员功能已就绪"
+  promote-member-success: "&a提升成员功能已就绪"
+  demote-member-success: "&a降级成员功能已就绪"
+  accept-application-success: "&a接受申请功能已就绪"
+  reject-application-success: "&a拒绝申请功能已就绪"
+  application-history-success: "&a申请历史功能已就绪"
+  change-description-success: "&a修改描述功能已就绪"
+  change-tag-success: "&a修改标签功能已就绪"
+  permissions-success: "&a权限设置功能已就绪"
+  search-success: "&a搜索功能已就绪"
+  filter-success: "&a筛选功能已就绪"
+  view-guild-details-success: "&a查看工会详情功能已就绪"
+  apply-to-guild-success: "&a申请加入工会功能已就绪"
+  name-input-success: "&a工会名称输入功能已就绪"
+  tag-input-success: "&a工会标签输入功能已就绪"
+  description-input-success: "&a工会描述输入功能已就绪"
+
+  # 成员管理
+  invite-member: "&a邀请成员"
+  kick-member: "&c踢出成员"
+  promote-member: "&6提升成员"
+  demote-member: "&7降级成员"
+
+  # 申请管理
+  pending-applications: "&e待处理申请"
+  application-history: "&e申请历史"
+  no-pending-applications: "&a没有待处理的申请"
+  no-application-history: "&a没有申请历史"
+
+  # 工会设置
+  change-description: "&e修改描述"
+  change-tag: "&e修改标签"
+  set-home: "&e设置工会家"
+  permissions: "&e权限设置"
+
+  # 工会列表
+  search: "&e搜索工会"
+  filter: "&e筛选"
+  no-guilds-found: "&c没有找到工会"
+  search-dev: "&a搜索功能正在开发中..."
+  filter-dev: "&a筛选功能正在开发中..."
+  no-guilds: "&c没有找到工会"
+
+  # 工会关系
+  allies: "&a盟友工会"
+  enemies: "&c敌对工会"
+  neutral: "&7中立工会"
+  relations-success: "&a工会关系功能已就绪"
+
+  # 分页
+  page-info: "&7第 {current} 页，共 {total} 页"
+  no-more-pages: "&c已经是最后一页了"
+  no-previous-pages: "&c已经是第一页了"
+
+  # 权限提示
+  permission-required: "&c需要权限: {permission}"
+  leader-only: "&c只有工会会长才能执行此操作"
+  officer-or-higher: "&c需要官员或更高权限"
+
+  # 操作提示
+  click-to-view: "&7点击查看详情"
+  click-to-edit: "&7点击编辑"
+  click-to-confirm: "&7点击确认"
+  click-to-cancel: "&7点击取消"
+
+  # 成员详情
+  confirm-kick: "&c确定要踢出成员 {member} 吗？输入 &f/guild kick {member} confirm &c确认"
+  confirm-promote: "&a确定要提升成员 {member} 为官员吗？输入 &f/guild promote {member} confirm &a确认"
+  confirm-demote: "&c确定要降级成员 {member} 吗？输入 &f/guild demote {member} confirm &c确认"
+  cannot-kick-leader: "&c不能踢出工会会长"
+  cannot-modify-leader: "&c不能修改工会会长的职位"
+  open-chat: "&e请输入要发送给 {member} 的消息:"
+
+  # 输入相关
+  input-name: "&a请在聊天框中输入工会名称（3-20字符）："
+  input-description: "&a请在聊天框中输入新的工会描述（最多100字符）："
+  input-tag: "&a请在聊天框中输入新的工会标签（最多10字符）："
+  description-too-long: "&c描述过长，最多100字符！"
+  tag-too-long: "&c标签过长，最多10字符！"
+  name-set: "&a工会名称已设置为：{name}"
+  tag-set: "&a工会标签已设置为：{tag}"
+  description-set: "&a工会描述已设置为：{description}"
+  description-updated: "&a工会描述已更新！"
+  description-update-failed: "&c工会描述更新失败！"
+  tag-updated: "&a工会标签已更新！"
+  tag-update-failed: "&c工会标签更新失败！"
+
+# 占位符相关消息
+placeholders:
+  no-guild: "无工会"
+  no-tag: "无标签"
+  no-description: "无描述"
+  unknown-role: "未知角色"
+
+# 帮助相关消息
+help:
+  title: "&6=== 工会系统帮助 ==="
+  main-menu: "&e/guild &7- 打开工会主界面"
+  create: "&e/guild create <名称> [标签] [描述] &7- 创建工会"
+  info: "&e/guild info &7- 查看工会信息"
+  members: "&e/guild members &7- 查看工会成员"
+  invite: "&e/guild invite <玩家> &7- 邀请玩家加入工会"
+  kick: "&e/guild kick <玩家> &7- 踢出工会成员"
+  leave: "&e/guild leave &7- 离开工会"
+  delete: "&e/guild delete &7- 删除工会"
+  promote: "&e/guild promote <玩家> &7- 提升工会成员"
+  demote: "&e/guild demote <玩家> &7- 降级工会成员"
+  accept: "&e/guild accept <邀请者> &7- 接受工会邀请"
+  decline: "&e/guild decline <邀请者> &7- 拒绝工会邀请"
+  sethome: "&e/guild sethome &7- 设置工会家"
+  home: "&e/guild home &7- 传送到工会家"
+  logs: "&e/guild logs &7- 查看工会操作日志"
+  help: "&e/guild help &7- 显示此帮助信息"
+
+
+
+# 错误消息
+errors:
+  database:
+    connection-failed: "&c数据库连接失败！"
+    query-failed: "&c数据库查询失败！"
+    table-not-found: "&c数据表不存在！"
+  config:
+    invalid-value: "&c配置值无效：{path}"
+    missing-value: "&c缺少配置项：{path}"
+  general:
+    unknown-error: "&c发生未知错误！"
+    plugin-disabled: "&c插件已禁用！"
+
+
+
+# 工会经济系统消息
+economy:
+  # 基础操作
+  no-guild: "&c您还没有加入工会！"
+  info: "&6工会经济信息"
+  balance: "&7当前资金: &e{balance}"
+  level: "&7当前等级: &e{level}"
+  max-members: "&7最大成员: &e{max_members}"
+  insufficient-balance: "&c您的余额不足！"
+  guild-insufficient-balance: "&c工会余额不足！"
+  leader-only: "&c只有工会会长才能执行此操作！"
+  target-guild-not-found: "&c目标工会不存在！"
+  cannot-transfer-to-self: "&c不能转账给自己的工会！"
+  deposit-success: "&a成功向工会存款 &e{amount}！"
+  deposit-failed: "&c存款失败！"
+  withdraw-success: "&a成功从工会取款 &e{amount}！"
+  withdraw-failed: "&c取款失败！"
+  transfer-success: "&a成功向工会 &e{target} &a转账 &e{amount}！"
+  transfer-failed: "&c转账失败！"
+  insufficient-funds: "&c工会资金不足！"
+  insufficient-personal-funds: "&c您的个人资金不足！"
+
+  # 等级系统
+  level-up: "&a工会升级成功！当前等级：{level}，最大成员数：{max_members}"
+  level-up-failed: "&c工会升级失败！"
+  max-level-reached: "&c工会已达到最高等级！"
+  upgrade-progress: "&e升级进度：{progress}%"
+
+  # 贡献系统
+  contribution-recorded: "&a贡献记录已保存！"
+  total-contribution: "&e您的总贡献：{amount} 金币"
+
+
+
+  # 解散
+  disband-compensation: "&a工会解散，您获得了 {amount} 金币补偿！"
+
+  # 管理员操作
+  admin-set-balance: "&a工会 {guild} 的资金已设置为 {amount}！"
+  admin-add-balance: "&a工会 {guild} 的资金已增加 {amount}！"
+  admin-remove-balance: "&a工会 {guild} 的资金已减少 {amount}！"
+  admin-balance-updated: "&a工会 {guild} 的资金已更新为 {amount}！"
+  admin-balance-failed: "&c更新工会资金失败！"
+
+  # 等级需求
+  level-1-requirement: "0-5000 金币"
+  level-2-requirement: "5000-10000 金币"
+  level-3-requirement: "10000-20000 金币"
+  level-4-requirement: "20000-35000 金币"
+  level-5-requirement: "35000-50000 金币"
+  level-6-requirement: "50000-75000 金币"
+  level-7-requirement: "75000-100000 金币"
+  level-8-requirement: "100000-150000 金币"
+  level-9-requirement: "150000-200000 金币"
+  level-10-requirement: "200000+ 金币"
+
+# 工会详情相关消息
+guild-detail:
+  title: "&6工会详情"
+  guild-info: "&e工会信息"
+  economy-info: "&e经济信息"
+  leader-info: "&6工会会长"
+  description-info: "&e工会描述"
+  members-title: "&a工会成员"
+  more-members: "&e更多成员"
+  freeze-guild: "&c冻结工会"
+  unfreeze-guild: "&a解冻工会"
+  delete-guild: "&4删除工会"
+  economy-management: "&e资金管理"
+  refresh-info: "&a刷新信息"
+  back: "&c返回"
+
+  # 状态信息
+  status-normal: "&a正常"
+  status-frozen: "&c已冻结"
+  online-status: "&a在线"
+  offline-status: "&7离线"
+
+  # 操作提示
+  freeze-success: "&a工会 {guild} 已被冻结！"
+  unfreeze-success: "&a工会 {guild} 已被解冻！"
+  freeze-failed: "&c冻结/解冻操作失败！"
+  delete-confirm: "&c您确定要删除工会 {guild} 吗？"
+  delete-command: "&c输入 &f/guildadmin delete {guild} confirm &c确认删除"
+  no-description: "&7暂无描述"
+
+# 系统设置相关消息
+system-settings:
+  title: "&4系统设置"
+  debug-mode: "&e详细后台信息显示"
+  auto-save: "&e自动保存数据"
+  economy-system: "&e经济系统"
+  relation-system: "&e工会关系系统"
+  level-system: "&e工会等级系统"
+  application-system: "&e申请加入系统"
+  invite-system: "&e邀请系统"
+  guild-home-system: "&e工会家系统"
+  reload-configs: "&a重载配置"
+  database-maintenance: "&b数据库维护"
+  backup-data: "&6备份数据"
+  save-settings: "&a保存设置"
+
+  # 状态信息
+  enabled: "&a已启用"
+  disabled: "&c已禁用"
+  current-status: "&7当前状态: {status}"
+
+  # 操作提示
+  toggle-success: "&a{feature}已{action}！"
+  toggle-enabled: "启用"
+  toggle-disabled: "禁用"
+  reload-success: "&a配置重载成功！"
+  reload-failed: "&c配置重载失败：{error}"
+  save-success: "&a设置保存成功！"
+  save-failed: "&c设置保存失败：{error}"
+
+  # 功能描述
+  debug-description: "&7启用后会在控制台显示详细的调试信息"
+  auto-save-description: "&7定期自动保存工会数据，防止数据丢失"
+  economy-description: "&7工会经济功能开关，包括存款、取款、转账等"
+  relation-description: "&7工会关系功能开关，包括盟友、敌对、开战等"
+  level-description: "&7工会等级功能开关，包括自动升级、成员限制等"
+  application-description: "&7申请加入工会功能开关，玩家需要申请才能加入工会"
+  invite-description: "&7工会邀请功能开关，会长可以邀请玩家加入工会"
+  home-description: "&7工会家功能开关，包括设置和传送到工会家"
+
+  # 维护功能
+  maintenance-dev: "&e数据库维护功能开发中..."
+  backup-dev: "&e数据备份功能开发中..."
+
+# 工会日志相关消息
+log-details: "&6=== 日志详情 ==="

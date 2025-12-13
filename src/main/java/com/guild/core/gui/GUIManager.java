@@ -20,209 +20,209 @@ import java.util.function.Function;
 import com.guild.core.utils.CompatibleScheduler;
 
 /**
- * GUI管理器 - 管理所有GUI界面
+ * Menedżer GUI - zarządza wszystkimi interfejsami GUI
  */
 public class GUIManager implements Listener {
-    
+
     private final GuildPlugin plugin;
     private final Logger logger;
     private final Map<UUID, GUI> openGuis = new HashMap<>();
     private final Map<UUID, Function<String, Boolean>> inputModes = new HashMap<>();
-    private final Map<UUID, Long> lastClickTime = new HashMap<>(); // 防止快速点击
-    
+    private final Map<UUID, Long> lastClickTime = new HashMap<>(); // Zapobieganie szybkiemu klikaniu
+
     public GUIManager(GuildPlugin plugin) {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
     }
-    
+
     /**
-     * 初始化GUI管理器
+     * Zainicjuj menedżera GUI
      */
     public void initialize() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        logger.info("GUI管理器初始化完成");
+        logger.info("Menedżer GUI zainicjalizowany pomyślnie");
     }
-    
+
     /**
-     * 打开GUI
+     * Otwórz GUI
      */
     public void openGUI(Player player, GUI gui) {
-        // 确保在主线程中执行
+        // Upewnij się, że wykonujesz w głównym wątku
         if (!CompatibleScheduler.isPrimaryThread()) {
             CompatibleScheduler.runTask(plugin, () -> openGUI(player, gui));
             return;
         }
-        
+
         try {
-            // 关闭玩家当前打开的GUI
+            // Zamknij aktualnie otwarte GUI gracza
             closeGUI(player);
-            
-            // 创建新的GUI
+
+            // Utwórz nowe GUI
             Inventory inventory = Bukkit.createInventory(null, gui.getSize(), gui.getTitle());
-            
-            // 设置GUI内容
+
+            // Ustaw zawartość GUI
             gui.setupInventory(inventory);
-            
-            // 打开GUI
+
+            // Otwórz GUI
             player.openInventory(inventory);
-            
-            // 记录打开的GUI
+
+            // Zarejestruj otwarte GUI
             openGuis.put(player.getUniqueId(), gui);
-            
-            logger.info("玩家 " + player.getName() + " 打开了GUI: " + gui.getClass().getSimpleName());
+
+            logger.info("Gracz " + player.getName() + " otworzył GUI: " + gui.getClass().getSimpleName());
         } catch (Exception e) {
-            logger.severe("打开GUI时发生错误: " + e.getMessage());
+            logger.severe("Błąd podczas otwierania GUI: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * 关闭GUI
+     * Zamknij GUI
      */
     public void closeGUI(Player player) {
-        // 确保在主线程中执行
+        // Upewnij się, że wykonujesz w głównym wątku
         if (!CompatibleScheduler.isPrimaryThread()) {
             CompatibleScheduler.runTask(plugin, () -> closeGUI(player));
             return;
         }
-        
+
         try {
             GUI gui = openGuis.remove(player.getUniqueId());
             if (gui != null) {
-                // 关闭库存
+                // Zamknij ekwipunek
                 if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() != null) {
                     player.closeInventory();
                 }
-                
-                logger.info("玩家 " + player.getName() + " 关闭了GUI: " + gui.getClass().getSimpleName());
+
+                logger.info("Gracz " + player.getName() + " zamknął GUI: " + gui.getClass().getSimpleName());
             }
         } catch (Exception e) {
-            logger.severe("关闭GUI时发生错误: " + e.getMessage());
+            logger.severe("Błąd podczas zamykania GUI: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * 获取玩家当前打开的GUI
+     * Pobierz aktualnie otwarte GUI gracza
      */
     public GUI getOpenGUI(Player player) {
         return openGuis.get(player.getUniqueId());
     }
-    
+
     /**
-     * 检查玩家是否打开了GUI
+     * Sprawdź, czy gracz ma otwarte GUI
      */
     public boolean hasOpenGUI(Player player) {
         return openGuis.containsKey(player.getUniqueId());
     }
-    
+
     /**
-     * 处理GUI点击事件
+     * Obsłuż zdarzenie kliknięcia w ekwipunku
      */
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
-        
+
         GUI gui = openGuis.get(player.getUniqueId());
         if (gui == null) {
             return;
         }
-        
-        // 防止快速点击
+
+        // Zapobiegaj szybkiemu klikaniu
         long currentTime = System.currentTimeMillis();
         Long lastClick = lastClickTime.get(player.getUniqueId());
-        if (lastClick != null && currentTime - lastClick < 200) { // 200ms防抖
+        if (lastClick != null && currentTime - lastClick < 200) { // 200ms anti-shake
             event.setCancelled(true);
             return;
         }
         lastClickTime.put(player.getUniqueId(), currentTime);
-        
+
         try {
-            // 阻止玩家移动物品
+            // Zapobiegaj przenoszeniu przedmiotów przez gracza
             event.setCancelled(true);
-            
-            // 处理GUI点击
+
+            // Obsłuż kliknięcie GUI
             int slot = event.getRawSlot();
             ItemStack clickedItem = event.getCurrentItem();
-            
-            // 添加调试日志
-            logger.info("玩家 " + player.getName() + " 点击了GUI: " + gui.getClass().getSimpleName() + " 槽位: " + slot);
-            
-            // 处理所有点击，包括空物品的点击
+
+            // Dodaj log debugowania
+            logger.info("Gracz " + player.getName() + " kliknął GUI: " + gui.getClass().getSimpleName() + " slot: " + slot);
+
+            // Obsłuż wszystkie kliknięcia, w tym kliknięcia pustych przedmiotów
             gui.onClick(player, slot, clickedItem, event.getClick());
         } catch (Exception e) {
-            logger.severe("处理GUI点击时发生错误: " + e.getMessage());
+            logger.severe("Błąd podczas obsługi kliknięcia GUI: " + e.getMessage());
             e.printStackTrace();
-            // 发生错误时关闭GUI
+            // Zamknij GUI w przypadku błędu
             closeGUI(player);
         }
     }
-    
+
     /**
-     * 处理GUI关闭事件
+     * Obsłuż zdarzenie zamknięcia ekwipunku
      */
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player player)) {
             return;
         }
-        
+
         try {
             GUI gui = openGuis.remove(player.getUniqueId());
             if (gui != null) {
-                // 只有在玩家确实在输入模式时才清理
+                // Czyść tylko jeśli gracz jest w trybie wprowadzania
                 if (inputModes.containsKey(player.getUniqueId())) {
                     clearInputMode(player);
                 }
-                
+
                 gui.onClose(player);
-                logger.info("玩家 " + player.getName() + " 关闭了GUI: " + gui.getClass().getSimpleName());
+                logger.info("Gracz " + player.getName() + " zamknął GUI: " + gui.getClass().getSimpleName());
             }
         } catch (Exception e) {
-            logger.severe("处理GUI关闭时发生错误: " + e.getMessage());
+            logger.severe("Błąd podczas zamykania GUI: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * 刷新GUI
+     * Odśwież GUI
      */
     public void refreshGUI(Player player) {
-        // 确保在主线程中执行
+        // Upewnij się, że wykonujesz w głównym wątku
         if (!CompatibleScheduler.isPrimaryThread()) {
             CompatibleScheduler.runTask(plugin, () -> refreshGUI(player));
             return;
         }
-        
+
         try {
             GUI gui = openGuis.get(player.getUniqueId());
             if (gui != null) {
-                // 关闭当前GUI
+                // Zamknij bieżące GUI
                 closeGUI(player);
-                
-                // 重新打开GUI
+
+                // Otwórz GUI ponownie
                 openGUI(player, gui);
-                
-                logger.info("玩家 " + player.getName() + " 的GUI已刷新: " + gui.getClass().getSimpleName());
+
+                logger.info("Odświeżono GUI dla gracza " + player.getName() + ": " + gui.getClass().getSimpleName());
             }
         } catch (Exception e) {
-            logger.severe("刷新GUI时发生错误: " + e.getMessage());
+            logger.severe("Błąd podczas odświeżania GUI: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * 关闭所有GUI
+     * Zamknij wszystkie GUI
      */
     public void closeAllGUIs() {
-        // 确保在主线程中执行
+        // Upewnij się, że wykonujesz w głównym wątku
         if (!CompatibleScheduler.isPrimaryThread()) {
             CompatibleScheduler.runTask(plugin, this::closeAllGUIs);
             return;
         }
-        
+
         try {
             for (UUID playerUuid : openGuis.keySet()) {
                 Player player = Bukkit.getPlayer(playerUuid);
@@ -231,99 +231,99 @@ public class GUIManager implements Listener {
                 }
             }
             openGuis.clear();
-            logger.info("已关闭所有GUI");
+            logger.info("Zamknięto wszystkie GUI");
         } catch (Exception e) {
-            logger.severe("关闭所有GUI时发生错误: " + e.getMessage());
+            logger.severe("Błąd podczas zamykania wszystkich GUI: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * 获取打开的GUI数量
+     * Pobierz liczbę otwartych GUI
      */
     public int getOpenGUICount() {
         return openGuis.size();
     }
-    
+
     /**
-     * 设置玩家输入模式
+     * Ustaw tryb wprowadzania dla gracza
      */
     public void setInputMode(Player player, Function<String, Boolean> inputHandler) {
-        // 确保在主线程中执行
+        // Upewnij się, że wykonujesz w głównym wątku
         if (!CompatibleScheduler.isPrimaryThread()) {
             CompatibleScheduler.runTask(plugin, () -> setInputMode(player, inputHandler));
             return;
         }
-        
+
         try {
             inputModes.put(player.getUniqueId(), inputHandler);
-            logger.info("玩家 " + player.getName() + " 进入输入模式");
+            logger.info("Gracz " + player.getName() + " wszedł w tryb wprowadzania");
         } catch (Exception e) {
-            logger.severe("设置输入模式时发生错误: " + e.getMessage());
+            logger.severe("Błąd podczas ustawiania trybu wprowadzania: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * 设置玩家输入模式（带GUI对象）
+     * Ustaw tryb wprowadzania dla gracza (z obiektem GUI)
      */
     public void setInputMode(Player player, String mode, GUI gui) {
-        // 确保在主线程中执行
+        // Upewnij się, że wykonujesz w głównym wątku
         if (!CompatibleScheduler.isPrimaryThread()) {
             CompatibleScheduler.runTask(plugin, () -> setInputMode(player, mode, gui));
             return;
         }
-        
+
         try {
-            // 为工会名称输入创建特殊的输入处理器
+            // Utwórz specjalny handler wejścia dla wprowadzania nazwy gildii
             if ("guild_name_input".equals(mode) && gui instanceof GuildNameInputGUI) {
                 GuildNameInputGUI nameInputGUI = (GuildNameInputGUI) gui;
                 inputModes.put(player.getUniqueId(), input -> {
-                    if ("取消".equals(input.trim())) {
+                    if ("Anuluj".equals(input.trim()) || "anuluj".equals(input.trim()) || "cancel".equals(input.trim())) {
                         nameInputGUI.handleCancel(player);
                         return true;
                     }
                     nameInputGUI.handleInputComplete(player, input);
                     return true;
                 });
-                logger.info("玩家 " + player.getName() + " 进入工会名称输入模式");
+                logger.info("Gracz " + player.getName() + " wszedł w tryb wprowadzania nazwy gildii");
             } else {
-                logger.warning("未知的输入模式: " + mode);
+                logger.warning("Nieznany tryb wprowadzania: " + mode);
             }
         } catch (Exception e) {
-            logger.severe("设置输入模式时发生错误: " + e.getMessage());
+            logger.severe("Błąd podczas ustawiania trybu wprowadzania: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * 清除玩家输入模式
+     * Wyczyść tryb wprowadzania dla gracza
      */
     public void clearInputMode(Player player) {
-        // 确保在主线程中执行
+        // Upewnij się, że wykonujesz w głównym wątku
         if (!CompatibleScheduler.isPrimaryThread()) {
             CompatibleScheduler.runTask(plugin, () -> clearInputMode(player));
             return;
         }
-        
+
         try {
             inputModes.remove(player.getUniqueId());
-            logger.info("玩家 " + player.getName() + " 退出输入模式");
+            logger.info("Gracz " + player.getName() + " opuścił tryb wprowadzania");
         } catch (Exception e) {
-            logger.severe("清除输入模式时发生错误: " + e.getMessage());
+            logger.severe("Błąd podczas czyszczenia trybu wprowadzania: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
-     * 检查玩家是否在输入模式
+     * Sprawdź, czy gracz jest w trybie wprowadzania
      */
     public boolean isInInputMode(Player player) {
         return inputModes.containsKey(player.getUniqueId());
     }
-    
+
     /**
-     * 处理玩家输入
+     * Obsłuż wejście gracza
      */
     public boolean handleInput(Player player, String input) {
         try {
@@ -337,9 +337,9 @@ public class GUIManager implements Listener {
             }
             return false;
         } catch (Exception e) {
-            logger.severe("处理玩家输入时发生错误: " + e.getMessage());
+            logger.severe("Błąd podczas obsługi wejścia gracza: " + e.getMessage());
             e.printStackTrace();
-            // 发生错误时清除输入模式
+            // Wyczyść tryb wprowadzania w przypadku błędu
             clearInputMode(player);
             return false;
         }

@@ -14,50 +14,50 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 /**
- * 工会权限设置GUI
+ * GUI Uprawnień Gildii
  */
 public class GuildPermissionsGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
-    
+
     public GuildPermissionsGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
         this.guild = guild;
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6工会权限设置");
+        return ColorUtils.colorize("&6Uprawnienia gildii");
     }
-    
+
     @Override
     public int getSize() {
         return 54;
     }
-    
+
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
+        // Wypełnij obramowanie
         fillBorder(inventory);
-        
-        // 显示权限信息
+
+        // Wyświetl informacje o uprawnieniach
         displayPermissions(inventory);
-        
-        // 添加返回按钮
+
+        // Dodaj przycisk powrotu
         setupButtons(inventory);
     }
-    
+
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot == 49) {
-            // 返回
+            // Powrót
             plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
         }
     }
-    
+
     /**
-     * 填充边框
+     * Wypełnij obramowanie
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
@@ -70,85 +70,85 @@ public class GuildPermissionsGUI implements GUI {
             inventory.setItem(i + 8, border);
         }
     }
-    
+
     /**
-     * 显示权限信息
+     * Wyświetl informacje o uprawnieniach
      */
     private void displayPermissions(Inventory inventory) {
-        // 会长权限
+        // Uprawnienia Lidera
         ItemStack leaderPerms = createItem(
             Material.GOLDEN_HELMET,
-            ColorUtils.colorize("&6会长权限"),
-            ColorUtils.colorize("&7• 所有权限"),
-            ColorUtils.colorize("&7• 管理成员"),
-            ColorUtils.colorize("&7• 修改设置"),
-            ColorUtils.colorize("&7• 删除工会")
+            ColorUtils.colorize("&6Uprawnienia Lidera"),
+            ColorUtils.colorize("&7• Wszystkie uprawnienia"),
+            ColorUtils.colorize("&7• Zarządzanie członkami"),
+            ColorUtils.colorize("&7• Modyfikacja ustawień"),
+            ColorUtils.colorize("&7• Usunięcie gildii")
         );
         inventory.setItem(10, leaderPerms);
-        
-        // 官员权限
+
+        // Uprawnienia Oficera
         ItemStack officerPerms = createItem(
             Material.IRON_HELMET,
-            ColorUtils.colorize("&e官员权限"),
-            ColorUtils.colorize("&7• 邀请成员"),
-            ColorUtils.colorize("&7• 踢出成员"),
-            ColorUtils.colorize("&7• 处理申请"),
-            ColorUtils.colorize("&7• 设置工会家")
+            ColorUtils.colorize("&eUprawnienia Oficera"),
+            ColorUtils.colorize("&7• Zapraszanie członków"),
+            ColorUtils.colorize("&7• Wyrzucanie członków"),
+            ColorUtils.colorize("&7• Przetwarzanie aplikacji"),
+            ColorUtils.colorize("&7• Ustawianie domu gildii")
         );
         inventory.setItem(12, officerPerms);
-        
-        // 成员权限
+
+        // Uprawnienia Członka
         ItemStack memberPerms = createItem(
             Material.LEATHER_HELMET,
-            ColorUtils.colorize("&7成员权限"),
-            ColorUtils.colorize("&7• 查看工会信息"),
-            ColorUtils.colorize("&7• 传送到工会家"),
-            ColorUtils.colorize("&7• 申请加入其他工会")
+            ColorUtils.colorize("&7Uprawnienia Członka"),
+            ColorUtils.colorize("&7• Podgląd informacji o gildii"),
+            ColorUtils.colorize("&7• Teleportacja do domu gildii"),
+            ColorUtils.colorize("&7• Aplikowanie do innych gildii")
         );
         inventory.setItem(14, memberPerms);
-        
-        // 权限说明
+
+        // Opis uprawnień
         ItemStack info = createItem(
             Material.BOOK,
-            ColorUtils.colorize("&e权限说明"),
-            ColorUtils.colorize("&7权限系统基于角色分配"),
-            ColorUtils.colorize("&7会长可以提升/降级成员"),
-            ColorUtils.colorize("&7官员可以管理普通成员"),
-            ColorUtils.colorize("&7成员拥有基础权限")
+            ColorUtils.colorize("&eInformacje o systemie"),
+            ColorUtils.colorize("&7Uprawnienia są przypisane do ról"),
+            ColorUtils.colorize("&7Lider może awansować/degradować"),
+            ColorUtils.colorize("&7Oficerowie zarządzają członkami"),
+            ColorUtils.colorize("&7Członkowie mają podstawowe prawa")
         );
         inventory.setItem(16, info);
-        
-        // 当前权限状态
+
+        // Status systemu
         ItemStack currentStatus = createItem(
             Material.SHIELD,
-            ColorUtils.colorize("&a当前权限状态"),
-            ColorUtils.colorize("&7工会: &e" + guild.getName()),
-            ColorUtils.colorize("&7权限系统: &a正常运行"),
-            ColorUtils.colorize("&7权限检查: &a已启用")
+            ColorUtils.colorize("&aStatus systemu uprawnień"),
+            ColorUtils.colorize("&7Gildia: &e" + guild.getName()),
+            ColorUtils.colorize("&7System: &aAktywny"),
+            ColorUtils.colorize("&7Weryfikacja: &aWłączona")
         );
         inventory.setItem(22, currentStatus);
     }
-    
+
     /**
-     * 设置按钮
+     * Skonfiguruj przyciski
      */
     private void setupButtons(Inventory inventory) {
-        // 返回按钮
+        // Przycisk powrotu
         ItemStack back = createItem(
             Material.ARROW,
-            ColorUtils.colorize("&7返回"),
-            ColorUtils.colorize("&7返回工会设置")
+            ColorUtils.colorize("&7Powrót"),
+            ColorUtils.colorize("&7Powrót do ustawień gildii")
         );
         inventory.setItem(49, back);
     }
-    
+
     /**
-     * 创建物品
+     * Utwórz przedmiot
      */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        
+
         if (meta != null) {
             meta.setDisplayName(name);
             if (lore.length > 0) {
@@ -156,7 +156,7 @@ public class GuildPermissionsGUI implements GUI {
             }
             item.setItemMeta(meta);
         }
-        
+
         return item;
     }
 }

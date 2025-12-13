@@ -1,0 +1,534 @@
+# Plik konfiguracyjny wiadomości pluginu gildyjnego
+
+# Wiadomości ogólne
+general:
+  prefix: "&6[Gildia] &r"
+  no-permission: "&cNie masz uprawnień do wykonania tej operacji!"
+  player-only: "&cTo polecenie może być wykonane tylko przez gracza!"
+  player-not-found: "&cGracz {player} nie został znalezion!"
+  guild-not-found: "&cGildia {guild} nie została znaleziona!"
+  invalid-arguments: "&cNieprawidłowe argumenty!"
+  error-occurred: "&cWystąpił błąd: {error}"
+  service-error: "&cUsługa gildii nie została zainicjalizowana!"
+  unknown-command: "&cNieznane polecenie! Użyj /guild help, aby zobaczyć pomoc."
+
+# Wiadomości dotyczące tworzenia gildii
+create:
+  success: "&aGildia {name} została utworzona pomyślnie!"
+  name-too-short: "&cNazwa gildii jest za krótka! Wymagane minimum {min} znaków."
+  name-too-long: "&cNazwa gildii jest za długa! Może mieć maksymalnie {max} znaków."
+  name-exists: "&cNazwa gildii {name} już istnieje!"
+  name-required: "&cProszę najpierw wprowadzić nazwę gildii!"
+  tag-exists: "&cTag gildii {tag} już istnieje!"
+  tag-too-long: "&cTag gildii jest za długi! Może mieć maksymalnie {max} znaków."
+  already-in-guild: "&cJesteś już w gildii!"
+  insufficient-funds: "&cNiewystarczające środki! Utworzenie gildii kosztuje {cost} monet."
+  usage: "&eUżycie: /guild create <nazwa> [tag] [opis]"
+  description-too-long: "&cOpis gildii nie może przekraczać 100 znaków!"
+  failed: "&cTworzenie gildii nie powiodło się! Możliwe przyczyny:"
+  failed-reason-1: "&c- Nazwa gildii lub tag już istnieje"
+  failed-reason-2: "&c- Jesteś już członkiem innej gildii"
+  name-info: "&eNazwa gildii: {name}"
+  tag-info: "&eTag gildii: [{tag}]"
+  description-info: "&eOpis gildii: {description}"
+  economy-not-available: "&cSystem ekonomii jest niedostępny, nie można utworzyć gildii!"
+  payment-failed: "&cNie udało się pobrać opłaty za utworzenie!"
+  payment-refunded: "&eZwrócono opłatę za utworzenie w wysokości {cost} monet."
+  cost-info: "&eKoszt utworzenia: {amount}"
+
+# Wiadomości dotyczące informacji o gildii
+info:
+  title: "&6=== Informacje o Gildii ==="
+  name: "&eNazwa: &f{name}"
+  tag: "&eTag: &f{tag}"
+  description: "&eOpis: &f{description}"
+  leader: "&eLider: &f{leader}"
+  members: "&eLiczba członków: &f{count}/{max}"
+  created: "&eData utworzenia: &f{date}"
+  no-guild: "&cNie należysz jeszcze do żadnej gildii!"
+  role: "&eTwoja rola: &f{role}"
+
+# Wiadomości dotyczące członków gildii
+members:
+  title: "&6=== Członkowie Gildii ==="
+  leader: "&c{name} &7(Lider)"
+  officer: "&6{name} &7(Oficer)"
+  member: "&f{name} &7(Członek)"
+  joined: "&7Dołączył: {date}"
+  no-members: "&cBrak członków w gildii!"
+  member-format: "&e{role} {name} &7- {status}"
+  total: "&eŁącznie: {count} osób"
+
+# Wiadomości dotyczące zaproszeń
+invite:
+  sent: "&aWysłano zaproszenie do gildii dla {player}!"
+  received: "&e{inviter} zaprasza cię do gildii: {guild}"
+  accepted: "&aZaakceptowałeś zaproszenie do gildii {guild}!"
+  declined: "&cOdrzuciłeś zaproszenie do gildii {guild}!"
+  expired: "&cZaproszenie do gildii wygasło!"
+  already-invited: "&c{player} już otrzymał zaproszenie!"
+  no-permission: "&cNie masz uprawnień do zapraszania graczy!"
+  usage: "&eUżycie: /guild invite <gracz>"
+  title: "&6=== Zaproszenie do Gildii ==="
+  guild-tag: "&eTag gildii: [{tag}]"
+  accept-command: "&eWpisz &a/guild accept {inviter} &eaby zaakceptować"
+  decline-command: "&eWpisz &c/guild decline {inviter} &eaby odrzucić"
+  already-in-guild: "&cGracz {player} jest już w innej gildii!"
+  cannot-invite-self: "&cNie możesz zaprosić samego siebie!"
+
+# Wiadomości dotyczące wyrzucania
+kick:
+  success: "&aWyrzucono {player} z gildii!"
+  kicked: "&cZostałeś wyrzucony z gildii {guild}!"
+  no-permission: "&cNie masz uprawnień do wyrzucania graczy!"
+  cannot-kick-leader: "&cNie można wyrzucić lidera gildii!"
+  usage: "&eUżycie: /guild kick <gracz>"
+  player-not-found: "&cGracz {player} nie jest online!"
+  not-in-guild: "&cGracz {player} nie jest w twojej gildii!"
+  cannot-kick-self: "&cNie możesz wyrzucić samego siebie! Użyj /guild leave aby opuścić gildię."
+  failed: "&cWyrzucenie gracza nie powiodło się!"
+
+# Wiadomości dotyczące opuszczania gildii
+leave:
+  success: "&aOpuściłeś gildię!"
+  leader-cannot-leave: "&cLider gildii nie może opuścić gildii! Przekaż przywództwo lub usuń gildię."
+  confirm: "&cCzy na pewno chcesz opuścić gildię? Użyj /guild leave confirm aby potwierdzić."
+  member-error: "&cBłąd informacji o członku gildii!"
+  success-with-guild: "&aPomyślnie opuściłeś gildię: {guild}"
+  failed: "&cOpuszczenie gildii nie powiodło się!"
+  use-delete: "&cJeśli chcesz rozwiązać gildię, użyj polecenia /guild delete."
+
+# Wiadomości dotyczące usuwania gildii
+delete:
+  success: "&aGildia {guild} została usunięta!"
+  no-permission: "&cNie masz uprawnień do usuwania gildii!"
+  confirm: "&cCzy na pewno chcesz usunąć gildię? To spowoduje rozwiązanie całej gildii! Użyj /guild delete confirm aby potwierdzić."
+  only-leader: "&cTylko lider gildii może usunąć gildię!"
+  warning: "&cOstrzeżenie: Usunięcie gildii trwale ją rozwiąże, a wszyscy członkowie zostaną usunięci!"
+  confirm-command: "&cJeśli jesteś pewien, że chcesz usunąć gildię, wpisz ponownie: /guild delete confirm"
+  cancel-command: "&cLub wpisz: /guild delete cancel aby anulować operację"
+
+# Wiadomości dotyczące domu gildii
+sethome:
+  success: "&aDom gildii został ustawiony pomyślnie!"
+  failed: "&cUstawianie domu gildii nie powiodło się!"
+  only-leader: "&cTylko lider gildii może ustawić dom gildii!"
+  no-permission: "&cNie masz uprawnień do ustawiania domu gildii!"
+home:
+  success: "&aTeleportowano do domu gildii!"
+  not-set: "&cDom gildii nie został jeszcze ustawiony!"
+  no-permission: "&cNie masz uprawnień do teleportacji do domu gildii!"
+  teleport-failed: "&cTeleportacja do domu gildii nie powiodła się!"
+
+# Wiadomości dotyczące aplikacji
+application:
+  sent: "&aTwoja aplikacja została wysłana do {guild}!"
+  received: "&aOtrzymano aplikację od {player}!"
+  accepted: "&aTwoja aplikacja została zaakceptowana przez {guild}!"
+  declined: "&cTwoja aplikacja została odrzucona przez {guild}!"
+  already-applied: "&cJuż aplikowałeś do {guild}!"
+  usage: "&eUżycie: /guild apply <gildia> [wiadomość]"
+
+# Wiadomości dotyczące aplikacji (używane w GUI)
+apply:
+  success: "&aAplikacja została złożona!"
+  failed: "&cZłożenie aplikacji nie powiodło się!"
+  already-applied: "&cJuż aplikowałeś do tej gildii!"
+
+# Wiadomości dotyczące relacji gildii
+relation:
+  no-guild: "&cNie należysz jeszcze do gildii!"
+  only-leader: "&cTylko lider gildii może zarządzać relacjami gildii!"
+  help-title: "&6=== Zarządzanie Relacjami Gildii ==="
+  help-list: "&e/guild relation list &7- Zobacz wszystkie relacje"
+  help-create: "&e/guild relation create <gildia> <typ> &7- Utwórz relację"
+  help-delete: "&e/guild relation delete <gildia> &7- Usuń relację"
+  help-accept: "&e/guild relation accept <gildia> &7- Zaakceptuj prośbę o relację"
+  help-reject: "&e/guild relation reject <gildia> &7- Odrzuć prośbę o relację"
+  help-types: "&7Typy relacji: &eally(sojusznik), enemy(wróg), war(wojna), truce(rozejm), neutral(neutralny)"
+  create-usage: "&eUżycie: /guild relation create <cel_gildia> <typ_relacji>"
+  delete-usage: "&eUżycie: /guild relation delete <cel_gildia>"
+  accept-usage: "&eUżycie: /guild relation accept <cel_gildia>"
+  reject-usage: "&eUżycie: /guild relation reject <cel_gildia>"
+  unknown-subcommand: "&cNieznane podpolecenie! Użyj /guild relation aby zobaczyć pomoc."
+  no-relations: "&7Twoja gildia nie ma jeszcze żadnych relacji."
+  list-title: "&6=== Lista Relacji Gildii ==="
+  list-format: "&e{other_guild} &7- {type} ({status})"
+  invalid-type: "&cNieprawidłowy typ relacji! Prawidłowe typy: ally, enemy, war, truce, neutral"
+  target-not-found: "&cGildia docelowa {guild} nie istnieje!"
+  cannot-relation-self: "&cNie można nawiązać relacji z samym sobą!"
+  create-success: "&aWysłano prośbę o relację {type} do {guild}!"
+  create-failed: "&cTworzenie relacji nie powiodło się! Relacja może już istnieć."
+  delete-success: "&aUsunięto relację z {guild}!"
+  delete-failed: "&cUsunięcie relacji nie powiodło się! Relacja może nie istnieć."
+  accept-success: "&aZaakceptowano prośbę o relację od {guild}!"
+  accept-failed: "&cAkceptacja relacji nie powiodła się! Może nie być oczekującej prośby."
+  reject-success: "&cOdrzucono prośbę o relację od {guild}!"
+  reject-failed: "&cOdrzucenie relacji nie powiodło się! Może nie być oczekującej prośby."
+
+# Wiadomości dotyczące uprawnień
+permissions:
+  promote:
+    success: "&aAwansowano {player} na {role}!"
+    no-permission: "&cNie masz uprawnień do awansowania graczy!"
+    cannot-promote: "&cNie można awansować tego gracza!"
+    usage: "&eUżycie: /guild promote <gracz>"
+    player-not-found: "&cGracz {player} nie jest online!"
+    not-in-guild: "&cGracz {player} nie jest w twojej gildii!"
+    already-highest: "&cGracz {player} ma już najwyższą rangę!"
+    cannot-promote-self: "&cNie możesz awansować samego siebie!"
+  demote:
+    success: "&aZdegradowano {player} na {role}!"
+    no-permission: "&cNie masz uprawnień do degradowania graczy!"
+    cannot-demote: "&cNie można zdegradować tego gracza!"
+    usage: "&eUżycie: /guild demote <gracz>"
+    player-not-found: "&cGracz {player} nie jest online!"
+    not-in-guild: "&cGracz {player} nie jest w twojej gildii!"
+    already-lowest: "&cGracz {player} ma już najniższą rangę!"
+    cannot-demote-self: "&cNie możesz zdegradować samego siebie!"
+    cannot-demote-leader: "&cNie można zdegradować lidera gildii!"
+
+# Wiadomości dla administratorów
+admin:
+  no-permission: "&cNie masz uprawnień administratora!"
+  unknown-command: "&cNieznane polecenie! Użyj /guildadmin help aby zobaczyć pomoc."
+  reload:
+    success: "&aKonfiguracja przeładowana pomyślnie!"
+    error: "&cPrzeładowanie konfiguracji nie powiodło się: {error}"
+  list:
+    title: "&6=== Lista Gildii ==="
+    entry: "&e{guild} &7- {count} członków"
+    empty: "&cNie znaleziono żadnych gildii!"
+    total: "&eŁącznie: {count} gildii"
+  info:
+    title: "&6=== Szczegóły Gildii ==="
+    id: "&eID: &f{id}"
+    name: "&eNazwa: &f{name}"
+    tag: "&eTag: &f{tag}"
+    description: "&eOpis: &f{description}"
+    leader: "&eLider: &f{leader}"
+    member-count: "&eLiczba członków: &f{count}"
+    created: "&eUtworzono: &f{created}"
+    updated: "&eZaktualizowano: &f{updated}"
+    usage: "&eUżycie: /guildadmin info <nazwa_gildii>"
+    not-found: "&cGildia {guild} nie istnieje!"
+    members-title: "&6=== Lista Członków ==="
+  delete:
+    success: "&aGildia {guild} została usunięta przez administratora!"
+    error: "&cUsunięcie gildii nie powiodło się: {error}"
+    usage: "&eUżycie: /guildadmin delete <nazwa_gildii>"
+    not-found: "&cGildia {guild} nie istnieje!"
+    warning: "&cOstrzeżenie: Usunięcie gildii trwale ją rozwiąże, a wszyscy członkowie zostaną usunięci!"
+    confirm: "&cJeśli jesteś pewien, że chcesz usunąć gildię, użyj: /guildadmin delete {guild} confirm"
+    success-with-name: "&aPomyślnie usunięto gildię: {guild}"
+    failed: "&cUsunięcie gildii nie powiodło się!"
+  kick:
+    success: "&aWyrzucono {player} z {guild}!"
+    error: "&cWyrzucenie gracza nie powiodło się: {error}"
+    usage: "&eUżycie: /guildadmin kick <nazwa_gracza> <nazwa_gildii>"
+    guild-not-found: "&cGildia {guild} nie istnieje!"
+    player-not-found: "&cGracz {player} nie jest online!"
+    player-not-in-guild: "&cGracz {player} nie jest w gildii {guild}!"
+    cannot-kick-leader: "&cNie można wyrzucić lidera gildii! Przekaż przywództwo lub usuń gildię."
+    success-with-names: "&aPomyślnie wyrzucono gracza {player} z gildii {guild}!"
+    kicked-by-admin: "&cZostałeś wyrzucony z gildii {guild} przez administratora!"
+    failed: "&cWyrzucenie gracza nie powiodło się!"
+  help:
+    title: "&6=== Pomoc Administratora Gildii ==="
+    reload: "&e/guildadmin reload &7- Przeładuj konfigurację"
+    list: "&e/guildadmin list &7- Wypisz wszystkie gildie"
+    info: "&e/guildadmin info <nazwa_gildii> &7- Zobacz szczegóły gildii"
+    delete: "&e/guildadmin delete <nazwa_gildii> &7- Usuń wskazaną gildię"
+    kick: "&e/guildadmin kick <gracz> <gildia> &7- Wyrzuć gracza z gildii"
+    help: "&e/guildadmin help &7- Pokaż tę pomoc"
+
+# Wiadomości GUI
+gui:
+  title: "&6System Gildii"
+  create-guild: "&aUtwórz Gildię"
+  guild-info: "&eInformacje o Gildii"
+  member-management: "&eZarządzanie Członkami"
+  application-management: "&eZarządzanie Aplikacjami"
+  guild-settings: "&eUstawienia Gildii"
+  guild-list: "&eLista Gildii"
+  guild-relations: "&eRelacje Gildii"
+  invite-player: "&eZaproś Gracza"
+  leave-guild: "&cOpuść Gildię"
+  delete-guild: "&4Usuń Gildię"
+  confirm: "&aPotwierdź"
+  cancel: "&cAnuluj"
+  back: "&7Wróć"
+  next-page: "&aNastępna strona"
+  previous-page: "&cPoprzednia strona"
+  no-guild: "&cNie masz jeszcze gildii"
+  no-permission: "&cNiewystarczające uprawnienia"
+  opening: "&aOtwieranie GUI systemu gildii..."
+
+  # Funkcje menu głównego
+  create-guild-success: "&aFunkcja tworzenia gildii jest gotowa"
+  guild-info-success: "&aFunkcja informacji o gildii jest gotowa"
+  member-management-success: "&aFunkcja zarządzania członkami jest gotowa"
+  application-management-success: "&aFunkcja zarządzania aplikacjami jest gotowa"
+  guild-settings-success: "&aFunkcja ustawień gildii jest gotowa"
+  guild-list-success: "&aFunkcja listy gildii jest gotowa"
+  guild-relations-success: "&aFunkcja relacji gildii jest gotowa"
+
+  # Wiadomości funkcji
+  invite-member-success: "&aFunkcja zapraszania członków jest gotowa"
+  kick-member-success: "&aFunkcja wyrzucania członków jest gotowa"
+  promote-member-success: "&aFunkcja awansowania członków jest gotowa"
+  demote-member-success: "&aFunkcja degradowania członków jest gotowa"
+  accept-application-success: "&aFunkcja akceptowania aplikacji jest gotowa"
+  reject-application-success: "&aFunkcja odrzucania aplikacji jest gotowa"
+  application-history-success: "&aFunkcja historii aplikacji jest gotowa"
+  change-description-success: "&aFunkcja zmiany opisu jest gotowa"
+  change-tag-success: "&aFunkcja zmiany tagu jest gotowa"
+  permissions-success: "&aFunkcja ustawień uprawnień jest gotowa"
+  search-success: "&aFunkcja wyszukiwania jest gotowa"
+  filter-success: "&aFunkcja filtrowania jest gotowa"
+  view-guild-details-success: "&aFunkcja podglądu szczegółów gildii jest gotowa"
+  apply-to-guild-success: "&aFunkcja aplikowania do gildii jest gotowa"
+  name-input-success: "&aFunkcja wprowadzania nazwy gildii jest gotowa"
+  tag-input-success: "&aFunkcja wprowadzania tagu gildii jest gotowa"
+  description-input-success: "&aFunkcja wprowadzania opisu gildii jest gotowa"
+
+  # Zarządzanie członkami
+  invite-member: "&aZaproś członka"
+  kick-member: "&cWyrzuć członka"
+  promote-member: "&6Awansuj członka"
+  demote-member: "&7Zdegraduj członka"
+
+  # Zarządzanie aplikacjami
+  pending-applications: "&eOczekujące aplikacje"
+  application-history: "&eHistoria aplikacji"
+  no-pending-applications: "&aBrak oczekujących aplikacji"
+  no-application-history: "&aBrak historii aplikacji"
+
+  # Ustawienia gildii
+  change-description: "&eZmień opis"
+  change-tag: "&eZmień tag"
+  set-home: "&eUstaw dom gildii"
+  permissions: "&eUstawienia uprawnień"
+
+  # Lista gildii
+  search: "&eSzukaj gildii"
+  filter: "&eFiltruj"
+  no-guilds-found: "&cNie znaleziono gildii"
+  search-dev: "&aFunkcja wyszukiwania w trakcie tworzenia..."
+  filter-dev: "&aFunkcja filtrowania w trakcie tworzenia..."
+  no-guilds: "&cNie znaleziono gildii"
+
+  # Relacje gildii
+  allies: "&aSojusznicy"
+  enemies: "&cWrogowie"
+  neutral: "&7Neutralni"
+  relations-success: "&aFunkcja relacji gildii jest gotowa"
+
+  # Stronicowanie
+  page-info: "&7Strona {current} z {total}"
+  no-more-pages: "&cTo już ostatnia strona"
+  no-previous-pages: "&cTo jest pierwsza strona"
+
+  # Wskazówki dotyczące uprawnień
+  permission-required: "&cWymagane uprawnienie: {permission}"
+  leader-only: "&cTylko lider gildii może wykonać tę operację"
+  officer-or-higher: "&cWymagane uprawnienia oficera lub wyższe"
+
+  # Wskazówki operacyjne
+  click-to-view: "&7Kliknij, aby zobaczyć szczegóły"
+  click-to-edit: "&7Kliknij, aby edytować"
+  click-to-confirm: "&7Kliknij, aby potwierdzić"
+  click-to-cancel: "&7Kliknij, aby anulować"
+
+  # Szczegóły członka
+  confirm-kick: "&cCzy na pewno chcesz wyrzucić członka {member}? Wpisz &f/guild kick {member} confirm &caby potwierdzić"
+  confirm-promote: "&aCzy na pewno chcesz awansować członka {member} na oficera? Wpisz &f/guild promote {member} confirm &aaby potwierdzić"
+  confirm-demote: "&cCzy na pewno chcesz zdegradować członka {member}? Wpisz &f/guild demote {member} confirm &caby potwierdzić"
+  cannot-kick-leader: "&cNie można wyrzucić lidera gildii"
+  cannot-modify-leader: "&cNie można modyfikować rangi lidera gildii"
+  open-chat: "&eWprowadź wiadomość do wysłania do {member}:"
+
+  # Wprowadzanie danych
+  input-name: "&aProszę wprowadzić nazwę gildii na czacie (3-20 znaków):"
+  input-description: "&aProszę wprowadzić nowy opis gildii na czacie (maks. 100 znaków):"
+  input-tag: "&aProszę wprowadzić nowy tag gildii na czacie (maks. 10 znaków):"
+  description-too-long: "&cOpis za długi, maks. 100 znaków!"
+  tag-too-long: "&cTag za długi, maks. 10 znaków!"
+  name-set: "&aNazwa gildii ustawiona na: {name}"
+  tag-set: "&aTag gildii ustawiony na: {tag}"
+  description-set: "&aOpis gildii ustawiony na: {description}"
+  description-updated: "&aOpis gildii zaktualizowany!"
+  description-update-failed: "&cAktualizacja opisu gildii nie powiodła się!"
+  tag-updated: "&aTag gildii zaktualizowany!"
+  tag-update-failed: "&cAktualizacja tagu gildii nie powiodła się!"
+
+# Wiadomości dotyczące placeholderów
+placeholders:
+  no-guild: "Brak gildii"
+  no-tag: "Brak tagu"
+  no-description: "Brak opisu"
+  unknown-role: "Nieznana rola"
+
+# Wiadomości pomocy
+help:
+  title: "&6=== Pomoc Systemu Gildii ==="
+  main-menu: "&e/guild &7- Otwórz główne menu gildii"
+  create: "&e/guild create <nazwa> [tag] [opis] &7- Utwórz gildię"
+  info: "&e/guild info &7- Zobacz informacje o gildii"
+  members: "&e/guild members &7- Zobacz członków gildii"
+  invite: "&e/guild invite <gracz> &7- Zaproś gracza do gildii"
+  kick: "&e/guild kick <gracz> &7- Wyrzuć członka z gildii"
+  leave: "&e/guild leave &7- Opuść gildię"
+  delete: "&e/guild delete &7- Usuń gildię"
+  promote: "&e/guild promote <gracz> &7- Awansuj członka gildii"
+  demote: "&e/guild demote <gracz> &7- Zdegraduj członka gildii"
+  accept: "&e/guild accept <zapraszający> &7- Zaakceptuj zaproszenie do gildii"
+  decline: "&e/guild decline <zapraszający> &7- Odrzuć zaproszenie do gildii"
+  sethome: "&e/guild sethome &7- Ustaw dom gildii"
+  home: "&e/guild home &7- Teleportuj do domu gildii"
+  logs: "&e/guild logs &7- Zobacz logi operacji gildii"
+  help: "&e/guild help &7- Pokaż tę pomoc"
+
+# Wiadomości o błędach
+errors:
+  database:
+    connection-failed: "&cPołączenie z bazą danych nie powiodło się!"
+    query-failed: "&cZapytanie do bazy danych nie powiodło się!"
+    table-not-found: "&cTabela danych nie istnieje!"
+  config:
+    invalid-value: "&cNieprawidłowa wartość konfiguracji: {path}"
+    missing-value: "&cBrakująca wartość konfiguracji: {path}"
+  general:
+    unknown-error: "&cWystąpił nieznany błąd!"
+    plugin-disabled: "&cPlugin jest wyłączony!"
+
+# Wiadomości ekonomii gildii
+economy:
+  # Podstawowe operacje
+  no-guild: "&cNie należysz jeszcze do gildii!"
+  info: "&6Informacje Ekonomiczne Gildii"
+  balance: "&7Aktualne saldo: &e{balance}"
+  level: "&7Aktualny poziom: &e{level}"
+  max-members: "&7Maks. członków: &e{max_members}"
+  insufficient-balance: "&cNiewystarczające saldo!"
+  guild-insufficient-balance: "&cNiewystarczające saldo gildii!"
+  leader-only: "&cTylko lider gildii może wykonać tę operację!"
+  target-guild-not-found: "&cGildia docelowa nie istnieje!"
+  cannot-transfer-to-self: "&cNie można przelać środków do własnej gildii!"
+  deposit-success: "&aPomyślnie wpłacono &e{amount} &ado gildii!"
+  deposit-failed: "&cWpłata nie powiodła się!"
+  withdraw-success: "&aPomyślnie wypłacono &e{amount} &az gildii!"
+  withdraw-failed: "&cWypłata nie powiodła się!"
+  transfer-success: "&aPomyślnie przelano &e{amount} &ado gildii &e{target}!"
+  transfer-failed: "&cPrzelew nie powiódł się!"
+  insufficient-funds: "&cNiewystarczające fundusze gildii!"
+  insufficient-personal-funds: "&cNiewystarczające fundusze osobiste!"
+
+  # System poziomów
+  level-up: "&aGildia awansowała! Obecny poziom: {level}, Maks. członków: {max_members}"
+  level-up-failed: "&cAwans gildii nie powiódł się!"
+  max-level-reached: "&cGildia osiągnęła maksymalny poziom!"
+  upgrade-progress: "&ePostęp ulepszania: {progress}%"
+
+  # System wkładów
+  contribution-recorded: "&aZapisano wkład!"
+  total-contribution: "&eTwój całkowity wkład: {amount} monet"
+
+  # Rozwiązanie
+  disband-compensation: "&aGildia rozwiązana, otrzymałeś rekompensatę w wysokości {amount} monet!"
+
+  # Operacje administratora
+  admin-set-balance: "&aSaldo gildii {guild} ustawiono na {amount}!"
+  admin-add-balance: "&aSaldo gildii {guild} zwiększono o {amount}!"
+  admin-remove-balance: "&aSaldo gildii {guild} zmniejszono o {amount}!"
+  admin-balance-updated: "&aSaldo gildii {guild} zaktualizowano do {amount}!"
+  admin-balance-failed: "&cAktualizacja salda gildii nie powiodła się!"
+
+  # Wymagania poziomów
+  level-1-requirement: "0-5000 monet"
+  level-2-requirement: "5000-10000 monet"
+  level-3-requirement: "10000-20000 monet"
+  level-4-requirement: "20000-35000 monet"
+  level-5-requirement: "35000-50000 monet"
+  level-6-requirement: "50000-75000 monet"
+  level-7-requirement: "75000-100000 monet"
+  level-8-requirement: "100000-150000 monet"
+  level-9-requirement: "150000-200000 monet"
+  level-10-requirement: "200000+ monet"
+
+# Wiadomości szczegółów gildii
+guild-detail:
+  title: "&6Szczegóły Gildii"
+  guild-info: "&eInformacje o Gildii"
+  economy-info: "&eInformacje Ekonomiczne"
+  leader-info: "&6Lider Gildii"
+  description-info: "&eOpis Gildii"
+  members-title: "&aCzłonkowie Gildii"
+  more-members: "&eWięcej członków"
+  freeze-guild: "&cZamroź Gildię"
+  unfreeze-guild: "&aOdmroź Gildię"
+  delete-guild: "&4Usuń Gildię"
+  economy-management: "&eZarządzanie Funduszami"
+  refresh-info: "&aOdśwież Informacje"
+  back: "&cWróć"
+
+  # Informacje o statusie
+  status-normal: "&aNormalny"
+  status-frozen: "&cZamrożony"
+  online-status: "&aOnline"
+  offline-status: "&7Offline"
+
+  # Wskazówki operacyjne
+  freeze-success: "&aGildia {guild} została zamrożona!"
+  unfreeze-success: "&aGildia {guild} została odmrożona!"
+  freeze-failed: "&cOperacja zamrożenia/odmrożenia nie powiodła się!"
+  delete-confirm: "&cCzy na pewno chcesz usunąć gildię {guild}?"
+  delete-command: "&cWpisz &f/guildadmin delete {guild} confirm &caby potwierdzić usunięcie"
+  no-description: "&7Brak opisu"
+
+# Wiadomości ustawień systemowych
+system-settings:
+  title: "&4Ustawienia Systemowe"
+  debug-mode: "&eSzczegółowe informacje debugowania"
+  auto-save: "&eAutomatyczny zapis danych"
+  economy-system: "&eSystem Ekonomii"
+  relation-system: "&eSystem Relacji Gildii"
+  level-system: "&eSystem Poziomów Gildii"
+  application-system: "&eSystem Aplikacji"
+  invite-system: "&eSystem Zaproszeń"
+  guild-home-system: "&eSystem Domu Gildii"
+  reload-configs: "&aPrzeładuj Konfigurację"
+  database-maintenance: "&bKonserwacja Bazy Danych"
+  backup-data: "&6Kopia Zapasowa Danych"
+  save-settings: "&aZapisz Ustawienia"
+
+  # Informacje o statusie
+  enabled: "&aWłączone"
+  disabled: "&cWyłączone"
+  current-status: "&7Obecny status: {status}"
+
+  # Wskazówki operacyjne
+  toggle-success: "&a{feature} zostało {action}!"
+  toggle-enabled: "włączone"
+  toggle-disabled: "wyłączone"
+  reload-success: "&aKonfiguracja przeładowana pomyślnie!"
+  reload-failed: "&cPrzeładowanie konfiguracji nie powiodło się: {error}"
+  save-success: "&aUstawienia zapisane pomyślnie!"
+  save-failed: "&cZapisanie ustawień nie powiodło się: {error}"
+
+  # Opisy funkcji
+  debug-description: "&7Po włączeniu wyświetla szczegółowe informacje debugowania w konsoli"
+  auto-save-description: "&7Regularnie automatycznie zapisuje dane gildii, aby zapobiec utracie danych"
+  economy-description: "&7Przełącznik funkcji ekonomii gildii, w tym wpłaty, wypłaty, przelewy itp."
+  relation-description: "&7Przełącznik funkcji relacji gildii, w tym sojusznicy, wrogowie, wojny itp."
+  level-description: "&7Przełącznik funkcji poziomów gildii, w tym automatyczne awanse, limity członków itp."
+  application-description: "&7Przełącznik funkcji aplikacji do gildii, gracze muszą aplikować, aby dołączyć"
+  invite-description: "&7Przełącznik funkcji zaproszeń do gildii, lider może zapraszać graczy"
+  home-description: "&7Przełącznik funkcji domu gildii, w tym ustawianie i teleportacja do domu"
+
+  # Funkcje konserwacji
+  maintenance-dev: "&eFunkcja konserwacji bazy danych w trakcie tworzenia..."
+  backup-dev: "&eFunkcja kopii zapasowej danych w trakcie tworzenia..."
+
+# Wiadomości szczegółów logów
+log-details: "&6=== Szczegóły Logów ==="

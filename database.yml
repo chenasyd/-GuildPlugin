@@ -1,0 +1,108 @@
+# Plik konfiguracyjny bazy danych
+
+# Typ bazy danych: mysql lub sqlite
+type: sqlite
+
+# Konfiguracja MySQL (używana, gdy type to mysql)
+mysql:
+  # Adres hosta bazy danych
+  host: localhost
+  # Port bazy danych
+  port: 3306
+  # Nazwa bazy danych
+  database: guild
+  # Nazwa użytkownika bazy danych
+  username: root
+  # Hasło bazy danych
+  password: ""
+  # Rozmiar puli połączeń
+  pool-size: 10
+  # Minimalna liczba bezczynnych połączeń
+  min-idle: 5
+  # Czas oczekiwania na połączenie (milisekundy)
+  connection-timeout: 30000
+  # Czas bezczynności (milisekundy)
+  idle-timeout: 600000
+  # Maksymalny czas życia połączenia (milisekundy)
+  max-lifetime: 1800000
+  # Czy używać SSL
+  use-ssl: false
+  # Kodowanie znaków
+  character-encoding: UTF-8
+  # Strefa czasowa
+  timezone: UTC
+
+# Konfiguracja SQLite (używana, gdy type to sqlite)
+sqlite:
+  # Ścieżka do pliku bazy danych (względem folderu danych pluginu)
+  file: guild.db
+  # Czy włączyć tryb WAL
+  wal-mode: true
+  # Tryb synchronizacji: OFF, NORMAL, FULL
+  synchronous: NORMAL
+  # Rozmiar pamięci podręcznej (KB)
+  cache-size: 2000
+  # Rozmiar strony (bajty)
+  page-size: 4096
+  # Czy włączyć klucze obce
+  foreign-keys: true
+
+# Konfiguracja puli połączeń
+connection-pool:
+  # Maksymalny rozmiar puli
+  maximum-pool-size: 10
+  # Minimalna liczba bezczynnych połączeń
+  minimum-idle: 5
+  # Czas oczekiwania na połączenie (milisekundy)
+  connection-timeout: 30000
+  # Czas bezczynności (milisekundy)
+  idle-timeout: 600000
+  # Maksymalny czas życia połączenia (milisekundy)
+  max-lifetime: 1800000
+  # Zapytanie testujące połączenie
+  connection-test-query: "SELECT 1"
+  # Czas oczekiwania na walidację (milisekundy)
+  validation-timeout: 5000
+  # Czy walidować połączenie przy starcie
+  validate-on-start: true
+
+# Konfiguracja tabel bazy danych
+tables:
+  # Tabela gildii
+  guilds:
+    name: guilds
+    # Czy automatycznie tworzyć tabelę
+    auto-create: true
+    # Wersja struktury tabeli
+    version: 1
+
+  # Tabela członków gildii
+  guild_members:
+    name: guild_members
+    auto-create: true
+    version: 1
+
+  # Tabela aplikacji do gildii
+  guild_applications:
+    name: guild_applications
+    auto-create: true
+    version: 1
+
+  # Tabela zaproszeń do gildii
+  guild_invites:
+    name: guild_invites
+    auto-create: true
+    version: 1
+
+# Konfiguracja kopii zapasowych
+backup:
+  # Czy włączyć automatyczne kopie zapasowe
+  enabled: false
+  # Interwał kopii zapasowych (godziny)
+  interval: 24
+  # Liczba dni przechowywania kopii zapasowych
+  retention-days: 7
+  # Ścieżka do plików kopii zapasowych
+  path: "backups/"
+  # Format pliku kopii zapasowej
+  format: "yyyy-MM-dd_HH-mm-ss"

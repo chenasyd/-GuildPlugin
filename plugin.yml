@@ -1,0 +1,73 @@
+name: GuildPlugin
+version: 1.2.4
+main: com.guild.GuildPlugin
+api-version: '1.21'
+authors: [chenasyd]
+description: W pełni funkcjonalny plugin gildyjny dla Minecrafta, wspierający Spigot i Folia
+website: https://github.com/chenasyd
+softdepend: [PlaceholderAPI, Vault]
+
+# Minimalna obsługiwana wersja
+load: POSTWORLD
+
+# Oznaczenie wsparcia dla Folia
+folia-supported: true
+
+commands:
+  guild:
+    description: Główne polecenie systemu gildii
+    usage: /guild help
+    aliases: [g, gildia]
+    permission: guild.use
+  guildadmin:
+    description: Polecenie administratora gildii
+    usage: /guildadmin help
+    aliases: [ga, gadmin, zarzadzaniegildia]
+    permission: guild.admin
+
+permissions:
+  guild.use:
+    description: Pozwala na używanie systemu gildii
+    default: true
+  guild.admin:
+    description: Uprawnienia administratora gildii
+    default: op
+  guild.create:
+    description: Pozwala na tworzenie gildii
+    default: true
+  guild.invite:
+    description: Pozwala na zapraszanie graczy do gildii
+    default: true
+  guild.kick:
+    description: Pozwala na wyrzucanie członków gildii
+    default: true
+  guild.promote:
+    description: Pozwala na awansowanie członków gildii
+    default: true
+  guild.demote:
+    description: Pozwala na degradowanie członków gildii
+    default: true
+  guild.delete:
+    description: Pozwala na usuwanie gildii
+    default: op
+  guild.sethome:
+    description: Pozwala na ustawianie domu gildii
+    default: true
+  guild.home:
+    description: Pozwala na teleportację do domu gildii
+    default: true
+  guild.relation:
+    description: Pozwala na zarządzanie relacjami gildii
+    default: true
+  guild.economy:
+    description: Pozwala na zarządzanie ekonomią gildii
+    default: true
+  guild.deposit:
+    description: Pozwala na wpłacanie funduszy do gildii
+    default: true
+  guild.withdraw:
+    description: Pozwala na wypłacanie funduszy z gildii
+    default: true
+  guild.transfer:
+    description: Pozwala na przelewanie środków do innych gildii
+    default: true

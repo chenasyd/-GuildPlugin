@@ -1,0 +1,124 @@
+# Główny plik konfiguracyjny pluginu gildii
+
+# Konfiguracja gildii
+guild:
+  # Minimalna długość nazwy gildii
+  min-name-length: 3
+  # Maksymalna długość nazwy gildii
+  max-name-length: 20
+  # Maksymalna długość tagu gildii
+  max-tag-length: 6
+  # Maksymalna długość opisu gildii
+  max-description-length: 100
+  # Maksymalna liczba członków gildii
+  max-members: 50
+  # Koszt utworzenia gildii (wymaga Vault)
+  creation-cost: 1000.0
+  # Kolor tagu gildii
+  tag-color: "&6"
+  # Kolor nazwy gildii
+  name-color: "&e"
+
+# Konfiguracja wyświetlania
+display:
+  # Kolory rang (można dostosować)
+  role-colors:
+    leader: "&6"    # Lider: Złoty
+    officer: "&b"   # Oficer: Jasnoniebieski
+    member: "&7"    # Członek: Szary
+  # Konfiguracja separatora po lewej stronie rangi
+  role-separator:
+    enabled: true
+    text: " | "
+    color-per-role: true      # Czy separator ma mieć kolor rangi
+    default-color: "&7"      # Domyślny kolor bez rangi lub gildii (zazwyczaj nieużywany)
+
+# Konfiguracja uprawnień
+permissions:
+  # Domyślne uprawnienia
+  default:
+    can-create: true         # Pozwól na tworzenie gildii (gdy nie w gildii)
+    can-invite: false        # Nie-członek domyślnie nie może zapraszać
+    can-kick: false          # Nie-członek domyślnie nie może wyrzucać
+    can-promote: false       # Nie-członek domyślnie nie może awansować
+    can-demote: false        # Nie-członek domyślnie nie może degradować
+    can-delete: false        # Nie-członek domyślnie nie może usuwać gildii
+
+  # Uprawnienia lidera (jeśli pominięte, zakłada się pełne uprawnienia)
+  leader:
+    can-create: true
+    can-invite: true
+    can-kick: true
+    can-promote: true
+    can-demote: true
+    can-delete: true
+
+  # Uprawnienia oficera
+  officer:
+    can-create: true         # Pozwól na operacje zastępcze i tworzenie
+    can-invite: true
+    can-kick: true
+    can-promote: false       # Czy może awansować członków (zazwyczaj tylko lider)
+    can-demote: false        # Czy może degradować członków (zazwyczaj tylko lider)
+    can-delete: false        # Czy może usunąć gildię (zazwyczaj tylko lider)
+
+  # Uprawnienia członka
+  member:
+    can-create: true         # Pozwól na utworzenie nowej gildii po opuszczeniu obecnej
+    can-invite: false
+    can-kick: false
+    can-promote: false
+    can-demote: false
+    can-delete: false
+
+# Konfiguracja wiadomości
+messages:
+  # Czy włączyć wiadomości
+  enabled: true
+  # Prefiks wiadomości
+  prefix: "&6[Gildia] &r"
+  # Kolory wiadomości
+  colors:
+    success: "&a"
+    error: "&c"
+    info: "&e"
+    warning: "&6"
+
+# Konfiguracja GUI
+gui:
+  # Czy włączyć GUI
+  enabled: true
+  # Tytuł GUI
+  title: "&6System Gildii"
+  # Rozmiar GUI (musi być wielokrotnością 9)
+  size: 54
+  # Czy pokazywać tag gildii
+  show-tag: true
+  # Czy pokazywać opis gildii
+  show-description: true
+
+# Konfiguracja placeholderów
+placeholders:
+  # Czy włączyć placeholdery
+  enabled: true
+  # Prefiks placeholderów
+  prefix: "guild_"
+  # Czy buforować placeholdery
+  cache-enabled: true
+  # Czas buforowania (sekundy)
+  cache-time: 30
+
+# Konfiguracja logowania
+logging:
+  # Czy włączyć logowanie
+  enabled: true
+  # Poziom logowania: DEBUG, INFO, WARN, ERROR
+  level: INFO
+  # Czy zapisywać logi do pliku
+  file-logging: true
+  # Ścieżka do pliku logów
+  log-file: "logs/guild.log"
+  # Maksymalny rozmiar pliku logów (MB)
+  max-file-size: 10
+  # Liczba przechowywanych plików logów
+  max-files: 5

@@ -19,6 +19,20 @@ guild:
   # 工会名称颜色
   name-color: "&e"
 
+# 显示配置
+display:
+  # 职位颜色（可自定义）
+  role-colors:
+    leader: "&6"    # 会长：金色
+    officer: "&b"   # 官员：亮蓝色
+    member: "&7"    # 成员：灰色
+  # 职位左侧分隔符配置
+  role-separator:
+    enabled: true
+    text: " | "
+    color-per-role: true      # 分隔符是否跟随职位颜色
+    default-color: "&7"      # 无职位或未入会时的默认颜色（一般不会使用）
+
 # 权限配置
 permissions:
   # 默认权限
