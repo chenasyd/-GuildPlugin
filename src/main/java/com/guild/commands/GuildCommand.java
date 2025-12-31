@@ -298,24 +298,29 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         guildService.createGuildAsync(name, tag, description, player.getUniqueId(), player.getName())
             .thenAcceptAsync(success -> {
                 if (success) {
-                    String template = plugin.getConfigManager().getMessagesConfig().getString("create.success", "&a工会 {name} 创建成功！");
-                    player.sendMessage(ColorUtils.replaceWithColorIsolation(template, "{name}", name));
+                    // 去除名称中的颜色代码，避免影响提示消息颜色
+                    String cleanName = ColorUtils.stripColor(name);
+                    String cleanTag = tag != null ? ColorUtils.stripColor(tag) : null;
+                    String cleanDescription = description != null ? ColorUtils.stripColor(description) : null;
+                    
+                    String successMessage = plugin.getConfigManager().getMessagesConfig().getString("create.success", "&a工会 {name} 创建成功！");
+                    player.sendMessage(ColorUtils.colorize(successMessage.replace("{name}", cleanName)));
                     
                     String costMessage = plugin.getConfigManager().getMessagesConfig().getString("create.cost-info", "&e创建费用: {amount}")
                         .replace("{amount}", plugin.getEconomyManager().format(creationCost));
                     player.sendMessage(ColorUtils.colorize(costMessage));
                     
                     String nameMessage = plugin.getConfigManager().getMessagesConfig().getString("create.name-info", "&e工会名称: {name}");
-                    player.sendMessage(ColorUtils.colorize(nameMessage.replace("{name}", name)));
+                    player.sendMessage(ColorUtils.colorize(nameMessage.replace("{name}", cleanName)));
                     
-                    if (tag != null) {
+                    if (cleanTag != null) {
                         String tagMessage = plugin.getConfigManager().getMessagesConfig().getString("create.tag-info", "&e工会标签: [{tag}]");
-                        player.sendMessage(ColorUtils.colorize(tagMessage.replace("{tag}", tag)));
+                        player.sendMessage(ColorUtils.colorize(tagMessage.replace("{tag}", cleanTag)));
                     }
                     
-                    if (description != null) {
+                    if (cleanDescription != null) {
                         String descMessage = plugin.getConfigManager().getMessagesConfig().getString("create.description-info", "&e工会描述: {description}");
-                        player.sendMessage(ColorUtils.colorize(descMessage.replace("{description}", description)));
+                        player.sendMessage(ColorUtils.colorize(descMessage.replace("{description}", cleanDescription)));
                     }
                 } else {
                     // 退款
@@ -989,18 +994,44 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             return;
         }
         
-        // 处理邀请
-        boolean success = guildService.processInvitation(player.getUniqueId(), inviter.getUniqueId(), true);
-        if (success) {
-            String successMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accepted", "&a您已接受 {guild} 的邀请！");
-            player.sendMessage(ColorUtils.colorize(successMessage));
+        // 先检查邀请是否存在
+        guildService.getPendingInvitationAsync(player.getUniqueId(), inviter.getUniqueId()).thenAccept(invitation -> {
+            if (invitation == null) {
+                String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&c工会邀请已过期或不存在！");
+                CompatibleScheduler.runTask(plugin, () -> player.sendMessage(ColorUtils.colorize(failMessage)));
+                return;
+            }
             
-            String inviterMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accepted", "&a{player} 已接受您的邀请！");
-            inviter.sendMessage(ColorUtils.colorize(inviterMessage.replace("{player}", player.getName())));
-        } else {
-            String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&c工会邀请已过期！");
-            player.sendMessage(ColorUtils.colorize(failMessage));
-        }
+            // 获取工会信息
+            guildService.getGuildByIdAsync(invitation.getGuildId()).thenAccept(guild -> {
+                if (guild == null) {
+                    String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&c工会邀请已过期或工会不存在！");
+                    CompatibleScheduler.runTask(plugin, () -> player.sendMessage(ColorUtils.colorize(failMessage)));
+                    return;
+                }
+                
+                // 处理邀请
+                guildService.processInvitationAsync(player.getUniqueId(), inviter.getUniqueId(), true).thenAccept(success -> {
+                    CompatibleScheduler.runTask(plugin, () -> {
+                        if (success) {
+                            // 去除工会名称中的颜色代码
+                            String cleanGuildName = ColorUtils.stripColor(guild.getName());
+                            String successMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accepted", "&a您已接受 {guild} 的邀请！")
+                                .replace("{guild}", cleanGuildName);
+                            player.sendMessage(ColorUtils.colorize(successMessage));
+                            
+                            String inviterMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accepted-by-inviter", "&a{player} 已接受您的邀请！");
+                            if (inviter.isOnline()) {
+                                inviter.sendMessage(ColorUtils.colorize(inviterMessage.replace("{player}", player.getName())));
+                            }
+                        } else {
+                            String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&c工会邀请已过期！");
+                            player.sendMessage(ColorUtils.colorize(failMessage));
+                        }
+                    });
+                });
+            });
+        });
     }
     
     /**
@@ -1028,18 +1059,44 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             return;
         }
         
-        // 处理邀请
-        boolean success = guildService.processInvitation(player.getUniqueId(), inviter.getUniqueId(), false);
-        if (success) {
-            String successMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.declined", "&c您已拒绝 {guild} 的邀请！");
-            player.sendMessage(ColorUtils.colorize(successMessage));
+        // 先检查邀请是否存在
+        guildService.getPendingInvitationAsync(player.getUniqueId(), inviter.getUniqueId()).thenAccept(invitation -> {
+            if (invitation == null) {
+                String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&c工会邀请已过期或不存在！");
+                CompatibleScheduler.runTask(plugin, () -> player.sendMessage(ColorUtils.colorize(failMessage)));
+                return;
+            }
             
-            String inviterMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.declined", "&c{player} 已拒绝您的邀请！");
-            inviter.sendMessage(ColorUtils.colorize(inviterMessage.replace("{player}", player.getName())));
-        } else {
-            String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&c工会邀请已过期！");
-            player.sendMessage(ColorUtils.colorize(failMessage));
-        }
+            // 获取工会信息
+            guildService.getGuildByIdAsync(invitation.getGuildId()).thenAccept(guild -> {
+                if (guild == null) {
+                    String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&c工会邀请已过期或工会不存在！");
+                    CompatibleScheduler.runTask(plugin, () -> player.sendMessage(ColorUtils.colorize(failMessage)));
+                    return;
+                }
+                
+                // 处理邀请
+                guildService.processInvitationAsync(player.getUniqueId(), inviter.getUniqueId(), false).thenAccept(success -> {
+                    CompatibleScheduler.runTask(plugin, () -> {
+                        if (success) {
+                            // 去除工会名称中的颜色代码
+                            String cleanGuildName = ColorUtils.stripColor(guild.getName());
+                            String successMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.declined", "&c您已拒绝 {guild} 的邀请！")
+                                .replace("{guild}", cleanGuildName);
+                            player.sendMessage(ColorUtils.colorize(successMessage));
+                            
+                            String inviterMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.declined-by-inviter", "&c{player} 已拒绝您的邀请！");
+                            if (inviter.isOnline()) {
+                                inviter.sendMessage(ColorUtils.colorize(inviterMessage.replace("{player}", player.getName())));
+                            }
+                        } else {
+                            String failMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.expired", "&c工会邀请已过期！");
+                            player.sendMessage(ColorUtils.colorize(failMessage));
+                        }
+                    });
+                });
+            });
+        });
     }
     
     /**
