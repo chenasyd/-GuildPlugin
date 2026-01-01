@@ -1,17 +1,11 @@
 name: GuildPlugin
-version: 1.2.5
+version: 1.0.0
 main: com.guild.GuildPlugin
 api-version: '1.21'
 authors: [chenasyd]
-description: 一个功能完整的我的世界工会插件，支持Spigot和Folia
+description: 一个功能完整的我的世界工会插件
 website: https://github.com/chenasyd
 softdepend: [PlaceholderAPI, Vault]
-
-# 支持的最低版本
-load: POSTWORLD
-
-# Folia支持标记
-folia-supported: true
 
 commands:
   guild:
