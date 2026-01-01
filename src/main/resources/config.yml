@@ -1,23 +1,5 @@
 # 工会插件主配置文件
 
-# 数据库配置
-database:
-  # 数据库类型: mysql 或 sqlite
-  type: sqlite
-  
-  # MySQL配置（当type为mysql时使用）
-  mysql:
-    host: localhost
-    port: 3306
-    database: guild
-    username: root
-    password: ""
-    pool-size: 10
-    min-idle: 5
-    connection-timeout: 30000
-    idle-timeout: 600000
-    max-lifetime: 1800000
-
 # 工会配置
 guild:
   # 工会名称最小长度
@@ -37,34 +19,64 @@ guild:
   # 工会名称颜色
   name-color: "&e"
 
+# 显示配置
+display:
+  # 职位颜色（可自定义）
+  role-colors:
+    leader: "&6"    # 会长：金色
+    officer: "&b"   # 官员：亮蓝色
+    member: "&7"    # 成员：灰色
+  # 职位左侧分隔符配置
+  role-separator:
+    enabled: true
+    text: " | "
+    color-per-role: true      # 分隔符是否跟随职位颜色
+    default-color: "&7"      # 无职位或未入会时的默认颜色（一般不会使用）
+
 # 权限配置
 permissions:
   # 默认权限
   default:
+    can-create: true         # 允许创建工会（未入会时）
+    can-invite: false        # 非成员默认不可邀请
+    can-kick: false          # 非成员默认不可踢人
+    can-promote: false       # 非成员默认不可升职
+    can-demote: false        # 非成员默认不可降职
+    can-delete: false        # 非成员默认不可删会
+  
+  # 会长权限（若缺省则视为全开）
+  leader:
     can-create: true
     can-invite: true
     can-kick: true
     can-promote: true
-    can-demote: false
-    can-delete: false
-  
+    can-demote: true
+    can-delete: true
+
   # 官员权限
   officer:
-    can-create: true
+    can-create: true         # 允许代操作与创建
     can-invite: true
     can-kick: true
-    can-promote: false
-    can-demote: false
-    can-delete: false
+    can-promote: false       # 是否允许升职成员（通常只会长）
+    can-demote: false        # 是否允许降职成员（通常只会长）
+    can-delete: false        # 是否允许删除工会（通常只会长）
   
   # 成员权限
   member:
-    can-create: true
+    can-create: true         # 允许退会后再创建新工会
     can-invite: false
     can-kick: false
     can-promote: false
     can-demote: false
     can-delete: false
+
+# 语言配置
+language:
+  # 默认语言: en(英文), zh(中文), pl(波兰语)
+  default: "zh"
+  # 是否允许玩家切换语言
+  allow-player-switch: true
 
 # 消息配置
 messages:

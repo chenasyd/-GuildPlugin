@@ -1,20 +1,26 @@
 name: GuildPlugin
-version: 1.0.0
+version: 1.2.6
 main: com.guild.GuildPlugin
 api-version: '1.21'
 authors: [chenasyd]
-description: 一个功能完整的我的世界工会插件
+description: 一个功能完整的我的世界工会插件，支持Spigot和Folia
 website: https://github.com/chenasyd
 softdepend: [PlaceholderAPI, Vault]
 
+# 支持的最低版本
+load: POSTWORLD
+
+# Folia支持标记
+folia-supported: true
+
 commands:
   guild:
-    description: 工会系统主命令
+    description: 工会系统主命令 | Guild System Main Command | Główna Komenda Systemu Gildii
     usage: /guild help
     aliases: [g, 工会]
     permission: guild.use
   guildadmin:
-    description: 工会管理员命令
+    description: 工会管理员命令 | Guild Admin Command | Komenda Administratora Gildii
     usage: /guildadmin help
     aliases: [ga, 工会管理]
     permission: guild.admin

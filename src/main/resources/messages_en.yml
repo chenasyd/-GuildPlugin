@@ -1,0 +1,536 @@
+# Guild Plugin Messages Configuration File
+
+# General Messages
+general:
+  prefix: "&6[Guild] &r"
+  no-permission: "&cYou do not have permission to perform this action!"
+  player-only: "&cThis command can only be executed by a player!"
+  player-not-found: "&cPlayer {player} not found!"
+  guild-not-found: "&cGuild {guild} not found!"
+  invalid-arguments: "&cInvalid arguments!"
+  error-occurred: "&cAn error occurred: {error}"
+  service-error: "&cGuild service not initialized!"
+  unknown-command: "&cUnknown command! Use /guild help for help."
+
+# Guild Creation Messages
+create:
+  success: "&aGuild {name} created successfully!"
+  name-too-short: "&cGuild name is too short! Minimum {min} characters required."
+  name-too-long: "&cGuild name is too long! Maximum {max} characters allowed."
+  name-exists: "&cGuild name {name} already exists!"
+  name-required: "&cPlease enter a guild name first!"
+  tag-exists: "&cGuild tag {tag} already exists!"
+  tag-too-long: "&cGuild tag is too long! Maximum {max} characters allowed."
+  already-in-guild: "&cYou are already in a guild!"
+  insufficient-funds: "&cYou do not have enough funds! Creating a guild costs {cost} gold."
+  usage: "&eUsage: /guild create <name> [tag] [description]"
+  description-too-long: "&cGuild description cannot exceed 100 characters!"
+  failed: "&cGuild creation failed! Possible reasons:"
+  failed-reason-1: "&c- Guild name or tag already exists"
+  failed-reason-2: "&c- You are already in another guild"
+  name-info: "&eGuild Name: {name}"
+  tag-info: "&eGuild Tag: [{tag}]"
+  description-info: "&eGuild Description: {description}"
+  economy-not-available: "&cEconomy system unavailable, cannot create guild!"
+  payment-failed: "&cFailed to deduct creation fee!"
+  payment-refunded: "&eCreation fee {cost} gold refunded."
+  cost-info: "&eCreation Cost: {amount}"
+
+# Guild Information Messages
+info:
+  title: "&6=== Guild Information ==="
+  name: "&eName: &f{name}"
+  tag: "&eTag: &f{tag}"
+  description: "&eDescription: &f{description}"
+  leader: "&eLeader: &f{leader}"
+  members: "&eMembers: &f{count}/{max}"
+  created: "&eCreated: &f{date}"
+  no-guild: "&cYou have not joined any guild!"
+  role: "&eYour Role: &f{role}"
+
+# Guild Members Messages
+members:
+  title: "&6=== Guild Members ==="
+  leader: "&c{name} &7(Leader)"
+  officer: "&6{name} &7(Officer)"
+  member: "&f{name} &7(Member)"
+  joined: "&7Joined: {date}"
+  no-members: "&cThere are no members in the guild!"
+  member-format: "&e{role} {name} &7- {status}"
+  total: "&eTotal: {count}"
+
+# Invitation Messages
+invite:
+  sent: "&aInvitation sent to {player}!"
+  received: "&e{inviter} has invited you to join guild: {guild}"
+  accepted: "&aYou have accepted the invitation to {guild}!"
+  declined: "&cYou have declined the invitation to {guild}!"
+  expired: "&cGuild invitation has expired!"
+  already-invited: "&c{player} has already been invited!"
+  no-permission: "&cYou do not have permission to invite players!"
+  usage: "&eUsage: /guild invite <player>"
+  title: "&6=== Guild Invitation ==="
+  guild-tag: "&eGuild Tag: [{tag}]"
+  accept-command: "&eType &a/guild accept {inviter} &eto accept"
+  decline-command: "&eType &c/guild decline {inviter} &eto decline"
+  already-in-guild: "&cPlayer {player} is already in another guild!"
+  cannot-invite-self: "&cYou cannot invite yourself!"
+  accepted-by-inviter: "&a{player} has accepted your invitation!"
+  declined-by-inviter: "&c{player} has declined your invitation!"
+
+# Kick Messages
+kick:
+  success: "&a{player} has been kicked from the guild!"
+  kicked: "&cYou have been kicked from guild {guild}!"
+  no-permission: "&cYou do not have permission to kick players!"
+  cannot-kick-leader: "&cCannot kick the guild leader!"
+  usage: "&eUsage: /guild kick <player>"
+  player-not-found: "&cPlayer {player} is not online!"
+  not-in-guild: "&cPlayer {player} is not in your guild!"
+  cannot-kick-self: "&cYou cannot kick yourself! Use /guild leave to leave the guild."
+  failed: "&cFailed to kick player!"
+
+# Leave Guild Messages
+leave:
+  success: "&aYou have left the guild!"
+  leader-cannot-leave: "&cThe guild leader cannot leave the guild! Please transfer leadership or delete the guild first."
+  confirm: "&cAre you sure you want to leave the guild? Use /guild leave confirm to confirm."
+  member-error: "&cGuild member information error!"
+  success-with-guild: "&aYou have successfully left guild: {guild}"
+  failed: "&cFailed to leave guild!"
+  use-delete: "&cIf you want to disband the guild, please use the /guild delete command."
+
+# Delete Guild Messages
+delete:
+  success: "&aGuild {guild} has been deleted!"
+  no-permission: "&cYou do not have permission to delete the guild!"
+  confirm: "&cAre you sure you want to delete the guild? This will disband the entire guild! Use /guild delete confirm to confirm."
+  only-leader: "&cOnly the guild leader can delete the guild!"
+  warning: "&cWarning: Deleting the guild will permanently disband it, and all members will be removed!"
+  confirm-command: "&cIf you are sure you want to delete the guild, please type again: /guild delete confirm"
+  cancel-command: "&cOr type: /guild delete cancel to cancel"
+
+# Guild Home Messages
+sethome:
+  success: "&aGuild home set successfully!"
+  failed: "&cFailed to set guild home!"
+  only-leader: "&cOnly the guild leader can set the guild home!"
+  no-permission: "&cYou do not have permission to set the guild home!"
+home:
+  success: "&aTeleported to guild home!"
+  not-set: "&cGuild home is not set!"
+  no-permission: "&cYou do not have permission to teleport to the guild home!"
+  teleport-failed: "&cFailed to teleport to guild home!"
+
+# Application Messages
+application:
+  sent: "&aYour application has been sent to {guild}!"
+  received: "&aReceived an application from {player}!"
+  accepted: "&aYour application has been accepted by {guild}!"
+  declined: "&cYour application has been declined by {guild}!"
+  already-applied: "&cYou have already applied to {guild}!"
+  usage: "&eUsage: /guild apply <guild> [message]"
+
+# Application Messages (GUI)
+apply:
+  success: "&aApplication submitted!"
+  failed: "&cFailed to submit application!"
+  already-applied: "&cYou have already applied to this guild!"
+
+# Guild Relation Messages
+relation:
+  no-guild: "&cYou have not joined a guild!"
+  only-leader: "&cOnly the guild leader can manage guild relations!"
+  help-title: "&6=== Guild Relation Management ==="
+  help-list: "&e/guild relation list &7- View all relations"
+  help-create: "&e/guild relation create <guild> <type> &7- Create a relation"
+  help-delete: "&e/guild relation delete <guild> &7- Delete a relation"
+  help-accept: "&e/guild relation accept <guild> &7- Accept a relation request"
+  help-reject: "&e/guild relation reject <guild> &7- Reject a relation request"
+  help-types: "&7Relation Types: &eally, enemy, war, truce, neutral"
+  create-usage: "&eUsage: /guild relation create <target guild> <relation type>"
+  delete-usage: "&eUsage: /guild relation delete <target guild>"
+  accept-usage: "&eUsage: /guild relation accept <target guild>"
+  reject-usage: "&eUsage: /guild relation reject <target guild>"
+  unknown-subcommand: "&cUnknown subcommand! Use /guild relation for help."
+  no-relations: "&7Your guild has no relations yet."
+  list-title: "&6=== Guild Relations List ==="
+  list-format: "&e{other_guild} &7- {type} ({status})"
+  invalid-type: "&cInvalid relation type! Valid types: ally, enemy, war, truce, neutral"
+  target-not-found: "&cTarget guild {guild} does not exist!"
+  cannot-relation-self: "&cCannot establish a relation with yourself!"
+  create-success: "&a{type} relation request sent to {guild}!"
+  create-failed: "&cFailed to create relation! Relation may already exist."
+  delete-success: "&aRelation with {guild} deleted!"
+  delete-failed: "&cFailed to delete relation! Relation may not exist."
+  accept-success: "&aRelation request from {guild} accepted!"
+  accept-failed: "&cFailed to accept relation! No pending request found."
+  reject-success: "&cRelation request from {guild} rejected!"
+  reject-failed: "&cFailed to reject relation! No pending request found."
+
+# Permission Messages
+permissions:
+  promote:
+    success: "&a{player} has been promoted to {role}!"
+    no-permission: "&cYou do not have permission to promote players!"
+    cannot-promote: "&cCannot promote this player!"
+    usage: "&eUsage: /guild promote <player>"
+    player-not-found: "&cPlayer {player} is not online!"
+    not-in-guild: "&cPlayer {player} is not in your guild!"
+    already-highest: "&cPlayer {player} already has the highest rank!"
+    cannot-promote-self: "&cYou cannot promote yourself!"
+  demote:
+    success: "&a{player} has been demoted to {role}!"
+    no-permission: "&cYou do not have permission to demote players!"
+    cannot-demote: "&cCannot demote this player!"
+    usage: "&eUsage: /guild demote <player>"
+    player-not-found: "&cPlayer {player} is not online!"
+    not-in-guild: "&cPlayer {player} is not in your guild!"
+    already-lowest: "&cPlayer {player} already has the lowest rank!"
+    cannot-demote-self: "&cYou cannot demote yourself!"
+    cannot-demote-leader: "&cCannot demote the guild leader!"
+
+# Admin Command Messages
+admin:
+  no-permission: "&cYou do not have admin permissions!"
+  unknown-command: "&cUnknown command! Use /guildadmin help for help."
+  reload:
+    success: "&aConfiguration reloaded successfully!"
+    error: "&cConfiguration reload failed: {error}"
+  list:
+    title: "&6=== Guild List ==="
+    entry: "&e{guild} &7- {count} members"
+    empty: "&cNo guilds found!"
+    total: "&eTotal: {count} guilds"
+  info:
+    title: "&6=== Guild Details ==="
+    id: "&eID: &f{id}"
+    name: "&eName: &f{name}"
+    tag: "&eTag: &f{tag}"
+    description: "&eDescription: &f{description}"
+    leader: "&eLeader: &f{leader}"
+    member-count: "&eMembers: &f{count}"
+    created: "&eCreated: &f{created}"
+    updated: "&eUpdated: &f{updated}"
+    usage: "&eUsage: /guildadmin info <guild name>"
+    not-found: "&cGuild {guild} does not exist!"
+    members-title: "&6=== Members List ==="
+  delete:
+    success: "&aGuild {guild} has been deleted by an admin!"
+    error: "&cFailed to delete guild: {error}"
+    usage: "&eUsage: /guildadmin delete <guild name>"
+    not-found: "&cGuild {guild} does not exist!"
+    warning: "&cWarning: Deleting the guild will permanently disband it, and all members will be removed!"
+    confirm: "&cIf you are sure you want to delete the guild, use: /guildadmin delete {guild} confirm"
+    success-with-name: "&aSuccessfully deleted guild: {guild}"
+    failed: "&cFailed to delete guild!"
+  kick:
+    success: "&a{player} has been kicked from {guild}!"
+    error: "&cFailed to kick player: {error}"
+    usage: "&eUsage: /guildadmin kick <player name> <guild name>"
+    guild-not-found: "&cGuild {guild} does not exist!"
+    player-not-found: "&cPlayer {player} is not online!"
+    player-not-in-guild: "&cPlayer {player} is not in guild {guild}!"
+    cannot-kick-leader: "&cCannot kick the guild leader! Please transfer leadership or delete the guild first."
+    success-with-names: "&aSuccessfully kicked player {player} from guild {guild}!"
+    kicked-by-admin: "&cYou have been kicked from guild {guild} by an admin!"
+    failed: "&cFailed to kick player!"
+  help:
+    title: "&6=== Guild Admin Command Help ==="
+    reload: "&e/guildadmin reload &7- Reload configuration"
+    list: "&e/guildadmin list &7- List all guilds"
+    info: "&e/guildadmin info <guild name> &7- View guild details"
+    delete: "&e/guildadmin delete <guild name> &7- Delete a guild"
+    kick: "&e/guildadmin kick <player> <guild> &7- Kick a player from a guild"
+    help: "&e/guildadmin help &7- Show this help"
+
+# GUI Messages
+gui:
+  title: "&6Guild System"
+  create-guild: "&aCreate Guild"
+  guild-info: "&eGuild Info"
+  member-management: "&eMember Management"
+  application-management: "&eApplication Management"
+  guild-settings: "&eGuild Settings"
+  guild-list: "&eGuild List"
+  guild-relations: "&eGuild Relations"
+  invite-player: "&eInvite Player"
+  leave-guild: "&cLeave Guild"
+  delete-guild: "&4Delete Guild"
+  confirm: "&aConfirm"
+  cancel: "&cCancel"
+  back: "&7Back"
+  next-page: "&aNext Page"
+  previous-page: "&cPrevious Page"
+  no-guild: "&cYou have no guild"
+  no-permission: "&cInsufficient Permissions"
+  opening: "&aOpening Guild System GUI..."
+
+  # Main Interface Functions
+  create-guild-success: "&aCreate Guild function ready"
+  guild-info-success: "&aGuild Info function ready"
+  member-management-success: "&aMember Management function ready"
+  application-management-success: "&aApplication Management function ready"
+  guild-settings-success: "&aGuild Settings function ready"
+  guild-list-success: "&aGuild List function ready"
+  guild-relations-success: "&aGuild Relations function ready"
+
+  # Function Messages
+  invite-member-success: "&aInvite Member function ready"
+  kick-member-success: "&aKick Member function ready"
+  promote-member-success: "&aPromote Member function ready"
+  demote-member-success: "&aDemote Member function ready"
+  accept-application-success: "&aAccept Application function ready"
+  reject-application-success: "&aReject Application function ready"
+  application-history-success: "&aApplication History function ready"
+  change-description-success: "&aChange Description function ready"
+  change-tag-success: "&aChange Tag function ready"
+  permissions-success: "&aPermissions function ready"
+  search-success: "&aSearch function ready"
+  filter-success: "&aFilter function ready"
+  view-guild-details-success: "&aView Guild Details function ready"
+  apply-to-guild-success: "&aApply to Guild function ready"
+  name-input-success: "&aGuild Name Input function ready"
+  tag-input-success: "&aGuild Tag Input function ready"
+  description-input-success: "&aGuild Description Input function ready"
+
+  # Member Management
+  invite-member: "&aInvite Member"
+  kick-member: "&cKick Member"
+  promote-member: "&6Promote Member"
+  demote-member: "&7Demote Member"
+
+  # Application Management
+  pending-applications: "&ePending Applications"
+  application-history: "&eApplication History"
+  no-pending-applications: "&aNo pending applications"
+  no-application-history: "&aNo application history"
+
+  # Guild Settings
+  change-description: "&eChange Description"
+  change-tag: "&eChange Tag"
+  set-home: "&eSet Guild Home"
+  permissions: "&ePermissions"
+
+  # Guild List
+  search: "&eSearch Guilds"
+  filter: "&eFilter"
+  no-guilds-found: "&cNo guilds found"
+  search-dev: "&aSearch function under development..."
+  filter-dev: "&aFilter function under development..."
+  no-guilds: "&cNo guilds found"
+
+  # Guild Relations
+  allies: "&aAllied Guilds"
+  enemies: "&cEnemy Guilds"
+  neutral: "&7Neutral Guilds"
+  relations-success: "&aGuild Relations function ready"
+
+  # Pagination
+  page-info: "&7Page {current} of {total}"
+  no-more-pages: "&cAlready on the last page"
+  no-previous-pages: "&cAlready on the first page"
+
+  # Permission Hints
+  permission-required: "&cPermission required: {permission}"
+  leader-only: "&cOnly the guild leader can perform this action"
+  officer-or-higher: "&cOfficer or higher rank required"
+
+  # Action Hints
+  click-to-view: "&7Click to view details"
+  click-to-edit: "&7Click to edit"
+  click-to-confirm: "&7Click to confirm"
+  click-to-cancel: "&7Click to cancel"
+
+  # Member Details
+  confirm-kick: "&cAre you sure you want to kick member {member}? Type &f/guild kick {member} confirm &cto confirm"
+  confirm-promote: "&aAre you sure you want to promote member {member} to officer? Type &f/guild promote {member} confirm &ato confirm"
+  confirm-demote: "&cAre you sure you want to demote member {member}? Type &f/guild demote {member} confirm &cto confirm"
+  cannot-kick-leader: "&cCannot kick the guild leader"
+  cannot-modify-leader: "&cCannot modify the guild leader's rank"
+  open-chat: "&ePlease enter the message to send to {member}:"
+
+  # Input Related
+  input-name: "&aPlease enter the guild name in chat (3-20 characters):"
+  input-description: "&aPlease enter the new guild description in chat (max 100 characters):"
+  input-tag: "&aPlease enter the new guild tag in chat (max 10 characters):"
+  description-too-long: "&cDescription too long, maximum 100 characters!"
+  tag-too-long: "&cTag too long, maximum 10 characters!"
+  name-set: "&aGuild name set to: {name}"
+  tag-set: "&aGuild tag set to: {tag}"
+  description-set: "&aGuild description set to: {description}"
+  description-updated: "&aGuild description updated!"
+  description-update-failed: "&cFailed to update guild description!"
+  tag-updated: "&aGuild tag updated!"
+  tag-update-failed: "&cFailed to update guild tag!"
+
+# Placeholder Messages
+placeholders:
+  no-guild: "No Guild"
+  no-tag: "No Tag"
+  no-description: "No Description"
+  unknown-role: "Unknown Role"
+
+# Help Messages
+help:
+  title: "&6=== Guild System Help ==="
+  main-menu: "&e/guild &7- Open guild main menu"
+  create: "&e/guild create <name> [tag] [description] &7- Create a guild"
+  info: "&e/guild info &7- View guild information"
+  members: "&e/guild members &7- View guild members"
+  invite: "&e/guild invite <player> &7- Invite a player to the guild"
+  kick: "&e/guild kick <player> &7- Kick a member from the guild"
+  leave: "&e/guild leave &7- Leave the guild"
+  delete: "&e/guild delete &7- Delete the guild"
+  promote: "&e/guild promote <player> &7- Promote a guild member"
+  demote: "&e/guild demote <player> &7- Demote a guild member"
+  accept: "&e/guild accept <inviter> &7- Accept a guild invitation"
+  decline: "&e/guild decline <inviter> &7- Decline a guild invitation"
+  sethome: "&e/guild sethome &7- Set guild home"
+  home: "&e/guild home &7- Teleport to guild home"
+  logs: "&e/guild logs &7- View guild operation logs"
+  help: "&e/guild help &7- Show this help"
+
+# Error Messages
+errors:
+  database:
+    connection-failed: "&cDatabase connection failed!"
+    query-failed: "&cDatabase query failed!"
+    table-not-found: "&cDatabase table not found!"
+  config:
+    invalid-value: "&cInvalid configuration value: {path}"
+    missing-value: "&cMissing configuration item: {path}"
+  general:
+    unknown-error: "&cAn unknown error occurred!"
+    plugin-disabled: "&cPlugin is disabled!"
+
+# Guild Economy Messages
+economy:
+  # Basic Operations
+  no-guild: "&cYou have not joined a guild!"
+  info: "&6Guild Economy Info"
+  balance: "&7Current Funds: &e{balance}"
+  level: "&7Current Level: &e{level}"
+  max-members: "&7Max Members: &e{max_members}"
+  insufficient-balance: "&cYou have insufficient balance!"
+  guild-insufficient-balance: "&cThe guild has insufficient funds!"
+  leader-only: "&cOnly the guild leader can perform this action!"
+  target-guild-not-found: "&cTarget guild does not exist!"
+  cannot-transfer-to-self: "&cCannot transfer funds to your own guild!"
+  deposit-success: "&aSuccessfully deposited &e{amount} &ato the guild!"
+  deposit-failed: "&cDeposit failed!"
+  withdraw-success: "&aSuccessfully withdrew &e{amount} &afrom the guild!"
+  withdraw-failed: "&cWithdrawal failed!"
+  transfer-success: "&aSuccessfully transferred &e{amount} &ato guild &e{target}&a!"
+  transfer-failed: "&cTransfer failed!"
+  insufficient-funds: "&cGuild funds insufficient!"
+  insufficient-personal-funds: "&cYour personal funds are insufficient!"
+
+  # Level System
+  level-up: "&aGuild leveled up successfully! Current level: {level}, Max members: {max_members}"
+  level-up-failed: "&cGuild level up failed!"
+  max-level-reached: "&cGuild has reached the maximum level!"
+  upgrade-progress: "&eUpgrade Progress: {progress}%"
+
+  # Contribution System
+  contribution-recorded: "&aContribution recorded!"
+  total-contribution: "&eYour total contribution: {amount} gold"
+
+  # Disband
+  disband-compensation: "&aGuild disbanded, you received {amount} gold compensation!"
+
+  # Admin Actions
+  admin-set-balance: "&aGuild {guild} funds set to {amount}!"
+  admin-add-balance: "&aGuild {guild} funds increased by {amount}!"
+  admin-remove-balance: "&aGuild {guild} funds decreased by {amount}!"
+  admin-balance-updated: "&aGuild {guild} funds updated to {amount}!"
+  admin-balance-failed: "&cFailed to update guild funds!"
+
+  # Level Requirements
+  level-1-requirement: "0-5000 gold"
+  level-2-requirement: "5000-10000 gold"
+  level-3-requirement: "10000-20000 gold"
+  level-4-requirement: "20000-35000 gold"
+  level-5-requirement: "35000-50000 gold"
+  level-6-requirement: "50000-75000 gold"
+  level-7-requirement: "75000-100000 gold"
+  level-8-requirement: "100000-150000 gold"
+  level-9-requirement: "150000-200000 gold"
+  level-10-requirement: "200000+ gold"
+
+# Guild Detail Messages
+guild-detail:
+  title: "&6Guild Details"
+  guild-info: "&eGuild Information"
+  economy-info: "&eEconomy Information"
+  leader-info: "&6Guild Leader"
+  description-info: "&eGuild Description"
+  members-title: "&aGuild Members"
+  more-members: "&eMore Members"
+  freeze-guild: "&cFreeze Guild"
+  unfreeze-guild: "&aUnfreeze Guild"
+  delete-guild: "&4Delete Guild"
+  economy-management: "&eFunds Management"
+  refresh-info: "&aRefresh Info"
+  back: "&cBack"
+
+  # Status Information
+  status-normal: "&aNormal"
+  status-frozen: "&cFrozen"
+  online-status: "&aOnline"
+  offline-status: "&7Offline"
+
+  # Operation Hints
+  freeze-success: "&aGuild {guild} has been frozen!"
+  unfreeze-success: "&aGuild {guild} has been unfrozen!"
+  freeze-failed: "&cFreeze/Unfreeze operation failed!"
+  delete-confirm: "&cAre you sure you want to delete guild {guild}?"
+  delete-command: "&cType &f/guildadmin delete {guild} confirm &cto confirm deletion"
+  no-description: "&7No description"
+
+# System Settings Messages
+system-settings:
+  title: "&4System Settings"
+  debug-mode: "&eVerbose Backend Info Display"
+  auto-save: "&eAuto-Save Data"
+  economy-system: "&eEconomy System"
+  relation-system: "&eGuild Relation System"
+  level-system: "&eGuild Level System"
+  application-system: "&eApplication System"
+  invite-system: "&eInvitation System"
+  guild-home-system: "&eGuild Home System"
+  reload-configs: "&aReload Configs"
+  database-maintenance: "&bDatabase Maintenance"
+  backup-data: "&6Backup Data"
+  save-settings: "&aSave Settings"
+
+  # Status Information
+  enabled: "&aEnabled"
+  disabled: "&cDisabled"
+  current-status: "&7Current Status: {status}"
+
+  # Operation Hints
+  toggle-success: "&a{feature} has been {action}!"
+  toggle-enabled: "enabled"
+  toggle-disabled: "disabled"
+  reload-success: "&aConfiguration reloaded successfully!"
+  reload-failed: "&cConfiguration reload failed: {error}"
+  save-success: "&aSettings saved successfully!"
+  save-failed: "&cFailed to save settings: {error}"
+
+  # Feature Descriptions
+  debug-description: "&7Shows detailed debug information in console when enabled"
+  auto-save-description: "&7Periodically auto-saves guild data to prevent loss"
+  economy-description: "&7Toggles guild economy features, including deposit, withdrawal, transfer"
+  relation-description: "&7Toggles guild relation features, including ally, enemy, war"
+  level-description: "&7Toggles guild level features, including auto-leveling, member limits"
+  application-description: "&7Toggles application system; players must apply to join guilds"
+  invite-description: "&7Toggles invitation system; leaders can invite players"
+  home-description: "&7Toggles guild home features, including setting and teleporting"
+
+  # Maintenance Functions
+  maintenance-dev: "&eDatabase maintenance function under development..."
+  backup-dev: "&eData backup function under development..."
+
+# Guild Log Messages
+log-details: "&6=== Log Details ==="
