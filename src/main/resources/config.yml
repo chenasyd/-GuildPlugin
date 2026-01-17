@@ -71,6 +71,13 @@ permissions:
     can-demote: false
     can-delete: false
 
+# 语言配置
+language:
+  # 默认语言: en(英文), zh(中文), pl(波兰语)
+  default: "zh"
+  # 是否允许玩家切换语言
+  allow-player-switch: true
+
 # 消息配置
 messages:
   # 是否启用消息

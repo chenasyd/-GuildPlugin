@@ -1,11 +1,11 @@
 package com.guild.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
+import com.guild.GuildPlugin;
+import com.guild.core.utils.ColorUtils;
+import com.guild.gui.AdminGuildGUI;
+import com.guild.gui.RelationManagementGUI;
+import com.guild.models.Guild;
+import com.guild.models.GuildRelation;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,19 +13,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import com.guild.GuildPlugin;
-import com.guild.core.utils.ColorUtils;
-import com.guild.gui.AdminGuildGUI;
-import com.guild.gui.ConfirmDeleteGUI;
-import com.guild.gui.GuildListManagementGUI;
-import com.guild.gui.RelationManagementGUI;
-import com.guild.models.Guild;
-import com.guild.models.GuildRelation;
-
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 工会管理员命令
@@ -64,7 +56,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 handleInfo(sender, args);
                 break;
             case "delete":
-                handleDeleteCommand(sender, args);
+                handleDelete(sender, args);
                 break;
             case "freeze":
                 handleFreeze(sender, args);
@@ -220,87 +212,27 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         });
     }
     
-    private void handleDeleteCommand(CommandSender sender, String[] args) {
+    private void handleDelete(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            sender.sendMessage(ColorUtils.colorize("&c用法: /guildadmin delete <工会名称或ID> [confirm]"));
+            sender.sendMessage(ColorUtils.colorize("&c用法: /guildadmin delete <工会名称>"));
             return;
         }
-
-        final String target = args[1];
-
-        plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            Guild found = null;
-            UUID targetId = null;
-            try {
-                targetId = UUID.fromString(target);
-            } catch (Exception ignored) {}
-
-            if (targetId != null) {
-                for (Guild g : guilds) {
-                    if (String.valueOf(g.getId()).equals(String.valueOf(targetId))) {
-                        found = g;
-                        break;
-                    }
-                }
-            } else {
-                for (Guild g : guilds) {
-                    if (g.getName().equalsIgnoreCase(target)) {
-                        found = g;
-                        break;
-                    }
-                }
-            }
-
-            if (found == null) {
-                plugin.getServer().getScheduler().runTask(plugin, () ->
-                    sender.sendMessage(ColorUtils.colorize("&c未找到工会: " + target))
-                );
+        
+        String guildName = args[1];
+        plugin.getGuildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
+            if (guild == null) {
+                sender.sendMessage(ColorUtils.colorize("&c工会 " + guildName + " 不存在！"));
                 return;
             }
-
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                if (!plugin.getPermissionManager().hasPermission(player, "guild.admin")) {
-                    player.sendMessage(ColorUtils.colorize("&c你没有执行该命令的权限（guild.admin）"));
-                    return;
+            
+            // 强制删除工会
+            plugin.getGuildService().deleteGuildAsync(guild.getId(), UUID.randomUUID()).thenAccept(success -> {
+                if (success) {
+                    sender.sendMessage(ColorUtils.colorize("&a工会 " + guildName + " 已被强制删除！"));
+                } else {
+                    sender.sendMessage(ColorUtils.colorize("&c删除工会失败！"));
                 }
-                // 统一通过 GUI 进行确认删除
-                plugin.getGuiManager().openGUI(player, new ConfirmDeleteGUI(plugin, player, found, true));
-                player.sendMessage(ColorUtils.colorize("&e已打开删除确认 GUI，请在 GUI 中确认删除。"));
-            } else {
-                // 控制台：必须带 confirm
-                boolean confirm = args.length >= 3 && args[2].equalsIgnoreCase("confirm");
-                if (!confirm) {
-                    sender.sendMessage(ColorUtils.colorize("&c控制台无法打开GUI，请使用: /guildadmin delete " + target + " confirm"));
-                    return;
-                }
-                ConfirmDeleteGUI.confirmDelete(plugin, sender, found, true);
-            }
-
-            return;
-        });
-    }
-
-    private void suggestUseGuiForDeletion(CommandSender sender, Guild guild, String reason) {
-        plugin.getServer().getScheduler().runTask(plugin, () -> {
-            sender.sendMessage(ColorUtils.colorize("&c删除工会失败: &f" + guild.getName()));
-            if (reason != null && !reason.isEmpty()) {
-                sender.sendMessage(ColorUtils.colorize("&7原因: &f" + reason));
-            }
-            sender.sendMessage(ColorUtils.colorize("&e建议：在管理GUI中手动删除工会（先删除关系/成员后重试），或查看控制台日志以获取详细错误信息。"));
-
-            if (sender instanceof Player player) {
-                TextComponent tc = new TextComponent(ColorUtils.colorize("&a点击此处打开工会管理GUI以尝试手动删除"));
-                tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/guildadmin"));
-                tc.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ColorUtils.colorize("&7在 GUI 中可删除关系、移除成员，然后再次删除该工会")).create()));
-                player.spigot().sendMessage(tc);
-
-                // 打开工会列表管理界面，便于直接操作
-                plugin.getGuiManager().openGUI(player, new GuildListManagementGUI(plugin, player));
-            } else {
-                // 控制台提示
-                plugin.getLogger().info("管理员可在玩家端使用 /guildadmin 打开管理GUI后手动删除工会: " + guild.getName());
-            }
+            });
         });
     }
     
@@ -533,8 +465,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                     sender.sendMessage(ColorUtils.colorize("&c工会 " + guild2Name + " 不存在！"));
                     return;
                 }
-                // 兼容不同类型的 id（UUID / int 等），使用字符串比较
-                if (String.valueOf(guild1.getId()).equals(String.valueOf(guild2.getId()))) {
+                if (guild1.getId() == guild2.getId()) {
                     sender.sendMessage(ColorUtils.colorize("&c不能与自己建立关系！"));
                     return;
                 }
@@ -583,12 +514,9 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 // 查找并删除关系
                 plugin.getGuildService().getGuildRelationsAsync(guild1.getId()).thenAccept(relations -> {
                     for (GuildRelation relation : relations) {
-                        // 使用字符串比较以兼容 UUID / int / Integer 等实现
-                        String r1 = String.valueOf(relation.getGuild1Id());
-                        String r2 = String.valueOf(relation.getGuild2Id());
-                        String id1 = String.valueOf(guild1.getId());
-                        String id2 = String.valueOf(guild2.getId());
-                        if ((r1.equals(id1) && r2.equals(id2)) || (r1.equals(id2) && r2.equals(id1))) {
+                        if ((relation.getGuild1Id() == guild1.getId() && relation.getGuild2Id() == guild2.getId()) ||
+                            (relation.getGuild1Id() == guild2.getId() && relation.getGuild2Id() == guild1.getId())) {
+                            
                             plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
                                 if (success) {
                                     sender.sendMessage(ColorUtils.colorize("&a已删除关系: " + guild1Name + " ↔ " + guild2Name));
@@ -729,7 +657,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                             sender.sendMessage(ColorUtils.colorize("&c工会 " + guild2NameTest + " 不存在！"));
                             return;
                         }
-                        if (String.valueOf(guild1.getId()).equals(String.valueOf(guild2.getId()))) {
+                        if (guild1.getId() == guild2.getId()) {
                             sender.sendMessage(ColorUtils.colorize("&c不能与自己建立关系！"));
                             return;
                         }

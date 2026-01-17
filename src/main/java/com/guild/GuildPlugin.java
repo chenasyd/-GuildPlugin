@@ -15,10 +15,6 @@ import com.guild.listeners.GuildListener;
 import com.guild.services.GuildService;
 import com.guild.core.utils.ServerUtils;
 import com.guild.core.utils.TestUtils;
-import com.guild.utils.FoliaUtils;
-import com.guild.utils.TeleportManager;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -35,7 +31,6 @@ public class GuildPlugin extends JavaPlugin {
     private PermissionManager permissionManager;
     private EconomyManager economyManager;
     private GuildService guildService;
-    private boolean folia = false; // Folia 标识（在 onEnable 中初始化）
     
     @Override
     public void onEnable() {
@@ -104,12 +99,6 @@ public class GuildPlugin extends JavaPlugin {
             
             // 启动服务
             startServices();
-            
-            // 检测是否为 Folia，并记录日志
-            this.folia = FoliaUtils.isFolia();
-            if (this.folia) {
-                getLogger().warning("检测到 Folia 服务端，插件内的传送功能将被禁用以避免触发看门狗。");
-            }
             
             logger.info("工会插件启动成功！");
             logger.info("兼容模式: " + (ServerUtils.isFolia() ? "Folia" : "Spigot"));
@@ -209,18 +198,5 @@ public class GuildPlugin extends JavaPlugin {
     
     public GuildService getGuildService() {
         return guildService;
-    }
-    
-    public boolean isFolia() {
-        return folia;
-    }
-
-    /**
-     * 插件内部使用的安全传送封装：
-     * - 如果是 Folia，则阻止并返回 false（已经通知玩家）
-     * - 否则在主线程执行传送并返回 true
-     */
-    public boolean safeTeleport(Player player, Location target) {
-        return TeleportManager.teleport(this, player, target);
     }
 }

@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * 工会描述输入GUI
@@ -122,13 +121,17 @@ public class GuildDescriptionInputGUI implements GUI {
         player.closeInventory();
         
         // 发送消息提示输入
-        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.input-description", "&a请在聊天框中输入新的工会描述（最多100字符）：");
+        int maxLength = plugin.getConfigManager().getMainConfig().getInt("guild.max-description-length", 100);
+        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.input-description", "&a请在聊天框中输入新的工会描述（最多{max}字符）：")
+            .replace("{max}", String.valueOf(maxLength));
         player.sendMessage(ColorUtils.colorize(message));
         
         // 设置玩家为输入模式
+        final int finalMaxLength = maxLength; // 使用final变量避免lambda中的变量冲突
         plugin.getGuiManager().setInputMode(player, input -> {
-            if (input.length() > 100) {
-                String errorMessage = plugin.getConfigManager().getMessagesConfig().getString("gui.description-too-long", "&c描述过长，最多100字符！");
+            if (input.length() > finalMaxLength) {
+                String errorMessage = plugin.getConfigManager().getMessagesConfig().getString("gui.description-too-long", "&c描述过长，最多{max}字符！")
+                    .replace("{max}", String.valueOf(finalMaxLength));
                 player.sendMessage(ColorUtils.colorize(errorMessage));
                 return false;
             }

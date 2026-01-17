@@ -75,6 +75,8 @@ invite:
   decline-command: "&e输入 &c/guild decline {inviter} &e拒绝邀请"
   already-in-guild: "&c玩家 {player} 已经加入了其他工会！"
   cannot-invite-self: "&c您不能邀请自己！"
+  accepted-by-inviter: "&a{player} 已接受您的邀请！"
+  declined-by-inviter: "&c{player} 已拒绝您的邀请！"
 
 # 踢出相关消息
 kick:

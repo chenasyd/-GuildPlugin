@@ -1,8 +1,10 @@
 package com.guild.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.models.Guild;
+import com.guild.gui.GuildDetailGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,10 +13,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.models.Guild;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 工会列表管理GUI
@@ -186,7 +187,7 @@ public class GuildListManagementGUI implements GUI {
     private void handleGuildClick(Player player, Guild guild, ClickType clickType) {
         if (clickType == ClickType.LEFT) {
             // 查看详情
-            openGuildDetailsAsAdmin(player, guild);
+            openGuildDetailGUI(player, guild);
         } else if (clickType == ClickType.RIGHT) {
             // 删除工会
             deleteGuild(player, guild);
@@ -196,9 +197,9 @@ public class GuildListManagementGUI implements GUI {
         }
     }
     
-    private void openGuildDetailsAsAdmin(Player player, Guild guild) {
-        // 打开工会设置GUI（管理员模式）
-        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, player, guild, true));
+    private void openGuildDetailGUI(Player player, Guild guild) {
+        // 打开工会详情GUI
+        plugin.getGuiManager().openGUI(player, new GuildDetailGUI(plugin, guild, player));
     }
     
     private void deleteGuild(Player player, Guild guild) {
