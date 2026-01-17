@@ -24,7 +24,7 @@ public class GuildListManagementGUI implements GUI {
     private final GuildPlugin plugin;
     private final Player player;
     private int currentPage = 0;
-    private final int itemsPerPage = 28; // 7列 × 4行
+    private final int itemsPerPage = 12; // 从 28 减少到 12，界面更简洁
     private List<Guild> allGuilds = new ArrayList<>();
     
     public GuildListManagementGUI(GuildPlugin plugin, Player player) {
@@ -61,16 +61,16 @@ public class GuildListManagementGUI implements GUI {
     private void setupGuildList(Inventory inventory) {
         int startIndex = currentPage * itemsPerPage;
         int endIndex = Math.min(startIndex + itemsPerPage, allGuilds.size());
-        
+        int cols = 3; // 三列布局，居中显示（列 3,4,5）
+
         for (int i = 0; i < itemsPerPage; i++) {
             if (startIndex + i < endIndex) {
                 Guild guild = allGuilds.get(startIndex + i);
-                
-                // 计算在2-8列，2-5行的位置 (slots 10-43)
-                int row = (i / 7) + 1; // 2-5行
-                int col = (i % 7) + 1; // 2-8列
+
+                int row = (i / cols) + 1; // 1..4 对应 GUI 的行 2..5
+                int col = (i % cols) + 3; // 列 3,4,5 居中
                 int slot = row * 9 + col;
-                
+
                 inventory.setItem(slot, createGuildItem(guild));
             }
         }
@@ -78,24 +78,12 @@ public class GuildListManagementGUI implements GUI {
     
     private ItemStack createGuildItem(Guild guild) {
         Material material = guild.isFrozen() ? Material.RED_WOOL : Material.GREEN_WOOL;
-        String status = guild.isFrozen() ? "&c已冻结" : "&a正常";
-        
+
         List<String> lore = new ArrayList<>();
-        lore.add(ColorUtils.colorize("&7ID: " + guild.getId()));
-        lore.add(ColorUtils.colorize("&7标签: [" + (guild.getTag() != null ? guild.getTag() : "无") + "]"));
-        lore.add(ColorUtils.colorize("&7会长: " + guild.getLeaderName()));
-        lore.add(ColorUtils.colorize("&7等级: " + guild.getLevel()));
-        lore.add(ColorUtils.colorize("&7资金: " + plugin.getEconomyManager().format(guild.getBalance())));
-        lore.add(ColorUtils.colorize("&7状态: " + status));
-        lore.add("");
-        lore.add(ColorUtils.colorize("&e左键: 查看详情"));
-        lore.add(ColorUtils.colorize("&c右键: 删除工会"));
-        if (guild.isFrozen()) {
-            lore.add(ColorUtils.colorize("&a中键: 解冻工会"));
-        } else {
-            lore.add(ColorUtils.colorize("&6中键: 冻结工会"));
-        }
-        
+        lore.add(ColorUtils.colorize("&7会长: &e" + guild.getLeaderName()));
+        lore.add(ColorUtils.colorize("&7等级: &e" + guild.getLevel() + "  &7资金: &a" + plugin.getEconomyManager().format(guild.getBalance())));
+        lore.add(ColorUtils.colorize("&e左键: 查看  &c右键: 删除  &6Shift+右键: 冻结/解冻"));
+
         return createItem(material, ColorUtils.colorize("&6" + guild.getName()), lore.toArray(new String[0]));
     }
     
@@ -169,11 +157,12 @@ public class GuildListManagementGUI implements GUI {
             currentPage++;
             refresh(player);
         } else if (slot >= 10 && slot <= 43) {
-            // 工会项目 - 检查是否在2-8列，2-5行范围内
+            // 工会项目 - 检查是否在3列布局，列 3,4,5，行 1..4 范围内
             int row = slot / 9;
             int col = slot % 9;
-            if (row >= 1 && row <= 4 && col >= 1 && col <= 7) {
-                int relativeIndex = (row - 1) * 7 + (col - 1);
+            if (row >= 1 && row <= 4 && col >= 3 && col <= 5) {
+                int cols = 3;
+                int relativeIndex = (row - 1) * cols + (col - 3);
                 int guildIndex = (currentPage * itemsPerPage) + relativeIndex;
                 if (guildIndex < allGuilds.size()) {
                     Guild guild = allGuilds.get(guildIndex);
@@ -190,8 +179,8 @@ public class GuildListManagementGUI implements GUI {
         } else if (clickType == ClickType.RIGHT) {
             // 删除工会
             deleteGuild(player, guild);
-        } else if (clickType == ClickType.MIDDLE) {
-            // 冻结/解冻工会
+        } else if (clickType == ClickType.SHIFT_RIGHT) {
+            // 冻结/解冻工会（Shift+右键）
             toggleGuildFreeze(player, guild);
         }
     }

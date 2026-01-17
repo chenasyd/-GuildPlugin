@@ -1,11 +1,14 @@
 package com.guild.gui;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -54,54 +57,43 @@ public class GuildSettingsGUI implements GUI {
         
         // 添加功能按钮
         setupFunctionButtons(inventory);
+
+        // 用灰色玻璃填充内部空槽以美化界面（不覆盖已有物品）
+        fillInteriorSlots(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 10: // 修改名称
-                handleChangeName(player);
+            case 11: // 文本编辑：左=名称 右=描述 Shift+左=标签
+                if (clickType == ClickType.LEFT) handleChangeName(player);
+                else if (clickType == ClickType.RIGHT) handleChangeDescription(player);
+                else if (clickType == ClickType.SHIFT_LEFT) handleChangeTag(player);
                 break;
-            case 11: // 修改描述
-                handleChangeDescription(player);
+            case 15: // 成员管理：左=邀请 右=踢出 Shift+左=提升/降级
+                if (clickType == ClickType.LEFT) handleInviteMember(player);
+                else if (clickType == ClickType.RIGHT) handleKickMember(player);
+                else if (clickType == ClickType.SHIFT_LEFT) plugin.getGuiManager().openGUI(player, new PromoteMemberGUI(plugin, guild));
                 break;
-            case 12: // 修改标签
-                handleChangeTag(player);
-                break;
-            case 14: // 设置工会家
+            case 13: // 设置工会家
                 handleSetHome(player);
                 break;
-            case 16: // 权限设置
-                handlePermissions(player);
+            case 28: // 申请管理
+                if (clickType == ClickType.LEFT) handleApplications(player);
                 break;
-            case 20: // 邀请成员
-                handleInviteMember(player);
+            case 29: // 关系管理
+                if (clickType == ClickType.LEFT) handleRelations(player);
                 break;
-            case 22: // 踢出成员
-                handleKickMember(player);
-                break;
-            case 24: // 提升成员
-                handlePromoteMember(player);
-                break;
-            case 26: // 降级成员
-                handleDemoteMember(player);
-                break;
-            case 30: // 处理申请
-                handleApplications(player);
-                break;
-            case 31: // 工会关系管理
-                handleRelations(player);
-                break;
-            case 32: // 工会日志
-                handleGuildLogs(player);
+            case 31: // 工会日志
+                if (clickType == ClickType.LEFT) handleGuildLogs(player);
                 break;
             case 33: // 工会家传送
                 handleHomeTeleport(player);
                 break;
-            case 34: // 离开工会
+            case 34: // 离开
                 handleLeaveGuild(player);
                 break;
-            case 36: // 删除工会
+            case 36: // 删除
                 handleDeleteGuild(player);
                 break;
             case 49: // 返回
@@ -126,412 +118,206 @@ public class GuildSettingsGUI implements GUI {
     }
     
     /**
-     * 设置设置按钮
+     * 设置设置按钮（简约化）
      */
     private void setupSettingsButtons(Inventory inventory) {
-        // 修改名称按钮
-        ItemStack changeName = createItem(
-            Material.NAME_TAG,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-name.name", "&e修改名称")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-name.lore.1", "&7修改工会名称"))
-        );
-        inventory.setItem(10, changeName);
-        
-        // 修改描述按钮
-        ItemStack changeDescription = createItem(
-            Material.BOOK,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-description.name", "&e修改描述")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-description.lore.1", "&7修改工会描述"))
-        );
-        inventory.setItem(11, changeDescription);
-        
-        // 修改标签按钮
-        ItemStack changeTag = createItem(
-            Material.OAK_SIGN,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-tag.name", "&e修改标签")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.change-tag.lore.1", "&7修改工会标签"))
-        );
-        inventory.setItem(12, changeTag);
-        
-        // 设置工会家按钮
-        ItemStack setHome = createItem(
-            Material.COMPASS,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.set-home.name", "&e设置工会家")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.set-home.lore.1", "&7设置工会传送点"))
-        );
-        inventory.setItem(14, setHome);
-        
-        // 权限设置按钮
-        ItemStack permissions = createItem(
-            Material.SHIELD,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.permissions.name", "&e权限设置")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.permissions.lore.1", "&7管理成员权限"))
-        );
-        inventory.setItem(16, permissions);
+        // 文本编辑（说明改为 Shift+左键）
+        ItemStack textEdit = createItem(Material.WRITABLE_BOOK, "&e文本编辑", false,
+            "&7左键 &f修改名称",
+            "&7右键 &f修改描述",
+            "&7Shift+左键 &f修改标签");
+        inventory.setItem(11, textEdit);
+
+        // 成员管理（说明改为 Shift+左键）
+        ItemStack memberMgmt = createItem(Material.SHIELD, "&a成员管理", false,
+            "&7左键 &f邀请成员",
+            "&7右键 &f踢出成员",
+            "&7Shift+左键 &f提升/降级");
+        inventory.setItem(15, memberMgmt);
+
+        // 设置工会家 - 单独格
+        ItemStack setHome = createItem(Material.COMPASS, "&b设置工会家", false,
+            "&7单击 &f设置工会家");
+        inventory.setItem(13, setHome);
     }
-    
+
     /**
      * 设置功能按钮
      */
     private void setupFunctionButtons(Inventory inventory) {
-        // 邀请成员按钮
-        ItemStack inviteMember = createItem(
-            Material.EMERALD_BLOCK,
-            ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.invite-member", "&a邀请成员")),
-            ColorUtils.colorize("&7邀请新成员加入工会")
-        );
-        inventory.setItem(20, inviteMember);
-        
-        // 踢出成员按钮
-        ItemStack kickMember = createItem(
-            Material.REDSTONE,
-            ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.kick-member", "&c踢出成员")),
-            ColorUtils.colorize("&7踢出工会成员")
-        );
-        inventory.setItem(22, kickMember);
-        
-        // 提升成员按钮
-        ItemStack promoteMember = createItem(
-            Material.GOLD_INGOT,
-            ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.promote-member", "&6提升成员")),
-            ColorUtils.colorize("&7提升成员职位")
-        );
-        inventory.setItem(24, promoteMember);
-        
-        // 降级成员按钮
-        ItemStack demoteMember = createItem(
-            Material.IRON_INGOT,
-            ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.demote-member", "&7降级成员")),
-            ColorUtils.colorize("&7降级成员职位")
-        );
-        inventory.setItem(26, demoteMember);
-        
-        // 处理申请按钮
-        ItemStack applications = createItem(
-            Material.PAPER,
-            ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.application-management", "&e申请管理")),
-            ColorUtils.colorize("&7处理加入申请")
-        );
-        inventory.setItem(30, applications);
-        
-        // 工会关系管理按钮
-        ItemStack relations = createItem(
-            Material.RED_WOOL,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-relations-management.name", "&e工会关系管理")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-relations-management.lore.1", "&7管理工会关系")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-relations-management.lore.2", "&7盟友、敌对等"))
-        );
-        inventory.setItem(31, relations);
-        
-        // 工会日志按钮
-        ItemStack guildLogs = createItem(
-            Material.BOOK,
-            ColorUtils.colorize("&6工会日志"),
-            ColorUtils.colorize("&7查看工会操作历史"),
-            ColorUtils.colorize("&7记录所有重要操作")
-        );
-        inventory.setItem(32, guildLogs);
-        
-        // 工会家传送按钮
-        ItemStack homeTeleport = createItem(
-            Material.ENDER_PEARL,
-            ColorUtils.colorize("&b传送到工会家"),
-            ColorUtils.colorize("&7传送到工会设置的家")
-        );
+        // 申请管理（单独槽位 28）
+        ItemStack applications = createItem(Material.PAPER, "&e申请管理", false,
+            "&7单击 &f处理加入申请");
+        inventory.setItem(28, applications);
+
+        // 关系管理（单独槽位 29）
+        ItemStack relations = createItem(Material.RED_WOOL, "&e关系管理", false,
+            "&7单击 &f管理工会关系");
+        inventory.setItem(29, relations);
+
+        // 工会日志（单独槽位 31）
+        ItemStack guildLogs = createItem(Material.BOOK, "&6工会日志", false,
+            "&7单击 &f查看工会日志");
+        inventory.setItem(31, guildLogs);
+
+        // 工会家传送
+        ItemStack homeTeleport = createItem(Material.ENDER_PEARL, "&d工会家传送", false,
+            "&7单击 &f传送到工会家");
         inventory.setItem(33, homeTeleport);
-        
-        // 离开工会按钮
-        ItemStack leaveGuild = createItem(
-            Material.BARRIER,
-            ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.leave-guild", "&c离开工会")),
-            ColorUtils.colorize("&7离开当前工会")
-        );
+
+        // 离开工会
+        ItemStack leaveGuild = createItem(Material.BARRIER, "&c离开工会", false,
+            "&7单击 &f离开当前工会");
         inventory.setItem(34, leaveGuild);
-        
-        // 删除工会按钮
-        ItemStack deleteGuild = createItem(
-            Material.TNT,
-            ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("gui.delete-guild", "&4删除工会")),
-            ColorUtils.colorize("&7删除整个工会"),
-            ColorUtils.colorize("&c此操作不可撤销！")
-        );
+
+        // 删除工会
+        ItemStack deleteGuild = createItem(Material.TNT, "&4删除工会", false,
+            "&7单击 &f删除当前工会");
         inventory.setItem(36, deleteGuild);
-        
-        // 返回按钮
-        ItemStack back = createItem(
-            Material.ARROW,
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.back.name", "&7返回")),
-            ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.items.back.lore.1", "&7返回主菜单"))
-        );
+
+        // 返回主菜单
+        ItemStack back = createItem(Material.ARROW, "&7返回", false,
+            "&7单击 &f返回主菜单");
         inventory.setItem(49, back);
     }
     
     /**
-     * 显示当前设置信息
+     * 显示当前设置信息（简洁概览）
      */
     private void displayCurrentSettings(Inventory inventory) {
-        // 当前名称
-        ItemStack currentName = createItem(
-            Material.NAME_TAG,
-            ColorUtils.colorize("&e当前名称"),
-            ColorUtils.colorize("&7" + (guild.getName() != null ? guild.getName() : "无名称"))
-        );
-        inventory.setItem(10, currentName);
-        
-        // 当前描述
-        ItemStack currentDescription = createItem(
-            Material.BOOK,
-            ColorUtils.colorize("&e当前描述"),
-            ColorUtils.colorize("&7" + (guild.getDescription() != null ? guild.getDescription() : "无描述"))
-        );
-        inventory.setItem(11, currentDescription);
-        
-        // 当前标签
-        ItemStack currentTag = createItem(
-            Material.OAK_SIGN,
-            ColorUtils.colorize("&e当前标签"),
-            ColorUtils.colorize("&7" + (guild.getTag() != null ? "[" + guild.getTag() + "]" : "无标签"))
-        );
-        inventory.setItem(13, currentTag);
-        
-        // 当前工会家状态
+        String name = guild.getName() != null ? guild.getName() : "无名称";
+        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" : "无标签";
+        String desc = guild.getDescription() != null ? guild.getDescription() : "无描述";
         String homeStatus = guild.hasHome() ? "&a已设置" : "&c未设置";
-        ItemStack currentHome = createItem(
-            Material.COMPASS,
-            ColorUtils.colorize("&e工会家状态"),
-            ColorUtils.colorize("&7状态: " + homeStatus)
+
+        ItemStack overview = createItem(Material.PAPER, "&6工会概览", false,
+            "&7名称: &e" + name,
+            "&7标签: &e" + tag,
+            "&7描述: &7" + desc,
+            "&7工会家: " + homeStatus
         );
-        inventory.setItem(15, currentHome);
-        
-        // 当前权限设置
-        ItemStack currentPermissions = createItem(
-            Material.SHIELD,
-            ColorUtils.colorize("&e当前权限设置"),
-            ColorUtils.colorize("&7会长: 所有权限"),
-            ColorUtils.colorize("&7官员: 邀请、踢出"),
-            ColorUtils.colorize("&7成员: 基础权限")
-        );
-        inventory.setItem(17, currentPermissions);
+        inventory.setItem(10, overview);
     }
-    
-    /**
-     * 处理修改名称
-     */
+
+    // 填充内部空槽（灰色玻璃，不覆盖已有物品）
+    private void fillInteriorSlots(Inventory inventory) {
+        ItemStack filler = createItem(Material.GRAY_STAINED_GLASS_PANE, " ");
+        for (int slot = 9; slot <= 44; slot++) {
+            int col = slot % 9;
+            if (col == 0 || col == 8) continue; // 左右边框
+            if (inventory.getItem(slot) == null) inventory.setItem(slot, filler);
+        }
+    }
+
     private void handleChangeName(Player player) {
-        // 检查权限（只有会长可以修改名称）
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
-            player.sendMessage(ColorUtils.colorize(message));
+            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        
-        // 打开名称输入GUI
         plugin.getGuiManager().openGUI(player, new GuildNameInputGUI(plugin, guild, player));
     }
-    
-    /**
-     * 处理修改描述
-     */
+
     private void handleChangeDescription(Player player) {
-        // 检查权限（只有会长可以修改描述）
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
-            player.sendMessage(ColorUtils.colorize(message));
+            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        
-        // 打开描述输入GUI
         plugin.getGuiManager().openGUI(player, new GuildDescriptionInputGUI(plugin, guild));
     }
-    
-    /**
-     * 处理修改标签
-     */
+
     private void handleChangeTag(Player player) {
-        // 检查权限（只有会长可以修改标签）
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
-            player.sendMessage(ColorUtils.colorize(message));
+            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        
-        // 打开标签输入GUI
         plugin.getGuiManager().openGUI(player, new GuildTagInputGUI(plugin, guild));
     }
-    
-    /**
-     * 处理设置工会家
-     */
-    private void handleSetHome(Player player) {
-        // 检查权限（只有会长可以设置工会家）
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
-            player.sendMessage(ColorUtils.colorize(message));
-            return;
-        }
-        
-        // 设置工会家
-        plugin.getGuildService().setGuildHomeAsync(guild.getId(), player.getLocation(), player.getUniqueId()).thenAccept(success -> {
-            if (success) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("sethome.success", "&a工会家设置成功！");
-                player.sendMessage(ColorUtils.colorize(message));
-                
-                // 刷新GUI
-                plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
-            } else {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("sethome.failed", "&c工会家设置失败！");
-                player.sendMessage(ColorUtils.colorize(message));
-            }
-        });
-    }
-    
-    /**
-     * 处理权限设置
-     */
-    private void handlePermissions(Player player) {
-        // 检查权限（只有会长可以管理权限）
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
-            player.sendMessage(ColorUtils.colorize(message));
-            return;
-        }
-        
-        // 打开权限设置GUI
-        plugin.getGuiManager().openGUI(player, new GuildPermissionsGUI(plugin, guild));
-    }
-    
-    /**
-     * 处理邀请成员
-     */
+
     private void handleInviteMember(Player player) {
-        // 检查权限（官员或会长可以邀请成员）
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.officer-or-higher", "&c需要官员或更高权限");
-            player.sendMessage(ColorUtils.colorize(message));
+            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.officer-or-higher", "&c需要官员或更高权限");
+            player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        
-        // 打开邀请成员GUI
         plugin.getGuiManager().openGUI(player, new InviteMemberGUI(plugin, guild));
     }
-    
-    /**
-     * 处理踢出成员
-     */
+
     private void handleKickMember(Player player) {
-        // 检查权限（官员或会长可以踢出成员）
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.officer-or-higher", "&c需要官员或更高权限");
-            player.sendMessage(ColorUtils.colorize(message));
+            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.officer-or-higher", "&c需要官员或更高权限");
+            player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        
-        // 打开踢出成员GUI
         plugin.getGuiManager().openGUI(player, new KickMemberGUI(plugin, guild));
     }
-    
-    /**
-     * 处理提升成员
-     */
-    private void handlePromoteMember(Player player) {
-        // 检查权限（只有会长可以提升成员）
+
+    private void handleSetHome(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
-            player.sendMessage(ColorUtils.colorize(message));
+            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        
-        // 打开提升成员GUI
-        plugin.getGuiManager().openGUI(player, new PromoteMemberGUI(plugin, guild));
+        plugin.getGuildService().setGuildHomeAsync(guild.getId(), player.getLocation(), player.getUniqueId()).thenAccept(success -> {
+            CompatibleScheduler.runTask(plugin, () -> {
+                if (success) {
+                    String message = plugin.getConfigManager().getMessagesConfig().getString("sethome.success", "&a工会家设置成功！");
+                    player.sendMessage(ColorUtils.colorize(message));
+                    plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+                } else {
+                    String message = plugin.getConfigManager().getMessagesConfig().getString("sethome.failed", "&c工会家设置失败！");
+                    player.sendMessage(ColorUtils.colorize(message));
+                }
+            });
+        });
     }
-    
-    /**
-     * 处理降级成员
-     */
-    private void handleDemoteMember(Player player) {
-        // 检查权限（只有会长可以降级成员）
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
-            player.sendMessage(ColorUtils.colorize(message));
-            return;
-        }
-        
-        // 打开降级成员GUI
-        plugin.getGuiManager().openGUI(player, new DemoteMemberGUI(plugin, guild));
-    }
-    
-    /**
-     * 处理申请管理
-     */
+
     private void handleApplications(Player player) {
-        // 检查权限（官员或会长可以处理申请）
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.officer-or-higher", "&c需要官员或更高权限");
-            player.sendMessage(ColorUtils.colorize(message));
+            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.officer-or-higher", "&c需要官员或更高权限");
+            player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        
-        // 打开申请管理GUI
         plugin.getGuiManager().openGUI(player, new ApplicationManagementGUI(plugin, guild));
     }
-    
-    /**
-     * 处理工会关系管理
-     */
+
     private void handleRelations(Player player) {
-        // 检查权限（只有会长可以管理关系）
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("relation.only-leader", "&c只有工会会长才能管理工会关系！");
-            player.sendMessage(ColorUtils.colorize(message));
+            String msg = plugin.getConfigManager().getMessagesConfig().getString("relation.only-leader", "&c只有工会会长才能管理工会关系！");
+            player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        
-        // 打开工会关系管理GUI
         plugin.getGuiManager().openGUI(player, new GuildRelationsGUI(plugin, guild, player));
     }
-    
-    /**
-     * 处理工会日志查看
-     */
+
     private void handleGuildLogs(Player player) {
-        // 检查权限（工会成员可以查看日志）
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
-            player.sendMessage(ColorUtils.colorize(message));
+            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+            player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        
-        // 打开工会日志GUI
         plugin.getGuiManager().openGUI(player, new GuildLogsGUI(plugin, guild, player));
     }
-    
-    /**
-     * 处理工会家传送
-     */
+
     private void handleHomeTeleport(Player player) {
-        // 检查权限（工会成员可以传送到工会家）
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
-            player.sendMessage(ColorUtils.colorize(message));
+            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+            player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        
-        // 传送到工会家
         plugin.getGuildService().getGuildHomeAsync(guild.getId()).thenAccept(location -> {
-            // 确保在主线程中执行传送操作并使用 Folia 安全传送
             CompatibleScheduler.runTask(plugin, () -> {
                 if (location != null) {
                     FoliaTeleportUtils.safeTeleport(plugin, player, location);
@@ -544,46 +330,43 @@ public class GuildSettingsGUI implements GUI {
             });
         });
     }
-    
-    /**
-     * 处理离开工会
-     */
+
     private void handleLeaveGuild(Player player) {
-        // 打开确认离开GUI
         plugin.getGuiManager().openGUI(player, new ConfirmLeaveGuildGUI(plugin, guild));
     }
-    
-    /**
-     * 处理删除工会
-     */
+
     private void handleDeleteGuild(Player player) {
-        // 检查权限（只有会长可以删除工会）
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
-            player.sendMessage(ColorUtils.colorize(message));
+            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        
-        // 打开确认删除GUI
         plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild));
     }
-    
-    /**
-     * 创建物品
-     */
+
+    // createItem 重载：支持不传 glowing 参数的旧调用
     private ItemStack createItem(Material material, String name, String... lore) {
+        return createItem(material, name, false, lore);
+    }
+
+    // 修正发光魔咒为 LURE（兼容 API）
+    private ItemStack createItem(Material material, String name, boolean glowing, String... lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
-        
         if (meta != null) {
-            meta.setDisplayName(name);
-            if (lore.length > 0) {
-                meta.setLore(Arrays.asList(lore));
+            meta.setDisplayName(ColorUtils.colorize(name));
+            List<String> coloredLore = new ArrayList<>();
+            for (String line : lore) {
+                coloredLore.add(ColorUtils.colorize(line));
+            }
+            meta.setLore(coloredLore);
+            if (glowing) {
+                meta.addEnchant(Enchantment.LURE, 1, true);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             }
             item.setItemMeta(meta);
         }
-        
         return item;
     }
 }

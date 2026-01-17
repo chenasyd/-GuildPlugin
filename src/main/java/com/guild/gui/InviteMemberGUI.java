@@ -1,9 +1,8 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.models.Guild;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,10 +12,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.models.Guild;
+import com.guild.util.InviteMessageUtils;
 
 /**
  * 邀请成员GUI
@@ -178,26 +179,26 @@ public class InviteMemberGUI implements GUI {
         // 检查目标玩家是否已经在工会中
         plugin.getGuildService().getGuildMemberAsync(target.getUniqueId()).thenAccept(member -> {
             if (member != null) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("invite.already-in-guild", "&c该玩家已经在工会中！");
-                inviter.sendMessage(ColorUtils.colorize(message));
+                CompatibleScheduler.runTask(plugin, () -> inviter.sendMessage(InviteMessageUtils.formatAlreadyInGuild(plugin, target.getName())));
                 return;
             }
-            
+
             // 发送邀请
-            plugin.getGuildService().sendInvitationAsync(guild.getId(), inviter.getUniqueId(), inviter.getName(), target.getUniqueId(), target.getName()).thenAccept(success -> {
-                if (success) {
-                    String inviterMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.sent", "&a已向 &e{player} &a发送邀请！")
-                        .replace("{player}", target.getName());
-                    inviter.sendMessage(ColorUtils.colorize(inviterMessage));
-                    
-                    String targetMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.received", "&a你收到了来自工会 &e{guild} &a的邀请！")
-                        .replace("{guild}", guild.getName());
-                    target.sendMessage(ColorUtils.colorize(targetMessage));
-                } else {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("invite.failed", "&c邀请发送失败！");
-                    inviter.sendMessage(ColorUtils.colorize(message));
-                }
-            });
+            plugin.getGuildService().sendInvitationAsync(guild.getId(), inviter.getUniqueId(), inviter.getName(), target.getUniqueId(), target.getName())
+                .thenAccept(success -> {
+                    // 确保在主线程发送消息
+                    CompatibleScheduler.runTask(plugin, () -> {
+                        if (success) {
+                            inviter.sendMessage(InviteMessageUtils.formatInviteSent(plugin, inviter, target));
+
+                            // 给被邀请者发送标题与带 inviter 的邀请信息
+                            target.sendMessage(InviteMessageUtils.formatInviteTitle(plugin));
+                            target.sendMessage(InviteMessageUtils.formatInviteReceived(plugin, inviter, guild));
+                        } else {
+                            inviter.sendMessage(InviteMessageUtils.formatInviteFailed(plugin));
+                        }
+                    });
+                });
         });
     }
     

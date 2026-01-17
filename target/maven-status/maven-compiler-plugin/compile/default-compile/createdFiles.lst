@@ -49,6 +49,7 @@ com\guild\gui\SystemSettingsGUI.class
 com\guild\gui\MemberManagementGUI$1.class
 com\guild\gui\InviteMemberGUI.class
 com\guild\gui\MemberDetailsGUI.class
+com\guildplugin\util\FoliaTeleportUtils.class
 com\guild\commands\GuildCommand.class
 com\guild\core\ServiceContainer.class
 com\guild\gui\CreateRelationGUI.class
@@ -61,6 +62,7 @@ com\guild\core\utils\CompatibleScheduler.class
 com\guild\commands\GuildAdminCommand$1.class
 com\guild\gui\MemberManagementGUI.class
 com\guild\commands\GuildAdminCommand.class
+com\guild\util\InviteMessageUtils.class
 com\guild\core\database\DatabaseManager.class
 com\guild\gui\MainGuildGUI.class
 com\guild\models\GuildLog$LogType.class

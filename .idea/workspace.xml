@@ -6,6 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="ce3a3fec-7ae5-4b2f-b319-4e62129f5b23" name="更改" comment="">
       <change afterPath="$PROJECT_DIR$/.github/workflows/maven-publish.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/build.bat" afterDir="false" />
@@ -80,6 +85,8 @@
       <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/models/GuildRelation.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/services/GuildService.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/settings/GuildSettings.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/util/GuiDecorationUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/util/InviteMessageUtils.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/util/PlatformUtils.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/util/TeleportService.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/com/guildplugin/util/FoliaTeleportUtils.java" afterDir="false" />
@@ -173,11 +180,9 @@
       <change afterPath="$PROJECT_DIR$/target/classes/messages_pl.yml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/target/classes/messages_zh.yml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/guild-plugin-1.2.1.jar" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/original-guild-plugin-1.2.1.jar" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,26 +210,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Maven.guild-plugin [package].executor": "Run",
-    "Maven.guild-plugin [test].executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Administrator/Downloads/coding-copilot-jetbrains-3.5.8412957-45596e92.zip",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Maven.guild-plugin [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.guild-plugin [test].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Administrator/Downloads/coding-copilot-jetbrains-3.5.8412957-45596e92.zip&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
@@ -235,6 +240,9 @@
       <updated>1768637816302</updated>
       <workItem from="1768637819465" duration="3848000" />
       <workItem from="1768643685107" duration="2936000" />
+      <workItem from="1768647310305" duration="7944000" />
+      <workItem from="1768664851523" duration="16000" />
+      <workItem from="1768664880149" duration="40000" />
     </task>
     <servers />
   </component>

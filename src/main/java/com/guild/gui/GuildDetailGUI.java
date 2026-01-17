@@ -1,10 +1,8 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -14,9 +12,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
 
 /**
  * 工会详情GUI
@@ -99,52 +99,45 @@ public class GuildDetailGUI implements GUI {
     }
     
     private void setupMembersList(Inventory inventory) {
-        // 成员列表标题 - 放在第三行中央
+        // 成员列表标题
         inventory.setItem(27, createItem(Material.PLAYER_HEAD, ColorUtils.colorize("&a工会成员"), 
             ColorUtils.colorize("&7共 " + members.size() + " 名成员")));
-        
-        // 显示前6个成员 - 在第三行和第四行
-        int maxDisplay = Math.min(6, members.size());
+
+        // 显示前4个成员（更简洁）
+        int maxDisplay = Math.min(4, members.size());
         for (int i = 0; i < maxDisplay; i++) {
             GuildMember member = members.get(i);
-            int slot = 28 + i;
-            
+            int slot = 28 + i; // 28-31
+
             List<String> memberLore = new ArrayList<>();
             memberLore.add(ColorUtils.colorize("&7职位: " + getRoleDisplayName(member.getRole())));
-            memberLore.add(ColorUtils.colorize("&7加入时间: " + formatTime(member.getJoinedAt())));
-            memberLore.add(ColorUtils.colorize("&7在线状态: " + (isPlayerOnline(member.getPlayerUuid()) ? "&a在线" : "&7离线")));
-            
+            memberLore.add(ColorUtils.colorize("&7加入: " + formatTime(member.getJoinedAt())));
+            memberLore.add(ColorUtils.colorize("&7在线: " + (isPlayerOnline(member.getPlayerUuid()) ? "&a在线" : "&7离线")));
+
             inventory.setItem(slot, createPlayerHead(member.getPlayerName(), memberLore.toArray(new String[0])));
         }
-        
-        // 如果成员超过6个，显示更多信息
-        if (members.size() > 6) {
-            inventory.setItem(34, createItem(Material.PAPER, ColorUtils.colorize("&e更多成员"), 
-                ColorUtils.colorize("&7还有 " + (members.size() - 6) + " 名成员未显示")));
+
+        // 更多成员压缩单格显示
+        if (members.size() > 4) {
+            inventory.setItem(32, createItem(Material.PAPER, ColorUtils.colorize("&e更多成员"), 
+                ColorUtils.colorize("&7还有 " + (members.size() - 4) + " 名成员未显示")));
+        } else {
+            inventory.setItem(32, null);
         }
     }
     
     private void setupActionButtons(Inventory inventory) {
-        // 返回按钮 - 放在底部左侧
+        // 返回
         inventory.setItem(45, createItem(Material.ARROW, ColorUtils.colorize("&c返回")));
         
-        // 管理操作按钮 - 放在底部中央
+        // 管理操作（仅保留常用：冻结/删除）
         if (viewer.hasPermission("guild.admin")) {
-            // 冻结/解冻按钮
             String freezeText = guild.isFrozen() ? "&a解冻工会" : "&c冻结工会";
-            String freezeLore = guild.isFrozen() ? "&7点击解冻工会" : "&7点击冻结工会";
-            inventory.setItem(47, createItem(Material.ICE, ColorUtils.colorize(freezeText), ColorUtils.colorize(freezeLore)));
-            
-            // 删除工会按钮
-            inventory.setItem(49, createItem(Material.TNT, ColorUtils.colorize("&4删除工会"), 
-                ColorUtils.colorize("&7点击删除工会")));
-            
-            // 资金管理按钮
-            inventory.setItem(51, createItem(Material.GOLD_BLOCK, ColorUtils.colorize("&e资金管理"), 
-                ColorUtils.colorize("&7管理工会资金")));
+            inventory.setItem(47, createItem(Material.ICE, ColorUtils.colorize(freezeText), ColorUtils.colorize("&7点击切换冻结状态")));
+            inventory.setItem(49, createItem(Material.TNT, ColorUtils.colorize("&4删除工会"), ColorUtils.colorize("&7点击删除工会")));
         }
-        
-        // 刷新按钮 - 放在底部右侧
+
+        // 刷新
         inventory.setItem(53, createItem(Material.EMERALD, ColorUtils.colorize("&a刷新信息")));
     }
     
@@ -188,9 +181,6 @@ public class GuildDetailGUI implements GUI {
         } else if (slot == 49 && player.hasPermission("guild.admin")) {
             // 删除工会
             deleteGuild(player);
-        } else if (slot == 51 && player.hasPermission("guild.admin")) {
-            // 资金管理
-            openEconomyManagement(player);
         }
     }
     
@@ -217,11 +207,6 @@ public class GuildDetailGUI implements GUI {
         // 打开统一的确认删除GUI
         plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild));
         player.closeInventory();
-    }
-    
-    private void openEconomyManagement(Player player) {
-        // 打开资金管理GUI
-        plugin.getGuiManager().openGUI(player, new EconomyManagementGUI(plugin, player));
     }
     
     private String formatTime(java.time.LocalDateTime dateTime) {

@@ -42,12 +42,14 @@ D:\GuildPlugin\src\main\java\com\guild\gui\KickMemberGUI.java
 D:\GuildPlugin\src\main\java\com\guild\gui\GuildDescriptionInputGUI.java
 D:\GuildPlugin\src\main\java\com\guild\commands\GuildCommand.java
 D:\GuildPlugin\src\main\java\com\guild\gui\CreateGuildGUI.java
+D:\GuildPlugin\src\main\java\com\guild\util\GuiDecorationUtils.java
 D:\GuildPlugin\src\main\java\com\guild\GuildPlugin.java
 D:\GuildPlugin\src\main\java\com\guild\gui\GuildDetailGUI.java
 D:\GuildPlugin\src\main\java\com\guild\gui\MemberDetailsGUI.java
 D:\GuildPlugin\src\main\java\com\guild\core\utils\CompatibleScheduler.java
 D:\GuildPlugin\src\main\java\com\guild\gui\PromoteMemberGUI.java
 D:\GuildPlugin\src\main\java\com\guild\services\GuildService.java
+D:\GuildPlugin\src\main\java\com\guild\util\InviteMessageUtils.java
 D:\GuildPlugin\src\main\java\com\guild\util\PlatformUtils.java
 D:\GuildPlugin\src\main\java\com\guild\util\TeleportService.java
 D:\GuildPlugin\src\main\java\com\guild\core\time\TimeProvider.java

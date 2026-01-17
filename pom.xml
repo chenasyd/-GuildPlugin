@@ -6,7 +6,7 @@
 
     <groupId>com.guild</groupId>
     <artifactId>guild-plugin</artifactId>
-    <version>1.2.1</version>
+    <version>1.2.8</version>
     <packaging>jar</packaging>
 
     <name>Guild Plugin</name>

@@ -1,23 +1,22 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.core.utils.PlaceholderUtils;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.PlaceholderUtils;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
 
 /**
  * 成员管理GUI
@@ -239,7 +238,7 @@ public class MemberManagementGUI implements GUI {
         
         if (member.getRole() != GuildMember.Role.LEADER) {
             lore.add(ColorUtils.colorize("&c右键: 踢出成员"));
-            lore.add(ColorUtils.colorize("&6中键: 提升/降级"));
+            lore.add(ColorUtils.colorize("&6Shift+左键: 提升/降级"));
         }
         
         return createItem(material, name, lore.toArray(new String[0]));
@@ -277,7 +276,20 @@ public class MemberManagementGUI implements GUI {
      * 检查是否是成员槽位
      */
     private boolean isMemberSlot(int slot) {
-        return slot >= 10 && slot <= 44 && slot % 9 != 0 && slot % 9 != 8;
+        return slot >= 10 && slot <= 43 && slot % 9 != 0 && slot % 9 != 8;
+    }
+    
+    /**
+     * 把 inventory 槽位映射为页内索引（0..MEMBERS_PER_PAGE-1），不可用返回 -1
+     */
+    private int slotToIndexInPage(int slot) {
+        if (slot < 10 || slot > 43) return -1;
+        int row = slot / 9;            // 1..4
+        int rowIdx = row - 1;         // 0..3
+        int col = slot % 9;           // 1..7
+        int colIdx = col - 1;         // 0..6
+        if (colIdx < 0 || colIdx > 6 || rowIdx < 0 || rowIdx > 3) return -1;
+        return rowIdx * 7 + colIdx;
     }
     
     /**
@@ -322,22 +334,23 @@ public class MemberManagementGUI implements GUI {
      * 处理成员点击
      */
     private void handleMemberClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 获取点击的成员
-        int memberIndex = (currentPage * MEMBERS_PER_PAGE) + (slot - 10);
-        if (memberIndex % 9 == 0 || memberIndex % 9 == 8) return; // 跳过边框
-        
+        int pageIdx = slotToIndexInPage(slot);
+        if (pageIdx < 0) return;
+
+        int memberIndex = (currentPage * MEMBERS_PER_PAGE) + pageIdx;
+
         plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(members -> {
             if (members != null && memberIndex < members.size()) {
                 GuildMember member = members.get(memberIndex);
-                
+
                 if (clickType == ClickType.LEFT) {
                     // 查看成员详情
                     showMemberDetails(player, member);
                 } else if (clickType == ClickType.RIGHT) {
                     // 踢出成员
                     handleKickMemberDirect(player, member);
-                } else if (clickType == ClickType.MIDDLE) {
-                    // 提升/降级成员
+                } else if (clickType == ClickType.SHIFT_LEFT) {
+                    // 使用 Shift+左键 提升/降级（替代中键）
                     handlePromoteDemoteMember(player, member);
                 }
             }

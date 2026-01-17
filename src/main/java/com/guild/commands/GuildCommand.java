@@ -21,6 +21,7 @@ import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.models.GuildRelation;
 import com.guild.services.GuildService;
+import com.guild.util.InviteMessageUtils;
 import com.guildplugin.util.FoliaTeleportUtils;
 
 /**
@@ -516,25 +517,19 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         guildService.sendInvitationAsync(guild.getId(), player.getUniqueId(), player.getName(), targetPlayer.getUniqueId(), targetPlayerName)
             .thenAcceptAsync(success -> {
                 if (success) {
-                    String sentMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.sent", "&a已向 {player} 发送工会邀请！");
-                    player.sendMessage(ColorUtils.colorize(sentMessage.replace("{player}", targetPlayerName)));
-                    
-                    String inviteTitle = plugin.getConfigManager().getMessagesConfig().getString("invite.title", "&6=== 工会邀请 ===");
-                    targetPlayer.sendMessage(ColorUtils.colorize(inviteTitle));
-                    
-                    String inviteMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.received", "&e{inviter} 邀请您加入工会: {guild}");
-                    targetPlayer.sendMessage(ColorUtils.colorize(inviteMessage
-                        .replace("{inviter}", player.getName())
-                        .replace("{guild}", guild.getName())));
-                    
+                    // 使用统一工具格式化消息
+                    player.sendMessage(InviteMessageUtils.formatInviteSent(plugin, player, targetPlayer));
+                    targetPlayer.sendMessage(InviteMessageUtils.formatInviteTitle(plugin));
+                    targetPlayer.sendMessage(InviteMessageUtils.formatInviteReceived(plugin, player, guild));
+
                     if (guild.getTag() != null && !guild.getTag().isEmpty()) {
                         String tagMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.guild-tag", "&e工会标签: [{tag}]");
                         targetPlayer.sendMessage(ColorUtils.colorize(tagMessage.replace("{tag}", guild.getTag())));
                     }
-                    
+
                     String acceptMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.accept-command", "&e输入 &a/guild accept {inviter} &e接受邀请");
                     targetPlayer.sendMessage(ColorUtils.colorize(acceptMessage.replace("{inviter}", player.getName())));
-                    
+
                     String declineMessage = plugin.getConfigManager().getMessagesConfig().getString("invite.decline-command", "&e输入 &c/guild decline {inviter} &e拒绝邀请");
                     targetPlayer.sendMessage(ColorUtils.colorize(declineMessage.replace("{inviter}", player.getName())));
                 } else {
