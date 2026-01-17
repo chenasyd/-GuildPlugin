@@ -210,9 +210,12 @@ public class GuildDetailGUI implements GUI {
     }
     
     private void deleteGuild(Player player) {
-        // 确认删除
-        player.sendMessage(ColorUtils.colorize("&c您确定要删除工会 " + guild.getName() + " 吗？"));
-        player.sendMessage(ColorUtils.colorize("&c输入 &f/guildadmin delete " + guild.getName() + " confirm &c确认删除"));
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize("&c您没有权限执行此操作！"));
+            return;
+        }
+        // 打开统一的确认删除GUI
+        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild));
         player.closeInventory();
     }
     

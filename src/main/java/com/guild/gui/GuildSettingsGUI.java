@@ -1,12 +1,7 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.core.utils.CompatibleScheduler;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import org.bukkit.Bukkit;
+import java.util.Arrays;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -14,8 +9,13 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
+import com.guildplugin.util.FoliaTeleportUtils;
 
 /**
  * 工会设置GUI
@@ -531,10 +531,10 @@ public class GuildSettingsGUI implements GUI {
         
         // 传送到工会家
         plugin.getGuildService().getGuildHomeAsync(guild.getId()).thenAccept(location -> {
-            // 确保在主线程中执行传送操作
+            // 确保在主线程中执行传送操作并使用 Folia 安全传送
             CompatibleScheduler.runTask(plugin, () -> {
                 if (location != null) {
-                    player.teleport(location);
+                    FoliaTeleportUtils.safeTeleport(plugin, player, location);
                     String message = plugin.getConfigManager().getMessagesConfig().getString("home.success", "&a已传送到工会家！");
                     player.sendMessage(ColorUtils.colorize(message));
                 } else {

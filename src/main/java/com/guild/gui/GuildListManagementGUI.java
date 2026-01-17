@@ -1,10 +1,8 @@
 package com.guild.gui;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.utils.ColorUtils;
-import com.guild.models.Guild;
-import com.guild.gui.GuildDetailGUI;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,9 +11,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.utils.ColorUtils;
+import com.guild.models.Guild;
 
 /**
  * 工会列表管理GUI
@@ -203,9 +202,12 @@ public class GuildListManagementGUI implements GUI {
     }
     
     private void deleteGuild(Player player, Guild guild) {
-        // 确认删除
-        player.sendMessage(ColorUtils.colorize("&c您确定要删除工会 " + guild.getName() + " 吗？"));
-        player.sendMessage(ColorUtils.colorize("&c输入 &f/guildadmin delete " + guild.getName() + " confirm &c确认删除"));
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize("&c您没有权限执行此操作！"));
+            return;
+        }
+        // 打开统一的确认删除GUI
+        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild));
     }
     
     private void toggleGuildFreeze(Player player, Guild guild) {

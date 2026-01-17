@@ -1,13 +1,10 @@
 package com.guild.commands;
 
-import com.guild.GuildPlugin;
-import com.guild.core.utils.ColorUtils;
-import com.guild.gui.MainGuildGUI;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import com.guild.models.GuildRelation;
-import com.guild.services.GuildService;
-import com.guild.core.utils.CompatibleScheduler;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,10 +12,16 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import com.guild.GuildPlugin;
+import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.gui.ConfirmDeleteGuildGUI;
+import com.guild.gui.MainGuildGUI;
+import com.guild.models.Guild;
+import com.guild.models.GuildMember;
+import com.guild.models.GuildRelation;
+import com.guild.services.GuildService;
+import com.guildplugin.util.FoliaTeleportUtils;
 
 /**
  * 工会主命令
@@ -77,7 +80,17 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 handleLeave(player);
                 break;
             case "delete":
-                handleDelete(player);
+                if (args.length >= 2) {
+                    if (args[1].equalsIgnoreCase("confirm")) {
+                        handleDeleteConfirm(player);
+                    } else if (args[1].equalsIgnoreCase("cancel")) {
+                        handleDeleteCancel(player);
+                    } else {
+                        handleDelete(player);
+                    }
+                } else {
+                    handleDelete(player);
+                }
                 break;
             case "sethome":
                 handleSetHome(player);
@@ -662,7 +675,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     }
     
     /**
-     * 处理删除工会命令
+     * 处理删除工会命令（打开确认 GUI）
      */
     private void handleDelete(Player player) {
         if (!plugin.getPermissionManager().hasPermission(player, "guild.delete")) {
@@ -670,14 +683,14 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
         if (guildService == null) {
             String message = plugin.getConfigManager().getMessagesConfig().getString("general.service-error", "&c工会服务未初始化！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 检查玩家是否有工会
         Guild guild = guildService.getPlayerGuild(player.getUniqueId());
         if (guild == null) {
@@ -685,21 +698,65 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
-        // 删除权限已在前置节点校验并由内置权限系统控制
-        
-        // 确认删除
-        String warningMessage = plugin.getConfigManager().getMessagesConfig().getString("delete.warning", "&c警告：删除工会将永久解散工会，所有成员将被移除！");
-        String confirmMessage = plugin.getConfigManager().getMessagesConfig().getString("delete.confirm-command", "&c如果您确定要删除工会，请再次输入: /guild delete confirm");
-        String cancelMessage = plugin.getConfigManager().getMessagesConfig().getString("delete.cancel-command", "&c或者输入: /guild delete cancel 取消操作");
-        
-        player.sendMessage(ColorUtils.colorize(warningMessage));
-        player.sendMessage(ColorUtils.colorize(confirmMessage));
-        player.sendMessage(ColorUtils.colorize(cancelMessage));
-        
-        // TODO: 实现确认机制，避免误删
+
+        // 检查是否是会长
+        GuildMember member = guildService.getGuildMember(player.getUniqueId());
+        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
+            String message = plugin.getConfigManager().getMessagesConfig().getString("delete.leader-only", "&c只有工会会长才能删除工会！");
+            player.sendMessage(ColorUtils.colorize(message));
+            return;
+        }
+
+        // 打开确认删除GUI
+        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild));
     }
-    
+
+    private void handleDeleteConfirm(Player player) {
+        if (!plugin.getPermissionManager().hasPermission(player, "guild.delete")) {
+            String message = plugin.getConfigManager().getMessagesConfig().getString("delete.no-permission", "&c您没有权限删除工会！");
+            player.sendMessage(ColorUtils.colorize(message));
+            return;
+        }
+
+        GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
+        if (guildService == null) {
+            String message = plugin.getConfigManager().getMessagesConfig().getString("general.service-error", "&c工会服务未初始化！");
+            player.sendMessage(ColorUtils.colorize(message));
+            return;
+        }
+
+        Guild guild = guildService.getPlayerGuild(player.getUniqueId());
+        if (guild == null) {
+            String message = plugin.getConfigManager().getMessagesConfig().getString("info.no-guild", "&c您还没有加入任何工会！");
+            player.sendMessage(ColorUtils.colorize(message));
+            return;
+        }
+
+        GuildMember member = guildService.getGuildMember(player.getUniqueId());
+        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
+            String message = plugin.getConfigManager().getMessagesConfig().getString("delete.leader-only", "&c只有工会会长才能删除工会！");
+            player.sendMessage(ColorUtils.colorize(message));
+            return;
+        }
+
+        plugin.getGuildService().deleteGuildAsync(guild.getId(), player.getUniqueId()).thenAccept(success -> {
+            CompatibleScheduler.runTask(plugin, () -> {
+                if (success) {
+                    String message = plugin.getConfigManager().getMessagesConfig().getString("delete.success", "&a工会已被删除！");
+                    player.sendMessage(ColorUtils.colorize(message.replace("{guild}", guild.getName())));
+                } else {
+                    String message = plugin.getConfigManager().getMessagesConfig().getString("delete.failed", "&c删除工会失败！");
+                    player.sendMessage(ColorUtils.colorize(message));
+                }
+            });
+        });
+    }
+
+    private void handleDeleteCancel(Player player) {
+        String message = plugin.getConfigManager().getMessagesConfig().getString("delete.canceled", "&a已取消删除工会！");
+        player.sendMessage(ColorUtils.colorize(message));
+    }
+
     /**
      * 处理设置工会家命令
      */
@@ -746,7 +803,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     }
     
     /**
-     * 处理传送到工会家命令
+     * 处理传送到工会家命令（使用 Folia 兼容传送）
      */
     private void handleHome(Player player) {
         if (!plugin.getPermissionManager().hasPermission(player, "guild.home")) {
@@ -754,14 +811,14 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
         if (guildService == null) {
             String message = plugin.getConfigManager().getMessagesConfig().getString("general.service-error", "&c工会服务未初始化！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 检查玩家是否有工会
         Guild guild = guildService.getPlayerGuild(player.getUniqueId());
         if (guild == null) {
@@ -769,7 +826,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 获取工会家位置 (异步)
         guildService.getGuildHomeAsync(guild.getId())
             .thenAcceptAsync(homeLocation -> {
@@ -778,14 +835,14 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
-                
-                // 传送到工会家
-                player.teleport(homeLocation);
+
+                // Folia 兼容安全传送
+                FoliaTeleportUtils.safeTeleport(plugin, player, homeLocation);
                 String message = plugin.getConfigManager().getMessagesConfig().getString("home.success", "&a已传送到工会家！");
                 player.sendMessage(ColorUtils.colorize(message));
             }, runnable -> CompatibleScheduler.runTask(plugin, runnable));
     }
-    
+
     /**
      * 处理提升成员命令
      */
