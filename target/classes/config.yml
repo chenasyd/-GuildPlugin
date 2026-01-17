@@ -90,7 +90,6 @@ messages:
     error: "&c"
     info: "&e"
     warning: "&6"
-  teleport_disabled_folia: "§c自动传送在 Folia 服务器上被禁用。请联系管理员或手动传送。"
 
 # GUI配置
 gui:
@@ -130,6 +129,3 @@ logging:
   max-file-size: 10
   # 保留的日志文件数量
   max-files: 5
-
-# 默认配置
-disable-folia-teleport: true
