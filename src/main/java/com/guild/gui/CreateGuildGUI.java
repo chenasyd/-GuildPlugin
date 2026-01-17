@@ -3,8 +3,6 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
-import com.guild.core.utils.PlaceholderUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -13,7 +11,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
 
 import com.guild.core.utils.CompatibleScheduler;
 
@@ -386,9 +383,10 @@ public class CreateGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("create.success", "&a工会 {name} 创建成功！");
-                    message = message.replace("{name}", guildName);
-                    player.sendMessage(ColorUtils.colorize(message));
+                    String template = plugin.getConfigManager().getMessagesConfig().getString("create.success", "&a工会 {name} 创建成功！");
+                    // 使用颜色隔离，避免 {name} 的内嵌颜色影响后续文本
+                    String rendered = ColorUtils.replaceWithColorIsolation(template, "{name}", guildName);
+                    player.sendMessage(rendered);
                     
                     // 关闭GUI并返回主界面
                     plugin.getGuiManager().closeGUI(player);

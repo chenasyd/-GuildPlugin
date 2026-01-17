@@ -1,5 +1,5 @@
 name: GuildPlugin
-version: 1.2.6
+version: 1.2.4
 main: com.guild.GuildPlugin
 api-version: '1.21'
 authors: [chenasyd]
@@ -15,12 +15,12 @@ folia-supported: true
 
 commands:
   guild:
-    description: 工会系统主命令 | Guild System Main Command | Główna Komenda Systemu Gildii
+    description: 工会系统主命令
     usage: /guild help
     aliases: [g, 工会]
     permission: guild.use
   guildadmin:
-    description: 工会管理员命令 | Guild Admin Command | Komenda Administratora Gildii
+    description: 工会管理员命令
     usage: /guildadmin help
     aliases: [ga, 工会管理]
     permission: guild.admin

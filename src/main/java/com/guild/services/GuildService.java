@@ -1,28 +1,33 @@
 package com.guild.services;
 
-import com.guild.GuildPlugin;
-import com.guild.core.database.DatabaseManager;
-import com.guild.models.Guild;
-import com.guild.models.GuildMember;
-import com.guild.models.GuildApplication;
-import com.guild.models.GuildInvitation;
-import com.guild.models.GuildRelation;
-import com.guild.models.GuildEconomy;
-import com.guild.models.GuildContribution;
-import com.guild.models.GuildLog;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import com.guild.core.time.TimeProvider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import com.guild.GuildPlugin;
+import com.guild.core.database.DatabaseManager;
+import com.guild.core.time.TimeProvider;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.models.Guild;
+import com.guild.models.GuildApplication;
+import com.guild.models.GuildContribution;
+import com.guild.models.GuildEconomy;
+import com.guild.models.GuildInvitation;
+import com.guild.models.GuildLog;
+import com.guild.models.GuildMember;
+import com.guild.models.GuildRelation;
 
 public class GuildService {
     

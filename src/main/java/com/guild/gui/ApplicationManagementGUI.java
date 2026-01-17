@@ -3,11 +3,9 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
-import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PlaceholderUtils;
 import com.guild.models.Guild;
 import com.guild.models.GuildApplication;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -18,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 申请管理GUI
@@ -381,28 +380,16 @@ public class ApplicationManagementGUI implements GUI {
                 
                 // 处理申请
                 plugin.getGuildService().processApplicationAsync(application.getId(), GuildApplication.ApplicationStatus.APPROVED, player.getUniqueId()).thenAccept(success -> {
-                    CompatibleScheduler.runTask(plugin, () -> {
-                        if (success) {
-                            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.application-accepted", "&a申请已接受！");
-                            player.sendMessage(ColorUtils.colorize(message));
-                            
-                            // 向申请者发送消息
-                            Player applicant = Bukkit.getPlayer(application.getPlayerUuid());
-                            if (applicant != null && applicant.isOnline()) {
-                                // 去除工会名称中的颜色代码
-                                String cleanGuildName = ColorUtils.stripColor(guild.getName());
-                                String acceptedMessage = plugin.getConfigManager().getMessagesConfig().getString("application.accepted", "&a您的申请已被 {guild} 接受！")
-                                    .replace("{guild}", cleanGuildName);
-                                applicant.sendMessage(ColorUtils.colorize(acceptedMessage));
-                            }
-                            
-                            // 刷新GUI
-                            refreshInventory(player);
-                        } else {
-                            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.application-accept-failed", "&c接受申请失败！");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        }
-                    });
+                    if (success) {
+                        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.application-accepted", "&a申请已接受！");
+                        player.sendMessage(ColorUtils.colorize(message));
+                        
+                        // 刷新GUI
+                        refreshInventory(player);
+                    } else {
+                        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.application-accept-failed", "&c接受申请失败！");
+                        player.sendMessage(ColorUtils.colorize(message));
+                    }
                 });
             }
         });
