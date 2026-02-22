@@ -4,6 +4,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,16 +20,18 @@ import java.util.concurrent.CompletableFuture;
  * 工会名称输入GUI
  */
 public class GuildNameInputGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
     private final Player player;
+    private final LanguageManager languageManager;
     private String currentName;
-    
+
     public GuildNameInputGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.guild = guild;
         this.player = player;
+        this.languageManager = plugin.getLanguageManager();
         this.currentName = guild.getName() != null ? guild.getName() : "";
     }
     
@@ -140,7 +143,7 @@ public class GuildNameInputGUI implements GUI {
     private void handleConfirm(Player player) {
         // 检查权限（只有会长可以修改工会名称）
         if (!plugin.getGuildService().isGuildLeader(player.getUniqueId(), guild.getId())) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            String message = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -160,7 +163,7 @@ public class GuildNameInputGUI implements GUI {
      */
     public void handleCancel(Player player) {
         // 返回到工会设置GUI
-        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
     }
     
     /**
@@ -246,11 +249,11 @@ public class GuildNameInputGUI implements GUI {
                             plugin.getGuildService().getGuildByIdAsync(guild.getId()).thenAccept(updatedGuild -> {
                                 if (updatedGuild != null) {
                                     // 返回到工会设置GUI（使用最新的工会信息）
-                                    plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, updatedGuild));
+                                    plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, updatedGuild, player));
                                 } else {
                                     // 如果获取失败，使用本地更新的对象
                                     guild.setName(newName);
-                                    plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+                                    plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
                                 }
                             });
                         } else {

@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
@@ -23,12 +24,14 @@ import java.util.concurrent.CompletableFuture;
 public class KickMemberGUI implements GUI {
     
     private final GuildPlugin plugin;
+    private final LanguageManager languageManager;
     private final Guild guild;
     private int currentPage = 0;
     private List<GuildMember> members;
     
     public KickMemberGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
+        this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
         // 初始化时获取成员列表
         this.members = List.of();
@@ -89,7 +92,7 @@ public class KickMemberGUI implements GUI {
             }
         } else if (slot == 49) {
             // 返回
-            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
         }
     }
     
@@ -184,30 +187,28 @@ public class KickMemberGUI implements GUI {
     private void handleKickMember(Player kicker, GuildMember member) {
         // 检查权限
         if (!kicker.hasPermission("guild.kick")) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+            String message = languageManager.getMessage(kicker, "gui.no-permission", "&c权限不足");
             kicker.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 踢出成员
         plugin.getGuildService().removeGuildMemberAsync(member.getPlayerUuid(), kicker.getUniqueId()).thenAccept(success -> {
             if (success) {
-                String kickerMessage = plugin.getConfigManager().getMessagesConfig().getString("kick.success", "&a已踢出成员 &e{player} &a！")
-                    .replace("{player}", member.getPlayerName());
+                String kickerMessage = languageManager.getMessage(kicker, "kick.success", "&a已踢出成员 &e{player} &a！", "{player}", member.getPlayerName());
                 kicker.sendMessage(ColorUtils.colorize(kickerMessage));
-                
+
                 // 通知被踢出的玩家
                 Player kickedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
                 if (kickedPlayer != null) {
-                    String kickedMessage = plugin.getConfigManager().getMessagesConfig().getString("kick.kicked", "&c你被踢出了工会 &e{guild} &c！")
-                        .replace("{guild}", guild.getName());
+                    String kickedMessage = languageManager.getMessage(kickedPlayer, "kick.kicked", "&c你被踢出了工会 &e{guild} &c！", "{guild}", guild.getName());
                     kickedPlayer.sendMessage(ColorUtils.colorize(kickedMessage));
                 }
-                
+
                 // 刷新GUI
                 plugin.getGuiManager().openGUI(kicker, new KickMemberGUI(plugin, guild));
             } else {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("kick.failed", "&c踢出成员失败！");
+                String message = languageManager.getMessage(kicker, "kick.failed", "&c踢出成员失败！");
                 kicker.sendMessage(ColorUtils.colorize(message));
             }
         });

@@ -2,7 +2,7 @@ package com.guild.listeners;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUIManager;
-import org.bukkit.Bukkit;
+import com.guild.core.language.LanguageManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -17,9 +17,11 @@ import com.guild.core.utils.CompatibleScheduler;
 public class PlayerListener implements Listener {
     
     private final GuildPlugin plugin;
+    private final LanguageManager languageManager;
     
     public PlayerListener(GuildPlugin plugin) {
         this.plugin = plugin;
+        this.languageManager = plugin.getLanguageManager();
     }
     
     /**
@@ -44,8 +46,7 @@ public class PlayerListener implements Listener {
                     CompatibleScheduler.runTask(plugin, () -> {
                         for (com.guild.models.GuildRelation relation : relations) {
                             if (relation.isWar()) {
-                                String message = plugin.getConfigManager().getMessagesConfig().getString("relations.war-notification", "&4[工会战争] &c您的工会与 {guild} 处于开战状态！");
-                                message = message.replace("{guild}", relation.getOtherGuildName(guild.getId()));
+                                String message = languageManager.getMessage(player, "relations.war-notification", "&4[工会战争] &c您的工会与 {guild} 处于开战状态！", "{guild}", relation.getOtherGuildName(guild.getId()));
                                 player.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                             }
                         }

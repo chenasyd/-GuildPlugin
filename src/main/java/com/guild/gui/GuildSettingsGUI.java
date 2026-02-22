@@ -16,6 +16,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guildplugin.util.FoliaTeleportUtils;
@@ -24,21 +25,25 @@ import com.guildplugin.util.FoliaTeleportUtils;
  * 工会设置GUI
  */
 public class GuildSettingsGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
-    
-    public GuildSettingsGUI(GuildPlugin plugin, Guild guild) {
+    private final Player player;
+    private final LanguageManager languageManager;
+
+    public GuildSettingsGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.guild = guild;
+        this.player = player;
+        this.languageManager = plugin.getLanguageManager();
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-settings.title", "&6工会设置 - {guild_name}")
-            .replace("{guild_name}", guild.getName() != null ? guild.getName() : "未知工会"));
+        return plugin.getLanguageManager().getGuiColoredMessage(player, "guild-settings.title", "&6工会设置 - {guild_name}")
+            .replace("{guild_name}", guild.getName() != null ? guild.getName() : "未知工会");
     }
-    
+
     @Override
     public int getSize() {
         return plugin.getConfigManager().getGuiConfig().getInt("guild-settings.size", 54);
@@ -97,7 +102,7 @@ public class GuildSettingsGUI implements GUI {
                 handleDeleteGuild(player);
                 break;
             case 49: // 返回
-                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
+                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
                 break;
         }
     }
@@ -212,7 +217,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleChangeName(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            String msg = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -222,7 +227,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleChangeDescription(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            String msg = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -232,7 +237,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleChangeTag(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            String msg = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -242,7 +247,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleInviteMember(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
-            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.officer-or-higher", "&c需要官员或更高权限");
+            String msg = languageManager.getMessage(player, "gui.officer-or-higher", "&c需要官员或更高权限");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -252,7 +257,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleKickMember(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
-            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.officer-or-higher", "&c需要官员或更高权限");
+            String msg = languageManager.getMessage(player, "gui.officer-or-higher", "&c需要官员或更高权限");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -262,18 +267,18 @@ public class GuildSettingsGUI implements GUI {
     private void handleSetHome(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            String msg = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
         plugin.getGuildService().setGuildHomeAsync(guild.getId(), player.getLocation(), player.getUniqueId()).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("sethome.success", "&a工会家设置成功！");
+                    String message = languageManager.getMessage(player, "sethome.success", "&a工会家设置成功！");
                     player.sendMessage(ColorUtils.colorize(message));
-                    plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+                    plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
                 } else {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("sethome.failed", "&c工会家设置失败！");
+                    String message = languageManager.getMessage(player, "sethome.failed", "&c工会家设置失败！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
@@ -283,17 +288,17 @@ public class GuildSettingsGUI implements GUI {
     private void handleApplications(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
-            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.officer-or-higher", "&c需要官员或更高权限");
+            String msg = languageManager.getMessage(player, "gui.officer-or-higher", "&c需要官员或更高权限");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        plugin.getGuiManager().openGUI(player, new ApplicationManagementGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new ApplicationManagementGUI(plugin, guild, player));
     }
 
     private void handleRelations(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = plugin.getConfigManager().getMessagesConfig().getString("relation.only-leader", "&c只有工会会长才能管理工会关系！");
+            String msg = languageManager.getMessage(player, "relation.only-leader", "&c只有工会会长才能管理工会关系！");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -303,7 +308,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleGuildLogs(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null) {
-            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+            String msg = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -313,7 +318,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleHomeTeleport(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null) {
-            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+            String msg = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -321,10 +326,10 @@ public class GuildSettingsGUI implements GUI {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (location != null) {
                     FoliaTeleportUtils.safeTeleport(plugin, player, location);
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("home.success", "&a已传送到工会家！");
+                    String message = languageManager.getMessage(player, "home.success", "&a已传送到工会家！");
                     player.sendMessage(ColorUtils.colorize(message));
                 } else {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("home.not-set", "&c工会家未设置！");
+                    String message = languageManager.getMessage(player, "home.not-set", "&c工会家未设置！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
@@ -338,7 +343,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleDeleteGuild(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            String msg = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }

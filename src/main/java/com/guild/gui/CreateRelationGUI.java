@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
@@ -23,8 +24,9 @@ import java.util.concurrent.CompletableFuture;
  * 创建工会关系GUI
  */
 public class CreateRelationGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
+    private final LanguageManager languageManager;
     private final Guild guild;
     private final Player player;
     private GuildRelation.RelationType selectedType = null;
@@ -35,6 +37,7 @@ public class CreateRelationGUI implements GUI {
     
     public CreateRelationGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
+        this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
         this.player = player;
     }
@@ -93,7 +96,7 @@ public class CreateRelationGUI implements GUI {
             if (selectedType != null && targetGuildName != null) {
                 createRelation(player);
             } else {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("relations.select-both", "&c请先选择关系类型和目标工会！");
+                String message = languageManager.getMessage(player, "relations.select-both", "&c请先选择关系类型和目标工会！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
             return;
@@ -130,9 +133,8 @@ public class CreateRelationGUI implements GUI {
                 Guild targetGuild = availableGuilds.get(guildIndex);
                 targetGuildName = targetGuild.getName();
                 refreshInventory(player);
-                
-                String message = plugin.getConfigManager().getMessagesConfig().getString("relations.target-selected", "&a已选择目标工会: {guild}");
-                message = message.replace("{guild}", targetGuildName);
+
+                String message = languageManager.getMessage(player, "relations.target-selected", "&a已选择目标工会: {guild}", "{guild}", targetGuildName);
                 player.sendMessage(ColorUtils.colorize(message));
             }
         }
@@ -307,9 +309,8 @@ public class CreateRelationGUI implements GUI {
         if (slot < types.length) {
             selectedType = types[slot];
             refreshInventory(player);
-            
-            String message = plugin.getConfigManager().getMessagesConfig().getString("relations.type-selected", "&a已选择关系类型: {type}");
-            message = message.replace("{type}", selectedType.getDisplayName());
+
+            String message = languageManager.getMessage(player, "relations.type-selected", "&a已选择关系类型: {type}", "{type}", selectedType.getDisplayName());
             player.sendMessage(ColorUtils.colorize(message));
         }
     }
@@ -328,7 +329,7 @@ public class CreateRelationGUI implements GUI {
         }
         
         if (targetGuild[0] == null) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("relations.target-not-found", "&c目标工会不存在！");
+            String message = languageManager.getMessage(player, "relations.target-not-found", "&c目标工会不存在！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -338,12 +339,11 @@ public class CreateRelationGUI implements GUI {
             .thenAccept(existingRelation -> {
                 CompatibleScheduler.runTask(plugin, () -> {
                     if (existingRelation != null) {
-                        String message = plugin.getConfigManager().getMessagesConfig().getString("relations.already-exists", "&c与 {guild} 的关系已存在！");
-                        message = message.replace("{guild}", targetGuildName);
+                        String message = languageManager.getMessage(player, "relations.already-exists", "&c与 {guild} 的关系已存在！", "{guild}", targetGuildName);
                         player.sendMessage(ColorUtils.colorize(message));
                         return;
                     }
-                    
+
                     // 创建新关系
                     plugin.getGuildService().createGuildRelationAsync(
                         guild.getId(), targetGuild[0].getId(),
@@ -352,16 +352,14 @@ public class CreateRelationGUI implements GUI {
                     ).thenAccept(success -> {
                         CompatibleScheduler.runTask(plugin, () -> {
                             if (success) {
-                                String message = plugin.getConfigManager().getMessagesConfig().getString("relations.create-success", "&a已向 {guild} 发送 {type} 关系请求！");
-                                message = message.replace("{guild}", targetGuildName)
-                                               .replace("{type}", selectedType.getDisplayName());
+                                String message = languageManager.getMessage(player, "relations.create-success", "&a已向 {guild} 发送 {type} 关系请求！", "{guild}", targetGuildName, "{type}", selectedType.getDisplayName());
                                 player.sendMessage(ColorUtils.colorize(message));
-                                
+
                                 // 返回关系管理界面
                                 GuildRelationsGUI relationsGUI = new GuildRelationsGUI(plugin, guild, player);
                                 plugin.getGuiManager().openGUI(player, relationsGUI);
                             } else {
-                                String message = plugin.getConfigManager().getMessagesConfig().getString("relations.create-failed", "&c创建关系失败！");
+                                String message = languageManager.getMessage(player, "relations.create-failed", "&c创建关系失败！");
                                 player.sendMessage(ColorUtils.colorize(message));
                             }
                         });

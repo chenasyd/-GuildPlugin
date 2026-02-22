@@ -4,6 +4,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.PlaceholderUtils;
+import com.guild.core.language.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -21,26 +22,32 @@ import com.guild.core.utils.CompatibleScheduler;
  * 创建工会GUI
  */
 public class CreateGuildGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
+    private final Player player;
+    private final LanguageManager languageManager;
     private String guildName = "";
     private String guildTag = "";
     private String guildDescription = "";
-    
-    public CreateGuildGUI(GuildPlugin plugin) {
+
+    public CreateGuildGUI(GuildPlugin plugin, Player player) {
         this.plugin = plugin;
+        this.player = player;
+        this.languageManager = plugin.getLanguageManager();
     }
-    
-    public CreateGuildGUI(GuildPlugin plugin, String guildName, String guildTag, String guildDescription) {
+
+    public CreateGuildGUI(GuildPlugin plugin, Player player, String guildName, String guildTag, String guildDescription) {
         this.plugin = plugin;
+        this.player = player;
+        this.languageManager = plugin.getLanguageManager();
         this.guildName = guildName;
         this.guildTag = guildTag;
         this.guildDescription = guildDescription;
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("create-guild.title", "&6创建工会"));
+        return plugin.getLanguageManager().getGuiColoredMessage(player, "create-guild.title", "&6创建工会");
     }
     
     @Override
@@ -205,40 +212,37 @@ public class CreateGuildGUI implements GUI {
      * 处理工会名称输入
      */
     private void handleNameInput(Player player) {
-        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.input-name", "&a请在聊天中输入工会名称（3-20字符）：");
+        String message = languageManager.getMessage(player, "gui.input-name", "&a请在聊天中输入工会名称（3-20字符）：");
         player.sendMessage(ColorUtils.colorize(message));
-        
+
         // 强制关闭GUI以便玩家看到输入提示
         if (player.getOpenInventory() != null) {
             player.closeInventory();
         }
         plugin.getGuiManager().closeGUI(player);
-        
+
         // 延迟设置输入模式，确保GUI完全关闭
         CompatibleScheduler.runTaskLater(plugin, () -> {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() < 3) {
-                    String errorMessage = plugin.getConfigManager().getMessagesConfig().getString("create.name-too-short", "&c工会名称太短！最少需要 {min} 个字符。");
-                    errorMessage = errorMessage.replace("{min}", "3");
+                    String errorMessage = languageManager.getMessage(player, "create.name-too-short", "&c工会名称太短！最少需要 {min} 个字符。", "{min}", "3");
                     player.sendMessage(ColorUtils.colorize(errorMessage));
                     return false;
                 }
-                
+
                 if (input.length() > 20) {
-                    String errorMessage = plugin.getConfigManager().getMessagesConfig().getString("create.name-too-long", "&c工会名称太长！最多只能有 {max} 个字符。");
-                    errorMessage = errorMessage.replace("{max}", "20");
+                    String errorMessage = languageManager.getMessage(player, "create.name-too-long", "&c工会名称太长！最多只能有 {max} 个字符。", "{max}", "20");
                     player.sendMessage(ColorUtils.colorize(errorMessage));
                     return false;
                 }
-                
+
                 guildName = input;
-                String successMessage = plugin.getConfigManager().getMessagesConfig().getString("gui.name-set", "&a工会名称已设置为：{name}");
-                successMessage = successMessage.replace("{name}", guildName);
+                String successMessage = languageManager.getMessage(player, "gui.name-set", "&a工会名称已设置为：{name}", "{name}", guildName);
                 player.sendMessage(ColorUtils.colorize(successMessage));
-                
+
                 // 重新打开GUI显示更新后的内容
-                plugin.getGuiManager().openGUI(player, new CreateGuildGUI(plugin, guildName, guildTag, guildDescription));
+                plugin.getGuiManager().openGUI(player, new CreateGuildGUI(plugin, player, guildName, guildTag, guildDescription));
                 return true;
             });
         }, 2L); // 延迟2个tick (0.1秒)
@@ -248,33 +252,31 @@ public class CreateGuildGUI implements GUI {
      * 处理工会标签输入
      */
     private void handleTagInput(Player player) {
-        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.input-tag", "&a请在聊天中输入工会标签（最多6字符，可选）：");
+        String message = languageManager.getMessage(player, "gui.input-tag", "&a请在聊天中输入工会标签（最多6字符，可选）：");
         player.sendMessage(ColorUtils.colorize(message));
-        
+
         // 强制关闭GUI以便玩家看到输入提示
         if (player.getOpenInventory() != null) {
             player.closeInventory();
         }
         plugin.getGuiManager().closeGUI(player);
-        
+
         // 延迟设置输入模式，确保GUI完全关闭
         CompatibleScheduler.runTaskLater(plugin, () -> {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() > 6) {
-                    String errorMessage = plugin.getConfigManager().getMessagesConfig().getString("create.tag-too-long", "&c工会标签太长！最多只能有 {max} 个字符。");
-                    errorMessage = errorMessage.replace("{max}", "6");
+                    String errorMessage = languageManager.getMessage(player, "create.tag-too-long", "&c工会标签太长！最多只能有 {max} 个字符。", "{max}", "6");
                     player.sendMessage(ColorUtils.colorize(errorMessage));
                     return false;
                 }
-                
+
                 guildTag = input;
-                String successMessage = plugin.getConfigManager().getMessagesConfig().getString("gui.tag-set", "&a工会标签已设置为：{tag}");
-                successMessage = successMessage.replace("{tag}", guildTag.isEmpty() ? "无" : guildTag);
+                String successMessage = languageManager.getMessage(player, "gui.tag-set", "&a工会标签已设置为：{tag}", "{tag}", guildTag.isEmpty() ? "无" : guildTag);
                 player.sendMessage(ColorUtils.colorize(successMessage));
-                
+
                 // 重新打开GUI显示更新后的内容
-                plugin.getGuiManager().openGUI(player, new CreateGuildGUI(plugin, guildName, guildTag, guildDescription));
+                plugin.getGuiManager().openGUI(player, new CreateGuildGUI(plugin, player, guildName, guildTag, guildDescription));
                 return true;
             });
         }, 2L); // 延迟2个tick (0.1秒)
@@ -284,32 +286,31 @@ public class CreateGuildGUI implements GUI {
      * 处理工会描述输入
      */
     private void handleDescriptionInput(Player player) {
-        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.input-description", "&a请在聊天中输入工会描述（最多100字符，可选）：");
+        String message = languageManager.getMessage(player, "gui.input-description", "&a请在聊天中输入工会描述（最多100字符，可选）：");
         player.sendMessage(ColorUtils.colorize(message));
-        
+
         // 强制关闭GUI以便玩家看到输入提示
         if (player.getOpenInventory() != null) {
             player.closeInventory();
         }
         plugin.getGuiManager().closeGUI(player);
-        
+
         // 延迟设置输入模式，确保GUI完全关闭
         CompatibleScheduler.runTaskLater(plugin, () -> {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() > 100) {
-                    String errorMessage = plugin.getConfigManager().getMessagesConfig().getString("create.description-too-long", "&c工会描述不能超过100个字符！");
+                    String errorMessage = languageManager.getMessage(player, "create.description-too-long", "&c工会描述不能超过100个字符！");
                     player.sendMessage(ColorUtils.colorize(errorMessage));
                     return false;
                 }
-                
+
                 guildDescription = input;
-                String successMessage = plugin.getConfigManager().getMessagesConfig().getString("gui.description-set", "&a工会描述已设置为：{description}");
-                successMessage = successMessage.replace("{description}", guildDescription.isEmpty() ? "无" : guildDescription);
+                String successMessage = languageManager.getMessage(player, "gui.description-set", "&a工会描述已设置为：{description}", "{description}", guildDescription.isEmpty() ? "无" : guildDescription);
                 player.sendMessage(ColorUtils.colorize(successMessage));
-                
+
                 // 重新打开GUI显示更新后的内容
-                plugin.getGuiManager().openGUI(player, new CreateGuildGUI(plugin, guildName, guildTag, guildDescription));
+                plugin.getGuiManager().openGUI(player, new CreateGuildGUI(plugin, player, guildName, guildTag, guildDescription));
                 return true;
             });
         }, 2L); // 延迟2个tick (0.1秒)
@@ -321,86 +322,80 @@ public class CreateGuildGUI implements GUI {
     private void handleConfirmCreate(Player player) {
         // 验证输入
         if (guildName.isEmpty()) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("create.name-required", "&c请先输入工会名称！");
+            String message = languageManager.getMessage(player, "create.name-required", "&c请先输入工会名称！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         if (guildName.length() < 3) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("create.name-too-short", "&c工会名称太短！最少需要 {min} 个字符。");
-            message = message.replace("{min}", "3");
+            String message = languageManager.getMessage(player, "create.name-too-short", "&c工会名称太短！最少需要 {min} 个字符。", "{min}", "3");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         if (guildName.length() > 20) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("create.name-too-long", "&c工会名称太长！最多只能有 {max} 个字符。");
-            message = message.replace("{max}", "20");
+            String message = languageManager.getMessage(player, "create.name-too-long", "&c工会名称太长！最多只能有 {max} 个字符。", "{max}", "20");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         if (!guildTag.isEmpty() && guildTag.length() > 6) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("create.tag-too-long", "&c工会标签太长！最多只能有 {max} 个字符。");
-            message = message.replace("{max}", "6");
+            String message = languageManager.getMessage(player, "create.tag-too-long", "&c工会标签太长！最多只能有 {max} 个字符。", "{max}", "6");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         if (!guildDescription.isEmpty() && guildDescription.length() > 100) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("create.description-too-long", "&c工会描述不能超过100个字符！");
+            String message = languageManager.getMessage(player, "create.description-too-long", "&c工会描述不能超过100个字符！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 检查经济系统
         if (!plugin.getEconomyManager().isVaultAvailable()) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("create.economy-not-available", "&c经济系统不可用，无法创建工会！");
+            String message = languageManager.getMessage(player, "create.economy-not-available", "&c经济系统不可用，无法创建工会！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 获取创建费用
         double creationCost = plugin.getConfigManager().getMainConfig().getDouble("guild.creation-cost", 1000.0);
-        
+
         // 检查玩家余额
         if (!plugin.getEconomyManager().hasBalance(player, creationCost)) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("create.insufficient-funds", "&c您的余额不足！创建工会需要 {cost} 金币。");
-            message = message.replace("{cost}", String.format("%.0f", creationCost));
+            String message = languageManager.getMessage(player, "create.insufficient-funds", "&c您的余额不足！创建工会需要 {cost} 金币。", "{cost}", String.format("%.0f", creationCost));
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 扣除创建费用
         if (!plugin.getEconomyManager().withdraw(player, creationCost)) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("create.payment-failed", "&c扣除创建费用失败！");
+            String message = languageManager.getMessage(player, "create.payment-failed", "&c扣除创建费用失败！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 创建工会
         String finalTag = guildTag.isEmpty() ? null : guildTag;
         String finalDescription = guildDescription.isEmpty() ? null : guildDescription;
-        
+
         plugin.getGuildService().createGuildAsync(guildName, finalTag, finalDescription, player.getUniqueId(), player.getName()).thenAccept(success -> {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("create.success", "&a工会 {name} 创建成功！");
-                    message = message.replace("{name}", guildName);
+                    String message = languageManager.getMessage(player, "create.success", "&a工会 {name} 创建成功！", "{name}", guildName);
                     player.sendMessage(ColorUtils.colorize(message));
-                    
+
                     // 关闭GUI并返回主界面
                     plugin.getGuiManager().closeGUI(player);
-                    plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
+                    plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
                 } else {
                     // 如果创建失败，退还费用
                     plugin.getEconomyManager().deposit(player, creationCost);
-                    String refundMessage = plugin.getConfigManager().getMessagesConfig().getString("create.payment-refunded", "&e已退还创建费用 {cost} 金币。");
-                    refundMessage = refundMessage.replace("{cost}", String.format("%.0f", creationCost));
+                    String refundMessage = languageManager.getMessage(player, "create.payment-refunded", "&e已退还创建费用 {cost} 金币。", "{cost}", String.format("%.0f", creationCost));
                     player.sendMessage(ColorUtils.colorize(refundMessage));
-                    
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("create.failed", "&c工会创建失败！");
+
+                    String message = languageManager.getMessage(player, "create.failed", "&c工会创建失败！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
@@ -412,7 +407,7 @@ public class CreateGuildGUI implements GUI {
      */
     private void handleCancel(Player player) {
         plugin.getGuiManager().closeGUI(player);
-        plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
+        plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
     }
     
     /**

@@ -284,7 +284,7 @@ public class SystemSettingsGUI implements GUI {
                 backupData(player);
                 break;
             case 49: // 返回
-                plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin));
+                plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
                 break;
             case 51: // 保存设置
                 saveSettings(player);

@@ -20,6 +20,7 @@ import com.guild.gui.ConfirmDeleteGuildGUI;
 import com.guild.gui.RelationManagementGUI;
 import com.guild.models.Guild;
 import com.guild.models.GuildRelation;
+import com.guild.core.language.LanguageManager; // 新增
 
 /**
  * 工会管理员命令
@@ -27,22 +28,25 @@ import com.guild.models.GuildRelation;
 public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     
     private final GuildPlugin plugin;
+    private final LanguageManager languageManager; // 新增字段
     
     public GuildAdminCommand(GuildPlugin plugin) {
         this.plugin = plugin;
+        this.languageManager = plugin.getLanguageManager(); // 初始化
     }
     
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission("guild.admin")) {
-            sender.sendMessage(ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("general.no-permission", "&c您没有权限执行此操作！")));
+            String msg = languageManager.getMessage("general.no-permission", "&c您没有权限执行此操作！");
+            sender.sendMessage(ColorUtils.colorize(msg));
             return true;
         }
         
         if (args.length == 0) {
             if (sender instanceof Player player) {
                 // 打开管理员GUI
-                AdminGuildGUI adminGUI = new AdminGuildGUI(plugin);
+                AdminGuildGUI adminGUI = new AdminGuildGUI(plugin, player);
                 plugin.getGuiManager().openGUI(player, adminGUI);
             } else {
                 handleHelp(sender);
@@ -85,7 +89,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 handleHelp(sender);
                 break;
             default:
-                sender.sendMessage(ColorUtils.colorize(plugin.getConfigManager().getMessagesConfig().getString("general.unknown-command", "&c未知命令！使用 /guildadmin help 查看帮助。")));
+                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("general.unknown-command", "&c未知命令！使用 /guildadmin help 查看帮助。")));
                 break;
         }
         
@@ -587,7 +591,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         switch (testType.toLowerCase()) {
             case "gui":
                 if (sender instanceof Player player) {
-                    AdminGuildGUI adminGUI = new AdminGuildGUI(plugin);
+                    AdminGuildGUI adminGUI = new AdminGuildGUI(plugin, player);
                     plugin.getGuiManager().openGUI(player, adminGUI);
                     sender.sendMessage(ColorUtils.colorize("&a已打开管理员GUI进行测试。"));
                 } else {

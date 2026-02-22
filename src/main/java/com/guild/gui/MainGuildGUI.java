@@ -4,6 +4,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.gui.GUIManager;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.language.LanguageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -21,16 +22,20 @@ import com.guild.core.utils.CompatibleScheduler;
  * 主工会GUI - 六个主要入口
  */
 public class MainGuildGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
-    
-    public MainGuildGUI(GuildPlugin plugin) {
+    private final Player player;
+    private final LanguageManager languageManager;
+
+    public MainGuildGUI(GuildPlugin plugin, Player player) {
         this.plugin = plugin;
+        this.player = player;
+        this.languageManager = plugin.getLanguageManager();
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("main-menu.title", "&6工会系统"));
+        return plugin.getLanguageManager().getGuiColoredMessage(player, "main-menu.title", "&6工会系统");
     }
     
     @Override
@@ -143,11 +148,11 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&c您还没有工会");
+                    String message = languageManager.getMessage(player, "gui.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
-                
+
                 // 打开工会信息GUI
                 GuildInfoGUI guildInfoGUI = new GuildInfoGUI(plugin, player, guild);
                 plugin.getGuiManager().openGUI(player, guildInfoGUI);
@@ -164,13 +169,13 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&c您还没有工会");
+                    String message = languageManager.getMessage(player, "gui.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
-                
+
                 // 打开成员管理GUI
-                MemberManagementGUI memberManagementGUI = new MemberManagementGUI(plugin, guild);
+                MemberManagementGUI memberManagementGUI = new MemberManagementGUI(plugin, guild, player);
                 plugin.getGuiManager().openGUI(player, memberManagementGUI);
             });
         });
@@ -185,23 +190,23 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&c您还没有工会");
+                    String message = languageManager.getMessage(player, "gui.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
-                
+
                 // 检查权限
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
                     // 确保在主线程中执行GUI操作
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null || !member.getRole().canInvite()) {
-                            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+                            String message = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
-                        
+
                         // 打开申请管理GUI
-                        ApplicationManagementGUI applicationManagementGUI = new ApplicationManagementGUI(plugin, guild);
+                        ApplicationManagementGUI applicationManagementGUI = new ApplicationManagementGUI(plugin, guild, player);
                         plugin.getGuiManager().openGUI(player, applicationManagementGUI);
                     });
                 });
@@ -218,23 +223,23 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&c您还没有工会");
+                    String message = languageManager.getMessage(player, "gui.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
-                
+
                 // 检查权限
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
                     // 确保在主线程中执行GUI操作
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null || member.getRole() != com.guild.models.GuildMember.Role.LEADER) {
-                            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+                            String message = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
-                        
+
                         // 打开工会设置GUI
-                        GuildSettingsGUI guildSettingsGUI = new GuildSettingsGUI(plugin, guild);
+                        GuildSettingsGUI guildSettingsGUI = new GuildSettingsGUI(plugin, guild, player);
                         plugin.getGuiManager().openGUI(player, guildSettingsGUI);
                     });
                 });
@@ -247,7 +252,7 @@ public class MainGuildGUI implements GUI {
      */
     private void openGuildListGUI(Player player) {
         // 打开工会列表GUI
-        GuildListGUI guildListGUI = new GuildListGUI(plugin);
+        GuildListGUI guildListGUI = new GuildListGUI(plugin, player);
         plugin.getGuiManager().openGUI(player, guildListGUI);
     }
     
@@ -260,21 +265,21 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-guild", "&c您还没有工会");
+                    String message = languageManager.getMessage(player, "gui.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
-                
+
                 // 检查权限
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
                     // 确保在主线程中执行GUI操作
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null || member.getRole() != com.guild.models.GuildMember.Role.LEADER) {
-                            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能管理关系");
+                            String message = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能管理关系");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
-                        
+
                         // 打开工会关系GUI
                         GuildRelationsGUI guildRelationsGUI = new GuildRelationsGUI(plugin, guild, player);
                         plugin.getGuiManager().openGUI(player, guildRelationsGUI);
@@ -293,13 +298,13 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild != null) {
-                    String message = plugin.getConfigManager().getMessagesConfig().getString("create.already-in-guild", "&c您已经在一个工会中了！");
+                    String message = languageManager.getMessage(player, "create.already-in-guild", "&c您已经在一个工会中了！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
-                
+
                 // 打开创建工会GUI
-                CreateGuildGUI createGuildGUI = new CreateGuildGUI(plugin);
+                CreateGuildGUI createGuildGUI = new CreateGuildGUI(plugin, player);
                 plugin.getGuiManager().openGUI(player, createGuildGUI);
             });
         });

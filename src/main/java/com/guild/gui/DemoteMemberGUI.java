@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
@@ -23,12 +24,14 @@ import java.util.concurrent.CompletableFuture;
 public class DemoteMemberGUI implements GUI {
     
     private final GuildPlugin plugin;
+    private final LanguageManager languageManager;
     private final Guild guild;
     private int currentPage = 0;
     private List<GuildMember> members;
     
     public DemoteMemberGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
+        this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
         // 初始化时获取成员列表
         this.members = List.of();
@@ -90,7 +93,7 @@ public class DemoteMemberGUI implements GUI {
             }
         } else if (slot == 49) {
             // 返回
-            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
         }
     }
     
@@ -185,30 +188,28 @@ public class DemoteMemberGUI implements GUI {
     private void handleDemoteMember(Player demoter, GuildMember member) {
         // 检查权限
         if (!demoter.hasPermission("guild.demote")) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+            String message = languageManager.getMessage(demoter, "gui.no-permission", "&c权限不足");
             demoter.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 降级成员
         plugin.getGuildService().updateMemberRoleAsync(member.getPlayerUuid(), GuildMember.Role.MEMBER, demoter.getUniqueId()).thenAccept(success -> {
             if (success) {
-                String demoterMessage = plugin.getConfigManager().getMessagesConfig().getString("demote.success", "&a已降级 &e{player} &a为成员！")
-                    .replace("{player}", member.getPlayerName());
+                String demoterMessage = languageManager.getMessage(demoter, "demote.success", "&a已降级 &e{player} &a为成员！", "{player}", member.getPlayerName());
                 demoter.sendMessage(ColorUtils.colorize(demoterMessage));
-                
+
                 // 通知被降级的玩家
                 Player demotedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
                 if (demotedPlayer != null) {
-                    String demotedMessage = plugin.getConfigManager().getMessagesConfig().getString("demote.demoted", "&c你被降级为工会 &e{guild} &c的成员！")
-                        .replace("{guild}", guild.getName());
+                    String demotedMessage = languageManager.getMessage(demotedPlayer, "demote.demoted", "&c你被降级为工会 &e{guild} &c的成员！", "{guild}", guild.getName());
                     demotedPlayer.sendMessage(ColorUtils.colorize(demotedMessage));
                 }
-                
+
                 // 刷新GUI
                 plugin.getGuiManager().openGUI(demoter, new DemoteMemberGUI(plugin, guild));
             } else {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("demote.failed", "&c降级成员失败！");
+                String message = languageManager.getMessage(demoter, "demote.failed", "&c降级成员失败！");
                 demoter.sendMessage(ColorUtils.colorize(message));
             }
         });

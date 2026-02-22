@@ -52,7 +52,7 @@ public class GuildPermissionsGUI implements GUI {
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot == 49) {
             // 返回
-            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
         }
     }
     

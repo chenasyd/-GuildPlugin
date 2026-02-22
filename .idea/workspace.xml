@@ -4,186 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ce3a3fec-7ae5-4b2f-b319-4e62129f5b23" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.github/workflows/maven-publish.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/build.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dependency-reduced-pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gui.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/guild-plugin.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/messages.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/plugin.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/GuildPlugin.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/commands/GuildAdminCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/commands/GuildCommand.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/ServiceContainer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/config/ConfigManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/database/DatabaseManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/economy/EconomyManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/events/EventBus.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/gui/GUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/gui/GUIManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/language/LanguageManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/permissions/PermissionManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/placeholder/GuildPlaceholderExpansion.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/placeholder/PlaceholderManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/time/TimeProvider.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/utils/ColorUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/utils/CompatibleScheduler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/utils/GUIUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/utils/PlaceholderUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/utils/ServerUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/utils/TestUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/core/utils/VariableTestUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/AdminGuildGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/ApplicationManagementGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/ConfirmDeleteGuildGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/ConfirmLeaveGuildGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/CreateGuildGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/CreateRelationGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/DeleteConfirmationGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/DemoteMemberGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/EconomyManagementGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/GuildDescriptionInputGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/GuildDetailGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/GuildInfoGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/GuildListGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/GuildListManagementGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/GuildLogsGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/GuildNameInputGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/GuildPermissionsGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/GuildRelationsGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/GuildSettingsGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/GuildTagInputGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/InviteMemberGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/KickMemberGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/MainGuildGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/MemberDetailsGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/MemberManagementGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/PromoteMemberGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/RelationManagementGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/gui/SystemSettingsGUI.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/listeners/GuildListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/listeners/PlayerListener.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/models/Guild.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/models/GuildApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/models/GuildContribution.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/models/GuildEconomy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/models/GuildInvitation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/models/GuildLog.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/models/GuildMember.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/models/GuildRelation.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/services/GuildService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/settings/GuildSettings.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/util/GuiDecorationUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/util/InviteMessageUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/util/PlatformUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guild/util/TeleportService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/guildplugin/util/FoliaTeleportUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/PLACEHOLDER_API.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/database.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/gui.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/messages.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/messages_en.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/messages_pl.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/messages_zh.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/GuildPlugin.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/commands/GuildAdminCommand.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/commands/GuildCommand.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/ServiceContainer$ServiceLifecycle.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/ServiceContainer$ServiceNotFoundException.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/ServiceContainer.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/config/ConfigManager.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/database/DatabaseManager$DatabaseType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/database/DatabaseManager.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/economy/EconomyManager.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/events/EventBus.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/gui/GUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/gui/GUIManager.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/language/LanguageManager.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/permissions/PermissionManager$PlayerPermissions.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/permissions/PermissionManager$RolePermissions.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/permissions/PermissionManager.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/placeholder/GuildPlaceholderExpansion.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/placeholder/PlaceholderManager.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/time/TimeProvider.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/utils/ColorUtils.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/utils/CompatibleScheduler.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/utils/GUIUtils.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/utils/PlaceholderUtils.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/utils/ServerUtils$ServerType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/utils/ServerUtils.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/utils/TestUtils.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/core/utils/VariableTestUtils.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/AdminGuildGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/ApplicationManagementGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/ConfirmDeleteGuildGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/ConfirmLeaveGuildGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/CreateGuildGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/CreateRelationGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/DemoteMemberGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/EconomyManagementGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/GuildDescriptionInputGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/GuildDetailGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/GuildInfoGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/GuildListGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/GuildListManagementGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/GuildLogsGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/GuildNameInputGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/GuildPermissionsGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/GuildRelationsGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/GuildSettingsGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/GuildTagInputGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/InviteMemberGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/KickMemberGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/MainGuildGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/MemberDetailsGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/MemberManagementGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/PromoteMemberGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/RelationManagementGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/gui/SystemSettingsGUI.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/listeners/GuildListener.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/listeners/PlayerListener.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/Guild.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildApplication$ApplicationStatus.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildApplication.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildContribution$ContributionType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildContribution.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildEconomy.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildInvitation$InvitationStatus.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildInvitation.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildLog$LogType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildLog.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildMember$Role.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildMember.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildRelation$RelationStatus.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildRelation$RelationType.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/models/GuildRelation.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/com/guild/services/GuildService.class" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/config.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/database.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/gui.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/messages.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/messages_en.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/messages_pl.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/messages_zh.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-    </list>
+    <list default="true" id="ce3a3fec-7ae5-4b2f-b319-4e62129f5b23" name="更改" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -210,26 +31,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Maven.guild-plugin [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.guild-plugin [test].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Administrator/Downloads/coding-copilot-jetbrains-3.5.8412957-45596e92.zip&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Batch.build.executor": "Run",
+    "Maven.guild-plugin [clean].executor": "Run",
+    "Maven.guild-plugin [package].executor": "Run",
+    "Maven.guild-plugin [test].executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/Administrator/Downloads/coding-copilot-jetbrains-3.5.8412957-45596e92.zip",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "advanced.settings",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
@@ -243,6 +65,8 @@
       <workItem from="1768647310305" duration="7944000" />
       <workItem from="1768664851523" duration="16000" />
       <workItem from="1768664880149" duration="40000" />
+      <workItem from="1770911712240" duration="42000" />
+      <workItem from="1770911774378" duration="272000" />
     </task>
     <servers />
   </component>

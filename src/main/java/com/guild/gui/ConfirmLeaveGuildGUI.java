@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 import org.bukkit.Material;
@@ -17,12 +18,14 @@ import java.util.Arrays;
  * 确认离开工会GUI
  */
 public class ConfirmLeaveGuildGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
+    private final LanguageManager languageManager;
     private final Guild guild;
-    
+
     public ConfirmLeaveGuildGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
+        this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
     }
     
@@ -116,22 +119,21 @@ public class ConfirmLeaveGuildGUI implements GUI {
     private void handleConfirmLeave(Player player) {
         // 检查是否是会长
         if (player.getUniqueId().equals(guild.getLeaderUuid())) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("leave.leader-cannot-leave", "&c工会会长不能离开工会！请先转让会长职位或删除工会。");
+            String message = languageManager.getMessage(player, "leave.leader-cannot-leave", "&c工会会长不能离开工会！请先转让会长职位或删除工会。");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 离开工会
         plugin.getGuildService().removeGuildMemberAsync(player.getUniqueId(), player.getUniqueId()).thenAccept(success -> {
             if (success) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("leave.success", "&a你已成功离开工会 &e{guild} &a！")
-                    .replace("{guild}", guild.getName());
+                String message = languageManager.getMessage(player, "leave.success", "&a你已成功离开工会 &e{guild} &a！", "{guild}", guild.getName());
                 player.sendMessage(ColorUtils.colorize(message));
-                
+
                 // 关闭GUI
                 player.closeInventory();
             } else {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("leave.failed", "&c离开工会失败！");
+                String message = languageManager.getMessage(player, "leave.failed", "&c离开工会失败！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -142,7 +144,7 @@ public class ConfirmLeaveGuildGUI implements GUI {
      */
     private void handleCancel(Player player) {
         // 返回工会设置GUI
-        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
     }
     
     /**

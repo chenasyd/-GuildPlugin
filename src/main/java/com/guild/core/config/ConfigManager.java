@@ -1,14 +1,15 @@
 package com.guild.core.config;
 
-import com.guild.GuildPlugin;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import com.guild.GuildPlugin;
 
 /**
  * 配置管理器 - 管理插件的所有配置文件
@@ -32,13 +33,10 @@ public class ConfigManager {
     private void loadConfigs() {
         // 主配置文件
         loadConfig("config.yml");
-        
-        // 消息配置文件
-        loadConfig("messages.yml");
-        
-        // GUI配置文件
-        loadConfig("gui.yml");
-        
+
+        // GUI配置文件（已废弃，现在使用多语言GUI配置）
+        // loadConfig("gui.yml");
+
         // 数据库配置文件
         loadConfig("database.yml");
     }
@@ -76,17 +74,18 @@ public class ConfigManager {
     }
     
     /**
-     * 获取消息配置文件
+     * 获取GUI配置文件（已废弃，请使用LanguageManager.getGuiMessage）
+     * @deprecated 请使用 {@code LanguageManager.getGuiMessage()} 方法
      */
-    public FileConfiguration getMessagesConfig() {
-        return getConfig("messages.yml");
-    }
-    
-    /**
-     * 获取GUI配置文件
-     */
+    @Deprecated
     public FileConfiguration getGuiConfig() {
-        return getConfig("gui.yml");
+        // 仍然支持旧的gui.yml文件以保持向后兼容
+        File guiFile = new File(plugin.getDataFolder(), "gui.yml");
+        if (guiFile.exists()) {
+            return YamlConfiguration.loadConfiguration(guiFile);
+        }
+        // 如果文件不存在，返回空的配置
+        return new YamlConfiguration();
     }
     
     /**

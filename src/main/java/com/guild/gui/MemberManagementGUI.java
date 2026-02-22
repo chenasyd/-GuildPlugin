@@ -15,6 +15,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.PlaceholderUtils;
+import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 
@@ -25,17 +26,21 @@ public class MemberManagementGUI implements GUI {
     
     private final GuildPlugin plugin;
     private final Guild guild;
+    private final Player player;
+    private final LanguageManager languageManager;
     private int currentPage = 0;
     private static final int MEMBERS_PER_PAGE = 28; // 4行7列，除去边框
-    
-    public MemberManagementGUI(GuildPlugin plugin, Guild guild) {
+
+    public MemberManagementGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.guild = guild;
+        this.player = player;
+        this.languageManager = plugin.getLanguageManager();
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("member-management.title", "&6成员管理"));
+        return plugin.getLanguageManager().getGuiColoredMessage(player, "member-management.title", "&6成员管理");
     }
     
     @Override
@@ -310,7 +315,7 @@ public class MemberManagementGUI implements GUI {
                 handleDemoteMember(player);
                 break;
             case 53: // 返回
-                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
+                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
                 break;
         }
     }
@@ -372,21 +377,20 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             if (executor == null || !executor.getRole().canKick()) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+                String message = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
             
             // 不能踢出会长
             if (member.getRole() == GuildMember.Role.LEADER) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.cannot-kick-leader", "&c不能踢出工会会长");
+                String message = languageManager.getMessage(player, "gui.cannot-kick-leader", "&c不能踢出工会会长");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
             
             // 确认踢出
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-kick", "&c确定要踢出成员 {member} 吗？输入 &f/guild kick {member} confirm &c确认")
-                .replace("{member}", member.getPlayerName());
+            String message = languageManager.getMessage(player, "gui.confirm-kick", "&c确定要踢出成员 {member} 吗？输入 &f/guild kick {member} confirm &c确认", "{member}", member.getPlayerName());
             player.sendMessage(ColorUtils.colorize(message));
         });
     }
@@ -398,27 +402,25 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             if (executor == null || executor.getRole() != GuildMember.Role.LEADER) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+                String message = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
             
             // 不能操作会长
             if (member.getRole() == GuildMember.Role.LEADER) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.cannot-modify-leader", "&c不能修改工会会长的职位");
+                String message = languageManager.getMessage(player, "gui.cannot-modify-leader", "&c不能修改工会会长的职位");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
             
             if (member.getRole() == GuildMember.Role.OFFICER) {
                 // 降级为普通成员
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-demote", "&c确定要降级成员 {member} 吗？输入 &f/guild demote {member} confirm &c确认")
-                    .replace("{member}", member.getPlayerName());
+                String message = languageManager.getMessage(player, "gui.confirm-demote", "&c确定要降级成员 {member} 吗？输入 &f/guild demote {member} confirm &c确认", "{member}", member.getPlayerName());
                 player.sendMessage(ColorUtils.colorize(message));
             } else {
                 // 提升为官员
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-promote", "&a确定要提升成员 {member} 为官员吗？输入 &f/guild promote {member} confirm &a确认")
-                    .replace("{member}", member.getPlayerName());
+                String message = languageManager.getMessage(player, "gui.confirm-promote", "&a确定要提升成员 {member} 为官员吗？输入 &f/guild promote {member} confirm &a确认", "{member}", member.getPlayerName());
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -431,7 +433,7 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || !member.getRole().canInvite()) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+                String message = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
@@ -441,7 +443,7 @@ public class MemberManagementGUI implements GUI {
             plugin.getGuiManager().openGUI(player, inviteMemberGUI);
         });
     }
-    
+
     /**
      * 处理踢出成员
      */
@@ -449,7 +451,7 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || !member.getRole().canKick()) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+                String message = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
@@ -459,7 +461,7 @@ public class MemberManagementGUI implements GUI {
             plugin.getGuiManager().openGUI(player, kickMemberGUI);
         });
     }
-    
+
     /**
      * 处理提升成员
      */
@@ -467,7 +469,7 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+                String message = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
@@ -477,7 +479,7 @@ public class MemberManagementGUI implements GUI {
             plugin.getGuiManager().openGUI(player, promoteMemberGUI);
         });
     }
-    
+
     /**
      * 处理降级成员
      */
@@ -485,7 +487,7 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+                String message = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }

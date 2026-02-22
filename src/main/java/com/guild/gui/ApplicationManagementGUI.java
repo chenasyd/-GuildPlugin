@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PlaceholderUtils;
@@ -23,21 +24,25 @@ import java.util.List;
  * 申请管理GUI
  */
 public class ApplicationManagementGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
+    private final Player player;
+    private final LanguageManager languageManager;
     private final Guild guild;
     private int currentPage = 0;
     private static final int APPLICATIONS_PER_PAGE = 28; // 4行7列，除去边框
     private boolean showingHistory = false; // false=待处理申请, true=申请历史
-    
-    public ApplicationManagementGUI(GuildPlugin plugin, Guild guild) {
+
+    public ApplicationManagementGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
+        this.player = player;
+        this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("application-management.title", "&6申请管理"));
+        return plugin.getLanguageManager().getGuiColoredMessage(player, "application-management.title", "&6申请管理");
     }
     
     @Override
@@ -321,7 +326,7 @@ public class ApplicationManagementGUI implements GUI {
                 refreshInventory(player);
                 break;
             case 49: // 返回
-                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
+                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
                 break;
         }
     }
@@ -347,7 +352,7 @@ public class ApplicationManagementGUI implements GUI {
     private void handleApplicationClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (showingHistory) {
             // 历史记录只能查看，不能操作
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.application-history-view-only", "&7这是历史记录，只能查看");
+            String message = languageManager.getMessage(player, "gui.application-history-view-only", "&7这是历史记录，只能查看");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -369,37 +374,36 @@ public class ApplicationManagementGUI implements GUI {
         // 获取当前页的申请列表
         plugin.getGuildService().getPendingApplicationsAsync(guild.getId()).thenAccept(applications -> {
             if (applications == null || applications.isEmpty()) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-pending-applications", "&c没有待处理的申请");
+                String message = languageManager.getMessage(player, "gui.no-pending-applications", "&c没有待处理的申请");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
-            
+
             // 计算申请在列表中的索引
             int applicationIndex = currentPage * APPLICATIONS_PER_PAGE + (slot - 10);
             if (applicationIndex >= 0 && applicationIndex < applications.size()) {
                 GuildApplication application = applications.get(applicationIndex);
-                
+
                 // 处理申请
                 plugin.getGuildService().processApplicationAsync(application.getId(), GuildApplication.ApplicationStatus.APPROVED, player.getUniqueId()).thenAccept(success -> {
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (success) {
-                            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.application-accepted", "&a申请已接受！");
+                            String message = languageManager.getMessage(player, "gui.application-accepted", "&a申请已接受！");
                             player.sendMessage(ColorUtils.colorize(message));
-                            
+
                             // 向申请者发送消息
                             Player applicant = Bukkit.getPlayer(application.getPlayerUuid());
                             if (applicant != null && applicant.isOnline()) {
                                 // 去除工会名称中的颜色代码
                                 String cleanGuildName = ColorUtils.stripColor(guild.getName());
-                                String acceptedMessage = plugin.getConfigManager().getMessagesConfig().getString("application.accepted", "&a您的申请已被 {guild} 接受！")
-                                    .replace("{guild}", cleanGuildName);
+                                String acceptedMessage = languageManager.getMessage(applicant, "application.accepted", "&a您的申请已被 {guild} 接受！", "{guild}", cleanGuildName);
                                 applicant.sendMessage(ColorUtils.colorize(acceptedMessage));
                             }
-                            
+
                             // 刷新GUI
                             refreshInventory(player);
                         } else {
-                            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.application-accept-failed", "&c接受申请失败！");
+                            String message = languageManager.getMessage(player, "gui.application-accept-failed", "&c接受申请失败！");
                             player.sendMessage(ColorUtils.colorize(message));
                         }
                     });
@@ -415,26 +419,26 @@ public class ApplicationManagementGUI implements GUI {
         // 获取当前页的申请列表
         plugin.getGuildService().getPendingApplicationsAsync(guild.getId()).thenAccept(applications -> {
             if (applications == null || applications.isEmpty()) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-pending-applications", "&c没有待处理的申请");
+                String message = languageManager.getMessage(player, "gui.no-pending-applications", "&c没有待处理的申请");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
-            
+
             // 计算申请在列表中的索引
             int applicationIndex = currentPage * APPLICATIONS_PER_PAGE + (slot - 10);
             if (applicationIndex >= 0 && applicationIndex < applications.size()) {
                 GuildApplication application = applications.get(applicationIndex);
-                
+
                 // 处理申请
                 plugin.getGuildService().processApplicationAsync(application.getId(), GuildApplication.ApplicationStatus.REJECTED, player.getUniqueId()).thenAccept(success -> {
                     if (success) {
-                        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.application-rejected", "&c申请已拒绝！");
+                        String message = languageManager.getMessage(player, "gui.application-rejected", "&c申请已拒绝！");
                         player.sendMessage(ColorUtils.colorize(message));
-                        
+
                         // 刷新GUI
                         refreshInventory(player);
                     } else {
-                        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.application-reject-failed", "&c拒绝申请失败！");
+                        String message = languageManager.getMessage(player, "gui.application-reject-failed", "&c拒绝申请失败！");
                         player.sendMessage(ColorUtils.colorize(message));
                     }
                 });

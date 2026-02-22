@@ -37,7 +37,7 @@ public class GuildInfoGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("guild-info.title", "&6工会信息"));
+        return plugin.getLanguageManager().getGuiColoredMessage(player, "guild-info.title", "&6工会信息");
     }
     
     @Override
@@ -245,7 +245,7 @@ public class GuildInfoGUI implements GUI {
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot == 49) {
             // 返回主菜单
-            plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
+            plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
         }
     }
     

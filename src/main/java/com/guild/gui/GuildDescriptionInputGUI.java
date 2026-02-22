@@ -3,6 +3,7 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,14 +18,16 @@ import java.util.Arrays;
  * 工会描述输入GUI
  */
 public class GuildDescriptionInputGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
+    private final LanguageManager languageManager;
     private String currentDescription;
-    
+
     public GuildDescriptionInputGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
         this.guild = guild;
+        this.languageManager = plugin.getLanguageManager();
         this.currentDescription = guild.getDescription() != null ? guild.getDescription() : "";
     }
     
@@ -119,40 +122,38 @@ public class GuildDescriptionInputGUI implements GUI {
     private void handleInputDescription(Player player) {
         // 关闭GUI
         player.closeInventory();
-        
+
         // 发送消息提示输入
         int maxLength = plugin.getConfigManager().getMainConfig().getInt("guild.max-description-length", 100);
-        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.input-description", "&a请在聊天框中输入新的工会描述（最多{max}字符）：")
-            .replace("{max}", String.valueOf(maxLength));
+        String message = languageManager.getMessage(player, "gui.input-description", "&a请在聊天框中输入新的工会描述（最多{max}字符）：", "{max}", String.valueOf(maxLength));
         player.sendMessage(ColorUtils.colorize(message));
-        
+
         // 设置玩家为输入模式
         final int finalMaxLength = maxLength; // 使用final变量避免lambda中的变量冲突
         plugin.getGuiManager().setInputMode(player, input -> {
             if (input.length() > finalMaxLength) {
-                String errorMessage = plugin.getConfigManager().getMessagesConfig().getString("gui.description-too-long", "&c描述过长，最多{max}字符！")
-                    .replace("{max}", String.valueOf(finalMaxLength));
+                String errorMessage = languageManager.getMessage(player, "gui.description-too-long", "&c描述过长，最多{max}字符！", "{max}", String.valueOf(finalMaxLength));
                 player.sendMessage(ColorUtils.colorize(errorMessage));
                 return false;
             }
-            
+
             // 更新描述
             currentDescription = input;
-            
+
             // 保存到数据库
             plugin.getGuildService().updateGuildDescriptionAsync(guild.getId(), input).thenAccept(success -> {
                 if (success) {
-                    String successMessage = plugin.getConfigManager().getMessagesConfig().getString("gui.description-updated", "&a工会描述已更新！");
+                    String successMessage = languageManager.getMessage(player, "gui.description-updated", "&a工会描述已更新！");
                     player.sendMessage(ColorUtils.colorize(successMessage));
-                    
+
                     // 安全刷新GUI
                     plugin.getGuiManager().refreshGUI(player);
                 } else {
-                    String errorMessage = plugin.getConfigManager().getMessagesConfig().getString("gui.description-update-failed", "&c工会描述更新失败！");
+                    String errorMessage = languageManager.getMessage(player, "gui.description-update-failed", "&c工会描述更新失败！");
                     player.sendMessage(ColorUtils.colorize(errorMessage));
                 }
             });
-            
+
             return true;
         });
     }
@@ -162,15 +163,15 @@ public class GuildDescriptionInputGUI implements GUI {
      */
     private void handleConfirm(Player player) {
         // 返回工会设置GUI
-        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
     }
-    
+
     /**
      * 处理取消
      */
     private void handleCancel(Player player) {
         // 返回工会设置GUI
-        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
     }
     
     /**

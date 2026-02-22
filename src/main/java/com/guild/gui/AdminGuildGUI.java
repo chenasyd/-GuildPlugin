@@ -23,14 +23,16 @@ import java.util.concurrent.CompletableFuture;
 public class AdminGuildGUI implements GUI {
     
     private final GuildPlugin plugin;
-    
-    public AdminGuildGUI(GuildPlugin plugin) {
+    private final Player player;
+
+    public AdminGuildGUI(GuildPlugin plugin, Player player) {
         this.plugin = plugin;
+        this.player = player;
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("admin-gui.title", "&4工会管理"));
+        return plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.title", "&4工会管理");
     }
     
     @Override
@@ -116,7 +118,7 @@ public class AdminGuildGUI implements GUI {
                 openSystemSettings(player);
                 break;
             case 49: // 返回
-                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
+                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
                 break;
         }
     }

@@ -83,7 +83,7 @@ public class InviteMemberGUI implements GUI {
             }
         } else if (slot == 49) {
             // 返回
-            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
         }
     }
     

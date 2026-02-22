@@ -285,7 +285,7 @@ public class RelationManagementGUI implements GUI {
         
         if (slot == 46) {
             // 返回
-            plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin));
+            plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
         } else if (slot == 52) {
             // 刷新
             if (!isLoading) {

@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
@@ -19,12 +20,14 @@ import java.util.Arrays;
  * 确认删除工会GUI
  */
 public class ConfirmDeleteGuildGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
+    private final LanguageManager languageManager;
     private final Guild guild;
-    
+
     public ConfirmDeleteGuildGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
+        this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
     }
     
@@ -122,27 +125,26 @@ public class ConfirmDeleteGuildGUI implements GUI {
         // 检查权限（只有当前工会会长可以删除）
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getGuildId() != guild.getId() || member.getRole() != GuildMember.Role.LEADER) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+            String message = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 删除工会
         plugin.getGuildService().deleteGuildAsync(guild.getId(), player.getUniqueId()).thenAccept(success -> {
             if (success) {
                 // 去除名称中的颜色代码，避免影响提示消息颜色
                 String cleanGuildName = ColorUtils.stripColor(guild.getName());
-                String message = plugin.getConfigManager().getMessagesConfig().getString("delete.success", "&a工会 &e{guild} &a已被删除！")
-                    .replace("{guild}", cleanGuildName);
+                String message = languageManager.getMessage(player, "delete.success", "&a工会 &e{guild} &a已被删除！", "{guild}", cleanGuildName);
                 // 回到主线程进行界面操作
                 CompatibleScheduler.runTask(plugin, () -> {
                     player.sendMessage(ColorUtils.colorize(message));
                     // 使用GUIManager以确保主线程安全关闭与打开
                     plugin.getGuiManager().closeGUI(player);
-                    plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin));
+                    plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
                 });
             } else {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("delete.failed", "&c删除工会失败！");
+                String message = languageManager.getMessage(player, "delete.failed", "&c删除工会失败！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -153,7 +155,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
      */
     private void handleCancel(Player player) {
         // 返回工会设置GUI
-        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
     }
     
     /**

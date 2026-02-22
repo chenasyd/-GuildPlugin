@@ -1,0 +1,716 @@
+# Plik konfiguracyjny GUI
+
+# Główny interfejs - sześć głównych wejść
+main-menu:
+  title: "&6System Gildii"
+  size: 54
+  items:
+    guild-info:
+      slot: 20
+      material: BOOK
+      name: "&eInformacje o gildii"
+      lore:
+        - "&7Zobacz szczegółowe informacje o gildii"
+        - "&7W tym podstawowe informacje, statystyki itp."
+      glow: false
+
+    member-management:
+      slot: 22
+      material: PLAYER_HEAD
+      name: "&eZarządzanie członkami"
+      lore:
+        - "&7Zarządzaj członkami gildii"
+        - "&7Zapraszaj, usuwaj, zarządzaj uprawnieniami"
+      glow: false
+
+    application-management:
+      slot: 24
+      material: PAPER
+      name: "&eZarządzanie aplikacjami"
+      lore:
+        - "&7Przetwarzaj zgłoszenia dołączenia"
+        - "&7Zobacz historię aplikacji"
+      glow: false
+
+    guild-settings:
+      slot: 30
+      material: COMPASS
+      name: "&eUstawienia gildii"
+      lore:
+        - "&7Modyfikuj ustawienia gildii"
+        - "&7Opis, tag, uprawnienia itp."
+      glow: false
+
+    guild-list:
+      slot: 32
+      material: BOOKSHELF
+      name: "&eLista gildii"
+      lore:
+        - "&7Zobacz wszystkie gildie"
+        - "&7Funkcje wyszukiwania, filtrowania"
+      glow: false
+
+    guild-relations:
+      slot: 34
+      material: RED_WOOL
+      name: "&eRelacje gildii"
+      lore:
+        - "&7Zarządzaj relacjami gildii"
+        - "&7Sojusze, wrogowie itp."
+      glow: false
+
+    create-guild:
+      slot: 48
+      material: EMERALD_BLOCK
+      name: "&aUtwórz gildię"
+      lore:
+        - "&7Utwórz nową gildię"
+        - "&7Wymaga monet"
+      glow: true
+
+# Interfejs informacji o gildii
+guild-info:
+  title: "&6Informacje o gildii"
+  size: 54
+  items:
+    guild-name:
+      slot: 10
+      material: NAME_TAG
+      name: "&eNazwa gildii"
+      lore:
+        - "&f{guild_name}"
+        - "&7ID gildii: {guild_id}"
+
+    guild-tag:
+      slot: 12
+      material: OAK_SIGN
+      name: "&eTag gildii"
+      lore:
+        - "&f{guild_tag}"
+        - "&7Służy do szybkiej identyfikacji"
+
+    guild-description:
+      slot: 14
+      material: BOOK
+      name: "&eOpis gildii"
+      lore:
+        - "&f{guild_description}"
+        - "&7Szczegółowy opis gildii"
+
+    guild-leader:
+      slot: 16
+      material: GOLDEN_HELMET
+      name: "&eLider gildii"
+      lore:
+        - "&f{leader_name}"
+        - "&7Lider posiada wszystkie uprawnienia"
+
+    guild-home:
+      slot: 19
+      material: COMPASS
+      name: "&eDom gildii"
+      lore:
+        - "&f{guild_home_location}"
+        - "&7Członkowie mogą się tu teleportować"
+
+    member-count:
+      slot: 28
+      material: PLAYER_HEAD
+      name: "&eLiczba członków"
+      lore:
+        - "&f{member_count}/{guild_max_members} członków"
+        - "&7Online: {online_member_count} członków"
+
+    guild-level:
+      slot: 30
+      material: EXPERIENCE_BOTTLE
+      name: "&ePoziom gildii"
+      lore:
+        - "&fPoziom {guild_level}"
+        - "&7Maks. członków: {guild_max_members} członków"
+        - "&7Postęp ulepszenia: {guild_level_progress}"
+
+    guild-balance:
+      slot: 32
+      material: GOLD_INGOT
+      name: "&eBilans gildii"
+      lore:
+        - "&f{guild_balance_formatted}"
+        - "&7Wymagane ulepszenie: {guild_next_level_requirement}"
+
+    created-date:
+      slot: 34
+      material: CLOCK
+      name: "&eData utworzenia"
+      lore:
+        - "&f{guild_created_date}"
+        - "&7{guild_created_time}"
+
+    guild-status:
+      slot: 36
+      material: BEACON
+      name: "&eStatus gildii"
+      lore:
+        - "&f{guild_frozen}"
+        - "&7Aktualny status gildii"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&7Wstecz"
+      lore:
+        - "&7Powrót do głównego menu"
+
+# Interfejs zarządzania członkami
+member-management:
+  title: "&6Zarządzanie członkami"
+  size: 54
+  items:
+    invite-member:
+      slot: 45
+      material: EMERALD_BLOCK
+      name: "&aZaproś członka"
+      lore:
+        - "&7Zaproś nowych członków"
+        - "&7Obecni członkowie: {member_count} członków"
+
+    kick-member:
+      slot: 47
+      material: REDSTONE_BLOCK
+      name: "&cWyrzuć członka"
+      lore:
+        - "&7Wyrzuć członków gildii"
+        - "&7Wymaga uprawnień oficera lub wyższych"
+
+    promote-member:
+      slot: 49
+      material: GOLD_INGOT
+      name: "&6Awansuj członka"
+      lore:
+        - "&7Awansuj pozycję członka"
+        - "&7Tylko lider może operować"
+
+    demote-member:
+      slot: 51
+      material: IRON_INGOT
+      name: "&7Zdegraduj członka"
+      lore:
+        - "&7Zdegraduj pozycję członka"
+        - "&7Tylko lider może operować"
+
+    back:
+      slot: 53
+      material: ARROW
+      name: "&7Wstecz"
+      lore:
+        - "&7Powrót do głównego menu"
+
+    next-page:
+      slot: 26
+      material: ARROW
+      name: "&aNastępna strona"
+      lore:
+        - "&7Zobacz następną stronę"
+
+    previous-page:
+      slot: 18
+      material: ARROW
+      name: "&cPoprzednia strona"
+      lore:
+        - "&7Zobacz poprzednią stronę"
+
+# Interfejs szczegółów członka
+member-details:
+  title: "&6Szczegóły członka - {member_name}"
+  size: 54
+
+# Interfejs zarządzania aplikacjami
+application-management:
+  title: "&6Zarządzanie aplikacjami"
+  size: 54
+  items:
+    pending-applications:
+      slot: 20
+      material: PAPER
+      name: "&eOczekujące aplikacje"
+      lore:
+        - "&7Zobacz oczekujące aplikacje"
+        - "&f{pending_count} aplikacji"
+        - "&7Wymaga szybkiego przetworzenia"
+
+    application-history:
+      slot: 24
+      material: BOOK
+      name: "&eHistoria aplikacji"
+      lore:
+        - "&7Zobacz historię aplikacji"
+        - "&7Przetworzone aplikacje"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&7Wstecz"
+      lore:
+        - "&7Powrót do głównego menu"
+
+    next-page:
+      slot: 26
+      material: ARROW
+      name: "&aNastępna strona"
+      lore:
+        - "&7Zobacz następną stronę"
+
+    previous-page:
+      slot: 18
+      material: ARROW
+      name: "&cPoprzednia strona"
+      lore:
+        - "&7Zobacz poprzednią stronę"
+
+# Interfejs ustawień gildii
+guild-settings:
+  title: "&6Ustawienia gildii"
+  size: 54
+  items:
+    change-description:
+      slot: 20
+      material: BOOK
+      name: "&eZmień opis"
+      lore:
+        - "&7Zmodyfikuj opis gildii"
+        - "&7Aktualny: {guild_description}"
+
+    change-tag:
+      slot: 22
+      material: OAK_SIGN
+      name: "&eZmień tag"
+      lore:
+        - "&7Zmodyfikuj tag gildii"
+        - "&7Aktualny: {guild_tag}"
+
+    set-home:
+      slot: 24
+      material: COMPASS
+      name: "&eUstaw dom gildii"
+      lore:
+        - "&7Ustaw punkt teleportacji gildii"
+        - "&7Aktualny: {guild_home_location}"
+
+    permissions:
+      slot: 30
+      material: SHIELD
+      name: "&eUprawnienia"
+      lore:
+        - "&7Zarządzaj uprawnieniami członków"
+        - "&7Zarządzanie uprawnieniami ról"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&7Wstecz"
+      lore:
+        - "&7Powrót do głównego menu"
+
+# Interfejs listy gildii
+guild-list:
+  title: "&6Lista gildii"
+  size: 54
+  items:
+    search:
+      slot: 45
+      material: COMPASS
+      name: "&eSzukaj gildii"
+      lore:
+        - "&7Szukaj konkretnej gildii"
+        - "&7Aktualne wyszukiwanie: {search_query}"
+
+    filter:
+      slot: 47
+      material: HOPPER
+      name: "&eFiltr"
+      lore:
+        - "&7Filtruj gildie według kryteriów"
+        - "&7Aktualny filtr: {filter_type}"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&7Wstecz"
+      lore:
+        - "&7Powrót do głównego menu"
+
+    next-page:
+      slot: 26
+      material: ARROW
+      name: "&aNastępna strona"
+      lore:
+        - "&7Zobacz następną stronę"
+
+    previous-page:
+      slot: 18
+      material: ARROW
+      name: "&cPoprzednia strona"
+      lore:
+        - "&7Zobacz poprzednią stronę"
+
+# Interfejs relacji gildii
+guild-relations:
+  title: "&6Relacje gildii"
+  size: 54
+  items:
+    allies:
+      slot: 20
+      material: GREEN_WOOL
+      name: "&aSojusze"
+      lore:
+        - "&7Zobacz sojusze gildii"
+        - "&7Zarządzaj relacjami sojuszników"
+
+    enemies:
+      slot: 24
+      material: RED_WOOL
+      name: "&cWrogowie"
+      lore:
+        - "&7Zobacz wrogie gildie"
+        - "&7Zarządzaj relacjami wrogów"
+
+    war:
+      slot: 28
+      material: NETHERITE_SWORD
+      name: "&4Wojny"
+      lore:
+        - "&7Zobacz wojenne gildie"
+        - "&7Zarządzaj stanem wojny"
+
+    neutral:
+      slot: 32
+      material: GRAY_WOOL
+      name: "&7Neutralne"
+      lore:
+        - "&7Zobacz neutralne gildie"
+        - "&7Zarządzaj relacjami neutralnymi"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&7Wstecz"
+      lore:
+        - "&7Powrót do głównego menu"
+
+# Wyświetlanie informacji o członku
+member-display:
+  leader:
+    material: GOLDEN_HELMET
+    name: "&c{player_name}"
+    lore:
+      - "&7Rola: &cLider"
+      - "&7Dołączył: {joined_date}"
+      - "&7Uprawnienia: Wszystkie uprawnienia"
+
+  officer:
+    material: GOLDEN_HELMET
+    name: "&6{player_name}"
+    lore:
+      - "&7Rola: &6Oficer"
+      - "&7Dołączył: {joined_date}"
+      - "&7Uprawnienia: Zapraszanie, usuwanie"
+
+  member:
+    material: PLAYER_HEAD
+    name: "&f{player_name}"
+    lore:
+      - "&7Rola: &fCzłonek"
+      - "&7Dołączył: {joined_date}"
+      - "&7Uprawnienia: Podstawowe uprawnienia"
+
+# Wyświetlanie informacji o aplikacji
+application-display:
+  pending:
+    material: YELLOW_WOOL
+    name: "&eAplikacja {player_name}"
+    lore:
+      - "&7Status: &eOczekująca"
+      - "&7Zgłoszona: {apply_date}"
+      - "&7Wiadomość: {message}"
+      - ""
+      - "&aLPM: Przyjmij"
+      - "&cPPM: Odrzuć"
+
+  accepted:
+    material: GREEN_WOOL
+    name: "&aAplikacja {player_name}"
+    lore:
+      - "&7Status: &aPrzyjęta"
+      - "&7Przetworzona: {process_date}"
+      - "&7Przez: {processor}"
+
+  rejected:
+    material: RED_WOOL
+    name: "&cAplikacja {player_name}"
+    lore:
+      - "&7Status: &cOdrzucona"
+      - "&7Przetworzona: {process_date}"
+      - "&7Przez: {processor}"
+
+# Wyświetlanie informacji o gildii
+guild-display:
+  material: SHIELD
+  name: "&e{guild_name}"
+  lore:
+    - "&7Tag: {guild_tag}"
+    - "&7Lider: {guild_leader}"
+    - "&7Członkowie: {member_count}/{max_members}"
+    - "&7Utworzona: {created_date}"
+    - ""
+    - "&aLPM: Zobacz szczegóły"
+    - "&ePPM: Zgłoś się"
+
+# Interfejs tworzenia gildii
+create-guild:
+  title: "&6Utwórz gildię"
+  size: 54
+  items:
+    name-input:
+      slot: 20
+      material: NAME_TAG
+      name: "&eNazwa gildii"
+      lore:
+        - "&7Kliknij, aby wpisać nazwę gildii"
+        - "&7Długość: 3-20 znaków"
+        - "&7Aktualna: {guild_name}"
+
+    tag-input:
+      slot: 22
+      material: OAK_SIGN
+      name: "&eTag gildii"
+      lore:
+        - "&7Kliknij, aby wpisać tag gildii"
+        - "&7Długość: Max 6 znaków"
+        - "&7Opcjonalne"
+        - "&7Aktualny: {guild_tag}"
+
+    description-input:
+      slot: 24
+      material: BOOK
+      name: "&eOpis gildii"
+      lore:
+        - "&7Kliknij, aby wpisać opis gildii"
+        - "&7Długość: Max 100 znaków"
+        - "&7Opcjonalne"
+        - "&7Aktualny: {guild_description}"
+
+    confirm:
+      slot: 39
+      material: EMERALD_BLOCK
+      name: "&aPotwierdź utworzenie"
+      lore:
+        - "&7Potwierdź utworzenie gildii"
+        - "&7Koszt: {cost} monet"
+        - "&7Twórca: {player_name}"
+      glow: true
+
+    cancel:
+      slot: 41
+      material: REDSTONE_BLOCK
+      name: "&cAnuluj"
+      lore:
+        - "&7Anuluj tworzenie gildii"
+
+# Interfejs zapraszania
+invite-player:
+  title: "&6Zaproś gracza"
+  size: 54
+  items:
+    player-input:
+      slot: 22
+      material: PLAYER_HEAD
+      name: "&eWybierz gracza"
+      lore:
+        - "&7Kliknij, aby wybrać gracza do zaproszenia"
+
+    confirm:
+      slot: 39
+      material: EMERALD_BLOCK
+      name: "&aWyślij zaproszenie"
+      lore:
+        - "&7Potwierdź wysłanie zaproszenia"
+      glow: true
+
+    cancel:
+      slot: 41
+      material: REDSTONE_BLOCK
+      name: "&cAnuluj"
+      lore:
+        - "&7Anuluj zaproszenie"
+
+# Interfejs potwierdzenia
+confirm:
+  title: "&6Potwierdź akcję"
+  size: 27
+  items:
+    confirm:
+      slot: 11
+      material: EMERALD_BLOCK
+      name: "&aPotwierdź"
+      lore:
+        - "&7Potwierdź wykonanie tej akcji"
+      glow: true
+
+    cancel:
+      slot: 15
+      material: REDSTONE_BLOCK
+      name: "&cAnuluj"
+      lore:
+        - "&7Anuluj akcję"
+
+# Elementy dekoracyjne
+decorations:
+  border:
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+
+  info:
+    material: LIGHT_BLUE_STAINED_GLASS_PANE
+    name: "&bSystem Gildii"
+    lore:
+      - "&7Potężna wtyczka gildyjna"
+
+# Administrator GUI
+admin-gui:
+  title: "&4Administracja gildii"
+  size: 54
+  items:
+    guild-list:
+      slot: 20
+      material: BOOKSHELF
+      name: "&eZarządzanie listą gildii"
+      lore:
+        - "&7Zobacz i zarządzaj wszystkimi gildiami"
+        - "&7W tym usuwanie, zamrażanie itp."
+        - "&eLPM: Zobacz szczegóły"
+        - "&cPPM: Usuń gildię"
+        - "&6ŚPM: Zamrożenie/odmrożenie"
+
+    economy:
+      slot: 22
+      material: GOLD_INGOT
+      name: "&eZarządzanie ekonomią"
+      lore:
+        - "&7Zarządzaj systemem ekonomicznym gildii"
+        - "&7Ustaw bilans, zobacz wkłady itp."
+        - "&eLPM: Ustaw bilans"
+        - "&aPPM: Dodaj bilans"
+        - "&cŚPM: Usuń bilans"
+
+    relations:
+      slot: 24
+      material: RED_WOOL
+      name: "&eZarządzanie relacjami"
+      lore:
+        - "&7Zarządzaj relacjami gildii"
+        - "&7Sojusze, wrogowie, wojny itp."
+        - "&cLPM: Usuń relację"
+        - "&ePPM: Zobacz szczegóły"
+
+    statistics:
+      slot: 29
+      material: PAPER
+      name: "&eStatystyki"
+      lore:
+        - "&7Zobacz statystyki gildii"
+        - "&7Liczba członków, ekonomia itp."
+        - "&eKliknij, aby zobaczyć szczegółowe statystyki"
+
+    settings:
+      slot: 31
+      material: COMPASS
+      name: "&eUstawienia systemu"
+      lore:
+        - "&7Zarządzaj ustawieniami systemu"
+        - "&7Przeładuj konfigurację, uprawnienia itp."
+        - "&eKliknij, aby wejść do ustawień"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&cWstecz"
+      lore:
+        - "&7Powrót do głównego menu"
+
+
+
+# Ekonomia gildii GUI
+guild-economy:
+  title: "&6Ekonomia gildii"
+  size: 54
+  items:
+    balance:
+      slot: 20
+      material: GOLD_INGOT
+      name: "&eAktualny bilans"
+      lore:
+        - "&7Aktualny bilans gildii"
+        - "&f{balance} monet"
+
+    deposit:
+      slot: 22
+      material: EMERALD_BLOCK
+      name: "&aWpłać"
+      lore:
+        - "&7Wpłać do bilansu gildii"
+        - "&7Kliknij, aby wpisać kwotę"
+
+    withdraw:
+      slot: 24
+      material: REDSTONE_BLOCK
+      name: "&cWypłać"
+      lore:
+        - "&7Wypłać z bilansu gildii"
+        - "&7Kliknij, aby wpisać kwotę"
+
+    level:
+      slot: 29
+      material: EXPERIENCE_BOTTLE
+      name: "&ePoziom gildii"
+      lore:
+        - "&7Aktualny poziom: {level}"
+        - "&7Postęp ulepszenia: {progress}%"
+        - "&7Maks. członków: {max_members}"
+
+    contributions:
+      slot: 31
+      material: BOOK
+      name: "&eRekordy wkładów"
+      lore:
+        - "&7Zobacz rekordy wkładów"
+        - "&7Twój wkład: {contribution}"
+
+    transfer:
+      slot: 33
+      material: DIAMOND
+      name: "&bPrzelew"
+      lore:
+        - "&7Przelej do innych gildii"
+        - "&7Kliknij, aby wybrać gildię docelową"
+
+    back:
+      slot: 49
+      material: ARROW
+      name: "&cWstecz"
+      lore:
+        - "&7Powrót do poprzedniego menu"
+
+# Interfejs szczegółów gildii
+guild-detail:
+  title: "&6Szczegóły gildii - {guild_name}"
+  size: 54
+
+# Interfejs ustawień systemu
+system-settings:
+  title: "&4Ustawienia systemu"
+  size: 54
+
+# Interfejs logów gildii
+guild-logs:
+  title: "&6Logi gildii - {guild_name}"
+  size: 54

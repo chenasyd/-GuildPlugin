@@ -8,6 +8,7 @@ import com.guild.core.gui.GUIManager;
 import com.guild.core.placeholder.PlaceholderManager;
 import com.guild.core.permissions.PermissionManager;
 import com.guild.core.economy.EconomyManager;
+import com.guild.core.language.LanguageManager;
 import com.guild.commands.GuildCommand;
 import com.guild.commands.GuildAdminCommand;
 import com.guild.listeners.PlayerListener;
@@ -30,6 +31,7 @@ public class GuildPlugin extends JavaPlugin {
     private PlaceholderManager placeholderManager;
     private PermissionManager permissionManager;
     private EconomyManager economyManager;
+    private LanguageManager languageManager;
     private GuildService guildService;
     
     @Override
@@ -83,7 +85,11 @@ public class GuildPlugin extends JavaPlugin {
             // 初始化经济管理器
             economyManager = new EconomyManager(this);
             serviceContainer.register(EconomyManager.class, economyManager);
-            
+
+            // 初始化语言管理器
+            languageManager = new LanguageManager(this);
+            serviceContainer.register(LanguageManager.class, languageManager);
+
             // 注册工会服务
             guildService = new GuildService(this);
             serviceContainer.register(GuildService.class, guildService);
@@ -195,7 +201,11 @@ public class GuildPlugin extends JavaPlugin {
     public EconomyManager getEconomyManager() {
         return economyManager;
     }
-    
+
+    public LanguageManager getLanguageManager() {
+        return languageManager;
+    }
+
     public GuildService getGuildService() {
         return guildService;
     }

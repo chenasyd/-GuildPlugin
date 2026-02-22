@@ -144,7 +144,7 @@ public class GuildListManagementGUI implements GUI {
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot == 46) {
             // 返回
-            plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin));
+            plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
         } else if (slot == 52) {
             // 刷新
             loadGuilds();

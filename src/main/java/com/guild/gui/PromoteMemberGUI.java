@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
@@ -23,12 +24,14 @@ import java.util.concurrent.CompletableFuture;
 public class PromoteMemberGUI implements GUI {
     
     private final GuildPlugin plugin;
+    private final LanguageManager languageManager;
     private final Guild guild;
     private int currentPage = 0;
     private List<GuildMember> members;
     
     public PromoteMemberGUI(GuildPlugin plugin, Guild guild) {
         this.plugin = plugin;
+        this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
         // 初始化时获取成员列表
         this.members = List.of();
@@ -90,7 +93,7 @@ public class PromoteMemberGUI implements GUI {
             }
         } else if (slot == 49) {
             // 返回
-            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild));
+            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
         }
     }
     
@@ -185,30 +188,28 @@ public class PromoteMemberGUI implements GUI {
     private void handlePromoteMember(Player promoter, GuildMember member) {
         // 检查权限
         if (!promoter.hasPermission("guild.promote")) {
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+            String message = languageManager.getMessage(promoter, "gui.no-permission", "&c权限不足");
             promoter.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         // 提升成员
         plugin.getGuildService().updateMemberRoleAsync(member.getPlayerUuid(), GuildMember.Role.OFFICER, promoter.getUniqueId()).thenAccept(success -> {
             if (success) {
-                String promoterMessage = plugin.getConfigManager().getMessagesConfig().getString("promote.success", "&a已提升 &e{player} &a为官员！")
-                    .replace("{player}", member.getPlayerName());
+                String promoterMessage = languageManager.getMessage(promoter, "promote.success", "&a已提升 &e{player} &a为官员！", "{player}", member.getPlayerName());
                 promoter.sendMessage(ColorUtils.colorize(promoterMessage));
-                
+
                 // 通知被提升的玩家
                 Player promotedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
                 if (promotedPlayer != null) {
-                    String promotedMessage = plugin.getConfigManager().getMessagesConfig().getString("promote.promoted", "&a你被提升为工会 &e{guild} &a的官员！")
-                        .replace("{guild}", guild.getName());
+                    String promotedMessage = languageManager.getMessage(promotedPlayer, "promote.promoted", "&a你被提升为工会 &e{guild} &a的官员！", "{guild}", guild.getName());
                     promotedPlayer.sendMessage(ColorUtils.colorize(promotedMessage));
                 }
-                
+
                 // 刷新GUI
                 plugin.getGuiManager().openGUI(promoter, new PromoteMemberGUI(plugin, guild));
             } else {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("promote.failed", "&c提升成员失败！");
+                String message = languageManager.getMessage(promoter, "promote.failed", "&c提升成员失败！");
                 promoter.sendMessage(ColorUtils.colorize(message));
             }
         });

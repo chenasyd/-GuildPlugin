@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.PlaceholderUtils;
 import com.guild.models.Guild;
@@ -24,14 +25,16 @@ import java.util.concurrent.CompletableFuture;
  * 成员详情GUI
  */
 public class MemberDetailsGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
+    private final LanguageManager languageManager;
     private final Guild guild;
     private final GuildMember member;
     private final Player viewer;
-    
+
     public MemberDetailsGUI(GuildPlugin plugin, Guild guild, GuildMember member, Player viewer) {
         this.plugin = plugin;
+        this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
         this.member = member;
         this.viewer = viewer;
@@ -39,8 +42,8 @@ public class MemberDetailsGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getConfigManager().getGuiConfig().getString("member-details.title", "&6成员详情")
-            .replace("{member_name}", member.getPlayerName()));
+        return plugin.getLanguageManager().getGuiColoredMessage(viewer, "member-details.title", "&6成员详情")
+            .replace("{member_name}", member.getPlayerName());
     }
     
     @Override
@@ -79,7 +82,7 @@ public class MemberDetailsGUI implements GUI {
         
         // 检查是否是返回按钮
         if (slot == 49) {
-            plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild));
+            plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, viewer));
         }
     }
     
@@ -319,14 +322,13 @@ public class MemberDetailsGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             if (executor == null || !executor.getRole().canKick()) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.no-permission", "&c权限不足");
+                String message = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
-            
+
             // 确认踢出
-            String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-kick", "&c确定要踢出成员 {member} 吗？输入 &f/guild kick {member} confirm &c确认")
-                .replace("{member}", member.getPlayerName());
+            String message = languageManager.getMessage(player, "gui.confirm-kick", "&c确定要踢出成员 {member} 吗？输入 &f/guild kick {member} confirm &c确认", "{member}", member.getPlayerName());
             player.sendMessage(ColorUtils.colorize(message));
             player.closeInventory();
         });
@@ -339,35 +341,32 @@ public class MemberDetailsGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             if (executor == null || executor.getRole() != GuildMember.Role.LEADER) {
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.leader-only", "&c只有工会会长才能执行此操作");
+                String message = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
-            
+
             if (member.getRole() == GuildMember.Role.OFFICER) {
                 // 降级
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-demote", "&c确定要降级成员 {member} 吗？输入 &f/guild demote {member} confirm &c确认")
-                    .replace("{member}", member.getPlayerName());
+                String message = languageManager.getMessage(player, "gui.confirm-demote", "&c确定要降级成员 {member} 吗？输入 &f/guild demote {member} confirm &c确认", "{member}", member.getPlayerName());
                 player.sendMessage(ColorUtils.colorize(message));
             } else {
                 // 提升
-                String message = plugin.getConfigManager().getMessagesConfig().getString("gui.confirm-promote", "&a确定要提升成员 {member} 为官员吗？输入 &f/guild promote {member} confirm &a确认")
-                    .replace("{member}", member.getPlayerName());
+                String message = languageManager.getMessage(player, "gui.confirm-promote", "&a确定要提升成员 {member} 为官员吗？输入 &f/guild promote {member} confirm &a确认", "{member}", member.getPlayerName());
                 player.sendMessage(ColorUtils.colorize(message));
             }
             player.closeInventory();
         });
     }
-    
+
     /**
      * 处理发送消息
      */
     private void handleSendMessage(Player player) {
-        String message = plugin.getConfigManager().getMessagesConfig().getString("gui.open-chat", "&e请输入要发送给 {member} 的消息:")
-            .replace("{member}", member.getPlayerName());
+        String message = languageManager.getMessage(player, "gui.open-chat", "&e请输入要发送给 {member} 的消息:", "{member}", member.getPlayerName());
         player.sendMessage(ColorUtils.colorize(message));
         player.closeInventory();
-        
+
         // 这里可以集成聊天系统，暂时只是提示
         // TODO: 实现私信系统
     }
