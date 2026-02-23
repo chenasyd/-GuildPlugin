@@ -78,7 +78,7 @@ public class GuildSettingsGUI implements GUI {
             case 15: // 成员管理：左=邀请 右=踢出 Shift+左=提升/降级
                 if (clickType == ClickType.LEFT) handleInviteMember(player);
                 else if (clickType == ClickType.RIGHT) handleKickMember(player);
-                else if (clickType == ClickType.SHIFT_LEFT) plugin.getGuiManager().openGUI(player, new PromoteMemberGUI(plugin, guild));
+                else if (clickType == ClickType.SHIFT_LEFT) plugin.getGuiManager().openGUI(player, new PromoteMemberGUI(plugin, guild, player));
                 break;
             case 13: // 设置工会家
                 handleSetHome(player);
@@ -231,7 +231,7 @@ public class GuildSettingsGUI implements GUI {
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        plugin.getGuiManager().openGUI(player, new GuildDescriptionInputGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new GuildDescriptionInputGUI(plugin, guild, player));
     }
 
     private void handleChangeTag(Player player) {
@@ -241,7 +241,7 @@ public class GuildSettingsGUI implements GUI {
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        plugin.getGuiManager().openGUI(player, new GuildTagInputGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new GuildTagInputGUI(plugin, guild, player));
     }
 
     private void handleInviteMember(Player player) {
@@ -251,7 +251,7 @@ public class GuildSettingsGUI implements GUI {
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        plugin.getGuiManager().openGUI(player, new InviteMemberGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new InviteMemberGUI(plugin, guild, player));
     }
 
     private void handleKickMember(Player player) {
@@ -261,7 +261,7 @@ public class GuildSettingsGUI implements GUI {
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        plugin.getGuiManager().openGUI(player, new KickMemberGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new KickMemberGUI(plugin, guild, player));
     }
 
     private void handleSetHome(Player player) {
@@ -337,7 +337,7 @@ public class GuildSettingsGUI implements GUI {
     }
 
     private void handleLeaveGuild(Player player) {
-        plugin.getGuiManager().openGUI(player, new ConfirmLeaveGuildGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new ConfirmLeaveGuildGUI(plugin, guild, player));
     }
 
     private void handleDeleteGuild(Player player) {
@@ -347,7 +347,7 @@ public class GuildSettingsGUI implements GUI {
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player));
     }
 
     // createItem 重载：支持不传 glowing 参数的旧调用

@@ -44,7 +44,8 @@ public class CreateRelationGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6创建工会关系");
+        return languageManager.getGuiColoredMessage(player, "create-relation.title",
+                ColorUtils.colorize("&6创建工会关系"));
     }
     
     @Override

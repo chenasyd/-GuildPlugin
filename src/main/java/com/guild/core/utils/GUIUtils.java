@@ -115,14 +115,15 @@ public class GUIUtils {
      * @param text 原始文本
      * @param member 成员对象
      * @param guild 工会对象
+     * @param player 玩家对象（可为null）
      * @return 替换后的文本
      */
-    public static String processMemberGUIVariables(String text, GuildMember member, Guild guild) {
+    public static String processMemberGUIVariables(String text, GuildMember member, Guild guild, Player player) {
         if (text == null) {
             return "";
         }
-        
-        return PlaceholderUtils.replaceMemberPlaceholders(text, member, guild);
+
+        return PlaceholderUtils.replaceMemberPlaceholders(text, member, guild, player);
     }
     
     /**

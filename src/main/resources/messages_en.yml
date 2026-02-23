@@ -210,6 +210,24 @@ economy:
   target-guild-not-found: "&cTarget guild does not exist!"
   cannot-transfer-to-self: "&cCannot transfer to your own guild!"
 
+# Deposit command
+deposit:
+  usage: "&cUsage: /guild deposit <amount>"
+  invalid-amount: "&cInvalid amount format!"
+  must-be-positive: "&cAmount must be greater than 0!"
+
+# Withdraw command
+withdraw:
+  usage: "&cUsage: /guild withdraw <amount>"
+  invalid-amount: "&cInvalid amount format!"
+  must-be-positive: "&cAmount must be greater than 0!"
+
+# Transfer command
+transfer:
+  usage: "&cUsage: /guild transfer <guild> <amount>"
+  invalid-amount: "&cInvalid amount format!"
+  must-be-positive: "&cAmount must be greater than 0!"
+
 # Help information
 help:
   title: "&6=== Guild System Help ==="
@@ -229,9 +247,228 @@ help:
   home: "&e/guild home &7- Teleport to guild home"
   relation: "&e/guild relation &7- Manage guild relations"
   economy: "&e/guild economy &7- Manage guild economy"
+  deposit: "&e/guild deposit <amount> &7- Deposit funds to guild"
+  withdraw: "&e/guild withdraw <amount> &7- Withdraw funds from guild"
+  transfer: "&e/guild transfer <guild> <amount> &7- Transfer funds to another guild"
   logs: "&e/guild logs &7- View guild operation logs"
 
 # Time
 time:
   title: "&6=== Time Test ==="
+  real-time: "&eReal time: &f"
+  game-time: "&eGame time: &f"
+
+# Placeholder text
+placeholder:
+  role-leader: "Leader"
+  role-officer: "Officer"
+  role-member: "Member"
+  role-unknown: "Unknown"
+  home-not-set: "None"
+  level-max: "Max level reached"
+
+# Admin commands
+admin:
+  # Guild list
+  list:
+    title: "&6=== Guild List ==="
+    empty: "&cNo guilds available"
+    format: "&e{name} &7- Leader: &f{leader} &7- Level: &f{level} &7{status}"
+    status-frozen: "&c[Frozen]"
+    status-normal: "&a[Normal]"
+
+  # Guild info
+  info:
+    usage: "&cUsage: /guildadmin info <guild name>"
+    title: "&6=== Guild Info ==="
+    name: "&eName: &f{name}"
+    tag: "&eTag: &f{tag}"
+    no-tag: "None"
+    leader: "&eLeader: &f{leader}"
+    level: "&eLevel: &f{level}"
+    balance: "&eBalance: &f{balance}"
+    status-frozen: "Frozen"
+    status-normal: "Normal"
+    members: "&eMembers: &f{count}/{max}"
+    not-found: "&cGuild {guild} does not exist!"
+
+  # Delete guild
+  delete:
+    usage: "&cUsage: /guildadmin delete <guild name>"
+    success: "&aGuild {guild} has been forcibly deleted!"
+    failed: "&cFailed to delete guild!"
+    not-found: "&cGuild {guild} does not exist!"
+
+  # Freeze guild
+  freeze:
+    usage: "&cUsage: /guildadmin freeze <guild name>"
+    success: "&aGuild {guild} has been frozen!"
+    not-found: "&cGuild {guild} does not exist!"
+
+  # Unfreeze guild
+  unfreeze:
+    usage: "&cUsage: /guildadmin unfreeze <guild name>"
+    success: "&aGuild {guild} has been unfrozen!"
+    not-found: "&cGuild {guild} does not exist!"
+
+  # Transfer guild
+  transfer:
+    usage: "&cUsage: /guildadmin transfer <guild name> <new leader>"
+    player-not-online: "&cPlayer {player} is not online!"
+    not-member: "&cPlayer {player} is not a member of this guild!"
+    success: "&aGuild {guild} leadership has been transferred to {player}!"
+    not-found: "&cGuild {guild} does not exist!"
+
+  # Economy management
+  economy:
+    usage: "&cUsage: /guildadmin economy <guild name> <set|add|remove> <amount>"
+    invalid-amount: "&cInvalid amount format!"
+    invalid-operation: "&cInvalid operation! Use set|add|remove"
+    success: "&aGuild {guild} balance has been updated to: {balance}"
+    failed: "&cFailed to update guild balance!"
+    not-found: "&cGuild {guild} does not exist!"
+
+  # Relation management
+  relation:
+    usage: "&cUsage: /guildadmin relation <list|create|delete|gui>"
+    title: "&6=== Guild Relation List ==="
+    empty: "&cNo guild relations"
+    format: "&e{guild1} ↔ {guild2} &7- {type} &7- {status}"
+    gui-player-only: "&cThis command can only be executed by a player!"
+    invalid-operation: "&cInvalid relation operation! Use list|create|delete|gui"
+    create-usage: "&cUsage: /guildadmin relation create <guild1> <guild2> <relation type>"
+    create-types: "&7Relation types: ally|enemy|war|truce|neutral"
+    delete-usage: "&cUsage: /guildadmin relation delete <guild1> <guild2>"
+    invalid-type: "&cInvalid relation type! Use: ally, enemy, war, truce, neutral"
+    create-success: "&aRelation created: {guild1} ↔ {guild2} ({type})"
+    create-failed: "&cFailed to create relation!"
+    delete-success: "&aRelation deleted: {guild1} ↔ {guild2}"
+    delete-failed: "&cFailed to delete relation!"
+    not-found: "&cNo relation found between guild {guild1} and {guild2}!"
+    not-found-guild: "&cGuild {guild} does not exist!"
+    cannot-relation-self: "&cCannot establish a relation with yourself!"
+    create-error: "&cError creating relation: {error}"
+    delete-error: "&cError deleting relation: {error}"
+    fetch-error: "Error fetching guild relations: {error}"
+
+    # Relation status
+    status:
+      pending: "Pending"
+      active: "Active"
+      expired: "Expired"
+      cancelled: "Cancelled"
+      unknown: "Unknown"
+
+    # Relation type
+    type:
+      ally: "Ally"
+      enemy: "Enemy"
+      war: "War"
+      truce: "Truce"
+      neutral: "Neutral"
+      unknown: "Unknown"
+
+  # Reload config
+  reload:
+    success: "&aConfiguration has been reloaded!"
+    failed: "&cFailed to reload configuration: {error}"
+
+  # Test features
+  test:
+    usage: "&cUsage: /guildadmin test <test-type>"
+    types: "&7test-type: gui, economy, relation"
+    gui-success: "&aAdmin GUI opened for testing."
+    gui-player-only: "&cThis command can only be executed by a player!"
+    economy-usage: "&cUsage: /guildadmin test economy <guild name> <operation> <amount>"
+    relation-usage: "&cUsage: /guildadmin test relation create <guild1> <guild2> <relation type>"
+    invalid-type: "&cInvalid test type! Use gui, economy, relation"
+
+  # Help info
+  help:
+    title: "&6=== Guild Admin Commands ==="
+    main: "&e/guildadmin &7- Open admin GUI"
+    list: "&e/guildadmin list &7- List all guilds"
+    info: "&e/guildadmin info <guild> &7- View guild info"
+    delete: "&e/guildadmin delete <guild> &7- Force delete guild"
+    freeze: "&e/guildadmin freeze <guild> &7- Freeze guild"
+    unfreeze: "&e/guildadmin unfreeze <guild> &7- Unfreeze guild"
+    transfer: "&e/guildadmin transfer <guild> <player> &7- Transfer leadership"
+    economy: "&e/guildadmin economy <guild> <operation> <amount> &7- Manage guild economy"
+    relation: "&e/guildadmin relation <operation> &7- Manage guild relations"
+    reload: "&e/guildadmin reload &7- Reload configuration"
+    help: "&e/guildadmin help &7- Show help info"
+
+# Application
+application:
+  status:
+    pending: "Pending"
+    approved: "Approved"
+    rejected: "Rejected"
+
+# Contribution
+contribution:
+  type:
+    deposit: "Deposit"
+    withdraw: "Withdraw"
+    transfer: "Transfer"
+    creation: "Guild Creation"
+    upgrade: "Guild Upgrade"
+    admin: "Admin Operation"
+
+# Invitation
+invitation:
+  status:
+    pending: "Pending"
+    accepted: "Accepted"
+    declined: "Declined"
+    expired: "Expired"
+
+# Relation
+relation:
+  type:
+    ally: "Ally"
+    enemy: "Enemy"
+    war: "War"
+    truce: "Truce"
+    neutral: "Neutral"
+  status:
+    pending: "Pending"
+    active: "Active"
+    expired: "Expired"
+    cancelled: "Cancelled"
+
+# Log
+log:
+  type:
+    guild-created: "Guild Created"
+    guild-dissolved: "Guild Dissolved"
+    guild-renamed: "Guild Renamed"
+    member-joined: "Member Joined"
+    member-left: "Member Left"
+    member-kicked: "Member Kicked"
+    member-promoted: "Member Promoted"
+    member-demoted: "Member Demoted"
+    leader-transferred: "Leader Transferred"
+    fund-deposited: "Fund Deposited"
+    fund-withdrawn: "Fund Withdrawn"
+    fund-transferred: "Fund Transferred"
+    relation-created: "Relation Created"
+    relation-deleted: "Relation Deleted"
+    relation-accepted: "Relation Accepted"
+    relation-rejected: "Relation Rejected"
+    guild-frozen: "Guild Frozen"
+    guild-unfrozen: "Guild Unfrozen"
+    guild-level-up: "Guild Level Up"
+    application-submitted: "Application Submitted"
+    application-accepted: "Application Accepted"
+    application-rejected: "Application Rejected"
+    invitation-sent: "Invitation Sent"
+    invitation-accepted: "Invitation Accepted"
+    invitation-rejected: "Invitation Rejected"
+  time:
+    unknown: "Unknown"
+    days-ago: "{0} days ago"
+    hours-ago: "{0} hours ago"
+    minutes-ago: "{0} minutes ago"
+    just-now: "Just now"
 

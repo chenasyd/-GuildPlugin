@@ -37,7 +37,8 @@ public class GuildNameInputGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6修改工会名称");
+        return languageManager.getGuiColoredMessage(player, "guild-name-input.title",
+                ColorUtils.colorize("&6修改工会名称"));
     }
     
     @Override

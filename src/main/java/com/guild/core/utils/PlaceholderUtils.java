@@ -23,6 +23,15 @@ public class PlaceholderUtils {
     private static boolean cachedSeparatorFollowRoleColor;
     private static String cachedSeparatorDefaultColor;
     
+    private static com.guild.core.language.LanguageManager languageManager;
+    
+    /**
+     * 设置语言管理器
+     */
+    public static void setLanguageManager(com.guild.core.language.LanguageManager lm) {
+        languageManager = lm;
+    }
+    
     /**
      * 替换工会相关占位符
      * @param text 原始文本
@@ -34,6 +43,9 @@ public class PlaceholderUtils {
         if (text == null || guild == null) {
             return text;
         }
+        
+        // 获取玩家语言（如果玩家为空，使用默认语言）
+        String lang = getLanguage(player);
         
         String result = text
             // 工会基本信息
@@ -53,7 +65,7 @@ public class PlaceholderUtils {
             .replace("{guild_home_x}", String.valueOf(guild.getHomeX()))
             .replace("{guild_home_y}", String.valueOf(guild.getHomeY()))
             .replace("{guild_home_z}", String.valueOf(guild.getHomeZ()))
-            .replace("{guild_home_location}", formatHomeLocation(guild))
+            .replace("{guild_home_location}", formatHomeLocation(guild, lang))
             
             // 玩家信息
             .replace("{player_name}", player != null ? player.getName() : "")
@@ -64,18 +76,18 @@ public class PlaceholderUtils {
             .replace("{guild_level}", String.valueOf(guild.getLevel()))
             .replace("{guild_balance}", String.valueOf(guild.getBalance()))
             .replace("{guild_max_members}", String.valueOf(guild.getMaxMembers()))
-            .replace("{guild_frozen}", guild.isFrozen() ? "已冻结" : "正常")
+            .replace("{guild_frozen}", guild.isFrozen() ? "True" : "False")
             
             // 经济相关变量 - 支持GUI配置中的变量名
             .replace("{guild_balance_formatted}", formatBalance(guild.getBalance()))
-            .replace("{guild_next_level_requirement}", getNextLevelRequirement(guild.getLevel()))
+            .replace("{guild_next_level_requirement}", getNextLevelRequirement(guild.getLevel(), lang))
             .replace("{guild_level_progress}", getLevelProgress(guild.getLevel(), guild.getBalance()))
             .replace("{guild_upgrade_cost}", getUpgradeCost(guild.getLevel()))
             .replace("{guild_currency_name}", "金币")
             .replace("{guild_currency_name_singular}", "金币")
             
             // 兼容性变量 - 支持旧格式
-            .replace("{guild_max_exp}", getNextLevelRequirement(guild.getLevel()))
+            .replace("{guild_max_exp}", getNextLevelRequirement(guild.getLevel(), lang))
             .replace("{guild_exp_percentage}", getLevelProgress(guild.getLevel(), guild.getBalance()));
         
         // 处理颜色代码
@@ -95,6 +107,9 @@ public class PlaceholderUtils {
             return CompletableFuture.completedFuture(text);
         }
         
+        // 获取玩家语言
+        String lang = getLanguage(player);
+        
         // 先替换静态占位符
         String result = replaceGuildPlaceholders(text, guild, player);
         
@@ -104,14 +119,14 @@ public class PlaceholderUtils {
                 return result
                     .replace("{member_count}", String.valueOf(memberCount))
                     .replace("{online_member_count}", String.valueOf(memberCount)) // 暂时使用总成员数，后续可以添加在线统计
-                    .replace("{guild_max_exp}", getNextLevelRequirement(guild.getLevel()))
+                    .replace("{guild_max_exp}", getNextLevelRequirement(guild.getLevel(), lang))
                     .replace("{guild_exp_percentage}", getLevelProgress(guild.getLevel(), guild.getBalance()));
             } catch (Exception e) {
                 // 如果获取失败，使用默认值
                 return result
                     .replace("{member_count}", "0")
                     .replace("{online_member_count}", "0")
-                    .replace("{guild_max_exp}", getNextLevelRequirement(guild.getLevel()))
+                    .replace("{guild_max_exp}", getNextLevelRequirement(guild.getLevel(), lang))
                     .replace("{guild_exp_percentage}", getLevelProgress(guild.getLevel(), guild.getBalance()));
             }
         });
@@ -122,18 +137,22 @@ public class PlaceholderUtils {
      * @param text 原始文本
      * @param member 成员对象
      * @param guild 工会对象
+     * @param player 玩家对象（用于获取语言设置，可为null）
      * @return 替换后的文本
      */
-    public static String replaceMemberPlaceholders(String text, GuildMember member, Guild guild) {
+    public static String replaceMemberPlaceholders(String text, GuildMember member, Guild guild, Player player) {
         if (text == null || member == null) {
             return text;
         }
+        
+        // 获取玩家语言
+        String lang = getLanguage(player);
         
         String result = text
             // 成员基本信息
             .replace("{member_name}", member.getPlayerName())
             .replace("{member_uuid}", member.getPlayerUuid().toString())
-            .replace("{member_role}", getRoleDisplayName(member.getRole()))
+            .replace("{member_role}", getRoleDisplayName(member.getRole(), lang))
             .replace("{member_role_color}", getRoleColorFromConfig(member.getRole()))
             .replace("{member_join_time}", member.getJoinedAt().format(DATE_FORMATTER))
             .replace("{member_join_date}", member.getJoinedAt().toLocalDate().toString())
@@ -196,9 +215,9 @@ public class PlaceholderUtils {
     /**
      * 格式化工会家位置
      */
-    private static String formatHomeLocation(Guild guild) {
+    private static String formatHomeLocation(Guild guild, String lang) {
         if (guild.getHomeWorld() == null) {
-            return "未设置";
+            return getPlaceholderMessage(lang, "home-not-set", "None");
         }
         return String.format("%s %.1f, %.1f, %.1f", 
             guild.getHomeWorld(), guild.getHomeX(), guild.getHomeY(), guild.getHomeZ());
@@ -207,12 +226,12 @@ public class PlaceholderUtils {
     /**
      * 获取角色显示名称
      */
-    private static String getRoleDisplayName(GuildMember.Role role) {
+    private static String getRoleDisplayName(GuildMember.Role role, String lang) {
         switch (role) {
-            case LEADER: return "会长";
-            case OFFICER: return "官员";
-            case MEMBER: return "成员";
-            default: return "未知";
+            case LEADER: return getPlaceholderMessage(lang, "role-leader", "Leader");
+            case OFFICER: return getPlaceholderMessage(lang, "role-officer", "Officer");
+            case MEMBER: return getPlaceholderMessage(lang, "role-member", "Member");
+            default: return getPlaceholderMessage(lang, "role-unknown", "Unknown");
         }
     }
     
@@ -239,9 +258,9 @@ public class PlaceholderUtils {
     /**
      * 对外提供：获取带颜色的职位显示文本
      */
-    public static String getColoredRoleDisplay(GuildMember.Role role) {
+    public static String getColoredRoleDisplay(GuildMember.Role role, String lang) {
         String color = getRoleColorFromConfig(role);
-        return ColorUtils.colorize(color + getRoleDisplayName(role));
+        return ColorUtils.colorize(color + getRoleDisplayName(role, lang));
     }
 
     /**
@@ -305,9 +324,9 @@ public class PlaceholderUtils {
     /**
      * 获取下一级升级需求
      */
-    private static String getNextLevelRequirement(int currentLevel) {
+    private static String getNextLevelRequirement(int currentLevel, String lang) {
         if (currentLevel >= 10) {
-            return "已达到最高等级";
+            return getPlaceholderMessage(lang, "level-max", "Max level reached");
         }
         
         double required = 0;
@@ -373,5 +392,28 @@ public class PlaceholderUtils {
         }
         
         return String.format("%.2f", cost);
+    }
+    
+    // ==================== 多语言支持方法 ====================
+    
+    /**
+     * 获取玩家语言，如果玩家为空或语言管理器不可用，返回默认语言
+     */
+    private static String getLanguage(Player player) {
+        if (languageManager != null && player != null) {
+            return languageManager.getPlayerLanguage(player);
+        }
+        // 使用默认的英文
+        return "en";
+    }
+    
+    /**
+     * 从语言配置获取占位符消息
+     */
+    private static String getPlaceholderMessage(String lang, String key, String defaultValue) {
+        if (languageManager != null) {
+            return languageManager.getMessage(lang, "placeholder." + key, defaultValue);
+        }
+        return defaultValue;
     }
 }

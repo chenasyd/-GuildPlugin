@@ -46,13 +46,13 @@ public final class TimeProvider {
 
     /** 格式化 LocalDateTime 为完整字符串。 */
     public static String format(LocalDateTime dateTime) {
-        if (dateTime == null) return "未知";
+        if (dateTime == null) return "N/A";
         return dateTime.format(FULL_FORMATTER);
     }
 
     /** 仅日期字符串 yyyy-MM-dd */
     public static String formatDate(LocalDateTime dateTime) {
-        if (dateTime == null) return "未知";
+        if (dateTime == null) return "N/A";
         return dateTime.format(DATE_FORMATTER);
     }
 }

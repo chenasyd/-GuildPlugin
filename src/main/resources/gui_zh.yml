@@ -705,9 +705,79 @@ guild-detail:
   title: "&6工会详情 - {guild_name}"
   size: 54
 
+# 修改工会名称界面
+guild-name-input:
+  title: "&6修改工会名称"
+  size: 27
+
+# 修改工会标签界面
+guild-tag-input:
+  title: "&6修改工会标签"
+  size: 27
+
+# 修改工会描述界面
+guild-description-input:
+  title: "&6修改工会描述"
+  size: 27
+
+# 工会权限设置界面
+guild-permissions:
+  title: "&6工会权限设置"
+  size: 54
+
+# 确认删除工会界面
+confirm-delete-guild:
+  title: "&4确认删除工会"
+  size: 27
+
+# 确认离开工会界面
+confirm-leave-guild:
+  title: "&c确认离开工会"
+  size: 27
+
 # 系统设置界面
 system-settings:
   title: "&4系统设置"
+  size: 54
+
+# 关系管理界面
+relation-management:
+  title: "&4关系管理"
+  size: 54
+
+# 工会列表管理界面
+guild-list-management:
+  title: "&4工会列表管理"
+  size: 54
+
+# 经济管理界面
+economy-management:
+  title: "&e经济管理"
+  size: 54
+
+# 创建工会关系界面
+create-relation:
+  title: "&6创建工会关系"
+  size: 54
+
+# 邀请成员界面
+invite-member:
+  title: "&6邀请成员"
+  size: 54
+
+# 踢出成员界面
+kick-member:
+  title: "&6踢出成员"
+  size: 54
+
+# 提升成员界面
+promote-member:
+  title: "&6提升成员"
+  size: 54
+
+# 降级成员界面
+demote-member:
+  title: "&6降级成员"
   size: 54
 
 # 工会日志界面

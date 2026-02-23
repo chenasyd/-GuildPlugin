@@ -2,6 +2,8 @@ package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import com.guild.core.language.LanguageManager;
+import com.guild.GuildPlugin;
 
 /**
  * 工会贡献记录数据模型
@@ -18,21 +20,46 @@ public class GuildContribution {
     private LocalDateTime createdAt;
     
     public enum ContributionType {
-        DEPOSIT("存款"),
-        WITHDRAW("取款"),
-        TRANSFER("转账"),
-        CREATION("创建工会"),
-        UPGRADE("升级工会"),
-        ADMIN("管理员操作");
-        
-        private final String displayName;
-        
-        ContributionType(String displayName) {
-            this.displayName = displayName;
+        DEPOSIT,
+        WITHDRAW,
+        TRANSFER,
+        CREATION,
+        UPGRADE,
+        ADMIN;
+
+        /**
+         * 获取贡献类型显示名称（多语言支持）
+         * @param lang 语言代码（如 "zh", "en", "pl"）
+         * @return 本地化的显示名称
+         */
+        public String getDisplayName(String lang) {
+            String key = "contribution.type." + name().toLowerCase();
+            LanguageManager languageManager = GuildPlugin.getInstance().getLanguageManager();
+
+            switch (this) {
+                case DEPOSIT:
+                    return languageManager.getMessage(lang, key, "Deposit");
+                case WITHDRAW:
+                    return languageManager.getMessage(lang, key, "Withdraw");
+                case TRANSFER:
+                    return languageManager.getMessage(lang, key, "Transfer");
+                case CREATION:
+                    return languageManager.getMessage(lang, key, "Guild Creation");
+                case UPGRADE:
+                    return languageManager.getMessage(lang, key, "Guild Upgrade");
+                case ADMIN:
+                    return languageManager.getMessage(lang, key, "Admin Operation");
+                default:
+                    return name();
+            }
         }
-        
+
+        /**
+         * 获取贡献类型显示名称（使用默认语言）
+         * @return 本地化的显示名称
+         */
         public String getDisplayName() {
-            return displayName;
+            return getDisplayName("en");
         }
     }
     

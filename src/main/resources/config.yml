@@ -74,7 +74,7 @@ permissions:
 # 语言配置
 language:
   # 默认语言: en(英文), zh(中文), pl(波兰语)
-  default: "zh"
+  default: "en"
   # 是否允许玩家切换语言
   allow-player-switch: true
 

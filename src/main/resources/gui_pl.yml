@@ -705,8 +705,80 @@ guild-detail:
   title: "&6Szczegóły gildii - {guild_name}"
   size: 54
 
+# Interfejs zmiany nazwy gildii
+guild-name-input:
+  title: "&6Zmień nazwę gildii"
+  size: 27
+
+# Interfejs zmiany tagu gildii
+guild-tag-input:
+  title: "&6Zmień tag gildii"
+  size: 27
+
+# Interfejs zmiany opisu gildii
+guild-description-input:
+  title: "&6Zmień opis gildii"
+  size: 27
+
+# Interfejs uprawnień gildii
+guild-permissions:
+  title: "&6Uprawnienia gildii"
+  size: 54
+
+# Interfejs potwierdzenia usunięcia gildii
+confirm-delete-guild:
+  title: "&4Potwierdź usunięcie gildii"
+  size: 27
+
+# Interfejs potwierdzenia opuszczenia gildii
+confirm-leave-guild:
+  title: "&cPotwierdź opuszczenie gildii"
+  size: 27
+
 # Interfejs ustawień systemu
 system-settings:
+  title: "&4Ustawienia systemu"
+  size: 54
+
+# Interfejs zarządzania relacjami
+relation-management:
+  title: "&4Zarządzanie relacjami"
+  size: 54
+
+# Interfejs zarządzania listą gildii
+guild-list-management:
+  title: "&4Zarządzanie listą gildii"
+  size: 54
+
+# Interfejs zarządzania ekonomią
+economy-management:
+  title: "&eZarządzanie ekonomią"
+  size: 54
+
+# Interfejs tworzenia relacji gildii
+create-relation:
+  title: "&6Utwórz relację gildii"
+  size: 54
+
+# Interfejs zapraszania członków
+invite-member:
+  title: "&6Zaproś członka"
+  size: 54
+
+# Interfejs wyrzucania członków
+kick-member:
+  title: "&6Wyrzuć członka"
+  size: 54
+
+# Interfejs awansowania członków
+promote-member:
+  title: "&6Awansuj członka"
+  size: 54
+
+# Interfejs degradacji członków
+demote-member:
+  title: "&6Zdegraduj członka"
+  size: 54
   title: "&4Ustawienia systemu"
   size: 54
 

@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
@@ -23,23 +24,28 @@ import com.guild.util.InviteMessageUtils;
  * 邀请成员GUI
  */
 public class InviteMemberGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
+    private final Player player;
+    private final LanguageManager languageManager;
     private int currentPage = 0;
     private List<Player> onlinePlayers;
-    
-    public InviteMemberGUI(GuildPlugin plugin, Guild guild) {
+
+    public InviteMemberGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.guild = guild;
+        this.player = player;
+        this.languageManager = plugin.getLanguageManager();
         this.onlinePlayers = Bukkit.getOnlinePlayers().stream()
-            .filter(player -> !player.getUniqueId().equals(guild.getLeaderUuid()))
+            .filter(p -> !p.getUniqueId().equals(guild.getLeaderUuid()))
             .collect(java.util.stream.Collectors.toList());
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6邀请成员 - 第" + (currentPage + 1) + "页");
+        return languageManager.getGuiColoredMessage(player, "invite-member.title",
+                ColorUtils.colorize("&6邀请成员 - 第" + (currentPage + 1) + "页"));
     }
     
     @Override
@@ -179,7 +185,7 @@ public class InviteMemberGUI implements GUI {
         // 检查目标玩家是否已经在工会中
         plugin.getGuildService().getGuildMemberAsync(target.getUniqueId()).thenAccept(member -> {
             if (member != null) {
-                CompatibleScheduler.runTask(plugin, () -> inviter.sendMessage(InviteMessageUtils.formatAlreadyInGuild(plugin, target.getName())));
+                CompatibleScheduler.runTask(plugin, () -> inviter.sendMessage(InviteMessageUtils.formatAlreadyInGuild(plugin, inviter, target.getName())));
                 return;
             }
 
@@ -192,10 +198,10 @@ public class InviteMemberGUI implements GUI {
                             inviter.sendMessage(InviteMessageUtils.formatInviteSent(plugin, inviter, target));
 
                             // 给被邀请者发送标题与带 inviter 的邀请信息
-                            target.sendMessage(InviteMessageUtils.formatInviteTitle(plugin));
-                            target.sendMessage(InviteMessageUtils.formatInviteReceived(plugin, inviter, guild));
+                            target.sendMessage(InviteMessageUtils.formatInviteTitle(plugin, target));
+                            target.sendMessage(InviteMessageUtils.formatInviteReceived(plugin, target, inviter, guild));
                         } else {
-                            inviter.sendMessage(InviteMessageUtils.formatInviteFailed(plugin));
+                            inviter.sendMessage(InviteMessageUtils.formatInviteFailed(plugin, inviter));
                         }
                     });
                 });

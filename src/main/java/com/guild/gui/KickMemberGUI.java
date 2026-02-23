@@ -22,22 +22,24 @@ import java.util.concurrent.CompletableFuture;
  * 踢出成员GUI
  */
 public class KickMemberGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final LanguageManager languageManager;
     private final Guild guild;
+    private final Player player;
     private int currentPage = 0;
     private List<GuildMember> members;
-    
-    public KickMemberGUI(GuildPlugin plugin, Guild guild) {
+
+    public KickMemberGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
+        this.player = player;
         // 初始化时获取成员列表
         this.members = List.of();
         loadMembers();
     }
-    
+
     private void loadMembers() {
         plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(memberList -> {
             this.members = memberList.stream()
@@ -45,10 +47,11 @@ public class KickMemberGUI implements GUI {
                 .collect(java.util.stream.Collectors.toList());
         });
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6踢出成员 - 第" + (currentPage + 1) + "页");
+        return languageManager.getGuiColoredMessage(player, "kick-member.title",
+                ColorUtils.colorize("&6踢出成员 - 第" + (currentPage + 1) + "页"));
     }
     
     @Override
@@ -206,7 +209,7 @@ public class KickMemberGUI implements GUI {
                 }
 
                 // 刷新GUI
-                plugin.getGuiManager().openGUI(kicker, new KickMemberGUI(plugin, guild));
+                plugin.getGuiManager().openGUI(kicker, new KickMemberGUI(plugin, guild, kicker));
             } else {
                 String message = languageManager.getMessage(kicker, "kick.failed", "&c踢出成员失败！");
                 kicker.sendMessage(ColorUtils.colorize(message));

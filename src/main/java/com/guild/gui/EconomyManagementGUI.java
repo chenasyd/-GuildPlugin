@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 import org.bukkit.Bukkit;
@@ -19,22 +20,25 @@ import java.util.List;
  * 经济管理GUI
  */
 public class EconomyManagementGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Player player;
+    private final LanguageManager languageManager;
     private int currentPage = 0;
     private final int itemsPerPage = 28; // 7列 × 4行
     private List<Guild> allGuilds = new ArrayList<>();
-    
+
     public EconomyManagementGUI(GuildPlugin plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
+        this.languageManager = plugin.getLanguageManager();
         loadGuilds();
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&e经济管理");
+        return languageManager.getGuiColoredMessage(player, "economy-management.title",
+                ColorUtils.colorize("&e经济管理"));
     }
     
     @Override

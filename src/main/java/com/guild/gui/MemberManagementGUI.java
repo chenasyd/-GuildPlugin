@@ -217,35 +217,35 @@ public class MemberManagementGUI implements GUI {
         Material material;
         String name;
         List<String> lore = new ArrayList<>();
-        
+
         switch (member.getRole()) {
             case LEADER:
                 material = Material.GOLDEN_HELMET;
-                name = PlaceholderUtils.replaceMemberPlaceholders("&c{member_name}", member, guild);
-                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7角色: &c{member_role}", member, guild));
+                name = PlaceholderUtils.replaceMemberPlaceholders("&c{member_name}", member, guild, player);
+                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7角色: &c{member_role}", member, guild, player));
                 break;
             case OFFICER:
                 material = Material.GOLDEN_HELMET;
-                name = PlaceholderUtils.replaceMemberPlaceholders("&6{member_name}", member, guild);
-                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7角色: &6{member_role}", member, guild));
+                name = PlaceholderUtils.replaceMemberPlaceholders("&6{member_name}", member, guild, player);
+                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7角色: &6{member_role}", member, guild, player));
                 break;
             default:
                 material = Material.PLAYER_HEAD;
-                name = PlaceholderUtils.replaceMemberPlaceholders("&f{member_name}", member, guild);
-                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7角色: &f{member_role}", member, guild));
+                name = PlaceholderUtils.replaceMemberPlaceholders("&f{member_name}", member, guild, player);
+                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7角色: &f{member_role}", member, guild, player));
                 break;
         }
-        
-        lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7加入时间: {member_join_time}", member, guild));
-        lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7权限: " + getRolePermissions(member.getRole()), member, guild));
+
+        lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7加入时间: {member_join_time}", member, guild, player));
+        lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7权限: " + getRolePermissions(member.getRole()), member, guild, player));
         lore.add("");
         lore.add(ColorUtils.colorize("&a左键: 查看详情"));
-        
+
         if (member.getRole() != GuildMember.Role.LEADER) {
             lore.add(ColorUtils.colorize("&c右键: 踢出成员"));
             lore.add(ColorUtils.colorize("&6Shift+左键: 提升/降级"));
         }
-        
+
         return createItem(material, name, lore.toArray(new String[0]));
     }
     
@@ -439,7 +439,7 @@ public class MemberManagementGUI implements GUI {
             }
             
             // 打开邀请成员GUI
-            InviteMemberGUI inviteMemberGUI = new InviteMemberGUI(plugin, guild);
+            InviteMemberGUI inviteMemberGUI = new InviteMemberGUI(plugin, guild, player);
             plugin.getGuiManager().openGUI(player, inviteMemberGUI);
         });
     }
@@ -457,7 +457,7 @@ public class MemberManagementGUI implements GUI {
             }
             
             // 打开踢出成员GUI
-            KickMemberGUI kickMemberGUI = new KickMemberGUI(plugin, guild);
+            KickMemberGUI kickMemberGUI = new KickMemberGUI(plugin, guild, player);
             plugin.getGuiManager().openGUI(player, kickMemberGUI);
         });
     }
@@ -475,7 +475,7 @@ public class MemberManagementGUI implements GUI {
             }
             
             // 打开提升成员GUI
-            PromoteMemberGUI promoteMemberGUI = new PromoteMemberGUI(plugin, guild);
+            PromoteMemberGUI promoteMemberGUI = new PromoteMemberGUI(plugin, guild, player);
             plugin.getGuiManager().openGUI(player, promoteMemberGUI);
         });
     }
@@ -493,7 +493,7 @@ public class MemberManagementGUI implements GUI {
             }
             
             // 打开降级成员GUI
-            DemoteMemberGUI demoteMemberGUI = new DemoteMemberGUI(plugin, guild);
+            DemoteMemberGUI demoteMemberGUI = new DemoteMemberGUI(plugin, guild, player);
             plugin.getGuiManager().openGUI(player, demoteMemberGUI);
         });
     }

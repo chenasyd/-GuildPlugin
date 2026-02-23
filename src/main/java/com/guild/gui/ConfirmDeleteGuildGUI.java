@@ -24,16 +24,19 @@ public class ConfirmDeleteGuildGUI implements GUI {
     private final GuildPlugin plugin;
     private final LanguageManager languageManager;
     private final Guild guild;
+    private final Player player;
 
-    public ConfirmDeleteGuildGUI(GuildPlugin plugin, Guild guild) {
+    public ConfirmDeleteGuildGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
+        this.player = player;
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&4确认删除工会");
+        return languageManager.getGuiColoredMessage(player, "confirm-delete-guild.title",
+                ColorUtils.colorize("&4确认删除工会"));
     }
     
     @Override

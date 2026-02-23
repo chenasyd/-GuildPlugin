@@ -2,6 +2,8 @@ package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import com.guild.core.language.LanguageManager;
+import com.guild.GuildPlugin;
 
 /**
  * 工会邀请数据模型
@@ -112,19 +114,40 @@ public class GuildInvitation {
      * 邀请状态枚举
      */
     public enum InvitationStatus {
-        PENDING("待处理"),
-        ACCEPTED("已接受"),
-        DECLINED("已拒绝"),
-        EXPIRED("已过期");
-        
-        private final String displayName;
-        
-        InvitationStatus(String displayName) {
-            this.displayName = displayName;
+        PENDING,
+        ACCEPTED,
+        DECLINED,
+        EXPIRED;
+
+        /**
+         * 获取邀请状态显示名称（多语言支持）
+         * @param lang 语言代码（如 "zh", "en", "pl"）
+         * @return 本地化的显示名称
+         */
+        public String getDisplayName(String lang) {
+            String key = "invitation.status." + name().toLowerCase();
+            LanguageManager languageManager = GuildPlugin.getInstance().getLanguageManager();
+
+            switch (this) {
+                case PENDING:
+                    return languageManager.getMessage(lang, key, "Pending");
+                case ACCEPTED:
+                    return languageManager.getMessage(lang, key, "Accepted");
+                case DECLINED:
+                    return languageManager.getMessage(lang, key, "Declined");
+                case EXPIRED:
+                    return languageManager.getMessage(lang, key, "Expired");
+                default:
+                    return name();
+            }
         }
-        
+
+        /**
+         * 获取邀请状态显示名称（使用默认语言）
+         * @return 本地化的显示名称
+         */
         public String getDisplayName() {
-            return displayName;
+            return getDisplayName("en");
         }
     }
     

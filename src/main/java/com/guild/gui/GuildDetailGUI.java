@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
@@ -22,22 +23,25 @@ import com.guild.models.GuildMember;
  * 工会详情GUI
  */
 public class GuildDetailGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
     private final Player viewer;
+    private final LanguageManager languageManager;
     private List<GuildMember> members = new ArrayList<>();
-    
+
     public GuildDetailGUI(GuildPlugin plugin, Guild guild, Player viewer) {
         this.plugin = plugin;
         this.guild = guild;
         this.viewer = viewer;
+        this.languageManager = plugin.getLanguageManager();
         loadMembers();
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6工会详情 - " + guild.getName());
+        return languageManager.getGuiColoredMessage(viewer, "guild-detail.title",
+                ColorUtils.colorize("&6工会详情 - " + guild.getName()), "{guild_name}", guild.getName());
     }
     
     @Override
@@ -205,7 +209,7 @@ public class GuildDetailGUI implements GUI {
             return;
         }
         // 打开统一的确认删除GUI
-        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player));
         player.closeInventory();
     }
     

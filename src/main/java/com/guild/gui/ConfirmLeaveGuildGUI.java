@@ -22,16 +22,19 @@ public class ConfirmLeaveGuildGUI implements GUI {
     private final GuildPlugin plugin;
     private final LanguageManager languageManager;
     private final Guild guild;
+    private final Player player;
 
-    public ConfirmLeaveGuildGUI(GuildPlugin plugin, Guild guild) {
+    public ConfirmLeaveGuildGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
+        this.player = player;
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&c确认离开工会");
+        return languageManager.getGuiColoredMessage(player, "confirm-leave-guild.title",
+                ColorUtils.colorize("&c确认离开工会"));
     }
     
     @Override

@@ -22,22 +22,24 @@ import java.util.concurrent.CompletableFuture;
  * 降级成员GUI
  */
 public class DemoteMemberGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final LanguageManager languageManager;
     private final Guild guild;
+    private final Player player;
     private int currentPage = 0;
     private List<GuildMember> members;
-    
-    public DemoteMemberGUI(GuildPlugin plugin, Guild guild) {
+
+    public DemoteMemberGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
+        this.player = player;
         // 初始化时获取成员列表
         this.members = List.of();
         loadMembers();
     }
-    
+
     private void loadMembers() {
         plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(memberList -> {
             this.members = memberList.stream()
@@ -46,10 +48,11 @@ public class DemoteMemberGUI implements GUI {
                 .collect(java.util.stream.Collectors.toList());
         });
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6降级成员 - 第" + (currentPage + 1) + "页");
+        return languageManager.getGuiColoredMessage(player, "demote-member.title",
+                ColorUtils.colorize("&6降级成员 - 第" + (currentPage + 1) + "页"));
     }
     
     @Override
@@ -207,7 +210,7 @@ public class DemoteMemberGUI implements GUI {
                 }
 
                 // 刷新GUI
-                plugin.getGuiManager().openGUI(demoter, new DemoteMemberGUI(plugin, guild));
+                plugin.getGuiManager().openGUI(demoter, new DemoteMemberGUI(plugin, guild, demoter));
             } else {
                 String message = languageManager.getMessage(demoter, "demote.failed", "&c降级成员失败！");
                 demoter.sendMessage(ColorUtils.colorize(message));

@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 import com.guild.models.GuildRelation;
@@ -24,22 +25,24 @@ import java.util.concurrent.CompletableFuture;
  * 关系管理GUI - 管理员专用
  */
 public class RelationManagementGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Player player;
+    private final LanguageManager languageManager;
     private int currentPage = 0;
     private final int itemsPerPage = 28; // 7列 × 4行
     private List<GuildRelation> allRelations = new ArrayList<>();
     private boolean isLoading = false;
-    
+
     // 确认删除机制
     private static final Map<UUID, GuildRelation> pendingDeletions = new HashMap<>();
     private static final Map<UUID, Long> deletionTimers = new HashMap<>();
     private static final long CONFIRMATION_TIMEOUT = 10000; // 10秒确认超时
-    
+
     public RelationManagementGUI(GuildPlugin plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
+        this.languageManager = plugin.getLanguageManager();
         // 检查管理员权限
         if (!player.hasPermission("guild.admin")) {
             player.sendMessage(ColorUtils.colorize("&c您没有管理员权限！"));
@@ -47,10 +50,11 @@ public class RelationManagementGUI implements GUI {
         }
         loadRelations();
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&4关系管理 - 管理员");
+        return languageManager.getGuiColoredMessage(player, "relation-management.title",
+                ColorUtils.colorize("&4关系管理 - 管理员"));
     }
     
     @Override

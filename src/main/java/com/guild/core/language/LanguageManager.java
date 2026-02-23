@@ -306,5 +306,21 @@ public class LanguageManager {
         String message = getGuiMessage(player, path, defaultValue);
         return message.replace("&", "§");
     }
+
+    /**
+     * 获取GUI配置（带颜色代码转换和占位符替换）
+     */
+    public String getGuiColoredMessage(String lang, String path, String defaultValue, String... placeholders) {
+        String message = getGuiMessage(lang, path, defaultValue, placeholders);
+        return message.replace("&", "§");
+    }
+
+    /**
+     * 获取玩家的GUI配置（带颜色代码转换和占位符替换）
+     */
+    public String getGuiColoredMessage(Player player, String path, String defaultValue, String... placeholders) {
+        String message = getGuiMessage(player, path, defaultValue, placeholders);
+        return message.replace("&", "§");
+    }
 }
 

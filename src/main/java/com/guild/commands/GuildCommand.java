@@ -523,8 +523,8 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 if (success) {
                     // 使用统一工具格式化消息
                     player.sendMessage(InviteMessageUtils.formatInviteSent(plugin, player, targetPlayer));
-                    targetPlayer.sendMessage(InviteMessageUtils.formatInviteTitle(plugin));
-                    targetPlayer.sendMessage(InviteMessageUtils.formatInviteReceived(plugin, player, guild));
+                    targetPlayer.sendMessage(InviteMessageUtils.formatInviteTitle(plugin, targetPlayer));
+                    targetPlayer.sendMessage(InviteMessageUtils.formatInviteReceived(plugin, targetPlayer, player, guild));
 
                     if (guild.getTag() != null && !guild.getTag().isEmpty()) {
                         String tagMessage = languageManager.getMessage(player, "invite.guild-tag", "&e工会标签: [{tag}]");
@@ -707,7 +707,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         }
 
         // 打开确认删除GUI
-        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player));
     }
 
     private void handleDeleteConfirm(Player player) {
@@ -1207,22 +1207,22 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         String help = languageManager.getMessage(player, "help.help", "&e/guild help &7- 显示此帮助信息");
         player.sendMessage(ColorUtils.colorize(help));
         
-        String relation = "&e/guild relation &7- 管理工会关系";
+        String relation = languageManager.getMessage(player, "help.relation", "&e/guild relation &7- 管理工会关系");
         player.sendMessage(ColorUtils.colorize(relation));
-        
-        String economy = "&e/guild economy &7- 管理工会经济";
+
+        String economy = languageManager.getMessage(player, "help.economy", "&e/guild economy &7- 管理工会经济");
         player.sendMessage(ColorUtils.colorize(economy));
-        
-        String deposit = "&e/guild deposit <金额> &7- 向工会存入资金";
+
+        String deposit = languageManager.getMessage(player, "help.deposit", "&e/guild deposit <金额> &7- 向工会存入资金");
         player.sendMessage(ColorUtils.colorize(deposit));
-        
-        String withdraw = "&e/guild withdraw <金额> &7- 从工会取出资金";
+
+        String withdraw = languageManager.getMessage(player, "help.withdraw", "&e/guild withdraw <金额> &7- 从工会取出资金");
         player.sendMessage(ColorUtils.colorize(withdraw));
-        
-        String transfer = "&e/guild transfer <工会> <金额> &7- 向其他工会转账";
+
+        String transfer = languageManager.getMessage(player, "help.transfer", "&e/guild transfer <工会> <金额> &7- 向其他工会转账");
         player.sendMessage(ColorUtils.colorize(transfer));
-        
-        String logs = "&e/guild logs &7- 查看工会操作日志";
+
+        String logs = languageManager.getMessage(player, "help.logs", "&e/guild logs &7- 查看工会操作日志");
         player.sendMessage(ColorUtils.colorize(logs));
     }
     
@@ -1531,20 +1531,23 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
      */
     private void handleDeposit(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(ColorUtils.colorize("&c用法: /guild deposit <金额>"));
+            String message = languageManager.getMessage(player, "deposit.usage", "&c用法: /guild deposit <金额>");
+            player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         double amount;
         try {
             amount = Double.parseDouble(args[1]);
         } catch (NumberFormatException e) {
-            player.sendMessage(ColorUtils.colorize("&c金额格式错误！"));
+            String message = languageManager.getMessage(player, "deposit.invalid-amount", "&c金额格式错误！");
+            player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         if (amount <= 0) {
-            player.sendMessage(ColorUtils.colorize("&c金额必须大于0！"));
+            String message = languageManager.getMessage(player, "deposit.must-be-positive", "&c金额必须大于0！");
+            player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
@@ -1585,20 +1588,23 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
      */
     private void handleWithdraw(Player player, String[] args) {
         if (args.length < 2) {
-            player.sendMessage(ColorUtils.colorize("&c用法: /guild withdraw <金额>"));
+            String message = languageManager.getMessage(player, "withdraw.usage", "&c用法: /guild withdraw <金额>");
+            player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         double amount;
         try {
             amount = Double.parseDouble(args[1]);
         } catch (NumberFormatException e) {
-            player.sendMessage(ColorUtils.colorize("&c金额格式错误！"));
+            String message = languageManager.getMessage(player, "withdraw.invalid-amount", "&c金额格式错误！");
+            player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         if (amount <= 0) {
-            player.sendMessage(ColorUtils.colorize("&c金额必须大于0！"));
+            String message = languageManager.getMessage(player, "withdraw.must-be-positive", "&c金额必须大于0！");
+            player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
@@ -1646,21 +1652,24 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
      */
     private void handleTransfer(Player player, String[] args) {
         if (args.length < 3) {
-            player.sendMessage(ColorUtils.colorize("&c用法: /guild transfer <工会> <金额>"));
+            String message = languageManager.getMessage(player, "transfer.usage", "&c用法: /guild transfer <工会> <金额>");
+            player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         String targetGuildName = args[1];
         double amount;
         try {
             amount = Double.parseDouble(args[2]);
         } catch (NumberFormatException e) {
-            player.sendMessage(ColorUtils.colorize("&c金额格式错误！"));
+            String message = languageManager.getMessage(player, "transfer.invalid-amount", "&c金额格式错误！");
+            player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         if (amount <= 0) {
-            player.sendMessage(ColorUtils.colorize("&c金额必须大于0！"));
+            String message = languageManager.getMessage(player, "transfer.must-be-positive", "&c金额必须大于0！");
+            player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
@@ -1764,9 +1773,12 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         }
         
         if (args.length < 2) {
-            player.sendMessage(ColorUtils.colorize("&c用法: /guild placeholder <变量名>"));
-            player.sendMessage(ColorUtils.colorize("&e示例: /guild placeholder name"));
-            player.sendMessage(ColorUtils.colorize("&e可用变量: name, tag, description, leader, membercount, role, hasguild, isleader, isofficer"));
+            String message = languageManager.getMessage(player, "placeholder.usage", "&c用法: /guild placeholder <变量名>");
+            player.sendMessage(ColorUtils.colorize(message));
+            message = languageManager.getMessage(player, "placeholder.example", "&e示例: /guild placeholder name");
+            player.sendMessage(ColorUtils.colorize(message));
+            message = languageManager.getMessage(player, "placeholder.available", "&e可用变量: name, tag, description, leader, membercount, role, hasguild, isleader, isofficer");
+            player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
@@ -1792,7 +1804,9 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         String gameTime = String.format("%02d:%02d", hours, minutes);
         String ticksStr = String.valueOf(ticks);
         player.sendMessage(ColorUtils.colorize(title));
-        player.sendMessage(ColorUtils.colorize("&e现实时间: &f" + realNow));
-        player.sendMessage(ColorUtils.colorize("&e游戏时间: &f" + gameTime + " &7(" + ticksStr + " ticks)"));
+        String message = languageManager.getMessage(player, "time.real-time", "&e现实时间: &f");
+        player.sendMessage(ColorUtils.colorize(message + realNow));
+        message = languageManager.getMessage(player, "time.game-time", "&e游戏时间: &f");
+        player.sendMessage(ColorUtils.colorize(message + gameTime + " &7(" + ticksStr + " ticks)"));
     }
 }

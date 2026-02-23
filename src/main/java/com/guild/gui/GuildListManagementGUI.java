@@ -13,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 
@@ -20,22 +21,25 @@ import com.guild.models.Guild;
  * 工会列表管理GUI
  */
 public class GuildListManagementGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Player player;
+    private final LanguageManager languageManager;
     private int currentPage = 0;
     private final int itemsPerPage = 12; // 从 28 减少到 12，界面更简洁
     private List<Guild> allGuilds = new ArrayList<>();
-    
+
     public GuildListManagementGUI(GuildPlugin plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
+        this.languageManager = plugin.getLanguageManager();
         loadGuilds();
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&4工会列表管理");
+        return languageManager.getGuiColoredMessage(player, "guild-list-management.title",
+                ColorUtils.colorize("&4工会列表管理"));
     }
     
     @Override
@@ -196,7 +200,7 @@ public class GuildListManagementGUI implements GUI {
             return;
         }
         // 打开统一的确认删除GUI
-        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild));
+        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player));
     }
     
     private void toggleGuildFreeze(Player player, Guild guild) {

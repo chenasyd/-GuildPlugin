@@ -705,9 +705,79 @@ guild-detail:
   title: "&6Guild Detail - {guild_name}"
   size: 54
 
+# Change Guild Name Interface
+guild-name-input:
+  title: "&6Change Guild Name"
+  size: 27
+
+# Change Guild Tag Interface
+guild-tag-input:
+  title: "&6Change Guild Tag"
+  size: 27
+
+# Change Guild Description Interface
+guild-description-input:
+  title: "&6Change Guild Description"
+  size: 27
+
+# Guild Permissions Interface
+guild-permissions:
+  title: "&6Guild Permissions"
+  size: 54
+
+# Confirm Delete Guild Interface
+confirm-delete-guild:
+  title: "&4Confirm Delete Guild"
+  size: 27
+
+# Confirm Leave Guild Interface
+confirm-leave-guild:
+  title: "&cConfirm Leave Guild"
+  size: 27
+
 # System Settings Interface
 system-settings:
   title: "&4System Settings"
+  size: 54
+
+# Relation Management Interface
+relation-management:
+  title: "&4Relation Management"
+  size: 54
+
+# Guild List Management Interface
+guild-list-management:
+  title: "&4Guild List Management"
+  size: 54
+
+# Economy Management Interface
+economy-management:
+  title: "&eEconomy Management"
+  size: 54
+
+# Create Guild Relation Interface
+create-relation:
+  title: "&6Create Guild Relation"
+  size: 54
+
+# Invite Member Interface
+invite-member:
+  title: "&6Invite Member"
+  size: 54
+
+# Kick Member Interface
+kick-member:
+  title: "&6Kick Member"
+  size: 54
+
+# Promote Member Interface
+promote-member:
+  title: "&6Promote Member"
+  size: 54
+
+# Demote Member Interface
+demote-member:
+  title: "&6Demote Member"
   size: 54
 
 # Guild Logs Interface

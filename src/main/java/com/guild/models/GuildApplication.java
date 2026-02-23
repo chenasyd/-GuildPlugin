@@ -2,6 +2,8 @@ package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import com.guild.core.language.LanguageManager;
+import com.guild.GuildPlugin;
 
 /**
  * 工会申请数据模型
@@ -88,18 +90,37 @@ public class GuildApplication {
      * 申请状态枚举
      */
     public enum ApplicationStatus {
-        PENDING("待处理"),
-        APPROVED("已通过"),
-        REJECTED("已拒绝");
-        
-        private final String displayName;
-        
-        ApplicationStatus(String displayName) {
-            this.displayName = displayName;
+        PENDING,
+        APPROVED,
+        REJECTED;
+
+        /**
+         * 获取状态显示名称（多语言支持）
+         * @param lang 语言代码（如 "zh", "en", "pl"）
+         * @return 本地化的显示名称
+         */
+        public String getDisplayName(String lang) {
+            String key = "application.status." + name().toLowerCase();
+            LanguageManager languageManager = GuildPlugin.getInstance().getLanguageManager();
+
+            switch (this) {
+                case PENDING:
+                    return languageManager.getMessage(lang, key, "Pending");
+                case APPROVED:
+                    return languageManager.getMessage(lang, key, "Approved");
+                case REJECTED:
+                    return languageManager.getMessage(lang, key, "Rejected");
+                default:
+                    return name();
+            }
         }
-        
+
+        /**
+         * 获取状态显示名称（使用默认语言）
+         * @return 本地化的显示名称
+         */
         public String getDisplayName() {
-            return displayName;
+            return getDisplayName("en");
         }
     }
     

@@ -210,6 +210,24 @@ economy:
   target-guild-not-found: "&c目标工会不存在！"
   cannot-transfer-to-self: "&c不能转账给自己的工会！"
 
+# 存款命令
+deposit:
+  usage: "&c用法: /guild deposit <金额>"
+  invalid-amount: "&c金额格式错误！"
+  must-be-positive: "&c金额必须大于0！"
+
+# 取款命令
+withdraw:
+  usage: "&c用法: /guild withdraw <金额>"
+  invalid-amount: "&c金额格式错误！"
+  must-be-positive: "&c金额必须大于0！"
+
+# 转账命令
+transfer:
+  usage: "&c用法: /guild transfer <工会> <金额>"
+  invalid-amount: "&c金额格式错误！"
+  must-be-positive: "&c金额必须大于0！"
+
 # 帮助信息
 help:
   title: "&6=== 工会系统帮助 ==="
@@ -229,8 +247,233 @@ help:
   home: "&e/guild home &7- 传送到工会家"
   relation: "&e/guild relation &7- 管理工会关系"
   economy: "&e/guild economy &7- 管理工会经济"
+  deposit: "&e/guild deposit <金额> &7- 向工会存入资金"
+  withdraw: "&e/guild withdraw <金额> &7- 从工会取出资金"
+  transfer: "&e/guild transfer <工会> <金额> &7- 向其他工会转账"
   logs: "&e/guild logs &7- 查看工会操作日志"
+
+# 占位符文本
+placeholder:
+  role-leader: "会长"
+  role-officer: "官员"
+  role-member: "成员"
+  role-unknown: "未知"
+  home-not-set: "未设置"
+  level-max: "已达到最高等级"
 
 # 时间
 time:
   title: "&6=== 时间测试 ==="
+  real-time: "&e现实时间: &f"
+  game-time: "&e游戏时间: &f"
+
+# 占位符命令
+placeholder:
+  usage: "&c用法: /guild placeholder <变量名>"
+  example: "&e示例: /guild placeholder name"
+  available: "&e可用变量: name, tag, description, leader, membercount, role, hasguild, isleader, isofficer"
+
+# 管理员命令
+admin:
+  # 工会列表
+  list:
+    title: "&6=== 工会列表 ==="
+    empty: "&c暂无工会"
+    format: "&e{name} &7- 会长: &f{leader} &7- 等级: &f{level} &7{status}"
+    status-frozen: "&c[冻结]"
+    status-normal: "&a[正常]"
+
+  # 工会信息
+  info:
+    usage: "&c用法: /guildadmin info <工会名称>"
+    title: "&6=== 工会信息 ==="
+    name: "&e名称: &f{name}"
+    tag: "&e标签: &f{tag}"
+    no-tag: "无"
+    leader: "&e会长: &f{leader}"
+    level: "&e等级: &f{level}"
+    balance: "&e资金: &f{balance}"
+    status-frozen: "冻结"
+    status-normal: "正常"
+    members: "&e成员数量: &f{count}/{max}"
+    not-found: "&c工会 {guild} 不存在！"
+
+  # 删除工会
+  delete:
+    usage: "&c用法: /guildadmin delete <工会名称>"
+    success: "&a工会 {guild} 已被强制删除！"
+    failed: "&c删除工会失败！"
+    not-found: "&c工会 {guild} 不存在！"
+
+  # 冻结工会
+  freeze:
+    usage: "&c用法: /guildadmin freeze <工会名称>"
+    success: "&a工会 {guild} 已被冻结！"
+    not-found: "&c工会 {guild} 不存在！"
+
+  # 解冻工会
+  unfreeze:
+    usage: "&c用法: /guildadmin unfreeze <工会名称>"
+    success: "&a工会 {guild} 已被解冻！"
+    not-found: "&c工会 {guild} 不存在！"
+
+  # 转让会长
+  transfer:
+    usage: "&c用法: /guildadmin transfer <工会名称> <新会长>"
+    player-not-online: "&c玩家 {player} 不在线！"
+    not-member: "&c玩家 {player} 不是该工会成员！"
+    success: "&a工会 {guild} 的会长已转让给 {player}！"
+    not-found: "&c工会 {guild} 不存在！"
+
+  # 经济管理
+  economy:
+    usage: "&c用法: /guildadmin economy <工会名称> <set|add|remove> <金额>"
+    invalid-amount: "&c金额格式错误！"
+    invalid-operation: "&c无效的操作！使用 set|add|remove"
+    success: "&a工会 {guild} 的资金已更新为: {balance}"
+    failed: "&c更新工会资金失败！"
+    not-found: "&c工会 {guild} 不存在！"
+
+  # 关系管理
+  relation:
+    usage: "&c用法: /guildadmin relation <list|create|delete|gui>"
+    title: "&6=== 工会关系列表 ==="
+    empty: "&c暂无工会关系"
+    format: "&e{guild1} ↔ {guild2} &7- {type} &7- {status}"
+    gui-player-only: "&c此命令只能由玩家执行！"
+    invalid-operation: "&c无效的关系操作！使用 list|create|delete|gui"
+    create-usage: "&c用法: /guildadmin relation create <工会1> <工会2> <关系类型>"
+    create-types: "&7关系类型: ally|enemy|war|truce|neutral"
+    delete-usage: "&c用法: /guildadmin relation delete <工会1> <工会2>"
+    invalid-type: "&c无效的关系类型！使用: ally, enemy, war, truce, neutral"
+    create-success: "&a已创建关系: {guild1} ↔ {guild2} ({type})"
+    create-failed: "&c创建关系失败！"
+    delete-success: "&a已删除关系: {guild1} ↔ {guild2}"
+    delete-failed: "&c删除关系失败！"
+    not-found: "&c未找到工会 {guild1} 和 {guild2} 之间的关系！"
+    not-found-guild: "&c工会 {guild} 不存在！"
+    cannot-relation-self: "&c不能与自己建立关系！"
+    create-error: "&c创建关系时发生错误: {error}"
+    delete-error: "&c删除关系时发生错误: {error}"
+    fetch-error: "获取工会关系时发生错误: {error}"
+
+    # 关系状态
+    status:
+      pending: "待处理"
+      active: "活跃"
+      expired: "已过期"
+      cancelled: "已取消"
+      unknown: "未知"
+
+    # 关系类型
+    type:
+      ally: "盟友"
+      enemy: "敌对"
+      war: "开战"
+      truce: "停战"
+      neutral: "中立"
+      unknown: "未知"
+
+  # 重载配置
+  reload:
+    success: "&a配置已重新加载！"
+    failed: "&c重新加载配置失败: {error}"
+
+  # 测试功能
+  test:
+    usage: "&c用法: /guildadmin test <test-type>"
+    types: "&7test-type: gui, economy, relation"
+    gui-success: "&a已打开管理员GUI进行测试。"
+    gui-player-only: "&c此命令只能由玩家执行！"
+    economy-usage: "&c用法: /guildadmin test economy <工会名称> <操作> <金额>"
+    relation-usage: "&c用法: /guildadmin test relation create <工会1> <工会2> <关系类型>"
+    invalid-type: "&c无效的测试类型！使用 gui, economy, relation"
+
+  # 帮助信息
+  help:
+    title: "&6=== 工会管理员命令 ==="
+    main: "&e/guildadmin &7- 打开管理员GUI"
+    list: "&e/guildadmin list &7- 列出所有工会"
+    info: "&e/guildadmin info <工会> &7- 查看工会信息"
+    delete: "&e/guildadmin delete <工会> &7- 强制删除工会"
+    freeze: "&e/guildadmin freeze <工会> &7- 冻结工会"
+    unfreeze: "&e/guildadmin unfreeze <工会> &7- 解冻工会"
+    transfer: "&e/guildadmin transfer <工会> <玩家> &7- 转让会长"
+    economy: "&e/guildadmin economy <工会> <操作> <金额> &7- 管理工会经济"
+    relation: "&e/guildadmin relation <操作> &7- 管理工会关系"
+    reload: "&e/guildadmin reload &7- 重新加载配置"
+    help: "&e/guildadmin help &7- 显示帮助信息"
+
+# 申请相关
+application:
+  status:
+    pending: "待处理"
+    approved: "已通过"
+    rejected: "已拒绝"
+
+# 贡献相关
+contribution:
+  type:
+    deposit: "存款"
+    withdraw: "取款"
+    transfer: "转账"
+    creation: "创建工会"
+    upgrade: "升级工会"
+    admin: "管理员操作"
+
+# 邀请相关
+invitation:
+  status:
+    pending: "待处理"
+    accepted: "已接受"
+    declined: "已拒绝"
+    expired: "已过期"
+
+# 关系相关
+relation:
+  type:
+    ally: "盟友"
+    enemy: "敌对"
+    war: "开战"
+    truce: "停战"
+    neutral: "中立"
+  status:
+    pending: "待处理"
+    active: "活跃"
+    expired: "已过期"
+    cancelled: "已取消"
+
+# 日志相关
+log:
+  type:
+    guild-created: "工会创建"
+    guild-dissolved: "工会解散"
+    guild-renamed: "工会改名"
+    member-joined: "成员加入"
+    member-left: "成员退出"
+    member-kicked: "成员被踢出"
+    member-promoted: "成员升职"
+    member-demoted: "成员降职"
+    leader-transferred: "会长转让"
+    fund-deposited: "资金存入"
+    fund-withdrawn: "资金取出"
+    fund-transferred: "资金转账"
+    relation-created: "关系建立"
+    relation-deleted: "关系删除"
+    relation-accepted: "关系接受"
+    relation-rejected: "关系拒绝"
+    guild-frozen: "工会冻结"
+    guild-unfrozen: "工会解冻"
+    guild-level-up: "工会升级"
+    application-submitted: "申请提交"
+    application-accepted: "申请接受"
+    application-rejected: "申请拒绝"
+    invitation-sent: "邀请发送"
+    invitation-accepted: "邀请接受"
+    invitation-rejected: "邀请拒绝"
+  time:
+    unknown: "未知"
+    days-ago: "{0}天前"
+    hours-ago: "{0}小时前"
+    minutes-ago: "{0}分钟前"
+    just-now: "刚刚"

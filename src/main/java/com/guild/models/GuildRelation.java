@@ -2,6 +2,8 @@ package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import com.guild.core.language.LanguageManager;
+import com.guild.GuildPlugin;
 
 /**
  * 工会关系数据模型
@@ -22,43 +24,91 @@ public class GuildRelation {
     private LocalDateTime expiresAt;
     
     public enum RelationType {
-        ALLY("盟友", "&a"),
-        ENEMY("敌对", "&c"),
-        WAR("开战", "&4"),
-        TRUCE("停战", "&e"),
-        NEUTRAL("中立", "&7");
-        
-        private final String displayName;
+        ALLY("&a"),
+        ENEMY("&c"),
+        WAR("&4"),
+        TRUCE("&e"),
+        NEUTRAL("&7");
+
         private final String color;
-        
-        RelationType(String displayName, String color) {
-            this.displayName = displayName;
+
+        RelationType(String color) {
             this.color = color;
         }
-        
-        public String getDisplayName() {
-            return displayName;
+
+        /**
+         * 获取关系类型显示名称（多语言支持）
+         * @param lang 语言代码（如 "zh", "en", "pl"）
+         * @return 本地化的显示名称
+         */
+        public String getDisplayName(String lang) {
+            String key = "relation.type." + name().toLowerCase();
+            LanguageManager languageManager = GuildPlugin.getInstance().getLanguageManager();
+
+            switch (this) {
+                case ALLY:
+                    return languageManager.getMessage(lang, key, "Ally");
+                case ENEMY:
+                    return languageManager.getMessage(lang, key, "Enemy");
+                case WAR:
+                    return languageManager.getMessage(lang, key, "War");
+                case TRUCE:
+                    return languageManager.getMessage(lang, key, "Truce");
+                case NEUTRAL:
+                    return languageManager.getMessage(lang, key, "Neutral");
+                default:
+                    return name();
+            }
         }
-        
+
+        /**
+         * 获取关系类型显示名称（使用默认语言）
+         * @return 本地化的显示名称
+         */
+        public String getDisplayName() {
+            return getDisplayName("en");
+        }
+
         public String getColor() {
             return color;
         }
     }
     
     public enum RelationStatus {
-        PENDING("待处理"),
-        ACTIVE("活跃"),
-        EXPIRED("已过期"),
-        CANCELLED("已取消");
-        
-        private final String displayName;
-        
-        RelationStatus(String displayName) {
-            this.displayName = displayName;
+        PENDING,
+        ACTIVE,
+        EXPIRED,
+        CANCELLED;
+
+        /**
+         * 获取关系状态显示名称（多语言支持）
+         * @param lang 语言代码（如 "zh", "en", "pl"）
+         * @return 本地化的显示名称
+         */
+        public String getDisplayName(String lang) {
+            String key = "relation.status." + name().toLowerCase();
+            LanguageManager languageManager = GuildPlugin.getInstance().getLanguageManager();
+
+            switch (this) {
+                case PENDING:
+                    return languageManager.getMessage(lang, key, "Pending");
+                case ACTIVE:
+                    return languageManager.getMessage(lang, key, "Active");
+                case EXPIRED:
+                    return languageManager.getMessage(lang, key, "Expired");
+                case CANCELLED:
+                    return languageManager.getMessage(lang, key, "Cancelled");
+                default:
+                    return name();
+            }
         }
-        
+
+        /**
+         * 获取关系状态显示名称（使用默认语言）
+         * @return 本地化的显示名称
+         */
         public String getDisplayName() {
-            return displayName;
+            return getDisplayName("en");
         }
     }
     

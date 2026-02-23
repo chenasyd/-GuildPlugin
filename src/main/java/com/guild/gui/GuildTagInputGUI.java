@@ -21,19 +21,22 @@ public class GuildTagInputGUI implements GUI {
 
     private final GuildPlugin plugin;
     private final Guild guild;
+    private final Player player;
     private final LanguageManager languageManager;
     private String currentTag;
 
-    public GuildTagInputGUI(GuildPlugin plugin, Guild guild) {
+    public GuildTagInputGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.guild = guild;
+        this.player = player;
         this.languageManager = plugin.getLanguageManager();
         this.currentTag = guild.getTag() != null ? guild.getTag() : "";
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6修改工会标签");
+        return languageManager.getGuiColoredMessage(player, "guild-tag-input.title",
+                ColorUtils.colorize("&6修改工会标签"));
     }
     
     @Override

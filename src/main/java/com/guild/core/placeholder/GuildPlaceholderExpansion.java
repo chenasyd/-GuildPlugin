@@ -24,6 +24,8 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
     public GuildPlaceholderExpansion(GuildPlugin plugin, GuildService guildService) {
         this.plugin = plugin;
         this.guildService = guildService;
+        // 初始化语言管理器
+        PlaceholderUtils.setLanguageManager(plugin.getLanguageManager());
     }
     
     @Override
@@ -133,9 +135,9 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
     private String getGuildName(Player player) {
         try {
             Guild guild = guildService.getPlayerGuild(player.getUniqueId());
-            return guild != null ? guild.getName() : "无工会";
+            return guild != null ? guild.getName() : "-";
         } catch (Exception e) {
-            return "无工会";
+            return "-";
         }
     }
     
@@ -208,9 +210,9 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
     private String getGuildFrozenStatus(Player player) {
         try {
             Guild guild = guildService.getPlayerGuild(player.getUniqueId());
-            return guild != null ? (guild.isFrozen() ? "已冻结" : "正常") : "无工会";
+            return guild != null ? (guild.isFrozen() ? "True" : "False") : "-";
         } catch (Exception e) {
-            return "无工会";
+            return "-";
         }
     }
     
@@ -239,7 +241,8 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
             if (member == null) return "";
-            return PlaceholderUtils.getColoredRoleDisplay(member.getRole());
+            String lang = plugin.getLanguageManager().getPlayerLanguage(player);
+            return PlaceholderUtils.getColoredRoleDisplay(member.getRole(), lang);
         } catch (Exception e) {
             return "";
         }
@@ -280,36 +283,36 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
     private String hasGuild(Player player) {
         try {
             Guild guild = guildService.getPlayerGuild(player.getUniqueId());
-            return guild != null ? "是" : "否";
+            return guild != null ? "True" : "False";
         } catch (Exception e) {
-            return "否";
+            return "False";
         }
     }
     
     private String isLeader(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            return member != null && member.getRole() == GuildMember.Role.LEADER ? "是" : "否";
+            return member != null && member.getRole() == GuildMember.Role.LEADER ? "True" : "False";
         } catch (Exception e) {
-            return "否";
+            return "False";
         }
     }
     
     private String isOfficer(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            return member != null && member.getRole() == GuildMember.Role.OFFICER ? "是" : "否";
+            return member != null && member.getRole() == GuildMember.Role.OFFICER ? "True" : "False";
         } catch (Exception e) {
-            return "否";
+            return "False";
         }
     }
     
     private String isMember(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            return member != null ? "是" : "否";
+            return member != null ? "True" : "False";
         } catch (Exception e) {
-            return "否";
+            return "False";
         }
     }
     
@@ -318,66 +321,66 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
     private String canInvite(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            if (member == null) return "否";
-            
-            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "是" : "否";
+            if (member == null) return "False";
+
+            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "True" : "False";
         } catch (Exception e) {
-            return "否";
+            return "False";
         }
     }
     
     private String canKick(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            if (member == null) return "否";
-            
-            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "是" : "否";
+            if (member == null) return "False";
+
+            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "True" : "False";
         } catch (Exception e) {
-            return "否";
+            return "False";
         }
     }
     
     private String canPromote(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            if (member == null) return "否";
-            
-            return member.getRole() == GuildMember.Role.LEADER ? "是" : "否";
+            if (member == null) return "False";
+
+            return member.getRole() == GuildMember.Role.LEADER ? "True" : "False";
         } catch (Exception e) {
-            return "否";
+            return "False";
         }
     }
     
     private String canDemote(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            if (member == null) return "否";
-            
-            return member.getRole() == GuildMember.Role.LEADER ? "是" : "否";
+            if (member == null) return "False";
+
+            return member.getRole() == GuildMember.Role.LEADER ? "True" : "False";
         } catch (Exception e) {
-            return "否";
+            return "False";
         }
     }
     
     private String canSetHome(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            if (member == null) return "否";
-            
-            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "是" : "否";
+            if (member == null) return "False";
+
+            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "True" : "False";
         } catch (Exception e) {
-            return "否";
+            return "False";
         }
     }
     
     private String canManageEconomy(Player player) {
         try {
             GuildMember member = guildService.getGuildMember(player.getUniqueId());
-            if (member == null) return "否";
-            
-            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "是" : "否";
+            if (member == null) return "False";
+
+            return (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER) ? "True" : "False";
         } catch (Exception e) {
-            return "否";
+            return "False";
         }
     }
 }

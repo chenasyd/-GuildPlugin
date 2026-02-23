@@ -2,6 +2,8 @@ package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import com.guild.core.language.LanguageManager;
+import com.guild.GuildPlugin;
 
 /**
  * 工会成员数据模型
@@ -78,36 +80,55 @@ public class GuildMember {
      * 工会成员角色枚举
      */
     public enum Role {
-        LEADER("会长"),
-        OFFICER("官员"),
-        MEMBER("成员");
-        
-        private final String displayName;
-        
-        Role(String displayName) {
-            this.displayName = displayName;
+        LEADER,
+        OFFICER,
+        MEMBER;
+
+        /**
+         * 获取角色显示名称（多语言支持）
+         * @param lang 语言代码（如 "zh", "en", "pl"）
+         * @return 本地化的显示名称
+         */
+        public String getDisplayName(String lang) {
+            String key = "placeholder.role-" + name().toLowerCase();
+            LanguageManager languageManager = GuildPlugin.getInstance().getLanguageManager();
+
+            switch (this) {
+                case LEADER:
+                    return languageManager.getMessage(lang, key, "Leader");
+                case OFFICER:
+                    return languageManager.getMessage(lang, key, "Officer");
+                case MEMBER:
+                    return languageManager.getMessage(lang, key, "Member");
+                default:
+                    return name();
+            }
         }
-        
+
+        /**
+         * 获取角色显示名称（使用默认语言）
+         * @return 本地化的显示名称
+         */
         public String getDisplayName() {
-            return displayName;
+            return getDisplayName("en");
         }
-        
+
         public boolean canInvite() {
             return this == LEADER || this == OFFICER;
         }
-        
+
         public boolean canKick() {
             return this == LEADER || this == OFFICER;
         }
-        
+
         public boolean canPromote() {
             return this == LEADER;
         }
-        
+
         public boolean canDemote() {
             return this == LEADER;
         }
-        
+
         public boolean canDeleteGuild() {
             return this == LEADER;
         }

@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -17,18 +18,21 @@ import java.util.List;
  * 系统设置GUI
  */
 public class SystemSettingsGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Player player;
-    
+    private final LanguageManager languageManager;
+
     public SystemSettingsGUI(GuildPlugin plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
+        this.languageManager = plugin.getLanguageManager();
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&4系统设置");
+        return languageManager.getGuiColoredMessage(player, "system-settings.title",
+                ColorUtils.colorize("&4系统设置"));
     }
     
     @Override

@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 import org.bukkit.Material;
@@ -17,18 +18,23 @@ import java.util.Arrays;
  * 工会权限设置GUI
  */
 public class GuildPermissionsGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
-    
-    public GuildPermissionsGUI(GuildPlugin plugin, Guild guild) {
+    private final Player player;
+    private final LanguageManager languageManager;
+
+    public GuildPermissionsGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.guild = guild;
+        this.player = player;
+        this.languageManager = plugin.getLanguageManager();
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6工会权限设置");
+        return languageManager.getGuiColoredMessage(player, "guild-permissions.title",
+                ColorUtils.colorize("&6工会权限设置"));
     }
     
     @Override

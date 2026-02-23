@@ -21,19 +21,22 @@ public class GuildDescriptionInputGUI implements GUI {
 
     private final GuildPlugin plugin;
     private final Guild guild;
+    private final Player player;
     private final LanguageManager languageManager;
     private String currentDescription;
 
-    public GuildDescriptionInputGUI(GuildPlugin plugin, Guild guild) {
+    public GuildDescriptionInputGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.guild = guild;
+        this.player = player;
         this.languageManager = plugin.getLanguageManager();
         this.currentDescription = guild.getDescription() != null ? guild.getDescription() : "";
     }
-    
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6修改工会描述");
+        return languageManager.getGuiColoredMessage(player, "guild-description-input.title",
+                ColorUtils.colorize("&6修改工会描述"));
     }
     
     @Override
