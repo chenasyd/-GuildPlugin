@@ -139,49 +139,49 @@ public class PromoteMemberGUI implements GUI {
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&e上一页"),
-                ColorUtils.colorize("&7点击查看上一页")
+                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.previous-page", "&e上一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-previous", "&7点击查看上一页"))
             );
             inventory.setItem(45, prevPage);
         }
-        
+
         // 下一页按钮
         int maxPage = (members.size() - 1) / 36;
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&e下一页"),
-                ColorUtils.colorize("&7点击查看下一页")
+                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.next-page", "&e下一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-next", "&7点击查看下一页"))
             );
             inventory.setItem(53, nextPage);
         }
-        
+
         // 返回按钮
         ItemStack back = createItem(
             Material.BARRIER,
-            ColorUtils.colorize("&c返回"),
-            ColorUtils.colorize("&7返回工会设置")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.back", "&c返回")),
+            ColorUtils.colorize(languageManager.getMessage(player, "member-operation.back-to-settings", "&7返回工会设置"))
         );
         inventory.setItem(49, back);
     }
-    
+
     /**
      * 创建成员头像
      */
     private ItemStack createMemberHead(GuildMember member) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
-        
+
         if (meta != null) {
             meta.setDisplayName(ColorUtils.colorize("&6" + member.getPlayerName()));
             meta.setLore(Arrays.asList(
-                ColorUtils.colorize("&7当前职位: &e" + member.getRole().getDisplayName()),
-                ColorUtils.colorize("&7加入时间: &e" + member.getJoinedAt()),
-                ColorUtils.colorize("&6点击提升为官员")
+                ColorUtils.colorize("&7" + languageManager.getMessage(player, "member-operation.current-position", "当前职位") + ": &e" + member.getRole().getDisplayName()),
+                ColorUtils.colorize("&7" + languageManager.getMessage(player, "member-operation.join-time", "加入时间") + ": &e" + member.getJoinedAt()),
+                ColorUtils.colorize("&6" + languageManager.getMessage(player, "promote-member.click-promote", "点击提升为官员"))
             ));
             head.setItemMeta(meta);
         }
-        
+
         return head;
     }
     

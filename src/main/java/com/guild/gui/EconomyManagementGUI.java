@@ -89,9 +89,9 @@ public class EconomyManagementGUI implements GUI {
         lore.add(ColorUtils.colorize("&7当前资金: " + plugin.getEconomyManager().format(guild.getBalance())));
         lore.add(ColorUtils.colorize("&7最大成员: " + guild.getMaxMembers()));
         lore.add("");
-        lore.add(ColorUtils.colorize("&e左键: 设置资金"));
-        lore.add(ColorUtils.colorize("&a右键: 增加资金"));
-        lore.add(ColorUtils.colorize("&c中键: 减少资金"));
+        lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "economy-management.left-click-set", "Left click: Set balance")));
+        lore.add(ColorUtils.colorize("&a" + languageManager.getMessage(player, "economy-management.right-click-add", "Right click: Add balance")));
+        lore.add(ColorUtils.colorize("&c" + languageManager.getMessage(player, "economy-management.middle-click-remove", "Middle click: Remove balance")));
         
         return createItem(material, ColorUtils.colorize("&6" + guild.getName()), lore.toArray(new String[0]));
     }
@@ -101,26 +101,31 @@ public class EconomyManagementGUI implements GUI {
         
         // 上一页按钮
         if (currentPage > 0) {
-            inventory.setItem(45, createItem(Material.ARROW, ColorUtils.colorize("&a上一页"), 
-                ColorUtils.colorize("&7第 " + (currentPage) + " 页")));
+            inventory.setItem(45, createItem(Material.ARROW,
+                ColorUtils.colorize(languageManager.getMessage("economy-management.previous-page", "&a上一页")),
+                ColorUtils.colorize(languageManager.getMessage("economy-management.previous-page.desc", "&7第 {0} 页", String.valueOf(currentPage)))));
         }
-        
+
         // 页码信息
-        inventory.setItem(49, createItem(Material.PAPER, ColorUtils.colorize("&e第 " + (currentPage + 1) + " 页，共 " + totalPages + " 页")));
-        
+        inventory.setItem(49, createItem(Material.PAPER,
+            ColorUtils.colorize(languageManager.getMessage("economy-management.page-info", "&e第 {0} 页，共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(totalPages)))));
+
         // 下一页按钮
         if (currentPage < totalPages - 1) {
-            inventory.setItem(53, createItem(Material.ARROW, ColorUtils.colorize("&a下一页"), 
-                ColorUtils.colorize("&7第 " + (currentPage + 2) + " 页")));
+            inventory.setItem(53, createItem(Material.ARROW,
+                ColorUtils.colorize(languageManager.getMessage("economy-management.next-page", "&a下一页")),
+                ColorUtils.colorize(languageManager.getMessage("economy-management.next-page.desc", "&7第 {0} 页", String.valueOf(currentPage + 2)))));
         }
     }
-    
+
     private void setupActionButtons(Inventory inventory) {
         // 返回按钮
-        inventory.setItem(46, createItem(Material.BARRIER, ColorUtils.colorize("&c返回")));
-        
+        inventory.setItem(46, createItem(Material.BARRIER,
+            ColorUtils.colorize(languageManager.getMessage("economy-management.back", "&c返回"))));
+
         // 刷新按钮
-        inventory.setItem(52, createItem(Material.EMERALD, ColorUtils.colorize("&a刷新列表")));
+        inventory.setItem(52, createItem(Material.EMERALD,
+            ColorUtils.colorize(languageManager.getMessage("economy-management.refresh", "&a刷新列表"))));
     }
     
     private void fillBorder(Inventory inventory) {
@@ -195,20 +200,20 @@ public class EconomyManagementGUI implements GUI {
     
     private void openSetBalanceGUI(Player player, Guild guild) {
         // TODO: 实现设置资金GUI
-        player.sendMessage(ColorUtils.colorize("&e设置资金功能开发中..."));
-        player.sendMessage(ColorUtils.colorize("&e使用命令: &f/guildadmin economy set " + guild.getName() + " <金额>"));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("economy-management.set-balance-dev", "&e设置资金功能开发中...")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("economy-management.use-command", "&e使用命令: &f/guildadmin economy set {0} <金额>", guild.getName())));
     }
-    
+
     private void openAddBalanceGUI(Player player, Guild guild) {
         // TODO: 实现增加资金GUI
-        player.sendMessage(ColorUtils.colorize("&e增加资金功能开发中..."));
-        player.sendMessage(ColorUtils.colorize("&e使用命令: &f/guildadmin economy add " + guild.getName() + " <金额>"));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("economy-management.add-balance-dev", "&e增加资金功能开发中...")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("economy-management.use-command", "&e使用命令: &f/guildadmin economy add {0} <金额>", guild.getName())));
     }
-    
+
     private void openRemoveBalanceGUI(Player player, Guild guild) {
         // TODO: 实现减少资金GUI
-        player.sendMessage(ColorUtils.colorize("&e减少资金功能开发中..."));
-        player.sendMessage(ColorUtils.colorize("&e使用命令: &f/guildadmin economy remove " + guild.getName() + " <金额>"));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("economy-management.remove-balance-dev", "&e减少资金功能开发中...")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("economy-management.use-command", "&e使用命令: &f/guildadmin economy remove {0} <金额>", guild.getName())));
     }
     
     private ItemStack createItem(Material material, String name, String... lore) {

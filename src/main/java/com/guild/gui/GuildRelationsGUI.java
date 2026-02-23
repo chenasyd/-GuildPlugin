@@ -49,7 +49,7 @@ public class GuildRelationsGUI implements GUI {
 
     @Override
     public int getSize() {
-        return plugin.getConfigManager().getGuiConfig().getInt("guild-relations.size", 54);
+        return 54;
     }
     
     @Override
@@ -78,32 +78,29 @@ public class GuildRelationsGUI implements GUI {
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (clickedItem == null || !clickedItem.hasItemMeta()) return;
-        
-        String itemName = clickedItem.getItemMeta().getDisplayName();
-        
-        // 返回按钮
-        if (itemName.contains("返回")) {
+
+        // 功能按钮槽位检测
+        if (slot == 49) { // 返回按钮
             MainGuildGUI mainGUI = new MainGuildGUI(plugin, player);
             plugin.getGuiManager().openGUI(player, mainGUI);
             return;
         }
-        
-        // 创建关系按钮
-        if (itemName.contains("创建关系")) {
+
+        if (slot == 45) { // 创建关系按钮
             openCreateRelationGUI(player);
             return;
         }
-        
+
         // 分页按钮
-        if (itemName.contains("上一页")) {
+        if (slot == 48) { // 上一页
             if (currentPage > 0) {
                 currentPage--;
                 refreshInventory(player);
             }
             return;
         }
-        
-        if (itemName.contains("下一页")) {
+
+        if (slot == 50) { // 下一页
             int maxPage = (relations.size() - 1) / itemsPerPage;
             if (currentPage < maxPage) {
                 currentPage++;
@@ -111,7 +108,7 @@ public class GuildRelationsGUI implements GUI {
             }
             return;
         }
-        
+
         // 关系项目点击 - 检查是否在2-8列，2-5行范围内
         if (slot >= 10 && slot <= 43) {
             int row = slot / 9;
@@ -162,41 +159,41 @@ public class GuildRelationsGUI implements GUI {
         String otherGuildName = relation.getOtherGuildName(guild.getId());
         GuildRelation.RelationType type = relation.getType();
         GuildRelation.RelationStatus status = relation.getStatus();
-        
+
         Material material = getRelationMaterial(type);
         String color = type.getColor();
         String displayName = color + otherGuildName + " - " + type.getDisplayName();
-        
+
         List<String> lore = new ArrayList<>();
-        lore.add(ColorUtils.colorize("&7关系类型: " + color + type.getDisplayName()));
-        lore.add(ColorUtils.colorize("&7状态: " + getStatusColor(status) + status.getDisplayName()));
-        lore.add(ColorUtils.colorize("&7发起人: " + relation.getInitiatorName()));
-        lore.add(ColorUtils.colorize("&7创建时间: " + formatDateTime(relation.getCreatedAt())));
-        
+        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.relation-type", "关系类型") + ": " + color + type.getDisplayName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.status", "状态") + ": " + getStatusColor(status) + status.getDisplayName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.initiator", "发起人") + ": " + relation.getInitiatorName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.created-time", "创建时间") + ": " + formatDateTime(relation.getCreatedAt())));
+
         if (relation.getExpiresAt() != null) {
-            lore.add(ColorUtils.colorize("&7过期时间: " + formatDateTime(relation.getExpiresAt())));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.expires-time", "过期时间") + ": " + formatDateTime(relation.getExpiresAt())));
         }
-        
+
         lore.add("");
-        
+
         // 根据关系类型和状态添加操作提示
         if (status == GuildRelation.RelationStatus.PENDING) {
             if (relation.getInitiatorUuid().equals(player.getUniqueId())) {
-                lore.add(ColorUtils.colorize("&c右键: 取消关系"));
+                lore.add(ColorUtils.colorize("&c" + languageManager.getMessage(player, "guild-relations.right-cancel", "右键: 取消关系")));
             } else {
-                lore.add(ColorUtils.colorize("&a左键: 接受关系"));
-                lore.add(ColorUtils.colorize("&c右键: 拒绝关系"));
+                lore.add(ColorUtils.colorize("&a" + languageManager.getMessage(player, "guild-relations.left-accept", "左键: 接受关系")));
+                lore.add(ColorUtils.colorize("&c" + languageManager.getMessage(player, "guild-relations.right-reject", "右键: 拒绝关系")));
             }
         } else if (status == GuildRelation.RelationStatus.ACTIVE) {
             if (type == GuildRelation.RelationType.TRUCE) {
-                lore.add(ColorUtils.colorize("&e左键: 结束停战"));
+                lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "guild-relations.left-end-truce", "左键: 结束停战")));
             } else if (type == GuildRelation.RelationType.WAR) {
-                lore.add(ColorUtils.colorize("&e左键: 提议停战"));
+                lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "guild-relations.left-propose-truce", "左键: 提议停战")));
             } else {
-                lore.add(ColorUtils.colorize("&c右键: 删除关系"));
+                lore.add(ColorUtils.colorize("&c" + languageManager.getMessage(player, "guild-relations.right-delete", "右键: 删除关系")));
             }
         }
-        
+
         return createItem(material, displayName, lore.toArray(new String[0]));
     }
     
@@ -231,7 +228,7 @@ public class GuildRelationsGUI implements GUI {
      * 格式化日期时间
      */
     private String formatDateTime(java.time.LocalDateTime dateTime) {
-        if (dateTime == null) return "未知";
+        if (dateTime == null) return languageManager.getMessage(player, "guild-relations.unknown", "未知");
         return dateTime.format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
     }
     
@@ -242,20 +239,11 @@ public class GuildRelationsGUI implements GUI {
         // 创建关系按钮
         ItemStack createRelation = createItem(
             Material.EMERALD,
-            ColorUtils.colorize("&a创建关系"),
-            ColorUtils.colorize("&7创建新的工会关系"),
-            ColorUtils.colorize("&7盟友、敌对、开战等")
+            ColorUtils.colorize("&a" + languageManager.getMessage(player, "guild-relations.create-relation", "创建关系")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.create-relation-desc", "创建新的工会关系")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.types", "盟友、敌对、开战等"))
         );
         inventory.setItem(45, createRelation);
-        
-        // 关系统计按钮
-        ItemStack statistics = createItem(
-            Material.BOOK,
-            ColorUtils.colorize("&e关系统计"),
-            ColorUtils.colorize("&7查看关系统计信息"),
-            ColorUtils.colorize("&7盟友数、敌对数等")
-        );
-        inventory.setItem(47, statistics);
     }
     
     /**
@@ -263,43 +251,43 @@ public class GuildRelationsGUI implements GUI {
      */
     private void addPaginationButtons(Inventory inventory) {
         int maxPage = (relations.size() - 1) / itemsPerPage;
-        
-        // 上一页按钮
+
+        // 上一页按钮 (槽位48)
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&c上一页"),
-                ColorUtils.colorize("&7查看上一页")
+                ColorUtils.colorize("&c" + languageManager.getMessage(player, "gui.previous-page", "上一页")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.view-previous", "查看上一页"))
             );
-            inventory.setItem(45, previousPage);
+            inventory.setItem(48, previousPage);
         }
-        
-        // 下一页按钮
+
+        // 下一页按钮 (槽位50)
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&a下一页"),
-                ColorUtils.colorize("&7查看下一页")
+                ColorUtils.colorize("&a" + languageManager.getMessage(player, "gui.next-page", "下一页")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.view-next", "查看下一页"))
             );
-            inventory.setItem(53, nextPage);
+            inventory.setItem(50, nextPage);
         }
-        
-        // 返回按钮
+
+        // 返回按钮 (槽位49)
         ItemStack backButton = createItem(
             Material.BARRIER,
-            ColorUtils.colorize("&c返回"),
-            ColorUtils.colorize("&7返回主菜单")
+            ColorUtils.colorize("&c" + languageManager.getMessage(player, "gui.back", "返回")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.back-to-menu", "返回主菜单"))
         );
         inventory.setItem(49, backButton);
-        
-        // 页码显示
+
+        // 页码显示 (槽位46)
         ItemStack pageInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize("&e第 " + (currentPage + 1) + " 页"),
-            ColorUtils.colorize("&7共 " + (maxPage + 1) + " 页"),
-            ColorUtils.colorize("&7总计 " + relations.size() + " 个关系")
+            ColorUtils.colorize("&e" + languageManager.getMessage(player, "guild-relations.page-info", "第 {current} 页", "{current}", String.valueOf(currentPage + 1))),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.total-pages", "共 {total} 页", "{total}", String.valueOf(maxPage + 1))),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.total-relations", "总计 {count} 个关系", "{count}", String.valueOf(relations.size())))
         );
-        inventory.setItem(47, pageInfo);
+        inventory.setItem(46, pageInfo);
     }
     
     /**

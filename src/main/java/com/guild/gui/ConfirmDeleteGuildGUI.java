@@ -87,14 +87,15 @@ public class ConfirmDeleteGuildGUI implements GUI {
      * 显示确认信息
      */
     private void displayConfirmInfo(Inventory inventory) {
+        String guildName = ColorUtils.stripColor(guild.getName());
         ItemStack info = createItem(
             Material.BOOK,
-            ColorUtils.colorize("&4确认删除工会"),
-            ColorUtils.colorize("&7工会: &e" + guild.getName()),
-            ColorUtils.colorize("&7你确定要删除这个工会吗？"),
-            ColorUtils.colorize("&c此操作将永久删除工会！"),
-            ColorUtils.colorize("&c所有成员将被移除！"),
-            ColorUtils.colorize("&c此操作不可撤销！")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-delete-guild.info-title", "&4确认删除工会")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.guild", "&7工会: &e{guild}", "{guild}", guildName)),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.confirm-question", "&7你确定要删除这个工会吗？")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.warning-1", "&c此操作将永久删除工会！")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.warning-2", "&c所有成员将被移除！")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.warning-3", "&c此操作不可撤销！"))
         );
         inventory.setItem(13, info);
     }
@@ -106,17 +107,17 @@ public class ConfirmDeleteGuildGUI implements GUI {
         // 确认删除按钮
         ItemStack confirm = createItem(
             Material.TNT,
-            ColorUtils.colorize("&4确认删除"),
-            ColorUtils.colorize("&7点击确认删除工会"),
-            ColorUtils.colorize("&c此操作不可撤销！")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-delete-guild.confirm-button", "&4确认删除")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.confirm-lore-1", "&7点击确认删除工会")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.confirm-lore-2", "&c此操作不可撤销！"))
         );
         inventory.setItem(11, confirm);
         
         // 取消按钮
         ItemStack cancel = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize("&a取消"),
-            ColorUtils.colorize("&7取消删除工会")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-delete-guild.cancel-button", "&a取消")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.cancel-lore", "&7取消删除工会"))
         );
         inventory.setItem(15, cancel);
     }

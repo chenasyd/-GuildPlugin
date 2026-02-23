@@ -82,18 +82,22 @@ public class CreateRelationGUI implements GUI {
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (clickedItem == null || !clickedItem.hasItemMeta()) return;
-        
+
         String itemName = clickedItem.getItemMeta().getDisplayName();
-        
+        String backText = languageManager.getGuiColoredMessage(player, "gui.back", "&7返回");
+        String confirmText = languageManager.getGuiColoredMessage(player, "create-relation.confirm-button", "&a确认创建");
+        String prevPageText = languageManager.getGuiColoredMessage(player, "gui.previous-page", "&c上一页");
+        String nextPageText = languageManager.getGuiColoredMessage(player, "gui.next-page", "&a下一页");
+
         // 返回按钮
-        if (itemName.contains("返回")) {
+        if (itemName.contains(backText.substring(backText.length() - 2))) {
             GuildRelationsGUI relationsGUI = new GuildRelationsGUI(plugin, guild, player);
             plugin.getGuiManager().openGUI(player, relationsGUI);
             return;
         }
-        
+
         // 确认创建按钮
-        if (itemName.contains("确认创建")) {
+        if (itemName.contains(confirmText.substring(confirmText.length() - 4))) {
             if (selectedType != null && targetGuildName != null) {
                 createRelation(player);
             } else {
@@ -102,17 +106,17 @@ public class CreateRelationGUI implements GUI {
             }
             return;
         }
-        
+
         // 分页按钮
-        if (itemName.contains("上一页")) {
+        if (itemName.contains(prevPageText.substring(prevPageText.length() - 2))) {
             if (currentPage > 0) {
                 currentPage--;
                 refreshInventory(player);
             }
             return;
         }
-        
-        if (itemName.contains("下一页")) {
+
+        if (itemName.contains(nextPageText.substring(nextPageText.length() - 2))) {
             int maxPage = (availableGuilds.size() - 1) / itemsPerPage;
             if (currentPage < maxPage) {
                 currentPage++;
@@ -120,13 +124,13 @@ public class CreateRelationGUI implements GUI {
             }
             return;
         }
-        
+
         // 关系类型选择 (slot 0-8)
         if (slot >= 0 && slot < 9) {
             handleRelationTypeClick(player, slot);
             return;
         }
-        
+
         // 目标工会选择 (slot 9-44)
         if (slot >= 9 && slot < 45) {
             int guildIndex = (currentPage * itemsPerPage) + (slot - 9);
@@ -161,41 +165,27 @@ public class CreateRelationGUI implements GUI {
      */
     private void displayRelationTypes(Inventory inventory) {
         GuildRelation.RelationType[] types = GuildRelation.RelationType.values();
-        
+        String lang = languageManager.getPlayerLanguage(player);
+
         for (int i = 0; i < types.length && i < 9; i++) {
             GuildRelation.RelationType type = types[i];
             Material material = getRelationTypeMaterial(type);
             String color = type.getColor();
-            String displayName = ColorUtils.colorize(color + type.getDisplayName());
-            
+            String displayName = ColorUtils.colorize(color + type.getDisplayName(lang));
+
             List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7关系类型: " + color + type.getDisplayName()));
-            
+            lore.add(ColorUtils.colorize("&7关系类型: " + color + type.getDisplayName(lang)));
+
             // 添加关系类型描述
-            switch (type) {
-                case ALLY:
-                    lore.add(ColorUtils.colorize("&7盟友工会，互相帮助"));
-                    break;
-                case ENEMY:
-                    lore.add(ColorUtils.colorize("&7敌对工会，互相攻击"));
-                    break;
-                case WAR:
-                    lore.add(ColorUtils.colorize("&7开战状态，全面战争"));
-                    break;
-                case TRUCE:
-                    lore.add(ColorUtils.colorize("&7停战协议，暂时和平"));
-                    break;
-                case NEUTRAL:
-                    lore.add(ColorUtils.colorize("&7中立关系，互不干涉"));
-                    break;
-            }
-            
+            String descKey = "relations.type." + type.name().toLowerCase() + ".description";
+            lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, descKey, "")));
+
             if (selectedType == type) {
-                lore.add(ColorUtils.colorize("&a✓ 已选择"));
+                lore.add(ColorUtils.colorize("&a✓ " + languageManager.getMessage(player, "gui.selected", "已选择")));
             } else {
-                lore.add(ColorUtils.colorize("&e点击选择"));
+                lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "gui.click-to-select", "点击选择")));
             }
-            
+
             ItemStack item = createItem(material, displayName, lore.toArray(new String[0]));
             inventory.setItem(i, item);
         }
@@ -207,27 +197,27 @@ public class CreateRelationGUI implements GUI {
     private void displayTargetGuilds(Inventory inventory) {
         int startIndex = currentPage * itemsPerPage;
         int endIndex = Math.min(startIndex + itemsPerPage, availableGuilds.size());
-        
+
         for (int i = startIndex; i < endIndex; i++) {
             Guild targetGuild = availableGuilds.get(i);
             int slot = 9 + (i - startIndex);
-            
+
             Material material = Material.SHIELD;
             String displayName = ColorUtils.colorize("&f" + targetGuild.getName());
-            
+
             List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7工会名称: " + targetGuild.getName()));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.guild-name", "工会名称") + ": " + targetGuild.getName()));
             if (targetGuild.getTag() != null && !targetGuild.getTag().isEmpty()) {
-                lore.add(ColorUtils.colorize("&7工会标签: [" + targetGuild.getTag() + "]"));
+                lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.guild-tag", "工会标签") + ": [" + targetGuild.getTag() + "]"));
             }
-            lore.add(ColorUtils.colorize("&7会长: " + targetGuild.getLeaderName()));
-            
+            lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.leader", "会长") + ": " + targetGuild.getLeaderName()));
+
             if (targetGuildName != null && targetGuildName.equals(targetGuild.getName())) {
-                lore.add(ColorUtils.colorize("&a✓ 已选择"));
+                lore.add(ColorUtils.colorize("&a✓ " + languageManager.getMessage(player, "gui.selected", "已选择")));
             } else {
-                lore.add(ColorUtils.colorize("&e点击选择"));
+                lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "gui.click-to-select", "点击选择")));
             }
-            
+
             ItemStack item = createItem(material, displayName, lore.toArray(new String[0]));
             inventory.setItem(slot, item);
         }
@@ -237,23 +227,29 @@ public class CreateRelationGUI implements GUI {
      * 添加功能按钮
      */
     private void addFunctionButtons(Inventory inventory) {
+        String lang = languageManager.getPlayerLanguage(player);
+
         // 确认创建按钮
         ItemStack confirmButton = createItem(
             Material.EMERALD,
-            ColorUtils.colorize("&a确认创建"),
-            ColorUtils.colorize("&7创建工会关系"),
-            ColorUtils.colorize("&7需要先选择关系类型和目标工会")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-relation.confirm-button", "&a确认创建")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-relation.confirm-lore-1", "&7创建工会关系")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-relation.confirm-lore-2", "&7需要先选择关系类型和目标工会"))
         );
         inventory.setItem(45, confirmButton);
-        
+
         // 当前选择显示
         List<String> selectionLore = new ArrayList<>();
-        selectionLore.add(ColorUtils.colorize("&7关系类型: " + (selectedType != null ? selectedType.getColor() + selectedType.getDisplayName() : "&c未选择")));
-        selectionLore.add(ColorUtils.colorize("&7目标工会: " + (targetGuildName != null ? "&a" + targetGuildName : "&c未选择")));
-        
+        String typeText = selectedType != null ?
+            selectedType.getColor() + selectedType.getDisplayName(lang) :
+            "&c" + languageManager.getMessage(player, "gui.not-selected", "未选择");
+        selectionLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.relation-type", "关系类型") + ": " + typeText));
+        selectionLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.target-guild", "目标工会") + ": " +
+            (targetGuildName != null ? "&a" + targetGuildName : "&c" + languageManager.getMessage(player, "gui.not-selected", "未选择"))));
+
         ItemStack selectionInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize("&e当前选择"),
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-relation.current-selection", "&e当前选择")),
             selectionLore.toArray(new String[0])
         );
         inventory.setItem(47, selectionInfo);
@@ -267,37 +263,37 @@ public class CreateRelationGUI implements GUI {
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&c上一页"),
-                ColorUtils.colorize("&7查看上一页")
+                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.previous-page", "&c上一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-previous", "&7查看上一页"))
             );
             inventory.setItem(18, previousPage);
         }
-        
+
         // 下一页按钮
         int maxPage = (availableGuilds.size() - 1) / itemsPerPage;
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&a下一页"),
-                ColorUtils.colorize("&7查看下一页")
+                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.next-page", "&a下一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-next", "&7查看下一页"))
             );
             inventory.setItem(26, nextPage);
         }
-        
+
         // 返回按钮
         ItemStack backButton = createItem(
             Material.ARROW,
-            ColorUtils.colorize("&7返回"),
-            ColorUtils.colorize("&7返回关系管理")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.back", "&7返回")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-relation.back-lore", "&7返回关系管理"))
         );
         inventory.setItem(49, backButton);
-        
+
         // 页码显示
         ItemStack pageInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize("&e第 " + (currentPage + 1) + " 页"),
-            ColorUtils.colorize("&7共 " + (maxPage + 1) + " 页"),
-            ColorUtils.colorize("&7总计 " + availableGuilds.size() + " 个工会")
+            ColorUtils.colorize(languageManager.getMessage(player, "gui.page-info", "&e第 {current} 页", "{current}", String.valueOf(currentPage + 1))),
+            ColorUtils.colorize(languageManager.getMessage(player, "gui.total-pages", "&7共 {total} 页", "{total}", String.valueOf(maxPage + 1))),
+            ColorUtils.colorize(languageManager.getMessage(player, "gui.total-guilds", "&7总计 {count} 个工会", "{count}", String.valueOf(availableGuilds.size())))
         );
         inventory.setItem(22, pageInfo);
     }
@@ -311,7 +307,8 @@ public class CreateRelationGUI implements GUI {
             selectedType = types[slot];
             refreshInventory(player);
 
-            String message = languageManager.getMessage(player, "relations.type-selected", "&a已选择关系类型: {type}", "{type}", selectedType.getDisplayName());
+            String lang = languageManager.getPlayerLanguage(player);
+            String message = languageManager.getMessage(player, "relations.type-selected", "&a已选择关系类型: {type}", "{type}", selectedType.getDisplayName(lang));
             player.sendMessage(ColorUtils.colorize(message));
         }
     }

@@ -90,10 +90,12 @@ public class GuildDescriptionInputGUI implements GUI {
      * 显示当前描述
      */
     private void displayCurrentDescription(Inventory inventory) {
+        String descText = currentDescription.isEmpty() ?
+            languageManager.getMessage(player, "gui.no-description", "无描述") : currentDescription;
         ItemStack currentDesc = createItem(
             Material.BOOK,
-            ColorUtils.colorize("&e当前描述"),
-            ColorUtils.colorize("&7" + (currentDescription.isEmpty() ? "无描述" : currentDescription))
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-description-input.current-description", "&e当前描述")),
+            ColorUtils.colorize("&7" + descText)
         );
         inventory.setItem(11, currentDesc);
     }
@@ -105,16 +107,16 @@ public class GuildDescriptionInputGUI implements GUI {
         // 确认按钮
         ItemStack confirm = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize("&a确认修改"),
-            ColorUtils.colorize("&7确认修改工会描述")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-description-input.confirm-button", "&a确认修改")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-description-input.confirm-lore", "&7确认修改工会描述"))
         );
         inventory.setItem(15, confirm);
         
         // 取消按钮
         ItemStack cancel = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize("&c取消"),
-            ColorUtils.colorize("&7取消修改")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-description-input.cancel-button", "&c取消")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-description-input.cancel-lore", "&7取消修改"))
         );
         inventory.setItem(13, cancel);
     }

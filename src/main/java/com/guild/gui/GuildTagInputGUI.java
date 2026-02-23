@@ -90,10 +90,12 @@ public class GuildTagInputGUI implements GUI {
      * 显示当前标签
      */
     private void displayCurrentTag(Inventory inventory) {
+        String tagText = currentTag.isEmpty() ?
+            languageManager.getMessage(player, "gui.no-tag", "无标签") : "[" + currentTag + "]";
         ItemStack currentTagItem = createItem(
             Material.OAK_SIGN,
-            ColorUtils.colorize("&e当前标签"),
-            ColorUtils.colorize("&7" + (currentTag.isEmpty() ? "无标签" : "[" + currentTag + "]"))
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-tag-input.current-tag", "&e当前标签")),
+            ColorUtils.colorize("&7" + tagText)
         );
         inventory.setItem(11, currentTagItem);
     }
@@ -105,16 +107,16 @@ public class GuildTagInputGUI implements GUI {
         // 确认按钮
         ItemStack confirm = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize("&a确认修改"),
-            ColorUtils.colorize("&7确认修改工会标签")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-tag-input.confirm-button", "&a确认修改")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-tag-input.confirm-lore", "&7确认修改工会标签"))
         );
         inventory.setItem(15, confirm);
         
         // 取消按钮
         ItemStack cancel = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize("&c取消"),
-            ColorUtils.colorize("&7取消修改")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-tag-input.cancel-button", "&c取消")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-tag-input.cancel-lore", "&7取消修改"))
         );
         inventory.setItem(13, cancel);
     }

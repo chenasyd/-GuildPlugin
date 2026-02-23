@@ -92,10 +92,12 @@ public class GuildNameInputGUI implements GUI {
      * 显示当前名称
      */
     private void displayCurrentName(Inventory inventory) {
+        String nameText = currentName.isEmpty() ?
+            languageManager.getMessage(player, "gui.no-name", "无名称") : currentName;
         ItemStack currentNameItem = createItem(
             Material.NAME_TAG,
-            ColorUtils.colorize("&e当前工会名称"),
-            ColorUtils.colorize("&7" + (currentName.isEmpty() ? "无名称" : currentName))
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-name-input.current-name", "&e当前工会名称")),
+            ColorUtils.colorize("&7" + nameText)
         );
         inventory.setItem(11, currentNameItem);
     }
@@ -107,17 +109,17 @@ public class GuildNameInputGUI implements GUI {
         // 确认按钮
         ItemStack confirmButton = createItem(
             Material.EMERALD,
-            ColorUtils.colorize("&a确认修改"),
-            ColorUtils.colorize("&7点击确认修改工会名称"),
-            ColorUtils.colorize("&7注意：工会名称修改后需要重新登录才能生效")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-name-input.confirm-button", "&a确认修改")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-name-input.confirm-lore-1", "&7点击确认修改工会名称")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-name-input.confirm-lore-2", "&7注意：工会名称修改后需要重新登录才能生效"))
         );
         inventory.setItem(15, confirmButton);
         
         // 取消按钮
         ItemStack cancelButton = createItem(
             Material.REDSTONE,
-            ColorUtils.colorize("&c取消"),
-            ColorUtils.colorize("&7返回上一级菜单")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-name-input.cancel-button", "&c取消")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-name-input.cancel-lore", "&7返回上一级菜单"))
         );
         inventory.setItem(13, cancelButton);
     }

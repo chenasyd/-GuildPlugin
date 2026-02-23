@@ -132,28 +132,28 @@ public class InviteMemberGUI implements GUI {
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&e上一页"),
-                ColorUtils.colorize("&7点击查看上一页")
+                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.previous-page", "&e上一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-previous", "&7点击查看上一页"))
             );
             inventory.setItem(45, prevPage);
         }
-        
+
         // 下一页按钮
         int maxPage = (onlinePlayers.size() - 1) / 36;
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&e下一页"),
-                ColorUtils.colorize("&7点击查看下一页")
+                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.next-page", "&e下一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-next", "&7点击查看下一页"))
             );
             inventory.setItem(53, nextPage);
         }
-        
+
         // 返回按钮
         ItemStack back = createItem(
             Material.BARRIER,
-            ColorUtils.colorize("&c返回"),
-            ColorUtils.colorize("&7返回工会设置")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.back", "&c返回")),
+            ColorUtils.colorize(languageManager.getMessage(player, "invite-member.back-to-settings", "&7返回工会设置"))
         );
         inventory.setItem(49, back);
     }
@@ -164,17 +164,17 @@ public class InviteMemberGUI implements GUI {
     private ItemStack createPlayerHead(Player player) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
-        
+
         if (meta != null) {
             meta.setOwningPlayer(player);
             meta.setDisplayName(ColorUtils.colorize("&a" + player.getName()));
             meta.setLore(Arrays.asList(
-                ColorUtils.colorize("&7点击邀请该玩家"),
-                ColorUtils.colorize("&7加入工会")
+                ColorUtils.colorize("&7" + languageManager.getMessage(this.player, "invite-member.click-invite", "点击邀请该玩家")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(this.player, "invite-member.join-guild", "加入工会"))
             ));
             head.setItemMeta(meta);
         }
-        
+
         return head;
     }
     

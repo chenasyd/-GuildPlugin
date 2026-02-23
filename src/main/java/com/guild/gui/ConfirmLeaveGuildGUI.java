@@ -85,12 +85,13 @@ public class ConfirmLeaveGuildGUI implements GUI {
      * 显示确认信息
      */
     private void displayConfirmInfo(Inventory inventory) {
+        String guildName = ColorUtils.stripColor(guild.getName());
         ItemStack info = createItem(
             Material.BOOK,
-            ColorUtils.colorize("&c确认离开工会"),
-            ColorUtils.colorize("&7工会: &e" + guild.getName()),
-            ColorUtils.colorize("&7你确定要离开这个工会吗？"),
-            ColorUtils.colorize("&c此操作不可撤销！")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-leave-guild.info-title", "&c确认离开工会")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.guild", "&7工会: &e{guild}", "{guild}", guildName)),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.confirm-question", "&7你确定要离开这个工会吗？")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.warning", "&c此操作不可撤销！"))
         );
         inventory.setItem(13, info);
     }
@@ -102,16 +103,16 @@ public class ConfirmLeaveGuildGUI implements GUI {
         // 确认离开按钮
         ItemStack confirm = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize("&c确认离开"),
-            ColorUtils.colorize("&7点击确认离开工会")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-leave-guild.confirm-button", "&c确认离开")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.confirm-lore", "&7点击确认离开工会"))
         );
         inventory.setItem(11, confirm);
         
         // 取消按钮
         ItemStack cancel = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize("&a取消"),
-            ColorUtils.colorize("&7取消离开工会")
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-leave-guild.cancel-button", "&a取消")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.cancel-lore", "&7取消离开工会"))
         );
         inventory.setItem(15, cancel);
     }

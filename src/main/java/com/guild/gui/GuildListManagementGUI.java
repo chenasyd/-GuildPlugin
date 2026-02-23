@@ -84,38 +84,43 @@ public class GuildListManagementGUI implements GUI {
         Material material = guild.isFrozen() ? Material.RED_WOOL : Material.GREEN_WOOL;
 
         List<String> lore = new ArrayList<>();
-        lore.add(ColorUtils.colorize("&7会长: &e" + guild.getLeaderName()));
-        lore.add(ColorUtils.colorize("&7等级: &e" + guild.getLevel() + "  &7资金: &a" + plugin.getEconomyManager().format(guild.getBalance())));
-        lore.add(ColorUtils.colorize("&e左键: 查看  &c右键: 删除  &6Shift+右键: 冻结/解冻"));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.leader", "会长") + ": &e" + guild.getLeaderName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list.level", "等级") + ": &e" + guild.getLevel() + "  &7" + languageManager.getMessage(player, "guild-list.balance", "资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())));
+        lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "guild-list.left-click-view", "左键: 查看") + "  &c" + languageManager.getMessage(player, "guild-list.right-click-delete", "右键: 删除") + "  &6" + languageManager.getMessage(player, "guild-list.shift-right-freeze", "Shift+右键: 冻结/解冻")));
 
         return createItem(material, ColorUtils.colorize("&6" + guild.getName()), lore.toArray(new String[0]));
     }
     
     private void setupPaginationButtons(Inventory inventory) {
         int totalPages = (int) Math.ceil((double) allGuilds.size() / itemsPerPage);
-        
+
         // 上一页按钮
         if (currentPage > 0) {
-            inventory.setItem(45, createItem(Material.ARROW, ColorUtils.colorize("&a上一页"), 
-                ColorUtils.colorize("&7第 " + (currentPage) + " 页")));
+            inventory.setItem(45, createItem(Material.ARROW,
+                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.previous-page", "&a上一页")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.page-info", "第 {current} 页", "{current}", String.valueOf(currentPage)))));
         }
-        
+
         // 页码信息
-        inventory.setItem(49, createItem(Material.PAPER, ColorUtils.colorize("&e第 " + (currentPage + 1) + " 页，共 " + totalPages + " 页")));
-        
+        inventory.setItem(49, createItem(Material.PAPER,
+            ColorUtils.colorize("&e" + languageManager.getMessage(player, "gui.page-info", "第 {current} 页", "{current}", String.valueOf(currentPage + 1)) + "，" + languageManager.getMessage(player, "gui.total-pages", "共 {total} 页", "{total}", String.valueOf(totalPages)))));
+
         // 下一页按钮
         if (currentPage < totalPages - 1) {
-            inventory.setItem(53, createItem(Material.ARROW, ColorUtils.colorize("&a下一页"), 
-                ColorUtils.colorize("&7第 " + (currentPage + 2) + " 页")));
+            inventory.setItem(53, createItem(Material.ARROW,
+                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.next-page", "&a下一页")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.page-info", "第 {current} 页", "{current}", String.valueOf(currentPage + 2)))));
         }
     }
-    
+
     private void setupActionButtons(Inventory inventory) {
         // 返回按钮
-        inventory.setItem(46, createItem(Material.BARRIER, ColorUtils.colorize("&c返回")));
-        
+        inventory.setItem(46, createItem(Material.BARRIER,
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.back", "&c返回"))));
+
         // 刷新按钮
-        inventory.setItem(52, createItem(Material.EMERALD, ColorUtils.colorize("&a刷新列表")));
+        inventory.setItem(52, createItem(Material.EMERALD,
+            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.refresh", "&a刷新列表"))));
     }
     
     private void fillBorder(Inventory inventory) {

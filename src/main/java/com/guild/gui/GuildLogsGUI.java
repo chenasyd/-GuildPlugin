@@ -4,6 +4,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import com.guild.models.GuildLog;
 import org.bukkit.Bukkit;
@@ -20,10 +21,11 @@ import java.util.concurrent.CompletableFuture;
  * 工会日志查看GUI
  */
 public class GuildLogsGUI implements GUI {
-    
+
     private final GuildPlugin plugin;
     private final Guild guild;
     private final Player player;
+    private final LanguageManager languageManager;
     private final int page;
     private final int itemsPerPage = 28; // 2-8列，2-5行
     private List<GuildLog> logs;
@@ -32,11 +34,12 @@ public class GuildLogsGUI implements GUI {
     public GuildLogsGUI(GuildPlugin plugin, Guild guild, Player player) {
         this(plugin, guild, player, 0);
     }
-    
+
     public GuildLogsGUI(GuildPlugin plugin, Guild guild, Player player, int page) {
         this.plugin = plugin;
         this.guild = guild;
         this.player = player;
+        this.languageManager = plugin.getLanguageManager();
         this.page = page;
     }
     
@@ -70,8 +73,8 @@ public class GuildLogsGUI implements GUI {
                 CompatibleScheduler.runTask(plugin, () -> {
                     ItemStack errorItem = createItem(
                         Material.BARRIER,
-                        ColorUtils.colorize("&c加载失败"),
-                        ColorUtils.colorize("&7无法加载日志数据，请重试")
+                        ColorUtils.colorize("&c" + languageManager.getMessage(player, "guild-logs.load-failed", "加载失败")),
+                        ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.load-error", "无法加载日志数据，请重试"))
                     );
                     inventory.setItem(22, errorItem);
                     setupBasicNavigationButtons(inventory);
@@ -132,9 +135,9 @@ public class GuildLogsGUI implements GUI {
             // 显示无日志信息
             ItemStack noLogs = createItem(
                 Material.BARRIER,
-                ColorUtils.colorize("&c暂无日志记录"),
-                ColorUtils.colorize("&7该工会还没有任何操作记录"),
-                ColorUtils.colorize("&7请等待工会活动产生日志")
+                ColorUtils.colorize("&c" + languageManager.getMessage(player, "guild-logs.no-logs", "暂无日志记录")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.no-logs-desc", "该工会还没有任何操作记录")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.wait-for-logs", "请等待工会活动产生日志"))
             );
             inventory.setItem(22, noLogs);
             return;
@@ -241,8 +244,8 @@ public class GuildLogsGUI implements GUI {
         // 返回按钮 - 移到槽位49，与其他GUI保持一致
         ItemStack backButton = createItem(
             Material.ARROW,
-            ColorUtils.colorize("&c返回"),
-            ColorUtils.colorize("&7返回上一级菜单")
+            ColorUtils.colorize("&c" + languageManager.getMessage(player, "gui.back", "返回")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.back-to-guild", "返回工会信息"))
         );
         inventory.setItem(49, backButton);
     }
@@ -255,36 +258,37 @@ public class GuildLogsGUI implements GUI {
         if (page > 0) {
             ItemStack prevButton = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&e上一页"),
-                ColorUtils.colorize("&7查看上一页日志")
+                ColorUtils.colorize("&e" + languageManager.getMessage(player, "gui.previous-page", "上一页")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.view-previous", "查看上一页"))
             );
-            inventory.setItem(45, prevButton);
+            inventory.setItem(48, prevButton);
         }
-        
+
         if ((page + 1) * itemsPerPage < totalLogs) {
             ItemStack nextButton = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&e下一页"),
-                ColorUtils.colorize("&7查看下一页日志")
+                ColorUtils.colorize("&a" + languageManager.getMessage(player, "gui.next-page", "下一页")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.view-next", "查看下一页"))
             );
-            inventory.setItem(53, nextButton);
+            inventory.setItem(50, nextButton);
         }
-        
+
         // 页码信息
+        int totalPages = (totalLogs - 1) / itemsPerPage + 1;
         ItemStack pageInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize("&6页码信息"),
-            ColorUtils.colorize("&7当前页: &f" + (page + 1)),
-            ColorUtils.colorize("&7总页数: &f" + ((totalLogs - 1) / itemsPerPage + 1)),
-            ColorUtils.colorize("&7总记录: &f" + totalLogs)
+            ColorUtils.colorize("&e" + languageManager.getMessage(player, "guild-logs.page-info", "页码信息")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.current-page", "当前页: {page}", "{page}", String.valueOf(page + 1))),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.total-pages", "总页数: {total}", "{total}", String.valueOf(totalPages))),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.total-records", "总记录: {count}", "{count}", String.valueOf(totalLogs)))
         );
-        inventory.setItem(47, pageInfo);
-        
+        inventory.setItem(46, pageInfo);
+
         // 刷新按钮
         ItemStack refreshButton = createItem(
             Material.EMERALD,
-            ColorUtils.colorize("&a刷新"),
-            ColorUtils.colorize("&7刷新日志列表")
+            ColorUtils.colorize("&a" + languageManager.getMessage(player, "gui.refresh", "刷新")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.refresh-logs", "刷新日志列表"))
         );
         inventory.setItem(51, refreshButton);
     }
@@ -292,42 +296,35 @@ public class GuildLogsGUI implements GUI {
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (clickedItem == null || !clickedItem.hasItemMeta()) return;
-        
-        String itemName = clickedItem.getItemMeta().getDisplayName();
-        
-        // 返回按钮
-        if (itemName.contains("返回")) {
-            // 返回到工会信息GUI
+
+        // 返回按钮 (槽位49)
+        if (slot == 49) {
             GuildInfoGUI guildInfoGUI = new GuildInfoGUI(plugin, player, guild);
             plugin.getGuiManager().openGUI(player, guildInfoGUI);
             return;
         }
-        
-        // 上一页按钮
-        if (itemName.contains("上一页")) {
-            if (page > 0) {
-                GuildLogsGUI prevPageGUI = new GuildLogsGUI(plugin, guild, player, page - 1);
-                plugin.getGuiManager().openGUI(player, prevPageGUI);
-            }
+
+        // 上一页按钮 (槽位48)
+        if (slot == 48 && page > 0) {
+            GuildLogsGUI prevPageGUI = new GuildLogsGUI(plugin, guild, player, page - 1);
+            plugin.getGuiManager().openGUI(player, prevPageGUI);
             return;
         }
-        
-        // 下一页按钮
-        if (itemName.contains("下一页")) {
-            if ((page + 1) * itemsPerPage < totalLogs) {
-                GuildLogsGUI nextPageGUI = new GuildLogsGUI(plugin, guild, player, page + 1);
-                plugin.getGuiManager().openGUI(player, nextPageGUI);
-            }
+
+        // 下一页按钮 (槽位50)
+        if (slot == 50 && (page + 1) * itemsPerPage < totalLogs) {
+            GuildLogsGUI nextPageGUI = new GuildLogsGUI(plugin, guild, player, page + 1);
+            plugin.getGuiManager().openGUI(player, nextPageGUI);
             return;
         }
-        
-        // 刷新按钮
-        if (itemName.contains("刷新")) {
+
+        // 刷新按钮 (槽位51)
+        if (slot == 51) {
             GuildLogsGUI refreshGUI = new GuildLogsGUI(plugin, guild, player, page);
             plugin.getGuiManager().openGUI(player, refreshGUI);
             return;
         }
-        
+
         // 日志项目点击 - 检查是否在日志显示区域
         if (slot >= 10 && slot <= 43) {
             int row = slot / 9;
@@ -348,14 +345,14 @@ public class GuildLogsGUI implements GUI {
      */
     private void handleLogClick(Player player, GuildLog log) {
         // 显示日志详细信息
-        String message = ColorUtils.colorize("&6=== 日志详情 ===");
-        player.sendMessage(message);
-        player.sendMessage(ColorUtils.colorize("&7类型: &f" + log.getLogType().getDisplayName()));
-        player.sendMessage(ColorUtils.colorize("&7操作者: &f" + log.getPlayerName()));
-        player.sendMessage(ColorUtils.colorize("&7时间: &f" + log.getSimpleTime()));
-        player.sendMessage(ColorUtils.colorize("&7描述: &f" + log.getDescription()));
+        String header = ColorUtils.colorize("&6" + languageManager.getMessage(player, "guild-logs.details-header", "=== 日志详情 ==="));
+        player.sendMessage(header);
+        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.type", "类型") + ": &f" + log.getLogType().getDisplayName()));
+        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.operator", "操作者") + ": &f" + log.getPlayerName()));
+        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.time", "时间") + ": &f" + log.getSimpleTime()));
+        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.description", "描述") + ": &f" + log.getDescription()));
         if (log.getDetails() != null && !log.getDetails().isEmpty()) {
-            player.sendMessage(ColorUtils.colorize("&7详情: &f" + log.getDetails()));
+            player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.details", "详情") + ": &f" + log.getDetails()));
         }
         player.sendMessage(ColorUtils.colorize("&6=================="));
     }

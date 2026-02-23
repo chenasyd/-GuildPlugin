@@ -1,6 +1,3 @@
-# GUI Configuration File
-
-# Main Interface - Six main entries
 main-menu:
   title: "&6Guild System"
   size: 54
@@ -13,7 +10,6 @@ main-menu:
         - "&7View detailed guild information"
         - "&7Including basic info, statistics, etc."
       glow: false
-
     member-management:
       slot: 22
       material: PLAYER_HEAD
@@ -22,7 +18,6 @@ main-menu:
         - "&7Manage guild members"
         - "&7Invite, kick, permission management"
       glow: false
-
     application-management:
       slot: 24
       material: PAPER
@@ -31,7 +26,6 @@ main-menu:
         - "&7Handle join applications"
         - "&7View application history"
       glow: false
-
     guild-settings:
       slot: 30
       material: COMPASS
@@ -40,7 +34,6 @@ main-menu:
         - "&7Modify guild settings"
         - "&7Description, tag, permissions, etc."
       glow: false
-
     guild-list:
       slot: 32
       material: BOOKSHELF
@@ -49,7 +42,6 @@ main-menu:
         - "&7View all guilds"
         - "&7Search, filter functions"
       glow: false
-
     guild-relations:
       slot: 34
       material: RED_WOOL
@@ -58,7 +50,6 @@ main-menu:
         - "&7Manage guild relations"
         - "&7Allies, enemies, etc."
       glow: false
-
     create-guild:
       slot: 48
       material: EMERALD_BLOCK
@@ -68,7 +59,6 @@ main-menu:
         - "&7Requires coins"
       glow: true
 
-# Guild Info Interface
 guild-info:
   title: "&6Guild Info"
   size: 54
@@ -80,7 +70,6 @@ guild-info:
       lore:
         - "&f{guild_name}"
         - "&7Guild ID: {guild_id}"
-
     guild-tag:
       slot: 12
       material: OAK_SIGN
@@ -88,7 +77,6 @@ guild-info:
       lore:
         - "&f{guild_tag}"
         - "&7Used for quick identification"
-
     guild-description:
       slot: 14
       material: BOOK
@@ -96,7 +84,6 @@ guild-info:
       lore:
         - "&f{guild_description}"
         - "&7Detailed guild description"
-
     guild-leader:
       slot: 16
       material: GOLDEN_HELMET
@@ -104,7 +91,6 @@ guild-info:
       lore:
         - "&f{leader_name}"
         - "&7Leader has all permissions"
-
     guild-home:
       slot: 19
       material: COMPASS
@@ -112,7 +98,6 @@ guild-info:
       lore:
         - "&f{guild_home_location}"
         - "&7Members can teleport here"
-
     member-count:
       slot: 28
       material: PLAYER_HEAD
@@ -120,7 +105,6 @@ guild-info:
       lore:
         - "&f{member_count}/{guild_max_members} members"
         - "&7Online: {online_member_count} members"
-
     guild-level:
       slot: 30
       material: EXPERIENCE_BOTTLE
@@ -129,7 +113,6 @@ guild-info:
         - "&fLevel {guild_level}"
         - "&7Max members: {guild_max_members} members"
         - "&7Upgrade progress: {guild_level_progress}"
-
     guild-balance:
       slot: 32
       material: GOLD_INGOT
@@ -137,7 +120,6 @@ guild-info:
       lore:
         - "&f{guild_balance_formatted}"
         - "&7Upgrade requires: {guild_next_level_requirement}"
-
     created-date:
       slot: 34
       material: CLOCK
@@ -145,7 +127,6 @@ guild-info:
       lore:
         - "&f{guild_created_date}"
         - "&7{guild_created_time}"
-
     guild-status:
       slot: 36
       material: BEACON
@@ -153,7 +134,6 @@ guild-info:
       lore:
         - "&f{guild_frozen}"
         - "&7Current guild status"
-
     back:
       slot: 49
       material: ARROW
@@ -161,7 +141,6 @@ guild-info:
       lore:
         - "&7Return to main menu"
 
-# Member Management Interface
 member-management:
   title: "&6Member Management"
   size: 54
@@ -173,7 +152,6 @@ member-management:
       lore:
         - "&7Invite new members"
         - "&7Current members: {member_count} members"
-
     kick-member:
       slot: 47
       material: REDSTONE_BLOCK
@@ -181,7 +159,6 @@ member-management:
       lore:
         - "&7Kick guild members"
         - "&7Requires officer or higher permission"
-
     promote-member:
       slot: 49
       material: GOLD_INGOT
@@ -189,7 +166,6 @@ member-management:
       lore:
         - "&7Promote member position"
         - "&7Only leader can operate"
-
     demote-member:
       slot: 51
       material: IRON_INGOT
@@ -197,37 +173,42 @@ member-management:
       lore:
         - "&7Demote member position"
         - "&7Only leader can operate"
-
     back:
       slot: 53
       material: ARROW
       name: "&7Back"
       lore:
         - "&7Return to main menu"
-
     next-page:
       slot: 26
       material: ARROW
       name: "&aNext Page"
       lore:
         - "&7View next page"
-
     previous-page:
       slot: 18
       material: ARROW
       name: "&cPrevious Page"
       lore:
         - "&7View previous page"
+  no-members: "&cNo Members"
+  no-members-desc: "&7There are no members in the guild"
+  role:
+    leader-perms: "All Permissions"
+    officer-perms: "Invite, Kick"
+    member-perms: "Basic Permissions"
 
-# Member Details Interface
 member-details:
   title: "&6Member Details - {member_name}"
   size: 54
 
-# Application Management Interface
 application-management:
   title: "&6Application Management"
   size: 54
+  no-pending: "&aNo Pending Applications"
+  no-pending-desc: "&7There are no pending applications"
+  no-history: "&aNo Application History"
+  no-history-desc: "&7There is no application history"
   items:
     pending-applications:
       slot: 20
@@ -237,7 +218,6 @@ application-management:
         - "&7View pending applications"
         - "&f{pending_count} applications"
         - "&7Needs timely processing"
-
     application-history:
       slot: 24
       material: BOOK
@@ -245,21 +225,18 @@ application-management:
       lore:
         - "&7View application history"
         - "&7Processed applications"
-
     back:
       slot: 49
       material: ARROW
       name: "&7Back"
       lore:
         - "&7Return to main menu"
-
     next-page:
       slot: 26
       material: ARROW
       name: "&aNext Page"
       lore:
         - "&7View next page"
-
     previous-page:
       slot: 18
       material: ARROW
@@ -267,10 +244,56 @@ application-management:
       lore:
         - "&7View previous page"
 
-# Guild Settings Interface
 guild-settings:
   title: "&6Guild Settings"
   size: 54
+  text-edit: "&eText Edit"
+  member-mgmt: "&aMember Management"
+  set-home: "&bSet Guild Home"
+  applications: "&eApplications"
+  relations: "&eRelations"
+  logs: "&6Guild Logs"
+  home-teleport: "&dTeleport Home"
+  leave: "&cLeave Guild"
+  delete: "&4Delete Guild"
+  back: "&7Back"
+  overview: "&6Guild Overview"
+  text-edit:
+    desc:
+      left: "&7Left Click &fEdit Name"
+      right: "&7Right Click &fEdit Description"
+      shift-left: "&7Shift+Left &fEdit Tag"
+  member-mgmt:
+    desc:
+      left: "&7Left Click &fInvite Member"
+      right: "&7Right Click &fKick Member"
+      shift-left: "&7Shift+Left &fPromote/Demote"
+  set-home:
+    desc: "&7Click &fSet Guild Home"
+  applications:
+    desc: "&7Click &fManage Applications"
+  relations:
+    desc: "&7Click &fManage Relations"
+  logs:
+    desc: "&7Click &fView Guild Logs"
+  home-teleport:
+    desc: "&7Click &fTeleport Home"
+  leave:
+    desc: "&7Click &fLeave Current Guild"
+  delete:
+    desc: "&7Click &fDelete Current Guild"
+  back:
+    desc: "&7Click &fReturn to Main Menu"
+  overview:
+    no-name: "No Name"
+    no-tag: "No Tag"
+    no-desc: "No Description"
+    home-set: "&aSet"
+    home-not-set: "&cNot Set"
+    name: "&7Name: &e{0}"
+    tag: "&7Tag: &e{0}"
+    desc: "&7Description: &7{0}"
+    home: "&7Home: {0}"
   items:
     change-description:
       slot: 20
@@ -279,7 +302,6 @@ guild-settings:
       lore:
         - "&7Modify guild description"
         - "&7Current: {guild_description}"
-
     change-tag:
       slot: 22
       material: OAK_SIGN
@@ -287,7 +309,6 @@ guild-settings:
       lore:
         - "&7Modify guild tag"
         - "&7Current: {guild_tag}"
-
     set-home:
       slot: 24
       material: COMPASS
@@ -295,7 +316,6 @@ guild-settings:
       lore:
         - "&7Set guild teleport point"
         - "&7Current: {guild_home_location}"
-
     permissions:
       slot: 30
       material: SHIELD
@@ -303,7 +323,6 @@ guild-settings:
       lore:
         - "&7Manage member permissions"
         - "&7Role permission management"
-
     back:
       slot: 49
       material: ARROW
@@ -311,7 +330,6 @@ guild-settings:
       lore:
         - "&7Return to main menu"
 
-# Guild List Interface
 guild-list:
   title: "&6Guild List"
   size: 54
@@ -323,7 +341,6 @@ guild-list:
       lore:
         - "&7Search for a specific guild"
         - "&7Current search: {search_query}"
-
     filter:
       slot: 47
       material: HOPPER
@@ -331,21 +348,18 @@ guild-list:
       lore:
         - "&7Filter guilds by criteria"
         - "&7Current filter: {filter_type}"
-
     back:
       slot: 49
       material: ARROW
       name: "&7Back"
       lore:
         - "&7Return to main menu"
-
     next-page:
       slot: 26
       material: ARROW
       name: "&aNext Page"
       lore:
         - "&7View next page"
-
     previous-page:
       slot: 18
       material: ARROW
@@ -353,7 +367,6 @@ guild-list:
       lore:
         - "&7View previous page"
 
-# Guild Relations Interface
 guild-relations:
   title: "&6Guild Relations"
   size: 54
@@ -365,7 +378,6 @@ guild-relations:
       lore:
         - "&7View allied guilds"
         - "&7Manage ally relations"
-
     enemies:
       slot: 24
       material: RED_WOOL
@@ -373,7 +385,6 @@ guild-relations:
       lore:
         - "&7View enemy guilds"
         - "&7Manage enemy relations"
-
     war:
       slot: 28
       material: NETHERITE_SWORD
@@ -381,7 +392,6 @@ guild-relations:
       lore:
         - "&7View war guilds"
         - "&7Manage war status"
-
     neutral:
       slot: 32
       material: GRAY_WOOL
@@ -389,7 +399,6 @@ guild-relations:
       lore:
         - "&7View neutral guilds"
         - "&7Manage neutral relations"
-
     back:
       slot: 49
       material: ARROW
@@ -397,7 +406,6 @@ guild-relations:
       lore:
         - "&7Return to main menu"
 
-# Member Info Display
 member-display:
   leader:
     material: GOLDEN_HELMET
@@ -406,7 +414,6 @@ member-display:
       - "&7Role: &cLeader"
       - "&7Joined: {joined_date}"
       - "&7Permissions: All permissions"
-
   officer:
     material: GOLDEN_HELMET
     name: "&6{player_name}"
@@ -414,7 +421,6 @@ member-display:
       - "&7Role: &6Officer"
       - "&7Joined: {joined_date}"
       - "&7Permissions: Invite, kick"
-
   member:
     material: PLAYER_HEAD
     name: "&f{player_name}"
@@ -423,7 +429,6 @@ member-display:
       - "&7Joined: {joined_date}"
       - "&7Permissions: Basic permissions"
 
-# Application Info Display
 application-display:
   pending:
     material: YELLOW_WOOL
@@ -435,7 +440,6 @@ application-display:
       - ""
       - "&aLeft click: Accept"
       - "&cRight click: Reject"
-
   accepted:
     material: GREEN_WOOL
     name: "&a{player_name}'s Application"
@@ -443,7 +447,6 @@ application-display:
       - "&7Status: &aAccepted"
       - "&7Processed: {process_date}"
       - "&7Processed by: {processor}"
-
   rejected:
     material: RED_WOOL
     name: "&c{player_name}'s Application"
@@ -452,7 +455,6 @@ application-display:
       - "&7Processed: {process_date}"
       - "&7Processed by: {processor}"
 
-# Guild Info Display
 guild-display:
   material: SHIELD
   name: "&e{guild_name}"
@@ -465,10 +467,12 @@ guild-display:
     - "&aLeft click: View details"
     - "&eRight click: Apply to join"
 
-# Create Guild Interface
 create-guild:
   title: "&6Create Guild"
   size: 54
+  current-name: "&eCurrent Guild Name"
+  current-tag: "&eCurrent Guild Tag"
+  current-description: "&eCurrent Guild Description"
   items:
     name-input:
       slot: 20
@@ -478,7 +482,6 @@ create-guild:
         - "&7Click to enter guild name"
         - "&7Length: 3-20 characters"
         - "&7Current: {guild_name}"
-
     tag-input:
       slot: 22
       material: OAK_SIGN
@@ -488,7 +491,6 @@ create-guild:
         - "&7Length: Max 6 characters"
         - "&7Optional"
         - "&7Current: {guild_tag}"
-
     description-input:
       slot: 24
       material: BOOK
@@ -498,7 +500,6 @@ create-guild:
         - "&7Length: Max 100 characters"
         - "&7Optional"
         - "&7Current: {guild_description}"
-
     confirm:
       slot: 39
       material: EMERALD_BLOCK
@@ -508,7 +509,6 @@ create-guild:
         - "&7Cost: {cost} coins"
         - "&7Creator: {player_name}"
       glow: true
-
     cancel:
       slot: 41
       material: REDSTONE_BLOCK
@@ -516,7 +516,6 @@ create-guild:
       lore:
         - "&7Cancel guild creation"
 
-# Invite Interface
 invite-player:
   title: "&6Invite Player"
   size: 54
@@ -527,7 +526,6 @@ invite-player:
       name: "&eSelect Player"
       lore:
         - "&7Click to select player to invite"
-
     confirm:
       slot: 39
       material: EMERALD_BLOCK
@@ -535,7 +533,6 @@ invite-player:
       lore:
         - "&7Confirm to send invitation"
       glow: true
-
     cancel:
       slot: 41
       material: REDSTONE_BLOCK
@@ -543,7 +540,6 @@ invite-player:
       lore:
         - "&7Cancel invitation"
 
-# Confirm Interface
 confirm:
   title: "&6Confirm Action"
   size: 27
@@ -555,7 +551,6 @@ confirm:
       lore:
         - "&7Confirm to execute this action"
       glow: true
-
     cancel:
       slot: 15
       material: REDSTONE_BLOCK
@@ -563,19 +558,16 @@ confirm:
       lore:
         - "&7Cancel action"
 
-# Decoration Items
 decorations:
   border:
     material: BLACK_STAINED_GLASS_PANE
     name: " "
-
   info:
     material: LIGHT_BLUE_STAINED_GLASS_PANE
     name: "&bGuild System"
     lore:
       - "&7Powerful guild plugin"
 
-# Admin GUI
 admin-gui:
   title: "&4Guild Admin"
   size: 54
@@ -590,7 +582,6 @@ admin-gui:
         - "&eLeft click: View details"
         - "&cRight click: Delete guild"
         - "&6Middle click: Freeze/unfreeze"
-
     economy:
       slot: 22
       material: GOLD_INGOT
@@ -601,7 +592,6 @@ admin-gui:
         - "&eLeft click: Set balance"
         - "&aRight click: Add balance"
         - "&cMiddle click: Remove balance"
-
     relations:
       slot: 24
       material: RED_WOOL
@@ -611,7 +601,6 @@ admin-gui:
         - "&7Allies, enemies, war, etc."
         - "&cLeft click: Delete relation"
         - "&eRight click: View details"
-
     statistics:
       slot: 29
       material: PAPER
@@ -620,7 +609,6 @@ admin-gui:
         - "&7View guild statistics"
         - "&7Member count, economy, etc."
         - "&eClick to view detailed stats"
-
     settings:
       slot: 31
       material: COMPASS
@@ -629,7 +617,6 @@ admin-gui:
         - "&7Manage system settings"
         - "&7Reload config, permissions, etc."
         - "&eClick to enter settings"
-
     back:
       slot: 49
       material: ARROW
@@ -637,9 +624,6 @@ admin-gui:
       lore:
         - "&7Return to main menu"
 
-
-
-# Guild Economy GUI
 guild-economy:
   title: "&6Guild Economy"
   size: 54
@@ -651,7 +635,6 @@ guild-economy:
       lore:
         - "&7Guild current balance"
         - "&f{balance} coins"
-
     deposit:
       slot: 22
       material: EMERALD_BLOCK
@@ -659,7 +642,6 @@ guild-economy:
       lore:
         - "&7Deposit to guild balance"
         - "&7Click to enter amount"
-
     withdraw:
       slot: 24
       material: REDSTONE_BLOCK
@@ -667,7 +649,6 @@ guild-economy:
       lore:
         - "&7Withdraw from guild balance"
         - "&7Click to enter amount"
-
     level:
       slot: 29
       material: EXPERIENCE_BOTTLE
@@ -676,7 +657,6 @@ guild-economy:
         - "&7Current level: {level}"
         - "&7Upgrade progress: {progress}%"
         - "&7Max members: {max_members}"
-
     contributions:
       slot: 31
       material: BOOK
@@ -684,7 +664,6 @@ guild-economy:
       lore:
         - "&7View contribution records"
         - "&7Your contribution: {contribution}"
-
     transfer:
       slot: 33
       material: DIAMOND
@@ -692,7 +671,6 @@ guild-economy:
       lore:
         - "&7Transfer to other guilds"
         - "&7Click to select target guild"
-
     back:
       slot: 49
       material: ARROW
@@ -700,87 +678,110 @@ guild-economy:
       lore:
         - "&7Return to previous menu"
 
-# Guild Detail Interface
 guild-detail:
   title: "&6Guild Detail - {guild_name}"
   size: 54
 
-# Change Guild Name Interface
 guild-name-input:
   title: "&6Change Guild Name"
   size: 27
+  current-name: "&eCurrent Guild Name"
+  confirm-button: "&aConfirm Edit"
+  confirm-lore-1: "&7Click to confirm guild name edit"
+  confirm-lore-2: "&7Note: Guild name changes require relogging to take effect"
+  cancel-button: "&cCancel"
+  cancel-lore: "&7Return to previous menu"
 
-# Change Guild Tag Interface
 guild-tag-input:
   title: "&6Change Guild Tag"
   size: 27
+  current-tag: "&eCurrent Tag"
+  confirm-button: "&aConfirm Edit"
+  confirm-lore: "&7Confirm guild tag edit"
+  cancel-button: "&cCancel"
+  cancel-lore: "&7Cancel edit"
 
-# Change Guild Description Interface
 guild-description-input:
   title: "&6Change Guild Description"
   size: 27
+  current-description: "&eCurrent Description"
+  confirm-button: "&aConfirm Edit"
+  confirm-lore: "&7Confirm guild description edit"
+  cancel-button: "&cCancel"
+  cancel-lore: "&7Cancel edit"
 
-# Guild Permissions Interface
 guild-permissions:
   title: "&6Guild Permissions"
   size: 54
 
-# Confirm Delete Guild Interface
 confirm-delete-guild:
   title: "&4Confirm Delete Guild"
   size: 27
+  info-title: "&4Confirm Delete Guild"
+  guild: "&7Guild: &e{guild}"
+  confirm-question: "&7Are you sure you want to delete this guild?"
+  warning-1: "&cThis action will permanently delete guild!"
+  warning-2: "&cAll members will be removed!"
+  warning-3: "&cThis action cannot be undone!"
+  confirm-button: "&4Confirm Delete"
+  confirm-lore-1: "&7Click to confirm guild deletion"
+  confirm-lore-2: "&cThis action cannot be undone!"
+  cancel-button: "&aCancel"
+  cancel-lore: "&7Cancel guild deletion"
 
-# Confirm Leave Guild Interface
 confirm-leave-guild:
   title: "&cConfirm Leave Guild"
   size: 27
+  info-title: "&cConfirm Leave Guild"
+  guild: "&7Guild: &e{guild}"
+  confirm-question: "&7Are you sure you want to leave this guild?"
+  warning: "&cThis action cannot be undone!"
+  confirm-button: "&cConfirm Leave"
+  confirm-lore: "&7Click to confirm leaving guild"
+  cancel-button: "&aCancel"
+  cancel-lore: "&7Cancel leaving guild"
 
-# System Settings Interface
 system-settings:
   title: "&4System Settings"
   size: 54
 
-# Relation Management Interface
 relation-management:
   title: "&4Relation Management"
   size: 54
 
-# Guild List Management Interface
 guild-list-management:
   title: "&4Guild List Management"
   size: 54
 
-# Economy Management Interface
 economy-management:
   title: "&eEconomy Management"
   size: 54
 
-# Create Guild Relation Interface
 create-relation:
   title: "&6Create Guild Relation"
   size: 54
+  confirm-button: "&aConfirm Create"
+  confirm-lore-1: "&7Create guild relation"
+  confirm-lore-2: "&7Need to select relation type and target guild first"
+  current-selection: "&eCurrent Selection"
+  back-lore: "&7Return to relation management"
 
-# Invite Member Interface
 invite-member:
   title: "&6Invite Member"
   size: 54
 
-# Kick Member Interface
 kick-member:
   title: "&6Kick Member"
   size: 54
 
-# Promote Member Interface
 promote-member:
   title: "&6Promote Member"
   size: 54
 
-# Demote Member Interface
 demote-member:
   title: "&6Demote Member"
   size: 54
 
-# Guild Logs Interface
 guild-logs:
   title: "&6Guild Logs - {guild_name}"
   size: 54

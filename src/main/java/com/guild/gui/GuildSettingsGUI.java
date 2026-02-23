@@ -46,7 +46,7 @@ public class GuildSettingsGUI implements GUI {
 
     @Override
     public int getSize() {
-        return plugin.getConfigManager().getGuiConfig().getInt("guild-settings.size", 54);
+        return 54;
     }
     
     @Override
@@ -127,22 +127,25 @@ public class GuildSettingsGUI implements GUI {
      */
     private void setupSettingsButtons(Inventory inventory) {
         // 文本编辑（说明改为 Shift+左键）
-        ItemStack textEdit = createItem(Material.WRITABLE_BOOK, "&e文本编辑", false,
-            "&7左键 &f修改名称",
-            "&7右键 &f修改描述",
-            "&7Shift+左键 &f修改标签");
+        ItemStack textEdit = createItem(Material.WRITABLE_BOOK,
+            languageManager.getMessage("guild-settings.text-edit", "&e文本编辑"), false,
+            languageManager.getMessage("guild-settings.text-edit.desc.left", "&7左键 &f修改名称"),
+            languageManager.getMessage("guild-settings.text-edit.desc.right", "&7右键 &f修改描述"),
+            languageManager.getMessage("guild-settings.text-edit.desc.shift-left", "&7Shift+左键 &f修改标签"));
         inventory.setItem(11, textEdit);
 
         // 成员管理（说明改为 Shift+左键）
-        ItemStack memberMgmt = createItem(Material.SHIELD, "&a成员管理", false,
-            "&7左键 &f邀请成员",
-            "&7右键 &f踢出成员",
-            "&7Shift+左键 &f提升/降级");
+        ItemStack memberMgmt = createItem(Material.SHIELD,
+            languageManager.getMessage("guild-settings.member-mgmt", "&a成员管理"), false,
+            languageManager.getMessage("guild-settings.member-mgmt.desc.left", "&7左键 &f邀请成员"),
+            languageManager.getMessage("guild-settings.member-mgmt.desc.right", "&7右键 &f踢出成员"),
+            languageManager.getMessage("guild-settings.member-mgmt.desc.shift-left", "&7Shift+左键 &f提升/降级"));
         inventory.setItem(15, memberMgmt);
 
         // 设置工会家 - 单独格
-        ItemStack setHome = createItem(Material.COMPASS, "&b设置工会家", false,
-            "&7单击 &f设置工会家");
+        ItemStack setHome = createItem(Material.COMPASS,
+            languageManager.getMessage("guild-settings.set-home", "&b设置工会家"), false,
+            languageManager.getMessage("guild-settings.set-home.desc", "&7单击 &f设置工会家"));
         inventory.setItem(13, setHome);
     }
 
@@ -151,38 +154,45 @@ public class GuildSettingsGUI implements GUI {
      */
     private void setupFunctionButtons(Inventory inventory) {
         // 申请管理（单独槽位 28）
-        ItemStack applications = createItem(Material.PAPER, "&e申请管理", false,
-            "&7单击 &f处理加入申请");
+        ItemStack applications = createItem(Material.PAPER,
+            languageManager.getMessage("guild-settings.applications", "&e申请管理"), false,
+            languageManager.getMessage("guild-settings.applications.desc", "&7单击 &f处理加入申请"));
         inventory.setItem(28, applications);
 
         // 关系管理（单独槽位 29）
-        ItemStack relations = createItem(Material.RED_WOOL, "&e关系管理", false,
-            "&7单击 &f管理工会关系");
+        ItemStack relations = createItem(Material.RED_WOOL,
+            languageManager.getMessage("guild-settings.relations", "&e关系管理"), false,
+            languageManager.getMessage("guild-settings.relations.desc", "&7单击 &f管理工会关系"));
         inventory.setItem(29, relations);
 
         // 工会日志（单独槽位 31）
-        ItemStack guildLogs = createItem(Material.BOOK, "&6工会日志", false,
-            "&7单击 &f查看工会日志");
+        ItemStack guildLogs = createItem(Material.BOOK,
+            languageManager.getMessage("guild-settings.logs", "&6工会日志"), false,
+            languageManager.getMessage("guild-settings.logs.desc", "&7单击 &f查看工会日志"));
         inventory.setItem(31, guildLogs);
 
         // 工会家传送
-        ItemStack homeTeleport = createItem(Material.ENDER_PEARL, "&d工会家传送", false,
-            "&7单击 &f传送到工会家");
+        ItemStack homeTeleport = createItem(Material.ENDER_PEARL,
+            languageManager.getMessage("guild-settings.home-teleport", "&d工会家传送"), false,
+            languageManager.getMessage("guild-settings.home-teleport.desc", "&7单击 &f传送到工会家"));
         inventory.setItem(33, homeTeleport);
 
         // 离开工会
-        ItemStack leaveGuild = createItem(Material.BARRIER, "&c离开工会", false,
-            "&7单击 &f离开当前工会");
+        ItemStack leaveGuild = createItem(Material.BARRIER,
+            languageManager.getMessage("guild-settings.leave", "&c离开工会"), false,
+            languageManager.getMessage("guild-settings.leave.desc", "&7单击 &f离开当前工会"));
         inventory.setItem(34, leaveGuild);
 
         // 删除工会
-        ItemStack deleteGuild = createItem(Material.TNT, "&4删除工会", false,
-            "&7单击 &f删除当前工会");
+        ItemStack deleteGuild = createItem(Material.TNT,
+            languageManager.getMessage("guild-settings.delete", "&4删除工会"), false,
+            languageManager.getMessage("guild-settings.delete.desc", "&7单击 &f删除当前工会"));
         inventory.setItem(36, deleteGuild);
 
         // 返回主菜单
-        ItemStack back = createItem(Material.ARROW, "&7返回", false,
-            "&7单击 &f返回主菜单");
+        ItemStack back = createItem(Material.ARROW,
+            languageManager.getMessage("guild-settings.back", "&7返回"), false,
+            languageManager.getMessage("guild-settings.back.desc", "&7单击 &f返回主菜单"));
         inventory.setItem(49, back);
     }
     
@@ -190,16 +200,22 @@ public class GuildSettingsGUI implements GUI {
      * 显示当前设置信息（简洁概览）
      */
     private void displayCurrentSettings(Inventory inventory) {
-        String name = guild.getName() != null ? guild.getName() : "无名称";
-        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" : "无标签";
-        String desc = guild.getDescription() != null ? guild.getDescription() : "无描述";
-        String homeStatus = guild.hasHome() ? "&a已设置" : "&c未设置";
+        String name = guild.getName() != null ? guild.getName() :
+            languageManager.getMessage("guild-settings.overview.no-name", "无名称");
+        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" :
+            languageManager.getMessage("guild-settings.overview.no-tag", "无标签");
+        String desc = guild.getDescription() != null ? guild.getDescription() :
+            languageManager.getMessage("guild-settings.overview.no-desc", "无描述");
+        String homeStatus = guild.hasHome() ?
+            languageManager.getMessage("guild-settings.overview.home-set", "&a已设置") :
+            languageManager.getMessage("guild-settings.overview.home-not-set", "&c未设置");
 
-        ItemStack overview = createItem(Material.PAPER, "&6工会概览", false,
-            "&7名称: &e" + name,
-            "&7标签: &e" + tag,
-            "&7描述: &7" + desc,
-            "&7工会家: " + homeStatus
+        ItemStack overview = createItem(Material.PAPER,
+            languageManager.getMessage("guild-settings.overview", "&6工会概览"), false,
+            languageManager.getMessage("guild-settings.overview.name", "&7名称: &e{0}", name),
+            languageManager.getMessage("guild-settings.overview.tag", "&7标签: &e{0}", tag),
+            languageManager.getMessage("guild-settings.overview.desc", "&7描述: &7{0}", desc),
+            languageManager.getMessage("guild-settings.overview.home", "&7工会家: {0}", homeStatus)
         );
         inventory.setItem(10, overview);
     }
