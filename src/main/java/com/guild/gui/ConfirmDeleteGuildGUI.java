@@ -35,8 +35,8 @@ public class ConfirmDeleteGuildGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return languageManager.getGuiColoredMessage(player, "confirm-delete-guild.title",
-                ColorUtils.colorize("&4确认删除工会"));
+        return ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild-title",
+                "&4确认删除工会"));
     }
     
     @Override
@@ -90,7 +90,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
         String guildName = ColorUtils.stripColor(guild.getName());
         ItemStack info = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-delete-guild.info-title", "&4确认删除工会")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.info-title", "&4确认删除工会")),
             ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.guild", "&7工会: &e{guild}", "{guild}", guildName)),
             ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.confirm-question", "&7你确定要删除这个工会吗？")),
             ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.warning-1", "&c此操作将永久删除工会！")),
@@ -107,7 +107,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
         // 确认删除按钮
         ItemStack confirm = createItem(
             Material.TNT,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-delete-guild.confirm-button", "&4确认删除")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.confirm-button", "&4确认删除")),
             ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.confirm-lore-1", "&7点击确认删除工会")),
             ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.confirm-lore-2", "&c此操作不可撤销！"))
         );
@@ -116,7 +116,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
         // 取消按钮
         ItemStack cancel = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-delete-guild.cancel-button", "&a取消")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.cancel-button", "&a取消")),
             ColorUtils.colorize(languageManager.getMessage(player, "confirm-delete-guild.cancel-lore", "&7取消删除工会"))
         );
         inventory.setItem(15, cancel);

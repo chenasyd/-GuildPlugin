@@ -44,7 +44,7 @@ public class GuildRelationsGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return plugin.getLanguageManager().getGuiColoredMessage(player, "guild-relations.title", "&6工会关系");
+        return ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "guild-relations.title", "&6工会关系"));
     }
 
     @Override

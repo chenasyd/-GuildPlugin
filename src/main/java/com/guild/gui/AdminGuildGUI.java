@@ -32,7 +32,7 @@ public class AdminGuildGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.title", "&4工会管理");
+        return ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui.title", "&4工会管理"));
     }
     
     @Override
@@ -48,53 +48,53 @@ public class AdminGuildGUI implements GUI {
         // 工会列表管理
         ItemStack guildList = createItem(
             Material.BOOKSHELF,
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.guild-list.name", "&e工会列表管理")),
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.guild-list.lore.1", "&7查看和管理所有工会")),
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.guild-list.lore.2", "&7包括删除、冻结等操作"))
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-guild-list-name", "&e工会列表管理")),
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-guild-list-lore-1", "&7查看和管理所有工会")),
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-guild-list-lore-2", "&7包括删除、冻结等操作"))
         );
         inventory.setItem(20, guildList);
 
         // 经济管理
         ItemStack economy = createItem(
             Material.GOLD_INGOT,
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.economy.name", "&e经济管理")),
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.economy.lore.1", "&7管理工会经济系统")),
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.economy.lore.2", "&7设置资金、查看贡献等"))
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-economy-name", "&e经济管理")),
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-economy-lore-1", "&7管理工会经济系统")),
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-economy-lore-2", "&7设置资金、查看贡献等"))
         );
         inventory.setItem(22, economy);
 
         // 关系管理
         ItemStack relations = createItem(
             Material.RED_WOOL,
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.relations.name", "&e关系管理")),
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.relations.lore.1", "&7管理工会关系")),
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.relations.lore.2", "&7盟友、敌对、开战等"))
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-relations-name", "&e关系管理")),
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-relations-lore-1", "&7管理工会关系")),
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-relations-lore-2", "&7盟友、敌对、开战等"))
         );
         inventory.setItem(24, relations);
 
         // 统计信息
         ItemStack statistics = createItem(
             Material.PAPER,
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.statistics.name", "&e统计信息")),
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.statistics.lore.1", "&7查看工会统计信息")),
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.statistics.lore.2", "&7成员数量、经济状况等"))
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-statistics-name", "&e统计信息")),
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-statistics-lore-1", "&7查看工会统计信息")),
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-statistics-lore-2", "&7成员数量、经济状况等"))
         );
         inventory.setItem(29, statistics);
 
         // 系统设置
         ItemStack settings = createItem(
             Material.COMPASS,
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.settings.name", "&e系统设置")),
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.settings.lore.1", "&7管理系统设置")),
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.settings.lore.2", "&7重载配置、权限设置等"))
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-settings-name", "&e系统设置")),
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-settings-lore-1", "&7管理系统设置")),
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-settings-lore-2", "&7重载配置、权限设置等"))
         );
         inventory.setItem(31, settings);
 
         // 返回按钮
         ItemStack back = createItem(
             Material.ARROW,
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.back.name", "&c返回")),
-            ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.items.back.lore.1", "&7返回主菜单"))
+            ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "gui.back", "&c返回")),
+            ColorUtils.colorize("&7" + plugin.getLanguageManager().getMessage(player, "gui.back-to-main-menu", "返回主菜单"))
         );
         inventory.setItem(49, back);
     }
@@ -144,8 +144,8 @@ public class AdminGuildGUI implements GUI {
     private void openStatistics(Player player) {
         // 显示统计信息
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.statistics.title", "&6=== 工会统计信息 ===")));
-            player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.statistics.total-guilds", "&e总工会数量: &f{count}", "{count}", String.valueOf(guilds.size()))));
+            player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-statistics-title", "&6=== 工会统计信息 ===")));
+            player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-statistics-total-guilds", "&e总工会数量: &f{count}", "{count}", String.valueOf(guilds.size()))));
 
             if (!guilds.isEmpty()) {
                 final double[] totalBalance = {0};
@@ -174,10 +174,10 @@ public class AdminGuildGUI implements GUI {
                         }
                     }
 
-                    player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.statistics.total-members", "&e总成员数量: &f{count}", "{count}", String.valueOf(totalMembers[0]))));
-                    player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.statistics.total-balance", "&e总资金: &f{balance}", "{balance}", String.valueOf(totalBalance[0]))));
-                    player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.statistics.frozen-guilds", "&e冻结工会数: &f{count}", "{count}", String.valueOf(frozenCount[0]))));
-                    player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getGuiColoredMessage(player, "admin-gui.statistics.normal-guilds", "&e正常工会数: &f{count}", "{count}", String.valueOf(guilds.size() - frozenCount[0]))));
+                    player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-statistics-total-members", "&e总成员数量: &f{count}", "{count}", String.valueOf(totalMembers[0]))));
+                    player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-statistics-total-balance", "&e总资金: &f{balance}", "{balance}", String.valueOf(totalBalance[0]))));
+                    player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-statistics-frozen-guilds", "&e冻结工会数: &f{count}", "{count}", String.valueOf(frozenCount[0]))));
+                    player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "admin-gui-statistics-normal-guilds", "&e正常工会数: &f{count}", "{count}", String.valueOf(guilds.size() - frozenCount[0]))));
                 });
             }
         });

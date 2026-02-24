@@ -51,8 +51,8 @@ public class PromoteMemberGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return languageManager.getGuiColoredMessage(player, "promote-member.title",
-                ColorUtils.colorize("&6提升成员 - 第" + (currentPage + 1) + "页"));
+        return ColorUtils.colorize(languageManager.getMessage(player, "promote-member.title",
+                "&6提升成员 - 第" + (currentPage + 1) + "页", "{page}", String.valueOf(currentPage + 1)));
     }
     
     @Override
@@ -96,7 +96,7 @@ public class PromoteMemberGUI implements GUI {
             }
         } else if (slot == 49) {
             // 返回
-            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
+            plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player));
         }
     }
     
@@ -139,7 +139,7 @@ public class PromoteMemberGUI implements GUI {
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.previous-page", "&e上一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.previous-page", "&e上一页")),
                 ColorUtils.colorize(languageManager.getMessage(player, "gui.view-previous", "&7点击查看上一页"))
             );
             inventory.setItem(45, prevPage);
@@ -150,7 +150,7 @@ public class PromoteMemberGUI implements GUI {
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.next-page", "&e下一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.next-page", "&e下一页")),
                 ColorUtils.colorize(languageManager.getMessage(player, "gui.view-next", "&7点击查看下一页"))
             );
             inventory.setItem(53, nextPage);
@@ -159,7 +159,7 @@ public class PromoteMemberGUI implements GUI {
         // 返回按钮
         ItemStack back = createItem(
             Material.BARRIER,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.back", "&c返回")),
+            ColorUtils.colorize(languageManager.getMessage(player, "gui.back", "&c返回")),
             ColorUtils.colorize(languageManager.getMessage(player, "member-operation.back-to-settings", "&7返回工会设置"))
         );
         inventory.setItem(49, back);

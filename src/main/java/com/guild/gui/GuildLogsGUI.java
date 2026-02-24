@@ -45,8 +45,8 @@ public class GuildLogsGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return plugin.getLanguageManager().getGuiColoredMessage(player, "guild-logs.title", "&6工会日志 - {guild_name}")
-            .replace("{guild_name}", guild.getName());
+        String title = plugin.getLanguageManager().getMessage(player, "guild-logs.title", "&6工会日志 - {guild_name}");
+        return ColorUtils.colorize(title.replace("{guild_name}", guild.getName()));
     }
     
     @Override

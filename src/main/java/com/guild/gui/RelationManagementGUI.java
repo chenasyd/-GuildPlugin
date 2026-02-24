@@ -53,8 +53,7 @@ public class RelationManagementGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return languageManager.getGuiColoredMessage(player, "relation-management.title",
-                ColorUtils.colorize("&4关系管理 - 管理员"));
+        return ColorUtils.colorize(languageManager.getMessage(player, "relation-management-title", "&4关系管理 - 管理员"));
     }
     
     @Override
@@ -177,33 +176,33 @@ public class RelationManagementGUI implements GUI {
         // 上一页按钮
         if (currentPage > 0) {
             inventory.setItem(45, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage("relation-management.previous-page", "&a上一页")),
-                ColorUtils.colorize(languageManager.getMessage("relation-management.previous-page.desc", "&7第 {0} 页", String.valueOf(currentPage)))));
+                ColorUtils.colorize(languageManager.getMessage(player, "relation-management.previous-page", "&a上一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "relation-management.previous-page.desc", "&7第 {0} 页", String.valueOf(currentPage)))));
         }
 
         // 页码信息
         inventory.setItem(49, createItem(Material.PAPER,
-            ColorUtils.colorize(languageManager.getMessage("relation-management.page-info", "&e第 {0} 页，共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(totalPages))),
-            ColorUtils.colorize(languageManager.getMessage("relation-management.total-relations", "&7总计 {0} 个关系", String.valueOf(allRelations.size())))));
+            ColorUtils.colorize(languageManager.getMessage(player, "relation-management.page-info", "&e第 {0} 页，共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(totalPages))),
+            ColorUtils.colorize(languageManager.getMessage(player, "relation-management.total-relations", "&7总计 {0} 个关系", String.valueOf(allRelations.size())))));
 
         // 下一页按钮
         if (currentPage < totalPages - 1) {
             inventory.setItem(53, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage("relation-management.next-page", "&a下一页")),
-                ColorUtils.colorize(languageManager.getMessage("relation-management.next-page.desc", "&7第 {0} 页", String.valueOf(currentPage + 2)))));
+                ColorUtils.colorize(languageManager.getMessage(player, "relation-management.next-page", "&a下一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "relation-management.next-page.desc", "&7第 {0} 页", String.valueOf(currentPage + 2)))));
         }
     }
 
     private void setupActionButtons(Inventory inventory) {
         // 返回按钮
         inventory.setItem(46, createItem(Material.BARRIER,
-            ColorUtils.colorize(languageManager.getMessage("relation-management.back", "&c返回")),
-            ColorUtils.colorize(languageManager.getMessage("relation-management.back.desc", "&7返回管理员菜单"))));
+            ColorUtils.colorize(languageManager.getMessage(player, "gui.back", "&c返回")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "relation-management-back-desc", "返回管理员菜单"))));
 
         // 刷新按钮
         inventory.setItem(52, createItem(Material.EMERALD,
-            ColorUtils.colorize(languageManager.getMessage("relation-management.refresh", "&a刷新列表")),
-            ColorUtils.colorize(languageManager.getMessage("relation-management.refresh.desc", "&7重新加载关系数据"))));
+            ColorUtils.colorize(languageManager.getMessage(player, "gui-refresh", "&a刷新列表")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "relation-management-refresh-desc", "重新加载关系数据"))));
     }
     
     private void fillBorder(Inventory inventory) {
@@ -342,9 +341,9 @@ public class RelationManagementGUI implements GUI {
         pendingDeletions.put(player.getUniqueId(), relation);
         deletionTimers.put(player.getUniqueId(), System.currentTimeMillis());
         
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.confirm-delete", "&c确定要删除关系: {0} ↔ {1} 吗？", relation.getGuild1Name(), relation.getGuild2Name())));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.confirm-delete-instruction", "&c左键: 确认删除 | 右键: 取消删除")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.auto-cancel", "&e10秒后自动取消")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.confirm-delete", "&c确定要删除关系: {0} ↔ {1} 吗？", relation.getGuild1Name(), relation.getGuild2Name())));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.confirm-delete-instruction", "&c左键: 确认删除 | 右键: 取消删除")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.auto-cancel", "&e10秒后自动取消")));
         
         // 刷新GUI显示待删除状态
         plugin.getGuiManager().refreshGUI(player);
@@ -367,18 +366,18 @@ public class RelationManagementGUI implements GUI {
         plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (success) {
-                    player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.delete-success", "&a已删除关系: {0} ↔ {1}", relation.getGuild1Name(), relation.getGuild2Name())));
+                    player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.delete-success", "&a已删除关系: {0} ↔ {1}", relation.getGuild1Name(), relation.getGuild2Name())));
                     // 从列表中移除
                     allRelations.remove(relation);
                     // 刷新GUI
                     plugin.getGuiManager().refreshGUI(player);
                 } else {
-                    player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.delete-failed", "&c删除关系失败！")));
+                    player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.delete-failed", "&c删除关系失败！")));
                 }
             });
         }).exceptionally(throwable -> {
             Bukkit.getScheduler().runTask(plugin, () -> {
-                player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.delete-error", "&c删除关系时发生错误: {0}", throwable.getMessage())));
+                player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.delete-error", "&c删除关系时发生错误: {0}", throwable.getMessage())));
             });
             return null;
         });
@@ -389,27 +388,27 @@ public class RelationManagementGUI implements GUI {
         deletionTimers.remove(player.getUniqueId());
         
         if (relation != null) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.cancel-delete", "&e已取消删除关系: {0} ↔ {1}", relation.getGuild1Name(), relation.getGuild2Name())));
+            player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.cancel-delete", "&e已取消删除关系: {0} ↔ {1}", relation.getGuild1Name(), relation.getGuild2Name())));
             // 刷新GUI
             plugin.getGuiManager().refreshGUI(player);
         }
     }
 
     private void showRelationDetails(Player player, GuildRelation relation) {
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.details.title", "&6=== 关系详情 ===")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.details.type", "&e关系类型: {0}", getRelationTypeName(relation.getType()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.details.status", "&e状态: {0}", getRelationStatus(relation.getStatus()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.details.guild1", "&e工会1: {0} (ID: {1})", relation.getGuild1Name(), String.valueOf(relation.getGuild1Id()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.details.guild2", "&e工会2: {0} (ID: {1})", relation.getGuild2Name(), String.valueOf(relation.getGuild2Id()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.details.initiator", "&e发起人: {0}", relation.getInitiatorName())));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.details.created", "&e创建时间: {0}", formatDateTime(relation.getCreatedAt()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.details.title", "&6=== 关系详情 ===")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.details.type", "&e关系类型: {0}", getRelationTypeName(relation.getType()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.details.status", "&e状态: {0}", getRelationStatus(relation.getStatus()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.details.guild1", "&e工会1: {0} (ID: {1})", relation.getGuild1Name(), String.valueOf(relation.getGuild1Id()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.details.guild2", "&e工会2: {0} (ID: {1})", relation.getGuild2Name(), String.valueOf(relation.getGuild2Id()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.details.initiator", "&e发起人: {0}", relation.getInitiatorName())));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.details.created", "&e创建时间: {0}", formatDateTime(relation.getCreatedAt()))));
         if (relation.getUpdatedAt() != null) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.details.updated", "&e更新时间: {0}", formatDateTime(relation.getUpdatedAt()))));
+            player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.details.updated", "&e更新时间: {0}", formatDateTime(relation.getUpdatedAt()))));
         }
         if (relation.getExpiresAt() != null) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.details.expires", "&e过期时间: {0}", formatDateTime(relation.getExpiresAt()))));
+            player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.details.expires", "&e过期时间: {0}", formatDateTime(relation.getExpiresAt()))));
         }
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("relation-management.details.separator", "&6==================")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "relation-management.details.separator", "&6==================")));
     }
     
     private ItemStack createItem(Material material, String name, String... lore) {

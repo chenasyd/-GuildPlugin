@@ -44,8 +44,8 @@ public class CreateRelationGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return languageManager.getGuiColoredMessage(player, "create-relation.title",
-                ColorUtils.colorize("&6创建工会关系"));
+        return ColorUtils.colorize(languageManager.getMessage(player, "create-relation.title",
+                "&6创建工会关系"));
     }
     
     @Override
@@ -84,10 +84,10 @@ public class CreateRelationGUI implements GUI {
         if (clickedItem == null || !clickedItem.hasItemMeta()) return;
 
         String itemName = clickedItem.getItemMeta().getDisplayName();
-        String backText = languageManager.getGuiColoredMessage(player, "gui.back", "&7返回");
-        String confirmText = languageManager.getGuiColoredMessage(player, "create-relation.confirm-button", "&a确认创建");
-        String prevPageText = languageManager.getGuiColoredMessage(player, "gui.previous-page", "&c上一页");
-        String nextPageText = languageManager.getGuiColoredMessage(player, "gui.next-page", "&a下一页");
+        String backText = languageManager.getMessage(player, "gui.back", "&7返回");
+        String confirmText = languageManager.getMessage(player, "create-relation.confirm-button", "&a确认创建");
+        String prevPageText = languageManager.getMessage(player, "gui.previous-page", "&c上一页");
+        String nextPageText = languageManager.getMessage(player, "gui.next-page", "&a下一页");
 
         // 返回按钮
         if (itemName.contains(backText.substring(backText.length() - 2))) {
@@ -174,7 +174,7 @@ public class CreateRelationGUI implements GUI {
             String displayName = ColorUtils.colorize(color + type.getDisplayName(lang));
 
             List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7关系类型: " + color + type.getDisplayName(lang)));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.relation-type", "关系类型") + ": " + color + type.getDisplayName(lang)));
 
             // 添加关系类型描述
             String descKey = "relations.type." + type.name().toLowerCase() + ".description";
@@ -232,7 +232,7 @@ public class CreateRelationGUI implements GUI {
         // 确认创建按钮
         ItemStack confirmButton = createItem(
             Material.EMERALD,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-relation.confirm-button", "&a确认创建")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-relation.confirm-button", "&a确认创建")),
             ColorUtils.colorize(languageManager.getMessage(player, "create-relation.confirm-lore-1", "&7创建工会关系")),
             ColorUtils.colorize(languageManager.getMessage(player, "create-relation.confirm-lore-2", "&7需要先选择关系类型和目标工会"))
         );
@@ -249,7 +249,7 @@ public class CreateRelationGUI implements GUI {
 
         ItemStack selectionInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-relation.current-selection", "&e当前选择")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-relation.current-selection", "&e当前选择")),
             selectionLore.toArray(new String[0])
         );
         inventory.setItem(47, selectionInfo);
@@ -263,7 +263,7 @@ public class CreateRelationGUI implements GUI {
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.previous-page", "&c上一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.previous-page", "&c上一页")),
                 ColorUtils.colorize(languageManager.getMessage(player, "gui.view-previous", "&7查看上一页"))
             );
             inventory.setItem(18, previousPage);
@@ -274,7 +274,7 @@ public class CreateRelationGUI implements GUI {
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.next-page", "&a下一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.next-page", "&a下一页")),
                 ColorUtils.colorize(languageManager.getMessage(player, "gui.view-next", "&7查看下一页"))
             );
             inventory.setItem(26, nextPage);
@@ -283,7 +283,7 @@ public class CreateRelationGUI implements GUI {
         // 返回按钮
         ItemStack backButton = createItem(
             Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.back", "&7返回")),
+            ColorUtils.colorize(languageManager.getMessage(player, "gui.back", "&7返回")),
             ColorUtils.colorize(languageManager.getMessage(player, "create-relation.back-lore", "&7返回关系管理"))
         );
         inventory.setItem(49, backButton);

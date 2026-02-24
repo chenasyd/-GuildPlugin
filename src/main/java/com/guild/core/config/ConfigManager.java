@@ -35,7 +35,7 @@ public class ConfigManager {
         loadConfig("config.yml");
 
         // GUI配置文件（已废弃，现在使用多语言GUI配置）
-        // loadConfig("gui.yml");
+        // gui.yml已废弃，所有内容已迁移到messages.yml
 
         // 数据库配置文件
         loadConfig("database.yml");
@@ -74,17 +74,13 @@ public class ConfigManager {
     }
     
     /**
-     * 获取GUI配置文件（已废弃，请使用LanguageManager.getGuiMessage）
-     * @deprecated 请使用 {@code LanguageManager.getGuiMessage()} 方法
+     * 获取GUI配置文件（已废弃，请使用LanguageManager.getMessage）
+     * @deprecated 请使用 {@code LanguageManager.getMessage()} 方法
      */
     @Deprecated
     public FileConfiguration getGuiConfig() {
-        // 仍然支持旧的gui.yml文件以保持向后兼容
-        File guiFile = new File(plugin.getDataFolder(), "gui.yml");
-        if (guiFile.exists()) {
-            return YamlConfiguration.loadConfiguration(guiFile);
-        }
-        // 如果文件不存在，返回空的配置
+        // gui.yml已废弃，所有内容已迁移到messages.yml
+        // 直接返回空配置，不再加载gui.yml文件
         return new YamlConfiguration();
     }
     

@@ -38,8 +38,8 @@ public class GuildListManagementGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return languageManager.getGuiColoredMessage(player, "guild-list-management.title",
-                ColorUtils.colorize("&4工会列表管理"));
+        return ColorUtils.colorize(languageManager.getMessage(player, "guild-list-management-title",
+                "&4工会列表管理"));
     }
     
     @Override
@@ -97,7 +97,7 @@ public class GuildListManagementGUI implements GUI {
         // 上一页按钮
         if (currentPage > 0) {
             inventory.setItem(45, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.previous-page", "&a上一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.previous-page", "&a上一页")),
                 ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.page-info", "第 {current} 页", "{current}", String.valueOf(currentPage)))));
         }
 
@@ -108,7 +108,7 @@ public class GuildListManagementGUI implements GUI {
         // 下一页按钮
         if (currentPage < totalPages - 1) {
             inventory.setItem(53, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.next-page", "&a下一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "gui.next-page", "&a下一页")),
                 ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.page-info", "第 {current} 页", "{current}", String.valueOf(currentPage + 2)))));
         }
     }
@@ -116,11 +116,11 @@ public class GuildListManagementGUI implements GUI {
     private void setupActionButtons(Inventory inventory) {
         // 返回按钮
         inventory.setItem(46, createItem(Material.BARRIER,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.back", "&c返回"))));
+            ColorUtils.colorize(languageManager.getMessage(player, "gui.back", "&c返回"))));
 
         // 刷新按钮
         inventory.setItem(52, createItem(Material.EMERALD,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "gui.refresh", "&a刷新列表"))));
+            ColorUtils.colorize(languageManager.getMessage(player, "gui-refresh", "&a刷新列表"))));
     }
     
     private void fillBorder(Inventory inventory) {

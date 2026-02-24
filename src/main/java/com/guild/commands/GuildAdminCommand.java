@@ -669,6 +669,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         try {
             plugin.getConfigManager().reloadAllConfigs();
             plugin.getPermissionManager().reloadFromConfig();
+            plugin.getLanguageManager().reloadLanguages();
             String success = languageManager.getMessage("admin.reload.success", "&a配置已重新加载！");
             sender.sendMessage(ColorUtils.colorize(success));
         } catch (Exception e) {

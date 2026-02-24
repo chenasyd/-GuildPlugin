@@ -33,8 +33,8 @@ public class ConfirmLeaveGuildGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return languageManager.getGuiColoredMessage(player, "confirm-leave-guild.title",
-                ColorUtils.colorize("&c确认离开工会"));
+        return ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.title",
+                "&c确认离开工会"));
     }
     
     @Override
@@ -88,7 +88,7 @@ public class ConfirmLeaveGuildGUI implements GUI {
         String guildName = ColorUtils.stripColor(guild.getName());
         ItemStack info = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-leave-guild.info-title", "&c确认离开工会")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.info-title", "&c确认离开工会")),
             ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.guild", "&7工会: &e{guild}", "{guild}", guildName)),
             ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.confirm-question", "&7你确定要离开这个工会吗？")),
             ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.warning", "&c此操作不可撤销！"))
@@ -103,7 +103,7 @@ public class ConfirmLeaveGuildGUI implements GUI {
         // 确认离开按钮
         ItemStack confirm = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-leave-guild.confirm-button", "&c确认离开")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.confirm-button", "&c确认离开")),
             ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.confirm-lore", "&7点击确认离开工会"))
         );
         inventory.setItem(11, confirm);
@@ -111,7 +111,7 @@ public class ConfirmLeaveGuildGUI implements GUI {
         // 取消按钮
         ItemStack cancel = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "confirm-leave-guild.cancel-button", "&a取消")),
+            ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.cancel-button", "&a取消")),
             ColorUtils.colorize(languageManager.getMessage(player, "confirm-leave-guild.cancel-lore", "&7取消离开工会"))
         );
         inventory.setItem(15, cancel);

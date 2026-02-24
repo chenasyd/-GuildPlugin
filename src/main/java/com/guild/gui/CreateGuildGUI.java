@@ -47,7 +47,7 @@ public class CreateGuildGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return plugin.getLanguageManager().getGuiColoredMessage(player, "create-guild.title", "&6创建工会");
+        return ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "create-guild.title", "&6创建工会"));
     }
     
     @Override
@@ -113,29 +113,29 @@ public class CreateGuildGUI implements GUI {
         // 工会名称输入按钮
         ItemStack nameInput = createItem(
             Material.NAME_TAG,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.name-input.name", "&e工会名称")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.name-input.lore.1", "&7点击输入工会名称")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.name-input.lore.2", "&7长度: 3-20 字符"))
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-name-input-name", "&e工会名称")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-name-input-lore-1", "&7点击输入工会名称")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-name-input-lore-2", "&7长度: 3-20 字符"))
         );
         inventory.setItem(20, nameInput);
 
         // 工会标签输入按钮
         ItemStack tagInput = createItem(
             Material.OAK_SIGN,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.tag-input.name", "&e工会标签")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.tag-input.lore.1", "&7点击输入工会标签")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.tag-input.lore.2", "&7长度: 最多6字符")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.tag-input.lore.3", "&7可选"))
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-tag-input-name", "&e工会标签")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-tag-input-lore-1", "&7点击输入工会标签")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-tag-input-lore-2", "&7长度: 最多6字符")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-tag-input-lore-3", "&7可选"))
         );
         inventory.setItem(22, tagInput);
 
         // 工会描述输入按钮
         ItemStack descriptionInput = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.description-input.name", "&e工会描述")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.description-input.lore.1", "&7点击输入工会描述")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.description-input.lore.2", "&7长度: 最多100字符")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.description-input.lore.3", "&7可选"))
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-description-input-name", "&e工会描述")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-description-input-lore-1", "&7点击输入工会描述")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-description-input-lore-2", "&7长度: 最多100字符")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-description-input-lore-3", "&7可选"))
         );
         inventory.setItem(24, descriptionInput);
     }
@@ -149,14 +149,14 @@ public class CreateGuildGUI implements GUI {
         String costText = String.format("%.0f", creationCost);
 
         // 确认创建按钮
-        String confirmName = languageManager.getGuiColoredMessage(player, "create-guild.items.confirm.name", "&a确认创建");
-        String confirmLore1 = languageManager.getGuiColoredMessage(player, "create-guild.items.confirm.lore.1", "&7确认创建工会");
-        String confirmLore2 = languageManager.getGuiColoredMessage(player, "create-guild.items.confirm.lore.2", "&7费用: {cost} 金币");
-        String confirmLore3 = languageManager.getGuiColoredMessage(player, "create-guild.items.confirm.lore.3", "&7创建者: {player_name}");
+        String confirmName = languageManager.getMessage(player, "create-guild-confirm-name", "&a确认创建");
+        String confirmLore1 = languageManager.getMessage(player, "create-guild-confirm-lore-1", "&7确认创建工会");
+        String confirmLore2 = languageManager.getMessage(player, "create-guild-confirm-lore-2", "&7费用: {cost} 金币");
+        String confirmLore3 = languageManager.getMessage(player, "create-guild-confirm-lore-3", "&7创建者: {player_name}");
 
         // 替换变量
         confirmLore2 = confirmLore2.replace("{cost}", costText);
-        confirmLore3 = confirmLore3.replace("{player_name}", "当前玩家");
+        confirmLore3 = confirmLore3.replace("{player_name}", player.getName());
 
         ItemStack confirm = createItem(
             Material.EMERALD_BLOCK,
@@ -170,8 +170,8 @@ public class CreateGuildGUI implements GUI {
         // 取消按钮
         ItemStack cancel = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.cancel.name", "&c取消")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.items.cancel.lore.1", "&7取消创建工会"))
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-cancel-name", "&c取消")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-cancel-lore-1", "&7取消创建工会"))
         );
         inventory.setItem(41, cancel);
     }
@@ -185,7 +185,7 @@ public class CreateGuildGUI implements GUI {
             languageManager.getMessage(player, "gui.not-set", "未设置") : guildName;
         ItemStack currentName = createItem(
             Material.NAME_TAG,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.current-name", "&e当前工会名称")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-current-name", "&e当前工会名称")),
             ColorUtils.colorize("&7" + nameDisplay)
         );
         inventory.setItem(11, currentName);
@@ -195,7 +195,7 @@ public class CreateGuildGUI implements GUI {
             languageManager.getMessage(player, "gui.not-set", "未设置") : "[" + guildTag + "]";
         ItemStack currentTag = createItem(
             Material.OAK_SIGN,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.current-tag", "&e当前工会标签")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-current-tag", "&e当前工会标签")),
             ColorUtils.colorize("&7" + tagDisplay)
         );
         inventory.setItem(13, currentTag);
@@ -205,7 +205,7 @@ public class CreateGuildGUI implements GUI {
             languageManager.getMessage(player, "gui.not-set", "未设置") : guildDescription;
         ItemStack currentDescription = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "create-guild.current-description", "&e当前工会描述")),
+            ColorUtils.colorize(languageManager.getMessage(player, "create-guild-current-description", "&e当前工会描述")),
             ColorUtils.colorize("&7" + descriptionDisplay)
         );
         inventory.setItem(15, currentDescription);

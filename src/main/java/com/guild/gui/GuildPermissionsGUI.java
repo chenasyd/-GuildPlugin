@@ -33,8 +33,8 @@ public class GuildPermissionsGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return languageManager.getGuiColoredMessage(player, "guild-permissions.title",
-                ColorUtils.colorize("&6工会权限设置"));
+        return ColorUtils.colorize(languageManager.getMessage(player, "guild-permissions.title",
+                "&6工会权限设置"));
     }
     
     @Override

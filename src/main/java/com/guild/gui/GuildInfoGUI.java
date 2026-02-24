@@ -35,7 +35,7 @@ public class GuildInfoGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return plugin.getLanguageManager().getGuiColoredMessage(player, "guild-info.title", "&6工会信息");
+        return ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "guild-info.title", "&6工会信息"));
     }
     
     @Override

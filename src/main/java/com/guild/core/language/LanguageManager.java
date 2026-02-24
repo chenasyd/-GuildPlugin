@@ -54,10 +54,7 @@ public class LanguageManager {
         loadLanguageFile(LANG_ZH);
         loadLanguageFile(LANG_PL);
 
-        // 加载所有GUI语言文件
-        loadGuiLanguageFile(LANG_EN);
-        loadGuiLanguageFile(LANG_ZH);
-        loadGuiLanguageFile(LANG_PL);
+        // gui.yml已废弃，所有内容已迁移到messages.yml
 
         logger.info("语言系统已加载，默认语言: " + defaultLanguage);
     }
@@ -80,20 +77,13 @@ public class LanguageManager {
     }
 
     /**
-     * 加载指定GUI语言文件
+     * 加载指定GUI语言文件（已废弃，内容已合并到messages.yml）
+     * @deprecated GUI配置已合并到messages.yml，不再需要单独加载
      */
+    @Deprecated
     private void loadGuiLanguageFile(String lang) {
-        String fileName = "gui_" + lang + ".yml";
-        File guiFile = new File(plugin.getDataFolder(), fileName);
-
-        // 如果GUI语言文件不存在，从jar中复制默认配置
-        if (!guiFile.exists()) {
-            plugin.saveResource(fileName, false);
-        }
-
-        FileConfiguration config = YamlConfiguration.loadConfiguration(guiFile);
-        guiConfigs.put(lang, config);
-        logger.info("加载GUI语言文件: " + fileName);
+        // gui.yml已废弃，所有内容已迁移到messages.yml
+        // 此方法保留以保持向后兼容性
     }
     
     /**

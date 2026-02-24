@@ -35,8 +35,8 @@ public class GuildTagInputGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return languageManager.getGuiColoredMessage(player, "guild-tag-input.title",
-                ColorUtils.colorize("&6修改工会标签"));
+        return ColorUtils.colorize(languageManager.getMessage(player, "guild-tag-input.title",
+                "&6修改工会标签"));
     }
     
     @Override
@@ -94,7 +94,7 @@ public class GuildTagInputGUI implements GUI {
             languageManager.getMessage(player, "gui.no-tag", "无标签") : "[" + currentTag + "]";
         ItemStack currentTagItem = createItem(
             Material.OAK_SIGN,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-tag-input.current-tag", "&e当前标签")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-tag-input.current-tag", "&e当前标签")),
             ColorUtils.colorize("&7" + tagText)
         );
         inventory.setItem(11, currentTagItem);
@@ -107,7 +107,7 @@ public class GuildTagInputGUI implements GUI {
         // 确认按钮
         ItemStack confirm = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-tag-input.confirm-button", "&a确认修改")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-tag-input.confirm-button", "&a确认修改")),
             ColorUtils.colorize(languageManager.getMessage(player, "guild-tag-input.confirm-lore", "&7确认修改工会标签"))
         );
         inventory.setItem(15, confirm);
@@ -115,7 +115,7 @@ public class GuildTagInputGUI implements GUI {
         // 取消按钮
         ItemStack cancel = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-tag-input.cancel-button", "&c取消")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-tag-input.cancel-button", "&c取消")),
             ColorUtils.colorize(languageManager.getMessage(player, "guild-tag-input.cancel-lore", "&7取消修改"))
         );
         inventory.setItem(13, cancel);

@@ -48,7 +48,7 @@ public class GuildListGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return plugin.getLanguageManager().getGuiColoredMessage(player, "guild-list.title", "&6工会列表");
+        return ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "guild-list-title", "&6工会列表"));
     }
     
     @Override
@@ -112,26 +112,26 @@ public class GuildListGUI implements GUI {
             languageManager.getMessage(player, "gui.no-search", "无") : searchQuery;
         ItemStack search = createItem(
             Material.COMPASS,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-list.items.search.name", "&e搜索工会")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-list.items.search.lore.1", "&7搜索特定工会")),
-            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list.current-search", "当前搜索: {query}", "{query}", searchText))
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-list-search-name", "&e搜索工会")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-list-search-lore-1", "&7搜索特定工会")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list-current-search", "当前搜索: {query}", "{query}", searchText))
         );
         inventory.setItem(45, search);
 
         // 筛选按钮
         ItemStack filter = createItem(
             Material.HOPPER,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-list.items.filter.name", "&e筛选")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-list.items.filter.lore.1", "&7按条件筛选工会")),
-            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list.current-filter", "当前筛选: {filter}", "{filter}", getFilterDisplayName()))
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-list-filter-name", "&e筛选")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-list-filter-lore-1", "&7按条件筛选工会")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list-current-filter", "当前筛选: {filter}", "{filter}", getFilterDisplayName()))
         );
         inventory.setItem(47, filter);
 
         // 返回按钮
         ItemStack back = createItem(
             Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-list.items.back.name", "&7返回")),
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-list.items.back.lore.1", "&7返回主菜单"))
+            ColorUtils.colorize(languageManager.getMessage(player, "gui.back", "&7返回")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.back-to-main-menu", "返回主菜单"))
         );
         inventory.setItem(49, back);
     }
@@ -267,8 +267,8 @@ public class GuildListGUI implements GUI {
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-list.items.previous-page.name", "&c上一页")),
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-list.items.previous-page.lore.1", "&7查看上一页"))
+                ColorUtils.colorize(languageManager.getMessage(player, "guild-list.items.previous-page.name", "&c上一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "guild-list.items.previous-page.lore.1", "&7查看上一页"))
             );
             inventory.setItem(18, previousPage);
         }
@@ -277,8 +277,8 @@ public class GuildListGUI implements GUI {
         if (currentPage < totalPages) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-list.items.next-page.name", "&a下一页")),
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(player, "guild-list.items.next-page.lore.1", "&7查看下一页"))
+                ColorUtils.colorize(languageManager.getMessage(player, "guild-list.items.next-page.name", "&a下一页")),
+                ColorUtils.colorize(languageManager.getMessage(player, "guild-list.items.next-page.lore.1", "&7查看下一页"))
             );
             inventory.setItem(26, nextPage);
         }

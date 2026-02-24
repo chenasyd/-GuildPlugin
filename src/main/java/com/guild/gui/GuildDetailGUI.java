@@ -40,8 +40,8 @@ public class GuildDetailGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return languageManager.getGuiColoredMessage(viewer, "guild-detail.title",
-                ColorUtils.colorize("&6工会详情 - " + guild.getName()), "{guild_name}", guild.getName());
+        String title = languageManager.getMessage(viewer, "guild-detail.title", "&6工会详情 - {name}");
+        return ColorUtils.colorize(title.replace("{name}", guild.getName()));
     }
     
     @Override
@@ -86,7 +86,7 @@ public class GuildDetailGUI implements GUI {
         economyLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.current-members", "当前成员数") + ": &e" + members.size()));
 
         inventory.setItem(19, createItem(Material.GOLD_INGOT,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(viewer, "guild-detail.economy-info", "&e经济信息")),
+            ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.economy-info", "&e经济信息")),
             economyLore.toArray(new String[0])));
 
         // 工会会长 - 放在第二行
@@ -95,7 +95,7 @@ public class GuildDetailGUI implements GUI {
         leaderLore.add(ColorUtils.colorize("&7UUID: &7" + guild.getLeaderUuid()));
 
         inventory.setItem(21, createItem(Material.GOLDEN_HELMET,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(viewer, "guild-detail.guild-leader", "&6工会会长")),
+            ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.guild-leader", "&6工会会长")),
             leaderLore.toArray(new String[0])));
 
         // 工会描述 - 放在第二行
@@ -108,14 +108,14 @@ public class GuildDetailGUI implements GUI {
         }
 
         inventory.setItem(23, createItem(Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(viewer, "guild-detail.guild-description", "&e工会描述")),
+            ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.guild-description", "&e工会描述")),
             descLore.toArray(new String[0])));
     }
     
     private void setupMembersList(Inventory inventory) {
         // 成员列表标题
         inventory.setItem(27, createItem(Material.PLAYER_HEAD,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(viewer, "guild-detail.guild-members", "&a工会成员")),
+            ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.guild-members", "&a工会成员")),
             ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.total-members", "共 {count} 名成员", "{count}", String.valueOf(members.size())))));
 
         // 显示前4个成员（更简洁）
@@ -136,7 +136,7 @@ public class GuildDetailGUI implements GUI {
         // 更多成员压缩单格显示
         if (members.size() > 4) {
             inventory.setItem(32, createItem(Material.PAPER,
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(viewer, "guild-detail.more-members", "&e更多成员")),
+                ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.more-members", "&e更多成员")),
                 ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.more-members-lore", "还有 {count} 名成员未显示", "{count}", String.valueOf(members.size() - 4)))));
         } else {
             inventory.setItem(32, null);
@@ -146,24 +146,24 @@ public class GuildDetailGUI implements GUI {
     private void setupActionButtons(Inventory inventory) {
         // 返回
         inventory.setItem(45, createItem(Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(viewer, "gui.back", "&c返回"))));
+            ColorUtils.colorize(languageManager.getMessage(viewer, "gui.back", "&c返回"))));
 
         // 管理操作（仅保留常用：冻结/删除）
         if (viewer.hasPermission("guild.admin")) {
             String freezeText = guild.isFrozen() ?
-                languageManager.getGuiColoredMessage(viewer, "guild-detail.unfreeze-guild", "&a解冻工会") :
-                languageManager.getGuiColoredMessage(viewer, "guild-detail.freeze-guild", "&c冻结工会");
+                languageManager.getMessage(viewer, "guild-detail.unfreeze-guild", "&a解冻工会") :
+                languageManager.getMessage(viewer, "guild-detail.freeze-guild", "&c冻结工会");
             inventory.setItem(47, createItem(Material.ICE,
                 ColorUtils.colorize(freezeText),
                 ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.toggle-freeze", "&7点击切换冻结状态"))));
             inventory.setItem(49, createItem(Material.TNT,
-                ColorUtils.colorize(languageManager.getGuiColoredMessage(viewer, "guild-detail.delete-guild", "&4删除工会")),
+                ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.delete-guild", "&4删除工会")),
                 ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.click-delete", "&7点击删除工会"))));
         }
 
         // 刷新
         inventory.setItem(53, createItem(Material.EMERALD,
-            ColorUtils.colorize(languageManager.getGuiColoredMessage(viewer, "gui.refresh", "&a刷新信息"))));
+            ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.refresh", "&a刷新信息"))));
     }
     
     private void fillBorder(Inventory inventory) {

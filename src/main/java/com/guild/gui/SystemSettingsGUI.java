@@ -31,8 +31,7 @@ public class SystemSettingsGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return languageManager.getGuiColoredMessage(player, "system-settings.title",
-                ColorUtils.colorize("&4系统设置"));
+        return ColorUtils.colorize(languageManager.getMessage(player, "system-settings-title", "&4系统设置"));
     }
     
     @Override
@@ -60,12 +59,12 @@ public class SystemSettingsGUI implements GUI {
         
         ItemStack debugToggle = createItem(
             debugMaterial,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.debug-toggle", "&e详细后台信息显示")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.current-status", "&7当前状态: {0}", debugStatus)),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.debug-toggle.lore1", "&7启用后会在控制台显示")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.debug-toggle.lore2", "&7详细的调试信息")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-debug-toggle", "&e详细后台信息显示")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-current-status", "&7当前状态: {0}", debugStatus)),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-debug-toggle-lore-1", "&7启用后会在控制台显示")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-debug-toggle-lore-2", "&7详细的调试信息")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-toggle", "&e点击切换状态"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
         inventory.setItem(19, debugToggle);
         
@@ -76,12 +75,12 @@ public class SystemSettingsGUI implements GUI {
         
         ItemStack autoSaveToggle = createItem(
             autoSaveMaterial,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.auto-save", "&e自动保存数据")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.current-status", "&7当前状态: {0}", autoSaveStatus)),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.auto-save.lore1", "&7定期自动保存工会数据")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.auto-save.lore2", "&7防止数据丢失")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-auto-save", "&e自动保存数据")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-current-status", "&7当前状态: {0}", autoSaveStatus)),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-auto-save-lore-1", "&7定期自动保存工会数据")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-auto-save-lore-2", "&7防止数据丢失")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-toggle", "&e点击切换状态"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
         inventory.setItem(21, autoSaveToggle);
         
@@ -92,12 +91,12 @@ public class SystemSettingsGUI implements GUI {
         
         ItemStack economyToggle = createItem(
             economyMaterial,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.economy", "&e经济系统")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.current-status", "&7当前状态: {0}", economyStatus)),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.economy.lore1", "&7工会经济功能开关")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.economy.lore2", "&7包括存款、取款、转账等")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-economy", "&e经济系统")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-current-status", "&7当前状态: {0}", economyStatus)),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-economy-lore-1", "&7工会经济功能开关")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-economy-lore-2", "&7包括存款、取款、转账等")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-toggle", "&e点击切换状态"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
         inventory.setItem(23, economyToggle);
         
@@ -108,12 +107,12 @@ public class SystemSettingsGUI implements GUI {
         
         ItemStack relationToggle = createItem(
             relationMaterial,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.relations", "&e工会关系系统")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.current-status", "&7当前状态: {0}", relationStatus)),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.relations.lore1", "&7工会关系功能开关")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.relations.lore2", "&7包括盟友、敌对、开战等")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-relations", "&e工会关系系统")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-current-status", "&7当前状态: {0}", relationStatus)),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-relations-lore-1", "&7工会关系功能开关")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-relations-lore-2", "&7包括盟友、敌对、开战等")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-toggle", "&e点击切换状态"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
         inventory.setItem(25, relationToggle);
         
@@ -124,12 +123,12 @@ public class SystemSettingsGUI implements GUI {
         
         ItemStack levelToggle = createItem(
             levelMaterial,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.level-system", "&e工会等级系统")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.current-status", "&7当前状态: {0}", levelStatus)),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.level-system.lore1", "&7工会等级功能开关")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.level-system.lore2", "&7包括自动升级、成员限制等")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-level-system", "&e工会等级系统")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-current-status", "&7当前状态: {0}", levelStatus)),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-level-system-lore-1", "&7工会等级功能开关")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-level-system-lore-2", "&7包括自动升级、成员限制等")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-toggle", "&e点击切换状态"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
         inventory.setItem(28, levelToggle);
 
@@ -140,12 +139,12 @@ public class SystemSettingsGUI implements GUI {
 
         ItemStack applicationToggle = createItem(
             applicationMaterial,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.applications", "&e申请加入系统")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.current-status", "&7当前状态: {0}", applicationStatus)),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.applications.lore1", "&7申请加入工会功能开关")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.applications.lore2", "&7玩家需要申请才能加入工会")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-applications", "&e申请加入系统")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-current-status", "&7当前状态: {0}", applicationStatus)),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-applications-lore-1", "&7申请加入工会功能开关")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-applications-lore-2", "&7玩家需要申请才能加入工会")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-toggle", "&e点击切换状态"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
         inventory.setItem(30, applicationToggle);
 
@@ -156,12 +155,12 @@ public class SystemSettingsGUI implements GUI {
 
         ItemStack inviteToggle = createItem(
             inviteMaterial,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.invites", "&e邀请系统")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.current-status", "&7当前状态: {0}", inviteStatus)),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.invites.lore1", "&7工会邀请功能开关")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.invites.lore2", "&7会长可以邀请玩家加入工会")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-invites", "&e邀请系统")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-current-status", "&7当前状态: {0}", inviteStatus)),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-invites-lore-1", "&7工会邀请功能开关")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-invites-lore-2", "&7会长可以邀请玩家加入工会")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-toggle", "&e点击切换状态"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
         inventory.setItem(32, inviteToggle);
 
@@ -172,12 +171,12 @@ public class SystemSettingsGUI implements GUI {
 
         ItemStack homeToggle = createItem(
             homeMaterial,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.guild-home", "&e工会家系统")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.current-status", "&7当前状态: {0}", homeStatus)),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.guild-home.lore1", "&7工会家功能开关")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.guild-home.lore2", "&7包括设置和传送到工会家")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-guild-home", "&e工会家系统")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-current-status", "&7当前状态: {0}", homeStatus)),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-guild-home-lore-1", "&7工会家功能开关")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-guild-home-lore-2", "&7包括设置和传送到工会家")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-toggle", "&e点击切换状态"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
         inventory.setItem(34, homeToggle);
     }
@@ -186,52 +185,52 @@ public class SystemSettingsGUI implements GUI {
         // 重载配置按钮
         ItemStack reload = createItem(
             Material.EMERALD,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.reload", "&a重载配置")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.reload.lore1", "&7重新加载所有配置文件")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.reload.lore2", "&7包括messages.yml、gui.yml等")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-reload", "&a重载配置")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-reload-lore-1", "&7重新加载所有配置文件")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-reload-lore-2", "&7包括messages.yml等")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-reload", "&e点击重载配置"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-reload", "&e点击重载配置"))
         );
         inventory.setItem(37, reload);
 
         // 数据库维护按钮
         ItemStack database = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.database", "&b数据库维护")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.database.lore1", "&7数据库维护和优化")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.database.lore2", "&7清理过期数据、优化性能")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-database", "&b数据库维护")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-database-lore-1", "&7数据库维护和优化")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-database-lore-2", "&7清理过期数据、优化性能")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-maintain", "&e点击进行维护"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-maintain", "&e点击进行维护"))
         );
         inventory.setItem(39, database);
 
         // 备份数据按钮
         ItemStack backup = createItem(
             Material.CHEST,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.backup", "&6备份数据")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.backup.lore1", "&7备份工会数据")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.backup.lore2", "&7创建数据备份文件")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-backup", "&6备份数据")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-backup-lore-1", "&7备份工会数据")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-backup-lore-2", "&7创建数据备份文件")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-backup", "&e点击备份数据"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-backup", "&e点击备份数据"))
         );
         inventory.setItem(41, backup);
 
         // 返回按钮
         ItemStack back = createItem(
             Material.ARROW,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.back", "&c返回")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.back-lore", "&7返回管理菜单"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings.back", "&c返回")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings.back-lore", "&7返回管理菜单"))
         );
         inventory.setItem(49, back);
 
         // 保存设置按钮
         ItemStack save = createItem(
             Material.GREEN_WOOL,
-            ColorUtils.colorize(languageManager.getMessage("system-settings.save", "&a保存设置")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.save.lore1", "&7保存当前所有设置")),
-            ColorUtils.colorize(languageManager.getMessage("system-settings.save.lore2", "&7应用到配置文件")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-save", "&a保存设置")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-save-lore-1", "&7保存当前所有设置")),
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-save-lore-2", "&7应用到配置文件")),
             "",
-            ColorUtils.colorize(languageManager.getMessage("system-settings.click-to-save", "&e点击保存设置"))
+            ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-save", "&e点击保存设置"))
         );
         inventory.setItem(51, save);
     }
@@ -302,8 +301,8 @@ public class SystemSettingsGUI implements GUI {
         plugin.getConfigManager().getMainConfig().set("debug.enabled", newValue);
         plugin.getConfigManager().saveMainConfig();
         
-        String message = newValue ? languageManager.getMessage("system-settings.debug-enabled", "&a详细后台信息显示已启用！")
-                                   : languageManager.getMessage("system-settings.debug-disabled", "&c详细后台信息显示已禁用！");
+        String message = newValue ? languageManager.getMessage(player, "system-settings.debug-enabled", "&a详细后台信息显示已启用！")
+                                   : languageManager.getMessage(player, "system-settings.debug-disabled", "&c详细后台信息显示已禁用！");
         player.sendMessage(ColorUtils.colorize(message));
         refresh(player);
     }
@@ -314,8 +313,8 @@ public class SystemSettingsGUI implements GUI {
         plugin.getConfigManager().getMainConfig().set("auto-save.enabled", newValue);
         plugin.getConfigManager().saveMainConfig();
         
-        String message = newValue ? languageManager.getMessage("system-settings.auto-save-enabled", "&a自动保存数据已启用！")
-                                   : languageManager.getMessage("system-settings.auto-save-disabled", "&c自动保存数据已禁用！");
+        String message = newValue ? languageManager.getMessage(player, "system-settings.auto-save-enabled", "&a自动保存数据已启用！")
+                                   : languageManager.getMessage(player, "system-settings.auto-save-disabled", "&c自动保存数据已禁用！");
         player.sendMessage(ColorUtils.colorize(message));
         refresh(player);
     }
@@ -326,8 +325,8 @@ public class SystemSettingsGUI implements GUI {
         plugin.getConfigManager().getMainConfig().set("economy.enabled", newValue);
         plugin.getConfigManager().saveMainConfig();
 
-        String message = newValue ? languageManager.getMessage("system-settings.economy-enabled", "&a经济系统已启用！")
-                                   : languageManager.getMessage("system-settings.economy-disabled", "&c经济系统已禁用！");
+        String message = newValue ? languageManager.getMessage(player, "system-settings.economy-enabled", "&a经济系统已启用！")
+                                   : languageManager.getMessage(player, "system-settings.economy-disabled", "&c经济系统已禁用！");
         player.sendMessage(ColorUtils.colorize(message));
         refresh(player);
     }
@@ -338,8 +337,8 @@ public class SystemSettingsGUI implements GUI {
         plugin.getConfigManager().getMainConfig().set("relations.enabled", newValue);
         plugin.getConfigManager().saveMainConfig();
 
-        String message = newValue ? languageManager.getMessage("system-settings.relations-enabled", "&a工会关系系统已启用！")
-                                   : languageManager.getMessage("system-settings.relations-disabled", "&c工会关系系统已禁用！");
+        String message = newValue ? languageManager.getMessage(player, "system-settings.relations-enabled", "&a工会关系系统已启用！")
+                                   : languageManager.getMessage(player, "system-settings.relations-disabled", "&c工会关系系统已禁用！");
         player.sendMessage(ColorUtils.colorize(message));
         refresh(player);
     }
@@ -350,8 +349,8 @@ public class SystemSettingsGUI implements GUI {
         plugin.getConfigManager().getMainConfig().set("level-system.enabled", newValue);
         plugin.getConfigManager().saveMainConfig();
 
-        String message = newValue ? languageManager.getMessage("system-settings.level-system-enabled", "&a工会等级系统已启用！")
-                                   : languageManager.getMessage("system-settings.level-system-disabled", "&c工会等级系统已禁用！");
+        String message = newValue ? languageManager.getMessage(player, "system-settings.level-system-enabled", "&a工会等级系统已启用！")
+                                   : languageManager.getMessage(player, "system-settings.level-system-disabled", "&c工会等级系统已禁用！");
         player.sendMessage(ColorUtils.colorize(message));
         refresh(player);
     }
@@ -362,8 +361,8 @@ public class SystemSettingsGUI implements GUI {
         plugin.getConfigManager().getMainConfig().set("applications.enabled", newValue);
         plugin.getConfigManager().saveMainConfig();
 
-        String message = newValue ? languageManager.getMessage("system-settings.applications-enabled", "&a申请加入系统已启用！")
-                                   : languageManager.getMessage("system-settings.applications-disabled", "&c申请加入系统已禁用！");
+        String message = newValue ? languageManager.getMessage(player, "system-settings.applications-enabled", "&a申请加入系统已启用！")
+                                   : languageManager.getMessage(player, "system-settings.applications-disabled", "&c申请加入系统已禁用！");
         player.sendMessage(ColorUtils.colorize(message));
         refresh(player);
     }
@@ -374,8 +373,8 @@ public class SystemSettingsGUI implements GUI {
         plugin.getConfigManager().getMainConfig().set("invites.enabled", newValue);
         plugin.getConfigManager().saveMainConfig();
 
-        String message = newValue ? languageManager.getMessage("system-settings.invites-enabled", "&a邀请系统已启用！")
-                                   : languageManager.getMessage("system-settings.invites-disabled", "&c邀请系统已禁用！");
+        String message = newValue ? languageManager.getMessage(player, "system-settings.invites-enabled", "&a邀请系统已启用！")
+                                   : languageManager.getMessage(player, "system-settings.invites-disabled", "&c邀请系统已禁用！");
         player.sendMessage(ColorUtils.colorize(message));
         refresh(player);
     }
@@ -386,8 +385,8 @@ public class SystemSettingsGUI implements GUI {
         plugin.getConfigManager().getMainConfig().set("guild-home.enabled", newValue);
         plugin.getConfigManager().saveMainConfig();
 
-        String message = newValue ? languageManager.getMessage("system-settings.guild-home-enabled", "&a工会家系统已启用！")
-                                   : languageManager.getMessage("system-settings.guild-home-disabled", "&c工会家系统已禁用！");
+        String message = newValue ? languageManager.getMessage(player, "system-settings.guild-home-enabled", "&a工会家系统已启用！")
+                                   : languageManager.getMessage(player, "system-settings.guild-home-disabled", "&c工会家系统已禁用！");
         player.sendMessage(ColorUtils.colorize(message));
         refresh(player);
     }
@@ -395,20 +394,21 @@ public class SystemSettingsGUI implements GUI {
     private void reloadConfigs(Player player) {
         try {
             plugin.getConfigManager().reloadAllConfigs();
-            player.sendMessage(ColorUtils.colorize(languageManager.getMessage("system-settings.reload-success", "&a配置重载成功！")));
+            plugin.getLanguageManager().reloadLanguages();
+            player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "system-settings.reload-success", "&a配置重载成功！")));
         } catch (Exception e) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getMessage("system-settings.reload-failed", "&c配置重载失败：{0}", e.getMessage())));
+            player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "system-settings.reload-failed", "&c配置重载失败：{0}", e.getMessage())));
         }
     }
 
     private void maintainDatabase(Player player) {
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("system-settings.database-dev", "&e数据库维护功能开发中...")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "system-settings.database-dev", "&e数据库维护功能开发中...")));
         // TODO: 实现数据库维护功能
         // 包括清理过期数据、优化性能等
     }
 
     private void backupData(Player player) {
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage("system-settings.backup-dev", "&e数据备份功能开发中...")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "system-settings.backup-dev", "&e数据备份功能开发中...")));
         // TODO: 实现数据备份功能
         // 创建数据备份文件
     }
@@ -416,9 +416,9 @@ public class SystemSettingsGUI implements GUI {
     private void saveSettings(Player player) {
         try {
             plugin.getConfigManager().saveMainConfig();
-            player.sendMessage(ColorUtils.colorize(languageManager.getMessage("system-settings.save-success", "&a设置保存成功！")));
+            player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "system-settings.save-success", "&a设置保存成功！")));
         } catch (Exception e) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getMessage("system-settings.save-failed", "&c设置保存失败：{0}", e.getMessage())));
+            player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "system-settings.save-failed", "&c设置保存失败：{0}", e.getMessage())));
         }
     }
     

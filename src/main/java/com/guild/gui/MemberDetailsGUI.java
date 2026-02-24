@@ -42,7 +42,7 @@ public class MemberDetailsGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return plugin.getLanguageManager().getGuiColoredMessage(viewer, "member-details.title", "&6成员详情")
+        return ColorUtils.colorize(plugin.getLanguageManager().getMessage(viewer, "member-details.title", "&6成员详情"))
             .replace("{member_name}", member.getPlayerName());
     }
     
