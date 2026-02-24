@@ -5,8 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 
-import java.lang.reflect.Method;
-
 /**
  * 兼容性调度器 - 支持Spigot和Folia
  */
@@ -16,6 +14,11 @@ public class CompatibleScheduler {
      * 在主线程执行任务
      */
     public static void runTask(Plugin plugin, Runnable task) {
+        // 检查插件是否已启用
+        if (plugin != null && !plugin.isEnabled()) {
+            return;
+        }
+
         if (ServerUtils.isFolia()) {
             try {
                 // 使用反射调用Folia的全局区域调度器
@@ -73,6 +76,11 @@ public class CompatibleScheduler {
      * 延迟执行任务
      */
     public static void runTaskLater(Plugin plugin, Runnable task, long delay) {
+        // 检查插件是否已启用
+        if (plugin != null && !plugin.isEnabled()) {
+            return;
+        }
+
         if (ServerUtils.isFolia()) {
             try {
                 // 使用反射调用Folia的全局区域调度器
@@ -130,6 +138,11 @@ public class CompatibleScheduler {
      * 重复执行任务
      */
     public static void runTaskTimer(Plugin plugin, Runnable task, long delay, long period) {
+        // 检查插件是否已启用
+        if (plugin != null && !plugin.isEnabled()) {
+            return;
+        }
+
         if (ServerUtils.isFolia()) {
             try {
                 // 使用反射调用Folia的全局区域调度器

@@ -219,10 +219,16 @@ public class GUIManager implements Listener {
     public void closeAllGUIs() {
         // 确保在主线程中执行
         if (!CompatibleScheduler.isPrimaryThread()) {
+            // 如果插件已禁用，直接返回，不尝试调度任务
+            if (!plugin.isEnabled()) {
+                logger.warning("插件已禁用，跳过关闭GUI的任务调度");
+                openGuis.clear();
+                return;
+            }
             CompatibleScheduler.runTask(plugin, this::closeAllGUIs);
             return;
         }
-        
+
         try {
             for (UUID playerUuid : openGuis.keySet()) {
                 Player player = Bukkit.getPlayer(playerUuid);

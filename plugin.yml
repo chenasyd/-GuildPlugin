@@ -1,5 +1,5 @@
 name: GuildPlugin
-version: 1.3.2
+version: 1.3.3
 main: com.guild.GuildPlugin
 api-version: '1.21'
 authors: [chenasyd]
