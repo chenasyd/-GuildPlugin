@@ -1033,3 +1033,101 @@ module.command.info.description: "&7描述: &f{0}"
 module.command.info.depends: "&7依赖: &f{0}"
 module.command.info.soft-depends: "&7可选依赖: &f{0}"
 
+# ==================== 公告模块消息 (module.announcement.*) ====================
+
+# 模块生命周期
+module.announcement.loaded: "&a[公告模块] 公告系统已启用"
+module.announcement.unloaded: "&e[公告模块] 公告系统已关闭"
+module.announcement.data-loaded: "&a[公告模块] 已从磁盘加载 {0} 条公告数据"
+module.announcement.data-saved: "&a[公告模块] 已保存 {0} 个工会的公告数据到磁盘"
+module.announcement.data-load-error: "&c[公告模块] 加载公告数据失败: {0}"
+module.announcement.data-save-error: "&c[公告模块] 保存公告数据失败: {0}"
+
+# 模块按钮（GuildSettingsGUI 注入）
+module.announcement.button-name: "插件公告"
+module.announcement.button-desc: "管理和发布工会公告"
+
+# 错误消息
+module.announcement.error.no-guild: "&c无法获取工会信息"
+module.announcement.error.no-permission: "&c你没有管理公告的权限"
+
+# 列表GUI
+module.announcement.list.title: "&e&l工会公告管理"
+module.announcement.list.back: "&c返回"
+module.announcement.list.back-hint: "&7点击返回工会设置"
+module.announcement.list.author: "&7作者: &f{0}"
+module.announcement.list.time: "&7时间: &f{0}"
+module.announcement.list.click-edit: "&e左键编辑"
+module.announcement.list.click-delete: "&c右键删除"
+module.announcement.list.create: "&a&l+ 发布新公告"
+module.announcement.list.create-hint: "&7点击创建新的工会公告"
+
+# 创建/更新操作结果
+module.announce.create.success: "&a公告发布成功: {0}"
+module.announcement.create.max-reached: "&c已达到最大公告数量限制({0}条)"
+module.announcement.update.success: "&a公告更新成功: {0}"
+module.announcement.update.failed: "&c公告更新失败"
+module.announcement.delete.success: "&a公告已删除: {0}"
+module.announcement.delete.failed: "&c删除失败"
+
+# 编辑GUI
+module.announcement.edit.title-create: "&e&l发布新公告"
+module.announcement.edit.title-edit: "&e&l编辑公告"
+module.announcement.edit.field-title: "&6标题"
+module.announcement.edit.field-title-hint: "&7点击修改公告标题"
+module.announcement.edit.field-content: "&6内容"
+module.announcement.edit.field-content-hint: "&7点击修改公告内容"
+module.announcement.edit.preview: "&6预览"
+module.announcement.edit.no-preview: "&7&o预览将在此处显示..."
+module.announcement.edit.empty: "&7未设置"
+module.announcement.edit.save: "&a&l保存公告"
+module.announcement.edit.save-hint: "&7左键保存当前内容"
+module.announcement.edit.cancel: "&c&l取消"
+module.announcement.edit.cancel-hint: "&7放弃修改并返回"
+module.announcement.edit.back: "&c返回列表"
+module.announcement.edit.back-hint: "&7返回公告列表"
+module.announcement.edit.input-title-prompt: "&e请在聊天中输入公告标题（输入 &ccancel &e取消）："
+module.announcement.edit.input-content-prompt: "&e请在聊天中输入公告内容（支持多行，输入 &csave &e保存，输入 &ccancel &e取消）："
+module.announcement.edit.input-cancelled: "&e已取消输入"
+module.announcement.edit.title-set: "&a标题已设置为: {0}"
+module.announcement.edit.content-set: "&a内容已保存"
+module.announcement.edit.content-updated: "&a内容已更新"
+module.announcement.edit.cancel-msg: "&e已取消编辑"
+module.announcement.edit.error-empty-title: "&c公告标题不能为空！请先填写标题。"
+module.announcement.edit.error-empty-content: "&c公告内容不能为空！请先填写内容。"
+
+# GuildInfoGUI 注入按钮
+module.announcement.info-button-name: "公告"
+module.announcement.info-button-desc: "查看工会公告"
+module.announcement.info-button-hint: "&7点击查看全部公告"
+
+# 公告浏览GUI (AnnouncementViewGUI)
+module.announcement.view.title: "&6&l工会公告"
+module.announcement.view.empty: "&7暂无公告"
+module.announcement.view.empty-hint: "&7工会尚未发布任何公告"
+module.announcement.view.back: "&c返回"
+module.announcement.view.back-hint: "&7点击返回工会信息"
+module.announcement.view.back-to-list: "&c返回列表"
+module.announcement.view.back-to-list-hint: "&7点击返回公告列表"
+module.announcement.view.item-author: "&7作者: &f{0}"
+module.announcement.view.item-time: "&7时间: &f{0}"
+module.announcement.view.item-click: "&e点击查看详情"
+module.announcement.view.detail-title: "&6&l公告详情"
+module.announcement.view.detail-author: "&7作者: &f{0}"
+module.announcement.view.detail-time: "&7时间: &f{0}"
+module.announcement.view.detail-updated: "&7更新: &f{0}"
+module.announcement.view.detail-content: "&6公告内容"
+module.announcement.view.detail-content-label: "&f公告内容:"
+module.announcement.view.detail-summary: "&e公告摘要"
+
+# GUI 翻页补充（多页布局）
+gui.page-info: "第{0}页/共{1}页"
+gui.previous-page: "&e&l上一页"
+gui.previous-page-hint: "&7点击返回上一页"
+gui.next-page: "&e&l下一页"
+gui.next-page-hint: "&7点击查看更多功能"
+gui.no-previous: "&7上一页"
+gui.already-first-page: "&7已经是第一页"
+gui.no-next: "&7下一页"
+gui.already-last-page: "&7已经是最后一页"
+

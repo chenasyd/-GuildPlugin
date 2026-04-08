@@ -1,0 +1,12 @@
+id: announcement
+name: "插件公告"
+version: 1.0.0
+author: "GuildPlugin Team"
+description: "工会插件公告系统 - 允许工会管理员发布和管理工会公告"
+type: gui
+api-version: 1.0.0
+main: com.guild.module.example.announcement.AnnouncementModule
+depends: []
+soft-depends: []
+permissions:
+  - guild.admin.announcement.manage

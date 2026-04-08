@@ -183,6 +183,62 @@ public class LanguageManager {
     }
     
     /**
+     * 获取本地化消息并替换索引占位符 {0}, {1}, {2} ...
+     *
+     * @param lang         语言代码
+     * @param path         消息键
+     * @param defaultValue 默认值
+     * @param args         按顺序替换 {0}, {1}, {2} ...（显式数组）
+     * @return 替换后的消息
+     */
+    public String getIndexedMessage(String lang, String path, String defaultValue, String[] args) {
+        String message = getMessage(lang, path, defaultValue);
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                message = message.replace("{" + i + "}", args[i] != null ? args[i] : "");
+            }
+        }
+        return message;
+    }
+
+    /**
+     * 获取默认语言的索引占位符消息
+     *
+     * @param path         消息键
+     * @param defaultValue 默认值
+     * @param args         按顺序替换 {0}, {1}, {2} ...
+     * @return 替换后的消息
+     */
+    public String getIndexedMessage(String path, String defaultValue, String... args) {
+        String message = getMessage(defaultLanguage, path, defaultValue);
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                message = message.replace("{" + i + "}", args[i] != null ? args[i] : "");
+            }
+        }
+        return message;
+    }
+
+    /**
+     * 获取玩家的索引占位符消息
+     *
+     * @param player       目标玩家
+     * @param path         消息键
+     * @param defaultValue 默认值
+     * @param args         按顺序替换 {0}, {1}, {2} ...
+     * @return 替换后的消息
+     */
+    public String getIndexedMessage(Player player, String path, String defaultValue, String... args) {
+        String message = getMessage(getPlayerLanguage(player), path, defaultValue);
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                message = message.replace("{" + i + "}", args[i] != null ? args[i] : "");
+            }
+        }
+        return message;
+    }
+
+    /**
      * 获取默认语言
      */
     public String getDefaultLanguage() {

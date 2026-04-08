@@ -6,7 +6,7 @@
 
     <groupId>com.guild</groupId>
     <artifactId>guild-plugin</artifactId>
-    <version>1.3.3</version>
+    <version>1.3.4</version>
     <packaging>jar</packaging>
 
     <name>Guild Plugin</name>
@@ -135,6 +135,13 @@
                                         <exclude>META-INF/MANIFEST.MF</exclude>
                                     </excludes>
                                 </filter>
+                                <!-- 排除模块示例类，避免与独立模块 JAR 冲突 -->
+                                <filter>
+                                    <artifact>${project.groupId}:${project.artifactId}</artifact>
+                                    <excludes>
+                                        <exclude>com/guild/module/example/**</exclude>
+                                    </excludes>
+                                </filter>
                             </filters>
                             <relocations>
                                 <relocation>
@@ -152,6 +159,38 @@
             </plugin>
         </plugins>
     </build>
-    
+
+    <profiles>
+        <profile>
+            <id>build-announcement-module</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/announcement-module.xml</descriptor>
+                            </descriptors>
+                            <finalName>announcement</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <attach>false</attach>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-announcement-module</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

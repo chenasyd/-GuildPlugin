@@ -87,26 +87,17 @@ public class ModuleContext {
     }
 
     /**
-     * 格式化消息
+     * 格式化消息（使用索引占位符 {0}, {1}, {2} ...）
      */
     private String formatMessage(String key, Object[] args) {
-        if (args == null || args.length == 0) {
-            return plugin.getLanguageManager().getMessage(key, "");
+        String[] strArgs = null;
+        if (args != null && args.length > 0) {
+            strArgs = new String[args.length];
+            for (int i = 0; i < args.length; i++) {
+                strArgs[i] = args[i] != null ? args[i].toString() : "";
+            }
         }
-        // 逐个展开为 varargs
-        String a0 = args.length > 0 ? (args[0] != null ? args[0].toString() : "null") : "";
-        String a1 = args.length > 1 ? (args[1] != null ? args[1].toString() : "null") : "";
-        String a2 = args.length > 2 ? (args[2] != null ? args[2].toString() : "null") : "";
-        String a3 = args.length > 3 ? (args[3] != null ? args[3].toString() : "null") : "";
-        String a4 = args.length > 4 ? (args[4] != null ? args[4].toString() : "null") : "";
-
-        switch (args.length) {
-            case 1: return plugin.getLanguageManager().getMessage(key, "", a0);
-            case 2: return plugin.getLanguageManager().getMessage(key, "", a0, a1);
-            case 3: return plugin.getLanguageManager().getMessage(key, "", a0, a1, a2);
-            case 4: return plugin.getLanguageManager().getMessage(key, "", a0, a1, a2, a3);
-            default: return plugin.getLanguageManager().getMessage(key, "", a0, a1, a2, a3, a4);
-        }
+        return plugin.getLanguageManager().getIndexedMessage(key, "", strArgs);
     }
 
     // ==================== 线程调度 ====================
