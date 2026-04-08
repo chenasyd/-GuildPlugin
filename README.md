@@ -1,4 +1,4 @@
-# Guild Plugin - Feature-Complete Minecraft Guild System(需要官方中文翻译请往下滑)
+# Guild Plugin - Feature-Complete Minecraft Guild System
 
 Guild Plugin is a comprehensive Minecraft server plugin that provides a complete guild/clan system for your server. With this plugin, players can create and manage their own guilds, invite members, establish inter-guild relationships, and enjoy various guild features.
 
@@ -95,8 +95,6 @@ Guild Plugin is a comprehensive Minecraft server plugin that provides a complete
 3. Edit configuration files as needed
 4. Restart server to apply changes
 
-
-
 ## 📋 中文目录
 
 - [功能特性](#功能特性)
@@ -170,9 +168,6 @@ Guild Plugin is a comprehensive Minecraft server plugin that provides a complete
    nano plugins/GuildPlugin/messages_zh.yml  # 中文
    nano plugins/GuildPlugin/messages_en.yml  # 英文
    nano plugins/GuildPlugin/messages_pl.yml  # 波兰语
-   nano plugins/GuildPlugin/gui_zh.yml  # 中文GUI
-   nano plugins/GuildPlugin/gui_en.yml  # 英文GUI
-   nano plugins/GuildPlugin/gui_pl.yml  # 波兰语GUI
    nano plugins/GuildPlugin/database.yml
    ```
 
@@ -236,23 +231,6 @@ general:
 create:
   success: "&a工会 {name} 创建成功！"
   insufficient-funds: "&c您的余额不足！创建工会需要 {cost} 金币。"
-```
-
-### GUI配置文件 (gui.yml)
-
-```yaml
-# 主界面配置
-main-menu:
-  title: "&6工会系统"
-  size: 54
-  items:
-    create-guild:
-      slot: 4
-      material: EMERALD_BLOCK
-      name: "&a创建工会"
-      lore:
-        - "&7创建新的工会"
-        - "&7需要消耗金币"
 ```
 
 ### 数据库配置文件 (database.yml)
@@ -491,7 +469,6 @@ CREATE TABLE guild_logs (
 );
 ```
 
-
 # GuildPlugin - 完整功能的 Minecraft 公会系统插件
 
 GuildPlugin 是一个为 Minecraft 服务器打造的高性能公会系统插件，支持多语言，涵盖公会管理、经济、关系、等级、GUI等丰富功能，适配多种主流经济与权限插件，完全免费开源！
@@ -538,7 +515,7 @@ GuildPlugin 是一个为 Minecraft 服务器打造的高性能公会系统插件
 ### 安装步骤
 1. 下载最新版插件 jar 文件，放入服务器 `/plugins` 目录
 2. 启动服务器，插件会自动生成配置文件
-3. 按需修改配置文件（config.yml/messages.yml/gui.yml/database.yml）
+3. 按需修改配置文件（config.yml/messages.yml/database.yml）
 4. 重启服务器即可生效
 
 ### Maven 构建（开发者）
@@ -655,15 +632,25 @@ SQL 示例见 plugins/database.sql。
 
 ## 更新日志
 
-### v1.3.1 (最新版本)
--  完整多语言支持系统（中文、英文、波兰语）
--  GUI 槽位检测优化，解决多语言环境下按钮失效问题
--  添加 guild_logs 数据表，完整记录公会活动日志
--  改进 GuildRelationsGUI 多语言支持
--  改进 GuildLogsGUI 多语言支持
--  改进 RelationManagementGUI 多语言支持
--  修复 GUI 返回按钮在非中文环境下失效的 bug
--  新增 78 个多语言翻译条目
+### v1.3.4 (最新版本)
+- 增加了新的API和模块加载器框架
+
+### v1.3.3
+- 修复了Folia关闭时异步线程的错误处理
+
+### v1.3.2
+- 迁移gui.yml至messages.yml文件
+- 完全翻译的语言有中文、英文、波兰语
+
+### v1.3.1
+- 完整多语言支持系统（中文、英文、波兰语）
+- GUI 槽位检测优化，解决多语言环境下按钮失效问题
+- 添加 guild_logs 数据表，完整记录公会活动日志
+- 改进 GuildRelationsGUI 多语言支持
+- 改进 GuildLogsGUI 多语言支持
+- 改进 RelationManagementGUI 多语言支持
+- 修复 GUI 返回按钮在非中文环境下失效的 bug
+- 新增 78 个多语言翻译条目
 
 ### v1.2.3
 - 基础功能发布
@@ -693,7 +680,7 @@ SQL 示例见 plugins/database.sql。
 - [ ] 公会活动系统
 - [ ] 公会仓库
 - [ ] 公会公告系统
-- [ ] 插件扩展市场（创意工坊）
+- [ ] 插件扩展市场（创意工坊） (正在开发)
 - [ ] 快速获取资源更新
 - [ ] 报错快捷反馈
 - [ ] 报错提示代码位置或具体问题
@@ -762,7 +749,6 @@ GuildPlugin is a comprehensive and high-performance Minecraft server plugin that
 ### Configuration Files
 - `config.yml` - Main plugin configuration
 - `messages_zh.yml` / `messages_en.yml` / `messages_pl.yml` - Language files
-- `gui_zh.yml` / `gui_en.yml` / `gui_pl.yml` - GUI text files
 - `database.yml` - Database settings
 
 ## Commands
@@ -830,15 +816,25 @@ GuildPlugin is a comprehensive and high-performance Minecraft server plugin that
 
 ## Changelog
 
-### v1.3.1 (Latest)
--  Full multi-language support system (Chinese, English, Polish)
--  GUI slot detection optimization, fixing button issues in non-Chinese languages
--  Added guild_logs table for complete guild activity tracking
--  Improved GuildRelationsGUI multi-language support
--  Improved GuildLogsGUI multi-language support
--  Improved RelationManagementGUI multi-language support
--  Fixed GUI return button failure in non-Chinese environments
--  Added 78 new translation entries
+### v1.3.4 (Latest)
+- Added new API and module loader framework
+
+### v1.3.3
+- Fixed error handling for asynchronous threads when Folia shuts down
+
+### v1.3.2
+- Migrated gui.yml to messages.yml file
+- Fully translated languages: Chinese, English, Polish
+
+### v1.3.1
+- Full multi-language support system (Chinese, English, Polish)
+- GUI slot detection optimization, fixing button issues in non-Chinese languages
+- Added guild_logs table for complete guild activity tracking
+- Improved GuildRelationsGUI multi-language support
+- Improved GuildLogsGUI multi-language support
+- Improved RelationManagementGUI multi-language support
+- Fixed GUI return button failure in non-Chinese environments
+- Added 78 new translation entries
 
 ### v1.2.3
 - Initial functional release
@@ -868,7 +864,7 @@ GuildPlugin is a comprehensive and high-performance Minecraft server plugin that
 - [ ] Guild event system
 - [ ] Guild storage
 - [ ] Guild announcement system
-- [ ] Plugin extension marketplace
+- [ ] Plugin extension marketplace (In development)
 - [ ] Quick resource updates
 - [ ] Quick error feedback
 - [ ] Error reporting with code locations
