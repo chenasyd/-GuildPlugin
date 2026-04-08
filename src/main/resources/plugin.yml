@@ -24,6 +24,10 @@ commands:
     usage: /guildadmin help
     aliases: [ga, 工会管理]
     permission: guild.admin
+  guildmodule:
+    description: 工会模块管理命令 | Guild Module Manager Command
+    usage: /guildmodule <list|load|unload|reload|info>
+    permission: guild.admin.module
 
 permissions:
   guild.use:
@@ -71,3 +75,6 @@ permissions:
   guild.transfer:
     description: 允许向其他工会转账
     default: true
+  guild.admin.module:
+    description: 允许管理扩展模块（加载/卸载/重载）
+    default: op

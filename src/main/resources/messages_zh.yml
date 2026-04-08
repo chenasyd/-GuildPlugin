@@ -969,3 +969,67 @@ demote-member.title: "&6降级成员 - 第{page}页"
 gui.search-dev: "&e搜索功能正在开发中..."
 gui.filter-dev: "&e筛选功能正在开发中..."
 
+# ==================== 模块系统消息 ====================
+
+# 系统日志（控制台输出）
+module.system.scanning: "&a[模块系统] 正在扫描扩展模块目录..."
+module.system.loading: "&a[模块系统] 正在加载模块: {0}"
+module.system.loaded-successfully: "&a[模块系统] 模块加载成功: {0} v{1} by {2}"
+module.system.unloading: "&e[模块系统] 正在卸载模块: {0}"
+module.system.unloaded-successfully: "&a[模块系统] 模块卸载成功: {0}"
+module.system.reloading: "&e[模块系统] 正在重载模块: {0}"
+module.system.reloaded-successfully: "&a[模块系统] 模块重载成功: {0}"
+module.system.no-modules: "&7[模块系统] 未发现扩展模块"
+module.system.load-complete: "&a[模块系统] 模块加载完成，成功: {0}，失败: {1}"
+module.system.all-unloaded: "&a[模块系统] 所有扩展模块已卸载"
+
+# 错误信息
+module.error.already-loaded: "&c模块已加载: {0}"
+module.error.not-loaded: "&c模块未加载或不存在: {0}"
+module.error.file-not-found: "&c找不到模块文件: {0}"
+module.error.enable-failed: "&c模块启用失败 [{0}]: {1}"
+module.error.unload-failed: "&c模块卸载失败 [{0}]: {1}"
+module.error.has-dependents: "&c无法卸载 [{0}]，以下模块依赖它: {1}"
+module.error.unload-failed-during-shutdown: "关闭时卸载模块失败: {0}"
+
+# 警告信息
+module.warning.soft-depend-missing: "&6[模块警告] 软依赖 [{0}] 未满足，模块 [{1}] 可能部分功能不可用"
+module.warning.no-api-version: "&6[模块警告] 模块 [{0}] 未声明 API 版本要求"
+
+# 命令相关
+module.command.usage-header: "&e&l====== &6&l模块管理命令 &e&l======"
+module.command.usage-list: "&7/guild module list  &f- 列出所有已加载模块"
+module.command.usage-load: "&7/guild module load <jar>  &f- 加载指定模块"
+module.command.usage-unload: "&7/guild module unload <id>  &f- 卸载指定模块"
+module.command.usage-reload: "&7/guild module reload <id>  &f- 重载指定模块"
+module.command.usage-info: "&7/guild module info <id>  &f- 查看模块详细信息"
+
+module.command.list.title: "已加载的扩展模块"
+module.command.list.empty: "&7当前没有已加载的扩展模块"
+module.command.list.entry: "{0}{1} &8| &f{2} &8(&7v{3}&8) &8[{4}]"
+module.command.list.footer: "&7共 {0} 个模块"
+
+module.command.load.usage: "&c用法: /guildmodule load <jar文件名>"
+module.command.load.success: "&a模块加载成功: {0}"
+module.command.load.failed: "&c模块加载失败 [{0}]: {1}"
+
+module.command.unload.usage: "&c用法: /guildmodule unload <模块ID>"
+module.command.unload.success: "&a模块卸载成功: {0}"
+module.command.unload.failed: "&c模块卸载失败: {0}"
+
+module.command.reload.usage: "&c用法: /guildmodule reload <模块ID>"
+module.command.reload.success: "&a模块重载成功: {0}"
+module.command.reload.failed: "&c模块重载失败: {0}"
+
+module.command.info.usage: "&c用法: /guildmodule info <模块ID>"
+module.command.info.header: "模块详细信息"
+module.command.info.id: "&7ID: &f{0}"
+module.command.info.name: "&7名称: &f{0}"
+module.command.info.version: "&7版本: &f{0}"
+module.command.info.author: "&7作者: &f{0}"
+module.command.info.type: "&7类型: &f{0}"
+module.command.info.state: "&7状态: &f{0}"
+module.command.info.description: "&7描述: &f{0}"
+module.command.info.depends: "&7依赖: &f{0}"
+module.command.info.soft-depends: "&7可选依赖: &f{0}"
+

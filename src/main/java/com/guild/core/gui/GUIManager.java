@@ -34,13 +34,22 @@ public class GUIManager implements Listener {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
     }
+
+    /**
+     * 检查是否启用了详细调试日志
+     */
+    private boolean isDebugEnabled() {
+        return plugin.getConfigManager().getMainConfig().getBoolean("debug.enabled", false);
+    }
     
     /**
      * 初始化GUI管理器
      */
     public void initialize() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        logger.info("GUI管理器初始化完成");
+        if (isDebugEnabled()) {
+            logger.info("GUI管理器初始化完成");
+        }
     }
     
     /**
@@ -69,7 +78,9 @@ public class GUIManager implements Listener {
             // 记录打开的GUI
             openGuis.put(player.getUniqueId(), gui);
             
-            logger.info("玩家 " + player.getName() + " 打开了GUI: " + gui.getClass().getSimpleName());
+            if (isDebugEnabled()) {
+                logger.info("玩家 " + player.getName() + " 打开了GUI: " + gui.getClass().getSimpleName());
+            }
         } catch (Exception e) {
             logger.severe("打开GUI时发生错误: " + e.getMessage());
             e.printStackTrace();
@@ -94,7 +105,9 @@ public class GUIManager implements Listener {
                     player.closeInventory();
                 }
                 
-                logger.info("玩家 " + player.getName() + " 关闭了GUI: " + gui.getClass().getSimpleName());
+                if (isDebugEnabled()) {
+                    logger.info("玩家 " + player.getName() + " 关闭了GUI: " + gui.getClass().getSimpleName());
+                }
             }
         } catch (Exception e) {
             logger.severe("关闭GUI时发生错误: " + e.getMessage());
@@ -148,7 +161,9 @@ public class GUIManager implements Listener {
             ItemStack clickedItem = event.getCurrentItem();
             
             // 添加调试日志
-            logger.info("玩家 " + player.getName() + " 点击了GUI: " + gui.getClass().getSimpleName() + " 槽位: " + slot);
+            if (isDebugEnabled()) {
+                logger.info("玩家 " + player.getName() + " 点击了GUI: " + gui.getClass().getSimpleName() + " 槽位: " + slot);
+            }
             
             // 处理所有点击，包括空物品的点击
             gui.onClick(player, slot, clickedItem, event.getClick());
@@ -178,7 +193,9 @@ public class GUIManager implements Listener {
                 }
                 
                 gui.onClose(player);
-                logger.info("玩家 " + player.getName() + " 关闭了GUI: " + gui.getClass().getSimpleName());
+                if (isDebugEnabled()) {
+                    logger.info("玩家 " + player.getName() + " 关闭了GUI: " + gui.getClass().getSimpleName());
+                }
             }
         } catch (Exception e) {
             logger.severe("处理GUI关闭时发生错误: " + e.getMessage());
@@ -205,7 +222,9 @@ public class GUIManager implements Listener {
                 // 重新打开GUI
                 openGUI(player, gui);
                 
-                logger.info("玩家 " + player.getName() + " 的GUI已刷新: " + gui.getClass().getSimpleName());
+                if (isDebugEnabled()) {
+                    logger.info("玩家 " + player.getName() + " 的GUI已刷新: " + gui.getClass().getSimpleName());
+                }
             }
         } catch (Exception e) {
             logger.severe("刷新GUI时发生错误: " + e.getMessage());
@@ -237,7 +256,9 @@ public class GUIManager implements Listener {
                 }
             }
             openGuis.clear();
-            logger.info("已关闭所有GUI");
+            if (isDebugEnabled()) {
+                logger.info("已关闭所有GUI");
+            }
         } catch (Exception e) {
             logger.severe("关闭所有GUI时发生错误: " + e.getMessage());
             e.printStackTrace();
@@ -263,7 +284,9 @@ public class GUIManager implements Listener {
         
         try {
             inputModes.put(player.getUniqueId(), inputHandler);
-            logger.info("玩家 " + player.getName() + " 进入输入模式");
+            if (isDebugEnabled()) {
+                logger.info("玩家 " + player.getName() + " 进入输入模式");
+            }
         } catch (Exception e) {
             logger.severe("设置输入模式时发生错误: " + e.getMessage());
             e.printStackTrace();
@@ -292,7 +315,9 @@ public class GUIManager implements Listener {
                     nameInputGUI.handleInputComplete(player, input);
                     return true;
                 });
-                logger.info("玩家 " + player.getName() + " 进入工会名称输入模式");
+                if (isDebugEnabled()) {
+                    logger.info("玩家 " + player.getName() + " 进入工会名称输入模式");
+                }
             } else {
                 logger.warning("未知的输入模式: " + mode);
             }
@@ -314,7 +339,9 @@ public class GUIManager implements Listener {
         
         try {
             inputModes.remove(player.getUniqueId());
-            logger.info("玩家 " + player.getName() + " 退出输入模式");
+            if (isDebugEnabled()) {
+                logger.info("玩家 " + player.getName() + " 退出输入模式");
+            }
         } catch (Exception e) {
             logger.severe("清除输入模式时发生错误: " + e.getMessage());
             e.printStackTrace();

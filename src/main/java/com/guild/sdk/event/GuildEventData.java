@@ -1,0 +1,20 @@
+package com.guild.sdk.event;
+
+/**
+ * 通用事件数据 - 工会事件
+ */
+public class GuildEventData {
+    private final int guildId;
+    private final String guildName;
+    private final String guildLeaderName;
+
+    public GuildEventData(int guildId, String guildName, String guildLeaderName) {
+        this.guildId = guildId;
+        this.guildName = guildName;
+        this.guildLeaderName = guildLeaderName;
+    }
+
+    public int getGuildId() { return guildId; }
+    public String getGuildName() { return guildName; }
+    public String getGuildLeaderName() { return guildLeaderName; }
+}

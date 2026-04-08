@@ -11,9 +11,11 @@ import com.guild.core.economy.EconomyManager;
 import com.guild.core.language.LanguageManager;
 import com.guild.commands.GuildCommand;
 import com.guild.commands.GuildAdminCommand;
+import com.guild.commands.GuildModuleCommand;
 import com.guild.listeners.PlayerListener;
 import com.guild.listeners.GuildListener;
 import com.guild.services.GuildService;
+import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.ServerUtils;
 import com.guild.core.utils.TestUtils;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,6 +35,7 @@ public class GuildPlugin extends JavaPlugin {
     private EconomyManager economyManager;
     private LanguageManager languageManager;
     private GuildService guildService;
+    private ModuleManager moduleManager;
     
     @Override
     public void onEnable() {
@@ -94,6 +97,10 @@ public class GuildPlugin extends JavaPlugin {
             guildService = new GuildService(this);
             serviceContainer.register(GuildService.class, guildService);
             
+            // 初始化模块系统（在所有核心服务就绪后）
+            moduleManager = new ModuleManager(this);
+            serviceContainer.register(ModuleManager.class, moduleManager);
+            
             // 设置PlaceholderManager的GuildService引用
             placeholderManager.setGuildService(guildService);
             
@@ -105,6 +112,9 @@ public class GuildPlugin extends JavaPlugin {
             
             // 启动服务
             startServices();
+            
+            // 加载所有扩展模块（在核心服务全部就绪后）
+            moduleManager.loadAllModules();
             
             logger.info("工会插件启动成功！");
             logger.info("兼容模式: " + (ServerUtils.isFolia() ? "Folia" : "Spigot"));
@@ -132,6 +142,11 @@ public class GuildPlugin extends JavaPlugin {
                 serviceContainer.shutdown();
             }
             
+            // 卸载所有扩展模块
+            if (moduleManager != null) {
+                moduleManager.unloadAllModules();
+            }
+            
             logger.info("工会插件已关闭");
             
         } catch (Exception e) {
@@ -143,11 +158,14 @@ public class GuildPlugin extends JavaPlugin {
     private void registerCommands() {
         GuildCommand guildCommand = new GuildCommand(this);
         GuildAdminCommand guildAdminCommand = new GuildAdminCommand(this);
+        GuildModuleCommand guildModuleCommand = new GuildModuleCommand(this);
         
         getCommand("guild").setExecutor(guildCommand);
         getCommand("guild").setTabCompleter(guildCommand);
         getCommand("guildadmin").setExecutor(guildAdminCommand);
         getCommand("guildadmin").setTabCompleter(guildAdminCommand);
+        getCommand("guildmodule").setExecutor(guildModuleCommand);
+        getCommand("guildmodule").setTabCompleter(guildModuleCommand);
     }
     
     private void registerListeners() {
@@ -208,5 +226,9 @@ public class GuildPlugin extends JavaPlugin {
 
     public GuildService getGuildService() {
         return guildService;
+    }
+    
+    public ModuleManager getModuleManager() {
+        return moduleManager;
     }
 }

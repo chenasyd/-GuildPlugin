@@ -2407,16 +2407,19 @@ public class GuildService {
         log.setDetails(rs.getString("details"));
         
         String createdAtStr = rs.getString("created_at");
-        if (createdAtStr != null) {
+        if (createdAtStr != null && !createdAtStr.isEmpty()) {
             try {
-                if (plugin.getDatabaseManager().getDatabaseType() == DatabaseManager.DatabaseType.SQLITE) {
-                    log.setCreatedAt(LocalDateTime.parse(createdAtStr, com.guild.core.time.TimeProvider.FULL_FORMATTER));
-                } else {
-                    log.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                log.setCreatedAt(LocalDateTime.parse(createdAtStr, com.guild.core.time.TimeProvider.FULL_FORMATTER));
+            } catch (Exception e1) {
+                try {
+                    log.setCreatedAt(LocalDateTime.parse(createdAtStr.replace(" ", "T")));
+                } catch (Exception e2) {
+                    logger.warning("解析日志创建时间失败: " + createdAtStr);
+                    log.setCreatedAt(com.guild.core.time.TimeProvider.nowLocalDateTime());
                 }
-            } catch (Exception e) {
-                logger.warning("解析日志创建时间时发生错误: " + e.getMessage());
             }
+        } else {
+            log.setCreatedAt(com.guild.core.time.TimeProvider.nowLocalDateTime());
         }
         
         return log;
