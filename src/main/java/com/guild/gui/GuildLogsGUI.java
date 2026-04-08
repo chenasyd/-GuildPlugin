@@ -166,7 +166,7 @@ public class GuildLogsGUI implements GUI {
         
         List<String> lore = new java.util.ArrayList<>();
         lore.add(ColorUtils.colorize("&7操作者: &f" + log.getPlayerName()));
-        lore.add(ColorUtils.colorize("&7时间: &f" + log.getSimpleTime()));
+        lore.add(ColorUtils.colorize("&7时间: &f" + log.getSimpleTime(languageManager.getPlayerLanguage(player))));
         lore.add(ColorUtils.colorize("&7描述: &f" + log.getDescription()));
         
         if (log.getDetails() != null && !log.getDetails().isEmpty()) {
@@ -349,7 +349,7 @@ public class GuildLogsGUI implements GUI {
         player.sendMessage(header);
         player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.type", "类型") + ": &f" + log.getLogType().getDisplayName()));
         player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.operator", "操作者") + ": &f" + log.getPlayerName()));
-        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.time", "时间") + ": &f" + log.getSimpleTime()));
+        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.time", "时间") + ": &f" + log.getSimpleTime(languageManager.getPlayerLanguage(player))));
         player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.description", "描述") + ": &f" + log.getDescription()));
         if (log.getDetails() != null && !log.getDetails().isEmpty()) {
             player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.details", "详情") + ": &f" + log.getDetails()));

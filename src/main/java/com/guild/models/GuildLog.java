@@ -228,14 +228,17 @@ public class GuildLog {
         if (createdAt == null) {
             return getLogTimeMessage(lang, "unknown", "Unknown");
         }
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = com.guild.core.time.TimeProvider.nowLocalDateTime();
         java.time.Duration duration = java.time.Duration.between(createdAt, now);
 
-        long days = duration.toDays();
-        long hours = duration.toHours() % 24;
-        long minutes = duration.toMinutes() % 60;
+        long totalMinutes = duration.toMinutes();
+        long days = totalMinutes / (24 * 60);
+        long hours = (totalMinutes % (24 * 60)) / 60;
+        long minutes = totalMinutes % 60;
 
-        if (days > 0) {
+        if (totalMinutes < 1 && duration.getSeconds() >= 0) {
+            return getLogTimeMessage(lang, "just-now", "Just now");
+        } else if (days > 0) {
             return getLogTimeMessage(lang, "days-ago", "{0} days ago", String.valueOf(days));
         } else if (hours > 0) {
             return getLogTimeMessage(lang, "hours-ago", "{0} hours ago", String.valueOf(hours));
@@ -259,6 +262,10 @@ public class GuildLog {
      */
     private String getLogTimeMessage(String lang, String key, String defaultValue, String... args) {
         LanguageManager languageManager = GuildPlugin.getInstance().getLanguageManager();
-        return languageManager.getMessage(lang, "log.time." + key, defaultValue, args);
+        if (args.length > 0) {
+            // LanguageManager.getMessage 需要成对传参: 占位符名 + 值
+            return languageManager.getMessage(lang, "log.time." + key, defaultValue, "{0}", args[0]);
+        }
+        return languageManager.getMessage(lang, "log.time." + key, defaultValue);
     }
 }
