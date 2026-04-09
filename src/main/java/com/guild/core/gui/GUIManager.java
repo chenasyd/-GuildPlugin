@@ -11,6 +11,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -28,7 +30,8 @@ public class GUIManager implements Listener {
     private final Logger logger;
     private final Map<UUID, GUI> openGuis = new HashMap<>();
     private final Map<UUID, Function<String, Boolean>> inputModes = new HashMap<>();
-    private final Map<UUID, Long> lastClickTime = new HashMap<>(); // 防止快速点击
+    private final Map<UUID, Long> lastClickTime = new HashMap<>();
+    private final Map<UUID, Deque<GUI>> navigationStacks = new HashMap<>();
     
     public GUIManager(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -231,7 +234,46 @@ public class GUIManager implements Listener {
             e.printStackTrace();
         }
     }
-    
+
+    // ==================== GUI 导航栈 ====================
+
+    /**
+     * 打开 GUI 并将当前 GUI 压入导航栈
+     */
+    public void pushAndOpen(Player player, GUI newGui) {
+        GUI current = openGuis.get(player.getUniqueId());
+        if (current != null) {
+            getNavStack(player).push(current);
+        }
+        openGUI(player, newGui);
+    }
+
+    /**
+     * 弹出导航栈顶部并打开
+     * @return 是否成功导航回上一页
+     */
+    public boolean popAndOpen(Player player) {
+        Deque<GUI> stack = navigationStacks.remove(player.getUniqueId());
+        if (stack == null || stack.isEmpty()) return false;
+        GUI previous = stack.pop();
+        if (!stack.isEmpty()) {
+            navigationStacks.put(player.getUniqueId(), stack);
+        }
+        openGUI(player, previous);
+        return true;
+    }
+
+    private Deque<GUI> getNavStack(Player player) {
+        return navigationStacks.computeIfAbsent(player.getUniqueId(), k -> new ArrayDeque<>());
+    }
+
+    /**
+     * 清除玩家的导航栈
+     */
+    public void clearNavigation(Player player) {
+        navigationStacks.remove(player.getUniqueId());
+    }
+
     /**
      * 关闭所有GUI
      */

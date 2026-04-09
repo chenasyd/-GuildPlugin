@@ -1131,3 +1131,33 @@ gui.already-first-page: "&7已经是第一页"
 gui.no-next: "&7下一页"
 gui.already-last-page: "&7已经是最后一页"
 
+# ==================== 成员贡献排名模块 (member-rank) ====================
+
+# 模块生命周期
+module.member-rank.loaded: "&a[排名模块] 成员贡献排名系统已启用"
+module.member-rank.unloaded: "&e[排名模块] 成员贡献排名系统已关闭"
+
+# 按钮名称与描述
+module.member-rank.button-name: "贡献排名"
+module.member-rank.button-desc: "管理成员贡献值和排名"
+module.member-rank.info-button-name: "贡献排行榜"
+module.member-rank.info-button-desc: "查看工会成员贡献排名"
+module.member-rank.info-button-hint: "&7点击查看排行榜"
+
+# 错误消息
+module.member-rank.error.no-guild: "&c无法获取工会信息"
+
+# 排名 GUI
+module.member-rank.gui.title: "&6&l成员贡献排名"
+module.member-rank.gui.empty: "&7暂无排名数据"
+module.member-rank.gui.empty-hint: "&7暂无成员贡献记录"
+module.member-rank.gui.back: "&c返回"
+module.member-rank.gui.back-hint: "&7点击返回上一页"
+module.member-rank.gui.contribution: "&7贡献值: &e{0}"
+module.member-rank.gui.last-active: "&7最后活跃: &f{0}"
+module.member-rank.gui.manage-hint: "&8左键+10 | 右键-10 | Shift+左键+100 | Shift+右键-100"
+module.member-rank.gui.add-success: "&a已为 {0} 增加 10 点贡献值"
+module.member-rank.gui.reduce-success: "&c已减少 {0} 10 点贡献值"
+module.member-rank.gui.add-bulk-success: "&a已为 {0} 增加 100 点贡献值"
+module.member-rank.gui.reduce-bulk-success: "&c已减少 {0} 100 点贡献值"
+

@@ -121,7 +121,7 @@ public class AnnouncementModule implements GuildModule {
             return;
         }
 
-        context.getGuiManager().openGUI(player,
+        context.openGUI(player,
                 new AnnouncementListGUI(this, guild, player));
     }
 
@@ -135,19 +135,19 @@ public class AnnouncementModule implements GuildModule {
             return;
         }
 
-        context.getGuiManager().openGUI(player,
+        context.openGUI(player,
                 new AnnouncementViewGUI(this, guild));
     }
 
     /** 打开编辑公告界面 */
     public void openEditGUI(Player player, Guild guild, String announcementId) {
-        context.getGuiManager().openGUI(player,
+        context.openGUI(player,
                 new AnnouncementEditGUI(this, guild, announcementId, player));
     }
 
     /** 打开创建新公告界面 */
     public void openCreateGUI(Player player, Guild guild) {
-        context.getGuiManager().openGUI(player,
+        context.openGUI(player,
                 new AnnouncementEditGUI(this, guild, null, player));
     }
 

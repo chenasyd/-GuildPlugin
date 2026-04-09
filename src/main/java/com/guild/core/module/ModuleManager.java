@@ -6,6 +6,7 @@ import com.guild.core.module.exception.ModuleConflictException;
 import com.guild.core.module.exception.ModuleDependencyException;
 import com.guild.core.module.exception.ModuleLoadException;
 import com.guild.core.utils.ColorUtils;
+import com.guild.sdk.GuildPluginAPI;
 
 import java.io.File;
 import java.util.List;
@@ -25,6 +26,9 @@ public class ModuleManager {
     private final ModuleLoader loader;
     private final ModuleRegistry registry;
 
+    /** 共享 API 实例（所有模块共用，确保事件集中分发） */
+    private final GuildPluginAPI sharedApi;
+
     /** 核心支持的 API 版本号 */
     private static final String CORE_API_VERSION = "1.0.0";
 
@@ -35,6 +39,7 @@ public class ModuleManager {
         this.modulesDir = new File(plugin.getDataFolder(), "modules");
         this.loader = new ModuleLoader(this);
         this.registry = new ModuleRegistry();
+        this.sharedApi = new GuildPluginAPI(plugin);
 
         if (!modulesDir.exists()) {
             modulesDir.mkdirs();
@@ -104,8 +109,8 @@ public class ModuleManager {
         // 5. 创建独立 ClassLoader 并实例化模块
         GuildModule module = loader.instantiateModule(jarFile, descriptor);
 
-        // 6. 创建模块上下文并启用
-        ModuleContext context = new ModuleContext(plugin, descriptor);
+        // 6. 创建模块上下文并启用（使用共享 API 实例）
+        ModuleContext context = new ModuleContext(plugin, descriptor, sharedApi);
         registry.setState(moduleId, ModuleState.LOADING);
 
         try {
@@ -154,6 +159,7 @@ public class ModuleManager {
 
         try {
             registry.unregister(moduleId);
+            sharedApi.clearModuleHandlers(module);
             module.onDisable();
             loader.unloadClassloader(moduleId);
 
@@ -216,6 +222,7 @@ public class ModuleManager {
         }
 
         loader.unloadAll();
+        sharedApi.clearAll();
         logger.info(ColorUtils.colorize(lang.getMessage("module.system.all-unloaded", "")));
     }
 
@@ -229,6 +236,9 @@ public class ModuleManager {
 
     /** 获取已加载模块数量 */
     public int getLoadedCount() { return registry.size(); }
+
+    /** 获取共享的 API 实例（供核心服务分发事件用） */
+    public GuildPluginAPI getSharedApi() { return sharedApi; }
 
     // ==================== 内部辅助方法 ====================
 

@@ -35,6 +35,36 @@ public class GuildService {
         this.databaseManager = plugin.getDatabaseManager();
         this.logger = plugin.getLogger();
     }
+
+    // ==================== 模块事件分发辅助 ====================
+
+    private void fireGuildCreate(int guildId, String guildName, String leaderName) {
+        try {
+            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
+            if (mm != null) mm.getSharedApi().fireGuildCreate(guildId, guildName, leaderName);
+        } catch (Exception ignored) {}
+    }
+
+    private void fireGuildDelete(int guildId, String guildName, String leaderName) {
+        try {
+            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
+            if (mm != null) mm.getSharedApi().fireGuildDelete(guildId, guildName, leaderName);
+        } catch (Exception ignored) {}
+    }
+
+    private void fireMemberJoin(int guildId, String guildName, UUID playerUuid, String playerName) {
+        try {
+            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
+            if (mm != null) mm.getSharedApi().fireMemberJoin(guildId, guildName, playerUuid, playerName);
+        } catch (Exception ignored) {}
+    }
+
+    private void fireMemberLeave(int guildId, String guildName, UUID playerUuid, String playerName, String eventType) {
+        try {
+            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
+            if (mm != null) mm.getSharedApi().fireMemberLeave(guildId, guildName, playerUuid, playerName, eventType);
+        } catch (Exception ignored) {}
+    }
     
     // 时间工具：统一使用操作系统本地时间字符串（yyyy-MM-dd HH:mm:ss）
     private String nowString() { return TimeProvider.nowString(); }
@@ -91,6 +121,7 @@ public class GuildService {
                         return addGuildMemberDirectAsync((Integer) guildId, leaderUuid, leaderName, GuildMember.Role.LEADER)
                             .thenCompose(success -> {
                                 if (success) {
+                                    fireGuildCreate((Integer) guildId, name, leaderName);
                                     // 记录工会创建日志
                                     return logGuildActionAsync((Integer) guildId, name, leaderUuid.toString(), leaderName,
                                         GuildLog.LogType.GUILD_CREATED, "创建工会", "工会名称: " + name + ", 标签: " + tag)
@@ -171,6 +202,9 @@ public class GuildService {
                                 // 记录工会解散日志
                                 logGuildActionAsync(guildId, guild.getName(), guild.getLeaderUuid().toString(), guild.getLeaderName(),
                                     GuildLog.LogType.GUILD_DISSOLVED, "工会解散", "工会余额: " + guildBalance + " 金币");
+                                
+                                // 分发工会解散事件给模块
+                                fireGuildDelete(guildId, guild.getName(), guild.getLeaderName());
                                 
                                 return true;
                             }
@@ -384,6 +418,10 @@ public class GuildService {
                                         logGuildActionAsync(member.getGuildId(), guild.getName(), 
                                             requesterUuid.toString(), requester.getPlayerName(),
                                             logType, description, details);
+                                        
+                                        // 分发成员离开事件给模块
+                                        String eventType = playerUuid.equals(requesterUuid) ? "leave" : "kicked";
+                                        fireMemberLeave(guild.getId(), guild.getName(), playerUuid, member.getPlayerName(), eventType);
                                     }
                                 });
                                 
@@ -1409,9 +1447,18 @@ public class GuildService {
                  }
                  return false;
              }).thenCompose(success -> {
-                 if (success && accept) {
+                        if (success && accept) {
                      // 如果接受邀请，添加玩家到工会
-                     return addGuildMemberAsync(invitation.getGuildId(), targetUuid, invitation.getTargetName(), GuildMember.Role.MEMBER);
+                     return addGuildMemberAsync(invitation.getGuildId(), targetUuid, invitation.getTargetName(), GuildMember.Role.MEMBER)
+                         .thenCompose(addSuccess -> {
+                             if (addSuccess) {
+                                 // 分发成员加入事件给模块
+                                 return getGuildByIdAsync(invitation.getGuildId()).thenAccept(g -> {
+                                     if (g != null) fireMemberJoin(g.getId(), g.getName(), targetUuid, invitation.getTargetName());
+                                 }).thenApply(v -> true);
+                             }
+                             return CompletableFuture.completedFuture(false);
+                         });
                  }
                  return CompletableFuture.completedFuture(success);
              });

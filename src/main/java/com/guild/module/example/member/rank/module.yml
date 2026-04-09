@@ -1,0 +1,12 @@
+id: member-rank
+name: "成员贡献排名"
+version: 1.0.0
+author: "GuildPlugin Team"
+description: "工会成员贡献排名系统 - 追踪并展示成员贡献值排行榜"
+type: gui
+api-version: 1.0.0
+main: com.guild.module.example.member.rank.MemberRankModule
+depends: []
+soft-depends: []
+permissions:
+  - guild.admin.rank.manage

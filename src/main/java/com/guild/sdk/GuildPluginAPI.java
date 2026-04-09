@@ -5,11 +5,15 @@ import com.guild.core.module.ModuleManager;
 import com.guild.core.module.hook.GUIExtensionHook;
 import com.guild.sdk.command.ModuleCommandHandler;
 import com.guild.sdk.event.GuildEventHandler;
+import com.guild.sdk.event.GuildEventData;
 import com.guild.sdk.event.MemberEventHandler;
+import com.guild.sdk.event.MemberEventData;
 import com.guild.sdk.gui.ModuleGUIFactory;
 import com.guild.sdk.http.HttpClientProvider;
+import com.guild.core.gui.GUI;
 import com.guild.sdk.data.GuildData;
 import com.guild.sdk.data.MemberData;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
@@ -18,24 +22,34 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 公会插件 SDK - 统一 API 门面
+ * <p>
+ * 所有模块共享同一个 API 实例（由 ModuleManager 管理），
+ * 确保事件处理器和 GUI 注册的集中分发。
  */
 public class GuildPluginAPI {
 
     private final GuildPlugin plugin;
     private final HttpClientProvider httpClient;
+    private final Logger logger;
 
-    // 事件处理器列表（线程安全）
+    // 事件处理器列表（线程安全，所有模块共享）
     private final List<GuildEventHandler> onGuildCreateHandlers = new CopyOnWriteArrayList<>();
     private final List<GuildEventHandler> onGuildDeleteHandlers = new CopyOnWriteArrayList<>();
     private final List<MemberEventHandler> onMemberJoinHandlers = new CopyOnWriteArrayList<>();
     private final List<MemberEventHandler> onMemberLeaveHandlers = new CopyOnWriteArrayList<>();
 
+    // 自定义 GUI 注册表 (guiId -> factory)
+    private final Map<String, ModuleGUIFactory> customGUIRegistry = new java.util.concurrent.ConcurrentHashMap<>();
+
     public GuildPluginAPI(GuildPlugin plugin) {
         this.plugin = plugin;
         this.httpClient = new HttpClientProvider();
+        this.logger = Logger.getLogger("GuildPlugin.API");
     }
 
     // ==================== 工会查询 API ====================
@@ -102,9 +116,36 @@ public class GuildPluginAPI {
                 .registerButton(guiType, slot, item, moduleId, handler);
     }
 
-    /** 注册全新的自定义 GUI 页面（预留接口） */
+    /** 注册全新的自定义 GUI 页面 */
     public void registerCustomGUI(String guiId, ModuleGUIFactory factory) {
-        // TODO: 在后续迭代中实现自定义 GUI 注册表
+        if (guiId == null || guiId.isEmpty()) {
+            throw new IllegalArgumentException("guiId cannot be empty");
+        }
+        if (customGUIRegistry.containsKey(guiId)) {
+            throw new IllegalArgumentException("guiId already registered: " + guiId);
+        }
+        customGUIRegistry.put(guiId, factory);
+    }
+
+    /** 注销自定义 GUI 页面（模块卸载时调用） */
+    public void unregisterCustomGUI(String guiId) {
+        customGUIRegistry.remove(guiId);
+    }
+
+    /** 打开已注册的自定义 GUI 页面 */
+    public void openCustomGUI(String guiId, Player player, Map<String, Object> data) {
+        ModuleGUIFactory factory = customGUIRegistry.get(guiId);
+        if (factory == null) {
+            logger.warning("custom GUI not found: " + guiId);
+            return;
+        }
+        GUI gui = factory.create(player, data != null ? data : Map.of());
+        plugin.getGuiManager().openGUI(player, gui);
+    }
+
+    /** 打开已注册的自定义 GUI 页面（无额外数据） */
+    public void openCustomGUI(String guiId, Player player) {
+        openCustomGUI(guiId, player, null);
     }
 
     // ==================== 命令扩展 API ====================
@@ -136,6 +177,77 @@ public class GuildPluginAPI {
     /** 监听成员离开工会事件 */
     public void onMemberLeave(MemberEventHandler handler) {
         onMemberLeaveHandlers.add(handler);
+    }
+
+    // ==================== 事件分发（供核心服务调用） ====================
+
+    /** 分发工会创建事件 */
+    public void fireGuildCreate(int guildId, String guildName, String leaderName) {
+        if (onGuildCreateHandlers.isEmpty()) return;
+        GuildEventData data = new GuildEventData(guildId, guildName, leaderName);
+        for (GuildEventHandler handler : onGuildCreateHandlers) {
+            try {
+                handler.onEvent(data);
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Exception in onGuildCreate handler: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    /** 分发工会解散事件 */
+    public void fireGuildDelete(int guildId, String guildName, String leaderName) {
+        if (onGuildDeleteHandlers.isEmpty()) return;
+        GuildEventData data = new GuildEventData(guildId, guildName, leaderName);
+        for (GuildEventHandler handler : onGuildDeleteHandlers) {
+            try {
+                handler.onEvent(data);
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Exception in onGuildDelete handler: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    /** 分发成员加入事件 */
+    public void fireMemberJoin(int guildId, String guildName, UUID playerUuid, String playerName) {
+        if (onMemberJoinHandlers.isEmpty()) return;
+        MemberEventData data = new MemberEventData(guildId, guildName, playerUuid, playerName, "JOIN");
+        for (MemberEventHandler handler : onMemberJoinHandlers) {
+            try {
+                handler.onEvent(data);
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Exception in onMemberJoin handler: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    /** 分发成员离开事件 */
+    public void fireMemberLeave(int guildId, String guildName, UUID playerUuid, String playerName, String eventType) {
+        if (onMemberLeaveHandlers.isEmpty()) return;
+        MemberEventData data = new MemberEventData(guildId, guildName, playerUuid, playerName, eventType);
+        for (MemberEventHandler handler : onMemberLeaveHandlers) {
+            try {
+                handler.onEvent(data);
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Exception in onMemberLeave handler: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    /** 清除指定模块注册的所有事件处理器（模块卸载时调用） */
+    public void clearModuleHandlers(Object moduleInstance) {
+        onGuildCreateHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
+        onGuildDeleteHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
+        onMemberJoinHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
+        onMemberLeaveHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
+    }
+
+    /** 清除所有事件处理器和自定义 GUI 注册 */
+    public void clearAll() {
+        onGuildCreateHandlers.clear();
+        onGuildDeleteHandlers.clear();
+        onMemberJoinHandlers.clear();
+        onMemberLeaveHandlers.clear();
+        customGUIRegistry.clear();
     }
 
     // ==================== HTTP 工具 API ====================
@@ -183,19 +295,21 @@ public class GuildPluginAPI {
             }
         } catch (Exception ignored) {}
 
+        int memberCount = plugin.getGuildService().getGuildMembers(guild.getId()).size();
+
         return new GuildData(
                 guild.getId(),
                 guild.getName(),
                 guild.getLeaderUuid(),
                 guild.getLeaderName(),
                 guild.getLevel(),
-                0L,  // experience 字段在核心模型中不存在，暂用0
+                0L,  // experience: not in core model
                 guild.getBalance(),
-                0,   // memberCount 通过成员列表 size() 获取
+                memberCount,
                 guild.getMaxMembers(),
-                guild.getDescription(),  // description 映射为 motto
+                guild.getDescription(),
                 createTimeMillis,
-                null  // members 列表可按需加载
+                null  // members list loaded on demand
         );
     }
 
@@ -213,13 +327,15 @@ public class GuildPluginAPI {
             }
         } catch (Exception ignored) {}
 
+        boolean online = org.bukkit.Bukkit.getPlayer(member.getPlayerUuid()) != null;
+
         return new MemberData(
                 member.getPlayerUuid(),
                 member.getPlayerName(),
                 member.getRole().name(),
                 joinTimeMillis,
-                0.0,  // contribution 在核心模型中不存在
-                false  // online 在核心模型中不存在
+                0.0,  // contribution: not in core model
+                online
         );
     }
 }

@@ -1,6 +1,5 @@
 package com.guild.module.example.announcement.gui;
 
-import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
@@ -200,8 +199,7 @@ public class AnnouncementEditGUI implements GUI {
                 break;
             case 49:
                 // 返回列表
-                module.getContext().getGuiManager().openGUI(player,
-                        new AnnouncementListGUI(module, guild, player));
+                module.getContext().navigateBack(player);
                 break;
         }
     }
@@ -244,9 +242,7 @@ public class AnnouncementEditGUI implements GUI {
                         lang.getMessage(player,
                                 "module.announcement.edit.input-cancelled",
                                 "&e已取消输入")));
-                module.getContext().getGuiManager().openGUI(player,
-                        new AnnouncementEditGUI(module, guild, editingId, player,
-                                currentTitle, currentContent));
+                module.getContext().navigateBack(player);
                 return true;
             }
 
@@ -348,8 +344,7 @@ public class AnnouncementEditGUI implements GUI {
 
         if (success) {
             // 返回列表
-            module.getContext().getGuiManager().openGUI(player,
-                    new AnnouncementListGUI(module, guild, player));
+            module.getContext().navigateBack(player);
         }
     }
 
@@ -359,8 +354,7 @@ public class AnnouncementEditGUI implements GUI {
                 lang.getMessage(player,
                         "module.announcement.edit.cancel-msg",
                         "&e已取消编辑")));
-        module.getContext().getGuiManager().openGUI(player,
-                new AnnouncementListGUI(module, guild, player));
+        module.getContext().navigateBack(player);
     }
 
     // ==================== UI组件 ====================

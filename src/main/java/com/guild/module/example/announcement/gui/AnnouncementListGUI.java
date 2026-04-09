@@ -2,7 +2,6 @@ package com.guild.module.example.announcement.gui;
 
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
-import com.guild.gui.GuildSettingsGUI;
 import com.guild.models.Guild;
 import com.guild.module.example.announcement.Announcement;
 import com.guild.module.example.announcement.AnnouncementModule;
@@ -227,8 +226,7 @@ public class AnnouncementListGUI implements GUI {
 
     private void returnToSettings() {
         if (player != null) {
-            module.getContext().getGuiManager().openGUI(player,
-                    new GuildSettingsGUI(module.getContext().getPlugin(), guild, player));
+            module.getContext().navigateBack(player);
         }
     }
 

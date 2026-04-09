@@ -2,7 +2,6 @@ package com.guild.module.example.announcement.gui;
 
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
-import com.guild.gui.GuildInfoGUI;
 import com.guild.models.Guild;
 import com.guild.module.example.announcement.Announcement;
 import com.guild.module.example.announcement.AnnouncementModule;
@@ -141,8 +140,7 @@ public class AnnouncementViewGUI implements GUI {
                 refresh(player);
             } else {
                 // 列表页 -> 返回工会信息
-                module.getContext().getGuiManager().openGUI(player,
-                        new GuildInfoGUI(module.getContext().getPlugin(), player, guild));
+                module.getContext().navigateBack(player);
             }
             return;
         }

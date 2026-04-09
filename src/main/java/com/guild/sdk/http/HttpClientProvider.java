@@ -9,23 +9,22 @@ import java.util.concurrent.CompletableFuture;
  * 封装了 HTTP 调用的常用模式，支持 GET/POST 方法，
  * 自动在异步线程执行，避免阻塞服务器主线程。
  * <p>
+ * 错误通过 {@link CompletableFuture#failedFuture(Throwable)} 传播，
+ * 调用方可使用 {@code .exceptionally()} 或 {@code .handle()} 处理异常。
+ * <p>
  * 使用示例：
  * <pre>{@code
- * CompletableFuture<String> response = context.getApi().httpGet(
- *     "https://api.example.com/player/" + uuid,
- *     Map.of("Authorization", "Bearer " + apiKey)
- * );
- * response.thenAccept(body -> {
- *     // 在主线程处理返回结果
- *     context.runSync(() -> showResult(player, body));
- * });
+ * context.getApi().httpGet("https://api.example.com/data")
+ *     .thenAccept(body -> context.runSync(() -> showResult(player, body)))
+ *     .exceptionally(err -> {
+ *         context.getLogger().warning("request failed: " + err.getMessage());
+ *         return null;
+ *     });
  * }</pre>
  */
 public class HttpClientProvider {
 
-    /** 默认连接超时时间（毫秒） */
     private static final int DEFAULT_CONNECT_TIMEOUT = 5000;
-    /** 默认读取超时时间（毫秒） */
     private static final int DEFAULT_READ_TIMEOUT = 10000;
 
     private final int connectTimeout;
@@ -43,9 +42,9 @@ public class HttpClientProvider {
     /**
      * 发送 GET 请求（异步）
      *
-     * @param url       请求地址
-     * @param headers   请求头（可为 null 或空）
-     * @return CompletableFuture 包含响应体文本
+     * @param url     请求地址
+     * @param headers 请求头（可为 null 或空）
+     * @return CompletableFuture 包含响应体文本，失败时通过 exceptionally 传播异常
      */
     public CompletableFuture<String> httpGet(String url, Map<String, String> headers) {
         return CompletableFuture.supplyAsync(() -> executeRequest("GET", url, null, headers));
@@ -54,10 +53,10 @@ public class HttpClientProvider {
     /**
      * 发送 POST 请求（异步）
      *
-     * @param url       请求地址
-     * @param body      请求体文本（JSON 等）
-     * @param headers   请求头（可为 null 或空）
-     * @return CompletableFuture 包含响应体文本
+     * @param url     请求地址
+     * @param body    请求体文本（JSON 等）
+     * @param headers 请求头（可为 null 或空）
+     * @return CompletableFuture 包含响应体文本，失败时通过 exceptionally 传播异常
      */
     public CompletableFuture<String> httpPost(String url, String body,
                                               Map<String, String> headers) {
@@ -67,6 +66,8 @@ public class HttpClientProvider {
 
     /**
      * 执行实际的 HTTP 请求
+     *
+     * @throws RuntimeException 包装网络/IO 异常，由 CompletableFuture 传播
      */
     private String executeRequest(String method, String url, String body,
                                   Map<String, String> headers) {
@@ -82,31 +83,27 @@ public class HttpClientProvider {
                 conn.setDoOutput(true);
             }
 
-            // 设置默认请求头
             conn.setRequestProperty("Accept", "application/json");
             conn.setRequestProperty("User-Agent", "GuildPlugin-Module/1.0");
 
-            // 设置自定义请求头
             if (headers != null) {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     conn.setRequestProperty(entry.getKey(), entry.getValue());
                 }
             }
 
-            // 写入请求体（POST）
             if (body != null && !body.isEmpty()) {
                 try (java.io.OutputStream os = conn.getOutputStream()) {
                     os.write(body.getBytes(java.nio.charset.StandardCharsets.UTF_8));
                 }
             }
 
-            // 读取响应
             int responseCode = conn.getResponseCode();
             java.io.InputStream inputStream =
                     responseCode >= 400 ? conn.getErrorStream() : conn.getInputStream();
 
             if (inputStream == null) {
-                return "{\"error\":\"empty_response\", \"status\":" + responseCode + "}";
+                throw new RuntimeException("HTTP " + responseCode + ": empty response from " + url);
             }
 
             StringBuilder response = new StringBuilder();
@@ -120,16 +117,17 @@ public class HttpClientProvider {
             }
 
             conn.disconnect();
+
+            if (responseCode >= 400) {
+                throw new RuntimeException("HTTP " + responseCode + ": " + response);
+            }
+
             return response.toString();
 
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
-            return "{\"error\":\"request_failed\", \"message\":"
-                    + jsonEscape(e.getMessage()) + "}";
+            throw new RuntimeException("HTTP request failed: " + e.getMessage(), e);
         }
-    }
-
-    private static String jsonEscape(String text) {
-        if (text == null) return "\"unknown\"";
-        return "\"" + text.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
     }
 }

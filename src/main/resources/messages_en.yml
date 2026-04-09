@@ -1131,3 +1131,33 @@ gui.already-first-page: "&7Already on first page"
 gui.no-next: "&7Next Page"
 gui.already-last-page: "&7Already on last page"
 
+# ==================== Member Rank Module (member-rank) ====================
+
+# Module lifecycle
+module.member-rank.loaded: "&a[Rank Module] Member contribution ranking system enabled"
+module.member-rank.unloaded: "&e[Rank Module] Member contribution ranking system disabled"
+
+# Button names and descriptions
+module.member-rank.button-name: "Contribution Rank"
+module.member-rank.button-desc: "Manage member contributions and rankings"
+module.member-rank.info-button-name: "Leaderboard"
+module.member-rank.info-button-desc: "View guild member contribution rankings"
+module.member-rank.info-button-hint: "&7Click to view leaderboard"
+
+# Error messages
+module.member-rank.error.no-guild: "&cUnable to get guild info"
+
+# Rank GUI
+module.member-rank.gui.title: "&6&lMember Contribution Rankings"
+module.member-rank.gui.empty: "&7No ranking data"
+module.member-rank.gui.empty-hint: "&7No member contribution records yet"
+module.member-rank.gui.back: "&cBack"
+module.member-rank.gui.back-hint: "&7Click to go back"
+module.member-rank.gui.contribution: "&7Contribution: &e{0}"
+module.member-rank.gui.last-active: "&7Last Active: &f{0}"
+module.member-rank.gui.manage-hint: "&8LClick+10 | RClick-10 | Shift+LClick+100 | Shift+RClick-100"
+module.member-rank.gui.add-success: "&aAdded 10 contribution points to {0}"
+module.member-rank.gui.reduce-success: "&cReduced 10 contribution points from {0}"
+module.member-rank.gui.add-bulk-success: "&aAdded 100 contribution points to {0}"
+module.member-rank.gui.reduce-bulk-success: "&cReduced 100 contribution points from {0}"
+
