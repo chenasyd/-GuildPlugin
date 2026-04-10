@@ -2038,6 +2038,11 @@ public class GuildService {
       * 更新工会余额 (异步)
       */
      public CompletableFuture<Boolean> updateGuildBalanceAsync(int guildId, double balance) {
+        return updateGuildBalanceAsync(guildId, balance, null, null);
+    }
+
+    public CompletableFuture<Boolean> updateGuildBalanceAsync(int guildId, double balance,
+                                                               String operatorUuid, String operatorName) {
          return getGuildByIdAsync(guildId).thenCompose(guild -> {
              if (guild == null) {
                  return CompletableFuture.completedFuture(false);
@@ -2065,16 +2070,17 @@ public class GuildService {
                              
                              // 记录资金变更日志
                              double oldBalance = guild.getBalance();
-                             double change = balance - oldBalance;
-                             if (change != 0) {
-                                 GuildLog.LogType logType = change > 0 ? GuildLog.LogType.FUND_DEPOSITED : GuildLog.LogType.FUND_WITHDRAWN;
-                                 String description = change > 0 ? "资金存入" : "资金取出";
-                                 String details = "变更金额: " + (change > 0 ? "+" : "") + change + " 金币, 新余额: " + balance + " 金币";
-                                 
-                                 // 这里需要获取操作者信息，暂时使用系统记录
-                                 logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
-                                     logType, description, details);
-                             }
+                            double change = balance - oldBalance;
+                            if (change != 0) {
+                                GuildLog.LogType logType = change > 0 ? GuildLog.LogType.FUND_DEPOSITED : GuildLog.LogType.FUND_WITHDRAWN;
+                                String description = change > 0 ? "资金存入" : "资金取出";
+                                String details = "变更金额: " + (change > 0 ? "+" : "") + change + " 金币, 新余额: " + balance + " 金币";
+
+                                String logUuid = (operatorUuid != null && !operatorUuid.isEmpty()) ? operatorUuid : "SYSTEM";
+                                String logName = (operatorName != null && !operatorName.isEmpty()) ? operatorName : "系统";
+                                logGuildActionAsync(guildId, guild.getName(), logUuid, logName,
+                                    logType, description, details);
+                            }
                              
                              return true;
                          }

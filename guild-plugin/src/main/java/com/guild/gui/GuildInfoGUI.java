@@ -1,7 +1,9 @@
 package com.guild.gui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -65,6 +67,12 @@ public class GuildInfoGUI implements GUI {
     private int currentPage = 1;
     /** 总页数 */
     private int totalPages = 1;
+    /**
+     * 第1页模块固定槽位的紧凑排列映射
+     * key = 实际放置到的槽位号, value = 对应的注入项
+     * 每次刷新时重建，用于点击分发
+     */
+    private Map<Integer, GUIExtensionHook.GUIInjectionSlot> fixedSlotMap;
 
     public GuildInfoGUI(GuildPlugin plugin, Player player, Guild guild) {
         this.plugin = plugin;
@@ -258,8 +266,10 @@ public class GuildInfoGUI implements GUI {
     }
 
     /**
-     * 渲染第1页的模块固定槽位注入项
-     * 将模块通过 registerButton 注册了具体槽位的按钮放置到对应位置
+     * 渲染第1页的模块固定槽位注入项（紧凑排列）
+     * <p>
+     * 剩余模块从 PAGE1_MODULE_SLOTS[0] 开始向前紧凑排列，
+     * 模块卸载后不会留下空隙，后续槽位由 fillInteriorSlots 填充背景
      */
     private void renderModuleFixedSlots(Inventory inv) {
         GUIExtensionHook guiHook = getGuiHook();
@@ -268,33 +278,27 @@ public class GuildInfoGUI implements GUI {
         List<GUIExtensionHook.GUIInjectionSlot> fixedInjections =
                 guiHook.getFixedSlotInjections(GUI_TYPE);
 
+        if (fixedInjections.isEmpty()) return;
+
+        fixedSlotMap = new HashMap<>();
+        int slotIndex = 0;
         for (GUIExtensionHook.GUIInjectionSlot inj : fixedInjections) {
-            int slot = inj.getSlot();
-            // 仅放置在预留区域内（不覆盖已有物品）
-            boolean isReserved = false;
-            for (int rs : PAGE1_MODULE_SLOTS) {
-                if (rs == slot) { isReserved = true; break; }
-            }
-            if (!isReserved) continue; // 跳过非预留区域的固定槽位
-            inv.setItem(slot, inj.getItem());
+            if (slotIndex >= PAGE1_MODULE_SLOTS.length) break;
+            int targetSlot = PAGE1_MODULE_SLOTS[slotIndex];
+            inv.setItem(targetSlot, inj.getItem());
+            fixedSlotMap.put(targetSlot, inj);
+            slotIndex++;
         }
     }
 
     /**
-     * 分发第1页点击到模块固定槽位
+     * 分发第1页点击到模块固定槽位（基于紧凑排列映射）
      */
     private void dispatchToModuleFixedSlot(int slot) {
-        GUIExtensionHook guiHook = getGuiHook();
-        if (guiHook == null) return;
-
-        List<GUIExtensionHook.GUIInjectionSlot> fixedInjections =
-                guiHook.getFixedSlotInjections(GUI_TYPE);
-
-        for (GUIExtensionHook.GUIInjectionSlot inj : fixedInjections) {
-            if (inj.getSlot() == slot) {
-                inj.getAction().onClick(player, guild);
-                return;
-            }
+        if (fixedSlotMap == null || fixedSlotMap.isEmpty()) return;
+        GUIExtensionHook.GUIInjectionSlot inj = fixedSlotMap.get(slot);
+        if (inj != null) {
+            inj.getAction().onClick(player, guild);
         }
     }
 

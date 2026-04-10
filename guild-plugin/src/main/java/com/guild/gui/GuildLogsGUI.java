@@ -163,16 +163,31 @@ public class GuildLogsGUI implements GUI {
     private ItemStack createLogItem(GuildLog log) {
         Material material = getLogMaterial(log.getLogType());
         String name = ColorUtils.colorize("&e" + log.getLogType().getDisplayName());
-        
+
         List<String> lore = new java.util.ArrayList<>();
         lore.add(ColorUtils.colorize("&7操作者: &f" + log.getPlayerName()));
+        if (log.getPlayerUuid() != null && !log.getPlayerUuid().equals("SYSTEM")) {
+            lore.add(ColorUtils.colorize("&8UUID: " + log.getPlayerUuid().substring(0, 8) + "..."));
+        }
         lore.add(ColorUtils.colorize("&7时间: &f" + log.getSimpleTime(languageManager.getPlayerLanguage(player))));
         lore.add(ColorUtils.colorize("&7描述: &f" + log.getDescription()));
-        
+
         if (log.getDetails() != null && !log.getDetails().isEmpty()) {
             lore.add(ColorUtils.colorize("&7详情: &f" + log.getDetails()));
         }
-        
+
+        if (log.getLogType() == GuildLog.LogType.FUND_DEPOSITED ||
+            log.getLogType() == GuildLog.LogType.FUND_WITHDRAWN ||
+            log.getLogType() == GuildLog.LogType.FUND_TRANSFERRED) {
+            if ("SYSTEM".equals(log.getPlayerUuid())) {
+                lore.add(ColorUtils.colorize(""));
+                lore.add(ColorUtils.colorize("&c⚠ 操作者为系统（可能为旧版记录）"));
+            } else {
+                lore.add(ColorUtils.colorize(""));
+                lore.add(ColorUtils.colorize("&a✓ 已记录真实操作者"));
+            }
+        }
+
         return createItem(material, name, lore.toArray(new String[0]));
     }
     

@@ -1568,8 +1568,18 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             
             // 执行存款
             plugin.getEconomyManager().withdraw(player, amount);
-            plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), guild.getBalance() + amount).thenAccept(success -> {
+            plugin.getGuildService().updateGuildBalanceAsync(
+                guild.getId(), guild.getBalance() + amount,
+                player.getUniqueId().toString(), player.getName()
+            ).thenAccept(success -> {
                 if (success) {
+                    // 记录个人贡献
+                    plugin.getGuildService().addGuildContributionAsync(
+                        guild.getId(), player.getUniqueId(), player.getName(),
+                        amount, com.guild.models.GuildContribution.ContributionType.DEPOSIT,
+                        "玩家向工会存入资金"
+                    );
+
                     String message = languageManager.getMessage(player, "economy.deposit-success", "&a成功向工会存款 &e{amount}！")
                         .replace("{amount}", plugin.getEconomyManager().format(amount));
                     player.sendMessage(ColorUtils.colorize(message));
@@ -1632,9 +1642,20 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 }
                 
                 // 执行取款
-                plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), guild.getBalance() - amount).thenAccept(success -> {
+                plugin.getGuildService().updateGuildBalanceAsync(
+                    guild.getId(), guild.getBalance() - amount,
+                    player.getUniqueId().toString(), player.getName()
+                ).thenAccept(success -> {
                     if (success) {
                         plugin.getEconomyManager().deposit(player, amount);
+
+                        // 记录个人贡献(取款为负)
+                        plugin.getGuildService().addGuildContributionAsync(
+                            guild.getId(), player.getUniqueId(), player.getName(),
+                            amount, com.guild.models.GuildContribution.ContributionType.WITHDRAW,
+                            "玩家从工会取出资金"
+                        );
+
                         String message = languageManager.getMessage(player, "economy.withdraw-success", "&a成功从工会取款 &e{amount}！")
                             .replace("{amount}", plugin.getEconomyManager().format(amount));
                         player.sendMessage(ColorUtils.colorize(message));

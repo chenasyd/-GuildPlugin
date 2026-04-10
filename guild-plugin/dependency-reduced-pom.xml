@@ -113,6 +113,34 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>build-guild-stats-module</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>make-guild-stats-module</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/guild-stats-module.xml</descriptor>
+              </descriptors>
+              <finalName>guild-stats</finalName>
+              <appendAssemblyId>false</appendAssemblyId>
+              <outputDirectory>${project.build.directory}/modules</outputDirectory>
+              <attach>false</attach>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
   <dependencies>
     <dependency>

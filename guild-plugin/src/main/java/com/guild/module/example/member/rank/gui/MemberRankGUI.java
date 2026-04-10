@@ -58,10 +58,29 @@ public class MemberRankGUI extends AbstractModuleGUI {
 
         if (allRanks.isEmpty()) {
             // 空列表提示
+            inventory.setItem(4, createItem(Material.BOOK,
+                    "&6&l成员贡献排名",
+                    "",
+                    "&7此模块的贡献值由本模块独立管理",
+                    "&8  与「数据统计」模块的贡献值相互独立",
+                    "",
+                    "&7数据来源: &e成员排名模块 (可读写)",
+                    "&7更新方式: &a在线自动发放 / 管理员手动调整",
+                    "",
+                    "&c暂无成员贡献记录"));
             inventory.setItem(22, createItem(Material.BARRIER,
                     module.getContext().getMessage("module.member-rank.gui.empty", "&7暂无排名数据"),
                     module.getContext().getMessage("module.member-rank.gui.empty-hint", "&7暂无成员贡献记录")));
         } else {
+            inventory.setItem(4, createItem(Material.BOOK,
+                    "&6&l成员贡献排名",
+                    "",
+                    "&7此模块的贡献值由本模块独立管理",
+                    "&8  与「数据统计」模块的贡献值相互独立",
+                    "",
+                    "&7数据来源: &e成员排名模块 (可读写)",
+                    "&7更新方式: &a在线自动发放 / 管理员手动调整"));
+
             for (int i = fromIndex; i < toIndex; i++) {
                 MemberRank rank = allRanks.get(i);
                 int displayIndex = i + 1;
@@ -227,6 +246,10 @@ public class MemberRankGUI extends AbstractModuleGUI {
                     "&8左键+10 | 右键-10 | Shift+左键+100 | Shift+右键-100");
         }
 
+        String dataSourceHint = module.getContext().getMessage(
+                "module.member-rank.gui.data-source",
+                "&8┃ 数据来源: 本模块独立管理 (非核心系统)");
+
         ItemStack item = new ItemStack(material);
         var meta = item.getItemMeta();
         if (meta != null) {
@@ -234,6 +257,7 @@ public class MemberRankGUI extends AbstractModuleGUI {
             java.util.List<String> lore = new java.util.ArrayList<>();
             lore.add(ColorUtils.colorize(contribText));
             lore.add(ColorUtils.colorize(activeText));
+            lore.add(ColorUtils.colorize(dataSourceHint));
             if (!manageHint.isEmpty()) {
                 lore.add(ColorUtils.colorize(manageHint));
             }

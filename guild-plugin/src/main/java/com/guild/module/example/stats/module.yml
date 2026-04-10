@@ -1,0 +1,15 @@
+id: guild-stats
+name: "公会数据统计"
+version: 1.0.0
+author: "GuildPlugin Team"
+description: "提供公会的多维度数据统计分析、可视化面板和全服排行榜"
+type: mixed
+api-version: 1.0.0
+main: com.guild.module.example.stats.GuildStatsModule
+depends: []
+soft-depends: []
+permissions:
+  - guild.stats.view
+  - guild.stats.top
+  - guild.stats.admin.refresh
+  - guild.stats.admin.export
