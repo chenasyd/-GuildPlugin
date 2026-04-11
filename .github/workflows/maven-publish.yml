@@ -11,27 +11,38 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v2
-    
-    - name: Set up JDK
-      uses: actions/setup-java@v2
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
       with:
-        java-version: '21'
-        distribution: 'adopt'
-        
-    - name: Build with Maven
-      run: mvn -B package
-      
-    - name: Upload artifact
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build all modules
+      run: mvn -B clean package
+
+    - name: Upload SDK artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Plugin
-        path: target/*.jar
-        
-    - name: Upload to release
-      if: github.event_name == 'release'
-      uses: softprops/action-gh-release@v1
+        name: Guild-SDK
+        path: guild-sdk/target/guild-sdk-*.jar
+
+    - name: Upload Plugin artifact
+      uses: actions/upload-artifact@v4
       with:
-        files: target/*.jar
+        name: Guild-Plugin
+        path: guild-plugin/target/guild-plugin-*-shaded.jar
+
+    - name: Upload to GitHub Release
+      if: github.event_name == 'release'
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          guild-sdk/target/guild-sdk-*.jar
+          guild-plugin/target/guild-plugin-*-shaded.jar
+        generate_release_notes: true
