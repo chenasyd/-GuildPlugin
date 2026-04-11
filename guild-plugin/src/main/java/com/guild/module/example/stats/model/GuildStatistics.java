@@ -19,8 +19,8 @@ public class GuildStatistics {
     private double avgDailyOnline;
     private int loginFrequency;
 
-    private double totalContribution;
-    private double avgContribution;
+    private double totalBCoin;
+    private double avgBCoin;
     private double economyGrowthRate;
     private int topContributorCount;
 
@@ -60,10 +60,10 @@ public class GuildStatistics {
     public void setAvgDailyOnline(double avgDailyOnline) { this.avgDailyOnline = avgDailyOnline; }
     public int getLoginFrequency() { return loginFrequency; }
     public void setLoginFrequency(int loginFrequency) { this.loginFrequency = loginFrequency; }
-    public double getTotalContribution() { return totalContribution; }
-    public void setTotalContribution(double totalContribution) { this.totalContribution = totalContribution; }
-    public double getAvgContribution() { return avgContribution; }
-    public void setAvgContribution(double avgContribution) { this.avgContribution = avgContribution; }
+    public double getTotalBCoin() { return totalBCoin; }
+    public void setTotalBCoin(double totalBCoin) { this.totalBCoin = totalBCoin; }
+    public double getAvgBCoin() { return avgBCoin; }
+    public void setAvgBCoin(double avgBCoin) { this.avgBCoin = avgBCoin; }
     public double getEconomyGrowthRate() { return economyGrowthRate; }
     public void setEconomyGrowthRate(double economyGrowthRate) { this.economyGrowthRate = economyGrowthRate; }
     public int getTopContributorCount() { return topContributorCount; }

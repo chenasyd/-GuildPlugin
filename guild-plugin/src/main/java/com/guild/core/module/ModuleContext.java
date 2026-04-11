@@ -7,10 +7,13 @@ import com.guild.core.gui.GUI;
 import com.guild.core.gui.GUIManager;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.ColorUtils;
 import com.guild.sdk.GuildPluginAPI;
 import com.guild.sdk.config.ModuleConfigSection;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -108,7 +111,7 @@ public class ModuleContext {
             }
             fallback = strArgs[0];
         }
-        return plugin.getLanguageManager().getIndexedMessage(key, fallback, strArgs);
+        return ColorUtils.colorize(plugin.getLanguageManager().getIndexedMessage(key, fallback, strArgs));
     }
 
     // ==================== 线程调度 ====================
@@ -153,5 +156,54 @@ public class ModuleContext {
      */
     public boolean navigateBack(Player player) {
         return plugin.getGuiManager().popAndOpen(player);
+    }
+
+    // ==================== GUI 刷新通知机制 ====================
+
+    /**
+     * GUI 刷新监听器接口
+     */
+    public interface GUIRefreshListener {
+        /**
+         * 当 GUI 需要刷新时调用
+         *
+         * @param guiType GUI 类型标识符
+         * @param data    相关数据
+         */
+        void onGUIRefresh(String guiType, Map<String, Object> data);
+    }
+
+    private final Map<String, GUIRefreshListener> refreshListeners = new ConcurrentHashMap<>();
+
+    /**
+     * 注册 GUI 刷新监听器
+     *
+     * @param guiType  GUI 类型标识符
+     * @param listener 刷新监听器
+     */
+    public void registerGUIRefreshListener(String guiType, GUIRefreshListener listener) {
+        refreshListeners.put(guiType, listener);
+    }
+
+    /**
+     * 取消注册 GUI 刷新监听器
+     *
+     * @param guiType GUI 类型标识符
+     */
+    public void unregisterGUIRefreshListener(String guiType) {
+        refreshListeners.remove(guiType);
+    }
+
+    /**
+     * 通知 GUI 刷新
+     *
+     * @param guiType GUI 类型标识符
+     * @param data    相关数据
+     */
+    public void notifyGUIRefresh(String guiType, Map<String, Object> data) {
+        GUIRefreshListener listener = refreshListeners.get(guiType);
+        if (listener != null) {
+            runSync(() -> listener.onGUIRefresh(guiType, data));
+        }
     }
 }

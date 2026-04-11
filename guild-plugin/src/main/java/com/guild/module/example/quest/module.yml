@@ -1,0 +1,20 @@
+id: guild-quest
+name: "公会任务"
+version: 1.0.0
+author: GuildPlugin-Team
+description: "公会任务系统 - 接取任务、追踪进度、领取奖励"
+main: com.guild.module.example.quest.GuildQuestModule
+api-version: 1.0.0
+type: functional
+config-prefix: quest
+
+settings:
+  max-daily-quests: 3
+  max-weekly-quests: 2
+  quest-reset-hour: 4
+  auto-save-interval-minutes: 10
+
+rewards:
+  default-contribution-per-quest: 50
+  default-money-reward: 100
+  enable-exp-reward: true

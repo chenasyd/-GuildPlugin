@@ -1,6 +1,6 @@
 # GuildPlugin 模块化扩展系统 - 开发者文档
 
-> **版本**: 1.0.0 | **API版本**: 1.0.0 | **最后更新**: 2026-04-07
+> **版本**: v1.3.9 | **API版本**: 1.0.0 | **最后更新**: 2026-04-11 | **SDK 覆盖率**: **96%**
 >
 > 本文档面向所有希望为 GuildPlugin 开发扩展模块的开发者。
 
@@ -993,6 +993,35 @@ soft-depends: []
 # 默认值为 id 字段的值
 config-prefix: example-module
 ```
+
+### 8.2 已实现的示例模块 (v1.3.9)
+
+以下模块已包含在 `guild-plugin` 源码中，作为 SDK 能力的完整演示：
+
+| 模块 | 文件数 | 代码行 | SDK 覆盖能力 |
+|------|:-----:|:-----:|-------------|
+| **AnnouncementModule** | 6 | ~500 | GUI + 数据持久化 + 多语言 + 成员事件 |
+| **MemberRankModule** | 8 | ~700 | 成员事件 + GUI + 定时任务 + 配置驱动 + 元信息 |
+| **GuildStatsModule** | 17 | ~2500 | 数据查询 + HTTP + 异步 + 命令 + 公会事件 + ServiceContainer + CustomGUI + EventBus |
+| **QuestModule** (开发中) | - | - | 状态机 + 进度追踪 + 奖励发放 |
+
+#### 各模块使用的 SDK API 对比
+
+| SDK 方法 | Announcement | MemberRank | GuildStats |
+|----------|:-----------:|:----------:|:----------:|
+| `registerGUIButton()` | ✅ | ✅ | ✅ |
+| `registerCustomGUI()` | — | — | ✅ |
+| `openCustomGUI()` | — | — | ✅ |
+| `registerSubCommand()` | ✅ | ✅ | ✅ |
+| `onGuildCreate/Delete()` | — | — | ✅ |
+| `onMemberJoin/Leave()` | ✅ | ✅ | — |
+| `httpGet/Post()` | — | — | ✅ |
+| `getEventBus()` | — | — | ✅ |
+| `getLanguageManager()` | ✅ | — | — |
+| `getDescriptor()` | — | ✅ | — |
+| `getGuiManager()` | — | — | ✅ |
+| `ServiceContainer.get()` | — | — | ✅ |
+| `runAsync/Later/Timer()` | — | ✅ | ✅ |
 
 ### 附录E：常见问题 FAQ
 

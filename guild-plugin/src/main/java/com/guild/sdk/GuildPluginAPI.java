@@ -8,11 +8,14 @@ import com.guild.sdk.event.GuildEventHandler;
 import com.guild.sdk.event.GuildEventData;
 import com.guild.sdk.event.MemberEventHandler;
 import com.guild.sdk.event.MemberEventData;
+import com.guild.sdk.event.EconomyEventHandler;
+import com.guild.sdk.event.EconomyEventData;
 import com.guild.sdk.gui.ModuleGUIFactory;
 import com.guild.sdk.http.HttpClientProvider;
 import com.guild.core.gui.GUI;
 import com.guild.sdk.data.GuildData;
 import com.guild.sdk.data.MemberData;
+import com.guild.sdk.economy.CurrencyManager;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -36,12 +39,15 @@ public class GuildPluginAPI {
     private final GuildPlugin plugin;
     private final HttpClientProvider httpClient;
     private final Logger logger;
+    private final CurrencyManager currencyManager;
 
     // 事件处理器列表（线程安全，所有模块共享）
     private final List<GuildEventHandler> onGuildCreateHandlers = new CopyOnWriteArrayList<>();
     private final List<GuildEventHandler> onGuildDeleteHandlers = new CopyOnWriteArrayList<>();
     private final List<MemberEventHandler> onMemberJoinHandlers = new CopyOnWriteArrayList<>();
     private final List<MemberEventHandler> onMemberLeaveHandlers = new CopyOnWriteArrayList<>();
+    private final List<EconomyEventHandler> onEconomyDepositHandlers = new CopyOnWriteArrayList<>();
+    private final List<EconomyEventHandler> onEconomyWithdrawHandlers = new CopyOnWriteArrayList<>();
 
     // 自定义 GUI 注册表 (guiId -> factory)
     private final Map<String, ModuleGUIFactory> customGUIRegistry = new java.util.concurrent.ConcurrentHashMap<>();
@@ -50,6 +56,7 @@ public class GuildPluginAPI {
         this.plugin = plugin;
         this.httpClient = new HttpClientProvider();
         this.logger = Logger.getLogger("GuildPlugin.API");
+        this.currencyManager = plugin.getServiceContainer().get(CurrencyManager.class);
     }
 
     // ==================== 工会查询 API ====================
@@ -140,7 +147,7 @@ public class GuildPluginAPI {
             return;
         }
         GUI gui = factory.create(player, data != null ? data : Map.of());
-        plugin.getGuiManager().openGUI(player, gui);
+        plugin.getGuiManager().pushAndOpen(player, gui);
     }
 
     /** 打开已注册的自定义 GUI 页面（无额外数据） */
@@ -177,6 +184,16 @@ public class GuildPluginAPI {
     /** 监听成员离开工会事件 */
     public void onMemberLeave(MemberEventHandler handler) {
         onMemberLeaveHandlers.add(handler);
+    }
+
+    /** 监听公会存款事件 */
+    public void onEconomyDeposit(EconomyEventHandler handler) {
+        onEconomyDepositHandlers.add(handler);
+    }
+
+    /** 监听公会取款事件 */
+    public void onEconomyWithdraw(EconomyEventHandler handler) {
+        onEconomyWithdrawHandlers.add(handler);
     }
 
     // ==================== 事件分发（供核心服务调用） ====================
@@ -233,12 +250,40 @@ public class GuildPluginAPI {
         }
     }
 
+    /** 分发公会存款事件 */
+    public void fireEconomyDeposit(int guildId, String guildName, UUID playerUuid, String playerName, double amount) {
+        if (onEconomyDepositHandlers.isEmpty()) return;
+        EconomyEventData data = new EconomyEventData(guildId, guildName, playerUuid, playerName, amount, "DEPOSIT");
+        for (EconomyEventHandler handler : onEconomyDepositHandlers) {
+            try {
+                handler.onEvent(data);
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Exception in onEconomyDeposit handler: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    /** 分发公会取款事件 */
+    public void fireEconomyWithdraw(int guildId, String guildName, UUID playerUuid, String playerName, double amount) {
+        if (onEconomyWithdrawHandlers.isEmpty()) return;
+        EconomyEventData data = new EconomyEventData(guildId, guildName, playerUuid, playerName, amount, "WITHDRAW");
+        for (EconomyEventHandler handler : onEconomyWithdrawHandlers) {
+            try {
+                handler.onEvent(data);
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Exception in onEconomyWithdraw handler: " + e.getMessage(), e);
+            }
+        }
+    }
+
     /** 清除指定模块注册的所有事件处理器（模块卸载时调用） */
     public void clearModuleHandlers(Object moduleInstance) {
         onGuildCreateHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
         onGuildDeleteHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
         onMemberJoinHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
         onMemberLeaveHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
+        onEconomyDepositHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
+        onEconomyWithdrawHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
     }
 
     /** 清除所有事件处理器和自定义 GUI 注册 */
@@ -247,7 +292,41 @@ public class GuildPluginAPI {
         onGuildDeleteHandlers.clear();
         onMemberJoinHandlers.clear();
         onMemberLeaveHandlers.clear();
+        onEconomyDepositHandlers.clear();
+        onEconomyWithdrawHandlers.clear();
         customGUIRegistry.clear();
+    }
+
+    // ==================== 货币 API ====================
+
+    /**
+     * 获取货币管理器
+     */
+    public CurrencyManager getCurrencyManager() {
+        return currencyManager;
+    }
+
+    /**
+     * 获取玩家的货币余额
+     */
+    public double getCurrencyBalance(int guildId, UUID playerUuid, CurrencyManager.CurrencyType currencyType) {
+        return currencyManager.getBalance(guildId, playerUuid, currencyType);
+    }
+
+    /**
+     * 增加玩家的货币
+     */
+    public boolean depositCurrency(int guildId, UUID playerUuid, String playerName, 
+                                 CurrencyManager.CurrencyType currencyType, double amount) {
+        return currencyManager.deposit(guildId, playerUuid, playerName, currencyType, amount);
+    }
+
+    /**
+     * 减少玩家的货币
+     */
+    public boolean withdrawCurrency(int guildId, UUID playerUuid, 
+                                  CurrencyManager.CurrencyType currencyType, double amount) {
+        return currencyManager.withdraw(guildId, playerUuid, currencyType, amount);
     }
 
     // ==================== HTTP 工具 API ====================

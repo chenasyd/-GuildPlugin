@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.guild</groupId>
         <artifactId>guild-parent</artifactId>
-        <version>1.3.6</version>
+        <version>1.4.0</version>
     </parent>
 
     <artifactId>guild-plugin</artifactId>
@@ -201,6 +201,35 @@
                         <executions>
                             <execution>
                                 <id>make-guild-stats-module</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>build-quest-module</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/quest-module.xml</descriptor>
+                            </descriptors>
+                            <finalName>guild-quest</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <attach>false</attach>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-quest-module</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>

@@ -165,15 +165,9 @@ public class AnnouncementEditGUI implements GUI {
                                 "&7放弃修改并返回")));
         inventory.setItem(33, cancelButton);
 
-        // 返回按钮 (slot 49)
-        ItemStack backButton = createItem(Material.ARROW,
-                ColorUtils.colorize("&c" +
-                        module.getContext().getMessage("module.announcement.edit.back",
-                                "&c返回列表")),
-                ColorUtils.colorize("&7" +
-                        module.getContext().getMessage("module.announcement.edit.back-hint",
-                                "&7返回公告列表")));
-        inventory.setItem(49, backButton);
+        inventory.setItem(49, createBackButton(
+                module.getContext().getMessage("module.announcement.edit.back", "&c返回列表"),
+                module.getContext().getMessage("module.announcement.edit.back-hint", "&7返回公告列表")));
 
         fillInteriorSlots(inventory);
     }
@@ -421,5 +415,9 @@ public class AnnouncementEditGUI implements GUI {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    private ItemStack createBackButton(String name, String hint) {
+        return createItem(Material.ARROW, ColorUtils.colorize(name), ColorUtils.colorize(hint));
     }
 }

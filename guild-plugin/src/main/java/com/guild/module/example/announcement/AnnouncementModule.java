@@ -10,6 +10,8 @@ import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.sdk.GuildPluginAPI;
+import com.guild.sdk.event.MemberEventData;
+import com.guild.sdk.event.MemberEventHandler;
 import com.guild.module.example.announcement.gui.AnnouncementEditGUI;
 import com.guild.module.example.announcement.gui.AnnouncementListGUI;
 import com.guild.module.example.announcement.gui.AnnouncementViewGUI;
@@ -74,8 +76,36 @@ public class AnnouncementModule implements GuildModule {
                 (player, ctx) -> handleOpenAnnouncementView(player, ctx)
         );
 
+        api.onMemberJoin(new MemberEventHandler() {
+            @Override
+            public void onEvent(MemberEventData data) {
+                if (context.getConfig().getBoolean("welcome-announcement.enabled", false)) {
+                    context.getLogger().info("[Announcement] 新成员 " + data.getPlayerName()
+                        + " 加入公会 " + data.getGuildName());
+                }
+            }
+            @Override
+            public Object getModuleInstance() { return AnnouncementModule.this; }
+        });
+
+        api.onMemberLeave(new MemberEventHandler() {
+            @Override
+            public void onEvent(MemberEventData data) {
+                context.getLogger().info("[Announcement] 成员 " + data.getPlayerName()
+                    + " 离开公会 " + data.getGuildName());
+            }
+            @Override
+            public Object getModuleInstance() { return AnnouncementModule.this; }
+        });
+
         context.getLogger().info(ColorUtils.colorize(context.getMessage("module.announcement.loaded",
                 "&a[公告模块] 公告系统已启用")));
+
+        var langManager = context.getLanguageManager();
+        String welcomeKey = "module.announcement.welcome-hint";
+        context.getLogger().info("[Announcement-Lang] 动态获取消息: "
+            + ColorUtils.colorize(langManager.getMessage(welcomeKey,
+                "&7提示: 使用 /guild announcement 管理公告")));
     }
 
     @Override

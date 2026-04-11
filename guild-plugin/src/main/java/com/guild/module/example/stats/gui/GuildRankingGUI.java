@@ -3,7 +3,9 @@ package com.guild.module.example.stats.gui;
 import com.guild.core.utils.ColorUtils;
 import com.guild.module.example.stats.GuildStatsModule;
 import com.guild.module.example.stats.model.GuildStatistics;
+import com.guild.sdk.GuildPluginAPI;
 import com.guild.sdk.gui.AbstractModuleGUI;
+import com.guild.models.Guild;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -11,12 +13,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class GuildRankingGUI extends AbstractModuleGUI {
 
     private final GuildStatsModule module;
     private final List<GuildStatistics> allStats;
     private int currentPage = 1;
+    private final Map<Integer, GuildStatistics> slotDataMap = new HashMap<>();
 
     public GuildRankingGUI(GuildStatsModule module, List<GuildStatistics> allStats) {
         this.module = module;
@@ -35,6 +40,8 @@ public class GuildRankingGUI extends AbstractModuleGUI {
     public void setupInventory(Inventory inv) {
         fillBorder(inv);
         fillInteriorSlots(inv);
+
+        slotDataMap.clear();
 
         int totalGuilds = allStats.size();
         int totalPages = getTotalPages(totalGuilds);
@@ -69,6 +76,7 @@ public class GuildRankingGUI extends AbstractModuleGUI {
                     "&7活跃度: &f" + String.format("%.1f", s.getActivityScore()),
                     "",
                     "&8┃ 来自 guild-stats 模块缓存"));
+                slotDataMap.put(slot, s);
             }
         }
 
@@ -103,6 +111,25 @@ public class GuildRankingGUI extends AbstractModuleGUI {
         } else if (slot == 53 && currentPage < totalPages) {
             currentPage++;
             refresh(player);
+        }
+
+        GuildStatistics selected = slotDataMap.get(slot);
+        if (selected != null) {
+            try {
+                Guild guildObj = new Guild();
+                guildObj.setId(selected.getGuildId());
+                guildObj.setName(selected.getGuildName());
+                guildObj.setLevel(selected.getLevel());
+                Map<String, Object> overviewData = new HashMap<>();
+                overviewData.put("guild", guildObj);
+                overviewData.put("stats", selected);
+                overviewData.put("economySummary", null);
+                GuildPluginAPI api = module.getContext().getApi();
+                api.openCustomGUI("stats-overview", player, overviewData);
+            } catch (Exception e) {
+                player.sendMessage(ColorUtils.colorize(
+                    "&c[Stats] 打开总览失败: " + e.getMessage()));
+            }
         }
     }
 }

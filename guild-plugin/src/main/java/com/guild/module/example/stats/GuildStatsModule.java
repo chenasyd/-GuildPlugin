@@ -18,6 +18,8 @@ import com.guild.sdk.event.MemberEventData;
 import com.guild.module.example.stats.gui.*;
 import com.guild.module.example.stats.model.ActivityReport;
 import com.guild.module.example.stats.model.GuildStatistics;
+import com.guild.module.example.stats.model.PlayerActivity;
+import com.guild.core.events.EventBus;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -70,6 +72,16 @@ public class GuildStatsModule implements GuildModule {
         registerEventHandlers(api);
         startScheduledTasks();
 
+        context.runLater(100L, () -> {
+            if (webReporter != null) webReporter.healthCheck();
+            context.getLogger().info(ColorUtils.colorize(
+                context.getMessage("module.stats.init-done", "&a[统计模块] 初始化完成, 已注册 CustomGUI x2")));
+        });
+
+        context.getEventBus().subscribe(StatsRefreshedEvent.class, event ->
+            context.getLogger().info(String.format("[Stats-Event] 公会 #%d %s 统计已刷新 (活跃度=%.1f)",
+                event.guildId, event.guildName, event.activityScore)));
+
         context.getLogger().info(ColorUtils.colorize(
             context.getMessage("module.stats.loaded", "&a[统计模块] 公会数据统计系统已启用")));
     }
@@ -77,12 +89,17 @@ public class GuildStatsModule implements GuildModule {
     @Override
     public void onDisable() {
         this.state = ModuleState.UNLOADED;
+        GuildPluginAPI api = context.getApi();
+        api.unregisterCustomGUI("stats-player-detail");
+        api.unregisterCustomGUI("stats-overview");
         if (activityTracker != null) {
             activityTracker.stop();
         }
         if (statsManager != null) {
-            statsManager.saveAll();
-            statsManager.clearAll();
+            context.runAsync(() -> {
+                statsManager.saveAll();
+                statsManager.clearAll();
+            });
         }
         dataCache.clearAll();
         context.getLogger().info(ColorUtils.colorize(
@@ -112,6 +129,24 @@ public class GuildStatsModule implements GuildModule {
         api.registerGUIButton("MainGuildGUI", GUIExtensionHook.AUTO_SLOT,
             rankingButton, "guild-stats",
             (player, ctx) -> openGuildRanking(player));
+
+        api.registerCustomGUI("stats-player-detail", (player, data) -> {
+            UUID targetUuid = (UUID) data.get("targetUuid");
+            ActivityReport reportData = (ActivityReport) data.get("report");
+            EconomyContributionFetcher.EconomySummary econ =
+                (EconomyContributionFetcher.EconomySummary) data.get("economySummary");
+            com.guild.models.Guild guildObj = (com.guild.models.Guild) data.get("guild");
+            PlayerActivity activity = findPlayerActivity(reportData, targetUuid);
+            return new PlayerDetailGUI(this, activity, reportData, econ);
+        });
+
+        api.registerCustomGUI("stats-overview", (player, data) -> {
+            com.guild.models.Guild guildObj = (com.guild.models.Guild) data.get("guild");
+            GuildStatistics statsData = (GuildStatistics) data.get("stats");
+            EconomyContributionFetcher.EconomySummary econ =
+                (EconomyContributionFetcher.EconomySummary) data.get("economySummary");
+            return new StatsOverviewGUI(this, guildObj, statsData, econ);
+        });
     }
 
     private void registerCommands(GuildPluginAPI api) {
@@ -131,18 +166,63 @@ public class GuildStatsModule implements GuildModule {
                     break;
                 case "refresh":
                     if (player.hasPermission("guild.stats.admin.refresh")) {
-                        player.sendMessage(ColorUtils.colorize("&a[Stats] 正在刷新..."));
+                        context.sendMessage(player, "stats.refreshing", "&a[Stats] 正在刷新...");
                         forceRefresh(player);
                     } else {
-                        player.sendMessage(ColorUtils.colorize("&c权限不足"));
+                        context.sendMessage(player, "stats.no-permission", "&c权限不足");
                     }
                     break;
                 default:
-                    showHelp(player);
+                    if (args.length > 1 && args[0].equalsIgnoreCase("view")) {
+                        openGuildStatsByName(player, args[1]);
+                    } else {
+                        showHelp(player);
+                    }
             }
         } else {
             openMyGuildStats(player);
         }
+    }
+
+    private void openGuildStatsByName(Player player, String guildName) {
+        context.sendMessage(player, "stats.loading", "&e[Stats] 正在查询公会: &f" + guildName);
+        GuildPluginAPI api = context.getApi();
+        api.getGuildByName(guildName)
+            .thenCompose(guildData -> {
+                if (guildData == null) {
+                    context.sendMessage(player, "stats.error.guild-not-found",
+                        "&c未找到名为 \"" + guildName + "\" 的公会");
+                    return CompletableFuture.completedFuture(null);
+                }
+                return updateSingleGuild(guildData.getId())
+                    .thenCombine(economyFetcher.fetchEconomySummary(guildData.getId())
+                        .exceptionally(ex -> null), (stats, econSummary) -> {
+                        if (stats != null) {
+                            dataCache.updateCache(guildData.getId(), stats);
+                            try {
+                                com.guild.models.Guild guild = new com.guild.models.Guild(
+                                    guildData.getName(), "", "", guildData.getMasterUuid(),
+                                    guildData.getMasterName());
+                                guild.setId(guildData.getId());
+                                guild.setLevel(guildData.getLevel());
+                                context.openGUI(player,
+                                    new StatsOverviewGUI(this, guild, stats, econSummary));
+                            } catch (Exception e) {
+                                context.sendMessage(player, "stats.error.gui-fail",
+                                    "&c[Stats] 打开界面失败: " + e.getMessage());
+                            }
+                        } else {
+                            context.sendMessage(player, "stats.error.no-data",
+                                "&c[Stats] 无法加载该公会的统计数据");
+                        }
+                        return null;
+                    });
+            })
+            .exceptionally(ex -> {
+                context.sendMessage(player, "stats.error.load-fail",
+                    "&c[Stats] 查询失败: " + ex.getMessage());
+                return null;
+            });
     }
 
     private void registerEventHandlers(GuildPluginAPI api) {
@@ -182,7 +262,7 @@ public class GuildStatsModule implements GuildModule {
 
         int retentionDays = context.getConfig().getInt("retention-days", 30);
         context.runTimer(1000L, 1728000L, () ->
-            statsManager.cleanupOlderThanDays(retentionDays));
+            context.runAsync(() -> statsManager.cleanupOlderThanDays(retentionDays)));
     }
 
     private void updateAllGuildsStatistics() {
@@ -198,8 +278,12 @@ public class GuildStatsModule implements GuildModule {
                         }));
                 }
                 CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0]))
-                    .thenRun(() -> context.getLogger().info(
-                        "[Stats] 已更新 " + guilds.size() + " 个公会的统计数据"))
+                    .thenRun(() -> {
+                        context.getLogger().info(
+                            "[Stats] 已更新 " + guilds.size() + " 个公会的统计数据");
+                        context.getEventBus().publish(new StatsRefreshedEvent(
+                            0, "ALL", guilds.size(), 0));
+                    })
                     .exceptionally(ex -> {
                         context.getLogger().warning("[Stats] 批量更新失败: " + ex.getMessage());
                         return null;
@@ -243,8 +327,8 @@ public class GuildStatsModule implements GuildModule {
             if (m.isOnline()) onlineCount++;
         }
 
-        stats.setTotalContribution(totalContrib);
-        stats.setAvgContribution(members.isEmpty() ? 0 : totalContrib / members.size());
+        stats.setTotalBCoin(totalContrib);
+        stats.setAvgBCoin(members.isEmpty() ? 0 : totalContrib / members.size());
         stats.setActiveMemberCount(onlineCount);
 
         // 使用 ActivityCalculator 计算真实的活跃度评分（而非简单公式）
@@ -282,11 +366,11 @@ public class GuildStatsModule implements GuildModule {
     private void openStatsOverview(Player player, Object... ctx) {
         Guild guild = extractGuild(ctx);
         if (guild == null) {
-            player.sendMessage(ColorUtils.colorize("&c无法获取工会信息"));
+            context.sendMessage(player, "stats.error.no-guild", "&c无法获取工会信息");
             return;
         }
 
-        player.sendMessage(ColorUtils.colorize("&e[Stats] 正在加载最新统计数据..."));
+        context.sendMessage(player, "stats.loading", "&e[Stats] 正在加载最新统计数据...");
 
         java.util.concurrent.CompletableFuture<GuildStatistics> statsFuture = updateSingleGuild(guild.getId());
         java.util.concurrent.CompletableFuture<EconomyContributionFetcher.EconomySummary> economyFuture =
@@ -303,13 +387,13 @@ public class GuildStatsModule implements GuildModule {
                     "[Stats] 刷新公会 %s 统计: 活跃度=%.1f 贡献=%.0f 经济=%s",
                     guild.getName(),
                     stats.getActivityScore(),
-                    stats.getTotalContribution(),
+                    stats.getTotalBCoin(),
                     econSummary != null ? String.format("净$%,.0f", econSummary.netTotal) : "无"));
                 try {
                     context.openGUI(player, new StatsOverviewGUI(this, guild, stats, econSummary));
                 } catch (Exception e) {
-                    player.sendMessage(ColorUtils.colorize(
-                        "&c[Stats] 打开界面失败: " + e.getMessage()));
+                    context.sendMessage(player, "stats.error.gui-fail",
+                        "&c[Stats] 打开界面失败: " + e.getMessage());
                     e.printStackTrace();
                 }
             } else {
@@ -317,8 +401,8 @@ public class GuildStatsModule implements GuildModule {
                 if (fallback != null) {
                     context.openGUI(player, new StatsOverviewGUI(this, guild, fallback, econSummary));
                 } else {
-                    player.sendMessage(ColorUtils.colorize(
-                        "&c[Stats] 无法加载统计数据"));
+                    context.sendMessage(player, "stats.error.no-data",
+                        "&c[Stats] 无法加载统计数据");
                 }
             }
         })
@@ -327,8 +411,8 @@ public class GuildStatsModule implements GuildModule {
             if (fallback != null) {
                 context.openGUI(player, new StatsOverviewGUI(this, guild, fallback, null));
             } else {
-                player.sendMessage(ColorUtils.colorize(
-                    "&c[Stats] 加载失败: " + ex.getMessage()));
+                context.sendMessage(player, "stats.error.load-fail",
+                    "&c[Stats] 加载失败: " + ex.getMessage());
             }
             return null;
         });
@@ -347,20 +431,21 @@ public class GuildStatsModule implements GuildModule {
         if (guild != null) {
             openStatsOverview(player, guild);
         } else {
-            player.sendMessage(ColorUtils.colorize("&c你不在任何公会中"));
+            context.sendMessage(player, "stats.error.no-guild-member", "&c你不在任何公会中");
         }
     }
 
     private void forceRefresh(Player player) {
         updateAllGuildsStatistics();
-        player.sendMessage(ColorUtils.colorize("&a[Stats] 已触发全量刷新，请稍后查看"));
+        context.sendMessage(player, "stats.refresh-triggered", "&a[Stats] 已触发全量刷新，请稍后查看");
     }
 
     private void showHelp(Player player) {
-        player.sendMessage(ColorUtils.colorize("&6&l=== 公会统计命令 ==="));
-        player.sendMessage(ColorUtils.colorize("&e/guild stats &7- 查看自己公会"));
-        player.sendMessage(ColorUtils.colorize("&e/guild stats top &7- 全服排行"));
-        player.sendMessage(ColorUtils.colorize("&e/guild stats refresh &7- 刷新数据(OP)"));
+        context.sendMessage(player, "stats.help.header", "&6&l=== 公会统计命令 ===");
+        context.sendMessage(player, "stats.help.view", "&e/guild stats &7- 查看自己公会");
+        context.sendMessage(player, "stats.help.top", "&e/guild stats top &7- 全服排行");
+        context.sendMessage(player, "stats.help.refresh", "&e/guild stats refresh &7- 刷新数据(OP)");
+        context.sendMessage(player, "stats.help.view-name", "&e/guild stats view <名称> &7- 按名查询其他公会");
     }
 
     private Guild extractGuild(Object... ctx) {
@@ -391,4 +476,26 @@ public class GuildStatsModule implements GuildModule {
     public StatsDataCache getDataCache() { return dataCache; }
     public ActivityCalculator getActivityCalculator() { return activityCalculator; }
     public EconomyContributionFetcher getEconomyFetcher() { return economyFetcher; }
+
+    private PlayerActivity findPlayerActivity(ActivityReport report, UUID uuid) {
+        if (report == null || report.getMembers() == null) return null;
+        for (PlayerActivity pa : report.getMembers()) {
+            if (uuid.equals(pa.getPlayerUuid())) return pa;
+        }
+        return null;
+    }
+
+    public static class StatsRefreshedEvent {
+        public final int guildId;
+        public final String guildName;
+        public final int totalGuilds;
+        public final double activityScore;
+
+        public StatsRefreshedEvent(int guildId, String guildName, int totalGuilds, double activityScore) {
+            this.guildId = guildId;
+            this.guildName = guildName;
+            this.totalGuilds = totalGuilds;
+            this.activityScore = activityScore;
+        }
+    }
 }

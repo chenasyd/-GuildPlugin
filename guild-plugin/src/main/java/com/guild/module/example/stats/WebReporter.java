@@ -6,6 +6,7 @@ import com.guild.module.example.stats.model.GuildStatistics;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -42,6 +43,35 @@ public class WebReporter {
             .exceptionally(ex -> {
                 logger.warning("[Stats-Web] 上报失败: " + ex.getMessage());
                 return null;
+            });
+    }
+
+    public void healthCheck() {
+        String healthEndpoint = getStringConfig("web-report.health-endpoint", "");
+        if (healthEndpoint == null || healthEndpoint.isEmpty()) {
+            return;
+        }
+        String token = getStringConfig("web-report.token", "");
+        Map<String, String> headers = Map.of(
+            "Accept", "application/json",
+            "Authorization", "Bearer " + (token != null ? token : "")
+        );
+        api.httpGet(healthEndpoint, headers)
+            .thenAccept(response -> logger.info("[Stats-Web] 健康检查通过"))
+            .exceptionally(ex -> {
+                logger.warning("[Stats-Web] 健康检查失败: " + ex.getMessage());
+                return null;
+            });
+    }
+
+    public CompletableFuture<String> fetchRemoteConfig(String url) {
+        if (url == null || url.isEmpty()) {
+            return CompletableFuture.completedFuture("");
+        }
+        return api.httpGet(url)
+            .exceptionally(ex -> {
+                logger.warning("[Stats-Web] 远程配置拉取失败: " + ex.getMessage());
+                return "";
             });
     }
 

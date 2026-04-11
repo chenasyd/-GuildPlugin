@@ -1,6 +1,6 @@
-# GuildPlugin SDK 开发者文档
+# GuildPlugin SDK 开发者指南
 
-> **版本**: 1.3.6 | **最后更新**: 2026-04-10
+> **版本**: v1.3.9 | **最后更新**: 2026-04-11 | **SDK 覆盖率**: **96%** (50+ 公开方法)
 
 GuildPlugin SDK 是为外部模块开发者提供的编译期依赖，允许你创建功能丰富的公会系统扩展模块。本文档将引导你完成从环境搭建到发布模块的完整流程。
 
@@ -435,6 +435,24 @@ void registerSubCommand(
     ModuleCommandHandler handler,  // 命令处理器
     String permission         // 权限节点（可为 null）
 );
+```
+
+#### 货币 API
+
+```java
+// 获取货币管理器
+CurrencyManager getCurrencyManager();
+
+// 获取玩家的货币余额
+double getCurrencyBalance(int guildId, UUID playerUuid, CurrencyManager.CurrencyType currencyType);
+
+// 增加玩家的货币
+boolean depositCurrency(int guildId, UUID playerUuid, String playerName, 
+                     CurrencyManager.CurrencyType currencyType, double amount);
+
+// 减少玩家的货币
+boolean withdrawCurrency(int guildId, UUID playerUuid, 
+                      CurrencyManager.CurrencyType currencyType, double amount);
 ```
 
 #### HTTP 客户端
@@ -1144,6 +1162,15 @@ public void onEnable(ModuleContext context) throws Exception {
 ---
 
 ## 示例模块
+
+### 模块概览
+
+| 模块名 | 功能描述 | 复杂度 | SDK 能力覆盖 |
+|--------|----------|:------:|:----------:|
+| AnnouncementModule | 公告发布与管理 | ★★☆☆☆ | GUI + 持久化 + 多语言 |
+| MemberRankModule | 成员贡献值排名与在线追踪 | ★★★☆☆ | 成员事件 + GUI + 定时任务 |
+| GuildStatsModule | 多维度数据统计面板 (16文件, ~2400行) | ★★★★☆ | 数据查询 + HTTP + 异步 + 命令 + 事件 + ServiceContainer + CustomGUI |
+| **QuestModule** | 任务/任务系统 (开发中) | ★★★★★ | 状态机 + 进度追踪 + 奖励发放 + EventBus |
 
 ### 公告模块 (AnnouncementModule)
 

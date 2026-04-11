@@ -10,7 +10,7 @@ When using this plugin, please follow the steps below to update your configurati
 2. If you prefer not to delete, you can manually replace the content of the corresponding `messages_*.yml` files with the latest configuration.
 3. After completing the above steps, run the following command to apply the configuration: `/guildadmin reload`
 
-> ⚠️ **Tip**: If you are using v1.3.5 or higher, please be sure to update the plugin configuration to the latest version; otherwise, the plugin will experience numerous display errors that affect the player experience.
+> ⚠️ **Tip**: If you are using v1.3.9 or higher, please be sure to update the plugin configuration to the latest version; otherwise, the plugin will experience numerous display errors that affect the player experience.
 
 ## Core Features
 
@@ -242,8 +242,17 @@ See `plugins/database.sql` for complete SQL schema.
 
 ## Changelog
 
-### v1.3.6 (Latest version)
-- Further improved the SDK module loader
+### v1.3.9 (Latest) - SDK Deep Enhancement
+- **SDK Coverage: 96%** (50+ public methods)
+- **Phase A (v1.3.7)**: 7 improvements — member events, unified messaging, async IO, config-driven, GUI tools, HTTP GET, name-based query
+- **Phase B (v1.3.8)**: 4 improvements — CustomGUI lifecycle (register/open/unregister), cross-GUI navigation
+- **Phase C (v1.3.9)**: 5 improvements — delayed init, dynamic language, descriptor logging, EventBus, GUI nav stack
+- **Core Fix**: ModuleContext.formatMessage() unified colorization
+- **3 Example Modules Complete**: AnnouncementModule / MemberRankModule / GuildStatsModule
+
+### v1.3.6 - GuildStatsModule Complete
+- Third example module: statistics dashboard (activity/economy/ranking/web reporting)
+- SDK coverage improved from 45% to 82%
 
 ### v1.3.5
 - Improved the SDK module loader
@@ -288,13 +297,12 @@ See `plugins/database.sql` for complete SQL schema.
 ## Planned Features
 
 - [ ] Guild war system (partially implemented)
-- [ ] Guild shop
-- [ ] Guild quest system
-- [ ] Guild leaderboard
+- [x] ~~Guild announcement system~~ ✅ (AnnouncementModule, v1.3.x)
+- [x] ~~Guild leaderboard~~ ✅ (GuildStatsModule-GuildRankingGUI, v1.3.x)
+- [ ] Guild quest/mission system **← Next: QuestModule**
 - [ ] Guild event system
 - [ ] Guild storage
-- [ ] Guild announcement system
-- [ ] Plugin extension marketplace (In development)
+- [x] ~~Plugin extension module SDK~~ ✅ (Full SDK + 3 example modules, 96% coverage, v1.3.9)
 - [ ] Quick resource updates
 - [ ] Quick error feedback
 - [ ] Error reporting with code locations

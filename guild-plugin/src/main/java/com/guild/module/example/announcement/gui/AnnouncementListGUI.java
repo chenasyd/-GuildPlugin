@@ -112,14 +112,9 @@ public class AnnouncementListGUI implements GUI {
         }
 
         // 返回按钮
-        ItemStack backItem = createItem(Material.ARROW,
-                ColorUtils.colorize("&c" +
-                        module.getContext().getMessage("module.announcement.list.back",
-                                "&c返回")),
-                ColorUtils.colorize("&7" +
-                        module.getContext().getMessage("module.announcement.list.back-hint",
-                                "&7点击返回工会设置")));
-        inventory.setItem(49, backItem);
+        inventory.setItem(49, createBackButton(
+                module.getContext().getMessage("module.announcement.list.back", "&c返回"),
+                module.getContext().getMessage("module.announcement.list.back-hint", "&7点击返回工会设置")));
 
         // 翻页按钮（如果有多页）
         if (getTotalPages() > 1) {
@@ -333,5 +328,9 @@ public class AnnouncementListGUI implements GUI {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    private ItemStack createBackButton(String name, String hint) {
+        return createItem(Material.ARROW, ColorUtils.colorize(name), ColorUtils.colorize(hint));
     }
 }

@@ -86,7 +86,7 @@ public class GuildInfoGUI implements GUI {
         String baseTitle = ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "guild-info.title", "&6工会信息"));
         if (totalPages > 1) {
             baseTitle += ColorUtils.colorize(" &7(" +
-                    plugin.getLanguageManager().getMessage(player, "gui.page-info",
+                    plugin.getLanguageManager().getIndexedMessage(player, "gui.page-info",
                             "第{0}页/共{1}页",
                             String.valueOf(currentPage), String.valueOf(totalPages)) + ")");
         }

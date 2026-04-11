@@ -67,37 +67,37 @@ public class StatsOverviewGUI extends AbstractModuleGUI {
             "",
             "&7■ 活跃度评分: " + getActivityScoreColor(stats.getActivityScore()) +
                 "&l" + String.format("%.1f", stats.getActivityScore()) + "/100",
-            "&8  (基于在线时长+贡献+角色综合计算)",
+            "&8  (基于在线时长+B币+角色综合计算)",
             "",
             "&7■ 活跃成员: &f" + stats.getActiveMemberCount(),
             "&8  (当前在线的成员数量)",
             "",
-            "&7⚠ 与「贡献值」的区别:",
-            "&8  贡献值 = 累积数值(只增不减)",
+            "&7⚠ 与「B币」的区别:",
+            "&8  B币 = 累积数值(只增不减)",
             "&8  活跃度 = 近期活跃程度(动态变化)",
             "",
             "&8┃ 数据来源: &7本模块独立计算 (在线追踪+评分算法)"));
 
         boolean hasRealEconomy = economySummary != null && !economySummary.allContributions.isEmpty();
-        double displayTotalContrib = hasRealEconomy ? economySummary.netTotal : stats.getTotalContribution();
+        double displayTotalContrib = hasRealEconomy ? economySummary.netTotal : stats.getTotalBCoin();
         double displayAvgContrib = hasRealEconomy && economySummary.uniqueContributors > 0
-            ? (economySummary.netTotal / economySummary.uniqueContributors) : stats.getAvgContribution();
+            ? (economySummary.netTotal / economySummary.uniqueContributors) : stats.getAvgBCoin();
 
         inv.setItem(21, createItem(Material.GOLD_INGOT,
             "&6&l经济报表",
             "",
             hasRealEconomy ?
-                "&7■ 净贡献总额: &e" + String.format("%,.0f", displayTotalContrib) :
-                "&7■ 总贡献值(核心): &e" + String.format("%.0f", displayTotalContrib),
+                "&7■ 净B币总额: &e" + String.format("%,.0f", displayTotalContrib) :
+                "&7■ 总B币(核心): &e" + String.format("%.0f", displayTotalContrib),
             hasRealEconomy ?
                 "&8  (存入-取出, 来自 guild_contributions 表)" :
-                "&8  (所有成员累积贡献之和)",
+                "&8  (所有成员累积B币之和)",
             "",
             hasRealEconomy ?
-                ("&7■ 人均净贡献: &f" + String.format("%,.1f", displayAvgContrib) +
+                ("&7■ 人均净B币: &f" + String.format("%,.1f", displayAvgContrib) +
                  "\n&8  (净总额 ÷ " + economySummary.uniqueContributors + " 位贡献者)") :
-                ("&7■ 人均贡献: &f" + String.format("%.1f", displayAvgContrib) +
-                 "\n&8  (总贡献 ÷ 成员数)"),
+                ("&7■ 人均B币: &f" + String.format("%.1f", displayAvgContrib) +
+                 "\n&8  (总B币 ÷ 成员数)"),
             "",
             hasRealEconomy ?
                 ("&7■ 累计存入: &a+$" + String.format("%,.0f", economySummary.totalDeposited) +
@@ -121,7 +121,7 @@ public class StatsOverviewGUI extends AbstractModuleGUI {
             "&8━━ 计算公式 ━━",
             "&7综合分 = 等级×50",
             "&8       + 活跃度×3",
-            "&8       + 贡献×0.05",
+            "&8       + B币×0.05",
             "&8  (满分约1000分)",
             "",
             "&8━━ 评分标准 ━━",

@@ -12,6 +12,7 @@ import com.guild.models.GuildMember;
 import com.guild.sdk.GuildPluginAPI;
 import com.guild.sdk.event.MemberEventData;
 import com.guild.sdk.event.MemberEventHandler;
+import com.guild.sdk.economy.CurrencyManager;
 import com.guild.module.example.member.rank.gui.MemberRankGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -47,12 +48,15 @@ public class MemberRankModule implements GuildModule {
         this.context = context;
         this.state = ModuleState.ACTIVE;
 
-        // 数据目录: plugins/GuildPlugin/data/member-ranks/
-        File dataDir = new File(context.getPlugin().getDataFolder(), "data" + File.separator + "member-ranks");
-        this.rankManager = new MemberRankManager(dataDir, context.getLogger());
+        // 初始化排名管理器，使用数据库存储
+        this.rankManager = new MemberRankManager(context.getPlugin());
         rankManager.loadAll();
         this.onlineActivityTracker = new OnlineActivityTracker(this);
         onlineActivityTracker.start();
+
+        int defaultContribution = context.getConfig().getInt("default-contribution-on-join", 0);
+        boolean autoDepositEnabled = context.getConfig().getBoolean("auto-deposit.enabled", true);
+        double autoDepositAmount = context.getConfig().getDouble("auto-deposit.amount", 10);
 
         GuildPluginAPI api = context.getApi();
 
@@ -60,7 +64,10 @@ public class MemberRankModule implements GuildModule {
         api.onMemberJoin(new MemberEventHandler() {
             @Override
             public void onEvent(MemberEventData data) {
-                rankManager.getOrCreate(data.getGuildId(), data.getPlayerUuid(), data.getPlayerName());
+                var record = rankManager.getOrCreate(data.getGuildId(), data.getPlayerUuid(), data.getPlayerName());
+                if (defaultContribution > 0 && record != null) {
+                    record.addACoin(defaultContribution);
+                }
             }
 
             @Override
@@ -104,6 +111,10 @@ public class MemberRankModule implements GuildModule {
 
         context.getLogger().info(ColorUtils.colorize(context.getMessage("module.member-rank.loaded",
                 "&a[排名模块] 成员贡献排名系统已启用")));
+
+        ModuleDescriptor desc = context.getDescriptor();
+        context.getLogger().info(String.format("[Rank-Meta] 模块元信息: id=%s name=%s version=%s author=%s",
+            desc.getId(), desc.getName(), desc.getVersion(), desc.getAuthor()));
     }
 
     @Override
@@ -185,11 +196,11 @@ public class MemberRankModule implements GuildModule {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(ColorUtils.colorize("&6&l" +
-                    context.getMessage("module.member-rank.button-name", "贡献排名")));
+                    context.getMessage("module.member-rank.button-name", "A币排名")));
             List<String> lore = new ArrayList<>();
             lore.add(ColorUtils.colorize("&7" +
                     context.getMessage("module.member-rank.button-desc",
-                            "管理成员贡献值和排名")));
+                            "管理成员A币和排名")));
             meta.setLore(lore);
             item.setItemMeta(meta);
         }
@@ -207,11 +218,11 @@ public class MemberRankModule implements GuildModule {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(ColorUtils.colorize("&e&l" +
-                    context.getMessage("module.member-rank.info-button-name", "贡献排行榜")));
+                    context.getMessage("module.member-rank.info-button-name", "A币排行榜")));
             List<String> lore = new ArrayList<>();
             lore.add(ColorUtils.colorize("&7" +
                     context.getMessage("module.member-rank.info-button-desc",
-                            "查看工会成员贡献排名")));
+                            "查看工会成员A币排名")));
             lore.add(ColorUtils.colorize("&7" +
                     context.getMessage("module.member-rank.info-button-hint",
                             "&7点击查看排行榜")));

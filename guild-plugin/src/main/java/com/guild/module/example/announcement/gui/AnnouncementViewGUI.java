@@ -88,25 +88,15 @@ public class AnnouncementViewGUI implements GUI {
         }
 
         // 返回按钮
-        ItemStack backItem;
         if (selectedAnnouncement != null) {
-            backItem = createItem(Material.ARROW,
-                    ColorUtils.colorize("&c" +
-                            module.getContext().getMessage("module.announcement.view.back-to-list",
-                                    "&c返回列表")),
-                    ColorUtils.colorize("&7" +
-                            module.getContext().getMessage("module.announcement.view.back-to-list-hint",
-                                    "&7点击返回公告列表")));
+            inventory.setItem(49, createBackButton(
+                    module.getContext().getMessage("module.announcement.view.back-to-list", "&c返回列表"),
+                    module.getContext().getMessage("module.announcement.view.back-to-list-hint", "&7点击返回公告列表")));
         } else {
-            backItem = createItem(Material.ARROW,
-                    ColorUtils.colorize("&c" +
-                            module.getContext().getMessage("module.announcement.view.back",
-                                    "&c返回")),
-                    ColorUtils.colorize("&7" +
-                            module.getContext().getMessage("module.announcement.view.back-hint",
-                                    "&7点击返回工会信息")));
+            inventory.setItem(49, createBackButton(
+                    module.getContext().getMessage("module.announcement.view.back", "&c返回"),
+                    module.getContext().getMessage("module.announcement.view.back-hint", "&7点击返回工会信息")));
         }
-        inventory.setItem(49, backItem);
 
         // 翻页按钮（仅列表页且多页时）
         if (selectedAnnouncement == null && getTotalPages() > 1) {
@@ -368,5 +358,9 @@ public class AnnouncementViewGUI implements GUI {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    private ItemStack createBackButton(String name, String hint) {
+        return createItem(Material.ARROW, ColorUtils.colorize(name), ColorUtils.colorize(hint));
     }
 }

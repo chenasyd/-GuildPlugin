@@ -9,6 +9,7 @@ import com.guild.core.placeholder.PlaceholderManager;
 import com.guild.core.permissions.PermissionManager;
 import com.guild.core.economy.EconomyManager;
 import com.guild.core.language.LanguageManager;
+import com.guild.sdk.economy.CurrencyManager;
 import com.guild.commands.GuildCommand;
 import com.guild.commands.GuildAdminCommand;
 import com.guild.commands.GuildModuleCommand;
@@ -97,21 +98,25 @@ public class GuildPlugin extends JavaPlugin {
             guildService = new GuildService(this);
             serviceContainer.register(GuildService.class, guildService);
             
+            // 设置PlaceholderManager的GuildService引用
+            placeholderManager.setGuildService(guildService);
+            
+            // 启动服务（确保数据库连接在模块加载前初始化）
+            startServices();
+            
+            // 初始化货币管理器（数据库连接初始化后）
+            CurrencyManager currencyManager = new CurrencyManager(this);
+            serviceContainer.register(CurrencyManager.class, currencyManager);
+            
             // 初始化模块系统（在所有核心服务就绪后）
             moduleManager = new ModuleManager(this);
             serviceContainer.register(ModuleManager.class, moduleManager);
-            
-            // 设置PlaceholderManager的GuildService引用
-            placeholderManager.setGuildService(guildService);
             
             // 注册命令
             registerCommands();
             
             // 注册监听器
             registerListeners();
-            
-            // 启动服务
-            startServices();
             
             // 加载所有扩展模块（在核心服务全部就绪后）
             moduleManager.loadAllModules();

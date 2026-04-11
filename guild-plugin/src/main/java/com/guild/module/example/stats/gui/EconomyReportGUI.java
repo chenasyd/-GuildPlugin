@@ -89,9 +89,9 @@ public class EconomyReportGUI extends AbstractModuleGUI {
             lore.add(ColorUtils.colorize(""));
             lore.add(ColorUtils.colorize("&8┃ 基于 /guild deposit 和 /guild withdraw 记录"));
         } else {
-            lore.add(ColorUtils.colorize("&7贡献总值(核心): &e&l" + String.format("%,.0f", stats.getTotalContribution())));
+            lore.add(ColorUtils.colorize("&7B币总值(核心): &e&l" + String.format("%,.0f", stats.getTotalBCoin())));
             lore.add(ColorUtils.colorize("&8  暂无存取款记录，显示 MemberData 值"));
-            lore.add(ColorUtils.colorize("&7人均贡献: &f" + String.format("%,.1f", stats.getAvgContribution())));
+            lore.add(ColorUtils.colorize("&7人均B币: &f" + String.format("%,.1f", stats.getAvgBCoin())));
         }
         lore.add(ColorUtils.colorize("&7成员总数: &f" + memberCount + " 人"));
 
@@ -274,7 +274,7 @@ public class EconomyReportGUI extends AbstractModuleGUI {
             return;
         }
 
-        double totalContrib = stats.getTotalContribution();
+        double totalContrib = stats.getTotalBCoin();
         if (totalContrib <= 0) {
             inv.setItem(23, createItem(Material.PAPER, "&7&l贡献分布", "", "&7总贡献值为 0"));
             return;
@@ -347,7 +347,7 @@ public class EconomyReportGUI extends AbstractModuleGUI {
         String timeAgo = formatTimeAgo(updateInterval);
 
         double displayTotalContrib = (economySummary != null && !economySummary.allContributions.isEmpty())
-            ? economySummary.netTotal : stats.getTotalContribution();
+            ? economySummary.netTotal : stats.getTotalBCoin();
 
         inv.setItem(25, createItem(Material.CLOCK,
             "&d&l增长趋势",
@@ -391,7 +391,7 @@ public class EconomyReportGUI extends AbstractModuleGUI {
     }
 
     private double calculateContribPercent(double contribution) {
-        double total = stats.getTotalContribution();
+        double total = stats.getTotalBCoin();
         if (total <= 0) return 0;
         return contribution / total * 100;
     }
@@ -405,8 +405,8 @@ public class EconomyReportGUI extends AbstractModuleGUI {
             return Double.MAX_VALUE;
         }
 
-        double prevContrib = prevStats.getTotalContribution();
-        double currContrib = stats.getTotalContribution();
+        double prevContrib = prevStats.getTotalBCoin();
+        double currContrib = stats.getTotalBCoin();
 
         if (prevContrib <= 0) {
             return currContrib > 0 ? 100.0 : 0.0;

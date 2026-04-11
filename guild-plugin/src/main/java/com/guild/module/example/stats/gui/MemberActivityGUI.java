@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.guild.sdk.GuildPluginAPI;
 
 public class MemberActivityGUI extends AbstractModuleGUI {
 
@@ -152,14 +153,19 @@ public class MemberActivityGUI extends AbstractModuleGUI {
         // 使用槽位映射表查找数据
         PlayerActivity selected = slotDataMap.get(slot);
         if (selected != null) {
+            var guiManager = module.getContext().getGuiManager();
             module.getContext().getLogger().info(
-                "[Stats] 玩家 " + player.getName() +
-                " 查看成员详情: " + selected.getPlayerName()
-            );
+                "[Stats] 玩家 " + player.getName()
+                + " 查看成员详情: " + selected.getPlayerName()
+                + " (导航深度: " + guiManager.getOpenGUICount() + ")");
 
             try {
-                module.getContext().openGUI(player,
-                    new PlayerDetailGUI(module, selected, report, economySummary));
+                Map<String, Object> detailData = new HashMap<>();
+                detailData.put("targetUuid", selected.getPlayerUuid());
+                detailData.put("report", report);
+                detailData.put("economySummary", economySummary);
+                GuildPluginAPI api = module.getContext().getApi();
+                api.openCustomGUI("stats-player-detail", player, detailData);
             } catch (Exception e) {
                 player.sendMessage(ColorUtils.colorize(
                     "&c[Stats] 打开详情失败: " + e.getMessage()));

@@ -170,7 +170,7 @@ public class OnlineActivityTracker implements Listener {
             return;
         }
 
-        module.getRankManager().addContribution(guildId, uuid, playerName, award);
+        module.getRankManager().addACoin(guildId, uuid, playerName, award);
         dailyAwarded.put(uuid, daily + award);
 
         // 按窗口累计，避免因为刷新频率漂移导致结算抖动

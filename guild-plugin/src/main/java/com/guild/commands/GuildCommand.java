@@ -1580,6 +1580,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                         "玩家向工会存入资金"
                     );
 
+                    // 分发存款事件
+                    if (plugin.getModuleManager() != null) {
+                        plugin.getModuleManager().getSharedApi().fireEconomyDeposit(
+                            guild.getId(), guild.getName(), player.getUniqueId(), player.getName(), amount
+                        );
+                    }
+
                     String message = languageManager.getMessage(player, "economy.deposit-success", "&a成功向工会存款 &e{amount}！")
                         .replace("{amount}", plugin.getEconomyManager().format(amount));
                     player.sendMessage(ColorUtils.colorize(message));
@@ -1655,6 +1662,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                             amount, com.guild.models.GuildContribution.ContributionType.WITHDRAW,
                             "玩家从工会取出资金"
                         );
+
+                        // 分发取款事件
+                        if (plugin.getModuleManager() != null) {
+                            plugin.getModuleManager().getSharedApi().fireEconomyWithdraw(
+                                guild.getId(), guild.getName(), player.getUniqueId(), player.getName(), amount
+                            );
+                        }
 
                         String message = languageManager.getMessage(player, "economy.withdraw-success", "&a成功从工会取款 &e{amount}！")
                             .replace("{amount}", plugin.getEconomyManager().format(amount));

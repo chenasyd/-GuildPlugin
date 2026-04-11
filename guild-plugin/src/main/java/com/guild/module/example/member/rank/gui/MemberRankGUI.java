@@ -39,7 +39,7 @@ public class MemberRankGUI extends AbstractModuleGUI {
     @Override
     public String getTitle() {
         return ColorUtils.colorize(module.getContext().getMessage(
-                "module.member-rank.gui.title", "&6&l成员贡献排名"));
+                "module.member-rank.gui.title", "&6&l成员A币排名"));
     }
 
     @Override
@@ -59,24 +59,24 @@ public class MemberRankGUI extends AbstractModuleGUI {
         if (allRanks.isEmpty()) {
             // 空列表提示
             inventory.setItem(4, createItem(Material.BOOK,
-                    "&6&l成员贡献排名",
+                    "&6&l成员A币排名",
                     "",
-                    "&7此模块的贡献值由本模块独立管理",
-                    "&8  与「数据统计」模块的贡献值相互独立",
+                    "&7此模块的A币由本模块独立管理",
+                    "&8  与「数据统计」模块的B币相互独立",
                     "",
                     "&7数据来源: &e成员排名模块 (可读写)",
                     "&7更新方式: &a在线自动发放 / 管理员手动调整",
                     "",
-                    "&c暂无成员贡献记录"));
+                    "&c暂无成员A币记录"));
             inventory.setItem(22, createItem(Material.BARRIER,
                     module.getContext().getMessage("module.member-rank.gui.empty", "&7暂无排名数据"),
-                    module.getContext().getMessage("module.member-rank.gui.empty-hint", "&7暂无成员贡献记录")));
+                    module.getContext().getMessage("module.member-rank.gui.empty-hint", "&7暂无成员A币记录")));
         } else {
             inventory.setItem(4, createItem(Material.BOOK,
-                    "&6&l成员贡献排名",
+                    "&6&l成员A币排名",
                     "",
-                    "&7此模块的贡献值由本模块独立管理",
-                    "&8  与「数据统计」模块的贡献值相互独立",
+                    "&7此模块的A币由本模块独立管理",
+                    "&8  与「数据统计」模块的B币相互独立",
                     "",
                     "&7数据来源: &e成员排名模块 (可读写)",
                     "&7更新方式: &a在线自动发放 / 管理员手动调整"));
@@ -152,16 +152,16 @@ public class MemberRankGUI extends AbstractModuleGUI {
             MemberRank rank = allRanks.get(realIndex);
 
             if (clickType == ClickType.LEFT) {
-                // 左键：增加贡献
-                module.getRankManager().addContribution(guild.getId(),
+                // 左键：增加A币
+                module.getRankManager().addACoin(guild.getId(),
                         rank.getPlayerUuid(), rank.getPlayerName(), 10);
                 player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 1.0f);
                 String msg = module.getContext().getMessage("module.member-rank.gui.add-success",
                         rank.getPlayerName());
                 player.sendMessage(ColorUtils.colorize(msg));
             } else if (clickType == ClickType.RIGHT) {
-                // 右键：减少贡献
-                module.getRankManager().reduceContribution(guild.getId(),
+                // 右键：减少A币
+                module.getRankManager().reduceACoin(guild.getId(),
                         rank.getPlayerUuid(), rank.getPlayerName(), 10);
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f);
                 String msg = module.getContext().getMessage("module.member-rank.gui.reduce-success",
@@ -169,7 +169,7 @@ public class MemberRankGUI extends AbstractModuleGUI {
                 player.sendMessage(ColorUtils.colorize(msg));
             } else if (clickType == ClickType.SHIFT_LEFT) {
                 // Shift+左键：增加 100
-                module.getRankManager().addContribution(guild.getId(),
+                module.getRankManager().addACoin(guild.getId(),
                         rank.getPlayerUuid(), rank.getPlayerName(), 100);
                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 1.0f);
                 String msg = module.getContext().getMessage("module.member-rank.gui.add-bulk-success",
@@ -177,7 +177,7 @@ public class MemberRankGUI extends AbstractModuleGUI {
                 player.sendMessage(ColorUtils.colorize(msg));
             } else if (clickType == ClickType.SHIFT_RIGHT) {
                 // Shift+右键：减少 100
-                module.getRankManager().reduceContribution(guild.getId(),
+                module.getRankManager().reduceACoin(guild.getId(),
                         rank.getPlayerUuid(), rank.getPlayerName(), 100);
                 player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f);
                 String msg = module.getContext().getMessage("module.member-rank.gui.reduce-bulk-success",
@@ -234,7 +234,7 @@ public class MemberRankGUI extends AbstractModuleGUI {
         String name = ColorUtils.colorize(prefix + onlineTag + " &f" + rank.getPlayerName());
 
         String contribText = module.getContext().getMessage("module.member-rank.gui.contribution",
-                String.valueOf(rank.getContribution()));
+                String.valueOf(rank.getACoin()));
 
         String activeText = module.getContext().getMessage("module.member-rank.gui.last-active",
                 rank.getLastActive() != null ? rank.getLastActive().toLocalDate().toString() : "-");
