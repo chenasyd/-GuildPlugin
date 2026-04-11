@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.guild</groupId>
         <artifactId>guild-parent</artifactId>
-        <version>1.4.0</version>
+        <version>${guild.version}</version>
     </parent>
 
     <artifactId>guild-sdk</artifactId>

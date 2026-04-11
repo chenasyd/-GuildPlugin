@@ -6,7 +6,7 @@ public class QuestObjective {
         COLLECT_RESOURCES("收集资源"),
         DEPOSIT_MONEY("存入公会资金"),
         ONLINE_HOURS("在线时长(分钟)"),
-        GUILD_CONTRIBUTE("贡献值增长");
+        GUILD_CONTRIBUTE("C币增长");
 
         private final String displayName;
         ObjectiveType(String displayName) { this.displayName = displayName; }

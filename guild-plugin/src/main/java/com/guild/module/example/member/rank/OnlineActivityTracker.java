@@ -165,7 +165,10 @@ public class OnlineActivityTracker implements Listener {
             return;
         }
 
-        int award = Math.min(awardPoints, dailyCap - daily);
+        // 根据玩家等级和活跃度调整奖励
+        int baseAward = awardPoints;
+        int adjustedAward = calculateAdjustedAward(baseAward, member);
+        int award = Math.min(adjustedAward, dailyCap - daily);
         if (award <= 0) {
             return;
         }
@@ -175,6 +178,26 @@ public class OnlineActivityTracker implements Listener {
 
         // 按窗口累计，避免因为刷新频率漂移导致结算抖动
         onlineActiveMinutes.put(uuid, Math.max(0, newMinutes - awardEveryMinutes));
+    }
+
+    private int calculateAdjustedAward(int baseAward, GuildMember member) {
+        // 根据玩家角色调整奖励
+        double roleMultiplier = 1.0;
+        switch (member.getRole()) {
+            case LEADER:
+                roleMultiplier = 2.0;
+                break;
+            case OFFICER:
+                roleMultiplier = 1.5;
+                break;
+            case MEMBER:
+            default:
+                roleMultiplier = 1.0;
+                break;
+        }
+        
+        // 可以根据其他因素调整，比如公会等级、玩家加入时间等
+        return (int) Math.round(baseAward * roleMultiplier);
     }
 
     private void markActive(UUID uuid) {

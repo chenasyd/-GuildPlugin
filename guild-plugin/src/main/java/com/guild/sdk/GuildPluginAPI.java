@@ -1,25 +1,8 @@
 package com.guild.sdk;
 
-import com.guild.GuildPlugin;
-import com.guild.core.module.ModuleManager;
-import com.guild.core.module.hook.GUIExtensionHook;
-import com.guild.sdk.command.ModuleCommandHandler;
-import com.guild.sdk.event.GuildEventHandler;
-import com.guild.sdk.event.GuildEventData;
-import com.guild.sdk.event.MemberEventHandler;
-import com.guild.sdk.event.MemberEventData;
-import com.guild.sdk.event.EconomyEventHandler;
-import com.guild.sdk.event.EconomyEventData;
-import com.guild.sdk.gui.ModuleGUIFactory;
-import com.guild.sdk.http.HttpClientProvider;
-import com.guild.core.gui.GUI;
-import com.guild.sdk.data.GuildData;
-import com.guild.sdk.data.MemberData;
-import com.guild.sdk.economy.CurrencyManager;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -27,6 +10,26 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import com.guild.GuildPlugin;
+import com.guild.core.gui.GUI;
+import com.guild.core.module.ModuleManager;
+import com.guild.core.module.hook.GUIExtensionHook;
+import com.guild.sdk.command.ModuleCommandHandler;
+import com.guild.sdk.data.GuildData;
+import com.guild.sdk.data.MemberData;
+import com.guild.sdk.economy.CurrencyManager;
+import com.guild.sdk.event.EconomyEventData;
+import com.guild.sdk.event.EconomyEventHandler;
+import com.guild.sdk.event.GuildEventData;
+import com.guild.sdk.event.GuildEventHandler;
+import com.guild.sdk.event.MemberEventData;
+import com.guild.sdk.event.MemberEventHandler;
+import com.guild.sdk.gui.ModuleGUIFactory;
+import com.guild.sdk.http.HttpClientProvider;
 
 /**
  * 公会插件 SDK - 统一 API 门面
@@ -51,6 +54,11 @@ public class GuildPluginAPI {
 
     // 自定义 GUI 注册表 (guiId -> factory)
     private final Map<String, ModuleGUIFactory> customGUIRegistry = new java.util.concurrent.ConcurrentHashMap<>();
+
+    // 命令注册表 (parentCommand -> (subCommand -> handler))
+    private final Map<String, Map<String, ModuleCommandHandler>> commandRegistry = new java.util.concurrent.ConcurrentHashMap<>();
+    // 权限注册表 (parentCommand -> (subCommand -> permission))
+    private final Map<String, Map<String, String>> permissionRegistry = new java.util.concurrent.ConcurrentHashMap<>();
 
     public GuildPluginAPI(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -157,11 +165,45 @@ public class GuildPluginAPI {
 
     // ==================== 命令扩展 API ====================
 
-    /** 注册子命令（预留接口） */
+    /** 注册子命令 */
     public void registerSubCommand(String parentCommand, String name,
                                    ModuleCommandHandler handler,
                                    String permission) {
-        // TODO: 实现基于反射或 Map 的子命令分发机制
+        if (parentCommand == null || parentCommand.isEmpty() || name == null || name.isEmpty() || handler == null) {
+            throw new IllegalArgumentException("parentCommand, name and handler cannot be null or empty");
+        }
+        
+        commandRegistry.computeIfAbsent(parentCommand.toLowerCase(), k -> new java.util.concurrent.ConcurrentHashMap<>())
+            .put(name.toLowerCase(), handler);
+        
+        if (permission != null) {
+            permissionRegistry.computeIfAbsent(parentCommand.toLowerCase(), k -> new java.util.concurrent.ConcurrentHashMap<>())
+                .put(name.toLowerCase(), permission);
+        }
+    }
+
+    /** 检查是否存在子命令 */
+    public boolean hasSubCommand(String parentCommand, String name) {
+        Map<String, ModuleCommandHandler> subCommands = commandRegistry.get(parentCommand.toLowerCase());
+        return subCommands != null && subCommands.containsKey(name.toLowerCase());
+    }
+
+    /** 获取子命令处理器 */
+    public ModuleCommandHandler getSubCommandHandler(String parentCommand, String name) {
+        Map<String, ModuleCommandHandler> subCommands = commandRegistry.get(parentCommand.toLowerCase());
+        return subCommands != null ? subCommands.get(name.toLowerCase()) : null;
+    }
+
+    /** 获取子命令权限 */
+    public String getSubCommandPermission(String parentCommand, String name) {
+        Map<String, String> permissions = permissionRegistry.get(parentCommand.toLowerCase());
+        return permissions != null ? permissions.get(name.toLowerCase()) : null;
+    }
+
+    /** 获取所有子命令名称 */
+    public List<String> getSubCommands(String parentCommand) {
+        Map<String, ModuleCommandHandler> subCommands = commandRegistry.get(parentCommand.toLowerCase());
+        return subCommands != null ? new ArrayList<>(subCommands.keySet()) : Collections.emptyList();
     }
 
     // ==================== 事件 API ====================
@@ -295,6 +337,8 @@ public class GuildPluginAPI {
         onEconomyDepositHandlers.clear();
         onEconomyWithdrawHandlers.clear();
         customGUIRegistry.clear();
+        commandRegistry.clear();
+        permissionRegistry.clear();
     }
 
     // ==================== 货币 API ====================

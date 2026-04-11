@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.guild</groupId>
         <artifactId>guild-parent</artifactId>
-        <version>1.4.0</version>
+        <version>${guild.version}</version>
     </parent>
 
     <artifactId>guild-plugin</artifactId>
@@ -74,6 +74,22 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>plugin.yml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>plugin.yml</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

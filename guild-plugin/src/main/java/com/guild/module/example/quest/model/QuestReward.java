@@ -2,7 +2,7 @@ package com.guild.module.example.quest.model;
 
 public class QuestReward {
     public enum RewardType {
-        CONTRIBUTION("贡献值"),
+        CONTRIBUTION("C币"),
         MONEY("金币"),
         EXP("经验值");
 

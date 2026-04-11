@@ -1,19 +1,28 @@
 package com.guild.module.example.quest;
 
-import com.guild.module.example.quest.model.QuestDefinition;
-import com.guild.module.example.quest.model.QuestProgress;
-import com.guild.core.module.ModuleContext;
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import com.guild.core.module.ModuleContext;
+import com.guild.module.example.quest.model.QuestDefinition;
+import com.guild.module.example.quest.model.QuestProgress;
 
 public class QuestManager {
     private final File dataDir;
@@ -22,6 +31,8 @@ public class QuestManager {
     private final Map<String, List<QuestProgress>> guildProgressMap = new ConcurrentHashMap<>();
     private static final java.time.ZoneId ZONE = java.time.ZoneId.systemDefault();
     private final Object saveLock = new Object();
+    private final Map<Integer, Long> lastSaveTimeMap = new ConcurrentHashMap<>();
+    private static final long SAVE_INTERVAL_MS = 300000; // 5分钟
     private ModuleContext context;
 
     public QuestManager(File dataDir, Logger logger) {
@@ -63,6 +74,19 @@ public class QuestManager {
                 ", questId=" + progress.getQuestId() + ", player=" + progress.getPlayerName());
             return false;
         }
+        
+        // 检查玩家是否真的属于该工会
+        if (!isPlayerInGuild(progress.getGuildId(), progress.getPlayerUuid())) {
+            logger.warning("[Quest] ⚠️ 拒绝接取: 玩家 " + progress.getPlayerName() + " 不在工会 " + progress.getGuildId() + " 中");
+            return false;
+        }
+        
+        // 检查是否在其他工会有未完成的相同任务
+        if (hasActiveQuestInOtherGuilds(progress.getGuildId(), progress.getPlayerUuid(), progress.getQuestId())) {
+            logger.warning("[Quest] ⚠️ 拒绝接取: 玩家 " + progress.getPlayerName() + " 在其他工会有未完成的相同任务");
+            return false;
+        }
+        
         String key = progressKey(progress.getGuildId(), progress.getPlayerUuid());
         List<QuestProgress> list = guildProgressMap.computeIfAbsent(key,
             k -> Collections.synchronizedList(new ArrayList<>()));
@@ -117,6 +141,12 @@ public class QuestManager {
 
     public void updateAndSave(int guildId, UUID playerUuid, String questId,
                                int objectiveIndex, int delta) {
+        // 检查玩家是否真的属于该工会
+        if (!isPlayerInGuild(guildId, playerUuid)) {
+            logger.warning("[Quest] ⚠️ 拒绝更新: 玩家不在工会 " + guildId + " 中");
+            return;
+        }
+        
         String key = progressKey(guildId, playerUuid);
         List<QuestProgress> all = guildProgressMap.get(key);
         if (all == null) return;
@@ -134,7 +164,12 @@ public class QuestManager {
                 boolean updated = progress.updateProgress(objectiveIndex, delta);
                 if (updated) {
                     checkAndMarkCompletion(progress);
-                    saveGuildProgress(guildId);
+                    // 优化：只有在需要时才保存
+                    long lastSaveTime = lastSaveTimeMap.getOrDefault(guildId, 0L);
+                    if (System.currentTimeMillis() - lastSaveTime > SAVE_INTERVAL_MS) {
+                        saveGuildProgress(guildId);
+                        lastSaveTimeMap.put(guildId, System.currentTimeMillis());
+                    }
                 }
             }
         }
@@ -154,9 +189,17 @@ public class QuestManager {
     }
 
     public void claimReward(QuestProgress progress) {
+        // 检查玩家是否真的属于该工会
+        if (!isPlayerInGuild(progress.getGuildId(), progress.getPlayerUuid())) {
+            logger.warning("[Quest] ⚠️ 拒绝领取奖励: 玩家不在工会 " + progress.getGuildId() + " 中");
+            return;
+        }
+        
         synchronized (progress) {
             progress.setClaimed();
+            // 奖励领取时立即保存
             saveGuildProgress(progress.getGuildId());
+            lastSaveTimeMap.put(progress.getGuildId(), System.currentTimeMillis());
         }
     }
 
@@ -409,12 +452,29 @@ public class QuestManager {
                 else logger.warning("[Quest] ⚠️ saveAll发现无效key: " + key);
             } catch (Exception ignored) {}
         }
-        for (int guildId : savedGuilds) saveGuildProgress(guildId);
+        // 使用批量保存提高性能
+        saveMultipleGuilds(savedGuilds);
     }
 
     public void saveGuildProgress(int guildId) {
         synchronized (saveLock) {
             doSaveGuildProgress(guildId);
+        }
+    }
+    
+    /**
+     * 批量保存多个公会的进度
+     */
+    public void saveMultipleGuilds(Collection<Integer> guildIds) {
+        synchronized (saveLock) {
+            for (int guildId : guildIds) {
+                try {
+                    doSaveGuildProgress(guildId);
+                    lastSaveTimeMap.put(guildId, System.currentTimeMillis());
+                } catch (Exception e) {
+                    logger.warning("[Quest] 批量保存公会进度失败: " + guildId + " - " + e.getMessage());
+                }
+            }
         }
     }
 
@@ -437,7 +497,12 @@ public class QuestManager {
             if (!entry.getKey().startsWith(prefix)) continue;
             List<QuestProgress> list = entry.getValue();
             synchronized (list) {
+                // 过滤掉已过期的任务进度
                 for (QuestProgress p : list) {
+                    if (isProgressExpired(p)) {
+                        continue;
+                    }
+                    
                     Map<String, Object> map = new LinkedHashMap<>();
                     map.put("questId", p.getQuestId());
                     map.put("playerUuid", p.getPlayerUuid().toString());
@@ -457,30 +522,100 @@ public class QuestManager {
         }
 
         if (progressList.isEmpty()) {
-            YamlConfiguration existing = YamlConfiguration.loadConfiguration(file);
-            List<?> existingProgress = existing.getList("progress");
-            if (existingProgress != null && !existingProgress.isEmpty()) {
-                logger.warning("[Quest] ⚠️ 尝试保存空数据到 " + file.getName() +
-                    " 但文件中有 " + existingProgress.size() + " 条记录，跳过覆盖！");
-                logger.warning("[Quest]   map总条目数: " + guildProgressMap.size() +
-                    ", 查找前缀: " + prefix);
-                for (String key : guildProgressMap.keySet()) {
-                    logger.warning("[Quest]   现有key: " + key);
+            // 如果文件存在且有数据，则删除文件
+            if (file.exists()) {
+                if (file.delete()) {
+                    logger.fine("[Quest] 🗑️ 删除空进度文件: " + file.getName());
                 }
-                return;
             }
+            return;
         }
 
         yaml.set("progress", progressList);
         try {
+            // 确保目录存在
+            file.getParentFile().mkdirs();
             yaml.save(file);
             logger.fine("[Quest] 💾 保存 " + file.getName() + ": " + entryCount + " 条记录");
         } catch (IOException e) {
             logger.warning("[Quest] 保存失败: " + file.getName() + " - " + e.getMessage());
         }
     }
+    
+    /**
+     * 检查任务进度是否已过期
+     */
+    private boolean isProgressExpired(QuestProgress progress) {
+        QuestDefinition def = getDefinition(progress.getQuestId());
+        if (def == null) return true;
+        
+        long time = progress.isClaimed() ? progress.getClaimedTime() : progress.getAcceptedTime();
+        
+        switch (def.getType()) {
+            case DAILY:
+                return !isSameDay(time);
+            case WEEKLY:
+                return !isSameWeek(time);
+            case ONE_TIME:
+                return progress.isClaimed();
+            default:
+                return true;
+        }
+    }
 
     public void clearAll() {
         guildProgressMap.clear();
+    }
+
+    /**
+     * 清理指定玩家在指定工会的任务进度
+     */
+    public void clearPlayerProgress(int guildId, UUID playerUuid) {
+        String key = progressKey(guildId, playerUuid);
+        guildProgressMap.remove(key);
+        saveGuildProgress(guildId);
+    }
+
+    /**
+     * 检查玩家是否属于指定工会
+     */
+    private boolean isPlayerInGuild(int guildId, UUID playerUuid) {
+        if (context == null) return false;
+        
+        try {
+            var guildService = context.getPlugin().getGuildService();
+            var member = guildService.getGuildMember(playerUuid);
+            return member != null && member.getGuildId() == guildId;
+        } catch (Exception e) {
+            logger.warning("[Quest] 检查玩家工会失败: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 检查玩家是否在其他工会有未完成的相同任务
+     */
+    private boolean hasActiveQuestInOtherGuilds(int currentGuildId, UUID playerUuid, String questId) {
+        for (Map.Entry<String, List<QuestProgress>> entry : guildProgressMap.entrySet()) {
+            String key = entry.getKey();
+            try {
+                int guildId = Integer.parseInt(key.split("_")[0]);
+                if (guildId == currentGuildId) continue;
+                
+                List<QuestProgress> list = entry.getValue();
+                synchronized (list) {
+                    for (QuestProgress p : list) {
+                        if (p.getPlayerUuid().equals(playerUuid) && 
+                            p.getQuestId().equals(questId) && 
+                            !p.isClaimed()) {
+                            return true;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // 忽略无效的key
+            }
+        }
+        return false;
     }
 }

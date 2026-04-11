@@ -1,8 +1,12 @@
 package com.guild.module.example.quest;
 
-import com.guild.module.example.quest.model.QuestDefinition;
-import com.guild.module.example.quest.model.QuestObjective;
-import com.guild.module.example.quest.model.QuestProgress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -12,10 +16,10 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
+
+import com.guild.module.example.quest.model.QuestDefinition;
+import com.guild.module.example.quest.model.QuestObjective;
+import com.guild.module.example.quest.model.QuestProgress;
 
 public class QuestTracker implements Listener {
     private final GuildQuestModule module;
@@ -83,34 +87,27 @@ public class QuestTracker implements Listener {
         EntityType entityType = event.getEntityType();
         boolean isHostile = isHostileMob(entityType);
 
-        for (QuestDefinition def : module.getQuestManager()
-            .getDefinitionsByType(QuestDefinition.QuestType.DAILY)) {
+        // 优化：一次性获取所有任务类型，减少重复遍历
+        List<QuestDefinition> allQuests = new ArrayList<>();
+        allQuests.addAll(module.getQuestManager().getDefinitionsByType(QuestDefinition.QuestType.DAILY));
+        allQuests.addAll(module.getQuestManager().getDefinitionsByType(QuestDefinition.QuestType.WEEKLY));
+        allQuests.addAll(module.getQuestManager().getDefinitionsByType(QuestDefinition.QuestType.ONE_TIME));
+
+        for (QuestDefinition def : allQuests) {
             for (int i = 0; i < def.getObjectives().size(); i++) {
                 QuestObjective obj = def.getObjectives().get(i);
                 if (obj.getType() == QuestObjective.ObjectiveType.KILL_MOBS) {
-                    if (isHostile || entityType == EntityType.PLAYER) {
+                    // 根据任务类型和怪物类型判断是否更新
+                    boolean shouldUpdate = false;
+                    if (def.getType() == QuestDefinition.QuestType.DAILY) {
+                        shouldUpdate = isHostile || entityType == EntityType.PLAYER;
+                    } else {
+                        shouldUpdate = isHostile;
+                    }
+                    
+                    if (shouldUpdate) {
                         module.getQuestManager().updateAndSave(guildId, uuid, def.getId(), i, 1);
                     }
-                }
-            }
-        }
-
-        for (QuestDefinition def : module.getQuestManager()
-            .getDefinitionsByType(QuestDefinition.QuestType.WEEKLY)) {
-            for (int i = 0; i < def.getObjectives().size(); i++) {
-                QuestObjective obj = def.getObjectives().get(i);
-                if (obj.getType() == QuestObjective.ObjectiveType.KILL_MOBS && isHostile) {
-                    module.getQuestManager().updateAndSave(guildId, uuid, def.getId(), i, 1);
-                }
-            }
-        }
-
-        for (QuestDefinition def : module.getQuestManager()
-            .getDefinitionsByType(QuestDefinition.QuestType.ONE_TIME)) {
-            for (int i = 0; i < def.getObjectives().size(); i++) {
-                QuestObjective obj = def.getObjectives().get(i);
-                if (obj.getType() == QuestObjective.ObjectiveType.KILL_MOBS && isHostile) {
-                    module.getQuestManager().updateAndSave(guildId, uuid, def.getId(), i, 1);
                 }
             }
         }
@@ -198,14 +195,14 @@ public class QuestTracker implements Listener {
         String questId = def.getId();
 
         logger.info("[Quest-Tracker] 创建定时器: " + taskId + 
-            " (延迟: 1分钟, 间隔: 1小时)");
+            " (延迟: 1分钟, 间隔: 15分钟)");
 
-        // 创建并注册定时器
+        // 创建并注册定时器 - 改为每15分钟执行一次，提高精度
         BukkitTask task = Bukkit.getScheduler().runTaskTimer(
             module.getContext().getPlugin(),
             () -> updateOnlineProgress(playerUuid, guildId, questId),
             1200L,  // 延迟1分钟（60秒 / 20 ticks）
-            72000L  // 每1小时执行一次（3600秒 / 20 ticks）
+            18000L  // 每15分钟执行一次（900秒 / 20 ticks）
         );
 
         // 存储到管理Map中
@@ -259,11 +256,11 @@ public class QuestTracker implements Listener {
         for (int i = 0; i < def.getObjectives().size(); i++) {
             QuestObjective obj = def.getObjectives().get(i);
             if (obj.getType() == QuestObjective.ObjectiveType.ONLINE_HOURS) {
-                // 每小时更新一次，每次加60分钟（1小时）
-                module.getQuestManager().updateAndSave(guildId, playerUuid, questId, i, 60);
+                // 每15分钟更新一次，每次加15分钟
+                module.getQuestManager().updateAndSave(guildId, playerUuid, questId, i, 15);
                 
                 logger.fine("[Quest-Tracker] 更新进度: " + player.getName() + 
-                    " -> " + def.getName() + " [" + i + "] +60分钟");
+                    " -> " + def.getName() + " [" + i + "] +15分钟");
             }
         }
     }
@@ -383,21 +380,26 @@ public class QuestTracker implements Listener {
         
         var questManager = module.getQuestManager();
         
-        // 检查所有任务类型的DEPOSIT_MONEY目标
+        // 优化：一次性获取所有任务，减少重复遍历
+        List<QuestDefinition> allQuests = new ArrayList<>();
         for (QuestDefinition.QuestType questType : QuestDefinition.QuestType.values()) {
-            for (QuestDefinition def : questManager.getDefinitionsByType(questType)) {
-                for (int i = 0; i < def.getObjectives().size(); i++) {
-                    QuestObjective obj = def.getObjectives().get(i);
-                    if (obj.getType() == QuestObjective.ObjectiveType.DEPOSIT_MONEY) {
-                        // 更新进度
-                        questManager.updateAndSave(guildId, playerUuid, def.getId(), i, (int) amount);
-                        
-                        Player player = Bukkit.getPlayer(playerUuid);
-                        String playerName = player != null ? player.getName() : playerUuid.toString();
-                        logger.info("[Quest-Tracker] " + playerName + 
-                            " 存入 $" + String.format("%.0f", amount) + 
-                            " -> 任务: " + def.getName());
-                    }
+            allQuests.addAll(questManager.getDefinitionsByType(questType));
+        }
+        
+        int depositAmount = (int) amount;
+        Player player = Bukkit.getPlayer(playerUuid);
+        String playerName = player != null ? player.getName() : playerUuid.toString();
+        
+        for (QuestDefinition def : allQuests) {
+            for (int i = 0; i < def.getObjectives().size(); i++) {
+                QuestObjective obj = def.getObjectives().get(i);
+                if (obj.getType() == QuestObjective.ObjectiveType.DEPOSIT_MONEY) {
+                    // 更新进度
+                    questManager.updateAndSave(guildId, playerUuid, def.getId(), i, depositAmount);
+                    
+                    logger.info("[Quest-Tracker] " + playerName + 
+                        " 存入 $" + String.format("%.0f", amount) + 
+                        " -> 任务: " + def.getName());
                 }
             }
         }

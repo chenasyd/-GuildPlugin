@@ -14,6 +14,7 @@ import com.guild.sdk.event.MemberEventData;
 import com.guild.sdk.event.MemberEventHandler;
 import com.guild.sdk.economy.CurrencyManager;
 import com.guild.module.example.member.rank.gui.MemberRankGUI;
+import com.guild.module.example.member.rank.gui.MemberRankSettingsGUI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -76,11 +77,48 @@ public class MemberRankModule implements GuildModule {
             }
         });
 
-        // 监听成员离开事件 —— 从排名中移除记录
+        // 监听成员离开事件 —— 从排名中移除记录并重置 A 币
         api.onMemberLeave(new MemberEventHandler() {
             @Override
             public void onEvent(MemberEventData data) {
+                // 重置该玩家的 A 币
+                var currencyManager = context.getApi().getCurrencyManager();
+                currencyManager.withdraw(data.getGuildId(), data.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN, 
+                    currencyManager.getBalance(data.getGuildId(), data.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN));
+                
+                // 从排名中移除记录
                 rankManager.removeMember(data.getGuildId(), data.getPlayerUuid());
+            }
+
+            @Override
+            public Object getModuleInstance() {
+                return MemberRankModule.this;
+            }
+        });
+
+        // 监听公会删除事件 —— 重置所有成员的 A 币
+        api.onGuildDelete(new com.guild.sdk.event.GuildEventHandler() {
+            @Override
+            public void onEvent(com.guild.sdk.event.GuildEventData data) {
+                int guildId = data.getGuildId();
+                // 重置该公会所有成员的 A 币
+                var currencyManager = context.getApi().getCurrencyManager();
+                var guildService = context.getPlugin().getGuildService();
+                
+                try {
+                    // 获取公会所有成员
+                    var members = guildService.getGuildMembers(guildId);
+                    for (var member : members) {
+                        // 重置每个成员的 A 币
+                        currencyManager.withdraw(guildId, member.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN, 
+                            currencyManager.getBalance(guildId, member.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN));
+                    }
+                } catch (Exception e) {
+                    context.getLogger().severe("[MemberRank] 重置公会成员 A 币失败: " + e.getMessage());
+                }
+                
+                // 清除该公会的排名数据
+                rankManager.clearByGuild(guildId);
             }
 
             @Override
@@ -97,6 +135,16 @@ public class MemberRankModule implements GuildModule {
                 settingsButton,
                 "member-rank",
                 (player, ctx) -> handleOpenRankGUIFromSettings(player, ctx)
+        );
+
+        // 在 GuildSettingsGUI 中注册"A币设置"按钮（配置入口，自动分配槽位）
+        ItemStack rankSettingsButton = createRankSettingsButton();
+        api.registerGUIButton(
+                "GuildSettingsGUI",
+                GUIExtensionHook.AUTO_SLOT,
+                rankSettingsButton,
+                "member-rank",
+                (player, ctx) -> handleOpenRankSettingsGUI(player, ctx)
         );
 
         // 在 GuildInfoGUI 中注册"排行榜"按钮（固定槽位14，所有成员可见）
@@ -230,6 +278,48 @@ public class MemberRankModule implements GuildModule {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    private ItemStack createRankSettingsButton() {
+        Material material;
+        try {
+            material = Material.valueOf("REDSTONE_COMPARATOR");
+        } catch (IllegalArgumentException e) {
+            material = Material.REDSTONE;
+        }
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(ColorUtils.colorize("&6&l" +
+                    context.getMessage("module.member-rank.settings.button-name", "A币设置")));
+            List<String> lore = new ArrayList<>();
+            lore.add(ColorUtils.colorize("&7" +
+                    context.getMessage("module.member-rank.settings.button-desc",
+                            "配置 A 币增长规则")));
+            lore.add(ColorUtils.colorize("&7" +
+                    context.getMessage("module.member-rank.settings.button-hint",
+                            "&7点击打开配置界面")));
+            meta.setLore(lore);
+            item.setItemMeta(meta);
+        }
+        return item;
+    }
+
+    private void handleOpenRankSettingsGUI(Player player, Object... ctx) {
+        Guild guild = extractGuild(ctx);
+        if (guild == null) {
+            player.sendMessage(ColorUtils.colorize(
+                    context.getMessage("module.member-rank.error.no-guild",
+                            "&c无法获取工会信息")));
+            return;
+        }
+        if (!hasManagePermission(player)) {
+            player.sendMessage(ColorUtils.colorize(
+                    context.getMessage("module.member-rank.error.no-permission",
+                            "&c您没有权限管理 A 币设置")));
+            return;
+        }
+        context.openGUI(player, new MemberRankSettingsGUI(this, guild, player));
     }
 
     // ==================== Getter ====================
