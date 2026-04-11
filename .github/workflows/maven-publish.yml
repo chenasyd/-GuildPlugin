@@ -36,7 +36,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Guild-Plugin
-        path: guild-plugin/target/guild-plugin-*-shaded.jar
+        path: guild-plugin/target/guild-plugin-*.jar
 
     - name: Upload to GitHub Release
       if: github.event_name == 'release'
@@ -44,5 +44,5 @@ jobs:
       with:
         files: |
           guild-sdk/target/guild-sdk-*.jar
-          guild-plugin/target/guild-plugin-*-shaded.jar
+          guild-plugin/target/guild-plugin-*.jar
         generate_release_notes: true
