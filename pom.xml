@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spigot.version>1.21-R0.1-SNAPSHOT</spigot.version>
         <folia.version>1.21.8-R0.1-SNAPSHOT</folia.version>
-        <guild.version>1.4.1</guild.version>
+        <guild.version>1.4.2</guild.version>
     </properties>
 
     <repositories>

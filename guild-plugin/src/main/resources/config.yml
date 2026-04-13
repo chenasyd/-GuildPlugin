@@ -73,10 +73,18 @@ permissions:
 
 # 语言配置
 language:
-  # 默认语言: en(英文), zh(中文), pl(波兰语)
+  # 默认语言（必须与 messages_xx.yml 中的语言代码一致）
+  # 内置语言: en(英文), zh(中文), pl(波兰语), br(巴西葡萄牙语)
+  # 你可以添加任意语言，只需在插件目录下放置对应的 messages_xx.yml 文件
+  # 例如: 添加法语只需创建 messages_fr.yml 并将 default 设为 "fr"
   default: "en"
   # 是否允许玩家切换语言
   allow-player-switch: true
+  # 额外语言列表（用于加载不在插件数据目录中的内置语言文件）
+  # 插件会自动扫描数据目录下所有 messages_*.yml 文件并加载
+  # 此列表仅用于确保从 JAR 包中释放对应的默认语言文件
+  # 示例: ["de", "fr", "es", "ja"]
+  additional-languages: []
 
 # 消息配置
 messages:

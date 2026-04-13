@@ -6,15 +6,19 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-/**
- * 语言管理器 - 管理插件的多语言系统
- */
 public class LanguageManager {
     
     private final GuildPlugin plugin;
@@ -24,10 +28,13 @@ public class LanguageManager {
     private final Map<UUID, String> playerLanguages = new HashMap<>();
     private String defaultLanguage = "en";
     
-    // 支持的语言列表
     public static final String LANG_EN = "en";
     public static final String LANG_ZH = "zh";
     public static final String LANG_PL = "pl";
+    public static final String LANG_BR = "br";
+    
+    private static final String MESSAGE_FILE_PREFIX = "messages_";
+    private static final String MESSAGE_FILE_SUFFIX = ".yml";
     
     public LanguageManager(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -35,67 +42,181 @@ public class LanguageManager {
         loadLanguages();
     }
     
-    /**
-     * 加载所有语言文件
-     */
     private void loadLanguages() {
-        // 从config.yml读取默认语言
         FileConfiguration mainConfig = plugin.getConfigManager().getMainConfig();
         defaultLanguage = mainConfig.getString("language.default", "en");
 
-        // 验证默认语言是否支持
-        if (!isLanguageSupported(defaultLanguage)) {
-            logger.warning("不支持的语言: " + defaultLanguage + "，使用默认语言: en");
-            defaultLanguage = "en";
+        discoverAndLoadLanguageFiles();
+
+        if (!languageConfigs.containsKey(defaultLanguage)) {
+            logger.warning("language.default \u8bbe\u7f6e\u4e3a '" + defaultLanguage + "' \u4f46\u672a\u627e\u5230\u5bf9\u5e94\u7684\u8bed\u8a00\u6587\u4ef6 messages_" + defaultLanguage + ".yml");
+            if (languageConfigs.containsKey("en")) {
+                logger.warning("\u56de\u9000\u5230\u9ed8\u8ba4\u8bed\u8a00: en");
+                defaultLanguage = "en";
+            } else if (!languageConfigs.isEmpty()) {
+                String fallback = languageConfigs.keySet().iterator().next();
+                logger.warning("\u56de\u9000\u5230\u53ef\u7528\u8bed\u8a00: " + fallback);
+                defaultLanguage = fallback;
+            } else {
+                logger.severe("\u672a\u52a0\u8f7d\u4efb\u4f55\u8bed\u8a00\u6587\u4ef6\uff0c\u63d2\u4ef6\u5c06\u4f7f\u7528\u786c\u7f16\u7801\u9ed8\u8ba4\u503c");
+                defaultLanguage = "en";
+            }
         }
-        
-        // 加载所有支持的语言文件
-        loadLanguageFile(LANG_EN);
-        loadLanguageFile(LANG_ZH);
-        loadLanguageFile(LANG_PL);
 
-        // gui.yml已废弃，所有内容已迁移到messages.yml
+        List<String> additionalLangs = mainConfig.getStringList("language.additional-languages");
+        for (String lang : additionalLangs) {
+            lang = lang.trim().toLowerCase();
+            if (!languageConfigs.containsKey(lang)) {
+                loadLanguageFile(lang);
+            }
+        }
 
-        logger.info("语言系统已加载，默认语言: " + defaultLanguage);
+        logger.info("\u8bed\u8a00\u7cfb\u7edf\u5df2\u52a0\u8f7d\uff0c\u9ed8\u8ba4\u8bed\u8a00: " + defaultLanguage
+            + "\uff0c\u5df2\u52a0\u8f7d\u8bed\u8a00: " + String.join(", ", getLoadedLanguages()));
     }
     
-    /**
-     * 加载指定语言文件
-     */
+    private void discoverAndLoadLanguageFiles() {
+        File dataFolder = plugin.getDataFolder();
+        if (!dataFolder.exists()) {
+            dataFolder.mkdirs();
+        }
+
+        File[] existingFiles = dataFolder.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.startsWith(MESSAGE_FILE_PREFIX) && name.endsWith(MESSAGE_FILE_SUFFIX);
+            }
+        });
+
+        if (existingFiles != null) {
+            for (File file : existingFiles) {
+                String fileName = file.getName();
+                String langCode = fileName.substring(
+                    MESSAGE_FILE_PREFIX.length(),
+                    fileName.length() - MESSAGE_FILE_SUFFIX.length()
+                );
+                langCode = langCode.toLowerCase();
+                loadLanguageFileFromDisk(langCode, file);
+            }
+        }
+
+        discoverBundledLanguages();
+    }
+    
+    private void discoverBundledLanguages() {
+        try (InputStream indexStream = plugin.getResource("languages.index")) {
+            if (indexStream != null) {
+                byte[] bytes = indexStream.readAllBytes();
+                String content = new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
+                String[] langs = content.split("[\\r\\n]+");
+                for (String lang : langs) {
+                    lang = lang.trim().toLowerCase();
+                    if (!lang.isEmpty() && !languageConfigs.containsKey(lang)) {
+                        loadLanguageFile(lang);
+                    }
+                }
+                return;
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+
+        String[] knownBundledLangs = {LANG_EN, LANG_ZH, LANG_PL, LANG_BR};
+        for (String lang : knownBundledLangs) {
+            if (!languageConfigs.containsKey(lang)) {
+                loadLanguageFile(lang);
+            }
+        }
+    }
+    
     private void loadLanguageFile(String lang) {
-        String fileName = "messages_" + lang + ".yml";
+        String fileName = MESSAGE_FILE_PREFIX + lang + MESSAGE_FILE_SUFFIX;
         File langFile = new File(plugin.getDataFolder(), fileName);
 
-        // 如果语言文件不存在，从jar中复制默认配置
         if (!langFile.exists()) {
-            plugin.saveResource(fileName, false);
+            try (InputStream resource = plugin.getResource(fileName)) {
+                if (resource != null) {
+                    plugin.saveResource(fileName, false);
+                } else {
+                    logger.warning("\u672a\u627e\u5230\u5185\u7f6e\u8bed\u8a00\u6587\u4ef6: " + fileName + "\uff0c\u8df3\u8fc7\u52a0\u8f7d");
+                    return;
+                }
+            } catch (Exception e) {
+                logger.warning("\u65e0\u6cd5\u91ca\u653e\u8bed\u8a00\u6587\u4ef6 " + fileName + ": " + e.getMessage());
+                return;
+            }
         }
 
-        FileConfiguration config = YamlConfiguration.loadConfiguration(langFile);
-        languageConfigs.put(lang, config);
-        logger.info("加载语言文件: " + fileName);
+        loadLanguageFileFromDisk(lang, langFile);
     }
+    
+    private void loadLanguageFileFromDisk(String lang, File langFile) {
+        if (!langFile.exists()) {
+            return;
+        }
 
-    /**
-     * 加载指定GUI语言文件（已废弃，内容已合并到messages.yml）
-     * @deprecated GUI配置已合并到messages.yml，不再需要单独加载
-     */
+        try {
+            FileConfiguration config = YamlConfiguration.loadConfiguration(langFile);
+            if (config.getKeys(false).isEmpty()) {
+                logger.warning("\u8bed\u8a00\u6587\u4ef6\u4e3a\u7a7a: " + langFile.getName() + "\uff0c\u8df3\u8fc7");
+                return;
+            }
+            languageConfigs.put(lang.toLowerCase(), config);
+            logger.info("\u52a0\u8f7d\u8bed\u8a00\u6587\u4ef6: " + langFile.getName());
+        } catch (Exception e) {
+            logger.warning("\u52a0\u8f7d\u8bed\u8a00\u6587\u4ef6\u5931\u8d25: " + langFile.getName() + " - " + e.getMessage());
+        }
+    }
+    
     @Deprecated
     private void loadGuiLanguageFile(String lang) {
-        // gui.yml已废弃，所有内容已迁移到messages.yml
-        // 此方法保留以保持向后兼容性
     }
     
-    /**
-     * 检查语言是否支持
-     */
     public boolean isLanguageSupported(String lang) {
-        return lang != null && (lang.equals(LANG_EN) || lang.equals(LANG_ZH) || lang.equals(LANG_PL));
+        return lang != null && languageConfigs.containsKey(lang.toLowerCase());
     }
     
-    /**
-     * 获取玩家的语言设置
-     */
+    public List<String> getLoadedLanguages() {
+        return new ArrayList<>(languageConfigs.keySet());
+    }
+    
+    public List<String> getAvailableLanguageNames() {
+        List<String> names = new ArrayList<>();
+        Map<String, String> codeToName = new HashMap<>();
+        codeToName.put("en", "English");
+        codeToName.put("zh", "\u4e2d\u6587");
+        codeToName.put("pl", "Polski");
+        codeToName.put("br", "Portugu\u00eas (BR)");
+        codeToName.put("de", "Deutsch");
+        codeToName.put("fr", "Fran\u00e7ais");
+        codeToName.put("es", "Espa\u00f1ol");
+        codeToName.put("ja", "\u65e5\u672c\u8a9e");
+        codeToName.put("ko", "\ud55c\uad6d\uc5b4");
+        codeToName.put("ru", "\u0420\u0443\u0441\u0441\u043a\u0438\u0439");
+        codeToName.put("it", "Italiano");
+        codeToName.put("nl", "Nederlands");
+        codeToName.put("sv", "Svenska");
+        codeToName.put("tr", "T\u00fcrk\u00e7e");
+        codeToName.put("vi", "Ti\u1ebfng Vi\u1ec7t");
+        codeToName.put("th", "\u0e44\u0e17\u0e22");
+        codeToName.put("ar", "\u0627\u0644\u0639\u0631\u0628\u064a\u0629");
+        codeToName.put("cs", "\u010ce\u0161tina");
+        codeToName.put("pt", "Portugu\u00eas");
+        codeToName.put("uk", "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430");
+        codeToName.put("ro", "Rom\u00e2n\u0103");
+        codeToName.put("hu", "Magyar");
+        codeToName.put("da", "Dansk");
+        codeToName.put("fi", "Suomi");
+        codeToName.put("no", "Norsk");
+
+        for (String code : languageConfigs.keySet()) {
+            String displayName = codeToName.getOrDefault(code, code.toUpperCase());
+            names.add(code + " (" + displayName + ")");
+        }
+        Collections.sort(names);
+        return names;
+    }
+    
     public String getPlayerLanguage(Player player) {
         if (player == null) {
             return defaultLanguage;
@@ -103,33 +224,26 @@ public class LanguageManager {
         return playerLanguages.getOrDefault(player.getUniqueId(), defaultLanguage);
     }
     
-    /**
-     * 设置玩家的语言
-     */
     public void setPlayerLanguage(Player player, String lang) {
         if (player == null || !isLanguageSupported(lang)) {
             return;
         }
-        playerLanguages.put(player.getUniqueId(), lang);
+        playerLanguages.put(player.getUniqueId(), lang.toLowerCase());
     }
     
-    /**
-     * 设置玩家的语言（通过UUID）
-     */
     public void setPlayerLanguage(UUID uuid, String lang) {
         if (uuid == null || !isLanguageSupported(lang)) {
             return;
         }
-        playerLanguages.put(uuid, lang);
+        playerLanguages.put(uuid, lang.toLowerCase());
     }
     
-    /**
-     * 获取本地化消息
-     */
     public String getMessage(String lang, String path, String defaultValue) {
+        if (lang != null) {
+            lang = lang.toLowerCase();
+        }
         FileConfiguration config = languageConfigs.get(lang);
         if (config == null) {
-            // 如果语言文件不存在，使用默认语言
             config = languageConfigs.get(defaultLanguage);
         }
         
@@ -141,28 +255,18 @@ public class LanguageManager {
         return message != null ? message : defaultValue;
     }
     
-    /**
-     * 获取本地化消息（使用默认语言）
-     */
     public String getMessage(String path, String defaultValue) {
         return getMessage(defaultLanguage, path, defaultValue);
     }
     
-    /**
-     * 获取玩家的本地化消息
-     */
     public String getMessage(Player player, String path, String defaultValue) {
         String lang = getPlayerLanguage(player);
         return getMessage(lang, path, defaultValue);
     }
     
-    /**
-     * 获取本地化消息并替换占位符
-     */
     public String getMessage(String lang, String path, String defaultValue, String... placeholders) {
         String message = getMessage(lang, path, defaultValue);
         
-        // 替换占位符
         for (int i = 0; i < placeholders.length; i += 2) {
             if (i + 1 < placeholders.length) {
                 String placeholder = placeholders[i];
@@ -174,23 +278,11 @@ public class LanguageManager {
         return message;
     }
     
-    /**
-     * 获取玩家的本地化消息并替换占位符
-     */
     public String getMessage(Player player, String path, String defaultValue, String... placeholders) {
         String lang = getPlayerLanguage(player);
         return getMessage(lang, path, defaultValue, placeholders);
     }
     
-    /**
-     * 获取本地化消息并替换索引占位符 {0}, {1}, {2} ...
-     *
-     * @param lang         语言代码
-     * @param path         消息键
-     * @param defaultValue 默认值
-     * @param args         按顺序替换 {0}, {1}, {2} ...（显式数组）
-     * @return 替换后的消息
-     */
     public String getIndexedMessage(String lang, String path, String defaultValue, String[] args) {
         String message = getMessage(lang, path, defaultValue);
         if (args != null) {
@@ -201,14 +293,6 @@ public class LanguageManager {
         return message;
     }
 
-    /**
-     * 获取默认语言的索引占位符消息
-     *
-     * @param path         消息键
-     * @param defaultValue 默认值
-     * @param args         按顺序替换 {0}, {1}, {2} ...
-     * @return 替换后的消息
-     */
     public String getIndexedMessage(String path, String defaultValue, String... args) {
         String message = getMessage(defaultLanguage, path, defaultValue);
         if (args != null) {
@@ -219,15 +303,6 @@ public class LanguageManager {
         return message;
     }
 
-    /**
-     * 获取玩家的索引占位符消息
-     *
-     * @param player       目标玩家
-     * @param path         消息键
-     * @param defaultValue 默认值
-     * @param args         按顺序替换 {0}, {1}, {2} ...
-     * @return 替换后的消息
-     */
     public String getIndexedMessage(Player player, String path, String defaultValue, String... args) {
         String message = getMessage(getPlayerLanguage(player), path, defaultValue);
         if (args != null) {
@@ -237,54 +312,35 @@ public class LanguageManager {
         }
         return message;
     }
-
-    /**
-     * 获取默认语言
-     */
+    
     public String getDefaultLanguage() {
         return defaultLanguage;
     }
     
-    /**
-     * 设置默认语言
-     */
     public void setDefaultLanguage(String lang) {
         if (isLanguageSupported(lang)) {
-            this.defaultLanguage = lang;
+            this.defaultLanguage = lang.toLowerCase();
         }
     }
     
-    /**
-     * 重新加载所有语言文件
-     */
     public void reloadLanguages() {
         languageConfigs.clear();
         loadLanguages();
-        logger.info("重新加载所有语言文件");
+        logger.info("\u91cd\u65b0\u52a0\u8f7d\u6240\u6709\u8bed\u8a00\u6587\u4ef6");
     }
     
-    /**
-     * 获取语言配置
-     */
     public FileConfiguration getLanguageConfig(String lang) {
-        return languageConfigs.get(lang);
+        return languageConfigs.get(lang != null ? lang.toLowerCase() : null);
     }
 
-    /**
-     * 获取GUI配置
-     */
     public FileConfiguration getGuiConfig(String lang) {
         FileConfiguration config = guiConfigs.get(lang);
         if (config == null) {
-            // 如果语言文件不存在，使用默认语言
             config = guiConfigs.get(defaultLanguage);
         }
         return config;
     }
 
-    /**
-     * 获取GUI消息
-     */
     public String getGuiMessage(String lang, String path, String defaultValue) {
         FileConfiguration config = getGuiConfig(lang);
 
@@ -296,28 +352,18 @@ public class LanguageManager {
         return message != null ? message : defaultValue;
     }
 
-    /**
-     * 获取GUI消息（使用默认语言）
-     */
     public String getGuiMessage(String path, String defaultValue) {
         return getGuiMessage(defaultLanguage, path, defaultValue);
     }
 
-    /**
-     * 获取玩家的GUI消息
-     */
     public String getGuiMessage(Player player, String path, String defaultValue) {
         String lang = getPlayerLanguage(player);
         return getGuiMessage(lang, path, defaultValue);
     }
 
-    /**
-     * 获取GUI消息并替换占位符
-     */
     public String getGuiMessage(String lang, String path, String defaultValue, String... placeholders) {
         String message = getGuiMessage(lang, path, defaultValue);
 
-        // 替换占位符
         for (int i = 0; i < placeholders.length; i += 2) {
             if (i + 1 < placeholders.length) {
                 String placeholder = placeholders[i];
@@ -329,44 +375,28 @@ public class LanguageManager {
         return message;
     }
 
-    /**
-     * 获取玩家的GUI消息并替换占位符
-     */
     public String getGuiMessage(Player player, String path, String defaultValue, String... placeholders) {
         String lang = getPlayerLanguage(player);
         return getGuiMessage(lang, path, defaultValue, placeholders);
     }
 
-    /**
-     * 获取GUI配置（带颜色代码转换）
-     */
     public String getGuiColoredMessage(String lang, String path, String defaultValue) {
         String message = getGuiMessage(lang, path, defaultValue);
-        return message.replace("&", "§");
+        return message.replace("&", "\u00a7");
     }
 
-    /**
-     * 获取玩家的GUI配置（带颜色代码转换）
-     */
     public String getGuiColoredMessage(Player player, String path, String defaultValue) {
         String message = getGuiMessage(player, path, defaultValue);
-        return message.replace("&", "§");
+        return message.replace("&", "\u00a7");
     }
 
-    /**
-     * 获取GUI配置（带颜色代码转换和占位符替换）
-     */
     public String getGuiColoredMessage(String lang, String path, String defaultValue, String... placeholders) {
         String message = getGuiMessage(lang, path, defaultValue, placeholders);
-        return message.replace("&", "§");
+        return message.replace("&", "\u00a7");
     }
 
-    /**
-     * 获取玩家的GUI配置（带颜色代码转换和占位符替换）
-     */
     public String getGuiColoredMessage(Player player, String path, String defaultValue, String... placeholders) {
         String message = getGuiMessage(player, path, defaultValue, placeholders);
-        return message.replace("&", "§");
+        return message.replace("&", "\u00a7");
     }
 }
-

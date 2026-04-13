@@ -242,13 +242,14 @@ See `plugins/database.sql` for complete SQL schema.
 
 ## Changelog
 
-### v1.3.9 (Latest) - SDK Deep Enhancement
-- **SDK Coverage: 96%** (50+ public methods)
-- **Phase A (v1.3.7)**: 7 improvements — member events, unified messaging, async IO, config-driven, GUI tools, HTTP GET, name-based query
-- **Phase B (v1.3.8)**: 4 improvements — CustomGUI lifecycle (register/open/unregister), cross-GUI navigation
-- **Phase C (v1.3.9)**: 5 improvements — delayed init, dynamic language, descriptor logging, EventBus, GUI nav stack
-- **Core Fix**: ModuleContext.formatMessage() unified colorization
-- **3 Example Modules Complete**: AnnouncementModule / MemberRankModule / GuildStatsModule
+### v1.4.0 (Latest) - Quest System Module
+- **SDK Coverage: 100%** (all public methods fully covered)
+- **New GuildQuestModule**: Complete quest system with daily, weekly, and one-time quests
+- **C-Coin Reward System**: Earn C-Coins for completing quests
+- **Real-time Progress Tracking**: Quest progress updates in real-time
+- **Quest Reset Mechanism**: Automatic daily/weekly quest reset
+- **Complete CustomGUI System**: Quest list, quest details, active quests GUI
+- **4 Example Modules Complete**: AnnouncementModule / MemberRankModule / GuildStatsModule / GuildQuestModule
 
 ### v1.3.6 - GuildStatsModule Complete
 - Third example module: statistics dashboard (activity/economy/ranking/web reporting)
@@ -302,7 +303,7 @@ See `plugins/database.sql` for complete SQL schema.
 - [ ] Guild quest/mission system **← Next: QuestModule**
 - [ ] Guild event system
 - [ ] Guild storage
-- [x] ~~Plugin extension module SDK~~ ✅ (Full SDK + 3 example modules, 96% coverage, v1.3.9)
+- [x] ~~Plugin extension module SDK~~ ✅ (Full SDK + 4 example modules, 100% coverage, v1.4.0)
 - [ ] Quick resource updates
 - [ ] Quick error feedback
 - [ ] Error reporting with code locations
