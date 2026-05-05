@@ -18,7 +18,9 @@ import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
+import com.guild.models.GuildInvitation;
 import com.guild.util.InviteMessageUtils;
+import com.guild.util.NotifyUtils;
 
 /**
  * 邀请成员GUI
@@ -44,8 +46,9 @@ public class InviteMemberGUI implements GUI {
 
     @Override
     public String getTitle() {
+        String defaultTitle = "&6邀请成员 - 第" + (currentPage + 1) + "页";
         return ColorUtils.colorize(languageManager.getMessage(player, "invite-member.title",
-                "&6邀请成员 - 第" + (currentPage + 1) + "页", "{page}", String.valueOf(currentPage + 1)));
+                defaultTitle, "{page}", String.valueOf(currentPage + 1), "{guild}", guild.getName()));
     }
     
     @Override
@@ -67,10 +70,10 @@ public class InviteMemberGUI implements GUI {
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        if (slot >= 9 && slot < 45) {
-            // 玩家头像区域
-            int playerIndex = slot - 9 + (currentPage * 36);
-            if (playerIndex < onlinePlayers.size()) {
+        // 检查是否是玩家头像槽位（槽位10-16, 19-25, 28-34, 37-43）
+        if (isPlayerSlot(slot)) {
+            int playerIndex = getPlayerIndexFromSlot(slot);
+            if (playerIndex >= 0 && playerIndex < onlinePlayers.size()) {
                 Player targetPlayer = onlinePlayers.get(playerIndex);
                 handleInvitePlayer(player, targetPlayer);
             }
@@ -82,7 +85,7 @@ public class InviteMemberGUI implements GUI {
             }
         } else if (slot == 53) {
             // 下一页
-            int maxPage = (onlinePlayers.size() - 1) / 36;
+            int maxPage = (onlinePlayers.size() - 1) / 28;
             if (currentPage < maxPage) {
                 currentPage++;
                 plugin.getGuiManager().refreshGUI(player);
@@ -91,6 +94,33 @@ public class InviteMemberGUI implements GUI {
             // 返回
             plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player));
         }
+    }
+    
+    /**
+     * 检查是否是玩家槽位
+     */
+    private boolean isPlayerSlot(int slot) {
+        // 玩家槽位：10-16, 19-25, 28-34, 37-43 (排除边框)
+        if (slot < 10 || slot > 43) return false;
+        int col = slot % 9;
+        return col != 0 && col != 8; // 排除第1列和第9列（边框）
+    }
+    
+    /**
+     * 从槽位计算玩家索引
+     */
+    private int getPlayerIndexFromSlot(int slot) {
+        int row = slot / 9;      // 行号（1-4）
+        int col = slot % 9;       // 列号（0-8）
+        int rowIndex = row - 1;   // 0-3
+        int colIndex = col - 1;   // 0-6
+        
+        if (colIndex < 0 || colIndex > 6 || rowIndex < 0 || rowIndex > 3) {
+            return -1;
+        }
+        
+        int pageIndex = rowIndex * 7 + colIndex;
+        return currentPage * 28 + pageIndex;
     }
     
     /**
@@ -112,15 +142,20 @@ public class InviteMemberGUI implements GUI {
      * 显示在线玩家
      */
     private void displayOnlinePlayers(Inventory inventory) {
-        int startIndex = currentPage * 36;
-        int endIndex = Math.min(startIndex + 36, onlinePlayers.size());
+        int startIndex = currentPage * 28; // 每页最多28个玩家（4行7列）
+        int endIndex = Math.min(startIndex + 28, onlinePlayers.size());
         
+        int slotIndex = 10; // 从第2行第2列开始
         for (int i = startIndex; i < endIndex; i++) {
             Player targetPlayer = onlinePlayers.get(i);
-            int slot = 9 + (i - startIndex);
             
             ItemStack playerHead = createPlayerHead(targetPlayer);
-            inventory.setItem(slot, playerHead);
+            inventory.setItem(slotIndex, playerHead);
+            
+            slotIndex++;
+            if (slotIndex % 9 == 0) { // 跳过边框（第9列）
+                slotIndex += 2;
+            }
         }
     }
     
@@ -197,9 +232,12 @@ public class InviteMemberGUI implements GUI {
                         if (success) {
                             inviter.sendMessage(InviteMessageUtils.formatInviteSent(plugin, inviter, target));
 
-                            // 给被邀请者发送标题与带 inviter 的邀请信息
-                            target.sendMessage(InviteMessageUtils.formatInviteTitle(plugin, target));
-                            target.sendMessage(InviteMessageUtils.formatInviteReceived(plugin, target, inviter, guild));
+                            // 创建邀请对象用于发送带点击事件的通知
+                            GuildInvitation invitation = new GuildInvitation(guild.getId(), inviter.getUniqueId(), 
+                                inviter.getName(), target.getUniqueId(), target.getName());
+                            
+                            // 给被邀请者发送带点击事件的邀请通知
+                            NotifyUtils.sendInviteWithClickableAction(plugin, target, inviter, guild, invitation);
                         } else {
                             inviter.sendMessage(InviteMessageUtils.formatInviteFailed(plugin, inviter));
                         }

@@ -19,6 +19,7 @@ import com.guild.services.GuildService;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.ServerUtils;
 import com.guild.core.utils.TestUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -121,6 +122,9 @@ public class GuildPlugin extends JavaPlugin {
             // 加载所有扩展模块（在核心服务全部就绪后）
             moduleManager.loadAllModules();
             
+            // 启动定时清理任务 - 清理过期邀请
+            startCleanupTasks();
+            
             logger.info("工会插件启动成功！");
             logger.info("兼容模式: " + (ServerUtils.isFolia() ? "Folia" : "Spigot"));
             
@@ -187,6 +191,25 @@ public class GuildPlugin extends JavaPlugin {
         
         // 初始化GUI系统
         guiManager.initialize();
+    }
+    
+    /**
+     * 启动定时清理任务
+     */
+    private void startCleanupTasks() {
+        // 每10分钟清理一次过期邀请（6000 ticks = 5分钟, 乘以2 = 10分钟）
+        // 72000 ticks = 1小时
+        Bukkit.getScheduler().runTaskTimer(this, () -> {
+            guildService.cleanupExpiredInvitationsAsync()
+                .thenAccept(count -> {
+                    if (count > 0) {
+                        getLogger().info("[清理] 已清理 " + count + " 个过期工会邀请");
+                    }
+                });
+            
+            // 每24小时清理一次旧的已处理邀请记录（保留30天）
+            // 1728000 ticks = 24小时
+        }, 1200L, 72000L); // 延迟1分钟启动，之后每5分钟执行一次
     }
     
     public static GuildPlugin getInstance() {

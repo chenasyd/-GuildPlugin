@@ -28,6 +28,7 @@ import com.guild.services.GuildService;
 import com.guild.sdk.GuildPluginAPI;
 import com.guild.sdk.command.ModuleCommandHandler;
 import com.guild.util.InviteMessageUtils;
+import com.guild.util.NotifyUtils;
 
 /**
  * 工会主命令
@@ -247,7 +248,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             return;
         }
         
-        String guildName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+        String guildName = String.join(" ", Arrays.copyOfRange(args, 1, args.length)).replaceAll("[\"']", "").trim();
         String guildTag = guildName.substring(0, Math.min(guildName.length(), 3)).toUpperCase();
         String description = "欢迎加入我们的公会！";
         
@@ -623,40 +624,51 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             return;
         }
         
-        String guildName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+        String guildName = String.join(" ", Arrays.copyOfRange(args, 1, args.length)).replaceAll("[\"']", "").trim();
         
-        CompletableFuture.runAsync(() -> {
-            try {
-                Guild existingGuild = guildService.getPlayerGuild(player.getUniqueId());
-                if (existingGuild != null) {
-                    String message = languageManager.getMessage(player, "guild.accept.already-in-guild", "&c您已经在一个公会中！");
-                    player.sendMessage(ColorUtils.colorize(message));
-                    return;
-                }
-                
-                Guild guild = guildService.getGuildByName(guildName);
+        guildService.getPlayerGuildAsync(player.getUniqueId()).thenAccept(existingGuild -> {
+            if (existingGuild != null) {
+                String message = languageManager.getMessage(player, "guild.accept.already-in-guild", "&c您已经在一个公会中！");
+                player.sendMessage(ColorUtils.colorize(message));
+                return;
+            }
+            
+            guildService.getGuildByNameAsync(guildName).thenAccept(guild -> {
                 if (guild == null) {
                     String message = languageManager.getMessage(player, "guild.accept.guild-not-found", "&c公会不存在！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
-                // 这里应该检查玩家是否有该公会的邀请
-                // 暂时简化处理
-                
-                boolean success = guildService.addGuildMember(guild.getId(), player.getUniqueId(), player.getName(), Role.MEMBER);
-                if (success) {
-                    String message = languageManager.getMessage(player, "guild.accept.success", "&a已成功加入公会！");
-                    player.sendMessage(ColorUtils.colorize(message));
-                } else {
-                    String message = languageManager.getMessage(player, "guild.accept.error", "&c加入公会时发生错误！");
-                    player.sendMessage(ColorUtils.colorize(message));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.accept.error", "&c加入公会时发生错误！");
-                player.sendMessage(ColorUtils.colorize(message));
-            }
+                // 检查玩家是否有该公会的有效邀请
+                guildService.getPendingInvitationAsync(player.getUniqueId(), guild.getId()).thenAccept(invitation -> {
+                    if (invitation == null) {
+                        plugin.getLogger().warning("[Accept-Debug] 玩家 " + player.getName() + " 没有来自 " + guild.getName() + " 的邀请");
+                        String message = languageManager.getMessage(player, "guild.accept.no-invitation", "&c您没有该公会的邀请或邀请已过期！");
+                        player.sendMessage(ColorUtils.colorize(message));
+                        return;
+                    }
+                    
+                    plugin.getLogger().info("[Accept-Debug] 找到邀请 ID=" + invitation.getId() + " 从 " + invitation.getInviterName() + " 到 " + invitation.getTargetName());
+                    
+                    // 处理邀请接受
+                    guildService.processInvitationDirectAsync(invitation, true).thenAccept(success -> {
+                        if (success) {
+                            plugin.getLogger().info("[Accept-Debug] 邀请处理成功，玩家 " + player.getName() + " 已加入 " + guild.getName());
+                            String message = languageManager.getMessage(player, "guild.accept.success", "&a已成功加入公会！");
+                            player.sendMessage(ColorUtils.colorize(message));
+                            
+                            // 通知邀请者
+                            NotifyUtils.notifyInviterInvitationProcessed(plugin, invitation.getInviterUuid(), 
+                                invitation.getInviterName(), guild, true);
+                        } else {
+                            plugin.getLogger().warning("[Accept-Debug] 邀请处理失败，邀请ID=" + invitation.getId());
+                            String message = languageManager.getMessage(player, "guild.accept.error", "&c加入公会时发生错误！");
+                            player.sendMessage(ColorUtils.colorize(message));
+                        }
+                    });
+                });
+            });
         });
     }
     
@@ -667,27 +679,38 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             return;
         }
         
-        String guildName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
+        String guildName = String.join(" ", Arrays.copyOfRange(args, 1, args.length)).replaceAll("[\"']", "").trim();
         
-        CompletableFuture.runAsync(() -> {
-            try {
-                Guild guild = guildService.getGuildByName(guildName);
-                if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.decline.guild-not-found", "&c公会不存在！");
+        guildService.getGuildByNameAsync(guildName).thenAccept(guild -> {
+            if (guild == null) {
+                String message = languageManager.getMessage(player, "guild.decline.guild-not-found", "&c公会不存在！");
+                player.sendMessage(ColorUtils.colorize(message));
+                return;
+            }
+            
+            // 检查玩家是否有该公会的有效邀请
+            guildService.getPendingInvitationAsync(player.getUniqueId(), guild.getId()).thenAccept(invitation -> {
+                if (invitation == null) {
+                    String message = languageManager.getMessage(player, "guild.decline.no-invitation", "&c您没有该公会的邀请或邀请已过期！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
-                // 这里应该移除玩家的邀请
-                // 暂时简化处理
-                
-                String message = languageManager.getMessage(player, "guild.decline.success", "&a已拒绝加入公会！");
-                player.sendMessage(ColorUtils.colorize(message));
-            } catch (Exception e) {
-                e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.decline.error", "&c拒绝加入公会时发生错误！");
-                player.sendMessage(ColorUtils.colorize(message));
-            }
+                // 处理邀请拒绝
+                guildService.processInvitationDirectAsync(invitation, false).thenAccept(success -> {
+                    if (success) {
+                        String message = languageManager.getMessage(player, "guild.decline.success", "&a已拒绝加入公会！");
+                        player.sendMessage(ColorUtils.colorize(message));
+                        
+                        // 通知邀请者
+                        NotifyUtils.notifyInviterInvitationProcessed(plugin, invitation.getInviterUuid(), 
+                            invitation.getInviterName(), guild, false);
+                    } else {
+                        String message = languageManager.getMessage(player, "guild.decline.error", "&c拒绝邀请时发生错误！");
+                        player.sendMessage(ColorUtils.colorize(message));
+                    }
+                });
+            });
         });
     }
     

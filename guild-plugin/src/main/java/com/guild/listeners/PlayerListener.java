@@ -3,6 +3,7 @@ package com.guild.listeners;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUIManager;
 import com.guild.core.language.LanguageManager;
+import com.guild.util.NotifyUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -31,6 +32,16 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         // 检查工会战争状态
         checkWarStatus(event.getPlayer());
+        
+        // 检查待处理的申请和邀请通知
+        checkPendingNotifications(event.getPlayer());
+    }
+    
+    /**
+     * 检查并发送待处理的申请和邀请通知
+     */
+    private void checkPendingNotifications(org.bukkit.entity.Player player) {
+        NotifyUtils.notifyOnLogin(plugin, player);
     }
     
     /**

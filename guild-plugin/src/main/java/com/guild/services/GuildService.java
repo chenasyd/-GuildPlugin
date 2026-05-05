@@ -10,6 +10,7 @@ import com.guild.models.GuildRelation;
 import com.guild.models.GuildEconomy;
 import com.guild.models.GuildContribution;
 import com.guild.models.GuildLog;
+import com.guild.util.NotifyUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -308,10 +309,15 @@ public class GuildService {
      * 添加工会成员 (异步)
      */
     public CompletableFuture<Boolean> addGuildMemberAsync(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
+        logger.info("[AddMember-Debug] 开始添加成员: guildId=" + guildId + ", player=" + playerName + ", uuid=" + playerUuid);
+        
         return getPlayerGuildAsync(playerUuid).thenCompose(existingGuild -> {
             if (existingGuild != null) {
+                logger.warning("[AddMember-Debug] 玩家 " + playerName + " 已在公会 " + existingGuild.getName() + " 中");
                 return CompletableFuture.completedFuture(false);
             }
+            
+            logger.info("[AddMember-Debug] 玩家不在任何公会中，准备插入数据库");
             
             return CompletableFuture.supplyAsync(() -> {
                 try {
@@ -327,9 +333,11 @@ public class GuildService {
                     stmt.setString(4, role.name());
                     stmt.setString(5, nowString());
                     
+                    logger.info("[AddMember-Debug] 执行INSERT: guildId=" + guildId + ", uuid=" + playerUuid + ", name=" + playerName + ", role=" + role.name());
+                    
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
-                        logger.info("玩家 " + playerName + " 加入工会 (ID: " + guildId + ")");
+                        logger.info("[AddMember-Debug] 玩家 " + playerName + " 成功加入工会 (ID: " + guildId + ")");
                         // 更新内置权限缓存
                         try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
                         
@@ -342,10 +350,12 @@ public class GuildService {
                         });
                         
                         return true;
+                    } else {
+                        logger.warning("[AddMember-Debug] INSERT未影响任何行");
                     }
                 }
             } catch (SQLException e) {
-                logger.severe("添加工会成员时发生错误: " + e.getMessage());
+                logger.severe("[AddMember-Debug] 添加工会成员时发生错误: " + e.getMessage());
             }
             return false;
         });
@@ -994,6 +1004,12 @@ public class GuildService {
                             if (guild != null) {
                                 logGuildActionAsync(guildId, guild.getName(), playerUuid.toString(), playerName,
                                     GuildLog.LogType.APPLICATION_SUBMITTED, "申请提交", "申请消息: " + message);
+                                
+                                // 创建申请对象用于通知
+                                GuildApplication application = new GuildApplication(guildId, playerUuid, playerName, message);
+                                
+                                // 实时通知工会会长
+                                NotifyUtils.notifyLeaderNewApplication(plugin, guild, application);
                             }
                         });
                         
@@ -1414,56 +1430,73 @@ public class GuildService {
          }
      }
      
-     /**
-      * 处理邀请 (异步)
-      */
-     public CompletableFuture<Boolean> processInvitationAsync(UUID targetUuid, UUID inviterUuid, boolean accept) {
-         return getPendingInvitationAsync(targetUuid, inviterUuid).thenCompose(invitation -> {
-             if (invitation == null) {
-                 return CompletableFuture.completedFuture(false);
-             }
-             
-             return CompletableFuture.supplyAsync(() -> {
-                 try {
-                     String status = accept ? "ACCEPTED" : "DECLINED";
-                     String sql = "UPDATE guild_invites SET status = ? WHERE player_uuid = ? AND inviter_uuid = ? AND status = 'PENDING'";
-                     
-                     try (Connection conn = databaseManager.getConnection();
-                          PreparedStatement stmt = conn.prepareStatement(sql)) {
-                         
-                         stmt.setString(1, status);
-                         stmt.setString(2, targetUuid.toString());
-                         stmt.setString(3, inviterUuid.toString());
-                         
-                         int affectedRows = stmt.executeUpdate();
-                         if (affectedRows > 0) {
-                             logger.info("邀请处理成功: " + targetUuid + " -> " + status);
-                             return true;
-                         }
-                         return false;
-                     }
-                 } catch (SQLException e) {
-                     logger.severe("处理邀请时发生错误: " + e.getMessage());
-                 }
-                 return false;
-             }).thenCompose(success -> {
-                        if (success && accept) {
-                     // 如果接受邀请，添加玩家到工会
-                     return addGuildMemberAsync(invitation.getGuildId(), targetUuid, invitation.getTargetName(), GuildMember.Role.MEMBER)
-                         .thenCompose(addSuccess -> {
-                             if (addSuccess) {
-                                 // 分发成员加入事件给模块
-                                 return getGuildByIdAsync(invitation.getGuildId()).thenAccept(g -> {
-                                     if (g != null) fireMemberJoin(g.getId(), g.getName(), targetUuid, invitation.getTargetName());
-                                 }).thenApply(v -> true);
-                             }
-                             return CompletableFuture.completedFuture(false);
-                         });
-                 }
-                 return CompletableFuture.completedFuture(success);
-             });
-         });
-     }
+    /**
+     * 处理邀请 (异步) - 通过inviterUuid查找
+     */
+    public CompletableFuture<Boolean> processInvitationAsync(UUID targetUuid, UUID inviterUuid, boolean accept) {
+        return getPendingInvitationAsync(targetUuid, inviterUuid).thenCompose(invitation -> {
+            if (invitation == null) {
+                return CompletableFuture.completedFuture(false);
+            }
+            return processInvitationDirectAsync(invitation, accept);
+        });
+    }
+    
+    /**
+     * 处理邀请 (异步) - 直接处理邀请对象
+     */
+    public CompletableFuture<Boolean> processInvitationDirectAsync(GuildInvitation invitation, boolean accept) {
+        logger.info("[Process-Debug] 开始处理邀请: id=" + invitation.getId() + ", guildId=" + invitation.getGuildId() + ", target=" + invitation.getTargetUuid() + ", accept=" + accept);
+        
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                String status = accept ? "ACCEPTED" : "DECLINED";
+                String sql = "UPDATE guild_invites SET status = ? WHERE id = ?";
+                
+                try (Connection conn = databaseManager.getConnection();
+                     PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    
+                    stmt.setString(1, status);
+                    stmt.setInt(2, invitation.getId());
+                    
+                    logger.info("[Process-Debug] 执行更新: status=" + status + ", id=" + invitation.getId());
+                    
+                    int affectedRows = stmt.executeUpdate();
+                    if (affectedRows > 0) {
+                        logger.info("[Process-Debug] 邀请状态更新成功: " + invitation.getTargetUuid() + " -> " + status);
+                        return true;
+                    } else {
+                        logger.warning("[Process-Debug] 邀请状态更新失败，未更新任何行: id=" + invitation.getId());
+                    }
+                    return false;
+                }
+            } catch (SQLException e) {
+                logger.severe("[Process-Debug] 处理邀请时发生错误: " + e.getMessage());
+            }
+            return false;
+        }).thenCompose(success -> {
+            if (success && accept) {
+                logger.info("[Process-Debug] 准备添加玩家到工会: guildId=" + invitation.getGuildId() + ", player=" + invitation.getTargetUuid());
+                // 如果接受邀请，添加玩家到工会
+                return addGuildMemberAsync(invitation.getGuildId(), invitation.getTargetUuid(), 
+                    invitation.getTargetName(), GuildMember.Role.MEMBER)
+                    .thenCompose(addSuccess -> {
+                        if (addSuccess) {
+                            logger.info("[Process-Debug] 玩家已添加，准备分发事件");
+                            // 分发成员加入事件给模块
+                            return getGuildByIdAsync(invitation.getGuildId()).thenAccept(g -> {
+                                if (g != null) fireMemberJoin(g.getId(), g.getName(), 
+                                    invitation.getTargetUuid(), invitation.getTargetName());
+                            }).thenApply(v -> true);
+                        } else {
+                            logger.warning("[Process-Debug] 添加玩家到工会失败");
+                            return CompletableFuture.completedFuture(false);
+                        }
+                    });
+            }
+            return CompletableFuture.completedFuture(success);
+        });
+    }
      
      /**
       * 处理邀请 (同步包装器)
@@ -1520,30 +1553,36 @@ public class GuildService {
      /**
       * 获取玩家的待处理邀请 (异步)
       */
-     public CompletableFuture<GuildInvitation> getPendingInvitationAsync(UUID targetUuid, int guildId) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "SELECT * FROM guild_invites WHERE player_uuid = ? AND guild_id = ? AND status = 'PENDING' AND expires_at > ? ORDER BY created_at DESC LIMIT 1";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                 
-                     stmt.setString(1, targetUuid.toString());
-                     stmt.setInt(2, guildId);
-                     stmt.setString(3, nowString());
-                 
-                     try (ResultSet rs = stmt.executeQuery()) {
-                         if (rs.next()) {
-                             return createGuildInvitationFromResultSet(rs);
-                         }
-                     }
-                 }
-             } catch (SQLException e) {
-                 logger.severe("获取邀请时发生错误: " + e.getMessage());
-             }
-             return null;
-         });
-     }
+    public CompletableFuture<GuildInvitation> getPendingInvitationAsync(UUID targetUuid, int guildId) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                String sql = "SELECT * FROM guild_invites WHERE player_uuid = ? AND guild_id = ? AND status = 'PENDING' AND expires_at > ? ORDER BY created_at DESC LIMIT 1";
+                
+                try (Connection conn = databaseManager.getConnection();
+                     PreparedStatement stmt = conn.prepareStatement(sql)) {
+                
+                    stmt.setString(1, targetUuid.toString());
+                    stmt.setInt(2, guildId);
+                    stmt.setString(3, nowString());
+                    
+                    logger.info("[Invite-Debug] 查询邀请: player=" + targetUuid + ", guildId=" + guildId + ", now=" + nowString());
+                
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            GuildInvitation invitation = createGuildInvitationFromResultSet(rs);
+                            logger.info("[Invite-Debug] 找到邀请: id=" + invitation.getId() + ", status=" + invitation.getStatus() + ", expires=" + invitation.getExpiresAt());
+                            return invitation;
+                        } else {
+                            logger.info("[Invite-Debug] 未找到邀请，检查过期时间: " + nowString());
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                logger.severe("获取邀请时发生错误: " + e.getMessage());
+            }
+            return null;
+        });
+    }
      
      /**
       * 获取玩家的待处理邀请 (同步包装器)
@@ -1624,14 +1663,96 @@ public class GuildService {
              } catch (SQLException e) {
                  logger.severe("获取申请历史时发生错误: " + e.getMessage());
              }
-             return applications;
-         });
-     }
-     
-     /**
-      * 获取工会成员 (异步) - 重载方法，接受guildId参数
-      */
-     public CompletableFuture<GuildMember> getGuildMemberAsync(int guildId, UUID playerUuid) {
+            return applications;
+        });
+    }
+    
+    /**
+     * 获取玩家所有待处理的邀请 (异步)
+     */
+    public CompletableFuture<List<GuildInvitation>> getPendingInvitationsAsync(UUID playerUuid) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<GuildInvitation> invitations = new ArrayList<>();
+            try {
+                String sql = "SELECT * FROM guild_invites WHERE player_uuid = ? AND status = 'PENDING' AND expires_at > ? ORDER BY created_at DESC";
+                
+                try (Connection conn = databaseManager.getConnection();
+                     PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    
+                    stmt.setString(1, playerUuid.toString());
+                    stmt.setString(2, nowString());
+                    
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        while (rs.next()) {
+                            invitations.add(createGuildInvitationFromResultSet(rs));
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                logger.severe("获取待处理邀请时发生错误: " + e.getMessage());
+            }
+            return invitations;
+        });
+    }
+    
+    /**
+     * 清理过期的工会邀请 (异步) - 将过期邀请状态更新为EXPIRED
+     * 建议定时调用，避免数据库中积累过多过期邀请
+     */
+    public CompletableFuture<Integer> cleanupExpiredInvitationsAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                String sql = "UPDATE guild_invites SET status = 'EXPIRED' WHERE status = 'PENDING' AND expires_at < ?";
+                
+                try (Connection conn = databaseManager.getConnection();
+                     PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    
+                    stmt.setString(1, nowString());
+                    
+                    int affectedRows = stmt.executeUpdate();
+                    if (affectedRows > 0) {
+                        logger.info("已清理 " + affectedRows + " 个过期工会邀请");
+                    }
+                    return affectedRows;
+                }
+            } catch (SQLException e) {
+                logger.severe("清理过期邀请时发生错误: " + e.getMessage());
+            }
+            return 0;
+        });
+    }
+    
+    /**
+     * 清理旧的已处理邀请 (异步) - 删除已过期超过指定天数的邀请记录
+     * @param days 保留天数，超过此天数的已处理邀请（ACCEPTED/DECLINED/EXPIRED）将被删除
+     */
+    public CompletableFuture<Integer> cleanupOldProcessedInvitationsAsync(int days) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                String sql = "DELETE FROM guild_invites WHERE status != 'PENDING' AND created_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
+                
+                try (Connection conn = databaseManager.getConnection();
+                     PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    
+                    stmt.setInt(1, days);
+                    
+                    int affectedRows = stmt.executeUpdate();
+                    if (affectedRows > 0) {
+                        logger.info("已清理 " + affectedRows + " 条旧的已处理邀请记录");
+                    }
+                    return affectedRows;
+                }
+            } catch (SQLException e) {
+                logger.severe("清理旧邀请记录时发生错误: " + e.getMessage());
+            }
+            return 0;
+        });
+    }
+    
+    /**
+     * 获取工会成员 (异步) - 重载方法，接受guildId参数
+     */
+    public CompletableFuture<GuildMember> getGuildMemberAsync(int guildId, UUID playerUuid) {
          return CompletableFuture.supplyAsync(() -> {
              try {
                  String sql = "SELECT * FROM guild_members WHERE guild_id = ? AND player_uuid = ?";

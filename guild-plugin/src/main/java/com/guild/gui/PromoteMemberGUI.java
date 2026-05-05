@@ -74,9 +74,9 @@ public class PromoteMemberGUI implements GUI {
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        if (slot >= 9 && slot < 45) {
+        if (slot >= 10 && slot < 45) {
             // 成员头像区域
-            int memberIndex = slot - 9 + (currentPage * 36);
+            int memberIndex = slot - 10 + (currentPage * 36);
             if (memberIndex < members.size()) {
                 GuildMember member = members.get(memberIndex);
                 handlePromoteMember(player, member);
@@ -124,7 +124,7 @@ public class PromoteMemberGUI implements GUI {
         
         for (int i = startIndex; i < endIndex; i++) {
             GuildMember member = members.get(i);
-            int slot = 9 + (i - startIndex);
+            int slot = 10 + (i - startIndex);
             
             ItemStack memberHead = createMemberHead(member);
             inventory.setItem(slot, memberHead);

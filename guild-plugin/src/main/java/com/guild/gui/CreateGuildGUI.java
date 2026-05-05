@@ -366,7 +366,7 @@ public class CreateGuildGUI implements GUI {
 
         // 检查玩家余额
         if (!plugin.getEconomyManager().hasBalance(player, creationCost)) {
-            String message = languageManager.getMessage(player, "create.insufficient-funds", "&c您的余额不足！创建工会需要 {cost} 金币。", "{cost}", String.format("%.0f", creationCost));
+            String message = languageManager.getMessage(player, "create.insufficient-funds", "&c您的余额不足！创建工会需要 {amount}！", "{amount}", plugin.getEconomyManager().format(creationCost));
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -395,7 +395,7 @@ public class CreateGuildGUI implements GUI {
                 } else {
                     // 如果创建失败，退还费用
                     plugin.getEconomyManager().deposit(player, creationCost);
-                    String refundMessage = languageManager.getMessage(player, "create.payment-refunded", "&e已退还创建费用 {cost} 金币。", "{cost}", String.format("%.0f", creationCost));
+                    String refundMessage = languageManager.getMessage(player, "create.payment-refunded", "&e已退还创建费用 {amount}。", "{amount}", plugin.getEconomyManager().format(creationCost));
                     player.sendMessage(ColorUtils.colorize(refundMessage));
 
                     String message = languageManager.getMessage(player, "create.failed", "&c工会创建失败！");
