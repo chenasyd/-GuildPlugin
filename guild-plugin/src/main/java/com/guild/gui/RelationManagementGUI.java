@@ -182,14 +182,14 @@ public class RelationManagementGUI implements GUI {
 
         // 页码信息
         inventory.setItem(49, createItem(Material.PAPER,
-            ColorUtils.colorize(languageManager.getMessage(player, "relation-management.page-info", "&e第 {0} 页，共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(totalPages))),
-            ColorUtils.colorize(languageManager.getMessage(player, "relation-management.total-relations", "&7总计 {0} 个关系", String.valueOf(allRelations.size())))));
+            ColorUtils.colorize(languageManager.getIndexedMessage(player, "relation-management.page-info", "&e第 {0} 页，共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(totalPages))),
+            ColorUtils.colorize(languageManager.getIndexedMessage(player, "relation-management.total-relations", "&7总计 {0} 个关系", String.valueOf(allRelations.size())))));
 
         // 下一页按钮
         if (currentPage < totalPages - 1) {
             inventory.setItem(53, createItem(Material.ARROW,
                 ColorUtils.colorize(languageManager.getMessage(player, "relation-management.next-page", "&a下一页")),
-                ColorUtils.colorize(languageManager.getMessage(player, "relation-management.next-page.desc", "&7第 {0} 页", String.valueOf(currentPage + 2)))));
+                ColorUtils.colorize(languageManager.getIndexedMessage(player, "relation-management.next-page.desc", "&7第 {0} 页", String.valueOf(currentPage + 2)))));
         }
     }
 

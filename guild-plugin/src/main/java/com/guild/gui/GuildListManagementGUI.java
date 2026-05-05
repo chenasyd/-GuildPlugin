@@ -65,14 +65,14 @@ public class GuildListManagementGUI implements GUI {
     private void setupGuildList(Inventory inventory) {
         int startIndex = currentPage * itemsPerPage;
         int endIndex = Math.min(startIndex + itemsPerPage, allGuilds.size());
-        int cols = 3; // 三列布局，居中显示（列 3,4,5）
+        int cols = 3; // 三列布局，从列2开始（列 2,3,4）
 
         for (int i = 0; i < itemsPerPage; i++) {
             if (startIndex + i < endIndex) {
                 Guild guild = allGuilds.get(startIndex + i);
 
                 int row = (i / cols) + 1; // 1..4 对应 GUI 的行 2..5
-                int col = (i % cols) + 3; // 列 3,4,5 居中
+                int col = (i % cols) + 2; // 列 2,3,4 从槽位10开始
                 int slot = row * 9 + col;
 
                 inventory.setItem(slot, createGuildItem(guild));
@@ -98,18 +98,18 @@ public class GuildListManagementGUI implements GUI {
         if (currentPage > 0) {
             inventory.setItem(45, createItem(Material.ARROW,
                 ColorUtils.colorize(languageManager.getMessage(player, "gui.previous-page", "&a上一页")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.page-info", "第 {current} 页", "{current}", String.valueOf(currentPage)))));
+                ColorUtils.colorize("&7" + languageManager.getIndexedMessage(player, "gui.page-info", "第 {0} 页，共 {1} 页", String.valueOf(currentPage), String.valueOf(totalPages)))));
         }
 
         // 页码信息
         inventory.setItem(49, createItem(Material.PAPER,
-            ColorUtils.colorize("&e" + languageManager.getMessage(player, "gui.page-info", "第 {current} 页", "{current}", String.valueOf(currentPage + 1)) + "，" + languageManager.getMessage(player, "gui.total-pages", "共 {total} 页", "{total}", String.valueOf(totalPages)))));
+            ColorUtils.colorize("&e" + languageManager.getIndexedMessage(player, "gui.page-info", "第 {0} 页/共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(totalPages)))));
 
         // 下一页按钮
         if (currentPage < totalPages - 1) {
             inventory.setItem(53, createItem(Material.ARROW,
                 ColorUtils.colorize(languageManager.getMessage(player, "gui.next-page", "&a下一页")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.page-info", "第 {current} 页", "{current}", String.valueOf(currentPage + 2)))));
+                ColorUtils.colorize("&7" + languageManager.getIndexedMessage(player, "gui.page-info", "第 {0} 页，共 {1} 页", String.valueOf(currentPage + 2), String.valueOf(totalPages)))));
         }
     }
 
@@ -166,12 +166,12 @@ public class GuildListManagementGUI implements GUI {
             currentPage++;
             refresh(player);
         } else if (slot >= 10 && slot <= 43) {
-            // 工会项目 - 检查是否在3列布局，列 3,4,5，行 1..4 范围内
+            // 工会项目 - 检查是否在3列布局，列 2,3,4，行 1..4 范围内
             int row = slot / 9;
             int col = slot % 9;
-            if (row >= 1 && row <= 4 && col >= 3 && col <= 5) {
+            if (row >= 1 && row <= 4 && col >= 2 && col <= 4) {
                 int cols = 3;
-                int relativeIndex = (row - 1) * cols + (col - 3);
+                int relativeIndex = (row - 1) * cols + (col - 2);
                 int guildIndex = (currentPage * itemsPerPage) + relativeIndex;
                 if (guildIndex < allGuilds.size()) {
                     Guild guild = allGuilds.get(guildIndex);
