@@ -17,9 +17,9 @@ import com.guild.listeners.PlayerListener;
 import com.guild.listeners.GuildListener;
 import com.guild.services.GuildService;
 import com.guild.core.module.ModuleManager;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ServerUtils;
 import com.guild.core.utils.TestUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -199,7 +199,7 @@ public class GuildPlugin extends JavaPlugin {
     private void startCleanupTasks() {
         // 每10分钟清理一次过期邀请（6000 ticks = 5分钟, 乘以2 = 10分钟）
         // 72000 ticks = 1小时
-        Bukkit.getScheduler().runTaskTimer(this, () -> {
+        CompatibleScheduler.runTaskTimer(this, () -> {
             guildService.cleanupExpiredInvitationsAsync()
                 .thenAccept(count -> {
                     if (count > 0) {

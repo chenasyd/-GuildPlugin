@@ -1,5 +1,7 @@
 package com.guild.module.example.member.rank;
 
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.ScheduledTaskHandle;
 import com.guild.models.GuildMember;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -12,7 +14,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class OnlineActivityTracker implements Listener {
 
     private final MemberRankModule module;
 
-    private BukkitTask task;
+    private ScheduledTaskHandle task;
 
     private final Map<UUID, Long> lastActionMillis = new ConcurrentHashMap<>();
     private final Map<UUID, Integer> onlineActiveMinutes = new ConcurrentHashMap<>();
@@ -59,7 +60,7 @@ public class OnlineActivityTracker implements Listener {
     public void start() {
         Bukkit.getPluginManager().registerEvents(this, module.getContext().getPlugin());
         long period = checkIntervalMinutes * 60L * 20L;
-        this.task = Bukkit.getScheduler().runTaskTimer(
+        this.task = CompatibleScheduler.runTaskTimer(
                 module.getContext().getPlugin(),
                 this::tick,
                 period,

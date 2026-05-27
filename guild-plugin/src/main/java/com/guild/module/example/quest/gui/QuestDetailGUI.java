@@ -435,7 +435,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     private void forceRefreshContent(Player player) {
         // 关键修复：由于新架构使用final字段（不可变数据），
         // 必须重新打开整个GUI实例来刷新数据
-        org.bukkit.Bukkit.getScheduler().runTaskLater(module.getContext().getPlugin(), () -> {
+        com.guild.core.utils.CompatibleScheduler.runTaskLater(module.getContext().getPlugin(), () -> {
             if (player.isOnline()) {
                 try {
                     // 重新获取最新的任务定义和进度

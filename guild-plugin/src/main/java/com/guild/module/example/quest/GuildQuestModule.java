@@ -303,7 +303,7 @@ public class GuildQuestModule implements GuildModule {
     private void startScheduledTasks() {
         context.runTimer(1200L, 600L, () ->
             context.getApi().getAllGuilds().thenAcceptAsync(guilds ->
-                org.bukkit.Bukkit.getScheduler().runTask(context.getPlugin(), () -> {
+                com.guild.core.utils.CompatibleScheduler.runTask(context.getPlugin(), () -> {
                     for (var guild : guilds) questManager.saveGuildProgress(guild.getId());
                 })
             ));
@@ -311,7 +311,7 @@ public class GuildQuestModule implements GuildModule {
         long resetDelayTicks = calculateSecondsUntil(resetHour) * 20L;
         context.runTimer(Math.max(1200L, resetDelayTicks), 172800000L, () ->
             context.getApi().getAllGuilds().thenAcceptAsync(guilds ->
-                org.bukkit.Bukkit.getScheduler().runTask(context.getPlugin(), () -> {
+                com.guild.core.utils.CompatibleScheduler.runTask(context.getPlugin(), () -> {
                     for (var guild : guilds) {
                         questManager.resetDailyQuests(guild.getId());
                         notifyQuestReset(guild.getId(), "daily");
@@ -321,7 +321,7 @@ public class GuildQuestModule implements GuildModule {
         long weeklyDelayTicks = calculateSecondsUntilWeekly(resetHour) * 20L;
         context.runTimer(Math.max(2400L, weeklyDelayTicks), 604800000L, () ->
             context.getApi().getAllGuilds().thenAcceptAsync(guilds ->
-                org.bukkit.Bukkit.getScheduler().runTask(context.getPlugin(), () -> {
+                com.guild.core.utils.CompatibleScheduler.runTask(context.getPlugin(), () -> {
                     for (var guild : guilds) {
                         questManager.resetWeeklyQuests(guild.getId());
                         notifyQuestReset(guild.getId(), "weekly");

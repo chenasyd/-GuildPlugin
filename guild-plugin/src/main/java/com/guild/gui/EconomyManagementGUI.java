@@ -5,7 +5,7 @@ import com.guild.core.gui.GUI;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
-import org.bukkit.Bukkit;
+import com.guild.core.utils.CompatibleScheduler;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -145,7 +145,7 @@ public class EconomyManagementGUI implements GUI {
     private void loadGuilds() {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
             this.allGuilds = guilds;
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (player.isOnline()) {
                     refresh(player);
                 }

@@ -3,6 +3,7 @@ package com.guild.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.guild.core.utils.CompatibleScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -184,7 +185,7 @@ public class GuildDetailGUI implements GUI {
     private void loadMembers() {
         plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(membersList -> {
             this.members = membersList != null ? membersList : new ArrayList<>();
-            Bukkit.getScheduler().runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, () -> {
                 if (viewer.isOnline()) {
                     refresh(viewer);
                 }

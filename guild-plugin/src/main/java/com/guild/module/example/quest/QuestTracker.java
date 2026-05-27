@@ -15,7 +15,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitTask;
+
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.ScheduledTaskHandle;
 
 import com.guild.module.example.quest.model.QuestDefinition;
 import com.guild.module.example.quest.model.QuestObjective;
@@ -30,7 +32,7 @@ public class QuestTracker implements Listener {
      * 定时器管理Map - key: "playerUuid_questId", value: BukkitTask
      * 用于跟踪所有活跃的在线时长追踪任务，防止重复创建和内存泄漏
      */
-    private final Map<String, BukkitTask> activeTasks = new ConcurrentHashMap<>();
+    private final Map<String, ScheduledTaskHandle> activeTasks = new ConcurrentHashMap<>();
 
     public QuestTracker(GuildQuestModule module) {
         this.module = module;
@@ -55,7 +57,7 @@ public class QuestTracker implements Listener {
 
         // 清理所有活跃的定时器 - 防止内存泄漏
         int taskCount = activeTasks.size();
-        for (BukkitTask task : activeTasks.values()) {
+        for (ScheduledTaskHandle task : activeTasks.values()) {
             if (task != null && !task.isCancelled()) {
                 try {
                     task.cancel();
@@ -198,7 +200,7 @@ public class QuestTracker implements Listener {
             " (延迟: 1分钟, 间隔: 15分钟)");
 
         // 创建并注册定时器 - 改为每15分钟执行一次，提高精度
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(
+        ScheduledTaskHandle task = CompatibleScheduler.runTaskTimer(
             module.getContext().getPlugin(),
             () -> updateOnlineProgress(playerUuid, guildId, questId),
             1200L,  // 延迟1分钟（60秒 / 20 ticks）
@@ -271,7 +273,7 @@ public class QuestTracker implements Listener {
      * @param taskId 任务ID ("uuid_questId")
      */
     private void cancelTask(String taskId) {
-        BukkitTask task = activeTasks.remove(taskId);
+        ScheduledTaskHandle task = activeTasks.remove(taskId);
         if (task != null && !task.isCancelled()) {
             try {
                 task.cancel();
@@ -294,7 +296,7 @@ public class QuestTracker implements Listener {
         // 使用迭代器安全删除
         activeTasks.keySet().removeIf(key -> {
             if (key.startsWith(prefix)) {
-                BukkitTask task = activeTasks.get(key);
+                ScheduledTaskHandle task = activeTasks.get(key);
                 if (task != null && !task.isCancelled()) {
                     try {
                         task.cancel();

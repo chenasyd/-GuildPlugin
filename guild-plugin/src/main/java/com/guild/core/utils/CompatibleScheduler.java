@@ -137,24 +137,79 @@ public class CompatibleScheduler {
     /**
      * 重复执行任务
      */
-    public static void runTaskTimer(Plugin plugin, Runnable task, long delay, long period) {
+    public static ScheduledTaskHandle runTaskTimer(Plugin plugin, Runnable task, long delay, long period) {
         // 检查插件是否已启用
         if (plugin != null && !plugin.isEnabled()) {
-            return;
+            return () -> {};
         }
 
         if (ServerUtils.isFolia()) {
             try {
                 // 使用反射调用Folia的全局区域调度器
                 Object globalScheduler = Bukkit.class.getMethod("getGlobalRegionScheduler").invoke(null);
-                globalScheduler.getClass().getMethod("runAtFixedRate", Plugin.class, java.util.function.Consumer.class, long.class, long.class)
-                    .invoke(globalScheduler, plugin, (java.util.function.Consumer<Object>) scheduledTask -> task.run(), delay, period);
+                Object scheduledTask = globalScheduler.getClass().getMethod("runAtFixedRate", Plugin.class, java.util.function.Consumer.class, long.class, long.class)
+                    .invoke(globalScheduler, plugin, (java.util.function.Consumer<Object>) scheduledTaskRef -> task.run(), delay, period);
+
+                return new ScheduledTaskHandle() {
+                    private volatile boolean cancelled = false;
+
+                    @Override
+                    public void cancel() {
+                        if (cancelled) {
+                            return;
+                        }
+                        cancelled = true;
+                        try {
+                            scheduledTask.getClass().getMethod("cancel").invoke(scheduledTask);
+                        } catch (Exception ignored) {
+                        }
+                    }
+
+                    @Override
+                    public boolean isCancelled() {
+                        return cancelled;
+                    }
+                };
             } catch (Exception e) {
                 // 如果Folia API不可用，回退到传统调度器
-                Bukkit.getScheduler().runTaskTimer(plugin, task, delay, period);
+                return new ScheduledTaskHandle() {
+                    private final org.bukkit.scheduler.BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(plugin, task, delay, period);
+                    private volatile boolean cancelled = false;
+
+                    @Override
+                    public void cancel() {
+                        if (cancelled) {
+                            return;
+                        }
+                        cancelled = true;
+                        bukkitTask.cancel();
+                    }
+
+                    @Override
+                    public boolean isCancelled() {
+                        return cancelled || bukkitTask.isCancelled();
+                    }
+                };
             }
         } else {
-            Bukkit.getScheduler().runTaskTimer(plugin, task, delay, period);
+            return new ScheduledTaskHandle() {
+                private final org.bukkit.scheduler.BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(plugin, task, delay, period);
+                private volatile boolean cancelled = false;
+
+                @Override
+                public void cancel() {
+                    if (cancelled) {
+                        return;
+                    }
+                    cancelled = true;
+                    bukkitTask.cancel();
+                }
+
+                @Override
+                public boolean isCancelled() {
+                    return cancelled || bukkitTask.isCancelled();
+                }
+            };
         }
     }
     

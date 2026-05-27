@@ -1,5 +1,7 @@
 package com.guild.module.example.stats;
 
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.ScheduledTaskHandle;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -7,7 +9,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -17,7 +18,7 @@ public class ActivityTracker implements Listener {
 
     private final GuildStatsModule module;
     private final ActivityDataPersistence persistence;
-    private BukkitTask task;
+    private ScheduledTaskHandle task;
 
     private final Map<UUID, Long> loginTimeMap = new java.util.concurrent.ConcurrentHashMap<>();
 
@@ -41,7 +42,7 @@ public class ActivityTracker implements Listener {
 
         // 每60秒执行一次：统计在线时长 + 检测日期变更
         long periodTicks = 60L * 20L; // 1分钟 = 20 ticks, 60分钟 = 1200 ticks
-        this.task = Bukkit.getScheduler().runTaskTimer(
+        this.task = CompatibleScheduler.runTaskTimer(
             module.getContext().getPlugin(),
             this::tick,
             periodTicks,

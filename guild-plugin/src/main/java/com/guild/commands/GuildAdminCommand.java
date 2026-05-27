@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import com.guild.core.utils.CompatibleScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -271,7 +272,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                Bukkit.getScheduler().runTask(plugin, () -> plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player)));
+                CompatibleScheduler.runTask(plugin, () -> plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player)));
             } else {
                 plugin.getGuildService().deleteGuildAsync(guild.getId(), UUID.randomUUID()).thenAccept(success -> {
                     if (success) {
