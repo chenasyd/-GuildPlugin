@@ -66,7 +66,7 @@ public class SystemSettingsGUI implements GUI {
             "",
             ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
-        inventory.setItem(19, debugToggle);
+        inventory.setItem(10, debugToggle);
         
         // 自动保存设置
         boolean autoSave = plugin.getConfigManager().getMainConfig().getBoolean("auto-save.enabled", true);
@@ -82,7 +82,7 @@ public class SystemSettingsGUI implements GUI {
             "",
             ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
-        inventory.setItem(21, autoSaveToggle);
+        inventory.setItem(12, autoSaveToggle);
         
         // 经济系统开关
         boolean economyEnabled = plugin.getConfigManager().getMainConfig().getBoolean("economy.enabled", true);
@@ -98,7 +98,7 @@ public class SystemSettingsGUI implements GUI {
             "",
             ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
-        inventory.setItem(23, economyToggle);
+        inventory.setItem(14, economyToggle);
         
         // 关系系统开关
         boolean relationEnabled = plugin.getConfigManager().getMainConfig().getBoolean("relations.enabled", true);
@@ -114,7 +114,7 @@ public class SystemSettingsGUI implements GUI {
             "",
             ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
-        inventory.setItem(25, relationToggle);
+        inventory.setItem(16, relationToggle);
         
         // 等级系统开关
         boolean levelEnabled = plugin.getConfigManager().getMainConfig().getBoolean("level-system.enabled", true);
@@ -130,7 +130,7 @@ public class SystemSettingsGUI implements GUI {
             "",
             ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
-        inventory.setItem(28, levelToggle);
+        inventory.setItem(19, levelToggle);
 
         // 申请系统开关
         boolean applicationEnabled = plugin.getConfigManager().getMainConfig().getBoolean("applications.enabled", true);
@@ -146,7 +146,7 @@ public class SystemSettingsGUI implements GUI {
             "",
             ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
-        inventory.setItem(30, applicationToggle);
+        inventory.setItem(21, applicationToggle);
 
         // 邀请系统开关
         boolean inviteEnabled = plugin.getConfigManager().getMainConfig().getBoolean("invites.enabled", true);
@@ -162,7 +162,7 @@ public class SystemSettingsGUI implements GUI {
             "",
             ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
-        inventory.setItem(32, inviteToggle);
+        inventory.setItem(23, inviteToggle);
 
         // 工会家系统开关
         boolean homeEnabled = plugin.getConfigManager().getMainConfig().getBoolean("guild-home.enabled", true);
@@ -178,7 +178,7 @@ public class SystemSettingsGUI implements GUI {
             "",
             ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-toggle", "&e点击切换状态"))
         );
-        inventory.setItem(34, homeToggle);
+        inventory.setItem(25, homeToggle);
     }
     
     private void setupActionButtons(Inventory inventory) {
@@ -191,7 +191,7 @@ public class SystemSettingsGUI implements GUI {
             "",
             ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-reload", "&e点击重载配置"))
         );
-        inventory.setItem(37, reload);
+        inventory.setItem(28, reload);
 
         // 数据库维护按钮
         ItemStack database = createItem(
@@ -202,7 +202,7 @@ public class SystemSettingsGUI implements GUI {
             "",
             ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-maintain", "&e点击进行维护"))
         );
-        inventory.setItem(39, database);
+        inventory.setItem(30, database);
 
         // 备份数据按钮
         ItemStack backup = createItem(
@@ -213,7 +213,7 @@ public class SystemSettingsGUI implements GUI {
             "",
             ColorUtils.colorize(languageManager.getMessage(player, "system-settings-click-to-backup", "&e点击备份数据"))
         );
-        inventory.setItem(41, backup);
+        inventory.setItem(32, backup);
 
         // 返回按钮
         ItemStack back = createItem(
