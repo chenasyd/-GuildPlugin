@@ -72,7 +72,7 @@ public class GuildListManagementGUI implements GUI {
                 Guild guild = allGuilds.get(startIndex + i);
 
                 int row = (i / cols) + 1; // 1..4 对应 GUI 的行 2..5
-                int col = (i % cols) + 2; // 列 2,3,4 从槽位10开始
+                int col = (i % cols) + 1; // 列 2,3,4 从槽位10开始
                 int slot = row * 9 + col;
 
                 inventory.setItem(slot, createGuildItem(guild));
@@ -169,9 +169,9 @@ public class GuildListManagementGUI implements GUI {
             // 工会项目 - 检查是否在3列布局，列 2,3,4，行 1..4 范围内
             int row = slot / 9;
             int col = slot % 9;
-            if (row >= 1 && row <= 4 && col >= 2 && col <= 4) {
+            if (row >= 1 && row <= 4 && col >= 1 && col <= 3) {
                 int cols = 3;
-                int relativeIndex = (row - 1) * cols + (col - 2);
+                int relativeIndex = (row - 1) * cols + (col - 1);
                 int guildIndex = (currentPage * itemsPerPage) + relativeIndex;
                 if (guildIndex < allGuilds.size()) {
                     Guild guild = allGuilds.get(guildIndex);
