@@ -253,37 +253,37 @@ public class SystemSettingsGUI implements GUI {
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 19: // 详细后台信息显示开关
+            case 10: // 详细后台信息显示开关
                 toggleDebugMode(player);
                 break;
-            case 21: // 自动保存开关
+            case 12: // 自动保存开关
                 toggleAutoSave(player);
                 break;
-            case 23: // 经济系统开关
+            case 14: // 经济系统开关
                 toggleEconomy(player);
                 break;
-            case 25: // 关系系统开关
+            case 16: // 关系系统开关
                 toggleRelations(player);
                 break;
-            case 28: // 等级系统开关
+            case 19: // 等级系统开关
                 toggleLevelSystem(player);
                 break;
-            case 30: // 申请系统开关
+            case 21: // 申请系统开关
                 toggleApplications(player);
                 break;
-            case 32: // 邀请系统开关
+            case 23: // 邀请系统开关
                 toggleInvites(player);
                 break;
-            case 34: // 工会家系统开关
+            case 25: // 工会家系统开关
                 toggleGuildHome(player);
                 break;
-            case 37: // 重载配置
+            case 28: // 重载配置
                 reloadConfigs(player);
                 break;
-            case 39: // 数据库维护
+            case 30: // 数据库维护
                 maintainDatabase(player);
                 break;
-            case 41: // 备份数据
+            case 32: // 备份数据
                 backupData(player);
                 break;
             case 49: // 返回
