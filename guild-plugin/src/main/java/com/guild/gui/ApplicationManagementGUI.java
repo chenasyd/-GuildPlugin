@@ -112,7 +112,7 @@ public class ApplicationManagementGUI implements GUI {
                 ColorUtils.colorize(languageManager.getMessage(player, "application-management-pending-applications-lore-1", "&7查看待处理的申请")),
                 ColorUtils.colorize("&f" + pendingCount + " " + languageManager.getMessage(player, "application-management-applications-count", "个申请"))
             );
-            inventory.setItem(20, pendingApplications);
+            inventory.setItem(47, pendingApplications);
         });
         
         // 申请历史按钮
@@ -121,7 +121,7 @@ public class ApplicationManagementGUI implements GUI {
             ColorUtils.colorize(languageManager.getMessage(player, "application-management-application-history-name", "&e申请历史")),
             ColorUtils.colorize(languageManager.getMessage(player, "application-management-application-history-lore-1", "&7查看申请历史记录"))
         );
-        inventory.setItem(24, applicationHistory);
+        inventory.setItem(51, applicationHistory);
         
         // 返回按钮
         ItemStack back = createItem(
@@ -167,6 +167,7 @@ public class ApplicationManagementGUI implements GUI {
             
             // 设置分页按钮
             setupPaginationButtons(inventory, totalPages);
+            inventory.setItem(22, null);
             
             // 显示当前页的申请
             displayApplications(inventory, applications);
@@ -197,6 +198,7 @@ public class ApplicationManagementGUI implements GUI {
             
             // 设置分页按钮
             setupPaginationButtons(inventory, totalPages);
+            inventory.setItem(22, null);
             
             // 显示当前页的申请
             displayApplications(inventory, applications);
@@ -293,7 +295,7 @@ public class ApplicationManagementGUI implements GUI {
      * 检查是否是功能按钮
      */
     private boolean isFunctionButton(int slot) {
-        return slot == 20 || slot == 24 || slot == 49;
+        return slot == 47 || slot == 51 || slot == 49;
     }
     
     /**
@@ -307,7 +309,7 @@ public class ApplicationManagementGUI implements GUI {
      * 检查是否是申请槽位
      */
     private boolean isApplicationSlot(int slot) {
-        return slot >= 10 && slot <= 44 && slot % 9 != 0 && slot % 9 != 8;
+        return slot >= 10 && slot <= 44 && slot % 9 != 0 && slot % 9 != 8 && slot != 22;
     }
     
     /**
@@ -315,12 +317,12 @@ public class ApplicationManagementGUI implements GUI {
      */
     private void handleFunctionButton(Player player, int slot) {
         switch (slot) {
-            case 20: // 待处理申请
+            case 47: // 待处理申请
                 showingHistory = false;
                 currentPage = 0;
                 refreshInventory(player);
                 break;
-            case 24: // 申请历史
+            case 51: // 申请历史
                 showingHistory = true;
                 currentPage = 0;
                 refreshInventory(player);

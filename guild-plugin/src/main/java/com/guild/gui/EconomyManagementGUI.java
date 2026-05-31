@@ -26,6 +26,11 @@ public class EconomyManagementGUI implements GUI {
     private final LanguageManager languageManager;
     private int currentPage = 0;
     private final int itemsPerPage = 28; // 7列 × 4行
+    private static final int PREVIOUS_PAGE_SLOT = 48;
+    private static final int NEXT_PAGE_SLOT = 50;
+    private static final int PAGE_INFO_SLOT = 49;
+    private static final int BACK_SLOT = 46;
+    private static final int REFRESH_SLOT = 52;
     private List<Guild> allGuilds = new ArrayList<>();
 
     public EconomyManagementGUI(GuildPlugin plugin, Player player) {
@@ -96,22 +101,25 @@ public class EconomyManagementGUI implements GUI {
     }
     
     private void setupPaginationButtons(Inventory inventory) {
-        int totalPages = (int) Math.ceil((double) allGuilds.size() / itemsPerPage);
+        int totalPages = Math.max(1, (int) Math.ceil((double) allGuilds.size() / itemsPerPage));
+        if (currentPage > totalPages - 1) {
+            currentPage = totalPages - 1;
+        }
         
         // 上一页按钮
         if (currentPage > 0) {
-            inventory.setItem(45, createItem(Material.ARROW,
+            inventory.setItem(PREVIOUS_PAGE_SLOT, createItem(Material.ARROW,
                 ColorUtils.colorize(languageManager.getMessage(player, "economy-management.previous-page", "&a上一页")),
                 ColorUtils.colorize(languageManager.getMessage(player, "economy-management.previous-page.desc", "&7第 {page} 页", "{page}", String.valueOf(currentPage)))));
         }
 
         // 页码信息
-        inventory.setItem(49, createItem(Material.PAPER,
+        inventory.setItem(PAGE_INFO_SLOT, createItem(Material.PAPER,
             ColorUtils.colorize(languageManager.getMessage(player, "economy-management.page-info", "&e第 {current} 页，共 {total} 页", "{current}", String.valueOf(currentPage + 1), "{total}", String.valueOf(totalPages)))));
 
         // 下一页按钮
         if (currentPage < totalPages - 1) {
-            inventory.setItem(53, createItem(Material.ARROW,
+            inventory.setItem(NEXT_PAGE_SLOT, createItem(Material.ARROW,
                 ColorUtils.colorize(languageManager.getMessage(player, "economy-management.next-page", "&a下一页")),
                 ColorUtils.colorize(languageManager.getMessage(player, "economy-management.next-page.desc", "&7第 {page} 页", "{page}", String.valueOf(currentPage + 2)))));
         }
@@ -158,14 +166,14 @@ public class EconomyManagementGUI implements GUI {
         if (slot == 46) {
             // 返回
             plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
-        } else if (slot == 52) {
+        } else if (slot == REFRESH_SLOT) {
             // 刷新
             loadGuilds();
-        } else if (slot == 45 && currentPage > 0) {
+        } else if (slot == PREVIOUS_PAGE_SLOT && currentPage > 0) {
             // 上一页
             currentPage--;
             refresh(player);
-        } else if (slot == 53 && currentPage < (int) Math.ceil((double) allGuilds.size() / itemsPerPage) - 1) {
+        } else if (slot == NEXT_PAGE_SLOT && currentPage < (int) Math.ceil((double) allGuilds.size() / itemsPerPage) - 1) {
             // 下一页
             currentPage++;
             refresh(player);
