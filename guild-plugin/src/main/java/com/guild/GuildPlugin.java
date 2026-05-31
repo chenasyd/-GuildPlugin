@@ -23,6 +23,8 @@ import com.guild.core.utils.TestUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
+import java.util.Map;
+import java.util.HashMap;
 
 public class GuildPlugin extends JavaPlugin {
     
@@ -38,6 +40,9 @@ public class GuildPlugin extends JavaPlugin {
     private LanguageManager languageManager;
     private GuildService guildService;
     private ModuleManager moduleManager;
+    // 等级需求配置（key = 当前等级 -> 所需金额达到下一等级）
+    private Map<Integer, Double> levelRequirements = new HashMap<>();
+    private int maxGuildLevel = 10;
     
     @Override
     public void onEnable() {
@@ -94,6 +99,8 @@ public class GuildPlugin extends JavaPlugin {
             // 初始化语言管理器
             languageManager = new LanguageManager(this);
             serviceContainer.register(LanguageManager.class, languageManager);
+            // 加载等级需求配置
+            loadLevelRequirements();
 
             // 注册工会服务
             guildService = new GuildService(this);
@@ -258,5 +265,48 @@ public class GuildPlugin extends JavaPlugin {
     
     public ModuleManager getModuleManager() {
         return moduleManager;
+    }
+
+    /**
+     * 从配置加载等级需求映射并提供访问方法
+     */
+    private void loadLevelRequirements() {
+        try {
+            int cfgMax = getConfig().getInt("guild.max-level", 10);
+            this.maxGuildLevel = Math.max(1, cfgMax);
+            for (int lvl = 1; lvl < maxGuildLevel; lvl++) {
+                double val = getConfig().getDouble("guild.levels." + lvl, getDefaultRequirementForLevel(lvl));
+                levelRequirements.put(lvl, val);
+            }
+        } catch (Exception e) {
+            getLogger().warning("加载等级需求配置失败，使用内置默认值: " + e.getMessage());
+            for (int lvl = 1; lvl < maxGuildLevel; lvl++) {
+                levelRequirements.put(lvl, getDefaultRequirementForLevel(lvl));
+            }
+        }
+    }
+
+    private double getDefaultRequirementForLevel(int level) {
+        switch (level) {
+            case 1: return 5000;
+            case 2: return 10000;
+            case 3: return 20000;
+            case 4: return 35000;
+            case 5: return 50000;
+            case 6: return 75000;
+            case 7: return 100000;
+            case 8: return 150000;
+            case 9: return 200000;
+            default: return 0;
+        }
+    }
+
+    public int getMaxGuildLevel() {
+        return maxGuildLevel;
+    }
+
+    public double getRequirementForNextLevel(int currentLevel) {
+        if (currentLevel >= maxGuildLevel) return 0;
+        return levelRequirements.getOrDefault(currentLevel, getDefaultRequirementForLevel(currentLevel));
     }
 }

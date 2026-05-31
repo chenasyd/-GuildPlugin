@@ -62,7 +62,12 @@ public class Guild {
     }
     
     public void setTag(String tag) {
-        this.tag = tag;
+        if (tag == null) {
+            this.tag = null;
+            return;
+        }
+        // 移除用户可能包含的方括号，保留纯标签文本
+        this.tag = tag.replace("[", "").replace("]", "");
     }
     
     public String getDescription() {

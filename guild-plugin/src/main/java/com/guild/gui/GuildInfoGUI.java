@@ -181,7 +181,7 @@ public class GuildInfoGUI implements GUI {
         List<String> summaryLore = new ArrayList<>();
         summaryLore.add(ColorUtils.colorize("&7" +
             plugin.getLanguageManager().getMessage(player, "guild-info.tag", "标签") +
-            ": " + (guild.getTag() != null ? "[" + guild.getTag() + "]" :
+            ": " + (guild.getTag() != null ? "[" + guild.getTag() + "&r]" :
             plugin.getLanguageManager().getMessage(player, "guild-info.no-tag", "无"))));
         if (guild.getDescription() != null && !guild.getDescription().isEmpty()) {
             summaryLore.add(ColorUtils.colorize("&7" +
@@ -455,34 +455,16 @@ public class GuildInfoGUI implements GUI {
     }
     
     private String getNextLevelRequirement(int currentLevel) {
-        if (currentLevel >= 10) {
+        if (currentLevel >= plugin.getMaxGuildLevel()) {
             return plugin.getLanguageManager().getMessage(player, "guild-info.max-level-reached", "已达到最高等级");
         }
-        double required = 0;
-        switch (currentLevel) {
-            case 1: required = 5000; break;
-            case 2: required = 10000; break;
-            case 3: required = 20000; break;
-            case 4: required = 35000; break;
-            case 5: required = 50000; break;
-            case 6: required = 75000; break;
-            case 7: required = 100000; break;
-            case 8: required = 150000; break;
-            case 9: required = 200000; break;
-        }
+        double required = plugin.getRequirementForNextLevel(currentLevel);
         return plugin.getEconomyManager().format(required);
     }
 
     private String getLevelProgress(int currentLevel, double currentBalance) {
-        if (currentLevel >= 10) return "100%";
-        double required = 0;
-        switch (currentLevel) {
-            case 1: required = 5000; break; case 2: required = 10000; break;
-            case 3: required = 20000; break; case 4: required = 35000; break;
-            case 5: required = 50000; break; case 6: required = 75000; break;
-            case 7: required = 100000; break; case 8: required = 150000; break;
-            case 9: required = 200000; break;
-        }
+        if (currentLevel >= plugin.getMaxGuildLevel()) return "100%";
+        double required = plugin.getRequirementForNextLevel(currentLevel);
         if (required <= 0) return "0.0%";
         double percentage = (currentBalance / required) * 100;
         if (percentage > 100) percentage = 100;
@@ -490,15 +472,7 @@ public class GuildInfoGUI implements GUI {
     }
 
     private String getProgressBar(int currentLevel, double currentBalance, int length) {
-        double required = 0;
-        switch (currentLevel) {
-            case 1: required = 5000; break; case 2: required = 10000; break;
-            case 3: required = 20000; break; case 4: required = 35000; break;
-            case 5: required = 50000; break; case 6: required = 75000; break;
-            case 7: required = 100000; break; case 8: required = 150000; break;
-            case 9: required = 200000; break;
-            default: required = 1; break;
-        }
+        double required = plugin.getRequirementForNextLevel(currentLevel);
         if (required <= 0) required = 1;
         double percent = Math.min(100.0, (currentBalance / required) * 100.0);
         int filled = (int) Math.round((percent / 100.0) * length);
