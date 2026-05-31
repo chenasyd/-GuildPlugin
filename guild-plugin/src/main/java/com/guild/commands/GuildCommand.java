@@ -1634,31 +1634,31 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     }
     
     private void handleHelp(Player player) {
-        String message = languageManager.getMessage(player, "guild.help.title", "&a公会命令帮助：");
+        String message = languageManager.getMessage(player, "help.title", "&a=== Guild System Help ===");
         player.sendMessage(ColorUtils.colorize(message));
         
-        player.sendMessage(ColorUtils.colorize("&b/guild &f- 打开公会主菜单"));
-        player.sendMessage(ColorUtils.colorize("&b/guild create <名称> &f- 创建公会"));
-        player.sendMessage(ColorUtils.colorize("&b/guild info &f- 查看公会信息"));
-        player.sendMessage(ColorUtils.colorize("&b/guild members &f- 查看公会成员"));
-        player.sendMessage(ColorUtils.colorize("&b/guild invite <玩家> &f- 邀请玩家加入公会"));
-        player.sendMessage(ColorUtils.colorize("&b/guild kick <玩家> &f- 踢出公会成员"));
-        player.sendMessage(ColorUtils.colorize("&b/guild promote <玩家> &f- 提升成员职位"));
-        player.sendMessage(ColorUtils.colorize("&b/guild demote <玩家> &f- 降级成员职位"));
-        player.sendMessage(ColorUtils.colorize("&b/guild accept <公会> &f- 接受公会邀请"));
-        player.sendMessage(ColorUtils.colorize("&b/guild decline <公会> &f- 拒绝公会邀请"));
-        player.sendMessage(ColorUtils.colorize("&b/guild leave &f- 离开公会"));
-        player.sendMessage(ColorUtils.colorize("&b/guild delete &f- 删除公会"));
-        player.sendMessage(ColorUtils.colorize("&b/guild sethome &f- 设置公会 home"));
-        player.sendMessage(ColorUtils.colorize("&b/guild home &f- 传送到公会 home"));
-        player.sendMessage(ColorUtils.colorize("&b/guild relation <list|create|delete|accept|reject> &f- 管理公会关系"));
-        player.sendMessage(ColorUtils.colorize("&b/guild economy <info|deposit|withdraw|transfer> &f- 管理公会经济"));
-        player.sendMessage(ColorUtils.colorize("&b/guild deposit <金额> &f- 存入金币到公会"));
-        player.sendMessage(ColorUtils.colorize("&b/guild withdraw <金额> &f- 从公会提现金币"));
-        player.sendMessage(ColorUtils.colorize("&b/guild transfer <玩家|公会> <金额> &f- 转账"));
-        player.sendMessage(ColorUtils.colorize("&b/guild logs &f- 查看公会日志"));
-        player.sendMessage(ColorUtils.colorize("&b/guild placeholder <player|guild|rank> &f- 获取占位符"));
-        player.sendMessage(ColorUtils.colorize("&b/guild time &f- 查看公会时间信息"));
-        player.sendMessage(ColorUtils.colorize("&b/guild help &f- 查看此帮助"));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.main-menu", "&e/guild &7- Open guild main menu")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.create", "&e/guild create <name> [tag] [description] &7- Create guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.info", "&e/guild info &7- View guild information")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.members", "&e/guild members &7- View guild members")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.invite", "&e/guild invite <player> &7- Invite player to join guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.kick", "&e/guild kick <player> &7- Kick guild member")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.promote", "&e/guild promote <player> &7- Promote guild member")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.demote", "&e/guild demote <player> &7- Demote guild member")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.accept", "&e/guild accept <inviter> &7- Accept guild invitation")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.decline", "&e/guild decline <inviter> &7- Decline guild invitation")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.leave", "&e/guild leave &7- Leave guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.delete", "&e/guild delete &7- Delete guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.sethome", "&e/guild sethome &7- Set guild home")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.home", "&e/guild home &7- Teleport to guild home")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.relation", "&e/guild relation &7- Manage guild relations")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.economy", "&e/guild economy &7- Manage guild economy")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.deposit", "&e/guild deposit <amount> &7- Deposit funds to guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.withdraw", "&e/guild withdraw <amount> &7- Withdraw funds from guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.transfer", "&e/guild transfer <guild> <amount> &7- Transfer funds to another guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.logs", "&e/guild logs &7- View guild operation logs")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.placeholder", "&e/guild placeholder <player|guild|rank> &7- Get placeholders")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.time", "&e/guild time &7- View guild time info")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.help", "&e/guild help &7- Show this help")));
     }
 }
