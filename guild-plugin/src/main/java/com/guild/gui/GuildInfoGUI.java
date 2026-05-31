@@ -181,7 +181,7 @@ public class GuildInfoGUI implements GUI {
         List<String> summaryLore = new ArrayList<>();
         summaryLore.add(ColorUtils.colorize("&7" +
             plugin.getLanguageManager().getMessage(player, "guild-info.tag", "标签") +
-            ": " + (guild.getTag() != null ? "[" + guild.getTag() + "&r]" :
+            ": " + (guild.getTag() != null ? "&7[" + guild.getTag() + "&7]" :
             plugin.getLanguageManager().getMessage(player, "guild-info.no-tag", "无"))));
         if (guild.getDescription() != null && !guild.getDescription().isEmpty()) {
             summaryLore.add(ColorUtils.colorize("&7" +

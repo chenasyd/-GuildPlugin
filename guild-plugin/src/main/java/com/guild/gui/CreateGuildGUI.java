@@ -192,7 +192,7 @@ public class CreateGuildGUI implements GUI {
         
         // 当前工会标签
         String tagDisplay = guildTag.isEmpty() ?
-            languageManager.getMessage(player, "gui.not-set", "未设置") : "[" + guildTag + "]";
+            languageManager.getMessage(player, "gui.not-set", "未设置") : "&7[" + guildTag + "&7]";
         ItemStack currentTag = createItem(
             Material.OAK_SIGN,
             ColorUtils.colorize(languageManager.getMessage(player, "create-guild-current-tag", "&e当前工会标签")),

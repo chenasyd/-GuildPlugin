@@ -380,7 +380,7 @@ public class GuildSettingsGUI implements GUI {
     private void displayCurrentSettings(Inventory inventory) {
         String name = guild.getName() != null ? guild.getName() :
             languageManager.getMessage(player, "guild-settings.overview-no-name", "无名称");
-        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" :
+        String tag = guild.getTag() != null ? "&7[" + guild.getTag() + "&7]" :
             languageManager.getMessage(player, "guild-settings.overview-no-tag", "无标签");
         String desc = guild.getDescription() != null ? guild.getDescription() :
             languageManager.getMessage(player, "guild-settings.overview-no-desc", "无描述");
