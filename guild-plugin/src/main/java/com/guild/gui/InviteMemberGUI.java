@@ -70,10 +70,10 @@ public class InviteMemberGUI implements GUI {
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 检查是否是玩家头像槽位（槽位10-16, 19-25, 28-34, 37-43）
-        if (isPlayerSlot(slot)) {
-            int playerIndex = getPlayerIndexFromSlot(slot);
-            if (playerIndex >= 0 && playerIndex < onlinePlayers.size()) {
+        // 检查是否是玩家槽位
+        int playerIndex = getIndexFromSlot(slot);
+        if (playerIndex >= 0) {
+            if (playerIndex < onlinePlayers.size()) {
                 Player targetPlayer = onlinePlayers.get(playerIndex);
                 handleInvitePlayer(player, targetPlayer);
             }
@@ -97,29 +97,36 @@ public class InviteMemberGUI implements GUI {
     }
     
     /**
-     * 检查是否是玩家槽位
+     * 槽位计算方法
      */
-    private boolean isPlayerSlot(int slot) {
-        // 玩家槽位：10-16, 19-25, 28-34, 37-43 (排除边框)
-        if (slot < 10 || slot > 43) return false;
-        int col = slot % 9;
-        return col != 0 && col != 8; // 排除第1列和第9列（边框）
+    
+    /**
+     * 从页内索引获取inventory槽位
+     * @param index 页内索引 (0-27)
+     * @return inventory槽位 (10-16, 19-25, 28-34, 37-43)
+     */
+    private int getSlotForIndex(int index) {
+        int row = index / 7;      // 行号 (0-3)
+        int col = index % 7;      // 列号 (0-6)
+        return (row + 1) * 9 + col + 1; // 转换为inventory槽位
     }
     
     /**
-     * 从槽位计算玩家索引
+     * 从inventory槽位获取页内索引
+     * @param slot inventory槽位
+     * @return 页内索引 (0-27)，或 -1 表示无效槽位
      */
-    private int getPlayerIndexFromSlot(int slot) {
-        int row = slot / 9;      // 行号（1-4）
-        int col = slot % 9;       // 列号（0-8）
-        int rowIndex = row - 1;   // 0-3
-        int colIndex = col - 1;   // 0-6
+    private int getIndexFromSlot(int slot) {
+        int row = slot / 9;      // 行号 (1-4)
+        int col = slot % 9;      // 列号 (0-8)
         
-        if (colIndex < 0 || colIndex > 6 || rowIndex < 0 || rowIndex > 3) {
+        // 检查是否在有效范围内
+        if (row < 1 || row > 4 || col < 1 || col > 7) {
             return -1;
         }
         
-        int pageIndex = rowIndex * 7 + colIndex;
+        // 计算页内索引
+        int pageIndex = (row - 1) * 7 + (col - 1);
         return currentPage * 28 + pageIndex;
     }
     
@@ -145,17 +152,12 @@ public class InviteMemberGUI implements GUI {
         int startIndex = currentPage * 28; // 每页最多28个玩家（4行7列）
         int endIndex = Math.min(startIndex + 28, onlinePlayers.size());
         
-        int slotIndex = 10; // 从第2行第2列开始
         for (int i = startIndex; i < endIndex; i++) {
             Player targetPlayer = onlinePlayers.get(i);
+            int slot = getSlotForIndex(i - startIndex);
             
             ItemStack playerHead = createPlayerHead(targetPlayer);
-            inventory.setItem(slotIndex, playerHead);
-            
-            slotIndex++;
-            if (slotIndex % 9 == 8) { // 跳过右边框
-                slotIndex += 2;
-            }
+            inventory.setItem(slot, playerHead);
         }
     }
     
