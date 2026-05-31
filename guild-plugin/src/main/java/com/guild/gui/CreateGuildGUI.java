@@ -355,32 +355,39 @@ public class CreateGuildGUI implements GUI {
         }
 
         // 检查经济系统
-        if (!plugin.getEconomyManager().isVaultAvailable()) {
+        boolean vaultAvailable = plugin.getEconomyManager().isVaultAvailable();
+        boolean noEconomyMode = plugin.getEconomyManager().isNoEconomyMode();
+
+        if (!vaultAvailable && !noEconomyMode) {
             String message = languageManager.getMessage(player, "create.economy-not-available", "&c经济系统不可用，无法创建工会！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
 
-        // 获取创建费用
-        double creationCost = plugin.getConfigManager().getMainConfig().getDouble("guild.creation-cost", 1000.0);
+        // 获取创建费用（无经济模式下费用为0）
+        double creationCost = vaultAvailable
+            ? plugin.getConfigManager().getMainConfig().getDouble("guild.creation-cost", 1000.0)
+            : 0.0;
 
-        // 检查玩家余额
-        if (!plugin.getEconomyManager().hasBalance(player, creationCost)) {
-            String message = languageManager.getMessage(player, "create.insufficient-funds", "&c您的余额不足！创建工会需要 {amount}！", "{amount}", plugin.getEconomyManager().format(creationCost));
-            player.sendMessage(ColorUtils.colorize(message));
-            return;
-        }
+        // 仅在有经济系统时检查余额并扣费
+        if (vaultAvailable) {
+            if (!plugin.getEconomyManager().hasBalance(player, creationCost)) {
+                String message = languageManager.getMessage(player, "create.insufficient-funds", "&c您的余额不足！创建工会需要 {amount}！", "{amount}", plugin.getEconomyManager().format(creationCost));
+                player.sendMessage(ColorUtils.colorize(message));
+                return;
+            }
 
-        // 扣除创建费用
-        if (!plugin.getEconomyManager().withdraw(player, creationCost)) {
-            String message = languageManager.getMessage(player, "create.payment-failed", "&c扣除创建费用失败！");
-            player.sendMessage(ColorUtils.colorize(message));
-            return;
+            if (!plugin.getEconomyManager().withdraw(player, creationCost)) {
+                String message = languageManager.getMessage(player, "create.payment-failed", "&c扣除创建费用失败！");
+                player.sendMessage(ColorUtils.colorize(message));
+                return;
+            }
         }
 
         // 创建工会
         String finalTag = guildTag.isEmpty() ? null : guildTag;
         String finalDescription = guildDescription.isEmpty() ? null : guildDescription;
+        final double finalCost = creationCost;
 
         plugin.getGuildService().createGuildAsync(guildName, finalTag, finalDescription, player.getUniqueId(), player.getName()).thenAccept(success -> {
             // 确保在主线程中执行GUI操作
@@ -393,10 +400,12 @@ public class CreateGuildGUI implements GUI {
                     plugin.getGuiManager().closeGUI(player);
                     plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
                 } else {
-                    // 如果创建失败，退还费用
-                    plugin.getEconomyManager().deposit(player, creationCost);
-                    String refundMessage = languageManager.getMessage(player, "create.payment-refunded", "&e已退还创建费用 {amount}。", "{amount}", plugin.getEconomyManager().format(creationCost));
-                    player.sendMessage(ColorUtils.colorize(refundMessage));
+                    // 如果创建失败且有扣费，退还费用
+                    if (vaultAvailable && finalCost > 0) {
+                        plugin.getEconomyManager().deposit(player, finalCost);
+                        String refundMessage = languageManager.getMessage(player, "create.payment-refunded", "&e已退还创建费用 {amount}。", "{amount}", plugin.getEconomyManager().format(finalCost));
+                        player.sendMessage(ColorUtils.colorize(refundMessage));
+                    }
 
                     String message = languageManager.getMessage(player, "create.failed", "&c工会创建失败！");
                     player.sendMessage(ColorUtils.colorize(message));

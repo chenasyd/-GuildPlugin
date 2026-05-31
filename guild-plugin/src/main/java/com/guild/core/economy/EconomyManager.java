@@ -177,6 +177,13 @@ public class EconomyManager {
     }
     
     /**
+     * 检查是否启用了无经济模式（跳过所有经济要求）
+     */
+    public boolean isNoEconomyMode() {
+        return plugin.getConfigManager().getMainConfig().getBoolean("guild.no-economy-mode", false);
+    }
+
+    /**
      * 获取经济实例
      */
     public Economy getEconomy() {

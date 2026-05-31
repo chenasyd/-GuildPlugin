@@ -14,6 +14,8 @@ guild:
   max-members: 50
   # 创建工会所需费用（需要Vault）
   creation-cost: 1000.0
+  # 无经济模式：当服务器未安装Vault等经济插件时，设为true可跳过经济检查，免费创建工会
+  no-economy-mode: false
   # 工会标签颜色
   tag-color: "&6"
   # 工会名称颜色
