@@ -505,7 +505,7 @@ public class GuildRelationsGUI implements GUI {
         ItemMeta meta = item.getItemMeta();
         
         if (meta != null) {
-            meta.setDisplayName(name);
+            meta.setDisplayName(ColorUtils.colorize(name));
             if (lore.length > 0) {
                 meta.setLore(Arrays.asList(lore));
             }
