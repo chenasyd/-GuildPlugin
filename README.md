@@ -49,3 +49,24 @@ mvn clean package -pl guild-plugin -Pbuild-member-rank-module
 ---
 
 **选择上方对应语言链接查看完整文档 / Choose your language above for full documentation**
+
+## 配置新增说明 — 等级系统 / New config: Level requirements
+
+已在 `config.yml` 中新增等级相关配置，用于替代代码中硬编码的升级费用：
+
+- `guild.max-level` (int): 最大等级，达到该等级后无下一级，默认 `10`。
+- `guild.levels.<n>` (double): 键为当前等级 `n`，值为升级到下一级所需的资金。例如 `guild.levels.1: 5000.0` 表示从等级1升到等级2需要5000。
+
+示例配置片段：
+
+```yaml
+guild:
+	max-level: 10
+	levels:
+		1: 5000.0
+		2: 10000.0
+		3: 20000.0
+		# ...
+```
+
+插件在启动时会加载这些配置并在 GUI（例如工会信息面板）中使用它们来显示“下级所需”与进度条。修改后无需重启服务器，但建议使用 `/guildadmin reload` 进行热加载并确认 UI 显示正确。

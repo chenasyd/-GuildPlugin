@@ -228,6 +228,27 @@ mysql:
   max-lifetime: 1800000
 ```
 
+### Leveling configuration (new)
+
+The plugin now supports configuring guild leveling requirements via `config.yml` instead of hardcoded values. The following keys are available under the `guild` section:
+
+- `guild.max-level` (int): Maximum guild level. When a guild reaches this level there is no next level. Default: `10`.
+- `guild.levels.<n>` (double): The cost required to go from level `n` to `n+1`. Example: `guild.levels.1: 5000.0` means level 1 -> 2 requires 5000.
+
+Example snippet:
+
+```yaml
+guild:
+  max-level: 10
+  levels:
+    1: 5000.0
+    2: 10000.0
+    3: 20000.0
+    # ...
+```
+
+The plugin loads these values on startup and will use them in GUIs (e.g. Guild Info) to display "next level requirement" and progress bars. You can change values and run `/guildadmin reload` to apply changes; by default the plugin will fall back to built-in values if configuration entries are missing.
+
 ## Database Schema
 
 The plugin uses the following tables:

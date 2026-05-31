@@ -74,9 +74,9 @@ public class PromoteMemberGUI implements GUI {
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        if (slot >= 10 && slot < 45) {
-            // 成员头像区域
-            int memberIndex = slot - 10 + (currentPage * 36);
+        // 检查是否是成员槽位
+        int memberIndex = getIndexFromSlot(slot);
+        if (memberIndex >= 0) {
             if (memberIndex < members.size()) {
                 GuildMember member = members.get(memberIndex);
                 handlePromoteMember(player, member);
@@ -89,7 +89,7 @@ public class PromoteMemberGUI implements GUI {
             }
         } else if (slot == 53) {
             // 下一页
-            int maxPage = (members.size() - 1) / 36;
+            int maxPage = (members.size() - 1) / 28;
             if (currentPage < maxPage) {
                 currentPage++;
                 plugin.getGuiManager().refreshGUI(player);
@@ -98,6 +98,40 @@ public class PromoteMemberGUI implements GUI {
             // 返回
             plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player));
         }
+    }
+    
+    /**
+     * 槽位计算方法
+     */
+    
+    /**
+     * 从页内索引获取inventory槽位
+     * @param index 页内索引 (0-27)
+     * @return inventory槽位 (10-16, 19-25, 28-34, 37-43)
+     */
+    private int getSlotForIndex(int index) {
+        int row = index / 7;      // 行号 (0-3)
+        int col = index % 7;      // 列号 (0-6)
+        return (row + 1) * 9 + col + 1; // 转换为inventory槽位
+    }
+    
+    /**
+     * 从inventory槽位获取页内索引
+     * @param slot inventory槽位
+     * @return 页内索引 (0-27)，或 -1 表示无效槽位
+     */
+    private int getIndexFromSlot(int slot) {
+        int row = slot / 9;      // 行号 (1-4)
+        int col = slot % 9;      // 列号 (0-8)
+        
+        // 检查是否在有效范围内
+        if (row < 1 || row > 4 || col < 1 || col > 7) {
+            return -1;
+        }
+        
+        // 计算页内索引
+        int pageIndex = (row - 1) * 7 + (col - 1);
+        return currentPage * 28 + pageIndex;
     }
     
     /**
@@ -119,12 +153,12 @@ public class PromoteMemberGUI implements GUI {
      * 显示成员列表
      */
     private void displayMembers(Inventory inventory) {
-        int startIndex = currentPage * 36;
-        int endIndex = Math.min(startIndex + 36, members.size());
+        int startIndex = currentPage * 28; // 每页最多28个成员（4行7列）
+        int endIndex = Math.min(startIndex + 28, members.size());
         
         for (int i = startIndex; i < endIndex; i++) {
             GuildMember member = members.get(i);
-            int slot = 10 + (i - startIndex);
+            int slot = getSlotForIndex(i - startIndex);
             
             ItemStack memberHead = createMemberHead(member);
             inventory.setItem(slot, memberHead);
@@ -146,7 +180,7 @@ public class PromoteMemberGUI implements GUI {
         }
 
         // 下一页按钮
-        int maxPage = (members.size() - 1) / 36;
+        int maxPage = (members.size() - 1) / 28;
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,

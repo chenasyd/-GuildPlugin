@@ -174,7 +174,7 @@ public class GuildSettingsGUI implements GUI {
                 else if (clickType == ClickType.SHIFT_LEFT) handleChangeTag(player);
                 break;
             case 15: // 成员管理
-                if (clickType == ClickType.LEFT) handleInviteMember(player);
+                if (clickType == ClickType.LEFT) plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player));
                 else if (clickType == ClickType.RIGHT) handleKickMember(player);
                 else if (clickType == ClickType.SHIFT_LEFT) plugin.getGuiManager().openGUI(player, new PromoteMemberGUI(plugin, guild, player));
                 break;

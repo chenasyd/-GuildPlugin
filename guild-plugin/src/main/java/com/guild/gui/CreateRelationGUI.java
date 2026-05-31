@@ -33,6 +33,12 @@ public class CreateRelationGUI implements GUI {
     private String targetGuildName = null;
     private int currentPage = 0;
     private final int itemsPerPage = 28;
+    private static final int[] TARGET_GUILD_SLOTS = {
+        10, 11, 12, 13, 14, 15, 16,
+        19, 20, 21, 22, 23, 24, 25,
+        28, 29, 30, 31, 32, 33, 34,
+        37, 38, 39, 40, 41, 42, 43
+    };
     private List<Guild> availableGuilds = new ArrayList<>();
     
     public CreateRelationGUI(GuildPlugin plugin, Guild guild, Player player) {
@@ -83,21 +89,15 @@ public class CreateRelationGUI implements GUI {
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (clickedItem == null || !clickedItem.hasItemMeta()) return;
 
-        String itemName = clickedItem.getItemMeta().getDisplayName();
-        String backText = languageManager.getMessage(player, "gui.back", "&7返回");
-        String confirmText = languageManager.getMessage(player, "create-relation.confirm-button", "&a确认创建");
-        String prevPageText = languageManager.getMessage(player, "gui.previous-page", "&c上一页");
-        String nextPageText = languageManager.getMessage(player, "gui.next-page", "&a下一页");
-
         // 返回按钮
-        if (itemName.contains(backText.substring(backText.length() - 2))) {
+        if (slot == 49) {
             GuildRelationsGUI relationsGUI = new GuildRelationsGUI(plugin, guild, player);
             plugin.getGuiManager().openGUI(player, relationsGUI);
             return;
         }
 
         // 确认创建按钮
-        if (itemName.contains(confirmText.substring(confirmText.length() - 4))) {
+        if (slot == 45) {
             if (selectedType != null && targetGuildName != null) {
                 createRelation(player);
             } else {
@@ -108,7 +108,7 @@ public class CreateRelationGUI implements GUI {
         }
 
         // 分页按钮
-        if (itemName.contains(prevPageText.substring(prevPageText.length() - 2))) {
+        if (slot == 52) {
             if (currentPage > 0) {
                 currentPage--;
                 refreshInventory(player);
@@ -116,7 +116,7 @@ public class CreateRelationGUI implements GUI {
             return;
         }
 
-        if (itemName.contains(nextPageText.substring(nextPageText.length() - 2))) {
+        if (slot == 53) {
             int maxPage = (availableGuilds.size() - 1) / itemsPerPage;
             if (currentPage < maxPage) {
                 currentPage++;
@@ -131,16 +131,19 @@ public class CreateRelationGUI implements GUI {
             return;
         }
 
-        // 目标工会选择 (slot 9-44)
-        if (slot >= 9 && slot < 45) {
-            int guildIndex = (currentPage * itemsPerPage) + (slot - 9);
-            if (guildIndex < availableGuilds.size()) {
-                Guild targetGuild = availableGuilds.get(guildIndex);
-                targetGuildName = targetGuild.getName();
-                refreshInventory(player);
+        // 目标工会选择
+        if (isTargetGuildSlot(slot)) {
+            int slotIndex = getTargetGuildSlotIndex(slot);
+            if (slotIndex >= 0) {
+                int guildIndex = currentPage * itemsPerPage + slotIndex;
+                if (guildIndex < availableGuilds.size()) {
+                    Guild targetGuild = availableGuilds.get(guildIndex);
+                    targetGuildName = targetGuild.getName();
+                    refreshInventory(player);
 
-                String message = languageManager.getMessage(player, "relations.target-selected", "&a已选择目标工会: {guild}", "{guild}", targetGuildName);
-                player.sendMessage(ColorUtils.colorize(message));
+                    String message = languageManager.getMessage(player, "relations.target-selected", "&a已选择目标工会: {guild}", "{guild}", targetGuildName);
+                    player.sendMessage(ColorUtils.colorize(message));
+                }
             }
         }
     }
@@ -200,7 +203,7 @@ public class CreateRelationGUI implements GUI {
 
         for (int i = startIndex; i < endIndex; i++) {
             Guild targetGuild = availableGuilds.get(i);
-            int slot = 9 + (i - startIndex);
+            int slot = TARGET_GUILD_SLOTS[i - startIndex];
 
             Material material = Material.SHIELD;
             String displayName = ColorUtils.colorize("&f" + targetGuild.getName());
@@ -266,7 +269,7 @@ public class CreateRelationGUI implements GUI {
                 ColorUtils.colorize(languageManager.getMessage(player, "gui.previous-page", "&c上一页")),
                 ColorUtils.colorize(languageManager.getMessage(player, "gui.view-previous", "&7查看上一页"))
             );
-            inventory.setItem(18, previousPage);
+            inventory.setItem(52, previousPage);
         }
 
         // 下一页按钮
@@ -277,7 +280,7 @@ public class CreateRelationGUI implements GUI {
                 ColorUtils.colorize(languageManager.getMessage(player, "gui.next-page", "&a下一页")),
                 ColorUtils.colorize(languageManager.getMessage(player, "gui.view-next", "&7查看下一页"))
             );
-            inventory.setItem(26, nextPage);
+            inventory.setItem(53, nextPage);
         }
 
         // 返回按钮
@@ -294,9 +297,27 @@ public class CreateRelationGUI implements GUI {
             ColorUtils.colorize(languageManager.getIndexedMessage(player, "gui.page-info", "&e第 {0} 页，共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(maxPage + 1))),
             ColorUtils.colorize(languageManager.getIndexedMessage(player, "gui.total-guilds", "&7总计 {0} 个工会", String.valueOf(availableGuilds.size())))
         );
-        inventory.setItem(22, pageInfo);
+        inventory.setItem(51, pageInfo);
     }
     
+    private boolean isTargetGuildSlot(int slot) {
+        for (int targetSlot : TARGET_GUILD_SLOTS) {
+            if (targetSlot == slot) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int getTargetGuildSlotIndex(int slot) {
+        for (int i = 0; i < TARGET_GUILD_SLOTS.length; i++) {
+            if (TARGET_GUILD_SLOTS[i] == slot) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     /**
      * 处理关系类型点击
      */

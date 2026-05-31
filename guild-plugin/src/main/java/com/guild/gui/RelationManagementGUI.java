@@ -31,6 +31,11 @@ public class RelationManagementGUI implements GUI {
     private final LanguageManager languageManager;
     private int currentPage = 0;
     private final int itemsPerPage = 28; // 7列 × 4行
+    private static final int PREVIOUS_PAGE_SLOT = 48;
+    private static final int NEXT_PAGE_SLOT = 50;
+    private static final int PAGE_INFO_SLOT = 49;
+    private static final int BACK_SLOT = 46;
+    private static final int REFRESH_SLOT = 52;
     private List<GuildRelation> allRelations = new ArrayList<>();
     private boolean isLoading = false;
 
@@ -171,23 +176,26 @@ public class RelationManagementGUI implements GUI {
     }
     
     private void setupPaginationButtons(Inventory inventory) {
-        int totalPages = (int) Math.ceil((double) allRelations.size() / itemsPerPage);
+        int totalPages = Math.max(1, (int) Math.ceil((double) allRelations.size() / itemsPerPage));
+        if (currentPage > totalPages - 1) {
+            currentPage = totalPages - 1;
+        }
 
         // 上一页按钮
         if (currentPage > 0) {
-            inventory.setItem(45, createItem(Material.ARROW,
+            inventory.setItem(PREVIOUS_PAGE_SLOT, createItem(Material.ARROW,
                 ColorUtils.colorize(languageManager.getMessage(player, "relation-management.previous-page", "&a上一页")),
                 ColorUtils.colorize(languageManager.getMessage(player, "relation-management.previous-page.desc", "&7第 {0} 页", String.valueOf(currentPage)))));
         }
 
         // 页码信息
-        inventory.setItem(49, createItem(Material.PAPER,
+        inventory.setItem(PAGE_INFO_SLOT, createItem(Material.PAPER,
             ColorUtils.colorize(languageManager.getIndexedMessage(player, "relation-management.page-info", "&e第 {0} 页，共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(totalPages))),
             ColorUtils.colorize(languageManager.getIndexedMessage(player, "relation-management.total-relations", "&7总计 {0} 个关系", String.valueOf(allRelations.size())))));
 
         // 下一页按钮
         if (currentPage < totalPages - 1) {
-            inventory.setItem(53, createItem(Material.ARROW,
+            inventory.setItem(NEXT_PAGE_SLOT, createItem(Material.ARROW,
                 ColorUtils.colorize(languageManager.getMessage(player, "relation-management.next-page", "&a下一页")),
                 ColorUtils.colorize(languageManager.getIndexedMessage(player, "relation-management.next-page.desc", "&7第 {0} 页", String.valueOf(currentPage + 2)))));
         }
@@ -289,11 +297,11 @@ public class RelationManagementGUI implements GUI {
                 loadRelations();
                 player.sendMessage(ColorUtils.colorize("&a" + languageManager.getMessage(player, "relation-management.refreshing", "正在刷新关系列表...")));
             }
-        } else if (slot == 45 && currentPage > 0) {
+        } else if (slot == PREVIOUS_PAGE_SLOT && currentPage > 0) {
             // 上一页
             currentPage--;
             plugin.getGuiManager().refreshGUI(player);
-        } else if (slot == 53 && currentPage < (int) Math.ceil((double) allRelations.size() / itemsPerPage) - 1) {
+        } else if (slot == NEXT_PAGE_SLOT && currentPage < (int) Math.ceil((double) allRelations.size() / itemsPerPage) - 1) {
             // 下一页
             currentPage++;
             plugin.getGuiManager().refreshGUI(player);

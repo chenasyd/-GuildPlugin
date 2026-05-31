@@ -50,7 +50,8 @@ public class PlaceholderUtils {
         String result = text
             // 工会基本信息
             .replace("{guild_name}", guild.getName())
-            .replace("{guild_tag}", guild.getTag() != null ? guild.getTag() : "")
+            // 限制标签颜色作用域：去除方括号并在末尾追加复位码，最终会由 ColorUtils.colorize() 转义
+            .replace("{guild_tag}", guild.getTag() != null ? guild.getTag().replace("[", "").replace("]", "") + "&r" : "")
             .replace("{guild_description}", guild.getDescription() != null ? guild.getDescription() : "")
             .replace("{guild_id}", String.valueOf(guild.getId()))
             .replace("{guild_created_time}", guild.getCreatedAt().format(DATE_FORMATTER))
@@ -159,7 +160,7 @@ public class PlaceholderUtils {
             
             // 工会信息
             .replace("{guild_name}", guild != null ? guild.getName() : "")
-            .replace("{guild_tag}", guild != null && guild.getTag() != null ? guild.getTag() : "");
+            .replace("{guild_tag}", guild != null && guild.getTag() != null ? guild.getTag().replace("[", "").replace("]", "") + "&r" : "");
         
         // 处理颜色代码
         return ColorUtils.colorize(result);
