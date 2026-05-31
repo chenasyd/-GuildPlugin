@@ -206,6 +206,7 @@ public class KickMemberGUI implements GUI {
         SkullMeta meta = (SkullMeta) head.getItemMeta();
 
         if (meta != null) {
+            meta.setOwningPlayer(member.getOfflinePlayer());
             meta.setDisplayName(ColorUtils.colorize("&c" + member.getPlayerName()));
             meta.setLore(Arrays.asList(
                 ColorUtils.colorize("&7" + languageManager.getMessage(player, "member-operation.position", "职位") + ": &e" + member.getRole().getDisplayName()),

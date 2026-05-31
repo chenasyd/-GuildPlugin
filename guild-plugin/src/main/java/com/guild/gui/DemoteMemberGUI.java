@@ -207,6 +207,7 @@ public class DemoteMemberGUI implements GUI {
         SkullMeta meta = (SkullMeta) head.getItemMeta();
 
         if (meta != null) {
+            meta.setOwningPlayer(member.getOfflinePlayer());
             meta.setDisplayName(ColorUtils.colorize("&7" + member.getPlayerName()));
             meta.setLore(Arrays.asList(
                 ColorUtils.colorize("&7" + languageManager.getMessage(player, "member-operation.current-position", "当前职位") + ": &e" + member.getRole().getDisplayName()),

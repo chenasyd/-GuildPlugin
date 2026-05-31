@@ -18,10 +18,10 @@ import com.guild.core.module.ModuleManager;
 import com.guild.core.module.hook.GUIExtensionHook;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.ServerUtils;
 import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
-import com.guildplugin.util.FoliaTeleportUtils;
 
 /**
  * 工会设置GUI - 支持多页布局
@@ -512,6 +512,13 @@ public class GuildSettingsGUI implements GUI {
     }
 
     private void handleHomeTeleport(Player player) {
+        // Folia 环境下传送功能因线程隔离无法使用，直接禁用
+        if (ServerUtils.isFolia()) {
+            String message = languageManager.getMessage(player, "home.folia-disabled", "&c传送功能在Folia环境下暂不可用！");
+            player.sendMessage(ColorUtils.colorize(message));
+            return;
+        }
+
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null) {
             String msg = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
@@ -521,7 +528,7 @@ public class GuildSettingsGUI implements GUI {
         plugin.getGuildService().getGuildHomeAsync(guild.getId()).thenAccept(location -> {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (location != null) {
-                    FoliaTeleportUtils.safeTeleport(plugin, player, location);
+                    player.teleport(location);
                     String message = languageManager.getMessage(player, "home.success", "&a已传送到工会家！");
                     player.sendMessage(ColorUtils.colorize(message));
                 } else {

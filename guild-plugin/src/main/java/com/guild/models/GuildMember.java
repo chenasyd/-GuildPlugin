@@ -2,6 +2,10 @@ package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+
 import com.guild.core.language.LanguageManager;
 import com.guild.GuildPlugin;
 
@@ -74,6 +78,13 @@ public class GuildMember {
     
     public void setJoinedAt(LocalDateTime joinedAt) {
         this.joinedAt = joinedAt;
+    }
+
+    /**
+     * 获取此成员对应的离线玩家对象（用于皮肤头颅）
+     */
+    public OfflinePlayer getOfflinePlayer() {
+        return Bukkit.getOfflinePlayer(playerUuid);
     }
     
     /**
