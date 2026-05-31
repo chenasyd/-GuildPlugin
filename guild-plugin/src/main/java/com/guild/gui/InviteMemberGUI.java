@@ -33,12 +33,20 @@ public class InviteMemberGUI implements GUI {
     private final LanguageManager languageManager;
     private int currentPage = 0;
     private List<Player> onlinePlayers;
+    
+    // 玩家槽位布局常量
+    private static final int ROWS = 4;           // 4行
+    private static final int COLS = 7;           // 7列
+    private static final int ITEMS_PER_PAGE = ROWS * COLS; // 28个玩家每页
+    private static final int START_ROW = 1;      // 从第2行开始（索引1）
+    private static final int START_COL = 1;      // 从第2列开始（索引1）
 
     public InviteMemberGUI(GuildPlugin plugin, Guild guild, Player player) {
         this.plugin = plugin;
         this.guild = guild;
         this.player = player;
         this.languageManager = plugin.getLanguageManager();
+        // 获取在线玩家列表，排除会长自己
         this.onlinePlayers = Bukkit.getOnlinePlayers().stream()
             .filter(p -> !p.getUniqueId().equals(guild.getLeaderUuid()))
             .collect(java.util.stream.Collectors.toList());
@@ -70,7 +78,7 @@ public class InviteMemberGUI implements GUI {
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 检查是否是玩家头像槽位（槽位10-16, 19-25, 28-34, 37-43）
+        // 检查是否是玩家头像槽位
         if (isPlayerSlot(slot)) {
             int playerIndex = getPlayerIndexFromSlot(slot);
             if (playerIndex >= 0 && playerIndex < onlinePlayers.size()) {
@@ -81,14 +89,14 @@ public class InviteMemberGUI implements GUI {
             // 上一页
             if (currentPage > 0) {
                 currentPage--;
-                plugin.getGuiManager().refreshGUI(player);
+                refresh(player);
             }
         } else if (slot == 53) {
             // 下一页
-            int maxPage = (onlinePlayers.size() - 1) / 28;
+            int maxPage = getMaxPage();
             if (currentPage < maxPage) {
                 currentPage++;
-                plugin.getGuiManager().refreshGUI(player);
+                refresh(player);
             }
         } else if (slot == 49) {
             // 返回
@@ -100,27 +108,36 @@ public class InviteMemberGUI implements GUI {
      * 检查是否是玩家槽位
      */
     private boolean isPlayerSlot(int slot) {
-        // 玩家槽位：10-16, 19-25, 28-34, 37-43 (排除边框)
+        // 玩家槽位范围：10-43
         if (slot < 10 || slot > 43) return false;
         int col = slot % 9;
-        return col != 0 && col != 8; // 排除第1列和第9列（边框）
+        // 排除第1列（col == 0）和第9列（col == 8），因为那是边框
+        return col != 0 && col != 8;
     }
     
     /**
      * 从槽位计算玩家索引
      */
     private int getPlayerIndexFromSlot(int slot) {
-        int row = slot / 9;      // 行号（1-4）
-        int col = slot % 9;       // 列号（0-8）
-        int rowIndex = row - 1;   // 0-3
-        int colIndex = col - 1;   // 0-6
+        if (!isPlayerSlot(slot)) return -1;
         
-        if (colIndex < 0 || colIndex > 6 || rowIndex < 0 || rowIndex > 3) {
+        int row = slot / 9;      // 行号：1-4（对应第2-5行）
+        int col = slot % 9;      // 列号：1-7（对应第2-8列）
+        
+        // 转换为0-based坐标
+        int rowIndex = row - START_ROW;   // 0-3
+        int colIndex = col - START_COL;   // 0-6
+        
+        // 检查坐标范围
+        if (rowIndex < 0 || rowIndex >= ROWS || colIndex < 0 || colIndex >= COLS) {
             return -1;
         }
         
-        int pageIndex = rowIndex * 7 + colIndex;
-        return currentPage * 28 + pageIndex;
+        // 计算在当前页中的相对索引
+        int relativeIndex = rowIndex * COLS + colIndex;
+        
+        // 返回全局索引
+        return currentPage * ITEMS_PER_PAGE + relativeIndex;
     }
     
     /**
@@ -128,10 +145,14 @@ public class InviteMemberGUI implements GUI {
      */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
+        
+        // 顶部和底部边框
         for (int i = 0; i < 9; i++) {
             inventory.setItem(i, border);
             inventory.setItem(i + 45, border);
         }
+        
+        // 左右边框
         for (int i = 9; i < 45; i += 9) {
             inventory.setItem(i, border);
             inventory.setItem(i + 8, border);
@@ -142,20 +163,18 @@ public class InviteMemberGUI implements GUI {
      * 显示在线玩家
      */
     private void displayOnlinePlayers(Inventory inventory) {
-        int startIndex = currentPage * 28; // 每页最多28个玩家（4行7列）
-        int endIndex = Math.min(startIndex + 28, onlinePlayers.size());
+        int startIndex = currentPage * ITEMS_PER_PAGE;
+        int endIndex = Math.min(startIndex + ITEMS_PER_PAGE, onlinePlayers.size());
         
-        int slotIndex = 10; // 从第2行第2列开始
         for (int i = startIndex; i < endIndex; i++) {
+            int relativeIndex = i - startIndex;
+            int row = START_ROW + (relativeIndex / COLS);     // 行：1-4
+            int col = START_COL + (relativeIndex % COLS);     // 列：1-7
+            int slot = row * 9 + col;                         // 计算实际槽位
+            
             Player targetPlayer = onlinePlayers.get(i);
-            
             ItemStack playerHead = createPlayerHead(targetPlayer);
-            inventory.setItem(slotIndex, playerHead);
-            
-            slotIndex++;
-            if (slotIndex % 9 == 0) { // 跳过边框（第9列）
-                slotIndex += 2;
-            }
+            inventory.setItem(slot, playerHead);
         }
     }
     
@@ -163,6 +182,8 @@ public class InviteMemberGUI implements GUI {
      * 设置导航按钮
      */
     private void setupNavigationButtons(Inventory inventory) {
+        int maxPage = getMaxPage();
+        
         // 上一页按钮
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
@@ -174,7 +195,6 @@ public class InviteMemberGUI implements GUI {
         }
 
         // 下一页按钮
-        int maxPage = (onlinePlayers.size() - 1) / 36;
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
@@ -184,13 +204,31 @@ public class InviteMemberGUI implements GUI {
             inventory.setItem(53, nextPage);
         }
 
-        // 返回按钮
+        // 页码显示
+        if (maxPage > 0) {
+            ItemStack pageInfo = createItem(
+                Material.PAPER,
+                ColorUtils.colorize("&e第 " + (currentPage + 1) + " / " + (maxPage + 1) + " 页"),
+                ColorUtils.colorize("&7共 " + onlinePlayers.size() + " 名在线玩家")
+            );
+            inventory.setItem(49, pageInfo);
+        }
+
+        // 返回按钮（放在第48槽位，页码在第49）
         ItemStack back = createItem(
             Material.BARRIER,
             ColorUtils.colorize(languageManager.getMessage(player, "gui.back", "&c返回")),
             ColorUtils.colorize(languageManager.getMessage(player, "invite-member.back-to-settings", "&7返回工会设置"))
         );
-        inventory.setItem(49, back);
+        inventory.setItem(48, back);
+    }
+    
+    /**
+     * 获取最大页数
+     */
+    private int getMaxPage() {
+        if (onlinePlayers.isEmpty()) return 0;
+        return (onlinePlayers.size() - 1) / ITEMS_PER_PAGE;
     }
     
     /**
@@ -262,5 +300,17 @@ public class InviteMemberGUI implements GUI {
         }
         
         return item;
+    }
+    
+    @Override
+    public void onClose(Player player) {
+        // 关闭时的处理
+    }
+    
+    @Override
+    public void refresh(Player player) {
+        if (player.isOnline()) {
+            plugin.getGuiManager().refreshGUI(player);
+        }
     }
 }
