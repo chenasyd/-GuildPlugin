@@ -153,7 +153,7 @@ public class InviteMemberGUI implements GUI {
             inventory.setItem(slotIndex, playerHead);
             
             slotIndex++;
-            if (slotIndex % 9 == 0) { // 跳过边框（第9列）
+            if (slotIndex % 9 == 8) { // 跳过右边框
                 slotIndex += 2;
             }
         }
