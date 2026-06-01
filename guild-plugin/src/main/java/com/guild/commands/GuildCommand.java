@@ -1303,6 +1303,12 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 
                 // 增加公会余额
                 boolean success = plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), guild.getBalance() + amount).join();
+                if (success) {
+                    // 记录投资
+                    plugin.getGuildInvestmentService().recordDeposit(guild.getId(), player.getUniqueId(), player.getName(), amount);
+                    // 分发存款事件给模块
+                    plugin.getGuildService().notifyEconomyDeposit(guild.getId(), guild.getName(), player.getUniqueId(), player.getName(), amount);
+                }
                 
                 String message = languageManager.getMessage(player, "guild.deposit.success", "&a已成功存入 {0} 金币到公会账户！");
                 message = message.replace("{0}", String.format("%.2f", amount));
@@ -1368,6 +1374,10 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 
                 // 减少公会余额
                 plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), guild.getBalance() - amount).join();
+                // 记录取款
+                plugin.getGuildInvestmentService().recordWithdraw(guild.getId(), player.getUniqueId(), amount);
+                // 分发取款事件给模块
+                plugin.getGuildService().notifyEconomyWithdraw(guild.getId(), guild.getName(), player.getUniqueId(), player.getName(), amount);
                 
                 String message = languageManager.getMessage(player, "guild.withdraw.success", "&a已成功从公会账户提现 {0} 金币！");
                 message = message.replace("{0}", String.format("%.2f", amount));

@@ -66,6 +66,28 @@ public class GuildService {
             if (mm != null) mm.getSharedApi().fireMemberLeave(guildId, guildName, playerUuid, playerName, eventType);
         } catch (Exception ignored) {}
     }
+
+    public void notifyEconomyDeposit(int guildId, String guildName, UUID playerUuid, String playerName, double amount) {
+        try {
+            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
+            if (mm != null) mm.getSharedApi().fireEconomyDeposit(guildId, guildName, playerUuid, playerName, amount);
+        } catch (Exception ignored) {}
+    }
+
+    public void notifyEconomyWithdraw(int guildId, String guildName, UUID playerUuid, String playerName, double amount) {
+        try {
+            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
+            if (mm != null) mm.getSharedApi().fireEconomyWithdraw(guildId, guildName, playerUuid, playerName, amount);
+        } catch (Exception ignored) {}
+    }
+
+    private void fireMemberRoleChange(int guildId, String guildName, UUID playerUuid, String playerName,
+                                       String oldRole, String newRole) {
+        try {
+            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
+            if (mm != null) mm.getSharedApi().fireMemberRoleChange(guildId, guildName, playerUuid, playerName, oldRole, newRole);
+        } catch (Exception ignored) {}
+    }
     
     // 时间工具：统一使用操作系统本地时间字符串（yyyy-MM-dd HH:mm:ss）
     private String nowString() { return TimeProvider.nowString(); }
@@ -346,6 +368,8 @@ public class GuildService {
                             if (guild != null) {
                                 logGuildActionAsync(guildId, guild.getName(), playerUuid.toString(), playerName,
                                     GuildLog.LogType.MEMBER_JOINED, "成员加入", "玩家: " + playerName + ", 职位: " + role.getDisplayName());
+                                // 分发成员加入事件给模块
+                                fireMemberJoin(guild.getId(), guild.getName(), playerUuid, playerName);
                             }
                         });
                         
@@ -530,6 +554,86 @@ public class GuildService {
             logger.severe("更新成员角色时发生异常: " + e.getMessage());
             return false;
         }
+    }
+
+    // ==================== SDK 直接管理方法（v1.5 新增，跳过权限检查） ====================
+
+    /**
+     * 直接移除成员（供 SDK 模块调用，跳过操作者权限检查）。
+     * 不影响现有的 removeGuildMemberAsync(playerUuid, requesterUuid) 方法。
+     */
+    public CompletableFuture<Boolean> removeGuildMemberDirectAsync(int guildId, UUID playerUuid) {
+        return getGuildMemberAsync(playerUuid).thenCompose(member -> {
+            if (member == null || member.getGuildId() != guildId) {
+                return CompletableFuture.completedFuture(false);
+            }
+            return CompletableFuture.supplyAsync(() -> {
+                try {
+                    String sql = "DELETE FROM guild_members WHERE player_uuid = ?";
+                    try (Connection conn = databaseManager.getConnection();
+                         PreparedStatement stmt = conn.prepareStatement(sql)) {
+                        stmt.setString(1, playerUuid.toString());
+                        int affectedRows = stmt.executeUpdate();
+                        if (affectedRows > 0) {
+                            try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                            getGuildByIdAsync(guildId).thenAccept(guild -> {
+                                if (guild != null) {
+                                    logGuildActionAsync(guildId, guild.getName(), playerUuid.toString(), member.getPlayerName(),
+                                            GuildLog.LogType.MEMBER_KICKED, "成员被API移除", "玩家: " + member.getPlayerName());
+                                    fireMemberLeave(guildId, guild.getName(), playerUuid, member.getPlayerName(), "kicked");
+                                }
+                            });
+                            return true;
+                        }
+                    }
+                } catch (SQLException e) {
+                    logger.severe("直接移除成员时发生错误: " + e.getMessage());
+                }
+                return false;
+            });
+        });
+    }
+
+    /**
+     * 直接修改成员角色（供 SDK 模块调用，跳过操作者权限检查）。
+     * 不影响现有的 updateMemberRoleAsync(playerUuid, newRole, requesterUuid) 方法。
+     */
+    public CompletableFuture<Boolean> updateMemberRoleDirectAsync(int guildId, UUID playerUuid, String roleName) {
+        return getGuildMemberAsync(playerUuid).thenCompose(member -> {
+            if (member == null || member.getGuildId() != guildId) {
+                return CompletableFuture.completedFuture(false);
+            }
+            GuildMember.Role newRole;
+            try {
+                newRole = GuildMember.Role.valueOf(roleName.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                return CompletableFuture.completedFuture(false);
+            }
+            String oldRole = member.getRole().name();
+            return CompletableFuture.supplyAsync(() -> {
+                try {
+                    String sql = "UPDATE guild_members SET role = ? WHERE player_uuid = ?";
+                    try (Connection conn = databaseManager.getConnection();
+                         PreparedStatement stmt = conn.prepareStatement(sql)) {
+                        stmt.setString(1, newRole.name());
+                        stmt.setString(2, playerUuid.toString());
+                        int affectedRows = stmt.executeUpdate();
+                        if (affectedRows > 0) {
+                            try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                            getGuildByIdAsync(guildId).thenAccept(guild -> {
+                                if (guild != null) {
+                                    fireMemberRoleChange(guildId, guild.getName(), playerUuid, member.getPlayerName(), oldRole, newRole.name());
+                                }
+                            });
+                            return true;
+                        }
+                    }
+                } catch (SQLException e) {
+                    logger.severe("直接修改角色时发生错误: " + e.getMessage());
+                }
+                return false;
+            });
+        });
     }
     
     /**

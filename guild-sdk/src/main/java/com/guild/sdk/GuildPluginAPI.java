@@ -5,10 +5,15 @@ import com.guild.core.module.hook.GUIExtensionHook;
 import com.guild.sdk.command.ModuleCommandHandler;
 import com.guild.sdk.data.GuildData;
 import com.guild.sdk.data.MemberData;
+import com.guild.sdk.event.EconomyEventData;
+import com.guild.sdk.event.EconomyEventHandler;
 import com.guild.sdk.event.GuildEventHandler;
 import com.guild.sdk.event.MemberEventHandler;
+import com.guild.sdk.event.MemberRoleChangeEventData;
+import com.guild.sdk.event.MemberRoleChangeEventHandler;
 import com.guild.sdk.gui.ModuleGUIFactory;
 import com.guild.sdk.http.HttpClientProvider;
+import com.guild.sdk.placeholder.PlaceholderProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -96,4 +101,59 @@ public class GuildPluginAPI {
     public HttpClientProvider getHttpClient() {
         return httpClient;
     }
+
+    // ==================== 成员管理 API（v1.5 新增） ====================
+
+    /** 向公会添加成员（异步） */
+    public CompletableFuture<Boolean> addMember(int guildId, UUID playerUuid, String playerName, String role) {
+        return CompletableFuture.completedFuture(false);
+    }
+
+    /** 从公会移除成员（异步） */
+    public CompletableFuture<Boolean> removeMember(int guildId, UUID playerUuid) {
+        return CompletableFuture.completedFuture(false);
+    }
+
+    /** 修改成员角色（异步） */
+    public CompletableFuture<Boolean> setMemberRole(int guildId, UUID playerUuid, String role) {
+        return CompletableFuture.completedFuture(false);
+    }
+
+    // ==================== 经济事件 API（v1.5 新增） ====================
+
+    /** 监听公会存款事件 */
+    public void onEconomyDeposit(EconomyEventHandler handler) { }
+
+    /** 监听公会取款事件 */
+    public void onEconomyWithdraw(EconomyEventHandler handler) { }
+
+    // ==================== 角色变更事件（v1.5 新增） ====================
+
+    /** 监听成员角色变更事件 */
+    public void onMemberRoleChange(MemberRoleChangeEventHandler handler) { }
+
+    // ==================== 货币 API（v1.5 新增） ====================
+
+    /** 获取玩家在公会中的货币余额 */
+    public double getCurrencyBalance(int guildId, UUID playerUuid, String currencyType) {
+        return 0.0;
+    }
+
+    /** 增加玩家货币 */
+    public boolean depositCurrency(int guildId, UUID playerUuid, String playerName, String currencyType, double amount) {
+        return false;
+    }
+
+    /** 减少玩家货币 */
+    public boolean withdrawCurrency(int guildId, UUID playerUuid, String currencyType, double amount) {
+        return false;
+    }
+
+    // ==================== 占位符扩展（v1.5 新增） ====================
+
+    /** 注册自定义占位符提供者 */
+    public void registerPlaceholderProvider(PlaceholderProvider provider) { }
+
+    /** 注销占位符提供者 */
+    public void unregisterPlaceholderProvider(String identifier) { }
 }

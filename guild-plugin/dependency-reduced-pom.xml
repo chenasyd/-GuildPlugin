@@ -184,6 +184,34 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>build-api-test-module</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>make-api-test-module</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <descriptors>
+                <descriptor>src/assembly/api-test-module.xml</descriptor>
+              </descriptors>
+              <finalName>api-test</finalName>
+              <appendAssemblyId>false</appendAssemblyId>
+              <outputDirectory>${project.build.directory}/modules</outputDirectory>
+              <attach>false</attach>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
   <dependencies>
     <dependency>

@@ -39,6 +39,7 @@ public class GuildPlugin extends JavaPlugin {
     private EconomyManager economyManager;
     private LanguageManager languageManager;
     private GuildService guildService;
+    private com.guild.services.GuildInvestmentService guildInvestmentService;
     private ModuleManager moduleManager;
     // 等级需求配置（key = 当前等级 -> 所需金额达到下一等级）
     private Map<Integer, Double> levelRequirements = new HashMap<>();
@@ -115,6 +116,10 @@ public class GuildPlugin extends JavaPlugin {
             // 初始化货币管理器（数据库连接初始化后）
             CurrencyManager currencyManager = new CurrencyManager(this);
             serviceContainer.register(CurrencyManager.class, currencyManager);
+
+            // 初始化投资记录服务
+            guildInvestmentService = new com.guild.services.GuildInvestmentService(this);
+            serviceContainer.register(com.guild.services.GuildInvestmentService.class, guildInvestmentService);
             
             // 初始化模块系统（在所有核心服务就绪后）
             moduleManager = new ModuleManager(this);
@@ -261,6 +266,10 @@ public class GuildPlugin extends JavaPlugin {
 
     public GuildService getGuildService() {
         return guildService;
+    }
+
+    public com.guild.services.GuildInvestmentService getGuildInvestmentService() {
+        return guildInvestmentService;
     }
     
     public ModuleManager getModuleManager() {

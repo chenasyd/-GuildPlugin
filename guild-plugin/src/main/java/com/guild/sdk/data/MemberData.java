@@ -13,15 +13,25 @@ public class MemberData {
     private final long joinTime;
     private final double contribution;
     private final boolean online;
+    private final double investedBalance;
 
+    /** 向后兼容构造器 */
     public MemberData(UUID playerUuid, String playerName, String role,
                       long joinTime, double contribution, boolean online) {
+        this(playerUuid, playerName, role, joinTime, contribution, online, 0.0);
+    }
+
+    /** 全参构造器 */
+    public MemberData(UUID playerUuid, String playerName, String role,
+                      long joinTime, double contribution, boolean online,
+                      double investedBalance) {
         this.playerUuid = playerUuid;
         this.playerName = playerName;
         this.role = role;
         this.joinTime = joinTime;
         this.contribution = contribution;
         this.online = online;
+        this.investedBalance = investedBalance;
     }
 
     public UUID getPlayerUuid() { return playerUuid; }
@@ -30,6 +40,7 @@ public class MemberData {
     public long getJoinTime() { return joinTime; }
     public double getContribution() { return contribution; }
     public boolean isOnline() { return online; }
+    public double getInvestedBalance() { return investedBalance; }
 
     @Override
     public String toString() {

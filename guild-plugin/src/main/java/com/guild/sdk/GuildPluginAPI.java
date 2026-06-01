@@ -28,8 +28,11 @@ import com.guild.sdk.event.GuildEventData;
 import com.guild.sdk.event.GuildEventHandler;
 import com.guild.sdk.event.MemberEventData;
 import com.guild.sdk.event.MemberEventHandler;
+import com.guild.sdk.event.MemberRoleChangeEventData;
+import com.guild.sdk.event.MemberRoleChangeEventHandler;
 import com.guild.sdk.gui.ModuleGUIFactory;
 import com.guild.sdk.http.HttpClientProvider;
+import com.guild.sdk.placeholder.PlaceholderProvider;
 
 /**
  * 公会插件 SDK - 统一 API 门面
@@ -51,6 +54,10 @@ public class GuildPluginAPI {
     private final List<MemberEventHandler> onMemberLeaveHandlers = new CopyOnWriteArrayList<>();
     private final List<EconomyEventHandler> onEconomyDepositHandlers = new CopyOnWriteArrayList<>();
     private final List<EconomyEventHandler> onEconomyWithdrawHandlers = new CopyOnWriteArrayList<>();
+    private final List<MemberRoleChangeEventHandler> onMemberRoleChangeHandlers = new CopyOnWriteArrayList<>();
+
+    // 占位符提供者注册表
+    private final Map<String, PlaceholderProvider> placeholderProviders = new java.util.concurrent.ConcurrentHashMap<>();
 
     // 自定义 GUI 注册表 (guiId -> factory)
     private final Map<String, ModuleGUIFactory> customGUIRegistry = new java.util.concurrent.ConcurrentHashMap<>();
@@ -238,6 +245,11 @@ public class GuildPluginAPI {
         onEconomyWithdrawHandlers.add(handler);
     }
 
+    /** 监听成员角色变更事件 */
+    public void onMemberRoleChange(MemberRoleChangeEventHandler handler) {
+        onMemberRoleChangeHandlers.add(handler);
+    }
+
     // ==================== 事件分发（供核心服务调用） ====================
 
     /** 分发工会创建事件 */
@@ -318,6 +330,20 @@ public class GuildPluginAPI {
         }
     }
 
+    /** 分发角色变更事件 */
+    public void fireMemberRoleChange(int guildId, String guildName, UUID playerUuid, String playerName,
+                                      String oldRole, String newRole) {
+        if (onMemberRoleChangeHandlers.isEmpty()) return;
+        MemberRoleChangeEventData data = new MemberRoleChangeEventData(guildId, guildName, playerUuid, playerName, oldRole, newRole);
+        for (MemberRoleChangeEventHandler handler : onMemberRoleChangeHandlers) {
+            try {
+                handler.onEvent(data);
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "Exception in onMemberRoleChange handler: " + e.getMessage(), e);
+            }
+        }
+    }
+
     /** 清除指定模块注册的所有事件处理器（模块卸载时调用） */
     public void clearModuleHandlers(Object moduleInstance) {
         onGuildCreateHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
@@ -326,6 +352,7 @@ public class GuildPluginAPI {
         onMemberLeaveHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
         onEconomyDepositHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
         onEconomyWithdrawHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
+        onMemberRoleChangeHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
     }
 
     /** 清除所有事件处理器和自定义 GUI 注册 */
@@ -336,6 +363,8 @@ public class GuildPluginAPI {
         onMemberLeaveHandlers.clear();
         onEconomyDepositHandlers.clear();
         onEconomyWithdrawHandlers.clear();
+        onMemberRoleChangeHandlers.clear();
+        placeholderProviders.clear();
         customGUIRegistry.clear();
         commandRegistry.clear();
         permissionRegistry.clear();
@@ -371,6 +400,65 @@ public class GuildPluginAPI {
     public boolean withdrawCurrency(int guildId, UUID playerUuid, 
                                   CurrencyManager.CurrencyType currencyType, double amount) {
         return currencyManager.withdraw(guildId, playerUuid, currencyType, amount);
+    }
+
+    // 字符串版货币方法（v1.5 新增，与 SDK 桩签名一致）
+    /** 获取玩家货币余额（字符串类型） */
+    public double getCurrencyBalance(int guildId, UUID playerUuid, String currencyType) {
+        try {
+            return currencyManager.getBalance(guildId, playerUuid, CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()));
+        } catch (IllegalArgumentException e) { return 0.0; }
+    }
+    /** 增加玩家货币（字符串类型） */
+    public boolean depositCurrency(int guildId, UUID playerUuid, String playerName, String currencyType, double amount) {
+        try {
+            return currencyManager.deposit(guildId, playerUuid, playerName, CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()), amount);
+        } catch (IllegalArgumentException e) { return false; }
+    }
+    /** 减少玩家货币（字符串类型） */
+    public boolean withdrawCurrency(int guildId, UUID playerUuid, String currencyType, double amount) {
+        try {
+            return currencyManager.withdraw(guildId, playerUuid, CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()), amount);
+        } catch (IllegalArgumentException e) { return false; }
+    }
+
+    // ==================== 成员管理 API（v1.5 新增） ====================
+
+    /** 向公会添加成员（异步） */
+    public CompletableFuture<Boolean> addMember(int guildId, UUID playerUuid, String playerName, String role) {
+        try {
+            com.guild.models.GuildMember.Role r = com.guild.models.GuildMember.Role.valueOf(role.toUpperCase());
+            return plugin.getGuildService().addGuildMemberAsync(guildId, playerUuid, playerName, r);
+        } catch (IllegalArgumentException e) {
+            return CompletableFuture.completedFuture(false);
+        }
+    }
+
+    /** 从公会移除成员（异步，使用直接管理方法跳过权限检查） */
+    public CompletableFuture<Boolean> removeMember(int guildId, UUID playerUuid) {
+        return plugin.getGuildService().removeGuildMemberDirectAsync(guildId, playerUuid);
+    }
+
+    /** 修改成员角色（异步，使用直接管理方法跳过权限检查） */
+    public CompletableFuture<Boolean> setMemberRole(int guildId, UUID playerUuid, String role) {
+        return plugin.getGuildService().updateMemberRoleDirectAsync(guildId, playerUuid, role);
+    }
+
+    // ==================== 占位符扩展 API（v1.5 新增） ====================
+
+    /** 注册自定义占位符提供者 */
+    public void registerPlaceholderProvider(PlaceholderProvider provider) {
+        placeholderProviders.put(provider.getIdentifier(), provider);
+    }
+
+    /** 注销占位符提供者 */
+    public void unregisterPlaceholderProvider(String identifier) {
+        placeholderProviders.remove(identifier);
+    }
+
+    /** 获取所有已注册的占位符提供者 */
+    public Map<String, PlaceholderProvider> getPlaceholderProviders() {
+        return placeholderProviders;
     }
 
     // ==================== HTTP 工具 API ====================
@@ -452,13 +540,24 @@ public class GuildPluginAPI {
 
         boolean online = org.bukkit.Bukkit.getPlayer(member.getPlayerUuid()) != null;
 
+        // 查询投入资金
+        double investedBalance = 0.0;
+        try {
+            com.guild.services.GuildInvestmentService invSvc =
+                plugin.getServiceContainer().get(com.guild.services.GuildInvestmentService.class);
+            if (invSvc != null) {
+                investedBalance = invSvc.getInvestedBalance(member.getGuildId(), member.getPlayerUuid());
+            }
+        } catch (Exception ignored) {}
+
         return new MemberData(
                 member.getPlayerUuid(),
                 member.getPlayerName(),
                 member.getRole().name(),
                 joinTimeMillis,
                 0.0,  // contribution: not in core model
-                online
+                online,
+                investedBalance
         );
     }
 }
