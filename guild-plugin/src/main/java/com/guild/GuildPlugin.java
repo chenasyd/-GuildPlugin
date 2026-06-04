@@ -128,7 +128,6 @@ public class GuildPlugin extends JavaPlugin {
             serviceContainer.register(ModuleManager.class, moduleManager);
 
             // 初始化 bStats 数据统计
-            // TODO: 将 pluginId 替换为你在 https://bstats.org/what-is-my-plugin-id 获取的实际插件 ID
             int bstatsPluginId = 31803;
             guildMetrics = new GuildMetrics(this, bstatsPluginId);
             

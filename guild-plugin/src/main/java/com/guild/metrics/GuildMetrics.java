@@ -51,9 +51,9 @@ public class GuildMetrics {
             }
         }));
 
-        // 示例：上报服务器版本
+        // 上报服务器版本
         metrics.addCustomChart(new SimplePie("server_version", () ->
-                plugin.getServer().getMinecraftVersion()));
+                plugin.getServer().getBukkitVersion()));
 
         // 示例：上报插件版本
         metrics.addCustomChart(new SimplePie("plugin_version", () ->
