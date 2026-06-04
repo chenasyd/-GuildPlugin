@@ -71,6 +71,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+
+        <!-- bStats Metrics -->
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -130,6 +136,10 @@
                                 <relocation>
                                     <pattern>com.google.gson</pattern>
                                     <shadedPattern>com.guild.libs.gson</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.bstats</pattern>
+                                    <shadedPattern>com.guild.libs.bstats</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

@@ -20,6 +20,7 @@ import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ServerUtils;
 import com.guild.core.utils.TestUtils;
+import com.guild.metrics.GuildMetrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -41,6 +42,7 @@ public class GuildPlugin extends JavaPlugin {
     private GuildService guildService;
     private com.guild.services.GuildInvestmentService guildInvestmentService;
     private ModuleManager moduleManager;
+    private GuildMetrics guildMetrics;
     // 等级需求配置（key = 当前等级 -> 所需金额达到下一等级）
     private Map<Integer, Double> levelRequirements = new HashMap<>();
     private int maxGuildLevel = 10;
@@ -124,6 +126,11 @@ public class GuildPlugin extends JavaPlugin {
             // 初始化模块系统（在所有核心服务就绪后）
             moduleManager = new ModuleManager(this);
             serviceContainer.register(ModuleManager.class, moduleManager);
+
+            // 初始化 bStats 数据统计
+            // TODO: 将 pluginId 替换为你在 https://bstats.org/what-is-my-plugin-id 获取的实际插件 ID
+            int bstatsPluginId = 31803;
+            guildMetrics = new GuildMetrics(this, bstatsPluginId);
             
             // 注册命令
             registerCommands();
@@ -274,6 +281,10 @@ public class GuildPlugin extends JavaPlugin {
     
     public ModuleManager getModuleManager() {
         return moduleManager;
+    }
+
+    public GuildMetrics getGuildMetrics() {
+        return guildMetrics;
     }
 
     /**
