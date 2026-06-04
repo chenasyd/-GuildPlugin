@@ -47,12 +47,12 @@ public class GuildMetrics {
             bStatsDir.mkdirs();
         }
         File configFile = new File(bStatsDir, "config.yml");
-        if (configFile.exists()) {
-            return; // Respect existing user configuration
-        }
 
+        // Always write; bStats itself may have created a config with loud defaults
+        // on a previous run. Overwriting ensures HTTP 429 and connection errors are
+        // suppressed — users can manually edit the file later if needed.
         try (FileWriter writer = new FileWriter(configFile)) {
-            writer.write("# bStats configuration for Guild Plugin\n");
+            writer.write("# bStats configuration\n");
             writer.write("enabled: true\n");
             writer.write("logFailedRequests: false\n");
             writer.write("logSentData: false\n");

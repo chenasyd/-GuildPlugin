@@ -1,72 +1,101 @@
-# GuildPlugin - Feature-Complete Minecraft Guild System
+<p align="center">
+  <img src="https://img.shields.io/badge/Minecraft-1.21+-green?style=for-the-badge&logo=minecraft" alt="Minecraft 1.21+"/>
+  <img src="https://img.shields.io/badge/API-Spigot%20%7C%20Folia-orange?style=for-the-badge" alt="Spigot | Folia"/>
+  <img src="https://img.shields.io/badge/Version-1.5.3-blue?style=for-the-badge" alt="Version 1.5.3"/>
+  <img src="https://img.shields.io/badge/License-GPL%20v3-red?style=for-the-badge" alt="GPL v3"/>
+  <img src="https://img.shields.io/badge/Java-17%2B-brightgreen?style=for-the-badge" alt="Java 17+"/>
+</p>
 
-**GuildPlugin** 是一个功能完整的 Minecraft 公会/工会系统插件，支持多语言、经济系统、关系管理、等级系统、完整 GUI 界面等丰富功能。
+# GuildPlugin
 
-## 📚 文档语言 / Documentation Language
+A feature-complete Minecraft guild/faction system with economy, relations, leveling, full GUI, and modular SDK support. Supports both Spigot and Folia — free and open-source.
 
-- **🇨🇳 中文文档**: [README_CN.md](./README_CN.md)
-- **🇬🇧 English Documentation**: [README_EN.md](./README_EN.md)
+> 📖 **中文完整文档**: [README_CN.md](./README_CN.md) &nbsp;|&nbsp; 🇬🇧 **English Documentation**: [README_EN.md](./README_EN.md)
 
-## ✨ 核心特性
+## Features
 
-- **公会管理**: 创建、解散、成员管理、权限系统
-- **经济系统**: 资金管理、存款取款、Vault 集成
-- **关系系统**: 联盟、敌对、战争、停战
-- **等级系统**: 公会成长与成员上限提升
-- **完整 GUI**: 图形化界面，操作便捷
-- **多语言**: 支持中文、英文、波兰语
-- **异步处理**: 高性能数据库操作
-- **模块化 SDK**: 支持外部模块扩展开发（4个示例模块，SDK覆盖率100%）
-- **CustomGUI 系统**: 模块可独立注册/打开/注销自定义GUI
-- **EventBus 事件总线**: 模块间松耦合通信
-- **ServiceContainer 服务容器**: 模块可访问核心系统服务
+- **Guild Management** — create, disband, member management, role-based permission system
+- **Economy System** — fund management, deposit/withdraw, Vault integration
+- **Relationship System** — ally, hostile, war, truce between guilds
+- **Level System** — guild growth with increasing max member caps
+- **Full GUI** — intuitive graphical interface for all operations
+- **Multi-language** — Chinese (简体中文), English, Polish
+- **Async Database** — HikariCP connection pool, MySQL/SQLite support
+- **Modular SDK** — external module development with full API coverage (4 example modules)
+- **CustomGUI System** — modules can independently register/open/unregister custom GUIs
+- **EventBus** — loose-coupled inter-module communication
+- **ServiceContainer** — modules access core system services via DI
 
-## 🔨 快速构建 (Maven Multi-Module)
+## Compatibility
+
+| Software | Version |
+|:--------:|:-------:|
+| [Spigot](https://www.spigotmc.org) | 1.21+ |
+| [PaperMC](https://papermc.io/downloads/paper) | 1.21+ |
+| [Purpur](https://purpurmc.org) | 1.21+ |
+| [Folia](https://papermc.io/software/folia) | 1.21+ |
+
+## Integrations
+
+| Plugin | Type |
+|:------:|:----:|
+| [Vault](https://www.spigotmc.org/resources/vault.34315/) | Economy |
+| [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) | Placeholders |
+
+## Installation
+
+1. Download the latest release from [Releases](https://github.com/chenasyd/-GuildPlugin/releases)
+2. Place `guild-plugin-1.5.3.jar` in your server's `plugins/` folder
+3. Restart the server
+4. Configure `plugins/GuildPlugin/config.yml` to your needs
+5. Run `/guildadmin reload` to apply configuration changes
+
+> ⚠️ When upgrading from an older version (v1.3.9+), delete `messages_*.yml` files and let the plugin regenerate them to avoid display errors.
+
+## Building from source
+
+**Requirements:** Java 17+, Maven 3.8+
 
 ```bash
-# 构建所有模块
-mvn clean install
+git clone https://github.com/chenasyd/-GuildPlugin.git
+cd -GuildPlugin
+mvn clean package -pl guild-plugin
+```
 
-# 仅构建 SDK（供外部模块开发者使用）
-mvn clean install -pl guild-sdk
+The output JAR will be at `guild-plugin/target/guild-plugin-1.5.3.jar`.
 
-# 构建 Plugin 并打包示例模块
+To include example modules:
+
+```bash
 mvn clean package -pl guild-plugin -Pbuild-member-rank-module
 ```
 
-## 📋 系统要求
+## Commands
 
-- **Minecraft**: 1.21+
-- **Java**: JDK 17+
-- **可选依赖**: Vault（经济）、PlaceholderAPI（变量）
+| Command | Description | Permission |
+|:-------:|:-----------:|:----------:|
+| `/guild` | Main guild command & GUI | `guild.use` |
+| `/guild create <name>` | Create a guild | `guild.use` |
+| `/guild info [guild]` | View guild info | `guild.use` |
+| `/guild invite <player>` | Invite a player | `guild.use` |
+| `/guild members` | List guild members | `guild.use` |
+| `/guild economy` | Manage guild funds | `guild.use` |
+| `/guild relation` | Manage guild relations | `guild.use` |
+| `/guildadmin` | Admin commands & GUI | `guild.admin` |
+| `/guildmodule` | Hot-load/unload modules | `guild.admin.module` |
 
-## 🔗 项目链接
+> Aliases: `/g` → `/guild`, `/ga` → `/guildadmin`. See full documentation for all subcommands.
+
+## Links
 
 - **GitHub**: [chenasyd/-GuildPlugin](https://github.com/chenasyd/-GuildPlugin)
-- **Issues**: [报告问题](https://github.com/chenasyd/-GuildPlugin/issues)
-- **License**: [GNU GPL v3.0](./LICENSE)
+- **Issues**: [Report a bug](https://github.com/chenasyd/-GuildPlugin/issues)
+- **Wiki**: [Documentation](https://github.com/chenasyd/-GuildPlugin/wiki)
 
----
+## bStats
 
-**选择上方对应语言链接查看完整文档 / Choose your language above for full documentation**
+[![bStats](https://bstats.org/signatures/bukkit/Guild%20Plugin.svg)](https://bstats.org/plugin/bukkit/Guild%20Plugin/31803)
 
-## 配置新增说明 — 等级系统 / New config: Level requirements
+## License
 
-已在 `config.yml` 中新增等级相关配置，用于替代代码中硬编码的升级费用：
-
-- `guild.max-level` (int): 最大等级，达到该等级后无下一级，默认 `10`。
-- `guild.levels.<n>` (double): 键为当前等级 `n`，值为升级到下一级所需的资金。例如 `guild.levels.1: 5000.0` 表示从等级1升到等级2需要5000。
-
-示例配置片段：
-
-```yaml
-guild:
-	max-level: 10
-	levels:
-		1: 5000.0
-		2: 10000.0
-		3: 20000.0
-		# ...
-```
-
-插件在启动时会加载这些配置并在 GUI（例如工会信息面板）中使用它们来显示“下级所需”与进度条。修改后无需重启服务器，但建议使用 `/guildadmin reload` 进行热加载并确认 UI 显示正确。
+This project is licensed under the [GNU GPL v3.0](LICENSE).
