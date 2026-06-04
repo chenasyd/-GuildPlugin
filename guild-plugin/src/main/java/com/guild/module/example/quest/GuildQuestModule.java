@@ -110,9 +110,10 @@ public class GuildQuestModule implements GuildModule {
 
         context.runLater(100L, () -> {
             questTracker.start();
+            int questCount = questManager.getDefinitions().size();
             context.getLogger().info(
                 context.getMessage("module.quest.loaded",
-                    "[Quest] Quest system enabled (" + questManager.getDefinitions().size() + " quests)")));
+                    "[Quest] Quest system enabled (" + questCount + " quests)"));
         });
 
         context.getEventBus().subscribe(QuestCompletedEvent.class, event ->
