@@ -157,7 +157,7 @@ public class PermissionManager {
         RolePermissions leaderFallback = new RolePermissions(true, true, true, true, true, true);
         this.leaderPermissions = readRolePermissions(cfg, "permissions.leader", leaderFallback);
         playerPermissions.clear();
-        logger.info("权限矩阵已从配置重载，并清空玩家权限缓存");
+        logger.info("Permission matrix reloaded from config, player permission cache cleared");
     }
 
     private RolePermissions readRolePermissions(FileConfiguration cfg, String path, RolePermissions fallback) {

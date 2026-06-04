@@ -23,9 +23,9 @@ import java.util.logging.Logger;
 public class CurrencyManager {
 
     public enum CurrencyType {
-        A_COIN("A币", "member_rank", "a_coin"),
-        B_COIN("B币", "guild_stats", "b_coin"),
-        C_COIN("C币", "guild_quest", "c_coin");
+        A_COIN("ACoin", "member_rank", "a_coin"),
+        B_COIN("BCoin", "guild_stats", "b_coin"),
+        C_COIN("CCoin", "guild_quest", "c_coin");
 
         private final String displayName;
         private final String moduleName;
@@ -85,9 +85,9 @@ public class CurrencyManager {
         try (Connection conn = databaseManager.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.executeUpdate(createTableSql);
-            logger.info("[Currency] 货币表初始化完成");
+            logger.info("[Currency] Currency table initialized");
         } catch (SQLException e) {
-            logger.severe("[Currency] 初始化货币表失败: " + e.getMessage());
+            logger.severe("[Currency] Failed to initialize currency table: " + e.getMessage());
         }
     }
 
@@ -178,7 +178,7 @@ public class CurrencyManager {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("[Currency] 增加货币失败: " + e.getMessage());
+            logger.severe("[Currency] Failed to deposit currency: " + e.getMessage());
         }
         return false;
     }
@@ -229,7 +229,7 @@ public class CurrencyManager {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("[Currency] 减少货币失败: " + e.getMessage());
+            logger.severe("[Currency] Failed to withdraw currency: " + e.getMessage());
         }
         return false;
     }
@@ -256,7 +256,7 @@ public class CurrencyManager {
                 }
             }
         } catch (SQLException e) {
-            logger.severe("[Currency] 加载余额失败: " + e.getMessage());
+            logger.severe("[Currency] Failed to load balance: " + e.getMessage());
         }
         return 0.0;
     }
@@ -273,7 +273,7 @@ public class CurrencyManager {
      */
     public void clearCache() {
         currencyCache.clear();
-        logger.info("[Currency] 货币缓存已清除");
+        logger.info("[Currency] Currency cache cleared");
     }
 
     /**

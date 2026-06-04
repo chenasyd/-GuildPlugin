@@ -31,24 +31,24 @@ public class EconomyManager {
      */
     private void setupEconomy() {
         if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
-            logger.warning("Vault插件未找到，经济功能将被禁用！");
+            logger.warning("Vault plugin not found, economy features will be disabled!");
             return;
         }
         
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
-            logger.warning("未找到经济服务提供者，经济功能将被禁用！");
+            logger.warning("No economy service provider found, economy features will be disabled!");
             return;
         }
         
         economy = rsp.getProvider();
         if (economy == null) {
-            logger.warning("经济服务提供者初始化失败，经济功能将被禁用！");
+            logger.warning("Economy service provider initialization failed, economy features will be disabled!");
             return;
         }
         
         vaultAvailable = true;
-        logger.info("经济系统初始化成功！");
+        logger.info("Economy system initialized successfully!");
     }
     
     /**
@@ -113,7 +113,7 @@ public class EconomyManager {
      */
     public String getCurrencyName() {
         if (!isVaultAvailable()) {
-            return "金币";
+            return "Coins";
         }
         return economy.currencyNamePlural();
     }
@@ -123,7 +123,7 @@ public class EconomyManager {
      */
     public String getCurrencyNameSingular() {
         if (!isVaultAvailable()) {
-            return "金币";
+            return "Coin";
         }
         return economy.currencyNameSingular();
     }

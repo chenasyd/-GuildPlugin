@@ -4,11 +4,9 @@ import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Logger;
-
 /**
- * bStats 数据统计封装类
- * 用于向 bStats 上报插件使用数据
+ * bStats metrics wrapper class
+ * Reports plugin usage data to bStats silently in the background
  */
 public class GuildMetrics {
 
@@ -17,31 +15,28 @@ public class GuildMetrics {
     private final int pluginId;
 
     /**
-     * 构造并初始化 bStats Metrics
+     * Construct and initialize bStats Metrics silently (no console output)
      *
-     * @param plugin   插件实例
-     * @param pluginId bStats 插件 ID（在 https://bstats.org/what-is-my-plugin-id 获取）
+     * @param plugin   Plugin instance
+     * @param pluginId bStats plugin ID (get at https://bstats.org/what-is-my-plugin-id)
      */
     public GuildMetrics(JavaPlugin plugin, int pluginId) {
         this.plugin = plugin;
         this.pluginId = pluginId;
-        Logger logger = plugin.getLogger();
 
-        logger.info("正在初始化 bStats 数据统计 (Plugin ID: " + pluginId + ")...");
+        // Silent initialization - runs in background, no console output
         this.metrics = new Metrics(plugin, pluginId);
 
-        // 注册自定义统计图表
+        // Register custom charts
         registerCustomCharts();
-
-        logger.info("bStats 数据统计初始化完成");
     }
 
     /**
-     * 注册自定义统计图表
-     * 可根据需要添加更多自定义数据维度
+     * Register custom statistics charts
+     * Add more custom data dimensions as needed
      */
     private void registerCustomCharts() {
-        // 示例：上报服务器类型（Spigot / Folia）
+        // Report server type (Spigot / Folia)
         metrics.addCustomChart(new SimplePie("server_type", () -> {
             try {
                 Class.forName("io.papermc.paper.threadedregions.scheduler.FoliaScheduler");
@@ -51,17 +46,17 @@ public class GuildMetrics {
             }
         }));
 
-        // 上报服务器版本
+        // Report server version
         metrics.addCustomChart(new SimplePie("server_version", () ->
                 plugin.getServer().getBukkitVersion()));
 
-        // 示例：上报插件版本
+        // Report plugin version
         metrics.addCustomChart(new SimplePie("plugin_version", () ->
                 plugin.getDescription().getVersion()));
     }
 
     /**
-     * 获取 bStats 插件 ID
+     * Get bStats plugin ID
      */
     public int getPluginId() {
         return pluginId;

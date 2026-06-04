@@ -35,13 +35,13 @@ public class PlaceholderManager {
                 placeholderExpansion = new GuildPlaceholderExpansion(plugin, guildService);
                 placeholderExpansion.register();
                 placeholderApiAvailable = true;
-                plugin.getLogger().info("PlaceholderAPI 占位符注册成功");
+                plugin.getLogger().info("PlaceholderAPI placeholders registered successfully");
             } catch (Exception e) {
-                plugin.getLogger().warning("PlaceholderAPI 初始化失败: " + e.getMessage());
+                plugin.getLogger().warning("PlaceholderAPI initialization failed: " + e.getMessage());
                 placeholderApiAvailable = false;
             }
         } else {
-            plugin.getLogger().warning("PlaceholderAPI 未找到，占位符功能将不可用");
+            plugin.getLogger().warning("PlaceholderAPI not found, placeholder features will be unavailable");
             placeholderApiAvailable = false;
         }
     }

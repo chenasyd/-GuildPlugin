@@ -19,7 +19,7 @@ public class ServiceContainer {
      */
     public <T> void register(Class<T> serviceClass, T service) {
         services.put(serviceClass, service);
-        logger.info("注册服务: " + serviceClass.getSimpleName());
+        logger.info("Registering service: " + serviceClass.getSimpleName());
     }
     
     /**
@@ -28,7 +28,7 @@ public class ServiceContainer {
     public <T> void register(Class<T> serviceClass, T service, ServiceLifecycle lifecycle) {
         services.put(serviceClass, service);
         lifecycles.put(serviceClass, lifecycle);
-        logger.info("注册服务: " + serviceClass.getSimpleName() + " (带生命周期)");
+        logger.info("Registering service: " + serviceClass.getSimpleName() + " (with lifecycle)");
     }
     
     /**
@@ -38,7 +38,7 @@ public class ServiceContainer {
     public <T> T get(Class<T> serviceClass) {
         T service = (T) services.get(serviceClass);
         if (service == null) {
-            throw new ServiceNotFoundException("服务未找到: " + serviceClass.getName());
+            throw new ServiceNotFoundException("Service not found: " + serviceClass.getName());
         }
         return service;
     }
@@ -55,13 +55,13 @@ public class ServiceContainer {
      */
     public CompletableFuture<Void> startAll() {
         return CompletableFuture.runAsync(() -> {
-            logger.info("正在启动所有服务...");
+            logger.info("Starting all services...");
             for (Map.Entry<Class<?>, ServiceLifecycle> entry : lifecycles.entrySet()) {
                 try {
                     entry.getValue().start();
-                    logger.info("服务启动成功: " + entry.getKey().getSimpleName());
+                    logger.info("Service started successfully: " + entry.getKey().getSimpleName());
                 } catch (Exception e) {
-                    logger.severe("服务启动失败: " + entry.getKey().getSimpleName() + " - " + e.getMessage());
+                    logger.severe("Service failed to start: " + entry.getKey().getSimpleName() + " - " + e.getMessage());
                 }
             }
         });
@@ -72,13 +72,13 @@ public class ServiceContainer {
      */
     public CompletableFuture<Void> stopAll() {
         return CompletableFuture.runAsync(() -> {
-            logger.info("正在停止所有服务...");
+            logger.info("Stopping all services...");
             for (Map.Entry<Class<?>, ServiceLifecycle> entry : lifecycles.entrySet()) {
                 try {
                     entry.getValue().stop();
-                    logger.info("服务停止成功: " + entry.getKey().getSimpleName());
+                    logger.info("Service stopped successfully: " + entry.getKey().getSimpleName());
                 } catch (Exception e) {
-                    logger.severe("服务停止失败: " + entry.getKey().getSimpleName() + " - " + e.getMessage());
+                    logger.severe("Service failed to stop: " + entry.getKey().getSimpleName() + " - " + e.getMessage());
                 }
             }
         });
@@ -92,9 +92,9 @@ public class ServiceContainer {
             stopAll().get();
             services.clear();
             lifecycles.clear();
-            logger.info("服务容器已关闭");
+            logger.info("Service container has been shut down");
         } catch (Exception e) {
-            logger.severe("关闭服务容器时发生错误: " + e.getMessage());
+            logger.severe("Error shutting down service container: " + e.getMessage());
         }
     }
     

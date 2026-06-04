@@ -52,13 +52,13 @@ public class GuildPlugin extends JavaPlugin {
         instance = this;
         Logger logger = getLogger();
         
-        logger.info("正在启动工会插件...");
-        logger.info("检测到服务器类型: " + ServerUtils.getServerType());
-        logger.info("服务器版本: " + ServerUtils.getServerVersion());
+        logger.info("Starting Guild Plugin...");
+        logger.info("Detected server type: " + ServerUtils.getServerType());
+        logger.info("Server version: " + ServerUtils.getServerVersion());
         
         // 检查API版本兼容性
         if (!ServerUtils.supportsApiVersion("1.21")) {
-            logger.severe("此插件需要1.21或更高版本！当前版本: " + ServerUtils.getServerVersion());
+            logger.severe("This plugin requires 1.21 or higher! Current version: " + ServerUtils.getServerVersion());
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -143,11 +143,11 @@ public class GuildPlugin extends JavaPlugin {
             // 启动定时清理任务 - 清理过期邀请
             startCleanupTasks();
             
-            logger.info("工会插件启动成功！");
-            logger.info("兼容模式: " + (ServerUtils.isFolia() ? "Folia" : "Spigot"));
+            logger.info("Guild Plugin started successfully!");
+            logger.info("Compatibility mode: " + (ServerUtils.isFolia() ? "Folia" : "Spigot"));
             
         } catch (Exception e) {
-            logger.severe("工会插件启动失败: " + e.getMessage());
+            logger.severe("Guild Plugin failed to start: " + e.getMessage());
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
         }
@@ -156,7 +156,7 @@ public class GuildPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         Logger logger = getLogger();
-        logger.info("正在关闭工会插件...");
+        logger.info("Shutting down Guild Plugin...");
         
         try {
             // 关闭所有GUI
@@ -174,10 +174,10 @@ public class GuildPlugin extends JavaPlugin {
                 moduleManager.unloadAllModules();
             }
             
-            logger.info("工会插件已关闭");
+            logger.info("Guild Plugin has been shut down");
             
         } catch (Exception e) {
-            logger.severe("关闭工会插件时发生错误: " + e.getMessage());
+            logger.severe("Error shutting down Guild Plugin: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -221,7 +221,7 @@ public class GuildPlugin extends JavaPlugin {
             guildService.cleanupExpiredInvitationsAsync()
                 .thenAccept(count -> {
                     if (count > 0) {
-                        getLogger().info("[清理] 已清理 " + count + " 个过期工会邀请");
+                        getLogger().info("[Cleanup] Cleaned up " + count + " expired guild invitations");
                     }
                 });
             
@@ -298,7 +298,7 @@ public class GuildPlugin extends JavaPlugin {
                 levelRequirements.put(lvl, val);
             }
         } catch (Exception e) {
-            getLogger().warning("加载等级需求配置失败，使用内置默认值: " + e.getMessage());
+            getLogger().warning("Failed to load level requirements config, using built-in defaults: " + e.getMessage());
             for (int lvl = 1; lvl < maxGuildLevel; lvl++) {
                 levelRequirements.put(lvl, getDefaultRequirementForLevel(lvl));
             }

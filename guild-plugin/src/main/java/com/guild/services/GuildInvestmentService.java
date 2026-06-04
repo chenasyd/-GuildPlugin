@@ -48,9 +48,9 @@ public class GuildInvestmentService {
         try (Connection conn = databaseManager.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.executeUpdate(sql);
-            logger.info("[Investment] 投资记录表初始化完成");
+            logger.info("[Investment] Investment records table initialized");
         } catch (SQLException e) {
-            logger.severe("[Investment] 初始化投资记录表失败: " + e.getMessage());
+            logger.severe("[Investment] Failed to initialize investment records table: " + e.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class GuildInvestmentService {
             stmt.setString(7, playerName);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            logger.warning("[Investment] 记录存款失败: " + e.getMessage());
+            logger.warning("[Investment] Failed to record deposit: " + e.getMessage());
         }
         // 更新缓存
         String key = guildId + "_" + playerUuid.toString();
@@ -95,7 +95,7 @@ public class GuildInvestmentService {
             stmt.setDouble(4, amount);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            logger.warning("[Investment] 记录取款失败: " + e.getMessage());
+            logger.warning("[Investment] Failed to record withdrawal: " + e.getMessage());
         }
     }
 
@@ -118,7 +118,7 @@ public class GuildInvestmentService {
                 }
             }
         } catch (SQLException e) {
-            logger.warning("[Investment] 查询投资额失败: " + e.getMessage());
+            logger.warning("[Investment] Failed to query investment: " + e.getMessage());
         }
         return 0.0;
     }

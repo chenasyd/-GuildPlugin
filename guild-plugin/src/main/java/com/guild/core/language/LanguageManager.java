@@ -49,16 +49,16 @@ public class LanguageManager {
         discoverAndLoadLanguageFiles();
 
         if (!languageConfigs.containsKey(defaultLanguage)) {
-            logger.warning("language.default \u8bbe\u7f6e\u4e3a '" + defaultLanguage + "' \u4f46\u672a\u627e\u5230\u5bf9\u5e94\u7684\u8bed\u8a00\u6587\u4ef6 messages_" + defaultLanguage + ".yml");
+            logger.warning("language.default is set to '" + defaultLanguage + "' but corresponding language file messages_" + defaultLanguage + ".yml not found");
             if (languageConfigs.containsKey("en")) {
-                logger.warning("\u56de\u9000\u5230\u9ed8\u8ba4\u8bed\u8a00: en");
+                logger.warning("Falling back to default language: en");
                 defaultLanguage = "en";
             } else if (!languageConfigs.isEmpty()) {
                 String fallback = languageConfigs.keySet().iterator().next();
-                logger.warning("\u56de\u9000\u5230\u53ef\u7528\u8bed\u8a00: " + fallback);
+                logger.warning("Falling back to available language: " + fallback);
                 defaultLanguage = fallback;
             } else {
-                logger.severe("\u672a\u52a0\u8f7d\u4efb\u4f55\u8bed\u8a00\u6587\u4ef6\uff0c\u63d2\u4ef6\u5c06\u4f7f\u7528\u786c\u7f16\u7801\u9ed8\u8ba4\u503c");
+                logger.severe("No language files loaded, plugin will use hardcoded defaults");
                 defaultLanguage = "en";
             }
         }
@@ -71,8 +71,8 @@ public class LanguageManager {
             }
         }
 
-        logger.info("\u8bed\u8a00\u7cfb\u7edf\u5df2\u52a0\u8f7d\uff0c\u9ed8\u8ba4\u8bed\u8a00: " + defaultLanguage
-            + "\uff0c\u5df2\u52a0\u8f7d\u8bed\u8a00: " + String.join(", ", getLoadedLanguages()));
+        logger.info("Language system loaded, default language: " + defaultLanguage
+            + ", loaded languages: " + String.join(", ", getLoadedLanguages()));
     }
     
     private void discoverAndLoadLanguageFiles() {
@@ -138,11 +138,11 @@ public class LanguageManager {
                 if (resource != null) {
                     plugin.saveResource(fileName, false);
                 } else {
-                    logger.warning("\u672a\u627e\u5230\u5185\u7f6e\u8bed\u8a00\u6587\u4ef6: " + fileName + "\uff0c\u8df3\u8fc7\u52a0\u8f7d");
+                    logger.warning("Bundled language file not found: " + fileName + ", skipping load");
                     return;
                 }
             } catch (Exception e) {
-                logger.warning("\u65e0\u6cd5\u91ca\u653e\u8bed\u8a00\u6587\u4ef6 " + fileName + ": " + e.getMessage());
+                logger.warning("Unable to extract language file " + fileName + ": " + e.getMessage());
                 return;
             }
         }
@@ -158,13 +158,13 @@ public class LanguageManager {
         try {
             FileConfiguration config = YamlConfiguration.loadConfiguration(langFile);
             if (config.getKeys(false).isEmpty()) {
-                logger.warning("\u8bed\u8a00\u6587\u4ef6\u4e3a\u7a7a: " + langFile.getName() + "\uff0c\u8df3\u8fc7");
+                logger.warning("Language file is empty: " + langFile.getName() + ", skipping");
                 return;
             }
             languageConfigs.put(lang.toLowerCase(), config);
-            logger.info("\u52a0\u8f7d\u8bed\u8a00\u6587\u4ef6: " + langFile.getName());
+            logger.info("Loading language file: " + langFile.getName());
         } catch (Exception e) {
-            logger.warning("\u52a0\u8f7d\u8bed\u8a00\u6587\u4ef6\u5931\u8d25: " + langFile.getName() + " - " + e.getMessage());
+            logger.warning("Failed to load language file: " + langFile.getName() + " - " + e.getMessage());
         }
     }
     
@@ -184,7 +184,7 @@ public class LanguageManager {
         List<String> names = new ArrayList<>();
         Map<String, String> codeToName = new HashMap<>();
         codeToName.put("en", "English");
-        codeToName.put("zh", "\u4e2d\u6587");
+        codeToName.put("zh", "Chinese");
         codeToName.put("pl", "Polski");
         codeToName.put("br", "Portugu\u00eas (BR)");
         codeToName.put("de", "Deutsch");
@@ -326,7 +326,7 @@ public class LanguageManager {
     public void reloadLanguages() {
         languageConfigs.clear();
         loadLanguages();
-        logger.info("\u91cd\u65b0\u52a0\u8f7d\u6240\u6709\u8bed\u8a00\u6587\u4ef6");
+        logger.info("Reloading all language files");
     }
     
     public FileConfiguration getLanguageConfig(String lang) {

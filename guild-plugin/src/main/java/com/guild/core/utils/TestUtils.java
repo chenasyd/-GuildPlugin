@@ -12,13 +12,13 @@ public class TestUtils {
         if (logger == null) {
             return;
         }
-        logger.info("=== 服务器兼容性测试 ===");
-        logger.info("服务器类型: " + ServerUtils.getServerType());
-        logger.info("服务器版本: " + ServerUtils.getServerVersion());
-        logger.info("是否支持1.21: " + ServerUtils.supportsApiVersion("1.21"));
-        logger.info("是否支持1.21.8: " + ServerUtils.supportsApiVersion("1.21.8"));
-        logger.info("是否为Folia: " + ServerUtils.isFolia());
-        logger.info("是否为Spigot: " + ServerUtils.isSpigot());
+        logger.info("=== Server Compatibility Test ===");
+        logger.info("Server type: " + ServerUtils.getServerType());
+        logger.info("Server version: " + ServerUtils.getServerVersion());
+        logger.info("Supports 1.21: " + ServerUtils.supportsApiVersion("1.21"));
+        logger.info("Supports 1.21.8: " + ServerUtils.supportsApiVersion("1.21.8"));
+        logger.info("Is Folia: " + ServerUtils.isFolia());
+        logger.info("Is Spigot: " + ServerUtils.isSpigot());
         logger.info("=========================");
     }
     
@@ -29,9 +29,9 @@ public class TestUtils {
         if (logger == null) {
             return;
         }
-        logger.info("=== 调度器兼容性测试 ===");
-        logger.info("是否在主线程: " + CompatibleScheduler.isPrimaryThread());
-        logger.info("服务器类型: " + ServerUtils.getServerType());
+        logger.info("=== Scheduler Compatibility Test ===");
+        logger.info("Is on primary thread: " + CompatibleScheduler.isPrimaryThread());
+        logger.info("Server type: " + ServerUtils.getServerType());
         logger.info("=========================");
     }
 }

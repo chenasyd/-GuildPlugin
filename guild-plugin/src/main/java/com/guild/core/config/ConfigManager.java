@@ -56,7 +56,7 @@ public class ConfigManager {
         configs.put(fileName, config);
         configFiles.put(fileName, configFile);
         
-        logger.info("加载配置文件: " + fileName);
+        logger.info("Loading config file: " + fileName);
     }
     
     /**
@@ -108,9 +108,9 @@ public class ConfigManager {
         if (config != null && configFile != null) {
             try {
                 config.save(configFile);
-                logger.info("保存配置文件: " + fileName);
+                logger.info("Saving config file: " + fileName);
             } catch (IOException e) {
-                logger.severe("保存配置文件失败: " + fileName + " - " + e.getMessage());
+                logger.severe("Failed to save config file: " + fileName + " - " + e.getMessage());
             }
         }
     }
@@ -120,7 +120,7 @@ public class ConfigManager {
      */
     public void reloadConfig(String fileName) {
         loadConfig(fileName);
-        logger.info("重新加载配置文件: " + fileName);
+        logger.info("Reloading config file: " + fileName);
     }
     
     /**
@@ -130,7 +130,7 @@ public class ConfigManager {
         configs.clear();
         configFiles.clear();
         loadConfigs();
-        logger.info("重新加载所有配置文件");
+        logger.info("Reloading all config files");
     }
     
     /**

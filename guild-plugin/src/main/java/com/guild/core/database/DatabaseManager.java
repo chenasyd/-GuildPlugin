@@ -45,10 +45,10 @@ public class DatabaseManager {
             // 创建数据表
             createTables();
             
-            logger.info("数据库连接初始化成功: " + databaseType);
+            logger.info("Database connection initialized successfully: " + databaseType);
             
         } catch (Exception e) {
-            logger.severe("数据库连接初始化失败: " + e.getMessage());
+            logger.severe("Database connection initialization failed: " + e.getMessage());
             throw new RuntimeException("数据库连接失败", e);
         }
     }
@@ -136,11 +136,11 @@ public class DatabaseManager {
                 Thread.sleep(1000); // 等待1秒确保数据库连接稳定
                 checkAndAddMissingColumns();
             } catch (Exception e) {
-                logger.warning("异步检查数据库列时发生错误: " + e.getMessage());
+                logger.warning("Error during async database column check: " + e.getMessage());
             }
         });
         
-        logger.info("数据表创建完成");
+        logger.info("Database tables created successfully");
     }
     
     /**
@@ -439,7 +439,7 @@ public class DatabaseManager {
             return stmt.executeUpdate();
             
         } catch (SQLException e) {
-            logger.severe("执行更新操作失败: " + e.getMessage());
+            logger.severe("Update operation failed: " + e.getMessage());
             throw new RuntimeException("数据库操作失败", e);
         }
     }
@@ -466,7 +466,7 @@ public class DatabaseManager {
             return stmt.executeQuery();
             
         } catch (SQLException e) {
-            logger.severe("执行查询操作失败: " + e.getMessage());
+            logger.severe("Query operation failed: " + e.getMessage());
             throw new RuntimeException("数据库操作失败", e);
         }
     }
@@ -477,7 +477,7 @@ public class DatabaseManager {
     public void close() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
-            logger.info("数据库连接已关闭");
+            logger.info("Database connection closed");
         }
     }
     
@@ -501,9 +501,9 @@ public class DatabaseManager {
             } else {
                 checkAndAddMySQLColumns();
             }
-            logger.info("数据库列检查完成");
+            logger.info("Database column check completed");
         } catch (Exception e) {
-            logger.warning("检查数据库列时发生错误: " + e.getMessage());
+            logger.warning("Error checking database columns: " + e.getMessage());
         }
     }
     
@@ -536,7 +536,7 @@ public class DatabaseManager {
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_pitch REAL")) {
                         stmt.executeUpdate();
                     }
-                    logger.info("已为guilds表添加home相关列");
+                    logger.info("Added home columns to guilds table");
                 }
             }
             
@@ -556,13 +556,13 @@ public class DatabaseManager {
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN frozen INTEGER DEFAULT 0")) {
                         stmt.executeUpdate();
                     }
-                    logger.info("已为guilds表添加economy相关列");
+                    logger.info("Added economy columns to guilds table");
                 }
             }
             
             conn.commit(); // 提交事务
         } catch (SQLException e) {
-            logger.warning("检查SQLite列时发生错误: " + e.getMessage());
+            logger.warning("Error checking SQLite columns: " + e.getMessage());
         }
     }
     
@@ -595,7 +595,7 @@ public class DatabaseManager {
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_pitch FLOAT")) {
                         stmt.executeUpdate();
                     }
-                    logger.info("已为guilds表添加home相关列");
+                    logger.info("Added home columns to guilds table");
                 }
             }
             
@@ -615,13 +615,13 @@ public class DatabaseManager {
                     try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN frozen BOOLEAN DEFAULT FALSE")) {
                         stmt.executeUpdate();
                     }
-                    logger.info("已为guilds表添加economy相关列");
+                    logger.info("Added economy columns to guilds table");
                 }
             }
             
             conn.commit(); // 提交事务
         } catch (SQLException e) {
-            logger.warning("检查MySQL列时发生错误: " + e.getMessage());
+            logger.warning("Error checking MySQL columns: " + e.getMessage());
         }
     }
     
