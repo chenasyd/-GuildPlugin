@@ -110,9 +110,9 @@ public class GuildQuestModule implements GuildModule {
 
         context.runLater(100L, () -> {
             questTracker.start();
-            context.getLogger().info(ColorUtils.colorize(
+            context.getLogger().info(
                 context.getMessage("module.quest.loaded",
-                    "&a[任务模块] 公会任务系统已启用 (" + questManager.getDefinitions().size() + " 个任务)")));
+                    "[Quest] Quest system enabled (" + questManager.getDefinitions().size() + " quests)")));
         });
 
         context.getEventBus().subscribe(QuestCompletedEvent.class, event ->
@@ -362,8 +362,8 @@ public class GuildQuestModule implements GuildModule {
         if (questManager != null) {
             questManager.saveAll();
         }
-        context.getLogger().info(ColorUtils.colorize(
-            context.getMessage("module.quest.unloaded", "&e[任务模块] 任务系统已关闭")));
+        context.getLogger().info(
+            context.getMessage("module.quest.unloaded", "[Quest] Quest system disabled"));
     }
 
     @Override

@@ -173,7 +173,7 @@ public class GuildPlugin extends JavaPlugin {
             if (moduleManager != null) {
                 moduleManager.unloadAllModules();
             }
-            
+
             logger.info("Guild Plugin has been shut down");
             
         } catch (Exception e) {

@@ -74,16 +74,16 @@ public class GuildStatsModule implements GuildModule {
 
         context.runLater(100L, () -> {
             if (webReporter != null) webReporter.healthCheck();
-            context.getLogger().info(ColorUtils.colorize(
-                context.getMessage("module.stats.init-done", "&a[统计模块] 初始化完成, 已注册 CustomGUI x2")));
+            context.getLogger().info(
+                context.getMessage("module.stats.init-done", "[Stats] Initialization complete, CustomGUI x2 registered"));
         });
 
         context.getEventBus().subscribe(StatsRefreshedEvent.class, event ->
             context.getLogger().info(String.format("[Stats-Event] 公会 #%d %s 统计已刷新 (活跃度=%.1f)",
                 event.guildId, event.guildName, event.activityScore)));
 
-        context.getLogger().info(ColorUtils.colorize(
-            context.getMessage("module.stats.loaded", "&a[统计模块] 公会数据统计系统已启用")));
+        context.getLogger().info(
+            context.getMessage("module.stats.loaded", "[Stats] Guild stats system enabled"));
     }
 
     @Override
@@ -102,8 +102,8 @@ public class GuildStatsModule implements GuildModule {
             });
         }
         dataCache.clearAll();
-        context.getLogger().info(ColorUtils.colorize(
-            context.getMessage("module.stats.unloaded", "&e[统计模块] 统计系统已关闭")));
+        context.getLogger().info(
+            context.getMessage("module.stats.unloaded", "[Stats] Stats system disabled"));
     }
 
     @Override

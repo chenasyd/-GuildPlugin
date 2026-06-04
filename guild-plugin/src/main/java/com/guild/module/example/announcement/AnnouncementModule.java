@@ -98,14 +98,14 @@ public class AnnouncementModule implements GuildModule {
             public Object getModuleInstance() { return AnnouncementModule.this; }
         });
 
-        context.getLogger().info(ColorUtils.colorize(context.getMessage("module.announcement.loaded",
-                "&a[公告模块] 公告系统已启用")));
+        context.getLogger().info(context.getMessage("module.announcement.loaded",
+                "[Announcement] Announcement system enabled"));
 
         var langManager = context.getLanguageManager();
         String welcomeKey = "module.announcement.welcome-hint";
-        context.getLogger().info("[Announcement-Lang] 动态获取消息: "
-            + ColorUtils.colorize(langManager.getMessage(welcomeKey,
-                "&7提示: 使用 /guild announcement 管理公告")));
+        context.getLogger().info("[Announcement-Lang] Dynamic message lookup: "
+            + langManager.getMessage(welcomeKey,
+                "Hint: use /guild announcement to manage announcements"));
     }
 
     @Override
@@ -115,8 +115,8 @@ public class AnnouncementModule implements GuildModule {
             announcementManager.saveAll();
             announcementManager.clearAll();
         }
-        context.getLogger().info(ColorUtils.colorize(context.getMessage("module.announcement.unloaded",
-                "&e[公告模块] 公告系统已关闭")));
+        context.getLogger().info(context.getMessage("module.announcement.unloaded",
+                "[Announcement] Announcement system disabled"));
     }
 
     @Override

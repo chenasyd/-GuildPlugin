@@ -157,8 +157,8 @@ public class MemberRankModule implements GuildModule {
                 (player, ctx) -> handleOpenRankGUIFromInfo(player, ctx)
         );
 
-        context.getLogger().info(ColorUtils.colorize(context.getMessage("module.member-rank.loaded",
-                "&a[排名模块] 成员贡献排名系统已启用")));
+        context.getLogger().info(context.getMessage("module.member-rank.loaded",
+                "[MemberRank] Member contribution ranking system enabled"));
 
         ModuleDescriptor desc = context.getDescriptor();
         context.getLogger().info(String.format("[Rank-Meta] 模块元信息: id=%s name=%s version=%s author=%s",
@@ -176,8 +176,8 @@ public class MemberRankModule implements GuildModule {
             rankManager.saveAll();
             rankManager.clearAll();
         }
-        context.getLogger().info(ColorUtils.colorize(context.getMessage("module.member-rank.unloaded",
-                "&e[排名模块] 成员贡献排名系统已关闭")));
+        context.getLogger().info(context.getMessage("module.member-rank.unloaded",
+                "[MemberRank] Member contribution ranking system disabled"));
     }
 
     @Override

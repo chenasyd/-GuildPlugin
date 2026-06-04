@@ -57,7 +57,7 @@ public class ApiTestModule implements GuildModule {
         // 4. 注册占位符提供者
         api.registerPlaceholderProvider(new RegionCountProvider());
 
-        context.getLogger().info("§d[ApiTest] 模块已启用 — 使用 /guild apitest help 查看测试命令");
+        context.getLogger().info("[ApiTest] Module enabled — use /guild apitest help to see test commands");
     }
 
     @Override
