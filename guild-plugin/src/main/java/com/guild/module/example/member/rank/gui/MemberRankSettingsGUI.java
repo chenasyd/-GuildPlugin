@@ -12,9 +12,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * A 币增长规则配置 GUI
+ * A-Coin growth rules configuration GUI.
  * <p>
- * 允许会长配置 A 币的自动增长规则，包括在线时间、奖励间隔等参数。
+ * Allows guild leaders to configure A-Coin auto-growth rules,
+ * including online time, award intervals, and other parameters.
  */
 public class MemberRankSettingsGUI extends AbstractModuleGUI {
 
@@ -31,7 +32,7 @@ public class MemberRankSettingsGUI extends AbstractModuleGUI {
     @Override
     public String getTitle() {
         return ColorUtils.colorize(module.getContext().getMessage(
-                "module.member-rank.settings.title", "&6&lA币增长规则配置"));
+                "module.member-rank.settings.title", "&6&lA-Coin Growth Rules Config"));
     }
 
     @Override
@@ -40,100 +41,100 @@ public class MemberRankSettingsGUI extends AbstractModuleGUI {
         inventory.clear();
         fillBorder(inventory);
 
-        // 标题
+        // Title
         inventory.setItem(4, createItem(Material.BOOK,
-                "&6&lA币增长规则配置",
+                "&6&lA-Coin Growth Rules Config",
                 "",
-                "&7配置 A 币的自动增长规则",
-                "&7包括在线时间、奖励间隔等参数",
+                "&7Configure A-Coin auto-growth rules",
+                "&7Includes online time, award intervals, etc.",
                 "",
-                "&7数据来源: &e成员排名模块配置",
-                "&7更新方式: &a实时保存"));
+                "&7Data source: &eMember Ranking module config",
+                "&7Update mode: &aSaved in real-time"));
 
-        // 在线检查间隔
+        // Online check interval
         int checkInterval = module.getContext().getConfig().getInt("activity.online.check-interval-minutes", 1);
         inventory.setItem(11, createItem(Material.CLOCK,
-                "&e&l在线检查间隔",
-                "&7当前值: &f" + checkInterval + " 分钟",
-                "&7设置系统检查玩家在线状态的频率",
-                "&7建议值: 1-5 分钟",
+                "&e&lOnline Check Interval",
+                "&7Current: &f" + checkInterval + " min(s)",
+                "&7How often the system checks player online status",
+                "&7Recommended: 1-5 minutes",
                 "",
-                "&e左键增加 | 右键减少"));
+                "&eLeft-click + | Right-click -"));
 
-        // 奖励发放间隔
+        // Award interval
         int awardInterval = module.getContext().getConfig().getInt("activity.online.award-every-minutes", 5);
         inventory.setItem(12, createItem(Material.GOLD_INGOT,
-                "&e&l奖励发放间隔",
-                "&7当前值: &f" + awardInterval + " 分钟",
-                "&7设置发放 A 币的时间间隔",
-                "&7建议值: 5-15 分钟",
+                "&e&lAward Interval",
+                "&7Current: &f" + awardInterval + " min(s)",
+                "&7Time between A-Coin award ticks",
+                "&7Recommended: 5-15 minutes",
                 "",
-                "&e左键增加 | 右键减少"));
+                "&eLeft-click + | Right-click -"));
 
-        // 活跃窗口时间
+        // Active window
         long activeWindow = module.getContext().getConfig().getLong("activity.online.active-window-seconds", 120);
         inventory.setItem(13, createItem(Material.REDSTONE,
-                "&e&l活跃窗口时间",
-                "&7当前值: &f" + activeWindow + " 秒",
-                "&7设置玩家保持活跃的时间窗口",
-                "&7建议值: 60-300 秒",
+                "&e&lActive Window",
+                "&7Current: &f" + activeWindow + " sec(s)",
+                "&7How long a player stays considered active",
+                "&7Recommended: 60-300 seconds",
                 "",
-                "&e左键增加 | 右键减少"));
+                "&eLeft-click + | Right-click -"));
 
-        // 每次奖励的 A 币数量
+        // Award points per tick
         int awardPoints = module.getContext().getConfig().getInt("activity.online.award-points", 2);
         inventory.setItem(14, createItem(Material.DIAMOND,
-                "&e&l每次奖励 A 币",
-                "&7当前值: &f" + awardPoints + " 个",
-                "&7设置每次发放的 A 币数量",
-                "&7建议值: 1-5 个",
+                "&e&lAward Per Tick",
+                "&7Current: &f" + awardPoints + " A-Coin(s)",
+                "&7How many A-Coins awarded per tick",
+                "&7Recommended: 1-5",
                 "",
-                "&e左键增加 | 右键减少"));
+                "&eLeft-click + | Right-click -"));
 
-        // 每日 A 币上限
+        // Daily cap
         int dailyCap = module.getContext().getConfig().getInt("activity.online.daily-cap", 60);
         inventory.setItem(15, createItem(Material.EMERALD,
-                "&e&l每日 A 币上限",
-                "&7当前值: &f" + dailyCap + " 个",
-                "&7设置玩家每日获得的 A 币上限",
-                "&7建议值: 30-120 个",
+                "&e&lDaily A-Coin Cap",
+                "&7Current: &f" + dailyCap + " A-Coin(s)",
+                "&7Maximum A-Coins a player can earn per day",
+                "&7Recommended: 30-120",
                 "",
-                "&e左键增加 | 右键减少"));
+                "&eLeft-click + | Right-click -"));
 
-        // 加入工会时的初始 A 币
+        // Initial A-Coins on join
         int defaultContribution = module.getContext().getConfig().getInt("default-contribution-on-join", 0);
         inventory.setItem(20, createItem(Material.GOLD_NUGGET,
-                "&e&l初始 A 币",
-                "&7当前值: &f" + defaultContribution + " 个",
-                "&7设置新成员加入时的初始 A 币",
-                "&7建议值: 0-50 个",
+                "&e&lInitial A-Coins",
+                "&7Current: &f" + defaultContribution + " A-Coin(s)",
+                "&7A-Coins granted to new members on join",
+                "&7Recommended: 0-50",
                 "",
-                "&e左键增加 | 右键减少"));
+                "&eLeft-click + | Right-click -"));
 
-        // 自动发放开关
+        // Auto deposit toggle
         boolean autoDepositEnabled = module.getContext().getConfig().getBoolean("auto-deposit.enabled", true);
         inventory.setItem(21, createItem(autoDepositEnabled ? Material.LIME_WOOL : Material.RED_WOOL,
-                "&e&l自动发放",
-                "&7当前状态: &f" + (autoDepositEnabled ? "开启" : "关闭"),
-                "&7是否自动发放 A 币",
-                "&7开启后会根据在线时间自动发放",
+                "&e&lAuto Award",
+                "&7Status: &f" + (autoDepositEnabled ? "Enabled" : "Disabled"),
+                "&7Whether to auto-award A-Coins",
+                "&7When enabled, awards based on online time",
                 "",
-                "&e点击切换状态"));
+                "&eClick to toggle"));
 
-        // 自动发放金额
+        // Auto deposit amount
         double autoDepositAmount = module.getContext().getConfig().getDouble("auto-deposit.amount", 10);
         inventory.setItem(22, createItem(Material.GOLD_BLOCK,
-                "&e&l自动发放金额",
-                "&7当前值: &f" + autoDepositAmount + " 金币",
-                "&7设置自动发放的金币数量",
-                "&7建议值: 5-50 金币",
+                "&e&lAuto Award Amount",
+                "&7Current: &f" + autoDepositAmount + " coins",
+                "&7Amount of coins awarded automatically",
+                "&7Recommended: 5-50 coins",
                 "",
-                "&e左键增加 | 右键减少"));
+                "&eLeft-click + | Right-click -"));
 
-        // 返回按钮
+        // Back button
         inventory.setItem(49, createBackButton(
-                module.getContext().getMessage("module.member-rank.gui.back", "&c返回"),
-                module.getContext().getMessage("module.member-rank.gui.back-hint", "&7点击返回上一页")));
+                module.getContext().getMessage("module.member-rank.gui.back", "&cBack"),
+                module.getContext().getMessage("module.member-rank.gui.back-hint", "&7Click to return")));
 
         fillInteriorSlots(inventory);
     }
@@ -142,15 +143,15 @@ public class MemberRankSettingsGUI extends AbstractModuleGUI {
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
-        // 返回按钮
+        // Back button
         if (slot == 49) {
             module.getContext().navigateBack(player);
             return;
         }
 
-        // 配置项点击提示
+        // Config item click hint
         if (slot >= 11 && slot <= 22) {
-            player.sendMessage(ColorUtils.colorize("&e[MemberRank] 配置修改功能暂未开放"));
+            player.sendMessage(ColorUtils.colorize("&e[MemberRank] Config editing is not yet available"));
             return;
         }
     }

@@ -27,14 +27,14 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * 成员贡献排名模块
+ * Member contribution ranking module.
  * <p>
- * 功能：
+ * Features:
  * <ul>
- *   <li>在 GuildSettingsGUI 注入"贡献排名"管理按钮</li>
- *   <li>在 GuildInfoGUI 注入"排行榜"查看按钮（所有成员可见）</li>
- *   <li>监听成员加入/离开事件自动维护排名数据</li>
- *   <li>提供贡献值手动调整功能（管理员）</li>
+ *   <li>Injects "Contribution Ranking" manage button into GuildSettingsGUI</li>
+ *   <li>Injects "Leaderboard" view button into GuildInfoGUI (visible to all members)</li>
+ *   <li>Listens to member join/leave events to auto-maintain ranking data</li>
+ *   <li>Provides admin manual contribution adjustment</li>
  * </ul>
  */
 public class MemberRankModule implements GuildModule {
@@ -50,7 +50,7 @@ public class MemberRankModule implements GuildModule {
         this.context = context;
         this.state = ModuleState.ACTIVE;
 
-        // 初始化排名管理器，使用数据库存储
+        // Initialize rank manager (uses database storage)
         this.rankManager = new MemberRankManager(context.getPlugin());
         rankManager.loadAll();
         this.onlineActivityTracker = new OnlineActivityTracker(this);
@@ -62,7 +62,7 @@ public class MemberRankModule implements GuildModule {
 
         GuildPluginAPI api = context.getApi();
 
-        // 监听成员加入事件 —— 自动在排名中创建记录
+        // Listen for member join – auto-create ranking record
         api.onMemberJoin(new MemberEventHandler() {
             @Override
             public void onEvent(MemberEventData data) {
@@ -78,16 +78,16 @@ public class MemberRankModule implements GuildModule {
             }
         });
 
-        // 监听成员离开事件 —— 从排名中移除记录并重置 A 币
+        // Listen for member leave – remove ranking record and reset A-Coins
         api.onMemberLeave(new MemberEventHandler() {
             @Override
             public void onEvent(MemberEventData data) {
-                // 重置该玩家的 A 币
+                // Reset this player's A-Coins
                 var currencyManager = context.getApi().getCurrencyManager();
                 currencyManager.withdraw(data.getGuildId(), data.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN, 
                     currencyManager.getBalance(data.getGuildId(), data.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN));
                 
-                // 从排名中移除记录
+                // Remove from ranking
                 rankManager.removeMember(data.getGuildId(), data.getPlayerUuid());
             }
 
@@ -97,28 +97,28 @@ public class MemberRankModule implements GuildModule {
             }
         });
 
-        // 监听公会删除事件 —— 重置所有成员的 A 币
+        // Listen for guild delete – reset all members' A-Coins
         api.onGuildDelete(new com.guild.sdk.event.GuildEventHandler() {
             @Override
             public void onEvent(com.guild.sdk.event.GuildEventData data) {
                 int guildId = data.getGuildId();
-                // 重置该公会所有成员的 A 币
+                // Reset A-Coins for all guild members
                 var currencyManager = context.getApi().getCurrencyManager();
                 var guildService = context.getPlugin().getGuildService();
                 
                 try {
-                    // 获取公会所有成员
+                    // Get all guild members
                     var members = guildService.getGuildMembers(guildId);
                     for (var member : members) {
-                        // 重置每个成员的 A 币
+                        // Reset each member's A-Coins
                         currencyManager.withdraw(guildId, member.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN, 
                             currencyManager.getBalance(guildId, member.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN));
                     }
                 } catch (Exception e) {
-                    context.getLogger().severe("[MemberRank] 重置公会成员 A 币失败: " + e.getMessage());
+                    context.getLogger().severe("[MemberRank] Failed to reset guild members' A-Coins: " + e.getMessage());
                 }
                 
-                // 清除该公会的排名数据
+                // Clear ranking data for this guild
                 rankManager.clearByGuild(guildId);
             }
 
@@ -128,7 +128,7 @@ public class MemberRankModule implements GuildModule {
             }
         });
 
-        // 在 GuildSettingsGUI 中注册"贡献排名"按钮（管理入口，自动分配槽位）
+        // Register "Contribution Ranking" button in GuildSettingsGUI (admin entry, auto-slot)
         ItemStack settingsButton = createSettingsButton();
         api.registerGUIButton(
                 "GuildSettingsGUI",
@@ -138,7 +138,7 @@ public class MemberRankModule implements GuildModule {
                 (player, ctx) -> handleOpenRankGUIFromSettings(player, ctx)
         );
 
-        // 在 GuildSettingsGUI 中注册"A币设置"按钮（配置入口，自动分配槽位）
+        // Register "A-Coin Settings" button in GuildSettingsGUI (config entry, auto-slot)
         ItemStack rankSettingsButton = createRankSettingsButton();
         api.registerGUIButton(
                 "GuildSettingsGUI",
@@ -148,7 +148,7 @@ public class MemberRankModule implements GuildModule {
                 (player, ctx) -> handleOpenRankSettingsGUI(player, ctx)
         );
 
-        // 在 GuildInfoGUI 中注册"排行榜"按钮（固定槽位14，所有成员可见）
+        // Register "Leaderboard" button in GuildInfoGUI (slot 14, visible to all members)
         ItemStack infoButton = createInfoButton();
         api.registerGUIButton(
                 "GuildInfoGUI",
@@ -162,7 +162,7 @@ public class MemberRankModule implements GuildModule {
                 "[MemberRank] Member contribution ranking system enabled"));
 
         ModuleDescriptor desc = context.getDescriptor();
-        context.getLogger().info(String.format("[Rank-Meta] 模块元信息: id=%s name=%s version=%s author=%s",
+        context.getLogger().info(String.format("[Rank-Meta] Module metadata: id=%s name=%s version=%s author=%s",
             desc.getId(), desc.getName(), desc.getVersion(), desc.getAuthor()));
     }
 
@@ -190,14 +190,14 @@ public class MemberRankModule implements GuildModule {
     @Override
     public ModuleState getState() { return state; }
 
-    // ==================== 按钮处理 ====================
+    // ==================== Button Handlers ====================
 
     private void handleOpenRankGUIFromSettings(Player player, Object... ctx) {
         Guild guild = extractGuild(ctx);
         if (guild == null) {
             player.sendMessage(ColorUtils.colorize(
                     context.getMessage("module.member-rank.error.no-guild",
-                            "&c无法获取工会信息")));
+                            "&cCannot retrieve guild info")));
             return;
         }
         context.openGUI(player, new MemberRankGUI(this, guild, player, true));
@@ -208,19 +208,19 @@ public class MemberRankModule implements GuildModule {
         if (guild == null) {
             player.sendMessage(ColorUtils.colorize(
                     context.getMessage("module.member-rank.error.no-guild",
-                            "&c无法获取工会信息")));
+                            "&cCannot retrieve guild info")));
             return;
         }
-        // 信息页入口为浏览模式：隐藏管理提示并禁用加减操作
+        // Info entry = browse mode: hide admin hints and disable +/- actions
         context.openGUI(player, new MemberRankGUI(this, guild, player, false));
     }
 
-    /** 打开排名 GUI（供外部调用） */
+    /** Open ranking GUI (for external callers) */
     public void openRankGUI(Player player, Guild guild) {
         context.openGUI(player, new MemberRankGUI(this, guild, player, true));
     }
 
-    // ==================== 权限检查 ====================
+    // ==================== Permission Check ====================
 
     public boolean hasManagePermission(Player player) {
         UUID uuid = player.getUniqueId();
@@ -231,7 +231,7 @@ public class MemberRankModule implements GuildModule {
                member.getRole() == GuildMember.Role.OFFICER;
     }
 
-    // ==================== 工具方法 ====================
+    // ==================== Utility Methods ====================
 
     private Guild extractGuild(Object... ctx) {
         if (ctx != null && ctx.length > 0 && ctx[0] instanceof Guild) {
@@ -245,11 +245,11 @@ public class MemberRankModule implements GuildModule {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(ColorUtils.colorize("&6&l" +
-                    context.getMessage("module.member-rank.button-name", "A币排名")));
+                    context.getMessage("module.member-rank.button-name", "A-Coin Ranking")));
             List<String> lore = new ArrayList<>();
             lore.add(ColorUtils.colorize("&7" +
                     context.getMessage("module.member-rank.button-desc",
-                            "管理成员A币和排名")));
+                            "Manage member A-Coins and rankings")));
             meta.setLore(lore);
             item.setItemMeta(meta);
         }
@@ -267,14 +267,14 @@ public class MemberRankModule implements GuildModule {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(ColorUtils.colorize("&e&l" +
-                    context.getMessage("module.member-rank.info-button-name", "A币排行榜")));
+                    context.getMessage("module.member-rank.info-button-name", "A-Coin Leaderboard")));
             List<String> lore = new ArrayList<>();
             lore.add(ColorUtils.colorize("&7" +
                     context.getMessage("module.member-rank.info-button-desc",
-                            "查看工会成员A币排名")));
+                            "View guild member A-Coin rankings")));
             lore.add(ColorUtils.colorize("&7" +
                     context.getMessage("module.member-rank.info-button-hint",
-                            "&7点击查看排行榜")));
+                            "&7Click to view leaderboard")));
             meta.setLore(lore);
             item.setItemMeta(meta);
         }
@@ -292,14 +292,14 @@ public class MemberRankModule implements GuildModule {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
             meta.setDisplayName(ColorUtils.colorize("&6&l" +
-                    context.getMessage("module.member-rank.settings.button-name", "A币设置")));
+                    context.getMessage("module.member-rank.settings.button-name", "A-Coin Settings")));
             List<String> lore = new ArrayList<>();
             lore.add(ColorUtils.colorize("&7" +
                     context.getMessage("module.member-rank.settings.button-desc",
-                            "配置 A 币增长规则")));
+                            "Configure A-Coin growth rules")));
             lore.add(ColorUtils.colorize("&7" +
                     context.getMessage("module.member-rank.settings.button-hint",
-                            "&7点击打开配置界面")));
+                            "&7Click to open configuration")));
             meta.setLore(lore);
             item.setItemMeta(meta);
         }
@@ -311,13 +311,13 @@ public class MemberRankModule implements GuildModule {
         if (guild == null) {
             player.sendMessage(ColorUtils.colorize(
                     context.getMessage("module.member-rank.error.no-guild",
-                            "&c无法获取工会信息")));
+                            "&cCannot retrieve guild info")));
             return;
         }
         if (!hasManagePermission(player)) {
             player.sendMessage(ColorUtils.colorize(
                     context.getMessage("module.member-rank.error.no-permission",
-                            "&c您没有权限管理 A 币设置")));
+                            "&cYou don't have permission to manage A-Coin settings")));
             return;
         }
         context.openGUI(player, new MemberRankSettingsGUI(this, guild, player));

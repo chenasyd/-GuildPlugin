@@ -4,20 +4,20 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * 成员A币排名数据模型
+ * Member A-Coin ranking data model.
  * <p>
- * 记录工会成员的累积A币和最近活跃时间，
- * 用于在 GUI 中展示A币排行榜。
+ * Records a guild member's accumulated A-Coins and last active time,
+ * used to display the A-Coin leaderboard in the GUI.
  */
 public class MemberRank {
 
     private UUID playerUuid;
     private String playerName;
     private int guildId;
-    private long aCoin;        // 累积A币
-    private LocalDateTime lastActive; // 最近活跃时间
+    private long aCoin;        // Accumulated A-Coins
+    private LocalDateTime lastActive; // Last active time
 
-    /** 无参构造器（JSON 反序列化使用） */
+    /** No-arg constructor (used by JSON deserialization) */
     public MemberRank() {}
 
     public MemberRank(UUID playerUuid, String playerName, int guildId) {
@@ -53,15 +53,15 @@ public class MemberRank {
     public LocalDateTime getLastActive() { return lastActive; }
     public void setLastActive(LocalDateTime lastActive) { this.lastActive = lastActive; }
 
-    // ==================== 业务方法 ====================
+    // ==================== Business Methods ====================
 
-    /** 增加A币 */
+    /** Add A-Coins */
     public void addACoin(long amount) {
         this.aCoin += amount;
         this.lastActive = LocalDateTime.now();
     }
 
-    /** 记录活跃（不改变A币） */
+    /** Record activity (without changing A-Coins) */
     public void touchActive() {
         this.lastActive = LocalDateTime.now();
     }

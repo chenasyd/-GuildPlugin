@@ -21,13 +21,13 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 在线活跃值追踪器
+ * Online activity value tracker.
  * <p>
- * 规则：
- * - 每分钟扫描一次在线成员
- * - 玩家最近有行为（移动/交互/命令）才记为活跃
- * - 每累计 N 分钟发放一次贡献值
- * - 每日最多发放固定贡献，防止挂机刷分
+ * Rules:
+ * - Scan online members every minute
+ * - A player is considered active only if they recently acted (move/interact/command)
+ * - Award contribution points every N cumulative active minutes
+ * - Daily cap on awarded contribution to prevent AFK farming
  */
 public class OnlineActivityTracker implements Listener {
 
@@ -40,7 +40,7 @@ public class OnlineActivityTracker implements Listener {
     private final Map<UUID, Integer> dailyAwarded = new ConcurrentHashMap<>();
     private LocalDate dailyBucket = LocalDate.now();
 
-    // 默认参数（可通过 module config 覆盖）
+    // Default parameters (overridable via module config)
     private final int checkIntervalMinutes;
     private final int awardEveryMinutes;
     private final long activeWindowSeconds;
@@ -166,7 +166,7 @@ public class OnlineActivityTracker implements Listener {
             return;
         }
 
-        // 根据玩家等级和活跃度调整奖励
+        // Adjust reward based on player level and activity
         int baseAward = awardPoints;
         int adjustedAward = calculateAdjustedAward(baseAward, member);
         int award = Math.min(adjustedAward, dailyCap - daily);
@@ -177,12 +177,12 @@ public class OnlineActivityTracker implements Listener {
         module.getRankManager().addACoin(guildId, uuid, playerName, award);
         dailyAwarded.put(uuid, daily + award);
 
-        // 按窗口累计，避免因为刷新频率漂移导致结算抖动
+        // Reset per-window to avoid drift from tick rate variance
         onlineActiveMinutes.put(uuid, Math.max(0, newMinutes - awardEveryMinutes));
     }
 
     private int calculateAdjustedAward(int baseAward, GuildMember member) {
-        // 根据玩家角色调整奖励
+        // Adjust bonus based on player role
         double roleMultiplier = 1.0;
         switch (member.getRole()) {
             case LEADER:
@@ -197,7 +197,7 @@ public class OnlineActivityTracker implements Listener {
                 break;
         }
         
-        // 可以根据其他因素调整，比如公会等级、玩家加入时间等
+        // Can also factor in other criteria: guild level, join time, etc.
         return (int) Math.round(baseAward * roleMultiplier);
     }
 

@@ -1,8 +1,8 @@
 id: member-rank
-name: "成员贡献排名"
+name: "Member Contribution Ranking"
 version: 1.0.0
 author: "GuildPlugin Team"
-description: "工会成员贡献排名系统 - 追踪并展示成员贡献值排行榜"
+description: "Guild member contribution ranking system - tracks and displays member contribution leaderboard"
 type: gui
 api-version: 1.0.0
 main: com.guild.module.example.member.rank.MemberRankModule

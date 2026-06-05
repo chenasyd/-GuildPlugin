@@ -35,6 +35,9 @@ jobs:
     - name: Build Quest Module
       run: mvn -B package -DskipTests -Pbuild-quest-module
 
+    - name: Build Member Rank Module
+      run: mvn -B package -DskipTests -Pbuild-member-rank-module
+
     - name: Build API Test Module
       run: mvn -B package -DskipTests -Pbuild-api-test-module
 
