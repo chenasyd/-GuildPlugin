@@ -28,8 +28,8 @@ public class UpdateChecker {
     private static final String VERSIONS_API_URL =
             "https://api.modrinth.com/v2/project/" + MODRINTH_PROJECT_ID + "/version";
     private static final String USER_AGENT = "GuildPlugin/UpdateChecker (chenasyd)";
-    private static final int CONNECT_TIMEOUT = 5000;
-    private static final int READ_TIMEOUT = 5000;
+    private static final int CONNECT_TIMEOUT = 10000;
+    private static final int READ_TIMEOUT = 15000;
     private static final long CHECK_INTERVAL_TICKS = 20L * 60 * 60 * 24; // 24 hours
 
     private final JavaPlugin plugin;

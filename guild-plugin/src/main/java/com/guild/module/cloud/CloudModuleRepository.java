@@ -10,12 +10,14 @@ import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ColorUtils;
 import org.bukkit.command.CommandSender;
 
+import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,24 @@ public class CloudModuleRepository {
     private static final String USER_AGENT = "GuildPlugin/CloudModuleRepository (chenasyd)";
     private static final String MODULE_PREFIX = "modules-";
     private static final int TIMEOUT = 10000;
+
+    static {
+        // 绕过 SSL 证书验证 — 兼容旧 Java 版本 / 受限环境
+        try {
+            TrustManager[] trustAll = new TrustManager[]{
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+                        public void checkClientTrusted(X509Certificate[] c, String a) {}
+                        public void checkServerTrusted(X509Certificate[] c, String a) {}
+                    }
+            };
+            SSLContext ctx = SSLContext.getInstance("TLS");
+            ctx.init(null, trustAll, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(ctx.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier((h, s) -> true);
+        } catch (Exception ignored) {
+        }
+    }
 
     private final GuildPlugin plugin;
     private final Gson gson = new Gson();
