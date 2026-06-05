@@ -27,10 +27,10 @@ jobs:
       run: mvn clean install -DskipTests
 
     - name: Build Announcement Module
-      run: mvn -B package -pl guild-plugin -Pbuild-announcement-module -DskipTests
+      run: cd guild-plugin && mvn package -Pbuild-announcement-module -DskipTests
 
     - name: Build API Test Module
-      run: mvn -B package -pl guild-plugin -Pbuild-api-test-module -DskipTests
+      run: cd guild-plugin && mvn package -Pbuild-api-test-module -DskipTests
 
     - name: Upload module artifacts
       uses: actions/upload-artifact@v4
