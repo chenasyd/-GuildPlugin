@@ -30,6 +30,7 @@ public class ApplicationManagementGUI implements GUI {
     private final LanguageManager languageManager;
     private final Guild guild;
     private int currentPage = 0;
+    private int totalPages = 0;
     private static final int APPLICATIONS_PER_PAGE = 28; // 4行7列，除去边框
     private boolean showingHistory = false; // false=待处理申请, true=申请历史
 
@@ -160,7 +161,7 @@ public class ApplicationManagementGUI implements GUI {
             }
             
             // 计算分页
-            int totalPages = (applications.size() - 1) / APPLICATIONS_PER_PAGE;
+            this.totalPages = (applications.size() - 1) / APPLICATIONS_PER_PAGE;
             if (currentPage > totalPages) {
                 currentPage = totalPages;
             }
@@ -191,7 +192,7 @@ public class ApplicationManagementGUI implements GUI {
             }
             
             // 计算分页
-            int totalPages = (applications.size() - 1) / APPLICATIONS_PER_PAGE;
+            this.totalPages = (applications.size() - 1) / APPLICATIONS_PER_PAGE;
             if (currentPage > totalPages) {
                 currentPage = totalPages;
             }
@@ -343,8 +344,10 @@ public class ApplicationManagementGUI implements GUI {
                 refreshInventory(player);
             }
         } else if (slot == 26) { // 下一页
-            currentPage++;
-            refreshInventory(player);
+            if (currentPage < totalPages) {
+                currentPage++;
+                refreshInventory(player);
+            }
         }
     }
     

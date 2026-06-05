@@ -37,6 +37,7 @@ public class GuildFilterGUI implements GUI {
     private int sortIndex;   // 0=DESC, 1=ASC, 2=FULL_ONLY
 
     private int currentPage = 0;
+    private int totalPages = 0;
     private static final int GUILDS_PER_PAGE = 28;
     private List<Guild> displayedGuilds = new ArrayList<>();
 
@@ -402,6 +403,7 @@ public class GuildFilterGUI implements GUI {
         }
 
         int totalPages = (totalItems - 1) / GUILDS_PER_PAGE;
+        this.totalPages = totalPages;
         if (currentPage > totalPages) {
             currentPage = totalPages;
         }
@@ -473,8 +475,10 @@ public class GuildFilterGUI implements GUI {
                 refreshInventory(player);
             }
         } else if (slot == 26) {
-            currentPage++;
-            refreshInventory(player);
+            if (currentPage < totalPages) {
+                currentPage++;
+                refreshInventory(player);
+            }
         }
     }
 

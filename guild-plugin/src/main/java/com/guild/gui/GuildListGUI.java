@@ -28,6 +28,7 @@ public class GuildListGUI implements GUI {
     private final Player player;
     private final LanguageManager languageManager;
     private int currentPage = 0;
+    private int totalPages = 0;
     private static final int GUILDS_PER_PAGE = 28;
     private String searchQuery = "";
     private List<Guild> displayedGuilds = new ArrayList<>();
@@ -197,6 +198,7 @@ public class GuildListGUI implements GUI {
         }
 
         int totalPages = (totalItems - 1) / GUILDS_PER_PAGE;
+        this.totalPages = totalPages;
         if (currentPage > totalPages) {
             currentPage = totalPages;
         }
@@ -285,8 +287,10 @@ public class GuildListGUI implements GUI {
                 refreshInventory(player);
             }
         } else if (slot == 26) {
-            currentPage++;
-            refreshInventory(player);
+            if (currentPage < totalPages) {
+                currentPage++;
+                refreshInventory(player);
+            }
         }
     }
 

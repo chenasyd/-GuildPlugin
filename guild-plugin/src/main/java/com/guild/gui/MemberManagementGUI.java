@@ -29,6 +29,7 @@ public class MemberManagementGUI implements GUI {
     private final Player player;
     private final LanguageManager languageManager;
     private int currentPage = 0;
+    private int totalPages = 0;
     private static final int MEMBERS_PER_PAGE = 28; // 4行7列，除去边框
 
     public MemberManagementGUI(GuildPlugin plugin, Guild guild, Player player) {
@@ -157,7 +158,7 @@ public class MemberManagementGUI implements GUI {
             }
             
             // 计算分页
-            int totalPages = (members.size() - 1) / MEMBERS_PER_PAGE;
+            this.totalPages = (members.size() - 1) / MEMBERS_PER_PAGE;
             if (currentPage > totalPages) {
                 currentPage = totalPages;
             }
@@ -330,8 +331,10 @@ public class MemberManagementGUI implements GUI {
                 refreshInventory(player);
             }
         } else if (slot == 26) { // 下一页
-            currentPage++;
-            refreshInventory(player);
+            if (currentPage < totalPages) {
+                currentPage++;
+                refreshInventory(player);
+            }
         }
     }
     
