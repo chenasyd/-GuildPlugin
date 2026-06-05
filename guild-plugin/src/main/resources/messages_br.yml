@@ -1074,6 +1074,9 @@ module.system.reloading: "&e[Sistema de Módulos] Recarregando módulo: {0}"
 module.system.reloaded-successfully: "&a[Sistema de Módulos] Módulo recarregado com sucesso: {0}"
 module.system.no-modules: "&7[Sistema de Módulos] Nenhum módulo de extensão encontrado"
 module.system.load-complete: "&a[Sistema de Módulos] Carregamento de módulos concluído, sucesso: {0}, falhas: {1}"
+module.system.duplicate-skip: "&e[Sistema de Módulos] Módulo duplicado ignorado {0} ({1}, SDK: {2}), mantida versão mais recente (SDK: {3})"
+module.system.duplicate-cleanup-title: "&6[Sistema de Módulos] &cOs seguintes JARs antigos devem ser excluídos:"
+module.system.duplicate-cleanup-item: "&c  - {0} (versão antiga, substituída por {1})"
 module.system.all-unloaded: "&a[Sistema de Módulos] Todos os módulos de extensão descarregados"
 
 # Mensagens de erro

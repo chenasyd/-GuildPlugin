@@ -9,7 +9,10 @@ import com.guild.core.utils.ConsoleLogger;
 import com.guild.sdk.GuildPluginAPI;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,10 +65,15 @@ public class ModuleManager {
             return;
         }
 
+        // Deduplicate: for same moduleId, keep only the JAR with the newest api-version
+        DedupResult dedup = deduplicateModules(jarFiles);
+        File[] filteredJars = dedup.filteredJars;
+        List<DuplicateInfo> skipped = dedup.skippedDuplicates;
+
         int successCount = 0;
         int failCount = 0;
 
-        for (File jarFile : jarFiles) {
+        for (File jarFile : filteredJars) {
             try {
                 loadModule(jarFile);
                 successCount++;
@@ -75,8 +83,148 @@ public class ModuleManager {
             }
         }
 
+        // Report skipped duplicates
+        for (DuplicateInfo dup : skipped) {
+            ConsoleLogger.warn(lang.getIndexedMessage("module.system.duplicate-skip", "",
+                    dup.moduleId, dup.skippedFileName, dup.skippedApiVersion, dup.keptApiVersion));
+        }
+        if (!skipped.isEmpty()) {
+            ConsoleLogger.warn(lang.getMessage("module.system.duplicate-cleanup-title", ""));
+            for (DuplicateInfo dup : skipped) {
+                ConsoleLogger.warn(lang.getIndexedMessage("module.system.duplicate-cleanup-item", "",
+                        dup.skippedFileName, dup.keptFileName));
+            }
+        }
+
         ConsoleLogger.info(lang.getIndexedMessage("module.system.load-complete", "",
                 String.valueOf(successCount), String.valueOf(failCount)));
+    }
+
+    /**
+     * Pre-scan JARs to detect and resolve duplicate module IDs.
+     * For modules with the same ID, keep the one with the newest api-version (SDK version).
+     *
+     * @param jarFiles all JAR files found in the modules directory
+     * @return deduplication result with filtered JAR list and skipped duplicate info
+     */
+    private DedupResult deduplicateModules(File[] jarFiles) {
+        // Parse all descriptors, tracking by moduleId
+        Map<String, DescriptorEntry> bestByModule = new LinkedHashMap<>();
+        List<DuplicateInfo> skipped = new ArrayList<>();
+        List<File> unparseable = new ArrayList<>();
+
+        for (File jarFile : jarFiles) {
+            ModuleDescriptor desc;
+            try {
+                desc = loader.parseDescriptor(jarFile);
+            } catch (ModuleLoadException e) {
+                // Unparseable JAR (not a valid module) — keep it so it fails naturally during load
+                unparseable.add(jarFile);
+                continue;
+            }
+
+            String moduleId = desc.getId();
+            DescriptorEntry existing = bestByModule.get(moduleId);
+
+            if (existing == null) {
+                bestByModule.put(moduleId, new DescriptorEntry(jarFile, desc));
+            } else {
+                // Duplicate moduleId — compare api-version, keep the newer one
+                int cmp = compareApiVersions(desc.getApiVersion(), existing.descriptor.getApiVersion());
+                if (cmp > 0) {
+                    // Current is newer → skip the old one, keep current
+                    skipped.add(new DuplicateInfo(
+                            moduleId,
+                            existing.file.getName(),
+                            existing.descriptor.getApiVersion(),
+                            desc.getApiVersion(),
+                            jarFile.getName()));
+                    bestByModule.put(moduleId, new DescriptorEntry(jarFile, desc));
+                } else {
+                    // Existing is newer or same → skip current
+                    skipped.add(new DuplicateInfo(
+                            moduleId,
+                            jarFile.getName(),
+                            desc.getApiVersion(),
+                            existing.descriptor.getApiVersion(),
+                            existing.file.getName()));
+                }
+            }
+        }
+
+        File[] filtered = new File[bestByModule.size() + unparseable.size()];
+        int i = 0;
+        for (DescriptorEntry entry : bestByModule.values()) {
+            filtered[i++] = entry.file;
+        }
+        for (File f : unparseable) {
+            filtered[i++] = f;
+        }
+
+        return new DedupResult(filtered, skipped);
+    }
+
+    /**
+     * Compare two api-version strings using semantic versioning rules.
+     *
+     * @return negative if v1 &lt; v2, zero if equal, positive if v1 &gt; v2
+     */
+    private int compareApiVersions(String v1, String v2) {
+        String[] p1 = v1.split("\\.");
+        String[] p2 = v2.split("\\.");
+        int maxLen = Math.max(p1.length, p2.length);
+        for (int i = 0; i < maxLen; i++) {
+            int n1 = i < p1.length ? parsePart(p1[i]) : 0;
+            int n2 = i < p2.length ? parsePart(p2[i]) : 0;
+            if (n1 != n2) return Integer.compare(n1, n2);
+        }
+        return 0;
+    }
+
+    private int parsePart(String part) {
+        try {
+            return Integer.parseInt(part.replaceAll("[^0-9]", ""));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    /** Holds a JAR file and its parsed descriptor. */
+    private static class DescriptorEntry {
+        final File file;
+        final ModuleDescriptor descriptor;
+        DescriptorEntry(File file, ModuleDescriptor descriptor) {
+            this.file = file;
+            this.descriptor = descriptor;
+        }
+    }
+
+    /** Info about a skipped duplicate module JAR. */
+    private static class DuplicateInfo {
+        final String moduleId;
+        final String skippedFileName;
+        final String skippedApiVersion;
+        final String keptApiVersion;
+        final String keptFileName;
+
+        DuplicateInfo(String moduleId, String skippedFileName, String skippedApiVersion,
+                      String keptApiVersion, String keptFileName) {
+            this.moduleId = moduleId;
+            this.skippedFileName = skippedFileName;
+            this.skippedApiVersion = skippedApiVersion;
+            this.keptApiVersion = keptApiVersion;
+            this.keptFileName = keptFileName;
+        }
+    }
+
+    /** Result of deduplication. */
+    private static class DedupResult {
+        final File[] filteredJars;
+        final List<DuplicateInfo> skippedDuplicates;
+        DedupResult(File[] filteredJars, List<DuplicateInfo> skippedDuplicates) {
+            this.filteredJars = filteredJars;
+            this.skippedDuplicates = skippedDuplicates;
+        }
     }
 
     // ==================== 热加载 ====================

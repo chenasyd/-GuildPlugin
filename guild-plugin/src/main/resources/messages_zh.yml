@@ -1118,6 +1118,9 @@ module.system.reloading: "&e[模块系统] 正在重载模块: {0}"
 module.system.reloaded-successfully: "&a[模块系统] 模块重载成功: {0}"
 module.system.no-modules: "&7[模块系统] 未发现扩展模块"
 module.system.load-complete: "&a[模块系统] 模块加载完成，成功: {0}，失败: {1}"
+module.system.duplicate-skip: "&e[模块系统] 跳过重复模块 {0} ({1}, SDK: {2})，已保留更新版本 (SDK: {3})"
+module.system.duplicate-cleanup-title: "&6[模块系统] &c以下旧版本模块JAR应被删除:"
+module.system.duplicate-cleanup-item: "&c  - {0} (旧版本，已由 {1} 替代)"
 module.system.all-unloaded: "&a[模块系统] 所有扩展模块已卸载"
 
 # 错误信息
