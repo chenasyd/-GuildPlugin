@@ -5,7 +5,7 @@ import com.guild.sdk.data.GuildData;
 import org.bukkit.entity.Player;
 
 /**
- * 测试执行器 —— 各测试方法用独立子系统分隔。
+ * Test executor — each test method separated by subsystem.
  */
 public class TestRunner {
 
@@ -29,15 +29,15 @@ public class TestRunner {
         module.log("TEST FAIL: " + msg);
     }
 
-    // ==================== 数据查询测试 ====================
+    // ==================== Data Query Test ====================
 
     void testQuery() {
-        module.log("=== 数据查询测试 ===");
-        player.sendMessage("§e--- 数据查询测试 ---");
+        module.log("=== Data Query Test ===");
+        player.sendMessage("§e--- Data Query Test ---");
 
         // getAllGuilds
         api.getAllGuilds().thenAccept(guilds -> {
-            ok("getAllGuilds: " + guilds.size() + " 个公会");
+            ok("getAllGuilds: " + guilds.size() + " guild(s)");
             // getGuildById
             if (!guilds.isEmpty()) {
                 GuildData g = guilds.get(0);
@@ -48,7 +48,7 @@ public class TestRunner {
                         ok("getGuildByName: " + (g3 != null ? g3.getName() : "null"));
                         // getGuildMembers
                         api.getGuildMembers(g.getId()).thenAccept(members -> {
-                            ok("getGuildMembers: " + members.size() + " 人");
+                            ok("getGuildMembers: " + members.size() + " member(s)");
                             // investedBalance
                             members.stream().findFirst().ifPresent(m -> {
                                 ok("investedBalance[" + m.getPlayerName() + "]: " + m.getInvestedBalance());
@@ -59,78 +59,78 @@ public class TestRunner {
             }
             // getPlayerGuild
             api.getPlayerGuild(player.getUniqueId()).thenAccept(pg -> {
-                ok("getPlayerGuild: " + (pg != null ? pg.getName() + " (Lv" + pg.getLevel() + ")" : "无公会"));
+                ok("getPlayerGuild: " + (pg != null ? pg.getName() + " (Lv" + pg.getLevel() + ")" : "No guild"));
             });
         });
     }
 
-    // ==================== 成员管理测试 ====================
+    // ==================== Member Management Test ====================
 
     void testMember() {
-        module.log("=== 成员管理测试 ===");
-        player.sendMessage("§e--- 成员管理测试 ---");
+        module.log("=== Member Management Test ===");
+        player.sendMessage("§e--- Member Management Test ---");
 
         api.getPlayerGuild(player.getUniqueId()).thenAccept(guild -> {
             if (guild == null) {
-                fail("成员管理: 无公会，跳过测试");
+                fail("Member Management: No guild, test skipped");
                 return;
             }
 
-            // 查询成员列表
+            // Query member list
             api.getGuildMembers(guild.getId()).thenAccept(members -> {
-                ok("当前成员: " + members.size() + " 人");
+                ok("Current members: " + members.size() + " member(s)");
                 members.forEach(m -> player.sendMessage("  §7- " + m.getPlayerName() + " [" + m.getRole() + "] invest=" + m.getInvestedBalance()));
 
-                // 注意: addMember/removeMember/setMemberRole 涉及真实玩家操作，不自动执行
-                player.sendMessage("§7提示: 使用后台指令手动测试 add/remove/role 操作");
+                // Note: addMember/removeMember/setMemberRole involve real player actions, not executed automatically
+                player.sendMessage("§7Tip: Use console commands to manually test add/remove/role operations");
             });
         });
     }
 
-    // ==================== 经济/货币测试 ====================
+    // ==================== Economy Test ====================
 
     void testEconomy() {
-        module.log("=== 经济/货币测试 ===");
-        player.sendMessage("§e--- 经济/货币测试 ---");
+        module.log("=== Economy Test ===");
+        player.sendMessage("§e--- Economy Test ---");
 
         api.getPlayerGuild(player.getUniqueId()).thenAccept(guild -> {
             if (guild == null) {
-                fail("无公会，跳过测试");
+                fail("No guild, test skipped");
                 return;
             }
-            ok("公会余额: " + guild.getBalance());
-            ok("公会等级: " + guild.getLevel());
+            ok("Guild balance: " + guild.getBalance());
+            ok("Guild level: " + guild.getLevel());
 
-            // 货币（A/B/C 币）
+            // Currency (A/B/C coins)
             try {
                 double a = api.getCurrencyBalance(guild.getId(), player.getUniqueId(), "A_COIN");
                 double b = api.getCurrencyBalance(guild.getId(), player.getUniqueId(), "B_COIN");
                 double c = api.getCurrencyBalance(guild.getId(), player.getUniqueId(), "C_COIN");
-                ok("货币余额: A=" + String.format("%.0f", a) + " B=" + String.format("%.0f", b) + " C=" + String.format("%.0f", c));
+                ok("Currency balance: A=" + String.format("%.0f", a) + " B=" + String.format("%.0f", b) + " C=" + String.format("%.0f", c));
             } catch (Exception e) {
-                fail("货币查询异常: " + e.getMessage());
+                fail("Currency query error: " + e.getMessage());
             }
         });
     }
 
-    // ==================== HTTP 测试 ====================
+    // ==================== HTTP Test ====================
 
     void testHttp() {
-        module.log("=== HTTP 测试 ===");
-        player.sendMessage("§e--- HTTP 测试 ---");
+        module.log("=== HTTP Test ===");
+        player.sendMessage("§e--- HTTP Test ---");
 
         api.httpGet("https://httpbin.org/get")
-                .thenAccept(resp -> ok("httpGet 成功: " + (resp != null ? resp.length() + " chars" : "null")))
-                .exceptionally(e -> { fail("httpGet 失败: " + e.getMessage()); return null; });
+                .thenAccept(resp -> ok("httpGet success: " + (resp != null ? resp.length() + " chars" : "null")))
+                .exceptionally(e -> { fail("httpGet failed: " + e.getMessage()); return null; });
     }
 
-    // ==================== 占位符测试 ====================
+    // ==================== Placeholder Test ====================
 
     void testPlaceholder() {
-        module.log("=== 占位符测试 ===");
-        player.sendMessage("§e--- 占位符测试 ---");
+        module.log("=== Placeholder Test ===");
+        player.sendMessage("§e--- Placeholder Test ---");
         ok("guild_module_apitest_invested: " + module.new RegionCountProvider().onRequest(player, "invested"));
-        ok("基本占位符注册成功 — 测试 identifier=apitest");
-        player.sendMessage("§7regioncount 需 WorldGuard 依赖，当前返回 0");
+        ok("Basic placeholder registered — tested identifier=apitest");
+        player.sendMessage("§7regioncount requires WorldGuard dependency, currently returns 0");
     }
 }

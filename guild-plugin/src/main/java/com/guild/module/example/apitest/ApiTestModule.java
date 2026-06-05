@@ -19,9 +19,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 /**
- * API 测试模块 —— 验证所有 SDK 公开 API 的可用性。
+ * API Test Module — verifies availability of all public SDK APIs.
  * <p>
- * 通过 /guild apitest 子命令调用各项测试。
+ * Invoke tests via /guild apitest subcommand.
  */
 public class ApiTestModule implements GuildModule {
 
@@ -44,8 +44,8 @@ public class ApiTestModule implements GuildModule {
         ItemStack btn = new ItemStack(Material.ENCHANTED_BOOK);
         org.bukkit.inventory.meta.ItemMeta meta = btn.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName("§d§lAPI 测试面板");
-            meta.setLore(List.of("§7点击打开 SDK 测试界面"));
+            meta.setDisplayName("§d§lAPI Test Panel");
+            meta.setLore(List.of("§7Click to open SDK test interface"));
             btn.setItemMeta(meta);
         }
         api.registerGUIButton("GuildSettingsGUI", GUIExtensionHook.AUTO_SLOT,
@@ -88,37 +88,37 @@ public class ApiTestModule implements GuildModule {
     private void registerAllEventHandlers(GuildPluginAPI api) {
 
         api.onGuildCreate(new GuildEventHandler() {
-            @Override public void onEvent(GuildEventData d) { log("公会创建: " + d.getGuildName() + " (ID=" + d.getGuildId() + ")"); }
+            @Override public void onEvent(GuildEventData d) { log("Guild created: " + d.getGuildName() + " (ID=" + d.getGuildId() + ")"); }
             @Override public Object getModuleInstance() { return ApiTestModule.this; }
         });
 
         api.onGuildDelete(new GuildEventHandler() {
-            @Override public void onEvent(GuildEventData d) { log("公会删除: " + d.getGuildName()); }
+            @Override public void onEvent(GuildEventData d) { log("Guild deleted: " + d.getGuildName()); }
             @Override public Object getModuleInstance() { return ApiTestModule.this; }
         });
 
         api.onMemberJoin(new MemberEventHandler() {
-            @Override public void onEvent(MemberEventData d) { log("成员加入: " + d.getPlayerName() + " → " + d.getGuildName()); }
+            @Override public void onEvent(MemberEventData d) { log("Member joined: " + d.getPlayerName() + " → " + d.getGuildName()); }
             @Override public Object getModuleInstance() { return ApiTestModule.this; }
         });
 
         api.onMemberLeave(new MemberEventHandler() {
-            @Override public void onEvent(MemberEventData d) { log("成员离开: " + d.getPlayerName() + " (" + d.getEventType() + ")"); }
+            @Override public void onEvent(MemberEventData d) { log("Member left: " + d.getPlayerName() + " (" + d.getEventType() + ")"); }
             @Override public Object getModuleInstance() { return ApiTestModule.this; }
         });
 
         api.onEconomyDeposit(new EconomyEventHandler() {
-            @Override public void onEvent(EconomyEventData d) { log(d.getPlayerName() + " 存款 " + d.getAmount() + " → " + d.getGuildName()); }
+            @Override public void onEvent(EconomyEventData d) { log(d.getPlayerName() + " deposited " + d.getAmount() + " → " + d.getGuildName()); }
             @Override public Object getModuleInstance() { return ApiTestModule.this; }
         });
 
         api.onEconomyWithdraw(new EconomyEventHandler() {
-            @Override public void onEvent(EconomyEventData d) { log(d.getPlayerName() + " 取款 " + d.getAmount() + " ← " + d.getGuildName()); }
+            @Override public void onEvent(EconomyEventData d) { log(d.getPlayerName() + " withdrew " + d.getAmount() + " ← " + d.getGuildName()); }
             @Override public Object getModuleInstance() { return ApiTestModule.this; }
         });
 
         api.onMemberRoleChange(new MemberRoleChangeEventHandler() {
-            @Override public void onEvent(MemberRoleChangeEventData d) { log(d.getPlayerName() + " 角色: " + d.getOldRole() + " → " + d.getNewRole()); }
+            @Override public void onEvent(MemberRoleChangeEventData d) { log(d.getPlayerName() + " role: " + d.getOldRole() + " → " + d.getNewRole()); }
             @Override public Object getModuleInstance() { return ApiTestModule.this; }
         });
     }
@@ -127,15 +127,15 @@ public class ApiTestModule implements GuildModule {
 
     void openTestGUI(Player player) {
         context.runSync(() -> {
-            Inventory inv = Bukkit.createInventory(null, 27, "§dAPI 测试面板");
-            inv.setItem(11, makeItem(Material.PAPER, "§e数据查询测试", "§7query all/discover"));
-            inv.setItem(12, makeItem(Material.PLAYER_HEAD, "§e成员管理测试", "§7add/remove/role"));
-            inv.setItem(13, makeItem(Material.GOLD_INGOT, "§e经济/货币测试", "§7deposit/withdraw/currency"));
-            inv.setItem(14, makeItem(Material.REDSTONE, "§eHTTP 测试", "§7http"));
-            inv.setItem(15, makeItem(Material.NAME_TAG, "§e占位符测试", "§7placeholder"));
-            inv.setItem(22, makeItem(Material.BARRIER, "§c关闭", "§7退出"));
+            Inventory inv = Bukkit.createInventory(null, 27, "§dAPI Test Panel");
+            inv.setItem(11, makeItem(Material.PAPER, "§eData Query Test", "§7query all/discover"));
+            inv.setItem(12, makeItem(Material.PLAYER_HEAD, "§eMember Management Test", "§7add/remove/role"));
+            inv.setItem(13, makeItem(Material.GOLD_INGOT, "§eEconomy Test", "§7deposit/withdraw/currency"));
+            inv.setItem(14, makeItem(Material.REDSTONE, "§eHTTP Test", "§7http"));
+            inv.setItem(15, makeItem(Material.NAME_TAG, "§ePlaceholder Test", "§7placeholder"));
+            inv.setItem(22, makeItem(Material.BARRIER, "§cClose", "§7Exit"));
             context.openGUI(player, new com.guild.core.gui.GUI() {
-                @Override public String getTitle() { return "§dAPI 测试面板"; }
+                @Override public String getTitle() { return "§dAPI Test Panel"; }
                 @Override public int getSize() { return 27; }
                 @Override public void setupInventory(Inventory i) { i.setContents(inv.getContents()); }
                 @Override public void onClick(Player p, int slot, ItemStack item, org.bukkit.event.inventory.ClickType clickType) {
@@ -161,7 +161,7 @@ public class ApiTestModule implements GuildModule {
             "http", runner::testHttp,
             "placeholder", runner::testPlaceholder
         );
-        tests.getOrDefault(test, () -> player.sendMessage("§c未知测试: " + test)).run();
+        tests.getOrDefault(test, () -> player.sendMessage("§cUnknown test: " + test)).run();
     }
 
     private static ItemStack makeItem(Material m, String name, String lore) {

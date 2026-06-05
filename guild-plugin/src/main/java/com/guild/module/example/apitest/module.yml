@@ -1,8 +1,8 @@
 id: api-test
-name: "API 测试模块"
+name: "API Test Module"
 version: 1.0.0
 author: "GuildPlugin Dev"
-description: "覆盖所有 SDK API 的测试验证模块"
+description: "Test and verification module covering all SDK APIs"
 type: mixed
 api-version: 1.0.0
 main: com.guild.module.example.apitest.ApiTestModule

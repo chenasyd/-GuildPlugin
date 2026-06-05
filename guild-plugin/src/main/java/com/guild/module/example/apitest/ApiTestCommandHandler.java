@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 
 /**
- * /guild apitest 命令处理。
+ * /guild apitest command handler.
  */
 public class ApiTestCommandHandler implements ModuleCommandHandler {
 
@@ -26,14 +26,14 @@ public class ApiTestCommandHandler implements ModuleCommandHandler {
         switch (sub) {
             case "status":
                 module.log("module active, " + module.getTestLog().size() + " log entries");
-                sender.sendMessage("§a[ApiTest] 模块运行中，事件日志 " + module.getTestLog().size() + " 条");
+                sender.sendMessage("§a[ApiTest] Module running, event log: " + module.getTestLog().size() + " entries");
                 break;
             case "log":
                 module.getTestLog().forEach(sender::sendMessage);
                 break;
             case "clear":
                 module.clearLog();
-                sender.sendMessage("§a[ApiTest] 日志已清空");
+                sender.sendMessage("§a[ApiTest] Log cleared");
                 break;
             case "gui":
                 if (sender instanceof Player p) module.openTestGUI(p);
@@ -50,21 +50,21 @@ public class ApiTestCommandHandler implements ModuleCommandHandler {
                     );
                     Runnable test = tests.get(sub);
                     if (test != null) test.run();
-                    else sender.sendMessage("§c未知命令: /guild apitest " + sub);
+                    else sender.sendMessage("§cUnknown command: /guild apitest " + sub);
                 }
         }
     }
 
     private void sendHelp(CommandSender s) {
-        s.sendMessage("§d===== ApiTest 命令 =====");
-        s.sendMessage("§e/guild apitest query §7— 数据查询测试");
-        s.sendMessage("§e/guild apitest member §7— 成员管理测试");
-        s.sendMessage("§e/guild apitest economy §7— 经济/货币测试");
-        s.sendMessage("§e/guild apitest http §7— HTTP 测试");
-        s.sendMessage("§e/guild apitest placeholder §7— 占位符测试");
-        s.sendMessage("§e/guild apitest status §7— 显示运行状态");
-        s.sendMessage("§e/guild apitest log §7— 显示事件日志");
-        s.sendMessage("§e/guild apitest clear §7— 清空日志");
-        s.sendMessage("§e/guild apitest gui §7— 打开测试面板");
+        s.sendMessage("§d===== ApiTest Commands =====");
+        s.sendMessage("§e/guild apitest query §7- Data query test");
+        s.sendMessage("§e/guild apitest member §7- Member management test");
+        s.sendMessage("§e/guild apitest economy §7- Economy test");
+        s.sendMessage("§e/guild apitest http §7- HTTP test");
+        s.sendMessage("§e/guild apitest placeholder §7- Placeholder test");
+        s.sendMessage("§e/guild apitest status §7- Show running status");
+        s.sendMessage("§e/guild apitest log §7- Show event log");
+        s.sendMessage("§e/guild apitest clear §7- Clear log");
+        s.sendMessage("§e/guild apitest gui §7- Open test panel");
     }
 }
