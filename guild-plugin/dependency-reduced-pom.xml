@@ -64,6 +64,10 @@
                   <pattern>com.google.gson</pattern>
                   <shadedPattern>com.guild.libs.gson</shadedPattern>
                 </relocation>
+                <relocation>
+                  <pattern>org.bstats</pattern>
+                  <shadedPattern>com.guild.libs.bstats</shadedPattern>
+                </relocation>
               </relocations>
             </configuration>
           </execution>
