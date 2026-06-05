@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -28,22 +29,36 @@ public class GuildListGUI implements GUI {
     private final Player player;
     private final LanguageManager languageManager;
     private int currentPage = 0;
-    private static final int GUILDS_PER_PAGE = 28; // 4行7列，除去边框
+    private static final int GUILDS_PER_PAGE = 28;
     private String searchQuery = "";
-    private String filterType = "all"; // all, name, tag
+    private int minLevel = 1;
+    private int maxLevel = 10;
+    private String sortMode = "DESC"; // DESC, ASC, FULL_ONLY
+    private List<Guild> displayedGuilds = new ArrayList<>();
 
     public GuildListGUI(GuildPlugin plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
         this.languageManager = plugin.getLanguageManager();
+        this.maxLevel = plugin.getMaxGuildLevel();
     }
 
-    public GuildListGUI(GuildPlugin plugin, Player player, String searchQuery, String filterType) {
+    public GuildListGUI(GuildPlugin plugin, Player player, String searchQuery) {
         this.plugin = plugin;
         this.player = player;
         this.languageManager = plugin.getLanguageManager();
-        this.searchQuery = searchQuery;
-        this.filterType = filterType;
+        this.searchQuery = searchQuery != null ? searchQuery : "";
+        this.maxLevel = plugin.getMaxGuildLevel();
+    }
+
+    public GuildListGUI(GuildPlugin plugin, Player player, String searchQuery, int minLevel, int maxLevel, String sortMode) {
+        this.plugin = plugin;
+        this.player = player;
+        this.languageManager = plugin.getLanguageManager();
+        this.searchQuery = searchQuery != null ? searchQuery : "";
+        this.minLevel = Math.max(1, minLevel);
+        this.maxLevel = Math.min(plugin.getMaxGuildLevel(), Math.max(this.minLevel, maxLevel));
+        this.sortMode = (sortMode != null) ? sortMode : "DESC";
     }
 
     @Override
@@ -58,39 +73,28 @@ public class GuildListGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
         fillBorder(inventory);
-        
-        // 添加功能按钮
         setupFunctionButtons(inventory);
-        
-        // 加载工会列表
         loadGuilds(inventory);
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 检查是否是功能按钮
         if (isFunctionButton(slot)) {
-            handleFunctionButton(player, slot);
+            handleFunctionButton(player, slot, clickType);
             return;
         }
         
-        // 检查是否是分页按钮
         if (isPaginationButton(slot)) {
             handlePaginationButton(player, slot);
             return;
         }
         
-        // 检查是否是工会按钮
         if (isGuildSlot(slot)) {
             handleGuildClick(player, slot, clickedItem, clickType);
         }
     }
     
-    /**
-     * 填充边框
-     */
     private void fillBorder(Inventory inventory) {
         ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
         for (int i = 0; i < 9; i++) {
@@ -103,27 +107,28 @@ public class GuildListGUI implements GUI {
         }
     }
     
-    /**
-     * 设置功能按钮
-     */
     private void setupFunctionButtons(Inventory inventory) {
         // 搜索按钮
         String searchText = searchQuery.isEmpty() ?
-            languageManager.getMessage(player, "gui.no-search", "无") : searchQuery;
+            languageManager.getMessage(player, "guild-list.no-search", "无") : searchQuery;
         ItemStack search = createItem(
             Material.COMPASS,
             ColorUtils.colorize(languageManager.getMessage(player, "guild-list-search-name", "&e搜索工会")),
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-list-search-lore-1", "&7搜索特定工会")),
-            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list-current-search", "当前搜索: {query}", "{query}", searchText))
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-list-search-lore-1", "&7左键: 输入关键词搜索")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-list-search-lore-2", "&7右键: 清除搜索")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list.current-search", "当前搜索: {query}", "{query}", searchText))
         );
         inventory.setItem(45, search);
 
         // 筛选按钮
+        String sortDisplay = getSortDisplayName();
         ItemStack filter = createItem(
             Material.HOPPER,
             ColorUtils.colorize(languageManager.getMessage(player, "guild-list-filter-name", "&e筛选")),
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-list-filter-lore-1", "&7按条件筛选工会")),
-            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list-current-filter", "当前筛选: {filter}", "{filter}", getFilterDisplayName()))
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-list-filter-lore-1", "&7左键: 打开筛选条件")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-list-filter-lore-2", "&7右键: 重置筛选")),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-list.filter-level-range", "&7等级: {min}-{max}", "{min}", String.valueOf(minLevel), "{max}", String.valueOf(maxLevel))),
+            ColorUtils.colorize(languageManager.getMessage(player, "guild-list.filter-sort", "&7排序: {sort}", "{sort}", sortDisplay))
         );
         inventory.setItem(47, filter);
 
@@ -136,134 +141,190 @@ public class GuildListGUI implements GUI {
         inventory.setItem(49, back);
     }
     
+    private String getSortDisplayName() {
+        switch (sortMode) {
+            case "ASC":
+                return languageManager.getMessage(player, "guild-filter.sort.asc", "人数升序");
+            case "FULL_ONLY":
+                return languageManager.getMessage(player, "guild-filter.sort.full-only", "仅满员");
+            default:
+                return languageManager.getMessage(player, "guild-filter.sort.desc", "人数降序");
+        }
+    }
+    
     /**
      * 加载工会列表
      */
     private void loadGuilds(Inventory inventory) {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            // 确保在主线程中更新GUI
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guilds == null || guilds.isEmpty()) {
-                    // 显示无工会信息
                     ItemStack noGuilds = createItem(
                         Material.BARRIER,
                         ColorUtils.colorize(languageManager.getMessage(player, "guild-list.no-guilds", "&c暂无工会")),
                         ColorUtils.colorize(languageManager.getMessage(player, "guild-list.no-guilds-lore", "&7服务器中还没有工会"))
                     );
                     inventory.setItem(22, noGuilds);
+                    this.displayedGuilds = new ArrayList<>();
                     return;
                 }
 
-                // 应用搜索和筛选
-                List<Guild> filteredGuilds = filterGuilds(guilds);
+                // 第一轮：搜索和等级范围筛选
+                List<Guild> preFiltered = preFilterGuilds(guilds);
 
-                if (filteredGuilds.isEmpty()) {
-                    // 显示无搜索结果
+                if (preFiltered.isEmpty()) {
                     ItemStack noResults = createItem(
                         Material.BARRIER,
                         ColorUtils.colorize(languageManager.getMessage(player, "guild-list.no-results", "&c无搜索结果")),
                         ColorUtils.colorize(languageManager.getMessage(player, "guild-list.no-results-lore", "&7没有找到匹配的工会"))
                     );
                     inventory.setItem(22, noResults);
+                    this.displayedGuilds = new ArrayList<>();
                     return;
                 }
-                
-                // 计算分页
-                int totalPages = (filteredGuilds.size() - 1) / GUILDS_PER_PAGE;
-                if (currentPage > totalPages) {
-                    currentPage = totalPages;
-                }
-                
-                // 设置分页按钮
-                setupPaginationButtons(inventory, totalPages);
-                
-                // 显示当前页的工会
-                displayGuilds(inventory, filteredGuilds);
+
+                // 第二轮：异步获取成员数，然后排序/筛选
+                processWithMemberCounts(inventory, preFiltered);
             });
         });
     }
     
     /**
-     * 筛选工会
+     * 预筛选：搜索 + 等级范围
      */
-    private List<Guild> filterGuilds(List<Guild> guilds) {
+    private List<Guild> preFilterGuilds(List<Guild> guilds) {
         List<Guild> filtered = new ArrayList<>();
-        
         for (Guild guild : guilds) {
-            boolean matches = true;
-            
-            // 应用搜索
+            // 搜索过滤：名称、标签、描述
             if (!searchQuery.isEmpty()) {
-                switch (filterType) {
-                    case "name":
-                        matches = guild.getName().toLowerCase().contains(searchQuery.toLowerCase());
-                        break;
-                    case "tag":
-                        if (guild.getTag() != null) {
-                            matches = guild.getTag().toLowerCase().contains(searchQuery.toLowerCase());
-                        } else {
-                            matches = false;
-                        }
-                        break;
-                    default: // all
-                        matches = guild.getName().toLowerCase().contains(searchQuery.toLowerCase()) ||
-                                (guild.getTag() != null && guild.getTag().toLowerCase().contains(searchQuery.toLowerCase()));
-                        break;
+                String lowerQuery = searchQuery.toLowerCase();
+                boolean nameMatch = guild.getName().toLowerCase().contains(lowerQuery);
+                boolean tagMatch = guild.getTag() != null && guild.getTag().toLowerCase().contains(lowerQuery);
+                boolean descMatch = guild.getDescription() != null && guild.getDescription().toLowerCase().contains(lowerQuery);
+                if (!nameMatch && !tagMatch && !descMatch) {
+                    continue;
                 }
             }
             
-            if (matches) {
-                filtered.add(guild);
+            // 等级范围
+            int guildLevel = guild.getLevel();
+            if (guildLevel < minLevel || guildLevel > maxLevel) {
+                continue;
             }
+            
+            filtered.add(guild);
         }
-        
         return filtered;
     }
     
     /**
-     * 显示工会列表
+     * 异步获取成员数，应用排序/仅满员筛选，然后显示
      */
-    private void displayGuilds(Inventory inventory, List<Guild> guilds) {
-        int startIndex = currentPage * GUILDS_PER_PAGE;
-        int endIndex = Math.min(startIndex + GUILDS_PER_PAGE, guilds.size());
-        
-        // 创建所有工会的异步任务
+    private void processWithMemberCounts(Inventory inventory, List<Guild> preFiltered) {
+        List<GuildItemData> itemDataList = new ArrayList<>();
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         
-        int slotIndex = 10; // 从第2行第2列开始
-        for (int i = startIndex; i < endIndex; i++) {
-            Guild guild = guilds.get(i);
-            if (slotIndex >= 44) break; // 避免超出显示区域
+        for (int i = 0; i < preFiltered.size(); i++) {
+            Guild guild = preFiltered.get(i);
+            final int originalIdx = i;
             
-            final int finalSlotIndex = slotIndex;
-            
-            // 异步获取成员数量并创建物品
             CompletableFuture<Void> future = plugin.getGuildService().getGuildMemberCountAsync(guild.getId())
                 .thenAccept(memberCount -> {
-                    // 在主线程中更新GUI
-                    CompatibleScheduler.runTask(plugin, () -> {
-                        ItemStack guildItem = createGuildItemWithMemberCount(guild, memberCount);
-                        inventory.setItem(finalSlotIndex, guildItem);
-                    });
+                    synchronized (itemDataList) {
+                        itemDataList.add(new GuildItemData(guild, memberCount, originalIdx));
+                    }
                 });
-            
             futures.add(future);
-            
-            slotIndex++;
-            if (slotIndex % 9 == 8) { // 跳过边框
-                slotIndex += 2;
-            }
         }
         
-        // 等待所有异步任务完成
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
+            CompatibleScheduler.runTask(plugin, () -> {
+                // 仅满员筛选
+                if ("FULL_ONLY".equals(sortMode)) {
+                    itemDataList.removeIf(data -> data.getMemberCount() < data.getGuild().getMaxMembers());
+                }
+                
+                // 排序
+                if ("ASC".equals(sortMode)) {
+                    itemDataList.sort(Comparator.comparingInt(GuildItemData::getMemberCount));
+                } else if ("FULL_ONLY".equals(sortMode)) {
+                    itemDataList.sort(Comparator.comparingInt(GuildItemData::getOriginalIndex));
+                } else {
+                    // DESC: 人数降序
+                    itemDataList.sort(Comparator.comparingInt(GuildItemData::getMemberCount).reversed());
+                }
+                
+                // 存储显示列表供点击处理使用
+                List<Guild> displayList = new ArrayList<>();
+                for (GuildItemData data : itemDataList) {
+                    displayList.add(data.getGuild());
+                }
+                this.displayedGuilds = displayList;
+                
+                // 显示
+                displayGuildsInInventory(inventory, itemDataList);
+            });
+        });
     }
     
     /**
-     * 设置分页按钮
+     * 在GUI中显示工会列表
      */
+    private void displayGuildsInInventory(Inventory inventory, List<GuildItemData> itemDataList) {
+        int totalItems = itemDataList.size();
+        if (totalItems == 0) {
+            ItemStack noResults = createItem(
+                Material.BARRIER,
+                ColorUtils.colorize(languageManager.getMessage(player, "guild-list.no-results", "&c无搜索结果")),
+                ColorUtils.colorize(languageManager.getMessage(player, "guild-list.no-results-lore", "&7没有找到匹配的工会"))
+            );
+            inventory.setItem(22, noResults);
+            setupPaginationButtons(inventory, 0);
+            return;
+        }
+        
+        int totalPages = (totalItems - 1) / GUILDS_PER_PAGE;
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+        
+        setupPaginationButtons(inventory, totalPages);
+        
+        int startIndex = currentPage * GUILDS_PER_PAGE;
+        int endIndex = Math.min(startIndex + GUILDS_PER_PAGE, totalItems);
+        
+        int slotIndex = 10;
+        for (int i = startIndex; i < endIndex; i++) {
+            if (slotIndex >= 44) break;
+            
+            GuildItemData data = itemDataList.get(i);
+            ItemStack guildItem = createGuildItemWithMemberCount(data.getGuild(), data.getMemberCount());
+            inventory.setItem(slotIndex, guildItem);
+            
+            slotIndex++;
+            if (slotIndex % 9 == 8) {
+                slotIndex += 2;
+            }
+        }
+    }
+    
+    private static class GuildItemData {
+        private final Guild guild;
+        private final int memberCount;
+        private final int originalIndex;
+        
+        GuildItemData(Guild guild, int memberCount, int originalIndex) {
+            this.guild = guild;
+            this.memberCount = memberCount;
+            this.originalIndex = originalIndex;
+        }
+        
+        Guild getGuild() { return guild; }
+        int getMemberCount() { return memberCount; }
+        int getOriginalIndex() { return originalIndex; }
+    }
+    
     private void setupPaginationButtons(Inventory inventory, int totalPages) {
-        // 上一页按钮
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
@@ -273,7 +334,6 @@ public class GuildListGUI implements GUI {
             inventory.setItem(18, previousPage);
         }
 
-        // 下一页按钮
         if (currentPage < totalPages) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
@@ -284,14 +344,12 @@ public class GuildListGUI implements GUI {
         }
     }
     
-    /**
-     * 创建工会物品（带成员数量）
-     */
     private ItemStack createGuildItemWithMemberCount(Guild guild, int memberCount) {
         List<String> lore = new ArrayList<>();
         lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7" + languageManager.getMessage(player, "gui.guild-tag", "标签") + ": {guild_tag}", guild, null));
         lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7" + languageManager.getMessage(player, "gui.leader", "会长") + ": {leader_name}", guild, null));
         lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list.members", "成员") + ": " + memberCount));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list.level", "等级") + ": " + guild.getLevel()));
         lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7" + languageManager.getMessage(player, "guild-list.created-time", "创建时间") + ": {guild_created_time}", guild, null));
         lore.add("");
         lore.add(ColorUtils.colorize("&a" + languageManager.getMessage(player, "guild-list.left-click-detail", "左键: 查看详情")));
@@ -304,143 +362,120 @@ public class GuildListGUI implements GUI {
         );
     }
     
-    /**
-     * 创建工会物品（原始方法，用于兼容性）
-     */
-    private ItemStack createGuildItem(Guild guild) {
-        return createGuildItemWithMemberCount(guild, 0); // 使用默认值
-    }
-    
-    /**
-     * 获取筛选显示名称
-     */
-    private String getFilterDisplayName() {
-        switch (filterType) {
-            case "name":
-                return languageManager.getMessage(player, "guild-list.filter-name", "按名称");
-            case "tag":
-                return languageManager.getMessage(player, "guild-list.filter-tag", "按标签");
-            default:
-                return languageManager.getMessage(player, "guild-list.filter-all", "全部");
-        }
-    }
-    
-    /**
-     * 检查是否是功能按钮
-     */
     private boolean isFunctionButton(int slot) {
         return slot == 45 || slot == 47 || slot == 49;
     }
     
-    /**
-     * 检查是否是分页按钮
-     */
     private boolean isPaginationButton(int slot) {
         return slot == 18 || slot == 26;
     }
     
-    /**
-     * 检查是否是工会槽位
-     */
     private boolean isGuildSlot(int slot) {
         return slot >= 10 && slot <= 44 && slot % 9 != 0 && slot % 9 != 8;
     }
     
-    /**
-     * 处理功能按钮点击
-     */
-    private void handleFunctionButton(Player player, int slot) {
+    private void handleFunctionButton(Player player, int slot, ClickType clickType) {
         switch (slot) {
-            case 45: // 搜索
-                handleSearch(player);
-                break;
-            case 47: // 筛选
-                handleFilter(player);
-                break;
-            case 49: // 返回
-                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
-                break;
+            case 45: handleSearch(player, clickType); break;
+            case 47: handleFilter(player, clickType); break;
+            case 49: plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player)); break;
         }
     }
     
-    /**
-     * 处理分页按钮点击
-     */
     private void handlePaginationButton(Player player, int slot) {
-        if (slot == 18) { // 上一页
+        if (slot == 18) {
             if (currentPage > 0) {
                 currentPage--;
                 refreshInventory(player);
             }
-        } else if (slot == 26) { // 下一页
+        } else if (slot == 26) {
             currentPage++;
             refreshInventory(player);
         }
     }
     
-    /**
-     * 处理工会点击
-     */
     private void handleGuildClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
+        // 计算在 displayedGuilds 中的索引
+        int guildIndex = currentPage * GUILDS_PER_PAGE + slotToDisplayIndex(slot);
+        if (guildIndex < 0 || guildIndex >= displayedGuilds.size()) return;
+        
+        Guild guild = displayedGuilds.get(guildIndex);
+        if (guild == null) return;
+        
         if (clickType == ClickType.LEFT) {
-            // 查看详情
-            handleViewGuildDetails(player, slot);
+            GuildInfoGUI guildInfoGUI = new GuildInfoGUI(plugin, player, guild);
+            plugin.getGuiManager().openGUI(player, guildInfoGUI);
         } else if (clickType == ClickType.RIGHT) {
-            // 申请加入
-            handleApplyToGuild(player, slot);
+            handleApplyToGuild(player, guild);
         }
+    }
+    
+    /**
+     * 将GUI槽位转换为显示索引（0-based within page）
+     */
+    private int slotToDisplayIndex(int slot) {
+        int row = slot / 9;
+        int col = slot % 9;
+        // 在边框内: row 1-4, col 1-7
+        if (row < 1 || row > 4 || col < 1 || col > 7) return -1;
+        return (row - 1) * 7 + (col - 1);
     }
     
     /**
      * 处理搜索
      */
-    private void handleSearch(Player player) {
-        String message = languageManager.getMessage(player, "gui.search-dev", "&a搜索功能正在开发中...");
-        player.sendMessage(ColorUtils.colorize(message));
+    private void handleSearch(Player player, ClickType clickType) {
+        if (clickType == ClickType.RIGHT) {
+            this.searchQuery = "";
+            this.currentPage = 0;
+            String message = languageManager.getMessage(player, "guild-list.search-cleared", "&e已清除搜索");
+            player.sendMessage(ColorUtils.colorize(message));
+            refreshInventory(player);
+            return;
+        }
+        
+        player.closeInventory();
+        String cancelKey = languageManager.getMessage(player, "gui.search-cancel-key", "C");
+        String promptMsg = languageManager.getMessage(player, "guild-list.search-prompt", "&a请在聊天中输入搜索关键词（输入C取消）：");
+        player.sendMessage(ColorUtils.colorize(promptMsg));
+        
+        final GuildListGUI self = this;
+        plugin.getGuiManager().setInputMode(player, input -> {
+            if (input.equalsIgnoreCase(cancelKey) || input.trim().isEmpty()) {
+                String cancelMsg = languageManager.getMessage(player, "guild-list.search-cancelled", "&e已取消搜索");
+                player.sendMessage(ColorUtils.colorize(cancelMsg));
+                CompatibleScheduler.runTask(plugin, () -> plugin.getGuiManager().openGUI(player, self));
+                return true;
+            }
+            
+            self.searchQuery = input.trim();
+            self.currentPage = 0;
+            CompatibleScheduler.runTask(plugin, () -> plugin.getGuiManager().openGUI(player, self));
+            return true;
+        });
     }
 
     /**
      * 处理筛选
      */
-    private void handleFilter(Player player) {
-        String message = languageManager.getMessage(player, "gui.filter-dev", "&a筛选功能正在开发中...");
-        player.sendMessage(ColorUtils.colorize(message));
+    private void handleFilter(Player player, ClickType clickType) {
+        if (clickType == ClickType.RIGHT) {
+            this.minLevel = 1;
+            this.maxLevel = plugin.getMaxGuildLevel();
+            this.sortMode = "DESC";
+            this.currentPage = 0;
+            String message = languageManager.getMessage(player, "guild-list.filter-reset", "&e筛选已重置");
+            player.sendMessage(ColorUtils.colorize(message));
+            refreshInventory(player);
+            return;
+        }
+        
+        GuildFilterGUI filterGUI = new GuildFilterGUI(plugin, player, this.searchQuery, minLevel, maxLevel, sortMode);
+        plugin.getGuiManager().openGUI(player, filterGUI);
     }
     
-    /**
-     * 处理查看工会详情
-     */
-    private void handleViewGuildDetails(Player player, int slot) {
-        // 获取当前页的工会列表
-        plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            // 确保在主线程中执行GUI操作
-            CompatibleScheduler.runTask(plugin, () -> {
-                if (guilds == null || guilds.isEmpty()) {
-                    String message = languageManager.getMessage(player, "gui.no-guilds", "&c没有找到工会");
-                    player.sendMessage(ColorUtils.colorize(message));
-                    return;
-                }
-
-                // 计算工会在列表中的索引
-                int guildIndex = currentPage * GUILDS_PER_PAGE + (slot - 10);
-                if (guildIndex >= 0 && guildIndex < guilds.size()) {
-                    Guild guild = guilds.get(guildIndex);
-
-                    // 打开工会信息GUI
-                    GuildInfoGUI guildInfoGUI = new GuildInfoGUI(plugin, player, guild);
-                    plugin.getGuiManager().openGUI(player, guildInfoGUI);
-                }
-            });
-        });
-    }
-    
-    /**
-     * 处理申请加入工会
-     */
-    private void handleApplyToGuild(Player player, int slot) {
-        // 检查玩家是否已有工会
+    private void handleApplyToGuild(Player player, Guild guild) {
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(playerGuild -> {
-            // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (playerGuild != null) {
                     String message = languageManager.getMessage(player, "create.already-in-guild", "&c您已经在一个工会中了！");
@@ -448,63 +483,35 @@ public class GuildListGUI implements GUI {
                     return;
                 }
 
-                // 获取当前页的工会列表
-                plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-                    // 确保在主线程中执行GUI操作
+                plugin.getGuildService().hasPendingApplicationAsync(player.getUniqueId(), guild.getId()).thenAccept(hasPending -> {
                     CompatibleScheduler.runTask(plugin, () -> {
-                        if (guilds == null || guilds.isEmpty()) {
-                            String message = languageManager.getMessage(player, "gui.no-guilds", "&c没有找到工会");
+                        if (hasPending) {
+                            String message = languageManager.getMessage(player, "apply.already-applied", "&c您已经申请过这个工会了！");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
 
-                        // 计算工会在列表中的索引
-                        int guildIndex = currentPage * GUILDS_PER_PAGE + (slot - 10);
-                        if (guildIndex >= 0 && guildIndex < guilds.size()) {
-                            Guild guild = guilds.get(guildIndex);
-
-                            // 检查是否已有待处理申请
-                            plugin.getGuildService().hasPendingApplicationAsync(player.getUniqueId(), guild.getId()).thenAccept(hasPending -> {
-                                // 确保在主线程中执行GUI操作
-                                CompatibleScheduler.runTask(plugin, () -> {
-                                    if (hasPending) {
-                                        String message = languageManager.getMessage(player, "apply.already-applied", "&c您已经申请过这个工会了！");
-                                        player.sendMessage(ColorUtils.colorize(message));
-                                        return;
-                                    }
-
-                                    // 提交申请
-                                    plugin.getGuildService().submitApplicationAsync(guild.getId(), player.getUniqueId(), player.getName(), "").thenAccept(success -> {
-                                        // 确保在主线程中执行GUI操作
-                                        CompatibleScheduler.runTask(plugin, () -> {
-                                            if (success) {
-                                                String message = languageManager.getMessage(player, "apply.success", "&a申请已提交！");
-                                                player.sendMessage(ColorUtils.colorize(message));
-                                            } else {
-                                                String message = languageManager.getMessage(player, "apply.failed", "&c申请提交失败！");
-                                                player.sendMessage(ColorUtils.colorize(message));
-                                            }
-                                        });
-                                    });
-                                });
+                        plugin.getGuildService().submitApplicationAsync(guild.getId(), player.getUniqueId(), player.getName(), "").thenAccept(success -> {
+                            CompatibleScheduler.runTask(plugin, () -> {
+                                if (success) {
+                                    String message = languageManager.getMessage(player, "apply.success", "&a申请已提交！");
+                                    player.sendMessage(ColorUtils.colorize(message));
+                                } else {
+                                    String message = languageManager.getMessage(player, "apply.failed", "&c申请提交失败！");
+                                    player.sendMessage(ColorUtils.colorize(message));
+                                }
                             });
-                        }
+                        });
                     });
                 });
             });
         });
     }
     
-    /**
-     * 刷新库存
-     */
     private void refreshInventory(Player player) {
         plugin.getGuiManager().refreshGUI(player);
     }
     
-    /**
-     * 创建物品
-     */
     private ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
