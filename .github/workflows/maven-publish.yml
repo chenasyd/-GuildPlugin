@@ -7,6 +7,7 @@ on:
     branches: [ main ]
   release:
     types: [ created ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -26,15 +27,16 @@ jobs:
       run: mvn -B test
 
     - name: Build with Maven
-      run: mvn -B package -DskipTests
+      run: mvn -B package -DskipTests -Pbuild-announcement-module,build-api-test-module
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: GuildPlugin-${{ github.sha }}
         path: |
-          guild-plugin/target/*.jar
-          guild-sdk/target/*.jar
+          guild-plugin/target/guild-plugin-*.jar
+          guild-plugin/target/modules/*.jar
+          guild-sdk/target/guild-sdk-*.jar
         retention-days: 30
 
     - name: Upload to release
@@ -43,4 +45,5 @@ jobs:
       with:
         files: |
           guild-plugin/target/*.jar
+          guild-plugin/target/modules/*.jar
           guild-sdk/target/*.jar
