@@ -1042,6 +1042,8 @@ module.command.usage-load: "&7/guild module load <jar>  &f- Load a specific modu
 module.command.usage-unload: "&7/guild module unload <id>  &f- Unload a specific module"
 module.command.usage-reload: "&7/guild module reload <id>  &f- Reload a specific module"
 module.command.usage-info: "&7/guild module info <id>  &f- View module details"
+module.command.usage-cloud: "&b/guildmodule cloud &7- List cloud modules"
+module.command.usage-cloud-download: "&b/guildmodule cloud download <name> &7- Download a cloud module"
 module.command.list.title: "Loaded Extension Modules"
 module.command.list.empty: "&7No extension modules currently loaded"
 module.command.list.entry: "{0}{1} &8| &f{2} &8(&7v{3}&8) &8[{4}]"

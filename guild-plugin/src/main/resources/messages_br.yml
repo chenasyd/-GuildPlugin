@@ -1050,6 +1050,8 @@ module.command.usage-load: "&7/guild module load <jar>  &f- Carregar um módulo 
 module.command.usage-unload: "&7/guild module unload <id>  &f- Descarregar um módulo específico"
 module.command.usage-reload: "&7/guild module reload <id>  &f- Recarregar um módulo específico"
 module.command.usage-info: "&7/guild module info <id>  &f- Ver detalhes do módulo"
+module.command.usage-cloud: "&b/guildmodule cloud &7- Listar módulos da nuvem"
+module.command.usage-cloud-download: "&b/guildmodule cloud download <name> &7- Baixar um módulo da nuvem"
 
 module.command.list.title: "Módulos de Extensão Carregados"
 module.command.list.empty: "&7Nenhum módulo de extensão carregado no momento"

@@ -7,6 +7,7 @@ import com.guild.core.module.ModuleManager;
 import com.guild.core.module.ModuleRegistry;
 import com.guild.core.module.ModuleState;
 import com.guild.core.utils.ColorUtils;
+import com.guild.module.cloud.CloudModuleRepository;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,10 +24,12 @@ import java.util.stream.Collectors;
 public class GuildModuleCommand implements CommandExecutor, TabCompleter {
 
     private final GuildPlugin plugin;
+    private final CloudModuleRepository cloudRepo;
     private static final String PERMISSION = "guild.admin.module";
 
     public GuildModuleCommand(GuildPlugin plugin) {
         this.plugin = plugin;
+        this.cloudRepo = new CloudModuleRepository(plugin);
     }
 
     @Override
@@ -48,6 +51,7 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
             case "unload" -> handleUnload(sender, args);
             case "reload" -> handleReload(sender, args);
             case "info" -> handleInfo(sender, args);
+            case "cloud" -> handleCloud(sender, args);
             default -> sendUsage(sender);
         }
         return true;
@@ -60,7 +64,7 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
             return List.of();
         }
         if (args.length == 1) {
-            return Arrays.asList("list", "load", "unload", "reload", "info")
+            return Arrays.asList("list", "load", "unload", "reload", "info", "cloud")
                     .stream()
                     .filter(s -> s.startsWith(args[0].toLowerCase()))
                     .collect(Collectors.toList());
@@ -246,6 +250,14 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(ColorUtils.colorize("&e&l=========================="));
     }
 
+    private void handleCloud(CommandSender sender, String[] args) {
+        if (args.length >= 2 && "download".equalsIgnoreCase(args[1]) && args.length >= 3) {
+            cloudRepo.downloadModule(sender, args[2]);
+        } else {
+            cloudRepo.listModules(sender);
+        }
+    }
+
     private void sendUsage(CommandSender sender) {
         var lang = plugin.getLanguageManager();
         sender.sendMessage(ColorUtils.colorize(lang.getMessage("module.command.usage-header", "")));
@@ -254,5 +266,7 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(ColorUtils.colorize(lang.getMessage("module.command.usage-unload", "")));
         sender.sendMessage(ColorUtils.colorize(lang.getMessage("module.command.usage-reload", "")));
         sender.sendMessage(ColorUtils.colorize(lang.getMessage("module.command.usage-info", "")));
+        sender.sendMessage(ColorUtils.colorize(lang.getMessage("module.command.usage-cloud", "")));
+        sender.sendMessage(ColorUtils.colorize(lang.getMessage("module.command.usage-cloud-download", "")));
     }
 }

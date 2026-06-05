@@ -1094,6 +1094,8 @@ module.command.usage-load: "&7/guild module load <jar>  &f- 加载指定模块"
 module.command.usage-unload: "&7/guild module unload <id>  &f- 卸载指定模块"
 module.command.usage-reload: "&7/guild module reload <id>  &f- 重载指定模块"
 module.command.usage-info: "&7/guild module info <id>  &f- 查看模块详细信息"
+module.command.usage-cloud: "&b/guildmodule cloud &7- 列出云端模块"
+module.command.usage-cloud-download: "&b/guildmodule cloud download <name> &7- 下载云端模块"
 
 module.command.list.title: "已加载的扩展模块"
 module.command.list.empty: "&7当前没有已加载的扩展模块"
