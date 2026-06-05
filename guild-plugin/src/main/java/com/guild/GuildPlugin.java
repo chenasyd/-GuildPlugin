@@ -22,6 +22,7 @@ import com.guild.core.utils.ServerUtils;
 import com.guild.core.utils.TestUtils;
 import com.guild.metrics.GuildMetrics;
 import com.guild.update.UpdateChecker;
+import com.guild.update.UpdateManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -44,6 +45,7 @@ public class GuildPlugin extends JavaPlugin {
     private com.guild.services.GuildInvestmentService guildInvestmentService;
     private ModuleManager moduleManager;
     private GuildMetrics guildMetrics;
+    private UpdateManager updateManager;
     private UpdateChecker updateChecker;
     // 等级需求配置（key = 当前等级 -> 所需金额达到下一等级）
     private Map<Integer, Double> levelRequirements = new HashMap<>();
@@ -133,8 +135,9 @@ public class GuildPlugin extends JavaPlugin {
             int bstatsPluginId = 31803;
             guildMetrics = new GuildMetrics(this, bstatsPluginId);
 
-            // 启动版本检测（Modrinth，每日检查）
-            updateChecker = new UpdateChecker(this);
+            // 启动版本检测（GitHub + Modrinth 双源，每日检查）
+            updateManager = new UpdateManager(this);
+            updateChecker = new UpdateChecker(this, updateManager);
             updateChecker.start();
             
             // 注册命令
@@ -290,6 +293,10 @@ public class GuildPlugin extends JavaPlugin {
 
     public GuildMetrics getGuildMetrics() {
         return guildMetrics;
+    }
+
+    public UpdateManager getUpdateManager() {
+        return updateManager;
     }
 
     /**

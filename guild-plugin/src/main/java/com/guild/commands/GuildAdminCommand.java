@@ -22,6 +22,8 @@ import com.guild.gui.RelationManagementGUI;
 import com.guild.models.Guild;
 import com.guild.models.GuildRelation;
 import com.guild.core.language.LanguageManager; // 新增
+import com.guild.update.UpdateManager;
+import com.guild.update.UpdateManager.VersionInfo;
 
 /**
  * 工会管理员命令
@@ -86,6 +88,9 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             case "test":
                 handleTest(sender, args);
                 break;
+            case "update":
+                handleUpdate(sender, args);
+                break;
             case "help":
                 handleHelp(sender);
                 break;
@@ -106,7 +111,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         }
         
         if (args.length == 1) {
-            completions.addAll(Arrays.asList("list", "info", "delete", "freeze", "unfreeze", "transfer", "economy", "relation", "reload", "help"));
+            completions.addAll(Arrays.asList("list", "info", "delete", "freeze", "unfreeze", "transfer", "economy", "relation", "reload", "update", "help"));
         } else if (args.length == 2) {
             switch (args[0].toLowerCase()) {
                 case "info":
@@ -121,6 +126,9 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                             completions.add(guild.getName());
                         }
                     });
+                    break;
+                case "update":
+                    completions.addAll(Arrays.asList("check", "download"));
                     break;
                 case "relation":
                     completions.addAll(Arrays.asList("list", "create", "delete", "gui"));
@@ -680,6 +688,95 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
+    private void handleUpdate(CommandSender sender, String[] args) {
+        UpdateManager updateManager = plugin.getUpdateManager();
+
+        if (args.length >= 2 && "download".equalsIgnoreCase(args[1])) {
+            // Download the update
+            if (!sender.hasPermission("guild.admin.update")) {
+                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                    "general.no-permission", "&cYou do not have permission!")));
+                return;
+            }
+
+            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                "admin.update.checking", "&6[GuildPlugin] &eChecking for latest version...")));
+            CompatibleScheduler.runTaskAsync(plugin, () -> {
+                VersionInfo info = updateManager.checkLatestVersion();
+                if (info == null) {
+                    sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                        "admin.update.fetch-failed", "&c[GuildPlugin] Failed to fetch version info.")));
+                    return;
+                }
+
+                String localVersion = plugin.getDescription().getVersion();
+                int cmp = UpdateManager.compareVersions(localVersion, info.version);
+                if (cmp >= 0) {
+                    sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                        "admin.update.already-latest", "&a[GuildPlugin] You are already running the latest version (v{version}).")
+                        .replace("{version}", localVersion)));
+                    return;
+                }
+
+                updateManager.downloadUpdate(info, sender);
+
+                // Notify all online admins
+                String broadcastMsg = languageManager.getMessage(
+                    "admin.update.download-broadcast", "&6[GuildPlugin] &e{player} downloaded v{version}. Restart to apply.")
+                    .replace("{player}", sender.getName())
+                    .replace("{version}", info.version);
+                for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
+                    if (p.hasPermission("guild.admin") && !p.equals(sender)) {
+                        p.sendMessage(ColorUtils.colorize(broadcastMsg));
+                    }
+                }
+            });
+            return;
+        }
+
+        // Check for updates (no download)
+        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+            "admin.update.checking-dual", "&6[GuildPlugin] &eChecking for updates from GitHub & Modrinth...")));
+        CompatibleScheduler.runTaskAsync(plugin, () -> {
+            VersionInfo info = updateManager.checkLatestVersion();
+            if (info == null) {
+                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                    "admin.update.unreachable", "&c[GuildPlugin] Unable to check for updates. Both GitHub and Modrinth are unreachable.")));
+                return;
+            }
+
+            String localVersion = plugin.getDescription().getVersion();
+            int cmp = UpdateManager.compareVersions(localVersion, info.version);
+
+            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                "admin.update.header", "&6======== GuildPlugin Update ========")));
+            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                "admin.update.source", "&eSource: &f{source}").replace("{source}", info.source)));
+            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                "admin.update.current", "&eCurrent: &fv{version}").replace("{version}", localVersion)));
+            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                cmp < 0 ? "admin.update.latest" : "admin.update.latest-up-to-date",
+                "&eLatest: &fv{version}").replace("{version}", info.version)));
+
+            if (cmp < 0) {
+                if (!info.changelog.isEmpty()) {
+                    sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                        "admin.update.changelog-title", "&eChangelog:")));
+                    for (String line : info.changelog.split("\n")) {
+                        sender.sendMessage(ColorUtils.colorize("&7  " + line));
+                    }
+                }
+                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                    "admin.update.usage-download", "&eUsage: &f/guildadmin update download &7to download the update")));
+            } else {
+                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                    "admin.update.up-to-date", "&aYou are running the latest version.")));
+            }
+            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                "admin.update.footer", "&6====================================")));
+        });
+    }
+
     private void handleTest(CommandSender sender, String[] args) {
         if (args.length < 2) {
             String usage = languageManager.getMessage("admin.test.usage", "&c用法: /guildadmin test <test-type>");
@@ -835,6 +932,8 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.economy", "&e/guildadmin economy <工会> <操作> <金额> &7- 管理工会经济")));
         sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.relation", "&e/guildadmin relation <操作> &7- 管理工会关系")));
         sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.reload", "&e/guildadmin reload &7- 重新加载配置")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.update", "&e/guildadmin update &7- Check for plugin updates")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.update-download", "&e/guildadmin update download &7- Download and install update")));
         sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.help", "&e/guildadmin help &7- 显示帮助信息")));
     }
 }

@@ -78,3 +78,6 @@ permissions:
   guild.admin.module:
     description: 允许管理扩展模块（加载/卸载/重载）
     default: op
+  guild.admin.update:
+    description: 允许下载并安装插件更新
+    default: op

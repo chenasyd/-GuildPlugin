@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/guild-plugin.iml" filepath="$PROJECT_DIR$/guild-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guild-plugin/guild-plugin.iml" filepath="$PROJECT_DIR$/guild-plugin/guild-plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/guild-sdk/guild-sdk.iml" filepath="$PROJECT_DIR$/guild-sdk/guild-sdk.iml" />
     </modules>
   </component>
 </project>

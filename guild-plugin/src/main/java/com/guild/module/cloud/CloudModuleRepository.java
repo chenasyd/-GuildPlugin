@@ -19,18 +19,23 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * GitHub 云端模块仓库
- * 从 GitHub Releases 获取模块列表，支持下载模块 jar 到本地 modules 目录
+ * 从 chenasyd/GuildPlugin Releases 获取所有模块 jar，支持下载到本地 modules 目录。
+ * <p>
+ * tag_name 格式为 {@code sdk-1.5.5}，其中 SDK 版本号仅作为信息展示，默认向后兼容，
+ * 实际 SDK 版本不影响模块兼容性。
  */
 public class CloudModuleRepository {
 
+    /** 模块仓库 — 获取全部 Release（每个 release 的 tag 代表 SDK 版本） */
     private static final String RELEASES_API =
-            "https://api.github.com/repos/chenasyd/-GuildPlugin/releases/latest";
+            "https://api.github.com/repos/chenasyd/GuildPlugin/releases";
     private static final String USER_AGENT = "GuildPlugin/CloudModuleRepository (chenasyd)";
-    private static final String MODULE_PREFIX = "modules-";
     private static final int TIMEOUT = 10000;
 
     static {
@@ -54,14 +59,22 @@ public class CloudModuleRepository {
     private final GuildPlugin plugin;
     private final Gson gson = new Gson();
 
-    public record ModuleInfo(String name, String fileName, String downloadUrl, long size) {}
+    /**
+     * @param name         模块显示名（去掉 .jar 后缀的文件名）
+     * @param fileName     原始文件名（如 modules-announcement.jar）
+     * @param downloadUrl  浏览器下载链接
+     * @param size         文件大小（字节）
+     * @param sdkVersion   对应的 SDK 版本号（从 tag_name 剥离 sdk- 前缀），仅作信息展示
+     */
+    public record ModuleInfo(String name, String fileName, String downloadUrl,
+                             long size, String sdkVersion) {}
 
     public CloudModuleRepository(GuildPlugin plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * 异步列出云端模块
+     * 异步列出云端模块 — 遍历所有 Release，按文件名去重取最新 SDK 版本
      */
     public void listModules(CommandSender sender) {
         CompatibleScheduler.runTaskAsync(plugin, () -> {
@@ -74,7 +87,8 @@ public class CloudModuleRepository {
                 sender.sendMessage(ColorUtils.colorize("&b&l=== Cloud Modules ==="));
                 for (ModuleInfo m : modules) {
                     sender.sendMessage(ColorUtils.colorize(
-                            "&e" + m.name() + " &7- " + formatSize(m.size())));
+                            "&e" + m.fileName() + " &7- " + formatSize(m.size())
+                            + " &8(sdk: " + m.sdkVersion() + ")"));
                 }
             });
         });
@@ -88,7 +102,9 @@ public class CloudModuleRepository {
             try {
                 List<ModuleInfo> modules = fetchModules();
                 ModuleInfo target = modules.stream()
-                        .filter(m -> m.name().equalsIgnoreCase(moduleName))
+                        .filter(m -> m.name().equalsIgnoreCase(moduleName)
+                                || m.fileName().equalsIgnoreCase(moduleName)
+                                || (m.fileName().equalsIgnoreCase(moduleName + ".jar")))
                         .findFirst().orElse(null);
 
                 if (target == null) {
@@ -96,13 +112,16 @@ public class CloudModuleRepository {
                     return;
                 }
 
-                File modulesDir = plugin.getServiceContainer().get(ModuleManager.class).getModulesDirectory();
+                File modulesDir = plugin.getServiceContainer().get(ModuleManager.class)
+                        .getModulesDirectory();
                 File outFile = new File(modulesDir, target.fileName());
 
-                reply(sender, "&7Downloading " + target.fileName() + " (" + formatSize(target.size()) + ")...");
+                reply(sender, "&7Downloading " + target.fileName() + " ("
+                        + formatSize(target.size()) + ", sdk: " + target.sdkVersion() + ")...");
 
                 // 下载
-                HttpURLConnection conn = (HttpURLConnection) new URL(target.downloadUrl()).openConnection();
+                HttpURLConnection conn = (HttpURLConnection)
+                        new URL(target.downloadUrl()).openConnection();
                 conn.setRequestProperty("User-Agent", USER_AGENT);
                 conn.setConnectTimeout(TIMEOUT);
                 conn.setReadTimeout(60000); // 下载超时 60s
@@ -114,7 +133,8 @@ public class CloudModuleRepository {
                 }
 
                 reply(sender, "&aDownloaded " + target.fileName()
-                        + ". Use &e/guildmodule load " + target.fileName() + " &ato load it.");
+                        + ". Use &e/guildmodule load " + target.fileName()
+                        + " &ato load it.");
 
             } catch (Exception e) {
                 reply(sender, "&cDownload failed: " + e.getMessage());
@@ -124,30 +144,50 @@ public class CloudModuleRepository {
 
     // ==================== 内部方法 ====================
 
+    /**
+     * 拉取所有 Release，按文件名去重（最新 SDK 版本优先）。
+     * GitHub releases API 默认按创建时间倒序，因此第一个出现的 release 即是最新。
+     */
     private List<ModuleInfo> fetchModules() {
-        List<ModuleInfo> list = new ArrayList<>();
+        Map<String, ModuleInfo> dedup = new LinkedHashMap<>();
         try {
-            JsonObject release = fetchRelease();
-            if (release == null) return list;
+            JsonArray releases = fetchReleases();
+            if (releases == null) return new ArrayList<>();
 
-            JsonArray assets = release.getAsJsonArray("assets");
-            for (JsonElement e : assets) {
-                JsonObject a = e.getAsJsonObject();
-                String name = a.get("name").getAsString();
-                if (name.startsWith(MODULE_PREFIX) && name.endsWith(".jar")) {
-                    String moduleName = name.substring(MODULE_PREFIX.length(), name.length() - 4);
-                    list.add(new ModuleInfo(moduleName, name,
-                            a.get("browser_download_url").getAsString(),
-                            a.get("size").getAsLong()));
+            for (JsonElement relElem : releases) {
+                JsonObject release = relElem.getAsJsonObject();
+                String tagName = release.get("tag_name").getAsString();
+                String sdkVersion = extractSdkVersion(tagName);
+
+                JsonArray assets = release.getAsJsonArray("assets");
+                if (assets == null) continue;
+
+                for (JsonElement a : assets) {
+                    JsonObject asset = a.getAsJsonObject();
+                    String fileName = asset.get("name").getAsString();
+
+                    if (!fileName.endsWith(".jar")) continue;
+
+                    String displayName = fileName.substring(0, fileName.length() - 4);
+                    // 按文件名去重 — 保留最先遇到的（最新 SDK）
+                    dedup.putIfAbsent(fileName, new ModuleInfo(
+                            displayName,
+                            fileName,
+                            asset.get("browser_download_url").getAsString(),
+                            asset.get("size").getAsLong(),
+                            sdkVersion));
                 }
             }
         } catch (Exception ex) {
             plugin.getLogger().warning("[CloudModuleRepo] Fetch failed: " + ex.getMessage());
         }
-        return list;
+        return new ArrayList<>(dedup.values());
     }
 
-    private JsonObject fetchRelease() throws IOException {
+    /**
+     * 请求全部 Release（返回 JSON 数组）
+     */
+    private JsonArray fetchReleases() throws IOException {
         HttpURLConnection conn = (HttpURLConnection) new URL(RELEASES_API).openConnection();
         conn.setRequestProperty("Accept", "application/json");
         conn.setRequestProperty("User-Agent", USER_AGENT);
@@ -162,10 +202,21 @@ public class CloudModuleRepository {
                 String line;
                 while ((line = r.readLine()) != null) sb.append(line);
             }
-            return gson.fromJson(sb.toString(), JsonObject.class);
+            return gson.fromJson(sb.toString(), JsonArray.class);
         } finally {
             conn.disconnect();
         }
+    }
+
+    /**
+     * 从 tag_name 提取 SDK 版本号。
+     * 例: "sdk-1.5.5" → "1.5.5"
+     */
+    private static String extractSdkVersion(String tagName) {
+        if (tagName.startsWith("sdk-")) {
+            return tagName.substring(4);
+        }
+        return tagName;
     }
 
     private void reply(CommandSender sender, String msg) {
