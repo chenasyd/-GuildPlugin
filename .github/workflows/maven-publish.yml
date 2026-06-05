@@ -27,7 +27,13 @@ jobs:
       run: mvn -B test
 
     - name: Build with Maven
-      run: mvn -B package -DskipTests -Pbuild-announcement-module,build-api-test-module
+      run: mvn -B package -DskipTests
+
+    - name: Build Announcement Module
+      run: mvn -B package -DskipTests -Pbuild-announcement-module
+
+    - name: Build API Test Module
+      run: mvn -B package -DskipTests -Pbuild-api-test-module
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
