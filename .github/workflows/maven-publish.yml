@@ -32,6 +32,9 @@ jobs:
     - name: Build Announcement Module
       run: mvn -B package -DskipTests -Pbuild-announcement-module
 
+    - name: Build Quest Module
+      run: mvn -B package -DskipTests -Pbuild-quest-module
+
     - name: Build API Test Module
       run: mvn -B package -DskipTests -Pbuild-api-test-module
 
