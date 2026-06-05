@@ -51,7 +51,7 @@ A feature-complete Minecraft guild/faction system with economy, relations, level
 4. Configure `plugins/GuildPlugin/config.yml` to your needs
 5. Run `/guildadmin reload` to apply configuration changes
 
-> ⚠️ When upgrading from an older version (v1.3.9+), delete `messages_*.yml` files and let the plugin regenerate them to avoid display errors.
+> ⚠️ **When upgrading the plugin**: Always back up your configuration and data first. It is recommended to delete `messages_*.yml` files and let the plugin regenerate them — this ensures all new messages are included and avoids display errors.
 
 ## Building from source
 
