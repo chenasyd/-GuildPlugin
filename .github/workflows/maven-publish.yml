@@ -34,9 +34,9 @@ jobs:
       with:
         name: GuildPlugin-${{ github.sha }}
         path: |
-          guild-plugin/target/guild-plugin-*.jar
+          guild-plugin/target/*.jar
           guild-plugin/target/modules/*.jar
-          guild-sdk/target/guild-sdk-*.jar
+          guild-sdk/target/*.jar
         retention-days: 30
 
     - name: Upload to release
