@@ -21,6 +21,7 @@ import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ServerUtils;
 import com.guild.core.utils.TestUtils;
 import com.guild.metrics.GuildMetrics;
+import com.guild.update.UpdateChecker;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -43,6 +44,7 @@ public class GuildPlugin extends JavaPlugin {
     private com.guild.services.GuildInvestmentService guildInvestmentService;
     private ModuleManager moduleManager;
     private GuildMetrics guildMetrics;
+    private UpdateChecker updateChecker;
     // 等级需求配置（key = 当前等级 -> 所需金额达到下一等级）
     private Map<Integer, Double> levelRequirements = new HashMap<>();
     private int maxGuildLevel = 10;
@@ -130,6 +132,10 @@ public class GuildPlugin extends JavaPlugin {
             // 初始化 bStats 数据统计
             int bstatsPluginId = 31803;
             guildMetrics = new GuildMetrics(this, bstatsPluginId);
+
+            // 启动版本检测（Modrinth，每日检查）
+            updateChecker = new UpdateChecker(this);
+            updateChecker.start();
             
             // 注册命令
             registerCommands();
