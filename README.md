@@ -67,7 +67,7 @@ The output JAR will be at `guild-plugin/target/guild-plugin-1.5.3.jar`.
 To include example modules:
 
 ```bash
-mvn clean package -pl guild-plugin -Pbuild-member-rank-module
+mvn clean package -pl guild-plugin -Pbuild-announcement-module
 ```
 
 ## Commands
