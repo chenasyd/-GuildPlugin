@@ -699,6 +699,10 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 return;
             }
 
+            // Pre-download warning about old plugin JARs
+            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                "admin.update.cleanup-notice", "&6[GuildPlugin] &eImportant: After downloading, please ensure ALL old "
+                    + "GuildPlugin JARs are deleted from the plugins folder before restarting!")));
             sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
                 "admin.update.checking", "&6[GuildPlugin] &eChecking for latest version...")));
             CompatibleScheduler.runTaskAsync(plugin, () -> {
@@ -720,9 +724,16 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
                 updateManager.downloadUpdate(info, sender);
 
+                // Post-download reminder
+                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                    "admin.update.manual-cleanup-reminder",
+                    "&6[GuildPlugin] &eREMINDER: Check the plugins folder and delete ALL old "
+                        + "GuildPlugin JARs (including renamed ones) before restarting the server!")));
+
                 // Notify all online admins
                 String broadcastMsg = languageManager.getMessage(
-                    "admin.update.download-broadcast", "&6[GuildPlugin] &e{player} downloaded v{version}. Restart to apply.")
+                    "admin.update.download-broadcast", "&6[GuildPlugin] &e{player} downloaded v{version}. "
+                        + "Remove all old GuildPlugin JARs and restart to apply.")
                     .replace("{player}", sender.getName())
                     .replace("{version}", info.version);
                 for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) {

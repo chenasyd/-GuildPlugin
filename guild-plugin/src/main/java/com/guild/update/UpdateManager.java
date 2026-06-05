@@ -14,6 +14,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
@@ -227,8 +231,8 @@ public class UpdateManager {
                 return null;
             }
 
-            // Remove old JARs with the same naming pattern
-            deleteOldJars(pluginsFolder, info.version);
+            // Remove old JARs — both pattern-matched and renamed
+            List<String> manualCleanup = scanAndRemoveAllOldJars(pluginsFolder, info.version, sender);
 
             // Move to plugins folder
             Files.move(tempFile, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -236,7 +240,14 @@ public class UpdateManager {
             logger.info("[UpdateManager] Downloaded " + targetName + " (" + formatSize(actualSize) + ")");
             if (sender != null) {
                 sender.sendMessage("[GuildPlugin] Saved: " + targetName + " (" + formatSize(actualSize) + ")");
-                sender.sendMessage("[GuildPlugin] Restart the server to apply the update.");
+                if (!manualCleanup.isEmpty()) {
+                    sender.sendMessage("[GuildPlugin] §c§lWARNING: §cThe following old JARs could not be deleted (file may be locked):");
+                    for (String name : manualCleanup) {
+                        sender.sendMessage("[GuildPlugin] §c  - " + name);
+                    }
+                    sender.sendMessage("[GuildPlugin] §cPlease manually delete them before restarting the server!");
+                }
+                sender.sendMessage("[GuildPlugin] §aRestart the server to apply the update.");
             }
 
             return targetFile;
@@ -312,21 +323,91 @@ public class UpdateManager {
         return sb.toString();
     }
 
-    private void deleteOldJars(File pluginsFolder, String newVersion) {
-        File[] jars = pluginsFolder.listFiles((dir, name) ->
+    /**
+     * Scan and remove all old GuildPlugin JARs, including renamed ones.
+     * Standard pattern-matched JARs are deleted first, then a deeper scan
+     * of all JARs checks plugin.yml to detect renamed copies.
+     *
+     * @param pluginsFolder the plugins directory
+     * @param newVersion    the newly downloaded version (to keep)
+     * @param sender        command sender for progress messages
+     * @return list of JAR filenames that could not be deleted (need manual cleanup)
+     */
+    private List<String> scanAndRemoveAllOldJars(File pluginsFolder, String newVersion, CommandSender sender) {
+        List<String> needsManualCleanup = new ArrayList<>();
+        if (pluginsFolder == null || !pluginsFolder.isDirectory()) return needsManualCleanup;
+
+        // Step 1: Standard pattern-based deletion (GuildPlugin-x.y.z.jar)
+        File[] stdJars = pluginsFolder.listFiles((dir, name) ->
                 name.matches("[Gg]uild[Pp]lugin-\\d+\\.\\d+.*\\.jar"));
-        if (jars == null) return;
-        for (File old : jars) {
-            try {
-                if (!old.getName().contains(newVersion)) {
-                    if (old.delete()) {
-                        logger.info("[UpdateManager] Removed old JAR: " + old.getName());
-                    }
-                }
-            } catch (Exception e) {
-                logger.warning("[UpdateManager] Could not remove " + old.getName() + ": " + e.getMessage());
+        if (stdJars != null) {
+            for (File old : stdJars) {
+                if (old.getName().contains(newVersion)) continue;
+                tryDeleteOrWarn(old, "pattern-matched", needsManualCleanup, sender);
             }
         }
+
+        // Step 2: Deep scan — check plugin.yml in all remaining JARs
+        File[] allJars = pluginsFolder.listFiles((dir, name) ->
+                name.toLowerCase().endsWith(".jar"));
+        if (allJars != null) {
+            for (File jar : allJars) {
+                // Skip the newly downloaded file
+                if (jar.getName().contains(newVersion)) continue;
+                // Skip files already handled in step 1 (standard naming)
+                if (jar.getName().matches("[Gg]uild[Pp]lugin-\\d+\\.\\d+.*\\.jar")) continue;
+
+                if (isGuildPluginJar(jar)) {
+                    tryDeleteOrWarn(jar, "renamed", needsManualCleanup, sender);
+                }
+            }
+        }
+
+        return needsManualCleanup;
+    }
+
+    /**
+     * Try to delete a file; if it fails, add to manual cleanup list and warn.
+     */
+    private void tryDeleteOrWarn(File file, String reason, List<String> needsCleanup, CommandSender sender) {
+        try {
+            if (file.delete()) {
+                logger.info("[UpdateManager] Removed " + reason + " old JAR: " + file.getName());
+                if (sender != null) {
+                    sender.sendMessage("[GuildPlugin] §aRemoved old JAR: §f" + file.getName());
+                }
+            } else {
+                needsCleanup.add(file.getName());
+                logger.warning("[UpdateManager] Could not delete " + file.getName() + " (file may be locked)");
+            }
+        } catch (Exception e) {
+            needsCleanup.add(file.getName());
+            logger.warning("[UpdateManager] Could not remove " + file.getName() + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Check whether a JAR file is a GuildPlugin by reading its plugin.yml.
+     */
+    private boolean isGuildPluginJar(File jarFile) {
+        try (JarFile jar = new JarFile(jarFile)) {
+            JarEntry entry = jar.getJarEntry("plugin.yml");
+            if (entry == null) return false;
+            try (InputStream is = jar.getInputStream(entry);
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    String trimmed = line.trim();
+                    // Match "main: com.guild.GuildPlugin" (with or without quotes, any spacing)
+                    if (trimmed.startsWith("main:") && trimmed.contains("com.guild.GuildPlugin")) {
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+            // Can't read the JAR — not a concern, just skip
+        }
+        return false;
     }
 
     private String formatSize(long bytes) {
