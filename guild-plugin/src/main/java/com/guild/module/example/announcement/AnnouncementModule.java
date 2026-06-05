@@ -7,6 +7,7 @@ import com.guild.core.module.ModuleDescriptor;
 import com.guild.core.module.ModuleState;
 import com.guild.core.module.hook.GUIExtensionHook;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.ConsoleLogger;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.sdk.GuildPluginAPI;
@@ -98,7 +99,7 @@ public class AnnouncementModule implements GuildModule {
             public Object getModuleInstance() { return AnnouncementModule.this; }
         });
 
-        context.getLogger().info(context.getMessage("module.announcement.loaded",
+        ConsoleLogger.info(context.getMessage("module.announcement.loaded",
                 "[Announcement] Announcement system enabled"));
 
         var langManager = context.getLanguageManager();
@@ -115,7 +116,7 @@ public class AnnouncementModule implements GuildModule {
             announcementManager.saveAll();
             announcementManager.clearAll();
         }
-        context.getLogger().info(context.getMessage("module.announcement.unloaded",
+        ConsoleLogger.info(context.getMessage("module.announcement.unloaded",
                 "[Announcement] Announcement system disabled"));
     }
 

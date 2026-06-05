@@ -7,6 +7,7 @@ import com.guild.core.module.ModuleDescriptor;
 import com.guild.core.module.ModuleState;
 import com.guild.core.module.hook.GUIExtensionHook;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.ConsoleLogger;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.sdk.GuildPluginAPI;
@@ -157,7 +158,7 @@ public class MemberRankModule implements GuildModule {
                 (player, ctx) -> handleOpenRankGUIFromInfo(player, ctx)
         );
 
-        context.getLogger().info(context.getMessage("module.member-rank.loaded",
+        ConsoleLogger.info(context.getMessage("module.member-rank.loaded",
                 "[MemberRank] Member contribution ranking system enabled"));
 
         ModuleDescriptor desc = context.getDescriptor();
@@ -176,7 +177,7 @@ public class MemberRankModule implements GuildModule {
             rankManager.saveAll();
             rankManager.clearAll();
         }
-        context.getLogger().info(context.getMessage("module.member-rank.unloaded",
+        ConsoleLogger.info(context.getMessage("module.member-rank.unloaded",
                 "[MemberRank] Member contribution ranking system disabled"));
     }
 

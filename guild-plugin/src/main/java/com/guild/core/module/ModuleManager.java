@@ -5,6 +5,7 @@ import com.guild.core.language.LanguageManager;
 import com.guild.core.module.exception.ModuleConflictException;
 import com.guild.core.module.exception.ModuleDependencyException;
 import com.guild.core.module.exception.ModuleLoadException;
+import com.guild.core.utils.ConsoleLogger;
 import com.guild.sdk.GuildPluginAPI;
 
 import java.io.File;
@@ -51,13 +52,13 @@ public class ModuleManager {
      * 插件启动时自动扫描并加载所有模块
      */
     public void loadAllModules() {
-        logger.info(lang.getMessage("module.system.scanning", ""));
+        ConsoleLogger.info(lang.getMessage("module.system.scanning", ""));
 
         File[] jarFiles = modulesDir.listFiles((dir, name) ->
                 name.endsWith(".jar") && !name.startsWith("."));
 
         if (jarFiles == null || jarFiles.length == 0) {
-            logger.info(lang.getMessage("module.system.no-modules", ""));
+            ConsoleLogger.info(lang.getMessage("module.system.no-modules", ""));
             return;
         }
 
@@ -74,7 +75,7 @@ public class ModuleManager {
             }
         }
 
-        logger.info(lang.getIndexedMessage("module.system.load-complete", "",
+        ConsoleLogger.info(lang.getIndexedMessage("module.system.load-complete", "",
                 String.valueOf(successCount), String.valueOf(failCount)));
     }
 
@@ -90,7 +91,7 @@ public class ModuleManager {
         ModuleDescriptor descriptor = loader.parseDescriptor(jarFile);
         String moduleId = descriptor.getId();
 
-        logger.fine(lang.getIndexedMessage("module.system.loading", "", moduleId));
+        ConsoleLogger.info(lang.getIndexedMessage("module.system.loading", "", moduleId));
 
         // 2. 冲突检查
         if (registry.isLoaded(moduleId)) {
@@ -127,7 +128,7 @@ public class ModuleManager {
         registry.register(module);
         registry.setState(moduleId, ModuleState.ACTIVE);
 
-        logger.info(lang.getIndexedMessage("module.system.loaded-successfully", "",
+        ConsoleLogger.info(lang.getIndexedMessage("module.system.loaded-successfully", "",
                 descriptor.getName(), descriptor.getVersion(), descriptor.getAuthor()));
 
         return module;
@@ -141,7 +142,7 @@ public class ModuleManager {
     public synchronized boolean unloadModule(String moduleId) {
         GuildModule module = registry.getModule(moduleId);
         if (module == null) {
-            logger.warning(lang.getIndexedMessage("module.error.not-loaded", "", moduleId));
+            ConsoleLogger.warn(lang.getIndexedMessage("module.error.not-loaded", "", moduleId));
             return false;
         }
 
@@ -153,7 +154,7 @@ public class ModuleManager {
             return false;
         }
 
-        logger.info(lang.getIndexedMessage("module.system.unloading", "", moduleId));
+        ConsoleLogger.info(lang.getIndexedMessage("module.system.unloading", "", moduleId));
         registry.setState(moduleId, ModuleState.DISABLING);
 
         try {
@@ -162,13 +163,13 @@ public class ModuleManager {
             module.onDisable();
             loader.unloadClassloader(moduleId);
 
-            logger.info(lang.getIndexedMessage("module.system.unloaded-successfully", "", moduleId));
+            ConsoleLogger.info(lang.getIndexedMessage("module.system.unloaded-successfully", "", moduleId));
             return true;
 
         } catch (Exception e) {
             registry.setState(moduleId, ModuleState.ERROR);
-            logger.log(Level.SEVERE,
-                    lang.getIndexedMessage("module.error.unload-failed", "", moduleId, e.getMessage()), e);
+            ConsoleLogger.severe(lang.getIndexedMessage("module.error.unload-failed", "", moduleId, e.getMessage()));
+            logger.log(Level.SEVERE, e.getMessage(), e);
             return false;
         }
     }
@@ -181,11 +182,11 @@ public class ModuleManager {
     public synchronized boolean reloadModule(String moduleId) {
         File moduleFile = findModuleFile(moduleId);
         if (moduleFile == null) {
-            logger.warning(lang.getIndexedMessage("module.error.file-not-found", "", moduleId));
+            ConsoleLogger.warn(lang.getIndexedMessage("module.error.file-not-found", "", moduleId));
             return false;
         }
 
-        logger.info(lang.getIndexedMessage("module.system.reloading", "", moduleId));
+        ConsoleLogger.info(lang.getIndexedMessage("module.system.reloading", "", moduleId));
 
         boolean unloaded = unloadModule(moduleId);
         if (!unloaded) {
@@ -194,7 +195,7 @@ public class ModuleManager {
 
         try {
             loadModule(moduleFile);
-            logger.info(lang.getIndexedMessage("module.system.reloaded-successfully", "", moduleId));
+            ConsoleLogger.info(lang.getIndexedMessage("module.system.reloaded-successfully", "", moduleId));
             return true;
         } catch (ModuleLoadException e) {
             logError(e);
@@ -222,7 +223,7 @@ public class ModuleManager {
 
         loader.unloadAll();
         sharedApi.clearAll();
-        logger.info(lang.getMessage("module.system.all-unloaded", ""));
+        ConsoleLogger.info(lang.getMessage("module.system.all-unloaded", ""));
     }
 
     // ==================== 查询方法 ====================
@@ -260,7 +261,7 @@ public class ModuleManager {
 
         for (String softDep : descriptor.getSoftDepends()) {
             if (!registry.isLoaded(softDep)) {
-                logger.warning(lang.getIndexedMessage("module.warning.soft-depend-missing",
+                ConsoleLogger.warn(lang.getIndexedMessage("module.warning.soft-depend-missing",
                         "", softDep, descriptor.getId()));
             }
         }
@@ -269,7 +270,7 @@ public class ModuleManager {
     private void checkCompatibility(ModuleDescriptor descriptor) throws ModuleLoadException {
         String requiredApi = descriptor.getApiVersion();
         if (requiredApi == null || requiredApi.trim().isEmpty()) {
-            logger.warning(lang.getIndexedMessage("module.warning.no-api-version",
+            ConsoleLogger.warn(lang.getIndexedMessage("module.warning.no-api-version",
                     "", descriptor.getId()));
             return;
         }
@@ -305,10 +306,11 @@ public class ModuleManager {
     private void logError(ModuleLoadException e) {
         if (e instanceof ModuleDependencyException) {
             ModuleDependencyException mde = (ModuleDependencyException) e;
-            logger.severe(e.getMessage());
+            ConsoleLogger.severe(e.getMessage());
             logger.severe("  Missing dependencies: " + mde.getMissingDependencies());
         } else {
-            logger.log(Level.SEVERE, e.getMessage(), e.getCause());
+            ConsoleLogger.severe(e.getMessage());
+            logger.log(Level.SEVERE, e.getCause() != null ? e.getCause().getMessage() : e.getMessage(), e.getCause());
         }
     }
 }
