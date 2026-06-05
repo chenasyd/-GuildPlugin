@@ -2,9 +2,9 @@ package com.guild.module.example.quest.model;
 
 public class QuestReward {
     public enum RewardType {
-        CONTRIBUTION("C币"),
-        MONEY("金币"),
-        EXP("经验值");
+        CONTRIBUTION("C-Coins"),
+        MONEY("Coins"),
+        EXP("Experience");
 
         private final String displayName;
         RewardType(String displayName) { this.displayName = displayName; }

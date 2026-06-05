@@ -29,8 +29,8 @@ public class QuestTracker implements Listener {
     private boolean running = false;
 
     /**
-     * 定时器管理Map - key: "playerUuid_questId", value: BukkitTask
-     * 用于跟踪所有活跃的在线时长追踪任务，防止重复创建和内存泄漏
+     * Timer management map - key: "playerUuid_questId", value: ScheduledTaskHandle
+     * Tracks all active online-hour tracking tasks to prevent duplicates and memory leaks
      */
     private final Map<String, ScheduledTaskHandle> activeTasks = new ConcurrentHashMap<>();
 
@@ -45,38 +45,37 @@ public class QuestTracker implements Listener {
             module.getContext().getPlugin().getServer().getPluginManager()
                 .registerEvents(this, module.getContext().getPlugin());
             running = true;
-            logger.info("[Quest-Tracker] 事件监听已启动");
-            logger.info("[Quest-Tracker] 定时器管理已初始化 (当前活跃任务: " + activeTasks.size() + ")");
+            logger.info("[Quest-Tracker] Event listeners started");
         } catch (Exception e) {
-            logger.warning("[Quest-Tracker] 注册事件监听失败: " + e.getMessage());
+            logger.warning("[Quest-Tracker] Failed to register event listeners: " + e.getMessage());
         }
     }
 
     public void stop() {
         running = false;
 
-        // 清理所有活跃的定时器 - 防止内存泄漏
+        // Clean up all active timers to prevent memory leaks
         int taskCount = activeTasks.size();
         for (ScheduledTaskHandle task : activeTasks.values()) {
             if (task != null && !task.isCancelled()) {
                 try {
                     task.cancel();
                 } catch (Exception e) {
-                    logger.warning("[Quest-Tracker] 取消定时器异常: " + e.getMessage());
+                    logger.warning("[Quest-Tracker] Error cancelling timer: " + e.getMessage());
                 }
             }
         }
         activeTasks.clear();
 
-        // 取消事件监听
+        // Unregister event listeners
         EntityDeathEvent.getHandlerList().unregister(this);
         PlayerJoinEvent.getHandlerList().unregister(this);
         PlayerQuitEvent.getHandlerList().unregister(this);
 
         if (taskCount > 0) {
-            logger.info("[Quest-Tracker] 已清理 " + taskCount + " 个活跃定时器");
+            logger.info("[Quest-Tracker] Cleaned up " + taskCount + " active timer(s)");
         }
-        logger.info("[Quest-Tracker] 事件监听已停止");
+        logger.info("[Quest-Tracker] Event listeners stopped");
     }
 
     @EventHandler
@@ -89,7 +88,7 @@ public class QuestTracker implements Listener {
         EntityType entityType = event.getEntityType();
         boolean isHostile = isHostileMob(entityType);
 
-        // 优化：一次性获取所有任务类型，减少重复遍历
+        // One-pass get all quest types to reduce duplicate iteration
         List<QuestDefinition> allQuests = new ArrayList<>();
         allQuests.addAll(module.getQuestManager().getDefinitionsByType(QuestDefinition.QuestType.DAILY));
         allQuests.addAll(module.getQuestManager().getDefinitionsByType(QuestDefinition.QuestType.WEEKLY));
@@ -99,7 +98,7 @@ public class QuestTracker implements Listener {
             for (int i = 0; i < def.getObjectives().size(); i++) {
                 QuestObjective obj = def.getObjectives().get(i);
                 if (obj.getType() == QuestObjective.ObjectiveType.KILL_MOBS) {
-                    // 根据任务类型和怪物类型判断是否更新
+                    // Determine whether to update based on quest type and mob type
                     boolean shouldUpdate = false;
                     if (def.getType() == QuestDefinition.QuestType.DAILY) {
                         shouldUpdate = isHostile || entityType == EntityType.PLAYER;
@@ -122,33 +121,28 @@ public class QuestTracker implements Listener {
         int guildId = getGuildId(uuid);
         if (guildId <= 0) return;
 
-        // 获取玩家已接取的在线时长任务
+        // Get player's accepted online-hour quests
         var questManager = module.getQuestManager();
         java.util.List<QuestProgress> activeQuests = questManager.getPlayerActiveQuests(guildId, uuid);
-
-        logger.info("[Quest-Tracker] 玩家 " + player.getName() + 
-            " 登录，检查 " + activeQuests.size() + " 个活跃任务");
 
         int trackingCount = 0;
         for (QuestProgress progress : activeQuests) {
             QuestDefinition def = questManager.getDefinition(progress.getQuestId());
             if (def == null) {
-                logger.warning("[Quest-Tracker] 未找到任务定义: " + progress.getQuestId());
+                logger.warning("[Quest-Tracker] Quest definition not found: " + progress.getQuestId());
                 continue;
             }
 
-            // 只处理包含在线时长目标的任务
+            // Only process quests with online-hour objectives
             if (!hasOnlineHourObjective(def)) continue;
 
-            // 启动在线时长追踪（内部会避免重复创建）
+            // Start online tracking (avoids duplicates internally)
             startOnlineTracking(player, guildId, def, progress);
             trackingCount++;
         }
 
         if (trackingCount > 0) {
-            logger.info("[Quest-Tracker] 玩家 " + player.getName() + 
-                " 已启动 " + trackingCount + " 个在线时长追踪任务");
-        }
+    }
     }
 
     @EventHandler
@@ -157,81 +151,63 @@ public class QuestTracker implements Listener {
         UUID uuid = player.getUniqueId();
         int guildId = getGuildId(uuid);
 
-        // 清理该玩家的所有活跃定时器 - 防止内存泄漏
+        // Clean up all active timers for this player to prevent memory leaks
         cleanupPlayerTasks(uuid);
 
         if (guildId > 0) {
             module.getQuestManager().saveGuildProgress(guildId);
         }
-
-        logger.fine("[Quest-Tracker] 玩家 " + player.getName() + " 已退出，已清理相关定时器");
     }
 
     /**
-     * 为指定玩家的在线时长任务启动追踪定时器
-     *
-     * @param player   目标玩家
-     * @param guildId  公会ID
-     * @param def      任务定义
-     * @param progress 任务进度
+     * Start tracking timer for a player's online-hour quest
      */
     private void startOnlineTracking(Player player, int guildId, QuestDefinition def, QuestProgress progress) {
         String taskId = buildTaskKey(player.getUniqueId(), def.getId());
 
-        logger.info("[Quest-Tracker] 准备启动在线追踪: " + taskId + 
-            " (任务: " + def.getName() + ")");
-
-        // 避免重复创建定时器 - 如果已存在则跳过
+        // Avoid creating duplicate timers
         if (activeTasks.containsKey(taskId)) {
-            logger.info("[Quest-Tracker] 任务追踪已存在: " + taskId + "，跳过重复创建");
             return;
         }
 
-        // 检查任务是否已完成
+        // Skip if quest is already completed
         if (def.isCompleted(progress.getObjectiveProgress())) {
-            logger.info("[Quest-Tracker] 任务已完成: " + def.getId() + "，无需追踪");
             return;
         }
 
         UUID playerUuid = player.getUniqueId();
         String questId = def.getId();
 
-        logger.info("[Quest-Tracker] 创建定时器: " + taskId + 
-            " (延迟: 1分钟, 间隔: 15分钟)");
-
-        // 创建并注册定时器 - 改为每15分钟执行一次，提高精度
+        // Create and register timer - every 15 minutes
         ScheduledTaskHandle task = CompatibleScheduler.runTaskTimer(
             module.getContext().getPlugin(),
             () -> updateOnlineProgress(playerUuid, guildId, questId),
-            1200L,  // 延迟1分钟（60秒 / 20 ticks）
-            18000L  // 每15分钟执行一次（900秒 / 20 ticks）
+            1200L,   // 1-minute delay (60s / 20 ticks)
+            18000L   // Every 15 minutes (900s / 20 ticks)
         );
 
-        // 存储到管理Map中
+        // Store in management map
         activeTasks.put(taskId, task);
-
-        logger.info("[Quest-Tracker] ✅ 已成功启动在线追踪: " + taskId +
-            " (总活跃任务: " + activeTasks.size() + ")");
     }
 
     /**
-     * 更新在线时长进度
+     * Update online hour progress
      */
     private void updateOnlineProgress(UUID playerUuid, int guildId, String questId) {
-        // 检查玩家是否仍在线
+        // Check if player is still online
         Player player = Bukkit.getPlayer(playerUuid);
         if (player == null || !player.isOnline()) {
-            // 玩家离线，取消该任务追踪
+            // Player offline, cancel tracking
             cancelTask(buildTaskKey(playerUuid, questId));
             return;
         }
 
-        // 获取最新的任务进度
+        // Get latest quest progress
         QuestProgress progress = module.getQuestManager()
             .getPlayerQuest(guildId, playerUuid, questId);
 
         if (progress == null || progress.isClaimed()) {
-            // 任务不存在或已领取，取消追踪
+            // Quest not found or already claimed, cancel tracking
             cancelTask(buildTaskKey(playerUuid, questId));
             return;
         }
@@ -242,58 +218,47 @@ public class QuestTracker implements Listener {
             return;
         }
 
-        // 检查任务是否已完成
+        // Check if quest is completed
         if (def.isCompleted(progress.getObjectiveProgress())) {
-            // 标记为已完成并取消追踪
+            // Mark as completed and cancel tracking
             progress.markAsCompleted();
             module.getQuestManager().saveGuildProgress(guildId);
             cancelTask(buildTaskKey(playerUuid, questId));
-            
-            logger.info("[Quest-Tracker] 玩家 " + player.getName() + 
-                " 完成在线时长任务: " + def.getName());
             return;
         }
 
-        // 更新所有在线时长目标的进度
+        // Update all online-hour objective progress
         for (int i = 0; i < def.getObjectives().size(); i++) {
             QuestObjective obj = def.getObjectives().get(i);
             if (obj.getType() == QuestObjective.ObjectiveType.ONLINE_HOURS) {
-                // 每15分钟更新一次，每次加15分钟
+                // Update every 15 minutes, +15 each tick
                 module.getQuestManager().updateAndSave(guildId, playerUuid, questId, i, 15);
-                
-                logger.fine("[Quest-Tracker] 更新进度: " + player.getName() + 
-                    " -> " + def.getName() + " [" + i + "] +15分钟");
             }
         }
     }
 
     /**
-     * 取消指定的定时器任务
-     *
-     * @param taskId 任务ID ("uuid_questId")
+     * Cancel a specific scheduled task
      */
     private void cancelTask(String taskId) {
         ScheduledTaskHandle task = activeTasks.remove(taskId);
         if (task != null && !task.isCancelled()) {
             try {
                 task.cancel();
-                logger.fine("[Quest-Tracker] 已取消任务追踪: " + taskId);
             } catch (Exception e) {
-                logger.warning("[Quest-Tracker] 取消任务异常: " + taskId + " - " + e.getMessage());
+                logger.warning("[Quest-Tracker] Error cancelling task: " + taskId + " - " + e.getMessage());
             }
         }
     }
 
     /**
-     * 清理指定玩家的所有活跃定时器
-     *
-     * @param playerUuid 玩家UUID
+     * Clean up all active timers for a player
      */
     private void cleanupPlayerTasks(UUID playerUuid) {
         String prefix = playerUuid.toString() + "_";
         final int[] cleanedCount = {0};
 
-        // 使用迭代器安全删除
+        // Use iterator to safely remove
         activeTasks.keySet().removeIf(key -> {
             if (key.startsWith(prefix)) {
                 ScheduledTaskHandle task = activeTasks.get(key);
@@ -302,7 +267,7 @@ public class QuestTracker implements Listener {
                         task.cancel();
                         cleanedCount[0]++;
                     } catch (Exception e) {
-                        logger.warning("[Quest-Tracker] 清理任务异常: " + key + " - " + e.getMessage());
+                        logger.warning("[Quest-Tracker] Error cleaning up task: " + key + " - " + e.getMessage());
                     }
                 }
                 return true;
@@ -310,20 +275,17 @@ public class QuestTracker implements Listener {
             return false;
         });
 
-        if (cleanedCount[0] > 0) {
-            logger.info("[Quest-Tracker] 已清理玩家 " + cleanedCount[0] + " 个活跃定时器");
-        }
     }
 
     /**
-     * 构建任务唯一标识键
+     * Build unique task identifier key
      */
     private String buildTaskKey(UUID playerUuid, String questId) {
         return playerUuid.toString() + "_" + questId;
     }
 
     /**
-     * 统计指定玩家的活跃追踪任务数量
+     * Count active tracking tasks for a player
      */
     private int countPlayerActiveTasks(UUID playerUuid) {
         String prefix = playerUuid.toString() + "_";
@@ -335,7 +297,7 @@ public class QuestTracker implements Listener {
     }
 
     /**
-     * 检查任务定义是否包含在线时长目标
+     * Check if a quest definition contains an online-hour objective
      */
     private boolean hasOnlineHourObjective(QuestDefinition def) {
         for (QuestObjective obj : def.getObjectives()) {
@@ -361,18 +323,15 @@ public class QuestTracker implements Listener {
     }
 
     /**
-     * 获取当前活跃定时器数量（用于监控和调试）
+     * Get the current number of active timers (for monitoring and debugging)
      */
     public int getActiveTaskCount() {
         return activeTasks.size();
     }
 
     /**
-     * 处理玩家存钱到公会的事件
-     * 用于更新DEPOSIT_MONEY类型的目标进度
-     *
-     * @param playerUuid 玩家UUID
-     * @param amount      存入金额
+     * Handle player deposit to guild event.
+     * Used to update DEPOSIT_MONEY type objective progress.
      */
     public void onPlayerDepositMoney(UUID playerUuid, double amount) {
         if (amount <= 0) return;
@@ -382,26 +341,19 @@ public class QuestTracker implements Listener {
         
         var questManager = module.getQuestManager();
         
-        // 优化：一次性获取所有任务，减少重复遍历
+        // One-pass get all quest types to reduce duplicate iteration
         List<QuestDefinition> allQuests = new ArrayList<>();
         for (QuestDefinition.QuestType questType : QuestDefinition.QuestType.values()) {
             allQuests.addAll(questManager.getDefinitionsByType(questType));
         }
         
         int depositAmount = (int) amount;
-        Player player = Bukkit.getPlayer(playerUuid);
-        String playerName = player != null ? player.getName() : playerUuid.toString();
         
         for (QuestDefinition def : allQuests) {
             for (int i = 0; i < def.getObjectives().size(); i++) {
                 QuestObjective obj = def.getObjectives().get(i);
                 if (obj.getType() == QuestObjective.ObjectiveType.DEPOSIT_MONEY) {
-                    // 更新进度
                     questManager.updateAndSave(guildId, playerUuid, def.getId(), i, depositAmount);
-                    
-                    logger.info("[Quest-Tracker] " + playerName + 
-                        " 存入 $" + String.format("%.0f", amount) + 
-                        " -> 任务: " + def.getName());
                 }
             }
         }

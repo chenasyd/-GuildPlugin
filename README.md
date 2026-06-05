@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Minecraft-1.21+-green?style=for-the-badge&logo=minecraft" alt="Minecraft 1.21+"/>
   <img src="https://img.shields.io/badge/API-Spigot%20%7C%20Folia-orange?style=for-the-badge" alt="Spigot | Folia"/>
-  <img src="https://img.shields.io/badge/Version-1.5.3-blue?style=for-the-badge" alt="Version 1.5.3"/>
+  <img src="https://img.shields.io/badge/Version-1.5.6-blue?style=for-the-badge" alt="Version 1.5.6"/>
   <img src="https://img.shields.io/badge/License-GPL%20v3-red?style=for-the-badge" alt="GPL v3"/>
   <img src="https://img.shields.io/badge/Java-17%2B-brightgreen?style=for-the-badge" alt="Java 17+"/>
 </p>
@@ -19,12 +19,13 @@ A feature-complete Minecraft guild/faction system with economy, relations, level
 - **Relationship System** — ally, hostile, war, truce between guilds
 - **Level System** — guild growth with increasing max member caps
 - **Full GUI** — intuitive graphical interface for all operations
-- **Multi-language** — Chinese (简体中文), English, Polish
+- **Multi-language** — Chinese (简体中文), English, Polish, Brazilian Portuguese (Português)
 - **Async Database** — HikariCP connection pool, MySQL/SQLite support
 - **Modular SDK** — external module development with full API coverage (4 example modules)
 - **CustomGUI System** — modules can independently register/open/unregister custom GUIs
 - **EventBus** — loose-coupled inter-module communication
 - **ServiceContainer** — modules access core system services via DI
+- **Hot-load Modules** — add/remove modules at runtime via `/guildmodule`, no server restart needed
 
 ## Compatibility
 

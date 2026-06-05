@@ -45,7 +45,7 @@ public class QuestListGUI extends AbstractModuleGUI {
         this.oneTimeQuests = new ArrayList<>(module.getQuestManager()
             .getDefinitionsByType(QuestDefinition.QuestType.ONE_TIME));
         
-        // 注册GUI刷新监听器
+        // Register GUI refresh listener
         registerRefreshListener();
     }
     
@@ -74,7 +74,7 @@ public class QuestListGUI extends AbstractModuleGUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6&l公会任务 - 可接取");
+        return ColorUtils.colorize("&6&lGuild Quests - Available");
     }
 
     private static final int SLOT_TITLE = 4;
@@ -87,11 +87,11 @@ public class QuestListGUI extends AbstractModuleGUI {
         slotDataMap.clear();
 
         inv.setItem(SLOT_TITLE, createItem(Material.BOOK,
-            "&6&l公会任务面板",
+            "&6&lGuild Quest Panel",
             "",
-            "&7每日: &f" + dailyQuests.size() + " 个  &e|&7  每周: &f" + weeklyQuests.size() + " 个  &e|&7  一次: &f" + oneTimeQuests.size() + " 个",
+            "&7Daily: &f" + dailyQuests.size() + "  &e|&7  Weekly: &f" + weeklyQuests.size() + "  &e|&7  One-time: &f" + oneTimeQuests.size(),
             "",
-            "&8┃ quest 模块 (本地持久化)"));
+            "&8| quest module (local persistence)"));
 
         List<QuestDefinition> allToShow = new ArrayList<>();
         allToShow.addAll(dailyQuests);
@@ -130,11 +130,11 @@ public class QuestListGUI extends AbstractModuleGUI {
         int totalPages = getTotalPages(allToShow.size());
         if (totalPages > 1) {
             setupPagination(inv, currentPage, totalPages,
-                "&e&l上一页", "&e&l下一页");
+                "&e&lPrevious", "&e&lNext");
         }
         inv.setItem(49, createBackButton(
-            context.getMessage("module.quest.back", "&c返回"),
-            context.getMessage("module.quest.back-hint", "&7返回公会信息")));
+            context.getMessage("module.quest.back", "&cBack"),
+            context.getMessage("module.quest.back-hint", "&7Return to guild info")));
     }
 
     private List<String> buildQuestLore(QuestDefinition def, boolean canAccept,
@@ -142,9 +142,9 @@ public class QuestListGUI extends AbstractModuleGUI {
                                           int acceptedDaily, int maxDaily) {
         List<String> lore = new ArrayList<>();
         lore.add("");
-        lore.add("&7类型: " + colorPrefix(def));
+        lore.add("&7Type: " + colorPrefix(def));
 
-        StringBuilder objectiveLine = new StringBuilder("&7目标: ");
+        StringBuilder objectiveLine = new StringBuilder("&7Goal: ");
         for (int j = 0; j < def.getObjectives().size(); j++) {
             QuestObjective obj = def.getObjectives().get(j);
             if (j > 0) objectiveLine.append(", ");
@@ -153,7 +153,7 @@ public class QuestListGUI extends AbstractModuleGUI {
         lore.add(objectiveLine.toString());
 
         if (!def.getRewards().isEmpty()) {
-            StringBuilder rewardLine = new StringBuilder("&7奖励: ");
+            StringBuilder rewardLine = new StringBuilder("&7Rewards: ");
             for (int j = 0; j < def.getRewards().size(); j++) {
                 var r = def.getRewards().get(j);
                 if (j > 0) rewardLine.append(", ");
@@ -162,53 +162,53 @@ public class QuestListGUI extends AbstractModuleGUI {
             lore.add(rewardLine.toString());
         }
 
-        lore.add("&7最低公会等级: &f" + def.getMinGuildLevel());
+        lore.add("&7Min Guild Level: &f" + def.getMinGuildLevel());
 
         if (!canAccept) {
             switch (def.getType()) {
                 case DAILY:
-                    lore.add("&c已达每日上限 (" + acceptedDaily + "/" + maxDaily + ")");
-                    lore.add("&7下次可接取: &f" + formatNextResetTime("daily"));
+                    lore.add("&cDaily limit reached (" + acceptedDaily + "/" + maxDaily + ")");
+                    lore.add("&7Next available: &f" + formatNextResetTime("daily"));
                     break;
                 case WEEKLY:
-                    lore.add("&c本周已接取此任务");
-                    lore.add("&7下次可接取: &f" + formatNextResetTime("weekly"));
+                    lore.add("&cAlready accepted this week");
+                    lore.add("&7Next available: &f" + formatNextResetTime("weekly"));
                     break;
                 case ONE_TIME:
                     QuestProgress oneTimeProgress = module.getQuestManager()
                         .getPlayerQuestAny(guildId, playerUuid, def.getId());
                     if (oneTimeProgress != null && oneTimeProgress.isClaimed()) {
-                        lore.add("&c已完成，不可重复接取");
+                        lore.add("&cCompleted, cannot re-accept");
                     } else if (oneTimeProgress != null) {
-                        lore.add("&a已接取 (进行中)");
-                        lore.add("&7点击查看详情与进度");
+                        lore.add("&aAccepted (In Progress)");
+                        lore.add("&7Click to view details & progress");
                     } else {
-                        lore.add("&c无法接取");
+                        lore.add("&cCannot accept");
                     }
                     break;
             }
         } else if (alreadyAccepted) {
-            lore.add("&a已接取 (进行中)");
-            lore.add("&7点击查看详情与进度");
+            lore.add("&aAccepted (In Progress)");
+            lore.add("&7Click to view details & progress");
         } else {
-            lore.add("&a点击接取此任务");
+            lore.add("&aClick to accept this quest");
         }
         lore.add("");
-        lore.add("&8┃ 来自 quest 模块");
+        lore.add("&8| from quest module");
         return lore;
     }
 
     private String colorPrefix(QuestDefinition def) {
         return switch (def.getType()) {
-            case DAILY -> "&e每日";
-            case WEEKLY -> "&6每周";
-            case ONE_TIME -> "&c一次性";
+            case DAILY -> "&eDaily";
+            case WEEKLY -> "&6Weekly";
+            case ONE_TIME -> "&cOne-time";
         };
     }
 
     private String formatNextResetTime(String type) {
         LocalDateTime now = LocalDateTime.now();
-        LocalTime resetTime = LocalTime.of(0, 0); // 改为00:00
+        LocalTime resetTime = LocalTime.of(0, 0); // Reset at midnight
         LocalDateTime nextReset;
         if ("daily".equals(type)) {
             nextReset = now.toLocalDate().plusDays(1).atTime(resetTime);
@@ -229,9 +229,9 @@ public class QuestListGUI extends AbstractModuleGUI {
         LocalDate resetDate = nextReset.toLocalDate();
         LocalTime resetHour = nextReset.toLocalTime();
         if (resetDate.equals(now.toLocalDate())) {
-            return "今天 " + String.format("%02d:%02d", resetHour.getHour(), resetHour.getMinute());
+            return "Today " + String.format("%02d:%02d", resetHour.getHour(), resetHour.getMinute());
         } else if (resetDate.equals(now.toLocalDate().plusDays(1))) {
-            return "明天 " + String.format("%02d:%02d", resetHour.getHour(), resetHour.getMinute());
+            return "Tomorrow " + String.format("%02d:%02d", resetHour.getHour(), resetHour.getMinute());
         }
         return nextReset.format(DateTimeFormatter.ofPattern("MM/dd HH:mm"));
     }
@@ -256,10 +256,10 @@ public class QuestListGUI extends AbstractModuleGUI {
                 context.getApi().openCustomGUI("quest-detail", player, data);
 
             } catch (Exception e) {
-                context.getLogger().severe("[Quest-List] 打开任务详情失败: " + e.getMessage());
-                player.sendMessage(ColorUtils.colorize("&c&l[错误] 打开任务详情失败"));
-                player.sendMessage(ColorUtils.colorize("&7任务: &f" + selected.getName()));
-                player.sendMessage(ColorUtils.colorize("&7原因: &c" + e.getMessage()));
+                context.getLogger().severe("[Quest-List] Failed to open quest details: " + e.getMessage());
+                player.sendMessage(ColorUtils.colorize("&c&l[Error] Failed to open quest details"));
+                player.sendMessage(ColorUtils.colorize("&7Quest: &f" + selected.getName()));
+                player.sendMessage(ColorUtils.colorize("&7Reason: &c" + e.getMessage()));
             }
         }
     }

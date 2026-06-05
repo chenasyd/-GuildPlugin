@@ -2,11 +2,11 @@ package com.guild.module.example.quest.model;
 
 public class QuestObjective {
     public enum ObjectiveType {
-        KILL_MOBS("击杀怪物"),
-        COLLECT_RESOURCES("收集资源"),
-        DEPOSIT_MONEY("存入公会资金"),
-        ONLINE_HOURS("在线时长(分钟)"),
-        GUILD_CONTRIBUTE("C币增长");
+        KILL_MOBS("Kill Mobs"),
+        COLLECT_RESOURCES("Collect Resources"),
+        DEPOSIT_MONEY("Deposit to Guild"),
+        ONLINE_HOURS("Online Time (min)"),
+        GUILD_CONTRIBUTE("C-Coins Growth");
 
         private final String displayName;
         ObjectiveType(String displayName) { this.displayName = displayName; }

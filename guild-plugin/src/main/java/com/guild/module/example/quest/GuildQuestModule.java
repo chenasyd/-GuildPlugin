@@ -67,7 +67,7 @@ public class GuildQuestModule implements GuildModule {
             UUID playerUuid = (UUID) data.get("playerUuid");
             
             if (guildId <= 0) {
-                context.getLogger().warning("[Quest-Factory] ⚠️ guildId无效: " +
+                context.getLogger().warning("[Quest-Factory] Invalid guildId: " +
                     data.get("guildId") + " (type=" + (data.get("guildId") != null ?
                     data.get("guildId").getClass().getSimpleName() : "null") +
                     "), player=" + player.getName());
@@ -86,7 +86,7 @@ public class GuildQuestModule implements GuildModule {
                     .build();
                 
             } catch (Exception e) {
-                context.getLogger().severe("[Quest-Factory] 创建QuestDetailGUI失败: " + e.getMessage());
+                context.getLogger().severe("[Quest-Factory] Failed to create QuestDetailGUI: " + e.getMessage());
                 for (StackTraceElement element : e.getStackTrace()) {
                     context.getLogger().severe("    at " + element.toString());
                 }
@@ -96,7 +96,7 @@ public class GuildQuestModule implements GuildModule {
                             playerUuid != null ? playerUuid : new UUID(0, 0))
                         .build();
                 } catch (Exception fallbackEx) {
-                    throw new RuntimeException("无法创建任何GUI", fallbackEx);
+                    throw new RuntimeException("Unable to create any GUI", fallbackEx);
                 }
             }
         });
@@ -110,75 +110,70 @@ public class GuildQuestModule implements GuildModule {
 
         context.runLater(100L, () -> {
             questTracker.start();
-            int questCount = questManager.getDefinitions().size();
-            context.getLogger().info(
-                context.getMessage("module.quest.loaded",
-                    "[Quest] Quest system enabled (" + questCount + " quests)"));
+            context.getLogger().info("[Quest] Quest system enabled");
         });
 
-        context.getEventBus().subscribe(QuestCompletedEvent.class, event ->
-            context.getLogger().info(String.format("[Quest-Event] %s 完成任务: %s (公会#%d)",
-                event.playerName, event.questName, event.guildId)));
+        context.getEventBus().subscribe(QuestCompletedEvent.class, event -> {});
     }
 
     private void registerDefaultQuests() {
-        // 每日任务 1: 每日狩猎
+        // Daily quest 1: Daily Hunter
         QuestDefinition daily1 = new QuestDefinition(
             "daily_hunter", 
-            context.getMessage("module.quest.daily_hunter.name", "每日狩猎"), 
-            context.getMessage("module.quest.daily_hunter.description", "击杀指定数量的怪物"),
+            context.getMessage("module.quest.daily_hunter.name", "Daily Hunter"), 
+            context.getMessage("module.quest.daily_hunter.description", "Kill a specified number of monsters"),
             QuestDefinition.QuestType.DAILY, 1, 1, true);
         daily1.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
-            15, context.getMessage("module.quest.daily_hunter.objective", "击杀 15 只敌对生物")));
+            15, context.getMessage("module.quest.daily_hunter.objective", "Kill 15 hostile mobs")));
         daily1.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 30));
         daily1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 50));
         questManager.registerDefinition(daily1);
 
-        // 每日任务 2: 每日坚守
+        // Daily quest 2: Daily Standby
         QuestDefinition daily2 = new QuestDefinition(
             "daily_online", 
-            context.getMessage("module.quest.daily_online.name", "每日坚守"), 
-            context.getMessage("module.quest.daily_online.description", "保持在线一定时间"),
+            context.getMessage("module.quest.daily_online.name", "Daily Standby"), 
+            context.getMessage("module.quest.daily_online.description", "Stay online for a certain amount of time"),
             QuestDefinition.QuestType.DAILY, 2, 1, true);
         daily2.addObjective(new QuestObjective(QuestObjective.ObjectiveType.ONLINE_HOURS,
-            60, context.getMessage("module.quest.daily_online.objective", "在线 60 分钟")));
+            60, context.getMessage("module.quest.daily_online.objective", "Stay online for 60 minutes")));
         daily2.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 20));
         daily2.addReward(new QuestReward(QuestReward.RewardType.EXP, 500));
         questManager.registerDefinition(daily2);
 
-        // 每周任务 1: 每周贡献者
+        // Weekly quest 1: Weekly Contributor
         QuestDefinition weekly1 = new QuestDefinition(
             "weekly_contributor", 
-            context.getMessage("module.quest.weekly_contributor.name", "每周贡献者"), 
-            context.getMessage("module.quest.weekly_contributor.description", "为公会做出大量贡献"),
+            context.getMessage("module.quest.weekly_contributor.name", "Weekly Contributor"), 
+            context.getMessage("module.quest.weekly_contributor.description", "Make significant contributions to the guild"),
             QuestDefinition.QuestType.WEEKLY, 1, 2, true);
         weekly1.addObjective(new QuestObjective(
             QuestObjective.ObjectiveType.DEPOSIT_MONEY, 2000, 
-            context.getMessage("module.quest.weekly_contributor.objective", "存入 $2000 到公会资金")));
+            context.getMessage("module.quest.weekly_contributor.objective", "Deposit $2000 to guild funds")));
         weekly1.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 100));
         weekly1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 300));
         questManager.registerDefinition(weekly1);
 
-        // 每周任务 2: 每周猎手
+        // Weekly quest 2: Weekly Slayer
         QuestDefinition weekly2 = new QuestDefinition(
             "weekly_slayer", 
-            context.getMessage("module.quest.weekly_slayer.name", "每周猎手"), 
-            context.getMessage("module.quest.weekly_slayer.description", "大量击杀怪物证明实力"),
+            context.getMessage("module.quest.weekly_slayer.name", "Weekly Slayer"), 
+            context.getMessage("module.quest.weekly_slayer.description", "Prove your strength by slaying many monsters"),
             QuestDefinition.QuestType.WEEKLY, 2, 3, true);
         weekly2.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
-            100, context.getMessage("module.quest.weekly_slayer.objective", "击杀 100 只敌对生物")));
+            100, context.getMessage("module.quest.weekly_slayer.objective", "Kill 100 hostile mobs")));
         weekly2.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 80));
         weekly2.addReward(new QuestReward(QuestReward.RewardType.EXP, 2000));
         questManager.registerDefinition(weekly2);
 
-        // 一次性任务: 初试锋芒
+        // One-time quest: First Blood
         QuestDefinition oneTime1 = new QuestDefinition(
             "onetime_first_blood", 
-            context.getMessage("module.quest.onetime_first_blood.name", "初试锋芒"), 
-            context.getMessage("module.quest.onetime_first_blood.description", "完成你的第一个任务"),
+            context.getMessage("module.quest.onetime_first_blood.name", "First Blood"), 
+            context.getMessage("module.quest.onetime_first_blood.description", "Complete your first quest"),
             QuestDefinition.QuestType.ONE_TIME, 1, 1, false);
         oneTime1.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
-            5, context.getMessage("module.quest.onetime_first_blood.objective", "击杀 5 只怪物")));
+            5, context.getMessage("module.quest.onetime_first_blood.objective", "Kill 5 mobs")));
         oneTime1.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 25));
         oneTime1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 100));
         questManager.registerDefinition(oneTime1);
@@ -186,17 +181,17 @@ public class GuildQuestModule implements GuildModule {
 
     private void registerGUIButtons(GuildPluginAPI api) {
         ItemStack questButton = createItem(Material.BOOK,
-            "&6&l" + context.getMessage("module.quest.button-name", "公会任务"),
-            "&7" + context.getMessage("module.quest.quest-list-lore", "接取和追踪公会任务"),
-            "&7" + context.getMessage("module.quest.quest-types", "每日 &8| &7每周 &8| &7一次性"),
+            "&6&l" + context.getMessage("module.quest.button-name", "Guild Quests"),
+            "&7" + context.getMessage("module.quest.quest-list-lore", "Accept and track guild quests"),
+            "&7" + context.getMessage("module.quest.quest-types", "Daily &8| &7Weekly &8| &7One-time"),
             "",
-            "&e" + context.getMessage("module.quest.click-open", "点击打开任务面板"));
+            "&e" + context.getMessage("module.quest.click-open", "Click to open quest panel"));
         api.registerGUIButton("GuildInfoGUI", 14, questButton, "guild-quest",
             (player, ctx) -> openQuestList(player, ctx));
 
         ItemStack activeButton = createItem(Material.COMPASS,
-            "&a&l" + context.getMessage("module.quest.active-quests", "进行中任务"),
-            "&7" + context.getMessage("module.quest.active-quests-lore", "查看你当前正在进行的任务进度"));
+            "&a&l" + context.getMessage("module.quest.active-quests", "Active Quests"),
+            "&7" + context.getMessage("module.quest.active-quests-lore", "View progress of your ongoing quests"));
         api.registerGUIButton("GuildInfoGUI", GUIExtensionHook.AUTO_SLOT,
             activeButton, "guild-quest",
             (player, ctx) -> openActiveQuests(player));
@@ -218,10 +213,10 @@ public class GuildQuestModule implements GuildModule {
                     .getPlayerGuild(player.getUniqueId());
                 if (guild != null) {
                     questManager.resetDailyQuests(guild.getId());
-                    context.sendMessage(player, "module.quest.reset-done", context.getMessage("module.quest.reset-done", "&a[Quest] 每日任务已重置"));
+                    context.sendMessage(player, "module.quest.reset-done", "&a[Quest] Daily quests have been reset");
                 }
             } else {
-                context.sendMessage(player, "module.quest.no-permission", context.getMessage("module.quest.no-permission", "&c权限不足"));
+                context.sendMessage(player, "module.quest.no-permission", "&cInsufficient permission");
             }
         } else {
             openQuestList(player);
@@ -234,35 +229,34 @@ public class GuildQuestModule implements GuildModule {
         
         var guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
         if (guild == null) {
-            context.sendMessage(player, "module.quest.error.no-guild", context.getMessage("module.quest.error.no-guild", "&c你不在任何公会中"));
+            context.sendMessage(player, "module.quest.error.no-guild", "&cYou are not in any guild");
             return;
         }
         
         int guildId = guild.getId();
         UUID playerUuid = player.getUniqueId();
         
-        // 构建货币信息消息
         StringBuilder message = new StringBuilder();
-        message.append(ColorUtils.colorize(context.getMessage("module.quest.currency.title", "&6=== 货币查询 ===\n")));
+        message.append(ColorUtils.colorize("&6=== Currency Info ===\n"));
         
-        // 查询金币（Vault）
+        // Query Vault economy
         var economyManager = context.getPlugin().getServiceContainer().get(com.guild.core.economy.EconomyManager.class);
         double goldBalance = economyManager.getBalance(player);
         String goldName = economyManager.getCurrencyName();
-        String goldMessage = context.getMessage("module.quest.currency.gold", "&e{currency}: &f{balance}");
-        goldMessage = goldMessage.replace("{currency}", goldName).replace("{balance}", economyManager.format(goldBalance));
-        message.append(ColorUtils.colorize(goldMessage)).append("\n");
+        message.append(ColorUtils.colorize("&e{currency}: &f{balance}"
+            .replace("{currency}", goldName).replace("{balance}", economyManager.format(goldBalance))))
+            .append("\n");
         
-        // 查询A币、B币、C币
+        // Query guild currencies (A/B/C coins)
         var currencyManager = context.getApi().getCurrencyManager();
         for (CurrencyManager.CurrencyType type : CurrencyManager.CurrencyType.values()) {
             double balance = currencyManager.getBalance(guildId, playerUuid, type);
-            String coinMessage = context.getMessage("module.quest.currency.coin", "&e{currency}: &f{balance}");
-            coinMessage = coinMessage.replace("{currency}", type.getDisplayName()).replace("{balance}", String.format("%.0f", balance));
-            message.append(ColorUtils.colorize(coinMessage)).append("\n");
+            message.append(ColorUtils.colorize("&e{currency}: &f{balance}"
+                .replace("{currency}", type.getDisplayName()).replace("{balance}", String.format("%.0f", balance))))
+                .append("\n");
         }
         
-        message.append(ColorUtils.colorize(context.getMessage("module.quest.currency.footer", "&6================")));
+        message.append(ColorUtils.colorize("&6================"));
         
         player.sendMessage(message.toString());
     }
@@ -281,10 +275,7 @@ public class GuildQuestModule implements GuildModule {
                 int guildId = data.getGuildId();
                 UUID playerUuid = data.getPlayerUuid();
                 
-                // 清理该玩家在该工会的所有任务进度
                 questManager.clearPlayerProgress(guildId, playerUuid);
-                
-                context.getLogger().info("[Quest] 清理玩家 " + data.getPlayerName() + " 在工会 " + guildId + " 的任务进度");
             }
 
             @Override
@@ -410,10 +401,10 @@ public class GuildQuestModule implements GuildModule {
     private void openQuestList(Player player, Object... ctx) {
         int guildId = extractGuildId(ctx);
         if (guildId <= 0) {
-            // 如果从 ctx 中没有获取到公会 ID，尝试直接从玩家获取
+            // If guild ID not found in ctx, try getting it from the player directly
             var guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
             if (guild == null) {
-                context.sendMessage(player, "module.quest.error.no-guild", context.getMessage("module.quest.error.no-guild", "&c你不在任何公会中"));
+                context.sendMessage(player, "module.quest.error.no-guild", context.getMessage("module.quest.error.no-guild", "&cYou are not in any guild"));
                 return;
             }
             guildId = guild.getId();
@@ -424,7 +415,7 @@ public class GuildQuestModule implements GuildModule {
     private void openActiveQuests(Player player) {
         var guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
         if (guild == null) {
-            context.sendMessage(player, "module.quest.error.no-guild", context.getMessage("module.quest.error.no-guild", "&c你不在任何公会中"));
+            context.sendMessage(player, "module.quest.error.no-guild", context.getMessage("module.quest.error.no-guild", "&cYou are not in any guild"));
             return;
         }
         List<QuestProgress> active = questManager.getPlayerActiveQuests(
@@ -433,17 +424,15 @@ public class GuildQuestModule implements GuildModule {
     }
 
     private void notifyQuestReset(int guildId, String resetType) {
-        // 通知所有相关GUI刷新
+        // Notify related GUIs to refresh
         java.util.Map<String, Object> refreshData = new java.util.HashMap<>();
         refreshData.put("guildId", guildId);
         refreshData.put("resetType", resetType);
         
-        // 通知任务列表刷新
+        // Notify quest list refresh
         context.notifyGUIRefresh("quest-list", refreshData);
-        // 通知活跃任务列表刷新
+        // Notify active quest list refresh
         context.notifyGUIRefresh("quest-active-list", refreshData);
-        
-        context.getLogger().info("[Quest] 通知GUI刷新: 公会 #" + guildId + " " + resetType + " 任务已重置");
     }
 
     private int extractGuildId(Object... ctx) {

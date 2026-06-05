@@ -24,15 +24,11 @@ public class QuestRewardHandler {
     }
 
     /**
-     * 发放任务奖励（主入口）
-     * 
-     * @param player 目标玩家
-     * @param definition 任务定义
-     * @param progress 任务进度
+     * Grant quest rewards (main entry point)
      */
     public void grantRewards(Player player, QuestDefinition definition, QuestProgress progress) {
         if (player == null || !player.isOnline()) {
-            logger.warning("[Quest-Reward] 玩家不在线，无法发放奖励");
+            logger.warning("[Quest-Reward] Player offline, cannot grant rewards");
             return;
         }
 
@@ -60,22 +56,20 @@ public class QuestRewardHandler {
             }
         }
 
-        // 标记为已领取（同步操作）
+        // Mark as claimed (synchronous operation)
         synchronized (progress) {
             progress.setClaimed();
         }
         
-        // 记录详细日志
+        // Log detailed result
         logRewardResult(player.getName(), definition.getName(), successRewards, failedRewards);
         
-        // 通知玩家
+        // Notify player
         notifyPlayer(player, definition.getName(), successRewards, failedRewards);
     }
 
     /**
-     * 发放C币奖励
-     * 
-     * @return 是否成功
+     * Grant C-Coins reward
      */
     private boolean grantContributionReward(Player player, double amount, 
                                            String questName,
@@ -84,14 +78,14 @@ public class QuestRewardHandler {
         try {
             var guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
             if (guild == null) {
-                String msg = "C币+" + (int)amount + " (失败: 不在公会中)";
+                String msg = "C-Coins+" + (int)amount + " (failed: not in guild)";
                 failedList.add(msg);
                 logger.warning("[Quest-Reward] " + player.getName() + 
-                    " 无法领取C币: 不在公会中 (任务: " + questName + ")");
+                    " cannot receive C-Coins: not in guild (quest: " + questName + ")");
                 return false;
             }
 
-            // 使用货币API发放C币
+            // Use currency API to grant C-Coins
             boolean success = context.getApi().depositCurrency(
                 guild.getId(),
                 player.getUniqueId(),
@@ -102,11 +96,11 @@ public class QuestRewardHandler {
 
             if (success) {
                 logger.info("[Quest-Reward] " + player.getName() + 
-                    " C币+" + (int)amount + " 已发放 (任务: " + questName + ")");
-                String msg = "C币+" + (int)amount;
+                    " C-Coins+" + (int)amount + " granted (quest: " + questName + ")");
+                String msg = "C-Coins+" + (int)amount;
                 successList.add(msg);
                 
-                // 发送货币变动消息
+                // Send currency change message
                 context.getApi().getCurrencyManager().sendCurrencyMessage(
                     player, 
                     CurrencyManager.CurrencyType.C_COIN, 
@@ -116,83 +110,79 @@ public class QuestRewardHandler {
                 
                 return true;
             } else {
-                String msg = "C币+" + (int)amount + " (发放失败)";
+                String msg = "C-Coins+" + (int)amount + " (grant failed)";
                 failedList.add(msg);
                 logger.warning("[Quest-Reward] " + player.getName() + 
-                    " C币发放失败 (任务: " + questName + ")");
+                    " C-Coins grant failed (quest: " + questName + ")");
                 return false;
             }
 
         } catch (Exception e) {
-            String msg = "C币+" + (int)amount + " (异常: " + e.getMessage() + ")";
+            String msg = "C-Coins+" + (int)amount + " (error: " + e.getMessage() + ")";
             failedList.add(msg);
-            logger.severe("[Quest-Reward] 发放C币异常: " + e.getMessage());
+            logger.severe("[Quest-Reward] C-Coins grant exception: " + e.getMessage());
             return false;
         }
     }
 
     /**
-     * 发放金币奖励
-     * 
-     * @return 是否成功
+     * Grant money reward
      */
     private boolean grantMoneyReward(Player player, double amount, 
                                     String questName,
                                     List<String> successList, 
                                     List<String> failedList) {
         try {
-            // 检查Vault经济系统是否可用
+            // Check if Vault economy is available
             var econReg = Bukkit.getServer().getServicesManager()
                 .getRegistration(net.milkbowl.vault.economy.Economy.class);
             
             if (econReg == null) {
-                String msg = "$" + (int)amount + " (失败: 经济系统未安装)";
+                String msg = "$" + (int)amount + " (failed: economy not installed)";
                 failedList.add(msg);
-                logger.warning("[Quest-Reward] 经济系统不可用，无法发放金币 (任务: " + questName + ")");
+                logger.warning("[Quest-Reward] Economy unavailable, cannot grant money (quest: " + questName + ")");
                 return false;
             }
 
             net.milkbowl.vault.economy.Economy econ = econReg.getProvider();
             
-            // 检查玩家是否有接收金币的权限（可选）
+            // Check if player has permission to receive money
             if (!player.hasPermission("guild.economy.deposit")) {
-                String msg = "$" + (int)amount + " (失败: 权限不足)";
+                String msg = "$" + (int)amount + " (failed: insufficient permission)";
                 failedList.add(msg);
                 logger.fine("[Quest-Reward] " + player.getName() + 
-                    " 无权限接收金币 (任务: " + questName + ")");
+                    " lacks permission to receive money (quest: " + questName + ")");
                 return false;
             }
 
-            // 发放金币
+            // Grant money
             boolean success = econ.depositPlayer(player, amount).transactionSuccess();
             
             if (success) {
                 String msg = "$" + String.format("%.0f", amount);
                 successList.add(msg);
                 logger.info("[Quest-Reward] " + player.getName() + 
-                    " 金币+$" + String.format("%.0f", amount) + " (任务: " + questName + ")");
+                    " received $" + String.format("%.0f", amount) + " (quest: " + questName + ")");
                 return true;
             } else {
-                String msg = "$" + String.format("%.0f", amount) + " (交易失败)";
+                String msg = "$" + String.format("%.0f", amount) + " (transaction failed)";
                 failedList.add(msg);
                 logger.warning("[Quest-Reward] " + player.getName() + 
-                    " 金币发放交易失败 (任务: " + questName + ")");
+                    " money transaction failed (quest: " + questName + ")");
                 return false;
             }
 
         } catch (Exception e) {
-            String msg = "$" + String.format("%.0f", amount) + " (异常: " + e.getMessage() + ")";
+            String msg = "$" + String.format("%.0f", amount) + " (error: " + e.getMessage() + ")";
             failedList.add(msg);
-            logger.severe("[Quest-Reward] 发放金币异常: " + e.getMessage() + 
-                " (任务: " + questName + ", 玩家: " + player.getName() + ")");
+            logger.severe("[Quest-Reward] Money grant exception: " + e.getMessage() + 
+                " (quest: " + questName + ", player: " + player.getName() + ")");
             return false;
         }
     }
 
     /**
-     * 发放经验值奖励
-     * 
-     * @return 是否成功
+     * Grant experience reward
      */
     private boolean grantExpReward(Player player, double amount, 
                                   String questName,
@@ -201,32 +191,32 @@ public class QuestRewardHandler {
         try {
             int expAmount = (int) amount;
             
-            // 使用Bukkit原生API给予经验
+            // Use Bukkit native API to grant experience
             player.giveExp(expAmount);
             
-            String msg = "经验+" + expAmount;
+            String msg = "EXP+" + expAmount;
             successList.add(msg);
             
             logger.fine("[Quest-Reward] " + player.getName() + 
-                " 经验+" + expAmount + " (任务: " + questName + ")");
+                " EXP+" + expAmount + " (quest: " + questName + ")");
             return true;
 
         } catch (Exception e) {
-            String msg = "经验+" + (int)amount + " (异常: " + e.getMessage() + ")";
+            String msg = "EXP+" + (int)amount + " (error: " + e.getMessage() + ")";
             failedList.add(msg);
-            logger.severe("[Quest-Reward] 发放经验异常: " + e.getMessage() + 
-                " (任务: " + questName + ", 玩家: " + player.getName() + ")");
+            logger.severe("[Quest-Reward] EXP grant exception: " + e.getMessage() + 
+                " (quest: " + questName + ", player: " + player.getName() + ")");
             return false;
         }
     }
 
     /**
-     * 记录奖励发放结果的详细日志
+     * Log reward result details
      */
     private void logRewardResult(String playerName, String questName, 
                                 List<String> successList, List<String> failedList) {
         StringBuilder logMsg = new StringBuilder();
-        logMsg.append(String.format("[Quest-Reward] %s 领取任务 '%s' 奖励: ", 
+        logMsg.append(String.format("[Quest-Reward] %s claimed '%s' rewards: ", 
             playerName, questName));
         
         if (!successList.isEmpty()) {
@@ -246,38 +236,38 @@ public class QuestRewardHandler {
     }
 
     /**
-     * 通知玩家奖励领取结果
+     * Notify player of reward result
      */
     private void notifyPlayer(Player player, String questName, 
                             List<String> successList, List<String> failedList) {
         if (!player.isOnline()) return;
 
-        // 构建消息
+        // Build message
         StringBuilder message = new StringBuilder();
-        message.append("&6&l[任务奖励]&r &a你已领取任务 '&e").append(questName)
-              .append("&e' 的奖励！\n");
+        message.append("&6&l[Quest Rewards]&r &aYou have claimed rewards for '&e").append(questName)
+              .append("&e'!\n");
 
         if (!successList.isEmpty()) {
-            message.append("&a获得: &f").append(String.join("&7, &f", successList)).append("\n");
+            message.append("&aReceived: &f").append(String.join("&7, &f", successList)).append("\n");
         }
 
         if (!failedList.isEmpty()) {
-            message.append("&c部分奖励发放失败: &7")
+            message.append("&cSome rewards failed: &7")
                   .append(String.join("&7, &c", failedList))
-                  .append("\n&7请联系管理员处理");
+                  .append("\n&7Please contact an administrator");
         }
 
-        // 发送消息（使用颜色代码）
+        // Send message (with color codes)
         context.sendMessage(player, "quest.reward-result", message.toString());
 
-        // 如果有失败的奖励，额外提示
+        // Extra notice if some rewards failed
         if (!failedList.isEmpty()) {
             context.sendMessage(player, "quest.reward-partial", 
-                "&e[Quest] 部分奖励未能正常发放，请截图并联系管理员");
+                "&e[Quest] Some rewards could not be delivered. Please screenshot and contact an administrator");
         }
     }
 
-    // ==================== 工厂方法 ====================
+    // ==================== Factory Methods ====================
 
     public static QuestReward createDefaultContribution(double amount) {
         return new QuestReward(QuestReward.RewardType.CONTRIBUTION, amount);
@@ -291,10 +281,10 @@ public class QuestRewardHandler {
         return new QuestReward(QuestReward.RewardType.EXP, amount);
     }
 
-    // ==================== 验证和诊断方法 ====================
+    // ==================== Validation & Diagnostics ====================
 
     /**
-     * 检查Vault经济系统是否可用
+     * Check if Vault economy is available
      */
     public boolean isEconomyAvailable() {
         return Bukkit.getServer().getServicesManager()
@@ -302,7 +292,7 @@ public class QuestRewardHandler {
     }
 
     /**
-     * 检查玩家是否可以接收指定类型的奖励
+     * Check if player can receive a specific reward type
      */
     public boolean canReceiveReward(Player player, QuestReward.RewardType type) {
         switch (type) {
@@ -315,7 +305,7 @@ public class QuestRewardHandler {
                     player.hasPermission("guild.economy.deposit");
                     
             case EXP:
-                return true; // 经验值总是可以接收
+                return true; // EXP can always be received
                 
             default:
                 return false;
@@ -323,7 +313,7 @@ public class QuestRewardHandler {
     }
 
     /**
-     * 验证所有奖励是否可发放（用于预检查）
+     * Validate all rewards for a player (pre-check)
      */
     public List<String> validateRewards(Player player, QuestDefinition definition) {
         List<String> issues = new ArrayList<>();
@@ -333,20 +323,20 @@ public class QuestRewardHandler {
                 case CONTRIBUTION:
                     if (context.getPlugin().getGuildService()
                         .getPlayerGuild(player.getUniqueId()) == null) {
-                        issues.add("C币奖励: 你不在公会中");
+                        issues.add("C-Coins reward: you are not in a guild");
                     }
                     break;
                     
                 case MONEY:
                     if (!isEconomyAvailable()) {
-                        issues.add("金币奖励: 服务器未安装经济系统");
+                        issues.add("Money reward: economy plugin not installed on this server");
                     } else if (!player.hasPermission("guild.economy.deposit")) {
-                        issues.add("金币奖励: 权限不足 (需要 guild.economy.deposit)");
+                        issues.add("Money reward: insufficient permission (need guild.economy.deposit)");
                     }
                     break;
                     
                 case EXP:
-                    // 经验值无需特殊条件
+                    // EXP has no special requirements
                     break;
             }
         }

@@ -19,19 +19,15 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * 任务详情GUI - 完全重写版本
- * 
- * 设计原则：
- * 1. 构造函数只接收预处理好的数据，不做任何业务逻辑
- * 2. setupInventory()采用纯防御性编程，确保100%不会崩溃
- * 3. 所有数据访问都有null保护和默认值
+ * Quest Detail GUI - fully rewritten version.
+ * Design principles: constructor only takes preprocessed data; setupInventory uses defensive coding.
  */
 public class QuestDetailGUI extends AbstractModuleGUI {
     
-    // 必要的模块引用（仅用于回调）
+    // Module reference (for callbacks only)
     private final GuildQuestModule module;
     
-    // 预加载的数据（全部可能为null，必须检查）
+    // Preloaded data (may be null, must check)
     private final String questId;
     private final String questName;
     private final String questDescription;
@@ -41,25 +37,25 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     private final List<QuestObjective> objectives;
     private final List<QuestReward> rewards;
     
-    // 进度数据（可能为null）
+    // Progress data (may be null)
     private final boolean hasProgress;
-    private final int[] objectiveProgress;  // 可能为null或空数组
+    private final int[] objectiveProgress;  // May be null or empty array
     private final boolean isCompleted;
     private final boolean isClaimed;
     
-    // 元数据
+    // Metadata
     private final int guildId;
     private final UUID playerUuid;
     
     /**
-     * 私有构造函数 - 只接收预处理好的数据
+     * Private constructor - only receives preprocessed data
      */
     private QuestDetailGUI(Builder builder) {
         super();
         this.module = builder.module;
         this.questId = builder.questId;
-        this.questName = builder.questName != null ? builder.questName : "未知任务";
-        this.questDescription = builder.questDescription != null ? builder.questDescription : "暂无描述";
+        this.questName = builder.questName != null ? builder.questName : "Unknown Quest";
+        this.questDescription = builder.questDescription != null ? builder.questDescription : "No description";
         this.questType = builder.questType != null ? builder.questType : QuestDefinition.QuestType.DAILY;
         this.minGuildLevel = builder.minGuildLevel;
         this.isRepeatable = builder.isRepeatable;
@@ -67,7 +63,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         this.rewards = builder.rewards != null ? builder.rewards : new ArrayList<>();
         
         this.hasProgress = builder.hasProgress;
-        this.objectiveProgress = builder.objectiveProgress;  // 允许为null
+        this.objectiveProgress = builder.objectiveProgress;  // Allow null
         this.isCompleted = builder.isCompleted;
         this.isClaimed = builder.isClaimed;
         
@@ -77,7 +73,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6&l任务详情 - " + questName);
+        return ColorUtils.colorize("&6&lQuest Details - " + questName);
     }
     
     @Override
@@ -92,21 +88,21 @@ public class QuestDetailGUI extends AbstractModuleGUI {
             renderRewards(inv);
             renderActionButtons(inv);
         } catch (Exception e) {
-            module.getContext().getLogger().severe("[Quest-Detail] 渲染GUI时发生严重错误: " + e.getMessage());
+            module.getContext().getLogger().severe("[Quest-Detail] Critical render error: " + e.getMessage());
             
-            // 显示错误提示界面
+            // Show error UI
             inv.setItem(13, createItem(Material.BARRIER,
-                "&c&l[ 渲染错误 ]",
+                "&c&l[ Render Error ]",
                 "",
-                "&7任务ID: &f" + questId,
-                "&7错误: &c" + (e.getMessage() != null ? e.getMessage() : "未知错误"),
+                "&7Quest ID: &f" + questId,
+                "&7Error: &c" + (e.getMessage() != null ? e.getMessage() : "Unknown error"),
                 "",
-                "&7请联系管理员"));
+                "&7Please contact an administrator"));
         }
     }
     
     /**
-     * 渲染头部信息（任务名称、类型、描述等）
+     * Render header info (quest name, type, description, etc.)
      */
     private void renderHeader(Inventory inv) {
         String typeColor = getTypeColor();
@@ -115,9 +111,9 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         
         List<String> lore = new ArrayList<>();
         lore.add("");
-        lore.add("&7类型: " + typeColor + typeName);
-        lore.add("&7最低公会等级: &f" + minGuildLevel);
-        lore.add("&7可重复完成: " + (isRepeatable ? "&a是" : "&c否"));
+        lore.add("&7Type: " + typeColor + typeName);
+        lore.add("&7Min Guild Level: &f" + minGuildLevel);
+        lore.add("&7Repeatable: " + (isRepeatable ? "&aYes" : "&cNo"));
         lore.add("");
         if (questDescription != null && !questDescription.isEmpty()) {
             lore.add(questDescription);
@@ -129,7 +125,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     /**
-     * 渲染状态信息（进度、状态文字）
+     * Render status info (progress, status text)
      */
     private void renderStatus(Inventory inv) {
         String statusText = getStatusText();
@@ -144,7 +140,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     /**
-     * 渲染目标列表
+     * Render objectives list
      */
     private void renderObjectives(Inventory inv) {
         if (objectives == null || objectives.isEmpty()) {
@@ -169,15 +165,15 @@ public class QuestDetailGUI extends AbstractModuleGUI {
                 done ? Material.LIME_STAINED_GLASS_PANE : Material.YELLOW_STAINED_GLASS_PANE,
                 (done ? "&a" : "&e") + getObjectiveDisplayName(obj),
                 "",
-                "&7目标: &f" + getObjectiveDescription(obj),
-                "&7进度: " + (done ? "&a" : "&e") + current + "/" + target + 
+                "&7Goal: &f" + getObjectiveDescription(obj),
+                "&7Progress: " + (done ? "&a" : "&e") + current + "/" + target + 
                     " (" + String.format("%.0f", pct) + "%)",
                 bar));
         }
     }
     
     /**
-     * 渲染奖励列表
+     * Render rewards list
      */
     private void renderRewards(Inventory inv) {
         if (rewards == null || rewards.isEmpty()) {
@@ -191,46 +187,46 @@ public class QuestDetailGUI extends AbstractModuleGUI {
             rewardLore.add("&7" + getRewardDisplayName(r) + ": &f+" + String.format("%.0f", r.getAmount()));
         }
         rewardLore.add("");
-        rewardLore.add("&8┃ 来自 quest 模块配置");
+        rewardLore.add("&8| from quest module config");
         
         inv.setItem(31, createItem(Material.DIAMOND,
-            "&b&l任务奖励",
+            "&b&lQuest Rewards",
             rewardLore.toArray(new String[0])));
     }
     
     /**
-     * 渲染操作按钮（接取/取消/领取）
+     * Render action buttons (accept/cancel/claim)
      */
     private void renderActionButtons(Inventory inv) {
         if (canAccept()) {
             inv.setItem(40, createItem(Material.EMERALD,
-                "&a&l[ 接取此任务 ]",
+                "&a&l[ Accept Quest ]",
                 "",
-                "&7确认后开始追踪进度",
-                "&8┃ 点击接取"));
+                "&7Accept to start tracking progress",
+                "&8| Click to accept"));
         } else if (isCompleted && !isClaimed) {
             inv.setItem(40, createItem(Material.GOLD_INGOT,
-                "&e&l[ 领取奖励 ]",
+                "&e&l[ Claim Reward ]",
                 "",
-                "&7所有目标已完成，领取你的奖励",
-                "&8┃ 点击领取"));
+                "&7All objectives completed, claim your reward",
+                "&8| Click to claim"));
         } else if (isClaimed) {
             inv.setItem(40, createItem(Material.GRAY_DYE,
-                "&7&l已领取奖励",
+                "&7&lReward Claimed",
                 "",
-                "&7该任务已完成并领取了奖励"));
+                "&7This quest has been completed and reward claimed"));
         } else if (hasProgress) {
             inv.setItem(40, createItem(Material.REDSTONE,
-                "&c&l[ 取消任务 ]",
+                "&c&l[ Cancel Quest ]",
                 "",
-                "&7放弃当前进度（不可恢复）",
-                "&8┃ 点击取消"));
+                "&7Abandon current progress (cannot undo)",
+                "&8| Click to cancel"));
         } else {
             inv.setItem(40, createItem(Material.BARRIER,
-                "&c&l[ 无法接取 ]",
+                "&c&l[ Cannot Accept ]",
                 "",
                 getCannotAcceptReason(),
-                "&7请检查条件后重试"));
+                "&7Check requirements and try again"));
         }
     }
     
@@ -242,7 +238,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     /**
-     * 处理操作按钮点击
+     * Handle action button click
      */
     private void handleActionButtonClick(Player player) {
         if (canAccept()) {
@@ -256,15 +252,15 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     
     private void handleAccept(Player player) {
         if (guildId <= 0) {
-            player.sendMessage(ColorUtils.colorize("&c[Quest] 公会ID无效，无法接取任务! (guildId=" + guildId + ")"));
-            module.getContext().getLogger().warning("[Quest-Detail] ⚠️ 拒绝接取: guildId=" + guildId +
+            player.sendMessage(ColorUtils.colorize("&c[Quest] Invalid guild ID, cannot accept quest! (guildId=" + guildId + ")"));
+            module.getContext().getLogger().warning("[Quest-Detail] Accept denied: guildId=" + guildId +
                 ", questId=" + questId + ", player=" + player.getName());
             return;
         }
 
         QuestDefinition definition = module.getQuestManager().getDefinition(questId);
         if (definition == null) {
-            player.sendMessage(ColorUtils.colorize("&c[Quest] 任务定义不存在!"));
+            player.sendMessage(ColorUtils.colorize("&c[Quest] Quest definition does not exist!"));
             return;
         }
         
@@ -274,7 +270,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         
         if (module.getQuestManager().acceptQuest(newProgress)) {
             module.getContext().sendMessage(player, "quest.accepted",
-                "&a[Quest] 已接取任务: &f" + questName);
+                "&a[Quest] Accepted quest: &f" + questName);
             
             notifyOtherGUIsRefresh();
             forceRefreshContent(player);
@@ -283,7 +279,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     
     private void handleClaimReward(Player player) {
         if (guildId <= 0) {
-            player.sendMessage(ColorUtils.colorize("&c[Quest] 公会ID无效，无法领取奖励!"));
+            player.sendMessage(ColorUtils.colorize("&c[Quest] Invalid guild ID, cannot claim reward!"));
             return;
         }
 
@@ -292,7 +288,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
             .getPlayerQuest(guildId, playerUuid, questId);
         
         if (definition == null || progress == null) {
-            player.sendMessage(ColorUtils.colorize("&c[Quest] 无法获取任务数据!"));
+            player.sendMessage(ColorUtils.colorize("&c[Quest] Cannot retrieve quest data!"));
             return;
         }
         
@@ -301,17 +297,17 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         module.getContext().getEventBus().publish(
             new GuildQuestModule.QuestCompletedEvent(
                 player.getName(), questName, guildId));
-        module.getContext().sendMessage(player, "quest.claimed", "&a[Quest] 奖励已发放!");
+        module.getContext().sendMessage(player, "quest.claimed", "&a[Quest] Rewards granted!");
         
         notifyOtherGUIsRefresh();
         forceRefreshContent(player);
     }
     
     private void handleCancel(Player player) {
-        player.sendMessage(ColorUtils.colorize("&c[Quest] 取消功能待实现"));
+        player.sendMessage(ColorUtils.colorize("&c[Quest] Cancel feature not yet implemented"));
     }
     
-    // ==================== 辅助方法 ====================
+    // ==================== Helper Methods ====================
     
     private String getTypeColor() {
         if (questType == null) return "&7";
@@ -324,12 +320,12 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     private String getTypeName() {
-        if (questType == null) return "未知";
+        if (questType == null) return "Unknown";
         switch (questType) {
-            case DAILY: return "每日任务";
-            case WEEKLY: return "每周任务";
-            case ONE_TIME: return "一次性任务";
-            default: return "未知类型";
+            case DAILY: return "Daily Quest";
+            case WEEKLY: return "Weekly Quest";
+            case ONE_TIME: return "One-time Quest";
+            default: return "Unknown Type";
         }
     }
     
@@ -344,11 +340,11 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     private String getStatusText() {
-        if (isClaimed) return "&a&l已领取";
-        if (isCompleted) return "&e&l已完成 (待领取)";
-        if (hasProgress) return "&6&l进行中";
-        if (canAccept()) return "&a&l可接取";
-        return "&c&l不可接取";
+        if (isClaimed) return "&a&lClaimed";
+        if (isCompleted) return "&e&lCompleted (Claim Pending)";
+        if (hasProgress) return "&6&lIn Progress";
+        if (canAccept()) return "&a&lAvailable";
+        return "&c&lUnavailable";
     }
     
     private String getProgressText() {
@@ -359,7 +355,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         try {
             QuestDefinition def = module.getQuestManager().getDefinition(questId);
             if (def != null) {
-                return "&7进度: &f" + String.format("%.1f%%", def.getProgressPercent(objectiveProgress));
+                return "&7Progress: &f" + String.format("%.1f%%", def.getProgressPercent(objectiveProgress));
             }
         } catch (Exception ignored) {}
         
@@ -367,7 +363,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     private String getHintText() {
-        if (isCompleted && !isClaimed) return "&e点击领取奖励";
+        if (isCompleted && !isClaimed) return "&eClick to claim reward";
         return "";
     }
     
@@ -384,17 +380,17 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     private String getObjectiveDisplayName(QuestObjective obj) {
-        if (obj == null || obj.getType() == null) return "未知目标";
+        if (obj == null || obj.getType() == null) return "Unknown Objective";
         return obj.getType().getDisplayName();
     }
     
     private String getObjectiveDescription(QuestObjective obj) {
-        if (obj == null) return "无描述";
-        return obj.getDescription() != null ? obj.getDescription() : "无描述";
+        if (obj == null) return "No description";
+        return obj.getDescription() != null ? obj.getDescription() : "No description";
     }
     
     private String getRewardDisplayName(QuestReward r) {
-        if (r == null || r.getType() == null) return "未知";
+        if (r == null || r.getType() == null) return "Unknown";
         return r.getType().getDisplayName();
     }
     
@@ -412,16 +408,16 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     private String getCannotAcceptReason() {
-        if (hasProgress) return "&c已接取此任务";
+        if (hasProgress) return "&cAlready accepted this quest";
         
         try {
             var guild = module.getContext().getPlugin().getGuildService().getPlayerGuild(playerUuid);
             if (guild != null && guild.getLevel() < minGuildLevel) {
-                return "&c需要公会等级: " + minGuildLevel + " (当前: &f" + guild.getLevel() + "&c)";
+                return "&cRequires guild level: " + minGuildLevel + " (current: &f" + guild.getLevel() + "&c)";
             }
         } catch (Exception ignored) {}
         
-        return "&c无法接取此任务";
+        return "&cCannot accept this quest";
     }
     
     private void notifyOtherGUIsRefresh() {
@@ -433,31 +429,31 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     private void forceRefreshContent(Player player) {
-        // 关键修复：由于新架构使用final字段（不可变数据），
-        // 必须重新打开整个GUI实例来刷新数据
+        // Key fix: since new architecture uses final fields (immutable data),
+        // must reopen entire GUI instance to refresh data
         com.guild.core.utils.CompatibleScheduler.runTaskLater(module.getContext().getPlugin(), () -> {
             if (player.isOnline()) {
                 try {
-                    // 重新获取最新的任务定义和进度
+                    // Re-fetch the latest quest definition and progress
                     QuestDefinition def = module.getQuestManager().getDefinition(questId);
                     QuestProgress progress = null;
                     if (def != null && guildId > 0 && playerUuid != null) {
                         progress = module.getQuestManager().getPlayerQuest(guildId, playerUuid, questId);
                     }
                     
-                    // 构建新的GUI实例（包含最新数据）
+                    // Build new GUI instance (with latest data)
                     Map<String, Object> reopenData = new java.util.HashMap<>();
-                    reopenData.put("definition", def);  // 可能是null，但Builder能处理
+                    reopenData.put("definition", def);  // May be null, but Builder can handle
                     reopenData.put("guildId", guildId);
                     reopenData.put("playerUuid", playerUuid);
                     
-                    // 重新打开GUI（这会替换当前GUI实例）
+                    // Reopen GUI (replaces current GUI instance)
                     module.getContext().getApi().openCustomGUI("quest-detail", player, reopenData);
                     
                 } catch (Exception e) {
-                    module.getContext().getLogger().warning("[Quest-Detail] 刷新GUI时出错: " + e.getMessage());
+                    module.getContext().getLogger().warning("[Quest-Detail] Error refreshing GUI: " + e.getMessage());
                     
-                    // 如果重新打开失败，尝试简单的inventory刷新作为后备方案
+                    // If reopen fails, try simple inventory refresh as fallback
                     if (this.inventory != null) {
                         this.inventory.clear();
                         setupInventory(this.inventory);
@@ -465,7 +461,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
                     }
                 }
             }
-        }, 1L);  // 延迟1tick
+        }, 1L);  // 1 tick delay
     }
     
     private static int mapObjectiveToSlot(int index) {
@@ -483,11 +479,11 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         return bar.toString();
     }
     
-    // ==================== Builder模式 ====================
+    // ==================== Builder Pattern ====================
     
     /**
-     * Builder类 - 用于安全地构建QuestDetailGUI实例
-     * 所有数据都在这里预处理和验证
+     * Builder class - safely constructs QuestDetailGUI instances.
+     * All data is preprocessed and validated here.
      */
     public static class Builder {
         private GuildQuestModule module;

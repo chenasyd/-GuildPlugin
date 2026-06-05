@@ -75,11 +75,11 @@ public class QuestProgress {
     }
 
     /**
-     * 更新指定目标的进度
+     * Update progress for a specific objective
      *
-     * @param index 目标索引（从0开始）
-     * @param delta 增加的进度量（必须为正数）
-     * @return 是否成功更新
+     * @param index Objective index (0-based)
+     * @param delta Progress increment (must be positive)
+     * @return Whether the update was successful
      */
     public boolean updateProgress(int index, int delta) { 
         synchronized (stateLock) {
@@ -92,8 +92,8 @@ public class QuestProgress {
     }
 
     /**
-     * 标记任务为已完成（由外部调用，不在getState中自动触发）
-     * 应该在检测到进度满足条件后显式调用
+     * Mark quest as completed (called externally, not auto-triggered in getState).
+     * Should be explicitly called after detecting progress meets completion criteria.
      */
     public void markAsCompleted() { 
         synchronized (stateLock) {
@@ -104,7 +104,7 @@ public class QuestProgress {
     }
 
     /**
-     * 检查是否已标记完成
+     * Check if completion is already marked
      */
     public boolean isCompletedMarked() { 
         synchronized (stateLock) {
@@ -113,7 +113,7 @@ public class QuestProgress {
     }
 
     /**
-     * 标记奖励已领取
+     * Mark reward as claimed
      */
     public void setClaimed() { 
         synchronized (stateLock) {
@@ -123,21 +123,21 @@ public class QuestProgress {
     }
 
     /**
-     * 获取当前状态（纯查询方法，不产生副作用）
+     * Get the current state (pure query method, no side effects)
      * 
-     * @param definition 任务定义（用于判断目标是否完成）
-     * @return 当前状态枚举
+     * @param definition Quest definition (used to check if objectives are complete)
+     * @return Current progress state
      */
     public ProgressState getState(QuestDefinition definition) { 
         synchronized (stateLock) {
             if (claimed) return ProgressState.CLAIMED;
             
-            // 如果已标记完成，直接返回完成状态
+            // If already marked complete, return directly
             if (completedTime > 0) return ProgressState.COMPLETED;
             
-            // 检查进度是否满足完成条件（但不自动标记）
+            // Check if progress meets completion criteria (without auto-marking)
             if (definition != null && definition.isCompleted(objectiveProgress)) {
-                return ProgressState.COMPLETED;  // 进度已完成但尚未标记
+                return ProgressState.COMPLETED;  // Progress completed but not yet marked
             }
             
             return ProgressState.IN_PROGRESS;
@@ -145,10 +145,10 @@ public class QuestProgress {
     }
 
     /**
-     * 检查进度是否已满足完成条件（不修改任何状态）
+     * Check if progress meets completion criteria (without modifying any state)
      * 
-     * @param definition 任务定义
-     * @return 是否所有目标都已完成
+     * @param definition Quest definition
+     * @return Whether all objectives are complete
      */
     public boolean isObjectivesCompleted(QuestDefinition definition) { 
         synchronized (stateLock) {
@@ -157,10 +157,10 @@ public class QuestProgress {
     }
 
     /**
-     * 获取进度完成的百分比
+     * Get completion percentage
      * 
-     * @param definition 任务定义
-     * @return 完成百分比（0.0 - 100.0）
+     * @param definition Quest definition
+     * @return Completion percentage (0.0 - 100.0)
      */
     public double getCompletionPercent(QuestDefinition definition) { 
         synchronized (stateLock) {

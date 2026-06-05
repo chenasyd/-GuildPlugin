@@ -34,7 +34,7 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
         this.guildId = guildId;
         this.playerUuid = playerUuid;
         
-        // 注册GUI刷新监听器
+        // Register GUI refresh listener
         registerRefreshListener();
     }
     
@@ -72,7 +72,7 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
     }
 
     @Override
-    public String getTitle() { return ColorUtils.colorize("&a&l进行中的任务"); }
+    public String getTitle() { return ColorUtils.colorize("&a&lActive Quests"); }
 
     @Override
     public void setupInventory(Inventory inv) {
@@ -82,17 +82,17 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
         slotDataMap.clear();
 
         inv.setItem(4, createItem(Material.COMPASS,
-            "&a&l进行中的任务",
+            "&a&lActive Quests",
             "",
-            "&7当前进行: &f" + activeQuests.size() + " 个任务",
-            "&8┃ 来自 quest 模块"));
+            "&7Ongoing: &f" + activeQuests.size() + " quest(s)",
+            "&8| from quest module"));
 
         if (activeQuests.isEmpty()) {
             inv.setItem(22, createItem(Material.BARRIER,
-                "&c&l暂无进行中的任务",
+                "&c&lNo Active Quests",
                 "",
-                "&7前往任务列表接取新任务吧!",
-                "&8┃ 点击返回"));
+                "&7Go to the quest list and accept some!",
+                "&8| Click to go back"));
             return;
         }
 
@@ -102,33 +102,33 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
             QuestDefinition def = module.getQuestManager().getDefinition(p.getQuestId());
             if (def == null) continue;
             
-            // 使用统一的状态判断逻辑
+            // Use unified state check logic
             boolean isCompleted = p.isObjectivesCompleted(def) || p.isCompletedMarked();
             double pct = p.getCompletionPercent(def);
             Material icon = isCompleted ? Material.LIME_STAINED_GLASS_PANE :
                 pct >= 50 ? Material.YELLOW_STAINED_GLASS_PANE : Material.WHITE_STAINED_GLASS_PANE;
             String colorPrefix = isCompleted ? "&a" : pct >= 50 ? "&e" : "&7";
             String typeIcon = switch (def.getType()) {
-                case DAILY -> "⏰";
-                case WEEKLY -> "☀";
-                case ONE_TIME -> "★";
+                case DAILY -> "D";
+                case WEEKLY -> "W";
+                case ONE_TIME -> "1";
             };
 
             List<String> lore = new ArrayList<>();
             lore.add("");
             lore.add(colorPrefix + typeIcon + " " + typeLabel(def.getType()));
-            lore.add("&7进度: " + colorPrefix + String.format("%.1f%%", pct));
+            lore.add("&7Progress: " + colorPrefix + String.format("%.1f%%", pct));
             if (!isCompleted && p.getObjectiveProgress().length > 0) {
                 QuestObjective mainObj = def.getObjectives().get(0);
                 lore.add("&7" + mainObj.getType().getDisplayName() + ": &f"
                     + p.getObjectiveProgress()[0] + "/" + mainObj.getTarget());
             }
             if (isCompleted && !p.isClaimed()) lore.add("");
-            if (isCompleted && !p.isClaimed()) lore.add("&e点击领取奖励");
-            else if (isCompleted) lore.add("&7已领取");
-            else lore.add("&7点击查看详情");
+            if (isCompleted && !p.isClaimed()) lore.add("&eClick to claim reward");
+            else if (isCompleted) lore.add("&7Claimed");
+            else lore.add("&7Click to view details");
             lore.add("");
-            lore.add("&8┃ 来自 quest 模块");
+            lore.add("&8| from quest module");
 
             int slot = mapToSlot(i);
             if (slot != -1) {
@@ -141,18 +141,18 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
         int totalPages = getTotalPages(activeQuests.size());
         if (totalPages > 1) {
             setupPagination(inv, currentPage, totalPages,
-                "&e&l上一页", "&e&l下一页");
+                "&e&lPrevious", "&e&lNext");
         }
         inv.setItem(49, createBackButton(
-            context.getMessage("module.quest.back", "&c返回"),
-            context.getMessage("module.quest.back-hint", "&7返回公会信息")));
+            context.getMessage("module.quest.back", "&cBack"),
+            context.getMessage("module.quest.back-hint", "&7Return to guild info")));
     }
 
     private String typeLabel(QuestDefinition.QuestType type) {
         return switch (type) {
-            case DAILY -> "每日";
-            case WEEKLY -> "每周";
-            case ONE_TIME -> "一次性";
+            case DAILY -> "Daily";
+            case WEEKLY -> "Weekly";
+            case ONE_TIME -> "One-time";
         };
     }
 
@@ -173,7 +173,7 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
                 api.openCustomGUI("quest-detail", player, data);
             } catch (Exception e) {
                 player.sendMessage(ColorUtils.colorize(
-                    "&c[Quest] 打开详情失败: " + e.getMessage()));
+                    "&c[Quest] Failed to open details: " + e.getMessage()));
             }
         }
     }
