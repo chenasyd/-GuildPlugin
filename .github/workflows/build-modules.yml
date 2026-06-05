@@ -23,11 +23,14 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Build all modules
+      run: mvn clean install -DskipTests
+
     - name: Build Announcement Module
-      run: mvn clean package -pl guild-plugin -Pbuild-announcement-module
+      run: mvn package -pl guild-plugin -Pbuild-announcement-module -DskipTests
 
     - name: Build API Test Module
-      run: mvn clean package -pl guild-plugin -Pbuild-api-test-module
+      run: mvn package -pl guild-plugin -Pbuild-api-test-module -DskipTests
 
     - name: Upload module artifacts
       uses: actions/upload-artifact@v4
