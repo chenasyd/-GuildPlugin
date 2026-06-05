@@ -1,40 +1,38 @@
-# Guild插件 PlaceholderAPI 变量使用说明
+# PlaceholderAPI Variables
 
-## 概述
+GuildPlugin provides full PlaceholderAPI support, allowing other plugins and chat formats to display dynamic guild-related information.
 
-Guild插件本次更新提供了完整的 PlaceholderAPI 支持，允许其他插件和聊天栏显示工会相关的动态信息。所有变量都支持颜色代码和中文显示。
+## Guild Info
 
-## 基础工会信息变量
+| Placeholder | Description |
+|:-----------:|:-----------:|
+| `%guild_name%` | Guild name |
+| `%guild_tag%` | Guild tag |
+| `%guild_membercount%` | Current member count |
+| `%guild_maxmembers%` | Maximum member capacity |
+| `%guild_level%` | Guild level |
+| `%guild_balance%` | Guild balance (2 decimal places) |
+| `%guild_frozen%` | Guild status (Normal / Frozen / No Guild) |
 
-### 工会基本信息
-- `%guild_name%` - 工会名称
-- `%guild_tag%` - 工会标签
-- `%guild_membercount%` - 工会成员数量
-- `%guild_maxmembers%` - 工会最大成员数
-- `%guild_level%` - 工会等级
-- `%guild_balance%` - 工会余额（保留2位小数）
-- `%guild_frozen%` - 工会状态（正常/已冻结/无工会）
+## Player Info
 
-### 玩家在工会中的信息
-- `%guild_role%` - 玩家在工会中的角色（会长/官员/成员）
-- `%guild_joined%` - 玩家加入工会的时间
-- `%guild_contribution%` - 玩家对工会的贡献度
+| Placeholder | Description |
+|:-----------:|:-----------:|
+| `%guild_role%` | Player role (Leader / Officer / Member) |
+| `%guild_joined%` | Join date |
+| `%guild_contribution%` | Contribution value |
+| `%guild_hasguild%` | Has a guild (Yes / No) |
+| `%guild_isleader%` | Is leader (Yes / No) |
+| `%guild_isofficer%` | Is officer (Yes / No) |
+| `%guild_ismember%` | Is member (Yes / No) |
 
-## 工会状态检查变量
+## Permission Checks
 
-### 玩家状态
-- `%guild_hasguild%` - 玩家是否有工会（是/否）
-- `%guild_isleader%` - 玩家是否是会长（是/否）
-- `%guild_isofficer%` - 玩家是否是官员（是/否）
-- `%guild_ismember%` - 玩家是否是工会成员（是/否）
-
-## 工会权限检查变量
-
-### 权限状态
-- `%guild_caninvite%` - 是否可以邀请玩家（是/否）
-- `%guild_cankick%` - 是否可以踢出成员（是/否）
-- `%guild_canpromote%` - 是否可以提升成员（是/否）
-- `%guild_candemote%` - 是否可以降级成员（是/否）
-- `%guild_cansethome%` - 是否可以设置工会传送点（是/否）
-- `%guild_canmanageeconomy%` - 是否可以管理工会经济（是/否）
-
+| Placeholder | Description |
+|:-----------:|:-----------:|
+| `%guild_caninvite%` | Can invite players (Yes / No) |
+| `%guild_cankick%` | Can kick members (Yes / No) |
+| `%guild_canpromote%` | Can promote members (Yes / No) |
+| `%guild_candemote%` | Can demote members (Yes / No) |
+| `%guild_cansethome%` | Can set guild home (Yes / No) |
+| `%guild_canmanageeconomy%` | Can manage guild economy (Yes / No) |

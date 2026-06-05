@@ -10,7 +10,7 @@
 
 A feature-complete Minecraft guild/faction system with economy, relations, leveling, full GUI, and modular SDK support. Supports both Spigot and Folia — free and open-source.
 
-> 📖 **中文完整文档**: [README_CN.md](./README_CN.md) &nbsp;|&nbsp; 🇬🇧 **English Documentation**: [README_EN.md](./README_EN.md)
+> Documentation: [User Guide](./Wiki/README_CN.md) | [Quick Start](./Wiki/README_EN.md) | [SDK Developer Guide](./Wiki/SDK%20Developer-Guide.md)
 
 ## Features
 
