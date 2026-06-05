@@ -176,7 +176,7 @@ public class InviteMemberGUI implements GUI {
         }
 
         // 下一页按钮
-        int maxPage = (onlinePlayers.size() - 1) / 36;
+        int maxPage = (onlinePlayers.size() - 1) / 28;
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
