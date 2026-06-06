@@ -47,6 +47,8 @@
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "Batch.build.executor": "Run",
+    "Maven.guild-parent [clean].executor": "Run",
+    "Maven.guild-parent [package].executor": "Run",
     "Maven.guild-plugin [clean].executor": "Run",
     "Maven.guild-plugin [package].executor": "Run",
     "Maven.guild-plugin [test].executor": "Run",
@@ -55,7 +57,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/Administrator/Downloads/coding-copilot-jetbrains-3.5.8412957-45596e92.zip",
+    "last_opened_file_path": "E:/war/Guild Plugin",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -80,6 +82,7 @@
       <workItem from="1768664880149" duration="40000" />
       <workItem from="1770911712240" duration="42000" />
       <workItem from="1770911774378" duration="272000" />
+      <workItem from="1780749703210" duration="773000" />
     </task>
     <servers />
   </component>

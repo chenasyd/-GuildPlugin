@@ -2203,11 +2203,48 @@ public class GuildService {
              } catch (SQLException e) {
                  logger.severe("获取玩家贡献记录时发生错误: " + e.getMessage());
              }
-             return contributions;
-         });
-     }
-     
-     // ==================== 辅助方法 ====================
+            return contributions;
+        });
+    }
+
+    /**
+     * 获取工会中各成员的存款总额（聚合查询，仅 DEPOSIT 类型）
+     * 返回 List<GuildContribution>，每个玩家一条，amount 为累计存款总额。
+     */
+    public CompletableFuture<List<GuildContribution>> getGuildContributionTotalsAsync(int guildId) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<GuildContribution> totals = new ArrayList<>();
+            try {
+                String sql = "SELECT player_uuid, player_name, SUM(amount) AS total_amount " +
+                             "FROM guild_contributions " +
+                             "WHERE guild_id = ? AND contribution_type = 'DEPOSIT' " +
+                             "GROUP BY player_uuid, player_name " +
+                             "ORDER BY total_amount DESC";
+
+                try (Connection conn = databaseManager.getConnection();
+                     PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                    stmt.setInt(1, guildId);
+
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        while (rs.next()) {
+                            GuildContribution c = new GuildContribution();
+                            c.setPlayerUuid(UUID.fromString(rs.getString("player_uuid")));
+                            c.setPlayerName(rs.getString("player_name"));
+                            c.setAmount(rs.getDouble("total_amount"));
+                            c.setType(GuildContribution.ContributionType.DEPOSIT);
+                            totals.add(c);
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                logger.severe("获取工会存款汇总时发生错误: " + e.getMessage());
+            }
+            return totals;
+        });
+    }
+    
+    // ==================== 辅助方法 ====================
      
      private GuildRelation createGuildRelationFromResultSet(ResultSet rs) throws SQLException {
          GuildRelation relation = new GuildRelation();

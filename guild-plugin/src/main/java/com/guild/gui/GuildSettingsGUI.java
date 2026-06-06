@@ -181,8 +181,10 @@ public class GuildSettingsGUI implements GUI {
             case 13: // 设置工会家
                 handleSetHome(player);
                 break;
-            case 28: // 申请管理
-                if (clickType == ClickType.LEFT) handleApplications(player);
+            case 27: // 工会资金
+                handleGuildFunds(player);
+                break;
+            case 28: // 预留扩展（无操作）
                 break;
             case 29: // 关系管理
                 if (clickType == ClickType.LEFT) handleRelations(player);
@@ -342,10 +344,15 @@ public class GuildSettingsGUI implements GUI {
 
     /** 设置功能按钮 - 仅第1页使用 */
     private void setupFunctionButtons(Inventory inventory) {
-        ItemStack applications = createItem(Material.PAPER,
-            languageManager.getMessage(player, "guild-settings.applications", "&e申请管理"), false,
-            languageManager.getMessage(player, "guild-settings.applications-desc", "&7单击 &f处理加入申请"));
-        inventory.setItem(28, applications);
+        ItemStack guildFunds = createItem(Material.EMERALD,
+            languageManager.getMessage(player, "guild-settings.guild-funds", "&a工会资金"), false,
+            languageManager.getMessage(player, "guild-settings.guild-funds-desc", "&7单击 &f查看成员存款"));
+        inventory.setItem(27, guildFunds);
+
+        ItemStack reservedSlot = createItem(Material.PAPER,
+            languageManager.getMessage(player, "guild-settings.reserved", "&7预留扩展"), false,
+            languageManager.getMessage(player, "guild-settings.reserved-desc", "&7功能开发中..."));
+        inventory.setItem(28, reservedSlot);
 
         ItemStack relations = createItem(Material.RED_WOOL,
             languageManager.getMessage(player, "guild-settings.relations", "&e关系管理"), false,
@@ -481,14 +488,14 @@ public class GuildSettingsGUI implements GUI {
         });
     }
 
-    private void handleApplications(Player player) {
+    private void handleGuildFunds(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
-            String msg = languageManager.getMessage(player, "gui.officer-or-higher", "&c需要官员或更高权限");
+        if (member == null) {
+            String msg = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        plugin.getGuiManager().openGUI(player, new ApplicationManagementGUI(plugin, guild, player));
+        plugin.getGuiManager().openGUI(player, new GuildFundsGUI(plugin, guild, player));
     }
 
     private void handleRelations(Player player) {
