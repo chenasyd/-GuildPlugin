@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * GitHub 云端模块仓库
@@ -37,6 +38,9 @@ public class CloudModuleRepository {
             "https://api.github.com/repos/chenasyd/GuildPlugin/releases";
     private static final String USER_AGENT = "GuildPlugin/CloudModuleRepository (chenasyd)";
     private static final int TIMEOUT = 10000;
+    /** 当目标文件已存在时，用于生成随机后缀的字符池 */
+    private static final String RANDOM_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789";
+    private static final Random RANDOM = new Random();
 
     static {
         // 绕过 SSL 证书验证 — 兼容旧 Java 版本 / 受限环境
@@ -116,7 +120,20 @@ public class CloudModuleRepository {
                         .getModulesDirectory();
                 File outFile = new File(modulesDir, target.fileName());
 
-                reply(sender, "&7Downloading " + target.fileName() + " ("
+                // If target file already exists (possibly loaded and locked by JVM),
+                // rename the download to avoid "file in use" conflict
+                boolean wasRenamed = false;
+                if (outFile.exists()) {
+                    String originalName = target.fileName();
+                    int dotIndex = originalName.lastIndexOf('.');
+                    String base = dotIndex > 0 ? originalName.substring(0, dotIndex) : originalName;
+                    String ext = dotIndex > 0 ? originalName.substring(dotIndex) : ".jar";
+                    String newName = base + "-" + generateRandomSuffix(5) + ext;
+                    outFile = new File(modulesDir, newName);
+                    wasRenamed = true;
+                }
+
+                reply(sender, "&7Downloading " + outFile.getName() + " ("
                         + formatSize(target.size()) + ", sdk: " + target.sdkVersion() + ")...");
 
                 // 下载
@@ -132,9 +149,18 @@ public class CloudModuleRepository {
                     conn.disconnect();
                 }
 
-                reply(sender, "&aDownloaded " + target.fileName()
-                        + ". Use &e/guildmodule load " + target.fileName()
-                        + " &ato load it.");
+                if (wasRenamed) {
+                    reply(sender, "&aDownloaded as &e" + outFile.getName()
+                            + " &a(saved with new name because &e" + target.fileName()
+                            + " &ais in use).");
+                    reply(sender, "&6Tip: &7Unload the old module first, then replace the jar file: "
+                            + "&e/guildmodule unload <id> &7-> replace jar -> "
+                            + "&e/guildmodule load " + outFile.getName());
+                } else {
+                    reply(sender, "&aDownloaded " + outFile.getName()
+                            + ". Use &e/guildmodule load " + outFile.getName()
+                            + " &ato load it.");
+                }
 
             } catch (Exception e) {
                 reply(sender, "&cDownload failed: " + e.getMessage());
@@ -228,5 +254,16 @@ public class CloudModuleRepository {
         if (bytes < 1024) return bytes + " B";
         if (bytes < 1024 * 1024) return String.format("%.1f KB", bytes / 1024.0);
         return String.format("%.1f MB", bytes / (1024.0 * 1024));
+    }
+
+    /**
+     * 生成指定长度的随机小写字母+数字字符串，用于文件重命名后缀。
+     */
+    private static String generateRandomSuffix(int length) {
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(RANDOM_CHARS.charAt(RANDOM.nextInt(RANDOM_CHARS.length())));
+        }
+        return sb.toString();
     }
 }
