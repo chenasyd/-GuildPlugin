@@ -269,15 +269,13 @@ public class GuildLogsGUI implements GUI {
      * 设置完整的导航按钮（依赖日志数据）
      */
     private void setupFullNavigationButtons(Inventory inventory) {
-        // 分页按钮
-        if (page > 0) {
-            ItemStack prevButton = createItem(
-                Material.ARROW,
-                ColorUtils.colorize("&e" + languageManager.getMessage(player, "gui.previous-page", "上一页")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.view-previous", "查看上一页"))
-            );
-            inventory.setItem(48, prevButton);
-        }
+        // 返回工会设置 (slot 48)
+        ItemStack backToSettings = createItem(
+            Material.ARROW,
+            ColorUtils.colorize("&c" + languageManager.getMessage(player, "gui.back", "返回")),
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.back-to-settings", "返回工会设置"))
+        );
+        inventory.setItem(48, backToSettings);
 
         if ((page + 1) * itemsPerPage < totalLogs) {
             ItemStack nextButton = createItem(
@@ -319,10 +317,10 @@ public class GuildLogsGUI implements GUI {
             return;
         }
 
-        // 上一页按钮 (槽位48)
-        if (slot == 48 && page > 0) {
-            GuildLogsGUI prevPageGUI = new GuildLogsGUI(plugin, guild, player, page - 1);
-            plugin.getGuiManager().openGUI(player, prevPageGUI);
+        // 返回工会设置 (槽位48)
+        if (slot == 48) {
+            GuildSettingsGUI settingsGUI = new GuildSettingsGUI(plugin, guild, player);
+            plugin.getGuiManager().openGUI(player, settingsGUI);
             return;
         }
 
