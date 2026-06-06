@@ -2,6 +2,7 @@ package com.guild.services;
 
 import com.guild.GuildPlugin;
 import com.guild.core.database.DatabaseManager;
+import com.guild.core.database.DatabaseManager.DatabaseType;
 
 import java.sql.*;
 import java.util.UUID;
@@ -29,22 +30,45 @@ public class GuildInvestmentService {
         initTable();
     }
 
+    private boolean isMySQL() {
+        return databaseManager.getDatabaseType() == DatabaseType.MYSQL;
+    }
+
     private void initTable() {
-        String sql = """
-            CREATE TABLE IF NOT EXISTS guild_member_investments (
-                id              INTEGER PRIMARY KEY AUTOINCREMENT,
-                guild_id        INTEGER NOT NULL,
-                player_uuid     TEXT    NOT NULL,
-                player_name     TEXT    NOT NULL,
-                total_invested  REAL    DEFAULT 0.0,
-                last_deposit    REAL,
-                last_deposit_at DATETIME,
-                total_withdrawn REAL    DEFAULT 0.0,
-                created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE(guild_id, player_uuid)
-            );
-            """;
+        String sql;
+        if (isMySQL()) {
+            sql = """
+                CREATE TABLE IF NOT EXISTS guild_member_investments (
+                    id              INT AUTO_INCREMENT PRIMARY KEY,
+                    guild_id        INT NOT NULL,
+                    player_uuid     VARCHAR(36) NOT NULL,
+                    player_name     VARCHAR(16) NOT NULL,
+                    total_invested  DOUBLE DEFAULT 0.0,
+                    last_deposit    DOUBLE,
+                    last_deposit_at TIMESTAMP NULL,
+                    total_withdrawn DOUBLE DEFAULT 0.0,
+                    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    UNIQUE KEY unique_guild_member_investment (guild_id, player_uuid)
+                )
+                """;
+        } else {
+            sql = """
+                CREATE TABLE IF NOT EXISTS guild_member_investments (
+                    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+                    guild_id        INTEGER NOT NULL,
+                    player_uuid     TEXT    NOT NULL,
+                    player_name     TEXT    NOT NULL,
+                    total_invested  REAL    DEFAULT 0.0,
+                    last_deposit    REAL,
+                    last_deposit_at DATETIME,
+                    total_withdrawn REAL    DEFAULT 0.0,
+                    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(guild_id, player_uuid)
+                )
+                """;
+        }
         try (Connection conn = databaseManager.getConnection();
              Statement stmt = conn.createStatement()) {
             stmt.executeUpdate(sql);
@@ -57,13 +81,24 @@ public class GuildInvestmentService {
     /** 记录存款并更新投资总额 */
     public void recordDeposit(int guildId, UUID playerUuid, String playerName, double amount) {
         if (amount <= 0) return;
+        String sql;
+        if (isMySQL()) {
+            sql =
+                "INSERT INTO guild_member_investments (guild_id, player_uuid, player_name, total_invested, last_deposit, last_deposit_at) " +
+                "VALUES (?, ?, ?, ?, ?, NOW()) " +
+                "ON DUPLICATE KEY UPDATE " +
+                "total_invested = total_invested + ?, last_deposit = ?, last_deposit_at = NOW(), " +
+                "player_name = ?, updated_at = NOW()";
+        } else {
+            sql =
+                "INSERT INTO guild_member_investments (guild_id, player_uuid, player_name, total_invested, last_deposit, last_deposit_at) " +
+                "VALUES (?, ?, ?, ?, ?, datetime('now', 'localtime')) " +
+                "ON CONFLICT(guild_id, player_uuid) DO UPDATE SET " +
+                "total_invested = total_invested + ?, last_deposit = ?, last_deposit_at = datetime('now', 'localtime'), " +
+                "player_name = ?, updated_at = datetime('now', 'localtime')";
+        }
         try (Connection conn = databaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(
-                 "INSERT INTO guild_member_investments (guild_id, player_uuid, player_name, total_invested, last_deposit, last_deposit_at) " +
-                 "VALUES (?, ?, ?, ?, ?, datetime('now', 'localtime')) " +
-                 "ON CONFLICT(guild_id, player_uuid) DO UPDATE SET " +
-                 "total_invested = total_invested + ?, last_deposit = ?, last_deposit_at = datetime('now', 'localtime'), " +
-                 "player_name = ?, updated_at = datetime('now', 'localtime')")) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, guildId);
             stmt.setString(2, playerUuid.toString());
             stmt.setString(3, playerName);
@@ -83,12 +118,22 @@ public class GuildInvestmentService {
     /** 记录取款（不影响投资总额，仅跟踪取款统计） */
     public void recordWithdraw(int guildId, UUID playerUuid, double amount) {
         if (amount <= 0) return;
+        String sql;
+        if (isMySQL()) {
+            sql =
+                "INSERT INTO guild_member_investments (guild_id, player_uuid, player_name, total_invested, total_withdrawn) " +
+                "VALUES (?, ?, '', 0, ?) " +
+                "ON DUPLICATE KEY UPDATE " +
+                "total_withdrawn = total_withdrawn + ?, updated_at = NOW()";
+        } else {
+            sql =
+                "INSERT INTO guild_member_investments (guild_id, player_uuid, player_name, total_invested, total_withdrawn) " +
+                "VALUES (?, ?, '', 0, ?) " +
+                "ON CONFLICT(guild_id, player_uuid) DO UPDATE SET " +
+                "total_withdrawn = total_withdrawn + ?, updated_at = datetime('now', 'localtime')";
+        }
         try (Connection conn = databaseManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(
-                 "INSERT INTO guild_member_investments (guild_id, player_uuid, player_name, total_invested, total_withdrawn) " +
-                 "VALUES (?, ?, '', 0, ?) " +
-                 "ON CONFLICT(guild_id, player_uuid) DO UPDATE SET " +
-                 "total_withdrawn = total_withdrawn + ?, updated_at = datetime('now', 'localtime')")) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, guildId);
             stmt.setString(2, playerUuid.toString());
             stmt.setDouble(3, amount);

@@ -2,6 +2,7 @@ package com.guild.sdk.economy;
 
 import com.guild.GuildPlugin;
 import com.guild.core.database.DatabaseManager;
+import com.guild.core.database.DatabaseManager.DatabaseType;
 import com.guild.core.utils.ColorUtils;
 import org.bukkit.entity.Player;
 
@@ -68,19 +69,37 @@ public class CurrencyManager {
      * 初始化数据库表
      */
     private void initDatabase() {
-        String createTableSql = """
-        CREATE TABLE IF NOT EXISTS guild_currencies (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            guild_id INTEGER NOT NULL,
-            player_uuid TEXT NOT NULL,
-            player_name TEXT NOT NULL,
-            a_coin REAL DEFAULT 0,
-            b_coin REAL DEFAULT 0,
-            c_coin REAL DEFAULT 0,
-            last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE(guild_id, player_uuid)
-        );
-        """;
+        DatabaseType dbType = databaseManager.getDatabaseType();
+        String createTableSql;
+        if (dbType == DatabaseType.MYSQL) {
+            createTableSql = """
+            CREATE TABLE IF NOT EXISTS guild_currencies (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                guild_id INT NOT NULL,
+                player_uuid VARCHAR(36) NOT NULL,
+                player_name VARCHAR(16) NOT NULL,
+                a_coin DOUBLE DEFAULT 0,
+                b_coin DOUBLE DEFAULT 0,
+                c_coin DOUBLE DEFAULT 0,
+                last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                UNIQUE KEY unique_guild_currency (guild_id, player_uuid)
+            )
+            """;
+        } else {
+            createTableSql = """
+            CREATE TABLE IF NOT EXISTS guild_currencies (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                guild_id INTEGER NOT NULL,
+                player_uuid TEXT NOT NULL,
+                player_name TEXT NOT NULL,
+                a_coin REAL DEFAULT 0,
+                b_coin REAL DEFAULT 0,
+                c_coin REAL DEFAULT 0,
+                last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(guild_id, player_uuid)
+            )
+            """;
+        }
 
         try (Connection conn = databaseManager.getConnection();
              Statement stmt = conn.createStatement()) {
