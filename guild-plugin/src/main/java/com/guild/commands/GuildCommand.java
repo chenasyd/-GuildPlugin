@@ -1314,6 +1314,17 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 if (success) {
                     // 记录投资
                     plugin.getGuildInvestmentService().recordDeposit(guild.getId(), player.getUniqueId(), player.getName(), amount);
+                    // 写入 guild_contributions 表（供 GuildFundsGUI 展示）
+                    plugin.getGuildService().addGuildContributionAsync(guild.getId(), player.getUniqueId(),
+                            player.getName(), amount,
+                            com.guild.models.GuildContribution.ContributionType.DEPOSIT,
+                            player.getName() + " 存入 " + String.format("%.2f", amount));
+                    // 写入 guild_logs 表（供 GuildLogsGUI 展示，记录真实操作者）
+                    plugin.getGuildService().logGuildActionAsync(guild.getId(), guild.getName(),
+                            player.getUniqueId().toString(), player.getName(),
+                            com.guild.models.GuildLog.LogType.FUND_DEPOSITED,
+                            player.getName() + " 存入了 " + String.format("%.2f", amount),
+                            "金额: " + String.format("%.2f", amount));
                     // 分发存款事件给模块
                     plugin.getGuildService().notifyEconomyDeposit(guild.getId(), guild.getName(), player.getUniqueId(), player.getName(), amount);
                 }
