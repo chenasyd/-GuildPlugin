@@ -115,7 +115,7 @@ public class GuildDetailGUI implements GUI {
     
     private void setupMembersList(Inventory inventory) {
         // 成员列表标题
-        inventory.setItem(27, createItem(Material.PLAYER_HEAD,
+        inventory.setItem(27, createItem(Material.PAPER,
             ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.guild-members", "&a工会成员")),
             ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.total-members", "共 {count} 名成员", "{count}", String.valueOf(members.size())))));
 
