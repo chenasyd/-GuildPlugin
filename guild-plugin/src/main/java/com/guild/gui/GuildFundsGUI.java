@@ -37,19 +37,25 @@ public class GuildFundsGUI implements GUI {
     private final LanguageManager languageManager;
     private final int page;
     private final int itemsPerPage = 28;
+    private final String sourceGuiType;
     private List<GuildContribution> totals;
     private int totalPlayers;
 
     public GuildFundsGUI(GuildPlugin plugin, Guild guild, Player player) {
-        this(plugin, guild, player, 0);
+        this(plugin, guild, player, 0, "GuildSettingsGUI");
     }
 
     public GuildFundsGUI(GuildPlugin plugin, Guild guild, Player player, int page) {
+        this(plugin, guild, player, page, "GuildSettingsGUI");
+    }
+
+    public GuildFundsGUI(GuildPlugin plugin, Guild guild, Player player, int page, String sourceGuiType) {
         this.plugin = plugin;
         this.guild = guild;
         this.player = player;
         this.languageManager = plugin.getLanguageManager();
         this.page = page;
+        this.sourceGuiType = sourceGuiType != null ? sourceGuiType : "GuildSettingsGUI";
     }
 
     @Override
@@ -93,7 +99,7 @@ public class GuildFundsGUI implements GUI {
 
         // 返回 (slot 49)
         if (slot == 49) {
-            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
+            navigateBack(player);
             return;
         }
 
@@ -227,8 +233,7 @@ public class GuildFundsGUI implements GUI {
         inventory.setItem(49, createItem(Material.ARROW,
                 ColorUtils.colorize("&c" + languageManager.getMessage(player,
                         "gui.back", "返回")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player,
-                        "guild-funds.back-to-settings", "返回工会设置"))));
+                ColorUtils.colorize("&7" + getBackLore())));
 
         if ((page + 1) * itemsPerPage < totalPlayers) {
             inventory.setItem(50, createItem(Material.ARROW,
@@ -249,8 +254,24 @@ public class GuildFundsGUI implements GUI {
         inventory.setItem(49, createItem(Material.ARROW,
                 ColorUtils.colorize("&c" + languageManager.getMessage(player,
                         "gui.back", "返回")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player,
-                        "guild-funds.back-to-settings", "返回工会设置"))));
+                ColorUtils.colorize("&7" + getBackLore())));
+    }
+
+    private void navigateBack(Player player) {
+        if ("GuildInfoGUI".equals(sourceGuiType)) {
+            plugin.getGuiManager().openGUI(player, new GuildInfoGUI(plugin, player, guild));
+        } else {
+            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
+        }
+    }
+
+    private String getBackLore() {
+        if ("GuildInfoGUI".equals(sourceGuiType)) {
+            return languageManager.getMessage(player,
+                    "guild-funds.back-to-info", "返回工会信息");
+        }
+        return languageManager.getMessage(player,
+                "guild-funds.back-to-settings", "返回工会设置");
     }
 
     private void setupPageInfo(Inventory inventory) {
