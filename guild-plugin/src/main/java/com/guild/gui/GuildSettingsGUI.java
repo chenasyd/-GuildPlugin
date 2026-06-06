@@ -181,13 +181,10 @@ public class GuildSettingsGUI implements GUI {
             case 13: // 设置工会家
                 handleSetHome(player);
                 break;
-            case 27: // 工会资金
+            case 28: // 工会资金
                 handleGuildFunds(player);
                 break;
-            case 28: // 预留扩展（无操作）
-                break;
-            case 29: // 关系管理
-                if (clickType == ClickType.LEFT) handleRelations(player);
+            case 29: // 预留扩展（顶替原关系管理入口）
                 break;
             case 31: // 工会日志
                 if (clickType == ClickType.LEFT) handleGuildLogs(player);
@@ -347,17 +344,12 @@ public class GuildSettingsGUI implements GUI {
         ItemStack guildFunds = createItem(Material.EMERALD,
             languageManager.getMessage(player, "guild-settings.guild-funds", "&a工会资金"), false,
             languageManager.getMessage(player, "guild-settings.guild-funds-desc", "&7单击 &f查看成员存款"));
-        inventory.setItem(27, guildFunds);
+        inventory.setItem(28, guildFunds);
 
         ItemStack reservedSlot = createItem(Material.PAPER,
             languageManager.getMessage(player, "guild-settings.reserved", "&7预留扩展"), false,
             languageManager.getMessage(player, "guild-settings.reserved-desc", "&7功能开发中..."));
-        inventory.setItem(28, reservedSlot);
-
-        ItemStack relations = createItem(Material.RED_WOOL,
-            languageManager.getMessage(player, "guild-settings.relations", "&e关系管理"), false,
-            languageManager.getMessage(player, "guild-settings.relations-desc", "&7单击 &f管理工会关系"));
-        inventory.setItem(29, relations);
+        inventory.setItem(29, reservedSlot);
 
         ItemStack guildLogs = createItem(Material.BOOK,
             languageManager.getMessage(player, "guild-settings.logs", "&6工会日志"), false,
@@ -496,16 +488,6 @@ public class GuildSettingsGUI implements GUI {
             return;
         }
         plugin.getGuiManager().openGUI(player, new GuildFundsGUI(plugin, guild, player));
-    }
-
-    private void handleRelations(Player player) {
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = languageManager.getMessage(player, "relation.only-leader", "&c只有工会会长才能管理工会关系！");
-            player.sendMessage(ColorUtils.colorize(msg));
-            return;
-        }
-        plugin.getGuiManager().openGUI(player, new GuildRelationsGUI(plugin, guild, player));
     }
 
     private void handleGuildLogs(Player player) {
