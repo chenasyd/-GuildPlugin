@@ -256,11 +256,11 @@ public class GuildLogsGUI implements GUI {
      * 设置基本的导航按钮（不依赖日志数据）
      */
     private void setupBasicNavigationButtons(Inventory inventory) {
-        // 返回按钮 - 移到槽位49，与其他GUI保持一致
+        // 返回按钮 - 槽位49
         ItemStack backButton = createItem(
             Material.ARROW,
             ColorUtils.colorize("&c" + languageManager.getMessage(player, "gui.back", "返回")),
-            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.back-to-guild", "返回工会信息"))
+            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.back-to-settings", "返回工会设置"))
         );
         inventory.setItem(49, backButton);
     }
@@ -269,14 +269,6 @@ public class GuildLogsGUI implements GUI {
      * 设置完整的导航按钮（依赖日志数据）
      */
     private void setupFullNavigationButtons(Inventory inventory) {
-        // 返回工会设置 (slot 48)
-        ItemStack backToSettings = createItem(
-            Material.ARROW,
-            ColorUtils.colorize("&c" + languageManager.getMessage(player, "gui.back", "返回")),
-            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.back-to-settings", "返回工会设置"))
-        );
-        inventory.setItem(48, backToSettings);
-
         if ((page + 1) * itemsPerPage < totalLogs) {
             ItemStack nextButton = createItem(
                 Material.ARROW,
@@ -310,15 +302,8 @@ public class GuildLogsGUI implements GUI {
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (clickedItem == null || !clickedItem.hasItemMeta()) return;
 
-        // 返回按钮 (槽位49)
+        // 返回工会设置 (槽位49)
         if (slot == 49) {
-            GuildInfoGUI guildInfoGUI = new GuildInfoGUI(plugin, player, guild);
-            plugin.getGuiManager().openGUI(player, guildInfoGUI);
-            return;
-        }
-
-        // 返回工会设置 (槽位48)
-        if (slot == 48) {
             GuildSettingsGUI settingsGUI = new GuildSettingsGUI(plugin, guild, player);
             plugin.getGuiManager().openGUI(player, settingsGUI);
             return;
