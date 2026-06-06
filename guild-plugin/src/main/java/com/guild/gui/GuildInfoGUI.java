@@ -158,6 +158,10 @@ public class GuildInfoGUI implements GUI {
                 plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
                 return;
             }
+            if (slot == 28) {
+                plugin.getGuiManager().openGUI(player, new GuildFundsGUI(plugin, guild, player));
+                return;
+            }
             // 分发到模块固定槽位
             dispatchToModuleFixedSlot(slot);
         } else {
@@ -216,7 +220,9 @@ public class GuildInfoGUI implements GUI {
             ColorUtils.colorize("&6" + plugin.getLanguageManager().getMessage(player, "guild-info.economy-title", "经济信息")),
             ColorUtils.colorize("&7" + plugin.getLanguageManager().getMessage(player, "guild-info.balance", "资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())),
             ColorUtils.colorize("&7" + plugin.getLanguageManager().getMessage(player, "guild-info.next-level-requirement", "下级所需") + ": " + getNextLevelRequirement(guild.getLevel())),
-            getProgressBar(guild.getLevel(), guild.getBalance(), 8)
+            getProgressBar(guild.getLevel(), guild.getBalance(), 8),
+            "",
+            ColorUtils.colorize("&e" + plugin.getLanguageManager().getMessage(player, "guild-info.funds-hint", "单击查看成员存款详情"))
         );
         inventory.setItem(28, economyItem);
 
@@ -258,7 +264,9 @@ public class GuildInfoGUI implements GUI {
                     ColorUtils.colorize("&6" + plugin.getLanguageManager().getMessage(player, "guild-info.economy-title", "经济信息")),
                     ColorUtils.colorize("&7" + plugin.getLanguageManager().getMessage(player, "guild-info.balance", "资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())),
                     ColorUtils.colorize("&7" + plugin.getLanguageManager().getMessage(player, "guild-info.next-level-requirement", "下级所需") + ": " + getNextLevelRequirement(guild.getLevel())),
-                    getProgressBar(guild.getLevel(), guild.getBalance(), 8)
+                    getProgressBar(guild.getLevel(), guild.getBalance(), 8),
+                    "",
+                    ColorUtils.colorize("&e" + plugin.getLanguageManager().getMessage(player, "guild-info.funds-hint", "单击查看成员存款详情"))
                 );
                 inventory.setItem(28, updatedEconomy);
             });
