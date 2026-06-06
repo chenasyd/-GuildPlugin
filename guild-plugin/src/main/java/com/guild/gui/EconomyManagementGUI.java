@@ -193,34 +193,32 @@ public class EconomyManagementGUI implements GUI {
     }
     
     private void handleGuildClick(Player player, Guild guild, ClickType clickType) {
-        if (clickType == ClickType.LEFT) {
-            // 设置资金
-            openSetBalanceGUI(player, guild);
-        } else if (clickType == ClickType.RIGHT) {
-            // 增加资金
-            openAddBalanceGUI(player, guild);
-        } else if (clickType == ClickType.MIDDLE) {
-            // 减少资金
-            openRemoveBalanceGUI(player, guild);
+        String operationType;
+
+        if (clickType == ClickType.MIDDLE) {
+            // 中键：直接打开确认GUI（不需要输入金额）
+            ConfirmChangeFundsGUI confirmGUI = new ConfirmChangeFundsGUI(
+                    plugin, guild, player, "remove",
+                    guild.getBalance());
+            String msg = languageManager.getMessage(player,
+                    "economy-management.middle-click-desc",
+                    "&c即将清空 &e{guild} &c的资金，请确认", "{guild}", guild.getName());
+            player.sendMessage(ColorUtils.colorize(msg));
+            plugin.getGuiManager().openGUI(player, confirmGUI);
+            return;
         }
-    }
-    
-    private void openSetBalanceGUI(Player player, Guild guild) {
-        // TODO: 实现设置资金GUI
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "economy-management.set-balance-dev", "&e设置资金功能开发中...")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "economy-management.use-command", "&e使用命令: &f/guildadmin economy set {guild} <金额>", "{guild}", guild.getName())));
-    }
 
-    private void openAddBalanceGUI(Player player, Guild guild) {
-        // TODO: 实现增加资金GUI
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "economy-management.add-balance-dev", "&e增加资金功能开发中...")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "economy-management.use-command", "&e使用命令: &f/guildadmin economy add {guild} <金额>", "{guild}", guild.getName())));
-    }
+        // 左键/右键：直接打开确认变更GUI（金额在界面上输入）
+        if (clickType == ClickType.LEFT) {
+            operationType = "set";
+        } else if (clickType == ClickType.RIGHT) {
+            operationType = "add";
+        } else {
+            return;
+        }
 
-    private void openRemoveBalanceGUI(Player player, Guild guild) {
-        // TODO: 实现减少资金GUI
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "economy-management.remove-balance-dev", "&e减少资金功能开发中...")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "economy-management.use-command", "&e使用命令: &f/guildadmin economy remove {guild} <金额>", "{guild}", guild.getName())));
+        plugin.getGuiManager().openGUI(player,
+                new ConfirmChangeFundsGUI(plugin, guild, player, operationType, 0));
     }
     
     private ItemStack createItem(Material material, String name, String... lore) {
