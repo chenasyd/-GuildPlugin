@@ -56,12 +56,10 @@ public class MemberManagementGUI implements GUI {
         fillBorder(inventory);
         // 添加功能按钮
         setupFunctionButtons(inventory);
-        // 清除成员展示区域的残留物品（原地刷新时防止旧玩家头残留）
-        clearMemberSlots(inventory);
         // 加载成员列表
         loadMembers(inventory);
     }
-    
+
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         // 检查是否是功能按钮
@@ -79,20 +77,6 @@ public class MemberManagementGUI implements GUI {
         // 检查是否是成员按钮
         if (isMemberSlot(slot)) {
             handleMemberClick(player, slot, clickedItem, clickType);
-        }
-    }
-    
-    /**
-     * 清除成员展示区域（slot 10-43 中非边框列），防止原地刷新时旧物品残留。
-     */
-    private void clearMemberSlots(Inventory inventory) {
-        for (int row = 1; row <= 4; row++) {
-            for (int col = 1; col <= 7; col++) {
-                int slot = row * 9 + col;
-                if (slot < 44) {
-                    inventory.setItem(slot, null);
-                }
-            }
         }
     }
 

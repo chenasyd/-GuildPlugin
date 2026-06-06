@@ -29,16 +29,4 @@ public class GUIManager {
     public boolean isPlayerTrackedOnline(UUID playerUuid) {
         return false;
     }
-
-    public void refreshOpenGUIs() {
-    }
-
-    public void refreshGUIInPlace(Player player) {
-    }
-
-    public void dumpOnlineStatus() {
-    }
-
-    public void forceRefreshGUIs() {
-    }
 }
