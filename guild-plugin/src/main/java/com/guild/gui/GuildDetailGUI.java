@@ -26,6 +26,8 @@ import com.guild.models.GuildMember;
  */
 public class GuildDetailGUI implements GUI {
 
+    private static final int MEMBERS_PER_PAGE = 21; // 3行×7列
+
     private final GuildPlugin plugin;
     private final Guild guild;
     private final Player viewer;
@@ -33,6 +35,10 @@ public class GuildDetailGUI implements GUI {
     private List<GuildMember> members = new ArrayList<>();
     /** 是否处于会长转移选择模式 */
     private boolean transferMode = false;
+    /** 当前成员分页页码 */
+    private int currentPage = 0;
+    /** 总成员分页数 */
+    private int totalPages = 0;
 
     public GuildDetailGUI(GuildPlugin plugin, Guild guild, Player viewer) {
         this.plugin = plugin;
@@ -82,7 +88,7 @@ public class GuildDetailGUI implements GUI {
 
         inventory.setItem(4, createItem(Material.SHIELD, ColorUtils.colorize("&6" + guild.getName()), guildLore.toArray(new String[0])));
 
-        // 工会等级和资金 - 移到 slot 16（原 slot 19）
+        // 工会等级和资金 - 放在 slot 16
         List<String> economyLore = new ArrayList<>();
         economyLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.current-level", "当前等级") + ": &e" + guild.getLevel()));
         economyLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.current-balance", "当前资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())));
@@ -93,7 +99,7 @@ public class GuildDetailGUI implements GUI {
             ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.economy-info", "&e经济信息")),
             economyLore.toArray(new String[0])));
 
-        // 工会描述 - 放在 slot 14（原 slot 23）
+        // 工会描述 - 放在 slot 14
         List<String> descLore = new ArrayList<>();
         String description = guild.getDescription();
         if (description != null && !description.isEmpty()) {
@@ -105,20 +111,57 @@ public class GuildDetailGUI implements GUI {
         inventory.setItem(14, createItem(Material.BOOK,
             ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.guild-description", "&e工会描述")),
             descLore.toArray(new String[0])));
+
+        // 会长头像 - 放在 slot 12
+        GuildMember leader = getLeaderMember();
+        if (leader != null) {
+            List<String> leaderLore = new ArrayList<>();
+            leaderLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "gui.leader", "会长") + ": &c" + leader.getPlayerName()));
+            leaderLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.joined", "加入") + ": " + formatTime(leader.getJoinedAt())));
+            leaderLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.online", "在线") + ": " +
+                (isPlayerOnline(leader.getPlayerUuid()) ? "&a" + languageManager.getMessage(viewer, "guild-detail.online-yes", "在线") : "&7" + languageManager.getMessage(viewer, "guild-detail.online-no", "离线"))));
+            inventory.setItem(12, createPlayerHead(leader.getPlayerName(), leader.getPlayerUuid(), leaderLore.toArray(new String[0])));
+        }
     }
     
+    /** 成员显示区域：3行×7列 = 21 个槽位，排除会长 */
+    private static final int[] MEMBER_SLOTS = {
+        19, 20, 21, 22, 23, 24, 25, // 第3行
+        28, 29, 30, 31, 32, 33, 34, // 第4行
+        37, 38, 39, 40, 41, 42, 43  // 第5行
+    };
+
     private void setupMembersList(Inventory inventory) {
-        // 成员列表标题 - 移到 slot 10（原 slot 27）
+        // 成员列表标题
         inventory.setItem(10, createItem(Material.PAPER,
             ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.guild-members", "&a工会成员")),
             ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.total-members", "共 {count} 名成员", "{count}", String.valueOf(members.size())))));
 
-        // 显示前4个成员（更简洁）
-        int[] memberSlots = {12, 29, 30, 31}; // slot 28→12，其余保持
-        int maxDisplay = Math.min(4, members.size());
-        for (int i = 0; i < maxDisplay; i++) {
-            GuildMember member = members.get(i);
-            int slot = memberSlots[i];
+        // 清除旧的成员槽位
+        for (int slot : MEMBER_SLOTS) {
+            inventory.setItem(slot, null);
+        }
+
+        // 排除会长后的成员列表
+        List<GuildMember> nonLeaderMembers = new ArrayList<>();
+        for (GuildMember m : members) {
+            if (!m.getPlayerUuid().equals(guild.getLeaderUuid())) {
+                nonLeaderMembers.add(m);
+            }
+        }
+
+        // 计算分页
+        totalPages = (nonLeaderMembers.size() - 1) / MEMBERS_PER_PAGE;
+        if (totalPages < 0) totalPages = 0;
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        // 显示当前页成员
+        int startIndex = currentPage * MEMBERS_PER_PAGE;
+        int endIndex = Math.min(startIndex + MEMBERS_PER_PAGE, nonLeaderMembers.size());
+
+        for (int i = startIndex; i < endIndex; i++) {
+            GuildMember member = nonLeaderMembers.get(i);
+            int slot = MEMBER_SLOTS[i - startIndex];
 
             List<String> memberLore = new ArrayList<>();
             memberLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.position", "职位") + ": " + getRoleDisplayName(member.getRole())));
@@ -129,14 +172,25 @@ public class GuildDetailGUI implements GUI {
             inventory.setItem(slot, createPlayerHead(member.getPlayerName(), member.getPlayerUuid(), memberLore.toArray(new String[0])));
         }
 
-        // 更多成员压缩单格显示
-        if (members.size() > 4) {
-            inventory.setItem(32, createItem(Material.PAPER,
-                ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.more-members", "&e更多成员")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.more-members-lore", "还有 {count} 名成员未显示", "{count}", String.valueOf(members.size() - 4)))));
-        } else {
-            inventory.setItem(32, null);
+        // 分页按钮
+        inventory.setItem(18, currentPage > 0
+            ? createItem(Material.ARROW,
+                ColorUtils.colorize("&e" + languageManager.getMessage(viewer, "gui.previous-page", "上一页")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "gui.view-previous", "查看上一页")))
+            : null);
+        inventory.setItem(26, currentPage < totalPages
+            ? createItem(Material.ARROW,
+                ColorUtils.colorize("&a" + languageManager.getMessage(viewer, "gui.next-page", "下一页")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "gui.view-next", "查看下一页")))
+            : null);
+    }
+
+    /** 获取会长成员对象 */
+    private GuildMember getLeaderMember() {
+        for (GuildMember m : members) {
+            if (m.getPlayerUuid().equals(guild.getLeaderUuid())) return m;
         }
+        return null;
     }
     
     private void setupActionButtons(Inventory inventory) {
@@ -229,18 +283,58 @@ public class GuildDetailGUI implements GUI {
             return;
         }
 
-        // 会长转移模式：点击成员头像执行转移
-        if (transferMode && player.hasPermission("guild.admin")) {
-            int memberIdx = -1;
-            if (slot == 12 || slot == 29 || slot == 30 || slot == 31) {
-                if (slot == 12) memberIdx = 0;
-                else memberIdx = slot - 28; // 29→1, 30→2, 31→3
+        // 分页
+        if (slot == 18 && currentPage > 0) {
+            currentPage--;
+            refresh(player);
+            return;
+        }
+        if (slot == 26 && currentPage < totalPages) {
+            currentPage++;
+            refresh(player);
+            return;
+        }
+
+        // 点击成员头像：会长转移模式 or 查看详情
+        GuildMember target = null;
+
+        // 会长槽位 (slot 12)
+        if (slot == 12) {
+            for (GuildMember m : members) {
+                if (m.getPlayerUuid().equals(guild.getLeaderUuid())) {
+                    target = m;
+                    break;
+                }
             }
-            if (memberIdx >= 0 && memberIdx < members.size()) {
-                GuildMember target = members.get(memberIdx);
+        } else {
+            // 成员显示区域 (19-25, 28-34, 37-43)
+            int memberSlotIndex = -1;
+            for (int i = 0; i < MEMBER_SLOTS.length; i++) {
+                if (MEMBER_SLOTS[i] == slot) {
+                    memberSlotIndex = i;
+                    break;
+                }
+            }
+            if (memberSlotIndex >= 0) {
+                // 从排除会长的列表中计算实际成员索引
+                List<GuildMember> nonLeaderMembers = new ArrayList<>();
+                for (GuildMember m : members) {
+                    if (!m.getPlayerUuid().equals(guild.getLeaderUuid())) {
+                        nonLeaderMembers.add(m);
+                    }
+                }
+                int memberIdx = (currentPage * MEMBERS_PER_PAGE) + memberSlotIndex;
+                if (memberIdx < nonLeaderMembers.size()) {
+                    target = nonLeaderMembers.get(memberIdx);
+                }
+            }
+        }
+
+        if (target != null) {
+            if (transferMode && player.hasPermission("guild.admin")) {
                 handleTransferLeader(player, target);
-                return;
             }
+            // 非转移模式：可扩展其他点击行为
         }
     }
     
