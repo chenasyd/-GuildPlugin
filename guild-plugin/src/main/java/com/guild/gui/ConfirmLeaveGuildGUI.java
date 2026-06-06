@@ -4,6 +4,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -141,16 +142,18 @@ public class ConfirmLeaveGuildGUI implements GUI {
 
         // 离开工会
         plugin.getGuildService().removeGuildMemberAsync(player.getUniqueId(), player.getUniqueId()).thenAccept(success -> {
-            if (success) {
-                String message = languageManager.getMessage(player, "leave.success", "&a你已成功离开工会 &e{guild} &a！", "{guild}", guild.getName());
-                player.sendMessage(ColorUtils.colorize(message));
+            CompatibleScheduler.runTask(plugin, () -> {
+                if (success) {
+                    String message = languageManager.getMessage(player, "leave.success", "&a你已成功离开工会 &e{guild} &a！", "{guild}", guild.getName());
+                    player.sendMessage(ColorUtils.colorize(message));
 
-                // 关闭GUI
-                player.closeInventory();
-            } else {
-                String message = languageManager.getMessage(player, "leave.failed", "&c离开工会失败！");
-                player.sendMessage(ColorUtils.colorize(message));
-            }
+                    // 关闭GUI
+                    player.closeInventory();
+                } else {
+                    String message = languageManager.getMessage(player, "leave.failed", "&c离开工会失败！");
+                    player.sendMessage(ColorUtils.colorize(message));
+                }
+            });
         });
     }
     
