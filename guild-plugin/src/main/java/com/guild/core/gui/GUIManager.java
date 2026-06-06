@@ -1,6 +1,8 @@
 package com.guild.core.gui;
 
 import com.guild.GuildPlugin;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.ScheduledTaskHandle;
 import com.guild.gui.GuildNameInputGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -8,18 +10,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.function.Function;
-
-import com.guild.core.utils.CompatibleScheduler;
 
 /**
  * GUI管理器 - 管理所有GUI界面
@@ -32,6 +37,13 @@ public class GUIManager implements Listener {
     private final Map<UUID, Function<String, Boolean>> inputModes = new HashMap<>();
     private final Map<UUID, Long> lastClickTime = new HashMap<>();
     private final Map<UUID, Deque<GUI>> navigationStacks = new HashMap<>();
+
+    // ==================== 在线成员追踪 ====================
+    /** guildId → 当前在线成员的 UUID 集合 */
+    private final Map<Integer, Set<UUID>> guildOnlineMembers = new ConcurrentHashMap<>();
+    private ScheduledTaskHandle onlineRefreshTask = null;
+    /** 定时刷新 GUIs 的间隔（tick，默认 20 秒） */
+    private static final long ONLINE_REFRESH_TICKS = 20 * 20L;
     
     public GUIManager(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -50,9 +62,18 @@ public class GUIManager implements Listener {
      */
     public void initialize() {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        startOnlineTracking();
         if (isDebugEnabled()) {
             logger.info("GUI manager initialized");
         }
+    }
+
+    /**
+     * 关闭 GUI 管理器，取消定时任务
+     */
+    public void shutdown() {
+        stopOnlineTracking();
+        closeAllGUIs();
     }
     
     /**
@@ -272,6 +293,170 @@ public class GUIManager implements Listener {
      */
     public void clearNavigation(Player player) {
         navigationStacks.remove(player.getUniqueId());
+    }
+
+    // ==================== 在线成员追踪 ====================
+
+    /**
+     * 启动在线成员追踪：重建缓存 + 定时刷新打开的 GUI
+     */
+    private void startOnlineTracking() {
+        rebuildOnlineCache();
+        if (onlineRefreshTask != null) {
+            onlineRefreshTask.cancel();
+        }
+        onlineRefreshTask = CompatibleScheduler.runTaskTimer(plugin,
+                this::refreshOpenGUIs, ONLINE_REFRESH_TICKS, ONLINE_REFRESH_TICKS);
+        if (isDebugEnabled()) {
+            logger.info("Online member tracking started, refresh interval: " +
+                    (ONLINE_REFRESH_TICKS / 20) + "s");
+        }
+    }
+
+    /**
+     * 停止在线成员追踪
+     */
+    private void stopOnlineTracking() {
+        if (onlineRefreshTask != null) {
+            onlineRefreshTask.cancel();
+            onlineRefreshTask = null;
+        }
+    }
+
+    /**
+     * 从当前在线玩家重建所有公会在线成员缓存
+     */
+    public void rebuildOnlineCache() {
+        CompatibleScheduler.runTask(plugin, () -> {
+            guildOnlineMembers.clear();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                trackPlayerOnline(player.getUniqueId(), true);
+            }
+            if (isDebugEnabled()) {
+                logger.info("Online cache rebuilt: " + guildOnlineMembers.size() + " guilds tracked");
+            }
+        });
+    }
+
+    /** 玩家加入时更新在线状态 */
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        CompatibleScheduler.runTaskLater(plugin, () ->
+                trackPlayerOnline(event.getPlayer().getUniqueId(), true), 20L);
+    }
+
+    /** 玩家退出时更新在线状态 */
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        trackPlayerOnline(event.getPlayer().getUniqueId(), false);
+    }
+
+    /**
+     * 追踪单个玩家的在线状态变化（建议在主线程调用）
+     */
+    private void trackPlayerOnline(UUID playerUuid, boolean online) {
+        try {
+            com.guild.models.Guild guild = plugin.getGuildService()
+                    .getPlayerGuild(playerUuid);
+            if (guild == null) return;
+
+            int guildId = guild.getId();
+            if (online) {
+                guildOnlineMembers
+                        .computeIfAbsent(guildId, k -> ConcurrentHashMap.newKeySet())
+                        .add(playerUuid);
+            } else {
+                Set<UUID> set = guildOnlineMembers.get(guildId);
+                if (set != null) {
+                    set.remove(playerUuid);
+                    if (set.isEmpty()) {
+                        guildOnlineMembers.remove(guildId);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.warning("Failed to update online status for " + playerUuid +
+                    ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取指定公会的在线成员数（线程安全）
+     */
+    public int getOnlineMemberCount(int guildId) {
+        Set<UUID> set = guildOnlineMembers.get(guildId);
+        return set != null ? set.size() : 0;
+    }
+
+    /**
+     * 获取指定公会的在线成员 UUID 集合（只读快照）
+     */
+    public Set<UUID> getOnlineMembers(int guildId) {
+        Set<UUID> set = guildOnlineMembers.get(guildId);
+        if (set == null) return Set.of();
+        return Set.copyOf(set);
+    }
+
+    /**
+     * 判断指定玩家是否在线追踪中
+     */
+    public boolean isPlayerTrackedOnline(UUID playerUuid) {
+        for (Set<UUID> members : guildOnlineMembers.values()) {
+            if (members.contains(playerUuid)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * 刷新所有当前打开的 GUI，使在线计数保持实时
+     */
+    public void refreshOpenGUIs() {
+        CompatibleScheduler.runTask(plugin, () -> {
+            if (openGuis.isEmpty()) return;
+            // 遍历时快照 keySet，避免并发修改
+            for (UUID uuid : new HashSet<>(openGuis.keySet())) {
+                Player player = Bukkit.getPlayer(uuid);
+                if (player != null && player.isOnline()) {
+                    refreshGUI(player);
+                }
+            }
+        });
+    }
+
+    /**
+     * [测试] 将当前在线追踪状态输出到控制台（需开启 debug.enabled）
+     */
+    public void dumpOnlineStatus() {
+        if (!isDebugEnabled()) {
+            return;
+        }
+        logger.info("========== Online Member Tracking Dump ==========");
+        logger.info("Tracked guilds: " + guildOnlineMembers.size());
+        for (Map.Entry<Integer, Set<UUID>> entry : guildOnlineMembers.entrySet()) {
+            int guildId = entry.getKey();
+            Set<UUID> members = entry.getValue();
+            StringBuilder sb = new StringBuilder();
+            sb.append("  Guild #").append(guildId)
+                    .append(": ").append(members.size()).append(" online → ");
+            for (UUID uuid : members) {
+                Player p = Bukkit.getPlayer(uuid);
+                sb.append(p != null ? p.getName() : uuid.toString().substring(0, 8))
+                        .append(" ");
+            }
+            logger.info(sb.toString());
+        }
+        logger.info("Open GUIs: " + openGuis.size());
+        logger.info("==================================================");
+    }
+
+    /**
+     * [测试] 强制立即刷新一次所有打开的 GUI（不等待定时器）
+     */
+    public void forceRefreshGUIs() {
+        if (isDebugEnabled()) {
+            logger.info("Manual GUI refresh triggered, open GUIs: " + openGuis.size());
+        }
+        refreshOpenGUIs();
     }
 
     /**
