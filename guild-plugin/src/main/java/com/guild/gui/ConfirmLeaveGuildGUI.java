@@ -23,12 +23,23 @@ public class ConfirmLeaveGuildGUI implements GUI {
     private final LanguageManager languageManager;
     private final Guild guild;
     private final Player player;
+    /** 记录打开本 GUI 的来源，取消时返回对应的 GUI。可选值: "GuildSettingsGUI", "MemberGuildGUI" */
+    private final String sourceGuiType;
 
-    public ConfirmLeaveGuildGUI(GuildPlugin plugin, Guild guild, Player player) {
+    public ConfirmLeaveGuildGUI(GuildPlugin plugin, Guild guild, Player player, String sourceGuiType) {
         this.plugin = plugin;
         this.languageManager = plugin.getLanguageManager();
         this.guild = guild;
         this.player = player;
+        this.sourceGuiType = sourceGuiType != null ? sourceGuiType : "GuildSettingsGUI";
+    }
+
+    /**
+     * @deprecated 使用 {@link #ConfirmLeaveGuildGUI(GuildPlugin, Guild, Player, String)} 传递来源标识
+     */
+    @Deprecated
+    public ConfirmLeaveGuildGUI(GuildPlugin plugin, Guild guild, Player player) {
+        this(plugin, guild, player, "GuildSettingsGUI");
     }
 
     @Override
@@ -147,8 +158,11 @@ public class ConfirmLeaveGuildGUI implements GUI {
      * 处理取消
      */
     private void handleCancel(Player player) {
-        // 返回工会设置GUI
-        plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
+        if ("MemberGuildGUI".equals(sourceGuiType)) {
+            plugin.getGuiManager().openGUI(player, new MemberGuildGUI(plugin, guild, player));
+        } else {
+            plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
+        }
     }
     
     /**

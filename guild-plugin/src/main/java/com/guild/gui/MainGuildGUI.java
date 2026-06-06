@@ -225,19 +225,24 @@ public class MainGuildGUI implements GUI {
                     return;
                 }
 
-                // 检查权限
+                // 检查角色：会长 → 完整设置GUI，普通成员 → 成员专用GUI
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
-                    // 确保在主线程中执行GUI操作
                     CompatibleScheduler.runTask(plugin, () -> {
-                        if (member == null || member.getRole() != com.guild.models.GuildMember.Role.LEADER) {
+                        if (member == null) {
                             String message = languageManager.getMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
 
-                        // 打开工会设置GUI
-                        GuildSettingsGUI guildSettingsGUI = new GuildSettingsGUI(plugin, guild, player);
-                        plugin.getGuiManager().openGUI(player, guildSettingsGUI);
+                        if (member.getRole() == com.guild.models.GuildMember.Role.LEADER) {
+                            // 打开工会设置GUI（完整版）
+                            GuildSettingsGUI guildSettingsGUI = new GuildSettingsGUI(plugin, guild, player);
+                            plugin.getGuiManager().openGUI(player, guildSettingsGUI);
+                        } else {
+                            // 打开成员工会GUI（简化版：仅传送家 + 离开工会）
+                            MemberGuildGUI memberGUI = new MemberGuildGUI(plugin, guild, player);
+                            plugin.getGuiManager().openGUI(player, memberGUI);
+                        }
                     });
                 });
             });

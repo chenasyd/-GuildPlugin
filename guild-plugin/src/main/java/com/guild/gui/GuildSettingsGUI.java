@@ -540,7 +540,8 @@ public class GuildSettingsGUI implements GUI {
     }
 
     private void handleLeaveGuild(Player player) {
-        plugin.getGuiManager().openGUI(player, new ConfirmLeaveGuildGUI(plugin, guild, player));
+        plugin.getGuiManager().openGUI(player,
+                new ConfirmLeaveGuildGUI(plugin, guild, player, "GuildSettingsGUI"));
     }
 
     private void handleDeleteGuild(Player player) {
