@@ -43,6 +43,14 @@ public interface GUI {
     default void refresh(Player player) {
         // 默认实现为空
     }
+
+    /**
+     * 原地刷新 GUI 内容（不关闭/重开，保持鼠标位置）。
+     * 默认直接调用 setupInventory(inventory) 刷新所有物品。
+     */
+    default void refreshInventory(Inventory inventory) {
+        setupInventory(inventory);
+    }
     
     /**
      * 检查GUI是否有效

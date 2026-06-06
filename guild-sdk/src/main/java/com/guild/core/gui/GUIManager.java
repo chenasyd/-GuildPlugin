@@ -33,6 +33,9 @@ public class GUIManager {
     public void refreshOpenGUIs() {
     }
 
+    public void refreshGUIInPlace(Player player) {
+    }
+
     public void dumpOnlineStatus() {
     }
 

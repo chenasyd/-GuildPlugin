@@ -408,19 +408,39 @@ public class GUIManager implements Listener {
     }
 
     /**
-     * 刷新所有当前打开的 GUI，使在线计数保持实时
+     * 刷新所有当前打开的 GUI，使在线计数保持实时（原地刷新，不重开）
      */
     public void refreshOpenGUIs() {
         CompatibleScheduler.runTask(plugin, () -> {
             if (openGuis.isEmpty()) return;
-            // 遍历时快照 keySet，避免并发修改
             for (UUID uuid : new HashSet<>(openGuis.keySet())) {
                 Player player = Bukkit.getPlayer(uuid);
                 if (player != null && player.isOnline()) {
-                    refreshGUI(player);
+                    refreshGUIInPlace(player);
                 }
             }
         });
+    }
+
+    /**
+     * 原地刷新 GUI 内容：直接更新当前打开的 Inventory，不关闭/重开。
+     * 避免鼠标归位问题，用户体验更好。
+     */
+    public void refreshGUIInPlace(Player player) {
+        if (!CompatibleScheduler.isPrimaryThread()) {
+            CompatibleScheduler.runTask(plugin, () -> refreshGUIInPlace(player));
+            return;
+        }
+        try {
+            GUI gui = openGuis.get(player.getUniqueId());
+            if (gui == null) return;
+            Inventory top = player.getOpenInventory().getTopInventory();
+            if (top == null) return;
+            gui.refreshInventory(top);
+        } catch (Exception e) {
+            logger.warning("Error refreshing GUI in-place for " + player.getName() +
+                    ": " + e.getMessage());
+        }
     }
 
     /**
