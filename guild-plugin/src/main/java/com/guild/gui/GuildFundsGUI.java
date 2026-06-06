@@ -106,21 +106,21 @@ public class GuildFundsGUI implements GUI {
         // 上一页 (slot 48)
         if (slot == 48 && page > 0) {
             plugin.getGuiManager().openGUI(player,
-                    new GuildFundsGUI(plugin, guild, player, page - 1));
+                    new GuildFundsGUI(plugin, guild, player, page - 1, sourceGuiType));
             return;
         }
 
         // 下一页 (slot 50)
         if (slot == 50 && (page + 1) * itemsPerPage < totalPlayers) {
             plugin.getGuiManager().openGUI(player,
-                    new GuildFundsGUI(plugin, guild, player, page + 1));
+                    new GuildFundsGUI(plugin, guild, player, page + 1, sourceGuiType));
             return;
         }
 
         // 刷新 (slot 51)
         if (slot == 51) {
             plugin.getGuiManager().openGUI(player,
-                    new GuildFundsGUI(plugin, guild, player, page));
+                    new GuildFundsGUI(plugin, guild, player, page, sourceGuiType));
             return;
         }
 

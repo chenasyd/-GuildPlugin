@@ -487,7 +487,7 @@ public class GuildSettingsGUI implements GUI {
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
-        plugin.getGuiManager().openGUI(player, new GuildFundsGUI(plugin, guild, player));
+        plugin.getGuiManager().openGUI(player, new GuildFundsGUI(plugin, guild, player, 0, "GuildSettingsGUI"));
     }
 
     private void handleGuildLogs(Player player) {

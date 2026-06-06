@@ -159,7 +159,7 @@ public class GuildInfoGUI implements GUI {
                 return;
             }
             if (slot == 28) {
-                plugin.getGuiManager().openGUI(player, new GuildFundsGUI(plugin, guild, player));
+                plugin.getGuiManager().openGUI(player, new GuildFundsGUI(plugin, guild, player, 0, "GuildInfoGUI"));
                 return;
             }
             // 分发到模块固定槽位
