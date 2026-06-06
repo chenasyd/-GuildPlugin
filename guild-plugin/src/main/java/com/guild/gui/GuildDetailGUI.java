@@ -2,6 +2,7 @@ package com.guild.gui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.guild.core.utils.CompatibleScheduler;
 import org.bukkit.Bukkit;
@@ -131,7 +132,7 @@ public class GuildDetailGUI implements GUI {
             memberLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.online", "在线") + ": " +
                 (isPlayerOnline(member.getPlayerUuid()) ? "&a" + languageManager.getMessage(viewer, "guild-detail.online-yes", "在线") : "&7" + languageManager.getMessage(viewer, "guild-detail.online-no", "离线"))));
 
-            inventory.setItem(slot, createPlayerHead(member.getPlayerName(), memberLore.toArray(new String[0])));
+            inventory.setItem(slot, createPlayerHead(member.getPlayerName(), member.getPlayerUuid(), memberLore.toArray(new String[0])));
         }
 
         // 更多成员压缩单格显示
@@ -278,7 +279,7 @@ public class GuildDetailGUI implements GUI {
         return item;
     }
     
-    private ItemStack createPlayerHead(String playerName, String... lore) {
+    private ItemStack createPlayerHead(String playerName, UUID playerUuid, String... lore) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         
@@ -291,9 +292,9 @@ public class GuildDetailGUI implements GUI {
             }
             meta.setLore(loreList);
             
-            // 尝试设置玩家头颅
+            // 使用 UUID 设置玩家皮肤头颅
             try {
-                meta.setOwningPlayer(Bukkit.getOfflinePlayer(playerName));
+                meta.setOwningPlayer(Bukkit.getOfflinePlayer(playerUuid));
             } catch (Exception e) {
                 // 如果设置失败，使用默认头颅
             }
