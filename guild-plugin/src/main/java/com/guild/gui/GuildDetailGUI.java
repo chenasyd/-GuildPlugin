@@ -172,17 +172,22 @@ public class GuildDetailGUI implements GUI {
             inventory.setItem(slot, createPlayerHead(member.getPlayerName(), member.getPlayerUuid(), memberLore.toArray(new String[0])));
         }
 
-        // 分页按钮
-        inventory.setItem(18, currentPage > 0
-            ? createItem(Material.ARROW,
+        // 分页按钮 — 无分页时显示边框
+        ItemStack borderPane = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
+        if (currentPage > 0) {
+            inventory.setItem(18, createItem(Material.ARROW,
                 ColorUtils.colorize("&e" + languageManager.getMessage(viewer, "gui.previous-page", "上一页")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "gui.view-previous", "查看上一页")))
-            : null);
-        inventory.setItem(26, currentPage < totalPages
-            ? createItem(Material.ARROW,
+                ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "gui.view-previous", "查看上一页"))));
+        } else {
+            inventory.setItem(18, borderPane);
+        }
+        if (currentPage < totalPages) {
+            inventory.setItem(26, createItem(Material.ARROW,
                 ColorUtils.colorize("&a" + languageManager.getMessage(viewer, "gui.next-page", "下一页")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "gui.view-next", "查看下一页")))
-            : null);
+                ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "gui.view-next", "查看下一页"))));
+        } else {
+            inventory.setItem(26, borderPane);
+        }
     }
 
     /** 获取会长成员对象 */
