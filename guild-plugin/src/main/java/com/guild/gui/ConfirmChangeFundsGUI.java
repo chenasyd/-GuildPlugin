@@ -274,7 +274,7 @@ public class ConfirmChangeFundsGUI implements GUI {
             case "add":
                 return Material.EMERALD_BLOCK;
             case "remove":
-                return Material.REDSTONE_BLOCK;
+                return Material.LAVA_BUCKET;
             default:
                 return Material.PAPER;
         }

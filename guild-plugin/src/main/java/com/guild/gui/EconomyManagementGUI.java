@@ -193,8 +193,6 @@ public class EconomyManagementGUI implements GUI {
     }
     
     private void handleGuildClick(Player player, Guild guild, ClickType clickType) {
-        String operationType;
-
         if (clickType == ClickType.MIDDLE) {
             // 中键：直接打开确认GUI（不需要输入金额）
             ConfirmChangeFundsGUI confirmGUI = new ConfirmChangeFundsGUI(
@@ -208,17 +206,58 @@ public class EconomyManagementGUI implements GUI {
             return;
         }
 
-        // 左键/右键：直接打开确认变更GUI（金额在界面上输入）
+        // 左键：设置资金 / 右键：增加资金 — 先关闭GUI并进入输入模式
+        String operationType;
+        String promptKey;
         if (clickType == ClickType.LEFT) {
             operationType = "set";
+            promptKey = "economy-management.set-prompt";
         } else if (clickType == ClickType.RIGHT) {
             operationType = "add";
+            promptKey = "economy-management.add-prompt";
         } else {
             return;
         }
 
-        plugin.getGuiManager().openGUI(player,
-                new ConfirmChangeFundsGUI(plugin, guild, player, operationType, 0));
+        // 关闭当前GUI
+        plugin.getGuiManager().closeGUI(player);
+
+        // 发送提示
+        String prompt = languageManager.getMessage(player, promptKey,
+                "&e请输入金额（在聊天框输入数字）:");
+        player.sendMessage(ColorUtils.colorize(prompt));
+
+        // 设置输入模式：捕获玩家输入的金额
+        plugin.getGuiManager().setInputMode(player, input -> {
+            try {
+                double amount = Double.parseDouble(input.trim());
+                if (amount <= 0) {
+                    player.sendMessage(ColorUtils.colorize(
+                            languageManager.getMessage(player,
+                                    "economy-management.invalid-amount",
+                                    "&c金额必须大于0！")));
+                    return false; // 继续等待有效输入
+                }
+                // 打开确认GUI
+                ConfirmChangeFundsGUI confirmGUI = new ConfirmChangeFundsGUI(
+                        plugin, guild, player, operationType, amount);
+                plugin.getGuiManager().openGUI(player, confirmGUI);
+                return true;
+            } catch (NumberFormatException e) {
+                if (input.equalsIgnoreCase("cancel")) {
+                    player.sendMessage(ColorUtils.colorize(
+                            languageManager.getMessage(player,
+                                    "economy-management.input-cancelled",
+                                    "&7已取消操作")));
+                    return true; // 退出输入模式
+                }
+                player.sendMessage(ColorUtils.colorize(
+                        languageManager.getMessage(player,
+                                "economy-management.invalid-number",
+                                "&c无效的数字！请输入有效金额或输入 cancel 取消")));
+                return false;
+            }
+        });
     }
     
     private ItemStack createItem(Material material, String name, String... lore) {
