@@ -10,6 +10,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
@@ -212,26 +213,24 @@ public class MemberManagementGUI implements GUI {
     }
     
     /**
-     * 创建成员物品
+     * 创建成员物品（玩家头像，参照 InviteMemberGUI/KickMemberGUI/PromoteMemberGUI）
      */
     private ItemStack createMemberItem(GuildMember member) {
-        Material material;
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) head.getItemMeta();
         String name;
         List<String> lore = new ArrayList<>();
 
         switch (member.getRole()) {
             case LEADER:
-                material = Material.GOLDEN_HELMET;
                 name = PlaceholderUtils.replaceMemberPlaceholders("&c{member_name}", member, guild, player);
                 lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getMessage(player, "member-details.role", "Role") + ": &c{member_role}", member, guild, player));
                 break;
             case OFFICER:
-                material = Material.GOLDEN_HELMET;
                 name = PlaceholderUtils.replaceMemberPlaceholders("&6{member_name}", member, guild, player);
                 lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getMessage(player, "member-details.role", "Role") + ": &6{member_role}", member, guild, player));
                 break;
             default:
-                material = Material.PLAYER_HEAD;
                 name = PlaceholderUtils.replaceMemberPlaceholders("&f{member_name}", member, guild, player);
                 lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getMessage(player, "member-details.role", "Role") + ": &f{member_role}", member, guild, player));
                 break;
@@ -247,7 +246,14 @@ public class MemberManagementGUI implements GUI {
             lore.add(ColorUtils.colorize("&6" + languageManager.getMessage(player, "member-details.promote-demote", "Shift+Left click: Promote/Demote")));
         }
 
-        return createItem(material, name, lore.toArray(new String[0]));
+        if (meta != null) {
+            meta.setOwningPlayer(member.getOfflinePlayer());
+            meta.setDisplayName(ColorUtils.colorize(name));
+            meta.setLore(lore);
+            head.setItemMeta(meta);
+        }
+
+        return head;
     }
     
     /**
