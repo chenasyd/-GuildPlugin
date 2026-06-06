@@ -5,6 +5,7 @@ import com.guild.core.language.LanguageManager;
 import com.guild.core.module.exception.ModuleConflictException;
 import com.guild.core.module.exception.ModuleDependencyException;
 import com.guild.core.module.exception.ModuleLoadException;
+import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.ConsoleLogger;
 import com.guild.sdk.GuildPluginAPI;
 
@@ -298,7 +299,7 @@ public class ModuleManager {
         try {
             checkDependents(moduleId);
         } catch (ModuleConflictException e) {
-            logger.warning(e.getMessage());
+            logger.warning(ColorUtils.stripColor(e.getMessage()));
             return false;
         }
 
@@ -317,7 +318,7 @@ public class ModuleManager {
         } catch (Exception e) {
             registry.setState(moduleId, ModuleState.ERROR);
             ConsoleLogger.severe(lang.getIndexedMessage("module.error.unload-failed", "", moduleId, e.getMessage()));
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.log(Level.SEVERE, ColorUtils.stripColor(e.getMessage()), e);
             return false;
         }
     }
@@ -364,8 +365,8 @@ public class ModuleManager {
                 unloadModule(moduleId);
             } catch (Exception e) {
                 logger.log(Level.WARNING,
-                        lang.getIndexedMessage("module.error.unload-failed-during-shutdown",
-                                "", moduleId), e);
+                        ColorUtils.stripColor(lang.getIndexedMessage("module.error.unload-failed-during-shutdown",
+                                "", moduleId)), e);
             }
         }
 
@@ -458,7 +459,9 @@ public class ModuleManager {
             logger.severe("  Missing dependencies: " + mde.getMissingDependencies());
         } else {
             ConsoleLogger.severe(e.getMessage());
-            logger.log(Level.SEVERE, e.getCause() != null ? e.getCause().getMessage() : e.getMessage(), e.getCause());
+            logger.log(Level.SEVERE,
+                    ColorUtils.stripColor(e.getCause() != null ? e.getCause().getMessage() : e.getMessage()),
+                    e.getCause());
         }
     }
 }
