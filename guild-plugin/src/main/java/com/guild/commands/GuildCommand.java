@@ -18,6 +18,7 @@ import com.guild.core.language.LanguageManager;
 import com.guild.core.permissions.PermissionManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.ServerUtils;
 import com.guild.gui.ConfirmDeleteGuildGUI;
 import com.guild.gui.MainGuildGUI;
 import com.guild.models.Guild;
@@ -863,33 +864,40 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
-        CompletableFuture.runAsync(() -> {
-            try {
-                Guild guild = guildService.getPlayerGuild(player.getUniqueId());
-                if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.home.not-in-guild", "&c您不在任何公会中！");
+
+        // Folia 环境下传送功能因线程隔离无法使用，直接禁用
+        if (ServerUtils.isFolia()) {
+            String message = languageManager.getMessage(player, "home.folia-disabled", "&c传送功能在Folia环境下暂不可用！");
+            player.sendMessage(ColorUtils.colorize(message));
+            return;
+        }
+
+        // 校验玩家是否为公会成员
+        com.guild.models.GuildMember member = guildService.getGuildMember(player.getUniqueId());
+        if (member == null) {
+            String message = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
+            player.sendMessage(ColorUtils.colorize(message));
+            return;
+        }
+
+        Guild guild = guildService.getPlayerGuild(player.getUniqueId());
+        if (guild == null) {
+            String message = languageManager.getMessage(player, "guild.home.not-in-guild", "&c您不在任何公会中！");
+            player.sendMessage(ColorUtils.colorize(message));
+            return;
+        }
+
+        plugin.getGuildService().getGuildHomeAsync(guild.getId()).thenAccept(location -> {
+            CompatibleScheduler.runTask(plugin, () -> {
+                if (location != null) {
+                    player.teleport(location);
+                    String message = languageManager.getMessage(player, "home.success", "&a已传送到工会家！");
                     player.sendMessage(ColorUtils.colorize(message));
-                    return;
-                }
-                
-                org.bukkit.Location homeLocation = plugin.getGuildService().getGuildHome(guild.getId());
-                if (homeLocation == null) {
-                    String message = languageManager.getMessage(player, "guild.home.not-set", "&c公会 home 位置未设置！");
+                } else {
+                    String message = languageManager.getMessage(player, "home.not-set", "&c工会家未设置！");
                     player.sendMessage(ColorUtils.colorize(message));
-                    return;
                 }
-                
-                // 传送玩家到公会 home
-                player.teleport(homeLocation);
-                
-                String message = languageManager.getMessage(player, "guild.home.success", "&a已传送到公会 home！");
-                player.sendMessage(ColorUtils.colorize(message));
-            } catch (Exception e) {
-                e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.home.error", "&c传送到公会 home 时发生错误！");
-                player.sendMessage(ColorUtils.colorize(message));
-            }
+            });
         });
     }
     
