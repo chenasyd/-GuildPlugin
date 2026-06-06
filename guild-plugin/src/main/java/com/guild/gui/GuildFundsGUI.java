@@ -240,7 +240,7 @@ public class GuildFundsGUI implements GUI {
 
         inventory.setItem(51, createItem(Material.EMERALD,
                 ColorUtils.colorize("&a" + languageManager.getMessage(player,
-                        "gui.refresh", "刷新")),
+                        "guild-funds.refresh", "刷新")),
                 ColorUtils.colorize("&7" + languageManager.getMessage(player,
                         "guild-funds.refresh-desc", "刷新资金数据"))));
     }
@@ -313,9 +313,6 @@ public class GuildFundsGUI implements GUI {
     }
 
     private String formatAmount(double amount) {
-        if (amount >= 10000.0) {
-            return String.format("%.1f万", amount / 10000.0);
-        }
         return String.format("%.0f", amount);
     }
 
