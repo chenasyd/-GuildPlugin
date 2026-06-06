@@ -1318,13 +1318,21 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     plugin.getGuildService().addGuildContributionAsync(guild.getId(), player.getUniqueId(),
                             player.getName(), amount,
                             com.guild.models.GuildContribution.ContributionType.DEPOSIT,
-                            player.getName() + " 存入 " + String.format("%.2f", amount));
+                            languageManager.getMessage(player, "deposit.contribution-desc",
+                                    "{player}存入{amount}")
+                                    .replace("{player}", player.getName())
+                                    .replace("{amount}", String.format("%.2f", amount)));
                     // 写入 guild_logs 表（供 GuildLogsGUI 展示，记录真实操作者）
                     plugin.getGuildService().logGuildActionAsync(guild.getId(), guild.getName(),
                             player.getUniqueId().toString(), player.getName(),
                             com.guild.models.GuildLog.LogType.FUND_DEPOSITED,
-                            player.getName() + " 存入了 " + String.format("%.2f", amount),
-                            "金额: " + String.format("%.2f", amount));
+                            languageManager.getMessage(player, "deposit.log-desc",
+                                    "{player}存入了{amount}")
+                                    .replace("{player}", player.getName())
+                                    .replace("{amount}", String.format("%.2f", amount)),
+                            languageManager.getMessage(player, "deposit.log-details",
+                                    "金额:{amount}")
+                                    .replace("{amount}", String.format("%.2f", amount)));
                     // 分发存款事件给模块
                     plugin.getGuildService().notifyEconomyDeposit(guild.getId(), guild.getName(), player.getUniqueId(), player.getName(), amount);
                 }

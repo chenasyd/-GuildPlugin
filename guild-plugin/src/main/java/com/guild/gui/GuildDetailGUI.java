@@ -31,6 +31,8 @@ public class GuildDetailGUI implements GUI {
     private final Player viewer;
     private final LanguageManager languageManager;
     private List<GuildMember> members = new ArrayList<>();
+    /** 是否处于会长转移选择模式 */
+    private boolean transferMode = false;
 
     public GuildDetailGUI(GuildPlugin plugin, Guild guild, Player viewer) {
         this.plugin = plugin;
@@ -91,16 +93,7 @@ public class GuildDetailGUI implements GUI {
             ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.economy-info", "&e经济信息")),
             economyLore.toArray(new String[0])));
 
-        // 工会会长 - 放在第二行
-        List<String> leaderLore = new ArrayList<>();
-        leaderLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "gui.leader", "会长") + ": &e" + guild.getLeaderName()));
-        leaderLore.add(ColorUtils.colorize("&7UUID: &7" + guild.getLeaderUuid()));
-
-        inventory.setItem(21, createItem(Material.GOLDEN_HELMET,
-            ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.guild-leader", "&6工会会长")),
-            leaderLore.toArray(new String[0])));
-
-        // 工会描述 - 放在第二行
+        // 工会描述 - 放在 slot 14（原 slot 23）
         List<String> descLore = new ArrayList<>();
         String description = guild.getDescription();
         if (description != null && !description.isEmpty()) {
@@ -109,22 +102,28 @@ public class GuildDetailGUI implements GUI {
             descLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "gui.no-description", "暂无描述")));
         }
 
-        inventory.setItem(23, createItem(Material.BOOK,
+        inventory.setItem(14, createItem(Material.BOOK,
             ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.guild-description", "&e工会描述")),
             descLore.toArray(new String[0])));
+
+        // 填充被删除的槽位
+        ItemStack filler = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
+        inventory.setItem(21, filler); // 原会长
+        inventory.setItem(23, filler); // 原描述
     }
     
     private void setupMembersList(Inventory inventory) {
-        // 成员列表标题
-        inventory.setItem(27, createItem(Material.PAPER,
+        // 成员列表标题 - 移到 slot 10（原 slot 27）
+        inventory.setItem(10, createItem(Material.PAPER,
             ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.guild-members", "&a工会成员")),
             ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.total-members", "共 {count} 名成员", "{count}", String.valueOf(members.size())))));
 
         // 显示前4个成员（更简洁）
+        int[] memberSlots = {12, 29, 30, 31}; // slot 28→12，其余保持
         int maxDisplay = Math.min(4, members.size());
         for (int i = 0; i < maxDisplay; i++) {
             GuildMember member = members.get(i);
-            int slot = 28 + i; // 28-31
+            int slot = memberSlots[i];
 
             List<String> memberLore = new ArrayList<>();
             memberLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.position", "职位") + ": " + getRoleDisplayName(member.getRole())));
@@ -134,6 +133,11 @@ public class GuildDetailGUI implements GUI {
 
             inventory.setItem(slot, createPlayerHead(member.getPlayerName(), member.getPlayerUuid(), memberLore.toArray(new String[0])));
         }
+
+        // 填充被删除的旧槽位
+        ItemStack filler = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
+        inventory.setItem(27, filler); // 原成员标题
+        inventory.setItem(28, filler); // 原成员1
 
         // 更多成员压缩单格显示
         if (members.size() > 4) {
@@ -166,6 +170,17 @@ public class GuildDetailGUI implements GUI {
         // 刷新
         inventory.setItem(53, createItem(Material.EMERALD,
             ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.refresh", "&a刷新信息"))));
+
+        // 会长转移（仅管理员）
+        if (viewer.hasPermission("guild.admin")) {
+            String transferKey = transferMode ? "guild-detail.transfer-leader-active" : "guild-detail.transfer-leader";
+            String transferDescKey = transferMode ? "guild-detail.transfer-leader-active-desc" : "guild-detail.transfer-leader-desc";
+            inventory.setItem(51, createItem(Material.GOLD_INGOT,
+                ColorUtils.colorize(languageManager.getMessage(viewer, transferKey,
+                        transferMode ? "&e请点击要转移给的成员..." : "&c转移会长")),
+                ColorUtils.colorize("&7" + languageManager.getMessage(viewer, transferDescKey,
+                        "&7点击后选择新会长"))));
+        }
     }
     
     private void fillBorder(Inventory inventory) {
@@ -199,15 +214,43 @@ public class GuildDetailGUI implements GUI {
         if (slot == 45) {
             // 返回
             plugin.getGuiManager().openGUI(player, new GuildListManagementGUI(plugin, player));
+            return;
         } else if (slot == 53) {
             // 刷新
             loadMembers();
+            return;
         } else if (slot == 47 && player.hasPermission("guild.admin")) {
             // 冻结/解冻工会
             toggleGuildFreeze(player);
+            return;
         } else if (slot == 49 && player.hasPermission("guild.admin")) {
             // 删除工会
             deleteGuild(player);
+            return;
+        } else if (slot == 51 && player.hasPermission("guild.admin")) {
+            // 切换会长转移模式
+            transferMode = !transferMode;
+            refresh(player);
+            String msg = transferMode
+                ? "&e请点击一个成员头像来转移会长职位"
+                : "&7已取消会长转移";
+            player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player,
+                    "guild-detail.transfer-mode-" + (transferMode ? "active" : "cancelled"), msg)));
+            return;
+        }
+
+        // 会长转移模式：点击成员头像执行转移
+        if (transferMode && player.hasPermission("guild.admin")) {
+            int memberIdx = -1;
+            if (slot == 12 || slot == 29 || slot == 30 || slot == 31) {
+                if (slot == 12) memberIdx = 0;
+                else memberIdx = slot - 28; // 29→1, 30→2, 31→3
+            }
+            if (memberIdx >= 0 && memberIdx < members.size()) {
+                GuildMember target = members.get(memberIdx);
+                handleTransferLeader(player, target);
+                return;
+            }
         }
     }
     
@@ -239,7 +282,7 @@ public class GuildDetailGUI implements GUI {
     }
     
     private String formatTime(java.time.LocalDateTime dateTime) {
-        if (dateTime == null) return "未知";
+        if (dateTime == null) return languageManager.getMessage(viewer, "gui.unknown", "未知");
         return dateTime.format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
     }
     
@@ -256,6 +299,37 @@ public class GuildDetailGUI implements GUI {
         }
     }
     
+    private void handleTransferLeader(Player player, GuildMember target) {
+        transferMode = false;
+
+        // 不能转移给自己
+        if (target.getPlayerUuid().equals(guild.getLeaderUuid())) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player,
+                    "guild-detail.transfer-self", "&c不能将会长转移给自己")));
+            refresh(player);
+            return;
+        }
+
+        // 执行转移
+        plugin.getGuildService().transferGuildLeadershipAsync(guild.getId(), target.getPlayerUuid(), target.getPlayerName())
+            .thenAccept(success -> {
+                CompatibleScheduler.runTask(plugin, () -> {
+                    if (success) {
+                        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player,
+                                "guild-detail.transfer-success", "&a成功将会长转移给 &e{name}")
+                                .replace("{name}", target.getPlayerName())));
+                        guild.setLeaderUuid(target.getPlayerUuid());
+                        guild.setLeaderName(target.getPlayerName());
+                        loadMembers();
+                    } else {
+                        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player,
+                                "guild-detail.transfer-failed", "&c会长转移失败！")));
+                        refresh(player);
+                    }
+                });
+            });
+    }
+
     private boolean isPlayerOnline(java.util.UUID uuid) {
         return Bukkit.getPlayer(uuid) != null;
     }

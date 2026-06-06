@@ -637,6 +637,67 @@ public class GuildService {
     }
     
     /**
+     * 转移会长职位 (异步，供管理员操作)
+     * 将 guild_id 的会长改为 newLeaderUuid，同时将原会长降为成员。
+     */
+    public CompletableFuture<Boolean> transferGuildLeadershipAsync(int guildId, UUID newLeaderUuid, String newLeaderName) {
+        return getGuildByIdAsync(guildId).thenCompose(guild -> {
+            if (guild == null) {
+                return CompletableFuture.completedFuture(false);
+            }
+            UUID oldLeaderUuid = guild.getLeaderUuid();
+            return CompletableFuture.supplyAsync(() -> {
+                try (Connection conn = databaseManager.getConnection()) {
+                    conn.setAutoCommit(false);
+                    try {
+                        // 1. 更新 guilds 表新会长
+                        try (PreparedStatement stmt = conn.prepareStatement(
+                                "UPDATE guilds SET leader_uuid = ?, leader_name = ? WHERE id = ?")) {
+                            stmt.setString(1, newLeaderUuid.toString());
+                            stmt.setString(2, newLeaderName);
+                            stmt.setInt(3, guildId);
+                            stmt.executeUpdate();
+                        }
+                        // 2. 原会长降级为成员
+                        try (PreparedStatement stmt = conn.prepareStatement(
+                                "UPDATE guild_members SET role = 'MEMBER' WHERE guild_id = ? AND player_uuid = ? AND role = 'LEADER'")) {
+                            stmt.setInt(1, guildId);
+                            stmt.setString(2, oldLeaderUuid.toString());
+                            stmt.executeUpdate();
+                        }
+                        // 3. 新会长升级
+                        try (PreparedStatement stmt = conn.prepareStatement(
+                                "UPDATE guild_members SET role = 'LEADER' WHERE guild_id = ? AND player_uuid = ?")) {
+                            stmt.setInt(1, guildId);
+                            stmt.setString(2, newLeaderUuid.toString());
+                            stmt.executeUpdate();
+                        }
+                        conn.commit();
+
+                        // 刷新权限缓存
+                        try { plugin.getPermissionManager().updatePlayerPermissions(oldLeaderUuid); } catch (Exception ignored) {}
+                        try { plugin.getPermissionManager().updatePlayerPermissions(newLeaderUuid); } catch (Exception ignored) {}
+
+                        // 记录日志
+                        String desc = "会长由 " + guild.getLeaderName() + " 转移给 " + newLeaderName;
+                        logGuildActionAsync(guildId, guild.getName(), newLeaderUuid.toString(), newLeaderName,
+                                GuildLog.LogType.LEADER_TRANSFERRED, desc, desc);
+
+                        return true;
+                    } catch (SQLException e) {
+                        conn.rollback();
+                        logger.severe("转移会长时发生错误: " + e.getMessage());
+                        return false;
+                    }
+                } catch (SQLException e) {
+                    logger.severe("转移会长时发生数据库错误: " + e.getMessage());
+                    return false;
+                }
+            });
+        });
+    }
+
+    /**
      * 获取玩家工会 (异步)
      */
     public CompletableFuture<Guild> getPlayerGuildAsync(UUID playerUuid) {
