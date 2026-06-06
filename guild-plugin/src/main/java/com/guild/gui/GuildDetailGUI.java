@@ -82,14 +82,14 @@ public class GuildDetailGUI implements GUI {
 
         inventory.setItem(4, createItem(Material.SHIELD, ColorUtils.colorize("&6" + guild.getName()), guildLore.toArray(new String[0])));
 
-        // 工会等级和资金 - 放在第二行
+        // 工会等级和资金 - 移到 slot 16（原 slot 19）
         List<String> economyLore = new ArrayList<>();
         economyLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.current-level", "当前等级") + ": &e" + guild.getLevel()));
         economyLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.current-balance", "当前资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())));
         economyLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.max-members", "最大成员数") + ": &e" + guild.getMaxMembers()));
         economyLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(viewer, "guild-detail.current-members", "当前成员数") + ": &e" + members.size()));
 
-        inventory.setItem(19, createItem(Material.GOLD_INGOT,
+        inventory.setItem(16, createItem(Material.GOLD_INGOT,
             ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.economy-info", "&e经济信息")),
             economyLore.toArray(new String[0])));
 
@@ -105,11 +105,6 @@ public class GuildDetailGUI implements GUI {
         inventory.setItem(14, createItem(Material.BOOK,
             ColorUtils.colorize(languageManager.getMessage(viewer, "guild-detail.guild-description", "&e工会描述")),
             descLore.toArray(new String[0])));
-
-        // 填充被删除的槽位
-        ItemStack filler = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        inventory.setItem(21, filler); // 原会长
-        inventory.setItem(23, filler); // 原描述
     }
     
     private void setupMembersList(Inventory inventory) {
@@ -133,11 +128,6 @@ public class GuildDetailGUI implements GUI {
 
             inventory.setItem(slot, createPlayerHead(member.getPlayerName(), member.getPlayerUuid(), memberLore.toArray(new String[0])));
         }
-
-        // 填充被删除的旧槽位
-        ItemStack filler = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        inventory.setItem(27, filler); // 原成员标题
-        inventory.setItem(28, filler); // 原成员1
 
         // 更多成员压缩单格显示
         if (members.size() > 4) {
