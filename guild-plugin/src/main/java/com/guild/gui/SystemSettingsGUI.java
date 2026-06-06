@@ -55,7 +55,9 @@ public class SystemSettingsGUI implements GUI {
         // 详细后台信息显示开关
         boolean debugMode = plugin.getConfigManager().getMainConfig().getBoolean("debug.enabled", false);
         Material debugMaterial = debugMode ? Material.LIME_WOOL : Material.RED_WOOL;
-        String debugStatus = debugMode ? "&a已启用" : "&c已禁用";
+        String debugStatus = ColorUtils.colorize(debugMode
+                ? languageManager.getMessage(player, "system-settings.status-enabled", "&a已启用")
+                : languageManager.getMessage(player, "system-settings.status-disabled", "&c已禁用"));
         
         ItemStack debugToggle = createItem(
             debugMaterial,
@@ -71,7 +73,9 @@ public class SystemSettingsGUI implements GUI {
         // 自动保存设置
         boolean autoSave = plugin.getConfigManager().getMainConfig().getBoolean("auto-save.enabled", true);
         Material autoSaveMaterial = autoSave ? Material.LIME_WOOL : Material.RED_WOOL;
-        String autoSaveStatus = autoSave ? "&a已启用" : "&c已禁用";
+        String autoSaveStatus = ColorUtils.colorize(autoSave
+                ? languageManager.getMessage(player, "system-settings.status-enabled", "&a已启用")
+                : languageManager.getMessage(player, "system-settings.status-disabled", "&c已禁用"));
         
         ItemStack autoSaveToggle = createItem(
             autoSaveMaterial,
@@ -87,7 +91,9 @@ public class SystemSettingsGUI implements GUI {
         // 经济系统开关
         boolean economyEnabled = plugin.getConfigManager().getMainConfig().getBoolean("economy.enabled", true);
         Material economyMaterial = economyEnabled ? Material.LIME_WOOL : Material.RED_WOOL;
-        String economyStatus = economyEnabled ? "&a已启用" : "&c已禁用";
+        String economyStatus = ColorUtils.colorize(economyEnabled
+                ? languageManager.getMessage(player, "system-settings.status-enabled", "&a已启用")
+                : languageManager.getMessage(player, "system-settings.status-disabled", "&c已禁用"));
         
         ItemStack economyToggle = createItem(
             economyMaterial,
@@ -103,7 +109,9 @@ public class SystemSettingsGUI implements GUI {
         // 关系系统开关
         boolean relationEnabled = plugin.getConfigManager().getMainConfig().getBoolean("relations.enabled", true);
         Material relationMaterial = relationEnabled ? Material.LIME_WOOL : Material.RED_WOOL;
-        String relationStatus = relationEnabled ? "&a已启用" : "&c已禁用";
+        String relationStatus = ColorUtils.colorize(relationEnabled
+                ? languageManager.getMessage(player, "system-settings.status-enabled", "&a已启用")
+                : languageManager.getMessage(player, "system-settings.status-disabled", "&c已禁用"));
         
         ItemStack relationToggle = createItem(
             relationMaterial,
@@ -119,7 +127,9 @@ public class SystemSettingsGUI implements GUI {
         // 等级系统开关
         boolean levelEnabled = plugin.getConfigManager().getMainConfig().getBoolean("level-system.enabled", true);
         Material levelMaterial = levelEnabled ? Material.LIME_WOOL : Material.RED_WOOL;
-        String levelStatus = levelEnabled ? "&a已启用" : "&c已禁用";
+        String levelStatus = ColorUtils.colorize(levelEnabled
+                ? languageManager.getMessage(player, "system-settings.status-enabled", "&a已启用")
+                : languageManager.getMessage(player, "system-settings.status-disabled", "&c已禁用"));
         
         ItemStack levelToggle = createItem(
             levelMaterial,
@@ -135,7 +145,10 @@ public class SystemSettingsGUI implements GUI {
         // 申请系统开关
         boolean applicationEnabled = plugin.getConfigManager().getMainConfig().getBoolean("applications.enabled", true);
         Material applicationMaterial = applicationEnabled ? Material.LIME_WOOL : Material.RED_WOOL;
-        String applicationStatus = applicationEnabled ? "&a已启用" : "&c已禁用";
+        String applicationStatus = ColorUtils.colorize(applicationEnabled
+                ? languageManager.getMessage(player, "system-settings.status-enabled", "&a已启用")
+                : languageManager.getMessage(player, "system-settings.status-disabled", "&c已禁用"));
+
 
         ItemStack applicationToggle = createItem(
             applicationMaterial,
@@ -151,7 +164,10 @@ public class SystemSettingsGUI implements GUI {
         // 邀请系统开关
         boolean inviteEnabled = plugin.getConfigManager().getMainConfig().getBoolean("invites.enabled", true);
         Material inviteMaterial = inviteEnabled ? Material.LIME_WOOL : Material.RED_WOOL;
-        String inviteStatus = inviteEnabled ? "&a已启用" : "&c已禁用";
+        String inviteStatus = ColorUtils.colorize(inviteEnabled
+                ? languageManager.getMessage(player, "system-settings.status-enabled", "&a已启用")
+                : languageManager.getMessage(player, "system-settings.status-disabled", "&c已禁用"));
+
 
         ItemStack inviteToggle = createItem(
             inviteMaterial,
@@ -167,7 +183,9 @@ public class SystemSettingsGUI implements GUI {
         // 工会家系统开关
         boolean homeEnabled = plugin.getConfigManager().getMainConfig().getBoolean("guild-home.enabled", true);
         Material homeMaterial = homeEnabled ? Material.LIME_WOOL : Material.RED_WOOL;
-        String homeStatus = homeEnabled ? "&a已启用" : "&c已禁用";
+        String homeStatus = ColorUtils.colorize(homeEnabled
+                ? languageManager.getMessage(player, "system-settings.status-enabled", "&a已启用")
+                : languageManager.getMessage(player, "system-settings.status-disabled", "&c已禁用"));
 
         ItemStack homeToggle = createItem(
             homeMaterial,
