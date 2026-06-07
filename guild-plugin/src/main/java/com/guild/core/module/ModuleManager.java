@@ -258,6 +258,7 @@ public class ModuleManager {
         checkCompatibility(descriptor);
 
         // 5. 创建独立 ClassLoader 并实例化模块
+        plugin.getLanguageManager().loadModuleLanguageResourcesForModule(moduleId);
         GuildModule module = loader.instantiateModule(jarFile, descriptor);
 
         // 6. 创建模块上下文并启用（使用共享 API 实例）

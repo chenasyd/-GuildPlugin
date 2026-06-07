@@ -42,7 +42,6 @@ public class LanguageManager {
     private static final String MODULES_LANG_PATH = "lang/modules/";
     private static final String LANG_FILE_SUFFIX = ".yml";
     private static final String[] KNOWN_LANGS = {LANG_EN, LANG_ZH, LANG_PL, LANG_BR};
-    private static final String[] MODULE_DIRS = {"announcement", "quest", "member-rank", "stats"};
     
     public LanguageManager(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -60,9 +59,6 @@ public class LanguageManager {
         for (String lang : KNOWN_LANGS) {
             saveBundledLanguageResource(CORE_LANG_PATH + lang + LANG_FILE_SUFFIX);
             saveBundledLanguageResource(GUI_LANG_PATH + lang + LANG_FILE_SUFFIX);
-            for (String moduleDir : MODULE_DIRS) {
-                saveBundledLanguageResource(MODULES_LANG_PATH + moduleDir + "/" + lang + LANG_FILE_SUFFIX);
-            }
         }
     }
     
@@ -74,9 +70,6 @@ public class LanguageManager {
         createDirectory(CORE_LANG_PATH);
         createDirectory(GUI_LANG_PATH);
         createDirectory(MODULES_LANG_PATH);
-        for (String moduleDir : MODULE_DIRS) {
-            createDirectory(MODULES_LANG_PATH + moduleDir + "/");
-        }
     }
     
     private void createDirectory(String relativePath) {
@@ -161,7 +154,6 @@ public class LanguageManager {
 
         loadBundledCoreLanguage(lang);
         loadBundledGuiLanguage(lang);
-        loadBundledModuleLanguage(lang);
     }
 
     private void registerCoreLanguageConfig(String lang, FileConfiguration config) {
@@ -206,25 +198,6 @@ public class LanguageManager {
         }
     }
 
-    private void loadBundledModuleLanguage(String lang) {
-        for (String moduleDir : MODULE_DIRS) {
-            String resourcePath = MODULES_LANG_PATH + moduleDir + "/" + lang + LANG_FILE_SUFFIX;
-            try (InputStream in = plugin.getResource(resourcePath)) {
-                if (in != null) {
-                    String yaml = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-                    FileConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
-                    if (!config.getKeys(false).isEmpty()) {
-                        mergeModuleConfig(lang, config);
-                        supportedLanguages.add(lang);
-                        logger.info("Loaded bundled module language file: " + resourcePath);
-                    }
-                }
-            } catch (Exception e) {
-                logger.warning("Failed to load bundled module language file " + resourcePath + ": " + e.getMessage());
-            }
-        }
-    }
-
     /**
      * 从插件 JAR 内的 lang/core/ 目录加载核心（非GUI）语言文件
      */
@@ -255,28 +228,6 @@ public class LanguageManager {
      */
     private void loadModuleLanguages() {
         loadExternalModuleLanguages();
-
-        // 已知模块目录列表（后续可由模块自身注册）
-        String[] moduleDirs = MODULE_DIRS;
-
-        for (String moduleDir : moduleDirs) {
-            for (String lang : KNOWN_LANGS) {
-                String resourcePath = MODULES_LANG_PATH + moduleDir + "/" + lang + LANG_FILE_SUFFIX;
-                try (InputStream in = plugin.getResource(resourcePath)) {
-                    if (in != null) {
-                        String yaml = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-                        FileConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
-                        if (!config.getKeys(false).isEmpty()) {
-                            mergeModuleConfig(lang, config);
-                            supportedLanguages.add(lang);
-                            logger.info("Loaded module language file: " + resourcePath);
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.warning("Failed to load module language file " + resourcePath + ": " + e.getMessage());
-                }
-            }
-        }
     }
 
     private void loadExternalCoreLanguages() {
@@ -358,32 +309,7 @@ public class LanguageManager {
         java.util.Arrays.sort(moduleDirs, java.util.Comparator.comparing(File::getName));
 
         for (File moduleDir : moduleDirs) {
-            File[] langFiles = moduleDir.listFiles((dir, name) -> name.endsWith(LANG_FILE_SUFFIX));
-            if (langFiles == null || langFiles.length == 0) {
-                continue;
-            }
-            // 对语言文件进行排序，确保输出顺序一致
-            java.util.Arrays.sort(langFiles, java.util.Comparator.comparing(File::getName));
-            
-            String moduleName = moduleDir.getName();
-            java.util.List<String> loadedLangs = new java.util.ArrayList<>();
-            for (File langFile : langFiles) {
-                String fileName = langFile.getName();
-                String lang = fileName.substring(0, fileName.length() - LANG_FILE_SUFFIX.length()).toLowerCase();
-                try {
-                    FileConfiguration config = YamlConfiguration.loadConfiguration(langFile);
-                    if (!config.getKeys(false).isEmpty()) {
-                        mergeModuleConfig(lang, config);
-                        supportedLanguages.add(lang);
-                        loadedLangs.add(lang);
-                    }
-                } catch (Exception e) {
-                    logger.warning("Failed to load external module language file " + langFile.getPath() + ": " + e.getMessage());
-                }
-            }
-            if (!loadedLangs.isEmpty()) {
-                logger.info("Loaded external module '" + moduleName + "' languages: " + String.join(", ", loadedLangs));
-            }
+            loadExternalModuleLanguageDirectory(moduleDir);
         }
     }
 
@@ -396,6 +322,92 @@ public class LanguageManager {
                 existing.set(key, config.get(key));
             }
         }
+    }
+
+    public boolean loadModuleLanguageResourcesForModule(String moduleId) {
+        if (moduleId == null || moduleId.trim().isEmpty()) {
+            return false;
+        }
+        String moduleDirName = moduleId.toLowerCase();
+        File moduleDir = new File(plugin.getDataFolder(), MODULES_LANG_PATH + moduleDirName);
+
+        boolean loaded = false;
+        if (moduleDir.exists() && moduleDir.isDirectory()) {
+            loaded = loadExternalModuleLanguageDirectory(moduleDir);
+        }
+
+        if (!loaded) {
+            loaded = loadBundledModuleLanguagesForModule(moduleDirName);
+        }
+
+        return loaded;
+    }
+
+    private boolean loadExternalModuleLanguageDirectory(File moduleDir) {
+        File[] langFiles = moduleDir.listFiles((dir, name) -> name.endsWith(LANG_FILE_SUFFIX));
+        if (langFiles == null || langFiles.length == 0) {
+            return false;
+        }
+
+        java.util.Arrays.sort(langFiles, java.util.Comparator.comparing(File::getName));
+        java.util.List<String> loadedLangs = new java.util.ArrayList<>();
+
+        for (File langFile : langFiles) {
+            String fileName = langFile.getName();
+            String lang = fileName.substring(0, fileName.length() - LANG_FILE_SUFFIX.length()).toLowerCase();
+            try {
+                FileConfiguration config = YamlConfiguration.loadConfiguration(langFile);
+                if (!config.getKeys(false).isEmpty()) {
+                    mergeModuleConfig(lang, config);
+                    supportedLanguages.add(lang);
+                    loadedLangs.add(lang);
+                }
+            } catch (Exception e) {
+                logger.warning("Failed to load external module language file " + langFile.getPath() + ": " + e.getMessage());
+            }
+        }
+
+        if (!loadedLangs.isEmpty()) {
+            logger.info("Loaded external module '" + moduleDir.getName() + "' languages: " + String.join(", ", loadedLangs));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean loadBundledModuleLanguagesForModule(String moduleDirName) {
+        boolean anyLoaded = false;
+        java.util.List<String> loadedLangs = new java.util.ArrayList<>();
+
+        for (String lang : KNOWN_LANGS) {
+            String resourcePath = MODULES_LANG_PATH + moduleDirName + "/" + lang + LANG_FILE_SUFFIX;
+            File moduleLangFile = new File(plugin.getDataFolder(), resourcePath);
+
+            if (!moduleLangFile.exists()) {
+                saveBundledLanguageResource(resourcePath);
+            }
+
+            if (!moduleLangFile.exists()) {
+                continue;
+            }
+
+            try {
+                FileConfiguration config = YamlConfiguration.loadConfiguration(moduleLangFile);
+                if (!config.getKeys(false).isEmpty()) {
+                    mergeModuleConfig(lang, config);
+                    supportedLanguages.add(lang);
+                    loadedLangs.add(lang);
+                    anyLoaded = true;
+                }
+            } catch (Exception e) {
+                logger.warning("Failed to load bundled module language file " + moduleLangFile.getPath() + ": " + e.getMessage());
+            }
+        }
+
+        if (anyLoaded) {
+            logger.info("Loaded bundled module languages for module '" + moduleDirName + "': " + String.join(", ", loadedLangs));
+        }
+
+        return anyLoaded;
     }
     
     /**
