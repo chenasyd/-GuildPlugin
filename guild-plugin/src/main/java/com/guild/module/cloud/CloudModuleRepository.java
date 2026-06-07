@@ -8,6 +8,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ColorUtils;
+import com.guild.update.UpdateManager;
 import org.bukkit.command.CommandSender;
 
 import javax.net.ssl.*;
@@ -80,6 +81,9 @@ public class CloudModuleRepository {
     /**
      * 异步列出云端模块 — 遍历所有 Release，按文件名去重取最新 SDK 版本
      */
+    /** 最低兼容 API 版本 — 低于此版本的模块不建议下载使用 */
+    private static final String MINIMUM_COMPATIBLE_API = "1.6.3";
+
     public void listModules(CommandSender sender) {
         CompatibleScheduler.runTaskAsync(plugin, () -> {
             List<ModuleInfo> modules = fetchModules();
@@ -90,9 +94,18 @@ public class CloudModuleRepository {
                 }
                 sender.sendMessage(ColorUtils.colorize("&b&l=== Cloud Modules ==="));
                 for (ModuleInfo m : modules) {
-                    sender.sendMessage(ColorUtils.colorize(
-                            "&e" + m.fileName() + " &7- " + formatSize(m.size())
-                            + " &8(sdk: " + m.sdkVersion() + ")"));
+                    boolean outdated = m.sdkVersion() == null || m.sdkVersion().isEmpty()
+                            || UpdateManager.compareVersions(m.sdkVersion(), MINIMUM_COMPATIBLE_API) < 0;
+                    if (outdated) {
+                        sender.sendMessage(ColorUtils.colorize(
+                                "&c" + m.fileName() + " &7- " + formatSize(m.size())
+                                + " &8(sdk: " + m.sdkVersion() + ")"
+                                + " &c&l[不推荐] &7需要 SDK " + MINIMUM_COMPATIBLE_API + "+"));
+                    } else {
+                        sender.sendMessage(ColorUtils.colorize(
+                                "&a" + m.fileName() + " &7- " + formatSize(m.size())
+                                + " &8(sdk: " + m.sdkVersion() + ")"));
+                    }
                 }
             });
         });

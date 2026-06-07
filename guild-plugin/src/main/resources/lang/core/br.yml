@@ -611,6 +611,7 @@ module.error.enable-failed: "&cFalha ao habilitar módulo [{0}]: {1}"
 module.error.unload-failed: "&cFalha ao descarregar módulo [{0}]: {1}"
 module.error.has-dependents: "&cNão foi possível descarregar [{0}], os seguintes módulos dependem dele: {1}"
 module.error.unload-failed-during-shutdown: "Falha ao descarregar módulo durante desligamento: {0}"
+module.error.api-too-old: "&cVersão da API do módulo [{0}] ({1}) é muito antiga. Este plugin requer API {2}+, não é possível carregar este módulo!"
 
 # Warning messages
 module.warning.soft-depend-missing: "&6[Aviso do Módulo] Dependência opcional [{0}] não encontrada, módulo [{1}] pode ter funcionalidade parcial indisponível"

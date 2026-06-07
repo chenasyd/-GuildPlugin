@@ -613,6 +613,7 @@ module.error.enable-failed: "&c模块启用失败 [{0}]: {1}"
 module.error.unload-failed: "&c模块卸载失败 [{0}]: {1}"
 module.error.has-dependents: "&c无法卸载 [{0}]，以下模块依赖它: {1}"
 module.error.unload-failed-during-shutdown: "关闭时卸载模块失败: {0}"
+module.error.api-too-old: "&c模块 [{0}] 的 API 版本 ({1}) 过低，此插件需要 API {2}+，无法加载此模块！"
 
 # 警告信息
 module.warning.soft-depend-missing: "&6[模块警告] 软依赖 [{0}] 未满足，模块 [{1}] 可能部分功能不可用"

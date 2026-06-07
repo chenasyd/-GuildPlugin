@@ -611,6 +611,7 @@ module.error.enable-failed: "&cNie udało się włączyć modułu [{0}]: {1}"
 module.error.unload-failed: "&cNie udało się rozładować modułu [{0}]: {1}"
 module.error.has-dependents: "&cNie można rozładować [{0}], następujące moduły są od niego zależne: {1}"
 module.error.unload-failed-during-shutdown: "Nie udało się rozładować modułu podczas wyłączania: {0}"
+module.error.api-too-old: "&cWersja API modułu [{0}] ({1}) jest zbyt stara. Plugin wymaga API {2}+, nie można załadować tego modułu!"
 
 # Warning messages
 module.warning.soft-depend-missing: "&6[Ostrzeżenie Modułu] Brak miękkiej zależności [{0}], moduł [{1}] może mieć niepełną funkcjonalność"

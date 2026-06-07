@@ -8,6 +8,7 @@ import com.guild.core.module.exception.ModuleLoadException;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.ConsoleLogger;
 import com.guild.sdk.GuildPluginAPI;
+import com.guild.update.UpdateManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -419,6 +420,9 @@ public class ModuleManager {
         }
     }
 
+    /** 最低兼容 API 版本 — 低于此版本的模块将被拒绝加载 */
+    private static final String MINIMUM_COMPATIBLE_API = "1.6.3";
+
     private void checkCompatibility(ModuleDescriptor descriptor) throws ModuleLoadException {
         String requiredApi = descriptor.getApiVersion();
         if (requiredApi == null || requiredApi.trim().isEmpty()) {
@@ -428,6 +432,16 @@ public class ModuleManager {
         }
 
         String pluginVersion = getCoreApiVersion();
+
+        // 检查模块 API 版本是否低于最低兼容版本
+        if (UpdateManager.compareVersions(requiredApi, MINIMUM_COMPATIBLE_API) < 0) {
+            throw new ModuleLoadException(
+                    lang.getCoreIndexedMessage("module.error.api-too-old", "",
+                            descriptor.getId(), requiredApi, MINIMUM_COMPATIBLE_API)
+            );
+        }
+
+        // 常规版本不匹配警告（仅提醒，不阻止加载）
         if (!pluginVersion.equals(requiredApi)) {
             ConsoleLogger.warn(lang.getCoreIndexedMessage("module.warning.api-version-mismatch", "",
                     descriptor.getId(), requiredApi, pluginVersion));

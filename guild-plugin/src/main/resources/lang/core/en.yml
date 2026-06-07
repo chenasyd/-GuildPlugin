@@ -614,6 +614,7 @@ module.error.enable-failed: "&cModule enable failed [{0}]: {1}"
 module.error.unload-failed: "&cModule unload failed [{0}]: {1}"
 module.error.has-dependents: "&cCannot unload [{0}], the following modules depend on it: {1}"
 module.error.unload-failed-during-shutdown: "Failed to unload module during shutdown: {0}"
+module.error.api-too-old: "&cModule [{0}] API version ({1}) is too old. This plugin requires API {2}+, cannot load this module!"
 
 # Warning messages
 module.warning.soft-depend-missing: "&6[Module Warning] Soft dependency [{0}] not met, module [{1}] may have partial functionality unavailable"
