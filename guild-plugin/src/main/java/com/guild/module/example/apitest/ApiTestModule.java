@@ -133,6 +133,7 @@ public class ApiTestModule implements GuildModule {
             inv.setItem(13, makeItem(Material.GOLD_INGOT, "§eEconomy Test", "§7deposit/withdraw/currency"));
             inv.setItem(14, makeItem(Material.REDSTONE, "§eHTTP Test", "§7http"));
             inv.setItem(15, makeItem(Material.NAME_TAG, "§ePlaceholder Test", "§7placeholder"));
+            inv.setItem(16, makeItem(Material.CLOCK, "§eTime/Console Test", "§7server time + console output"));
             inv.setItem(22, makeItem(Material.BARRIER, "§cClose", "§7Exit"));
             context.openGUI(player, new com.guild.core.gui.GUI() {
                 @Override public String getTitle() { return "§dAPI Test Panel"; }
@@ -146,6 +147,7 @@ public class ApiTestModule implements GuildModule {
                         case 13: runTest(p, "economy"); break;
                         case 14: runTest(p, "http"); break;
                         case 15: runTest(p, "placeholder"); break;
+                        case 16: runTest(p, "time"); break;
                     }
                 }
             });
@@ -159,7 +161,8 @@ public class ApiTestModule implements GuildModule {
             "member", runner::testMember,
             "economy", runner::testEconomy,
             "http", runner::testHttp,
-            "placeholder", runner::testPlaceholder
+            "placeholder", runner::testPlaceholder,
+            "time", runner::testTimeAndConsole
         );
         tests.getOrDefault(test, () -> player.sendMessage("§cUnknown test: " + test)).run();
     }

@@ -4,6 +4,8 @@ import com.guild.sdk.GuildPluginAPI;
 import com.guild.sdk.data.GuildData;
 import org.bukkit.entity.Player;
 
+import java.time.LocalDateTime;
+
 /**
  * Test executor — each test method separated by subsystem.
  */
@@ -130,7 +132,49 @@ public class TestRunner {
         module.log("=== Placeholder Test ===");
         player.sendMessage("§e--- Placeholder Test ---");
         ok("guild_module_apitest_invested: " + module.new RegionCountProvider().onRequest(player, "invested"));
+
+        // SDK placeholder registration helpers
+        api.registerPlaceholderProvider(new com.guild.sdk.placeholder.PlaceholderProvider() {
+            @Override public String getIdentifier() { return "apitest_temp"; }
+            @Override public String onRequest(Player player, String params) { return "temp"; }
+        });
+        ok("registerPlaceholderProvider(temp) called");
+        ok("getPlaceholderProviders contains apitest_temp: " + api.getPlaceholderProviders().containsKey("apitest_temp"));
+        api.unregisterPlaceholderProvider("apitest_temp");
+        ok("unregisterPlaceholderProvider(temp) called");
+        ok("getPlaceholderProviders no longer contains apitest_temp: " + !api.getPlaceholderProviders().containsKey("apitest_temp"));
+
         ok("Basic placeholder registered — tested identifier=apitest");
         player.sendMessage("§7regioncount requires WorldGuard dependency, currently returns 0");
+    }
+
+    void testTimeAndConsole() {
+        module.log("=== Server Time & Console API Test ===");
+        player.sendMessage("§e--- Server Time & Console API Test ---");
+
+        try {
+            LocalDateTime now = api.getServerTime();
+            ok("getServerTime: " + (now != null ? now.toString() : "null"));
+            ok("getServerTimeString: " + api.getServerTimeString());
+            ok("getServerDateString: " + api.getServerDateString());
+            ok("getServerTimePlusMinutes(5): " + api.getServerTimePlusMinutes(5));
+            ok("getServerTimePlusDays(1): " + api.getServerTimePlusDays(1));
+            ok("formatServerTime: " + api.formatServerTime(now));
+            ok("formatServerDate: " + api.formatServerDate(now));
+        } catch (Exception e) {
+            fail("Server time API test failed: " + e.getMessage());
+        }
+
+        try {
+            api.consoleInfo("&a[ApiTest] consoleInfo test");
+            api.consoleWarn("&e[ApiTest] consoleWarn test");
+            api.consoleSevere("&c[ApiTest] consoleSevere test");
+            api.consoleInfo("&a[ApiTest] consoleInfo formatted: {0}", "ok");
+            api.consoleWarn("&e[ApiTest] consoleWarn formatted: {0}", "ok");
+            api.consoleSevere("&c[ApiTest] consoleSevere formatted: {0}", "ok");
+            ok("consoleInfo/consoleWarn/consoleSevere invoked");
+        } catch (Exception e) {
+            fail("Console output API test failed: " + e.getMessage());
+        }
     }
 }

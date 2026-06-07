@@ -46,7 +46,8 @@ public class ApiTestCommandHandler implements ModuleCommandHandler {
                         "member", runner::testMember,
                         "economy", runner::testEconomy,
                         "http", runner::testHttp,
-                        "placeholder", runner::testPlaceholder
+                        "placeholder", runner::testPlaceholder,
+                        "time", runner::testTimeAndConsole
                     );
                     Runnable test = tests.get(sub);
                     if (test != null) test.run();
@@ -62,6 +63,7 @@ public class ApiTestCommandHandler implements ModuleCommandHandler {
         s.sendMessage("§e/guild apitest economy §7- Economy test");
         s.sendMessage("§e/guild apitest http §7- HTTP test");
         s.sendMessage("§e/guild apitest placeholder §7- Placeholder test");
+        s.sendMessage("§e/guild apitest time §7- Server time and console output test");
         s.sendMessage("§e/guild apitest status §7- Show running status");
         s.sendMessage("§e/guild apitest log §7- Show event log");
         s.sendMessage("§e/guild apitest clear §7- Clear log");
