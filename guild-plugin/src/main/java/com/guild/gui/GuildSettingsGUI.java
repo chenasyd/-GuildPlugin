@@ -85,9 +85,9 @@ public class GuildSettingsGUI implements GUI {
                 guild.getName() != null ? guild.getName() : "未知工会"));
         if (totalPages > 1) {
             baseTitle += ColorUtils.colorize(" &7(" +
-                    languageManager.getIndexedMessage(
+                    languageManager.getGuiIndexedMessage(
                             languageManager.getPlayerLanguage(player),
-                            "gui.page-info", "第{0}页/共{1}页",
+                            "gui.common.page-info", "第{0}页/共{1}页",
                             new String[]{String.valueOf(currentPage), String.valueOf(totalPages)}) + ")");
         }
         return baseTitle;

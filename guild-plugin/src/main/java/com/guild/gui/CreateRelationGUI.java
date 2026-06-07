@@ -294,8 +294,8 @@ public class CreateRelationGUI implements GUI {
         // 页码显示
         ItemStack pageInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize(languageManager.getIndexedMessage(player, "gui.page-info", "&e第 {0} 页，共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(maxPage + 1))),
-            ColorUtils.colorize(languageManager.getIndexedMessage(player, "gui.total-guilds", "&7总计 {0} 个工会", String.valueOf(availableGuilds.size())))
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "&e第 {0} 页，共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(maxPage + 1))),
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.common.total-guilds", "&7总计 {0} 个工会", String.valueOf(availableGuilds.size())))
         );
         inventory.setItem(51, pageInfo);
     }

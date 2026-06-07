@@ -750,4 +750,25 @@ public class LanguageManager {
         String lang = getPlayerLanguage(player);
         return getCoreIndexedMessage(lang, path, defaultValue, args);
     }
+
+    // ==================== GUI Indexed 消息（lang/gui/，支持 {0}{1} 索引占位符）====================
+
+    public String getGuiIndexedMessage(String lang, String path, String defaultValue, String[] args) {
+        String message = getGuiMessage(lang, path, defaultValue);
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                message = message.replace("{" + i + "}", args[i] != null ? args[i] : "");
+            }
+        }
+        return message;
+    }
+
+    public String getGuiIndexedMessage(String path, String defaultValue, String... args) {
+        return getGuiIndexedMessage(defaultLanguage, path, defaultValue, args);
+    }
+
+    public String getGuiIndexedMessage(Player player, String path, String defaultValue, String... args) {
+        String lang = getPlayerLanguage(player);
+        return getGuiIndexedMessage(lang, path, defaultValue, args);
+    }
 }

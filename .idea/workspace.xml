@@ -6,41 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="ce3a3fec-7ae5-4b2f-b319-4e62129f5b23" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/AdminGuildGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/AdminGuildGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/ApplicationManagementGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/ApplicationManagementGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/ConfirmChangeFundsGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/ConfirmChangeFundsGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/ConfirmDeleteGuildGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/ConfirmDeleteGuildGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/ConfirmLeaveGuildGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/ConfirmLeaveGuildGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/CreateGuildGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/CreateGuildGUI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/core/language/LanguageManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/core/language/LanguageManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/CreateRelationGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/CreateRelationGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/DemoteMemberGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/DemoteMemberGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/EconomyManagementGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/EconomyManagementGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildDescriptionInputGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildDescriptionInputGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildDetailGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildDetailGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildFilterGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildFilterGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildFundsGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildFundsGUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildInfoGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildInfoGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildListGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildListGUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildListManagementGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildListManagementGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildLogsGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildLogsGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildNameInputGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildNameInputGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildPermissionsGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildPermissionsGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildRelationsGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildRelationsGUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildSettingsGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildSettingsGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildTagInputGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/GuildTagInputGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/InviteMemberGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/InviteMemberGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/KickMemberGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/KickMemberGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/MainGuildGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/MainGuildGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/MemberDetailsGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/MemberDetailsGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/MemberGuildGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/MemberGuildGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/MemberManagementGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/MemberManagementGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/PromoteMemberGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/PromoteMemberGUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/RelationManagementGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/RelationManagementGUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/SystemSettingsGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/SystemSettingsGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/resources/lang/gui/br.yml" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/resources/lang/gui/br.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/resources/lang/gui/en.yml" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/resources/lang/gui/en.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/resources/lang/gui/pl.yml" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/resources/lang/gui/pl.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/resources/lang/gui/zh.yml" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/resources/lang/gui/zh.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,7 +89,7 @@
       <workItem from="1770911774378" duration="272000" />
       <workItem from="1780749703210" duration="773000" />
       <workItem from="1780754014165" duration="8923000" />
-      <workItem from="1780820063712" duration="10393000" />
+      <workItem from="1780820063712" duration="11531000" />
     </task>
     <servers />
   </component>

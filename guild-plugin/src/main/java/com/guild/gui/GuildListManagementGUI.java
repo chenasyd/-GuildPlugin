@@ -106,18 +106,18 @@ public class GuildListManagementGUI implements GUI {
         if (currentPage > 0) {
             inventory.setItem(PREVIOUS_PAGE_SLOT, createItem(Material.ARROW,
                 ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&a上一页")),
-                ColorUtils.colorize("&7" + languageManager.getIndexedMessage(player, "gui.page-info", "第 {0} 页，共 {1} 页", String.valueOf(currentPage), String.valueOf(totalPages)))));
+                ColorUtils.colorize("&7" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "第 {0} 页，共 {1} 页", String.valueOf(currentPage), String.valueOf(totalPages)))));
         }
 
         // 页码信息
         inventory.setItem(PAGE_INFO_SLOT, createItem(Material.PAPER,
-            ColorUtils.colorize("&e" + languageManager.getIndexedMessage(player, "gui.page-info", "第 {0} 页/共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(totalPages)))));
+            ColorUtils.colorize("&e" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "第 {0} 页/共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(totalPages)))));
 
         // 下一页按钮
         if (currentPage < totalPages - 1) {
             inventory.setItem(NEXT_PAGE_SLOT, createItem(Material.ARROW,
                 ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&a下一页")),
-                ColorUtils.colorize("&7" + languageManager.getIndexedMessage(player, "gui.page-info", "第 {0} 页，共 {1} 页", String.valueOf(currentPage + 2), String.valueOf(totalPages)))));
+                ColorUtils.colorize("&7" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "第 {0} 页，共 {1} 页", String.valueOf(currentPage + 2), String.valueOf(totalPages)))));
         }
     }
 

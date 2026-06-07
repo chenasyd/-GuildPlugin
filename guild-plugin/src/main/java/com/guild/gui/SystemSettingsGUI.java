@@ -62,7 +62,7 @@ public class SystemSettingsGUI implements GUI {
         ItemStack debugToggle = createItem(
             debugMaterial,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-debug-toggle", "&e详细后台信息显示")),
-            ColorUtils.colorize(languageManager.getIndexedMessage(player, "system-settings-current-status", "&7当前状态: {0}", debugStatus)),
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.system-settings.current-status", "&7当前状态: {0}", debugStatus)),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-debug-toggle-lore-1", "&7启用后会在控制台显示")),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-debug-toggle-lore-2", "&7详细的调试信息")),
             "",
@@ -80,7 +80,7 @@ public class SystemSettingsGUI implements GUI {
         ItemStack autoSaveToggle = createItem(
             autoSaveMaterial,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-auto-save", "&e自动保存数据")),
-            ColorUtils.colorize(languageManager.getIndexedMessage(player, "system-settings-current-status", "&7当前状态: {0}", autoSaveStatus)),
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.system-settings.current-status", "&7当前状态: {0}", autoSaveStatus)),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-auto-save-lore-1", "&7定期自动保存工会数据")),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-auto-save-lore-2", "&7防止数据丢失")),
             "",
@@ -98,7 +98,7 @@ public class SystemSettingsGUI implements GUI {
         ItemStack economyToggle = createItem(
             economyMaterial,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-economy", "&e经济系统")),
-            ColorUtils.colorize(languageManager.getIndexedMessage(player, "system-settings-current-status", "&7当前状态: {0}", economyStatus)),
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.system-settings.current-status", "&7当前状态: {0}", economyStatus)),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-economy-lore-1", "&7工会经济功能开关")),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-economy-lore-2", "&7包括存款、取款、转账等")),
             "",
@@ -116,7 +116,7 @@ public class SystemSettingsGUI implements GUI {
         ItemStack relationToggle = createItem(
             relationMaterial,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-relations", "&e工会关系系统")),
-            ColorUtils.colorize(languageManager.getIndexedMessage(player, "system-settings-current-status", "&7当前状态: {0}", relationStatus)),
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.system-settings.current-status", "&7当前状态: {0}", relationStatus)),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-relations-lore-1", "&7工会关系功能开关")),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-relations-lore-2", "&7包括盟友、敌对、开战等")),
             "",
@@ -134,7 +134,7 @@ public class SystemSettingsGUI implements GUI {
         ItemStack levelToggle = createItem(
             levelMaterial,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-level-system", "&e工会等级系统")),
-            ColorUtils.colorize(languageManager.getIndexedMessage(player, "system-settings-current-status", "&7当前状态: {0}", levelStatus)),
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.system-settings.current-status", "&7当前状态: {0}", levelStatus)),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-level-system-lore-1", "&7工会等级功能开关")),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-level-system-lore-2", "&7包括自动升级、成员限制等")),
             "",
@@ -153,7 +153,7 @@ public class SystemSettingsGUI implements GUI {
         ItemStack applicationToggle = createItem(
             applicationMaterial,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-applications", "&e申请加入系统")),
-            ColorUtils.colorize(languageManager.getIndexedMessage(player, "system-settings-current-status", "&7当前状态: {0}", applicationStatus)),
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.system-settings.current-status", "&7当前状态: {0}", applicationStatus)),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-applications-lore-1", "&7申请加入工会功能开关")),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-applications-lore-2", "&7玩家需要申请才能加入工会")),
             "",
@@ -172,7 +172,7 @@ public class SystemSettingsGUI implements GUI {
         ItemStack inviteToggle = createItem(
             inviteMaterial,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-invites", "&e邀请系统")),
-            ColorUtils.colorize(languageManager.getIndexedMessage(player, "system-settings-current-status", "&7当前状态: {0}", inviteStatus)),
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.system-settings.current-status", "&7当前状态: {0}", inviteStatus)),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-invites-lore-1", "&7工会邀请功能开关")),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-invites-lore-2", "&7会长可以邀请玩家加入工会")),
             "",
@@ -190,7 +190,7 @@ public class SystemSettingsGUI implements GUI {
         ItemStack homeToggle = createItem(
             homeMaterial,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-guild-home", "&e工会家系统")),
-            ColorUtils.colorize(languageManager.getIndexedMessage(player, "system-settings-current-status", "&7当前状态: {0}", homeStatus)),
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.system-settings.current-status", "&7当前状态: {0}", homeStatus)),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-guild-home-lore-1", "&7工会家功能开关")),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-guild-home-lore-2", "&7包括设置和传送到工会家")),
             "",
