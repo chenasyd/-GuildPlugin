@@ -100,10 +100,10 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
         var lang = plugin.getLanguageManager();
 
         sender.sendMessage(ColorUtils.colorize("\n&e&l=== " +
-                lang.getModuleMessage("module.command.list.title", "") + " ==="));
+                lang.getCoreMessage("module.command.list.title", "") + " ==="));
 
         if (registry.size() == 0) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.list.empty", "")));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.list.empty", "")));
             return;
         }
 
@@ -119,14 +119,14 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
             };
 
             sender.sendMessage(ColorUtils.colorize(
-                    lang.getModuleIndexedMessage("module.command.list.entry", "",
+                    lang.getCoreIndexedMessage("module.command.list.entry", "",
                             statusColor, moduleId, desc.getName(),
                             desc.getVersion(), state.name())
             ));
         }
 
         sender.sendMessage(ColorUtils.colorize(
-                lang.getModuleIndexedMessage("module.command.list.footer", "",
+                lang.getCoreIndexedMessage("module.command.list.footer", "",
                         String.valueOf(registry.size()))
         ));
     }
@@ -135,7 +135,7 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
         var lang = plugin.getLanguageManager();
 
         if (args.length < 2) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.load.usage", "")));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.load.usage", "")));
             return;
         }
 
@@ -148,15 +148,15 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
         File moduleFile = new File(mm.getModulesDirectory(), fileName);
 
         if (!moduleFile.exists()) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.error.file-not-found", "", fileName)));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.error.file-not-found", "", fileName)));
             return;
         }
 
         try {
             mm.loadModule(moduleFile);
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.load.success", "", fileName)));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.load.success", "", fileName)));
         } catch (Exception e) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.load.failed",
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.load.failed",
                     "", fileName, e.getMessage())));
         }
     }
@@ -165,7 +165,7 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
         var lang = plugin.getLanguageManager();
 
         if (args.length < 2) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.unload.usage", "")));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.unload.usage", "")));
             return;
         }
 
@@ -173,15 +173,15 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
         ModuleManager mm = plugin.getServiceContainer().get(ModuleManager.class);
 
         if (!mm.getRegistry().isLoaded(moduleId)) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.error.not-loaded", "", moduleId)));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.error.not-loaded", "", moduleId)));
             return;
         }
 
         boolean success = mm.unloadModule(moduleId);
         if (success) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.unload.success", "", moduleId)));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.unload.success", "", moduleId)));
         } else {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.unload.failed", "", moduleId)));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.unload.failed", "", moduleId)));
         }
     }
 
@@ -189,7 +189,7 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
         var lang = plugin.getLanguageManager();
 
         if (args.length < 2) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.reload.usage", "")));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.reload.usage", "")));
             return;
         }
 
@@ -197,15 +197,15 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
         ModuleManager mm = plugin.getServiceContainer().get(ModuleManager.class);
 
         if (!mm.getRegistry().isLoaded(moduleId)) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.error.not-loaded", "", moduleId)));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.error.not-loaded", "", moduleId)));
             return;
         }
 
         boolean success = mm.reloadModule(moduleId);
         if (success) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.reload.success", "", moduleId)));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.reload.success", "", moduleId)));
         } else {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.reload.failed", "", moduleId)));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.reload.failed", "", moduleId)));
         }
     }
 
@@ -213,7 +213,7 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
         var lang = plugin.getLanguageManager();
 
         if (args.length < 2) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.info.usage", "")));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.info.usage", "")));
             return;
         }
 
@@ -222,29 +222,29 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
 
         GuildModule module = mm.getRegistry().getModule(moduleId);
         if (module == null) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.error.not-loaded", "", moduleId)));
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.error.not-loaded", "", moduleId)));
             return;
         }
 
         ModuleDescriptor desc = module.getDescriptor();
         ModuleState state = mm.getRegistry().getState(moduleId);
 
-        String h = lang.getModuleMessage("module.command.info.header", "");
+        String h = lang.getCoreMessage("module.command.info.header", "");
         sender.sendMessage(ColorUtils.colorize("&e&l=== " + h + " ==="));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.info.id", "", desc.getId())));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.info.name", "", desc.getName())));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.info.version", "", desc.getVersion())));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.info.author", "", desc.getAuthor())));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.info.type", "", desc.getType())));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.info.state", "", state.name())));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.info.description", "", desc.getDescription())));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.info.id", "", desc.getId())));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.info.name", "", desc.getName())));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.info.version", "", desc.getVersion())));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.info.author", "", desc.getAuthor())));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.info.type", "", desc.getType())));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.info.state", "", state.name())));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.info.description", "", desc.getDescription())));
 
         if (!desc.getDepends().isEmpty()) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.info.depends",
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.info.depends",
                     "", String.join(", ", desc.getDepends()))));
         }
         if (!desc.getSoftDepends().isEmpty()) {
-            sender.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage("module.command.info.soft-depends",
+            sender.sendMessage(ColorUtils.colorize(lang.getCoreIndexedMessage("module.command.info.soft-depends",
                     "", String.join(", ", desc.getSoftDepends()))));
         }
         sender.sendMessage(ColorUtils.colorize("&e&l=========================="));
@@ -260,13 +260,13 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
 
     private void sendUsage(CommandSender sender) {
         var lang = plugin.getLanguageManager();
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.usage-header", "")));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.usage-list", "")));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.usage-load", "")));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.usage-unload", "")));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.usage-reload", "")));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.usage-info", "")));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.usage-cloud", "")));
-        sender.sendMessage(ColorUtils.colorize(lang.getModuleMessage("module.command.usage-cloud-download", "")));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.usage-header", "")));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.usage-list", "")));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.usage-load", "")));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.usage-unload", "")));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.usage-reload", "")));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.usage-info", "")));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.usage-cloud", "")));
+        sender.sendMessage(ColorUtils.colorize(lang.getCoreMessage("module.command.usage-cloud-download", "")));
     }
 }
