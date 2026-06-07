@@ -652,4 +652,20 @@ module.command.info.description: "&7Opis: &f{0}"
 module.command.info.depends: "&7Zależności: &f{0}"
 module.command.info.soft-depends: "&7Opcjonalne zależności: &f{0}"
 
+# Cloud Modules
+cloud.title: "&b&l=== Moduły w Chmurze ==="
+cloud.empty: "&cNie znaleziono modułów w chmurze."
+cloud.official-repo: "&b&lOficjalne Repozytorium"
+cloud.official-tag: "&8[Oficjalne]"
+cloud.outdated: "&c&l[Nie zalecane] &7Wymaga SDK {0}+"
+cloud.not-found: "&cModuł '{0}' nie został znaleziony w żadnym repozytorium."
+cloud.downloading: "&7[{0}] Pobieranie {1} ({2}, sdk: {3})..."
+cloud.download-complete: "&aPobrano {0}. Użyj &e/guildmodule load {0} &aaby załadować."
+cloud.download-renamed: "&aPobrano jako &e{0} &a(zapisano pod nową nazwą, ponieważ &e{1} &ajest w użyciu)."
+cloud.download-tip: "&6Wskazówka: &7Najpierw rozładuj stary moduł, zastąp plik: &e/guildmodule unload <id> &7-> zastąp jar -> &e/guildmodule load {0}"
+cloud.download-failed: "&cPobieranie nie powiodło się: {0}"
+
+
+
+
 

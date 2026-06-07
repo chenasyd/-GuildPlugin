@@ -153,3 +153,18 @@ logging:
   max-file-size: 10
   # Number of log files to retain
   max-files: 5
+
+# Developer mode
+developer-mode:
+  # Enable developer mode (required to use custom module repositories)
+  enabled: false
+  # External module repositories (only used when developer mode is enabled)
+  # Each repository needs a unique name (alias) and an API URL
+  # The built-in official repository is always available and cannot be modified
+  # Example:
+  # repositories:
+  #   - name: "My Repository"
+  #     api: "https://api.github.com/repos/your-username/your-repo/releases"
+  #   - name: "Community Repo"
+  #     api: "https://api.github.com/repos/community/repo/releases"
+  repositories: []

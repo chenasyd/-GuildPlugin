@@ -654,4 +654,20 @@ module.command.info.description: "&7描述: &f{0}"
 module.command.info.depends: "&7依赖: &f{0}"
 module.command.info.soft-depends: "&7可选依赖: &f{0}"
 
+# 云端模块
+cloud.title: "&b&l=== 云端模块 ==="
+cloud.empty: "&c未找到任何云端模块。"
+cloud.official-repo: "&b&l官方仓库"
+cloud.official-tag: "&8[官方]"
+cloud.outdated: "&c&l[不推荐] &7需要 SDK {0}+"
+cloud.not-found: "&c模块 '{0}' 未在任何仓库中找到。"
+cloud.downloading: "&7[{0}] 正在下载 {1}（{2}，sdk: {3}）..."
+cloud.download-complete: "&a已下载 {0}。使用 &e/guildmodule load {0} &a加载。"
+cloud.download-renamed: "&a已重命名为 &e{0} &a（因 &e{1} &a正在使用）。"
+cloud.download-tip: "&6提示: &7先卸载旧模块再替换文件: &e/guildmodule unload <id> &7-> 替换jar -> &e/guildmodule load {0}"
+cloud.download-failed: "&c下载失败: {0}"
+
+
+
+
 

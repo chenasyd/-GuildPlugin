@@ -655,4 +655,20 @@ module.command.info.description: "&7Description: &f{0}"
 module.command.info.depends: "&7Dependencies: &f{0}"
 module.command.info.soft-depends: "&7Optional Dependencies: &f{0}"
 
+# Cloud Modules
+cloud.title: "&b&l=== Cloud Modules ==="
+cloud.empty: "&cNo cloud modules found."
+cloud.official-repo: "&b&lOfficial Repository"
+cloud.official-tag: "&8[Official]"
+cloud.outdated: "&c&l[Not Recom.] &7Requires SDK {0}+"
+cloud.not-found: "&cModule '{0}' not found in any repository."
+cloud.downloading: "&7[{0}] Downloading {1} ({2}, sdk: {3})..."
+cloud.download-complete: "&aDownloaded {0}. Use &e/guildmodule load {0} &ato load it."
+cloud.download-renamed: "&aDownloaded as &e{0} &a(saved with new name because &e{1} &ais in use)."
+cloud.download-tip: "&6Tip: &7Unload old module first, replace jar: &e/guildmodule unload <id> &7-> replace jar -> &e/guildmodule load {0}"
+cloud.download-failed: "&cDownload failed: {0}"
+
+
+
+
 
