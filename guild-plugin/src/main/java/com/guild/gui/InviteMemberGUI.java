@@ -1,4 +1,4 @@
-﻿package com.guild.gui;
+package com.guild.gui;
 
 import java.util.Arrays;
 import java.util.List;

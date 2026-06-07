@@ -1,4 +1,4 @@
-﻿package com.guild.gui;
+package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
