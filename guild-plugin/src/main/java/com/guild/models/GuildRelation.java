@@ -1,4 +1,4 @@
-package com.guild.models;
+﻿package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -47,15 +47,15 @@ public class GuildRelation {
 
             switch (this) {
                 case ALLY:
-                    return languageManager.getMessage(lang, key, "Ally");
+                    return languageManager.getCoreMessage(lang, key, "Ally");
                 case ENEMY:
-                    return languageManager.getMessage(lang, key, "Enemy");
+                    return languageManager.getCoreMessage(lang, key, "Enemy");
                 case WAR:
-                    return languageManager.getMessage(lang, key, "War");
+                    return languageManager.getCoreMessage(lang, key, "War");
                 case TRUCE:
-                    return languageManager.getMessage(lang, key, "Truce");
+                    return languageManager.getCoreMessage(lang, key, "Truce");
                 case NEUTRAL:
-                    return languageManager.getMessage(lang, key, "Neutral");
+                    return languageManager.getCoreMessage(lang, key, "Neutral");
                 default:
                     return name();
             }
@@ -91,13 +91,13 @@ public class GuildRelation {
 
             switch (this) {
                 case PENDING:
-                    return languageManager.getMessage(lang, key, "Pending");
+                    return languageManager.getCoreMessage(lang, key, "Pending");
                 case ACTIVE:
-                    return languageManager.getMessage(lang, key, "Active");
+                    return languageManager.getCoreMessage(lang, key, "Active");
                 case EXPIRED:
-                    return languageManager.getMessage(lang, key, "Expired");
+                    return languageManager.getCoreMessage(lang, key, "Expired");
                 case CANCELLED:
-                    return languageManager.getMessage(lang, key, "Cancelled");
+                    return languageManager.getCoreMessage(lang, key, "Cancelled");
                 default:
                     return name();
             }

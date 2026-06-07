@@ -1,4 +1,4 @@
-package com.guild.models;
+﻿package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -105,11 +105,11 @@ public class GuildApplication {
 
             switch (this) {
                 case PENDING:
-                    return languageManager.getMessage(lang, key, "Pending");
+                    return languageManager.getCoreMessage(lang, key, "Pending");
                 case APPROVED:
-                    return languageManager.getMessage(lang, key, "Approved");
+                    return languageManager.getCoreMessage(lang, key, "Approved");
                 case REJECTED:
-                    return languageManager.getMessage(lang, key, "Rejected");
+                    return languageManager.getCoreMessage(lang, key, "Rejected");
                 default:
                     return name();
             }

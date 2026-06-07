@@ -1,4 +1,4 @@
-package com.guild.commands;
+﻿package com.guild.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +51,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
-            String msg = languageManager.getMessage("general.player-only", "&c此命令只能由玩家执行！");
+            String msg = languageManager.getCoreMessage("general.player-only", "&c此命令只能由玩家执行！");
             sender.sendMessage(ColorUtils.colorize(msg));
             return true;
         }
@@ -146,7 +146,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     // 检查权限
                     String permission = api.getSubCommandPermission("guild", args[0]);
                     if (permission != null && !plugin.getPermissionManager().hasPermission(player, permission)) {
-                        String message = languageManager.getMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
+                        String message = languageManager.getCoreMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
                         player.sendMessage(ColorUtils.colorize(message));
                         return true;
                     }
@@ -164,7 +164,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     }
                 }
                 
-                player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "general.unknown-command", "&c未知命令！使用 /guild help 查看帮助。")));
+                player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "general.unknown-command", "&c未知命令！使用 /guild help 查看帮助。")));
                 break;
         }
         
@@ -238,13 +238,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleCreate(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.create.usage", "&c用法: /guild create <公会名称>");
+            String message = languageManager.getCoreMessage(player, "guild.create.usage", "&c用法: /guild create <公会名称>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
         if (!plugin.getPermissionManager().hasPermission(player, "guild.create")) {
-            String message = languageManager.getMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
+            String message = languageManager.getCoreMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -254,13 +254,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         String description = "欢迎加入我们的公会！";
         
         if (guildName.length() < 2 || guildName.length() > 10) {
-            String message = languageManager.getMessage(player, "guild.create.name-length", "&c公会名称长度必须在2-10个字符之间！");
+            String message = languageManager.getCoreMessage(player, "guild.create.name-length", "&c公会名称长度必须在2-10个字符之间！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
         if (!guildName.matches("[a-zA-Z0-9\\u4e00-\\u9fa5]")) {
-            String message = languageManager.getMessage(player, "guild.create.invalid-name", "&c公会名称只能包含字母、数字和中文！");
+            String message = languageManager.getCoreMessage(player, "guild.create.invalid-name", "&c公会名称只能包含字母、数字和中文！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -269,19 +269,19 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 boolean success = guildService.createGuild(guildName, guildTag, description, player.getUniqueId(), player.getName());
                 if (success) {
-                    String message = languageManager.getMessage(player, "guild.create.success", "&a公会创建成功！");
+                    String message = languageManager.getCoreMessage(player, "guild.create.success", "&a公会创建成功！");
                     player.sendMessage(ColorUtils.colorize(message));
                     
                     // 打开公会信息GUI
                     MainGuildGUI mainGuildGUI = new MainGuildGUI(plugin, player);
                     plugin.getGuiManager().openGUI(player, mainGuildGUI);
                 } else {
-                    String message = languageManager.getMessage(player, "guild.create.exists", "&c该公会名称已存在！");
+                    String message = languageManager.getCoreMessage(player, "guild.create.exists", "&c该公会名称已存在！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.create.error", "&c创建公会时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.create.error", "&c创建公会时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -292,12 +292,12 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.info.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.info.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
-                String message = languageManager.getMessage(player, "guild.info.message", "&a公会信息：\n&b名称: &f{0}\n&b等级: &f{1}\n&b会长: &f{2}\n&b成员数量: &f{3}\n&b创建时间: &f{4}");
+                String message = languageManager.getCoreMessage(player, "guild.info.message", "&a公会信息：\n&b名称: &f{0}\n&b等级: &f{1}\n&b会长: &f{2}\n&b成员数量: &f{3}\n&b创建时间: &f{4}");
                 message = message.replace("{0}", guild.getName());
                 message = message.replace("{1}", String.valueOf(guild.getLevel()));
                 message = message.replace("{2}", guild.getLeaderName());
@@ -307,7 +307,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.info.error", "&c获取公会信息时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.info.error", "&c获取公会信息时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -318,30 +318,30 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.members.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.members.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 List<GuildMember> members = guildService.getGuildMembers(guild.getId());
                 if (members.isEmpty()) {
-                    String message = languageManager.getMessage(player, "guild.members.empty", "&c公会中没有成员！");
+                    String message = languageManager.getCoreMessage(player, "guild.members.empty", "&c公会中没有成员！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
-                String message = languageManager.getMessage(player, "guild.members.title", "&a公会成员列表：");
+                String message = languageManager.getCoreMessage(player, "guild.members.title", "&a公会成员列表：");
                 player.sendMessage(ColorUtils.colorize(message));
                 
                 for (GuildMember m : members) {
-                    String memberMessage = languageManager.getMessage(player, "guild.members.member", "&b{0} - &f{1}");
+                    String memberMessage = languageManager.getCoreMessage(player, "guild.members.member", "&b{0} - &f{1}");
                     memberMessage = memberMessage.replace("{0}", m.getPlayerName());
                     memberMessage = memberMessage.replace("{1}", m.getRole() == Role.LEADER ? "会长" : (m.getRole() == Role.OFFICER ? "副会长" : "成员"));
                     player.sendMessage(ColorUtils.colorize(memberMessage));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.members.error", "&c获取成员列表时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.members.error", "&c获取成员列表时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -349,13 +349,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleInvite(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.invite.usage", "&c用法: /guild invite <玩家名称>");
+            String message = languageManager.getCoreMessage(player, "guild.invite.usage", "&c用法: /guild invite <玩家名称>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
         if (!plugin.getPermissionManager().hasPermission(player, "guild.invite")) {
-            String message = languageManager.getMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
+            String message = languageManager.getCoreMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -364,13 +364,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         Player targetPlayer = Bukkit.getPlayer(targetName);
         
         if (targetPlayer == null) {
-            String message = languageManager.getMessage(player, "guild.invite.player-not-found", "&c玩家不在线！");
+            String message = languageManager.getCoreMessage(player, "guild.invite.player-not-found", "&c玩家不在线！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
         if (targetPlayer.getUniqueId().equals(player.getUniqueId())) {
-            String message = languageManager.getMessage(player, "guild.invite.self", "&c您不能邀请自己！");
+            String message = languageManager.getCoreMessage(player, "guild.invite.self", "&c您不能邀请自己！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -379,20 +379,20 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.invite.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.invite.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.hasGuildPermission(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.invite.no-permission", "&c您没有邀请成员的权限！");
+                    String message = languageManager.getCoreMessage(player, "guild.invite.no-permission", "&c您没有邀请成员的权限！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 Guild targetGuild = guildService.getPlayerGuild(targetPlayer.getUniqueId());
                 if (targetGuild != null) {
-                    String message = languageManager.getMessage(player, "guild.invite.already-in-guild", "&c该玩家已经在一个公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.invite.already-in-guild", "&c该玩家已经在一个公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -401,7 +401,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 int memberCount = guildService.getGuildMemberCount(guild.getId());
                 int maxMembers = guild.getMaxMembers();
                 if (memberCount >= maxMembers) {
-                    String message = languageManager.getMessage(player, "guild.invite.full", "&c公会成员已满！");
+                    String message = languageManager.getCoreMessage(player, "guild.invite.full", "&c公会成员已满！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -410,11 +410,11 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 String inviteMessage = InviteMessageUtils.formatInviteReceived(plugin, targetPlayer, player, guild);
                 targetPlayer.sendMessage(inviteMessage);
                 
-                String message = languageManager.getMessage(player, "guild.invite.success", "&a邀请已发送！");
+                String message = languageManager.getCoreMessage(player, "guild.invite.success", "&a邀请已发送！");
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.invite.error", "&c发送邀请时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.invite.error", "&c发送邀请时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -422,13 +422,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleKick(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.kick.usage", "&c用法: /guild kick <玩家名称>");
+            String message = languageManager.getCoreMessage(player, "guild.kick.usage", "&c用法: /guild kick <玩家名称>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
         if (!plugin.getPermissionManager().hasPermission(player, "guild.kick")) {
-            String message = languageManager.getMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
+            String message = languageManager.getCoreMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -437,7 +437,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         Player targetPlayer = Bukkit.getPlayer(targetName);
         
         if (targetPlayer == null) {
-            String message = languageManager.getMessage(player, "guild.kick.player-not-found", "&c玩家不在线！");
+            String message = languageManager.getCoreMessage(player, "guild.kick.player-not-found", "&c玩家不在线！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -446,45 +446,45 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.kick.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.kick.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.hasGuildPermission(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.kick.no-permission", "&c您没有踢出成员的权限！");
+                    String message = languageManager.getCoreMessage(player, "guild.kick.no-permission", "&c您没有踢出成员的权限！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 GuildMember targetMember = guildService.getGuildMember(targetPlayer.getUniqueId());
                 if (targetMember == null) {
-                    String message = languageManager.getMessage(player, "guild.kick.player-not-found", "&c该玩家不在公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.kick.player-not-found", "&c该玩家不在公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (targetMember.getRole() == Role.LEADER) {
-                    String message = languageManager.getMessage(player, "guild.kick.cannot-kick-master", "&c您不能踢出会长！");
+                    String message = languageManager.getCoreMessage(player, "guild.kick.cannot-kick-master", "&c您不能踢出会长！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 boolean success = guildService.removeGuildMember(targetPlayer.getUniqueId(), player.getUniqueId());
                 if (success) {
-                    String message = languageManager.getMessage(player, "guild.kick.success", "&a已成功踢出玩家！");
+                    String message = languageManager.getCoreMessage(player, "guild.kick.success", "&a已成功踢出玩家！");
                     player.sendMessage(ColorUtils.colorize(message));
                     
                     // 通知被踢出的玩家
-                    String kickMessage = languageManager.getMessage(targetPlayer, "guild.kick.kicked", "&c您已被踢出公会！");
+                    String kickMessage = languageManager.getCoreMessage(targetPlayer, "guild.kick.kicked", "&c您已被踢出公会！");
                     targetPlayer.sendMessage(ColorUtils.colorize(kickMessage));
                 } else {
-                    String message = languageManager.getMessage(player, "guild.kick.error", "&c踢出玩家时发生错误！");
+                    String message = languageManager.getCoreMessage(player, "guild.kick.error", "&c踢出玩家时发生错误！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.kick.error", "&c踢出玩家时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.kick.error", "&c踢出玩家时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -492,13 +492,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handlePromote(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.promote.usage", "&c用法: /guild promote <玩家名称>");
+            String message = languageManager.getCoreMessage(player, "guild.promote.usage", "&c用法: /guild promote <玩家名称>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
         if (!plugin.getPermissionManager().hasPermission(player, "guild.promote")) {
-            String message = languageManager.getMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
+            String message = languageManager.getCoreMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -507,7 +507,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         Player targetPlayer = Bukkit.getPlayer(targetName);
         
         if (targetPlayer == null) {
-            String message = languageManager.getMessage(player, "guild.promote.player-not-found", "&c玩家不在线！");
+            String message = languageManager.getCoreMessage(player, "guild.promote.player-not-found", "&c玩家不在线！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -515,20 +515,20 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         CompletableFuture.runAsync(() -> {
             try {
                 if (!guildService.isGuildLeader(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.promote.only-master", "&c只有会长可以提升成员！");
+                    String message = languageManager.getCoreMessage(player, "guild.promote.only-master", "&c只有会长可以提升成员！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 GuildMember targetMember = guildService.getGuildMember(targetPlayer.getUniqueId());
                 if (targetMember == null) {
-                    String message = languageManager.getMessage(player, "guild.promote.player-not-found", "&c该玩家不在公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.promote.player-not-found", "&c该玩家不在公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (targetMember.getRole() == Role.LEADER) {
-                    String message = languageManager.getMessage(player, "guild.promote.already-master", "&c该玩家已经是会长！");
+                    String message = languageManager.getCoreMessage(player, "guild.promote.already-master", "&c该玩家已经是会长！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -536,19 +536,19 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 提升为副会长
                 boolean success = guildService.updateMemberRole(targetPlayer.getUniqueId(), Role.OFFICER, player.getUniqueId());
                 if (success) {
-                    String message = languageManager.getMessage(player, "guild.promote.success", "&a已成功提升玩家为副会长！");
+                    String message = languageManager.getCoreMessage(player, "guild.promote.success", "&a已成功提升玩家为副会长！");
                     player.sendMessage(ColorUtils.colorize(message));
                     
                     // 通知被提升的玩家
-                    String promoteMessage = languageManager.getMessage(targetPlayer, "guild.promote.promoted", "&a您已被提升为副会长！");
+                    String promoteMessage = languageManager.getCoreMessage(targetPlayer, "guild.promote.promoted", "&a您已被提升为副会长！");
                     targetPlayer.sendMessage(ColorUtils.colorize(promoteMessage));
                 } else {
-                    String message = languageManager.getMessage(player, "guild.promote.error", "&c提升玩家时发生错误！");
+                    String message = languageManager.getCoreMessage(player, "guild.promote.error", "&c提升玩家时发生错误！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.promote.error", "&c提升玩家时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.promote.error", "&c提升玩家时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -556,13 +556,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleDemote(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.demote.usage", "&c用法: /guild demote <玩家名称>");
+            String message = languageManager.getCoreMessage(player, "guild.demote.usage", "&c用法: /guild demote <玩家名称>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
         if (!plugin.getPermissionManager().hasPermission(player, "guild.demote")) {
-            String message = languageManager.getMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
+            String message = languageManager.getCoreMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -571,7 +571,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         Player targetPlayer = Bukkit.getPlayer(targetName);
         
         if (targetPlayer == null) {
-            String message = languageManager.getMessage(player, "guild.demote.player-not-found", "&c玩家不在线！");
+            String message = languageManager.getCoreMessage(player, "guild.demote.player-not-found", "&c玩家不在线！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -579,20 +579,20 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         CompletableFuture.runAsync(() -> {
             try {
                 if (!guildService.isGuildLeader(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.demote.only-master", "&c只有会长可以降级成员！");
+                    String message = languageManager.getCoreMessage(player, "guild.demote.only-master", "&c只有会长可以降级成员！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 GuildMember targetMember = guildService.getGuildMember(targetPlayer.getUniqueId());
                 if (targetMember == null) {
-                    String message = languageManager.getMessage(player, "guild.demote.player-not-found", "&c该玩家不在公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.demote.player-not-found", "&c该玩家不在公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (targetMember.getRole() == Role.LEADER) {
-                    String message = languageManager.getMessage(player, "guild.demote.cannot-demote-master", "&c您不能降级会长！");
+                    String message = languageManager.getCoreMessage(player, "guild.demote.cannot-demote-master", "&c您不能降级会长！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -600,19 +600,19 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 降级为普通成员
                 boolean success = guildService.updateMemberRole(targetPlayer.getUniqueId(), Role.MEMBER, player.getUniqueId());
                 if (success) {
-                    String message = languageManager.getMessage(player, "guild.demote.success", "&a已成功降级玩家为普通成员！");
+                    String message = languageManager.getCoreMessage(player, "guild.demote.success", "&a已成功降级玩家为普通成员！");
                     player.sendMessage(ColorUtils.colorize(message));
                     
                     // 通知被降级的玩家
-                    String demoteMessage = languageManager.getMessage(targetPlayer, "guild.demote.demoted", "&c您已被降级为普通成员！");
+                    String demoteMessage = languageManager.getCoreMessage(targetPlayer, "guild.demote.demoted", "&c您已被降级为普通成员！");
                     targetPlayer.sendMessage(ColorUtils.colorize(demoteMessage));
                 } else {
-                    String message = languageManager.getMessage(player, "guild.demote.error", "&c降级玩家时发生错误！");
+                    String message = languageManager.getCoreMessage(player, "guild.demote.error", "&c降级玩家时发生错误！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.demote.error", "&c降级玩家时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.demote.error", "&c降级玩家时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -620,7 +620,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleAccept(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.accept.usage", "&c用法: /guild accept <公会名称>");
+            String message = languageManager.getCoreMessage(player, "guild.accept.usage", "&c用法: /guild accept <公会名称>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -629,14 +629,14 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         
         guildService.getPlayerGuildAsync(player.getUniqueId()).thenAccept(existingGuild -> {
             if (existingGuild != null) {
-                String message = languageManager.getMessage(player, "guild.accept.already-in-guild", "&c您已经在一个公会中！");
+                String message = languageManager.getCoreMessage(player, "guild.accept.already-in-guild", "&c您已经在一个公会中！");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
             
             guildService.getGuildByNameAsync(guildName).thenAccept(guild -> {
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.accept.guild-not-found", "&c公会不存在！");
+                    String message = languageManager.getCoreMessage(player, "guild.accept.guild-not-found", "&c公会不存在！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -645,7 +645,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 guildService.getPendingInvitationAsync(player.getUniqueId(), guild.getId()).thenAccept(invitation -> {
                     if (invitation == null) {
                         plugin.getLogger().warning("[Accept-Debug] 玩家 " + player.getName() + " 没有来自 " + guild.getName() + " 的邀请");
-                        String message = languageManager.getMessage(player, "guild.accept.no-invitation", "&c您没有该公会的邀请或邀请已过期！");
+                        String message = languageManager.getCoreMessage(player, "guild.accept.no-invitation", "&c您没有该公会的邀请或邀请已过期！");
                         player.sendMessage(ColorUtils.colorize(message));
                         return;
                     }
@@ -656,7 +656,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     guildService.processInvitationDirectAsync(invitation, true).thenAccept(success -> {
                         if (success) {
                             plugin.getLogger().info("[Accept-Debug] 邀请处理成功，玩家 " + player.getName() + " 已加入 " + guild.getName());
-                            String message = languageManager.getMessage(player, "guild.accept.success", "&a已成功加入公会！");
+                            String message = languageManager.getCoreMessage(player, "guild.accept.success", "&a已成功加入公会！");
                             player.sendMessage(ColorUtils.colorize(message));
                             
                             // 通知邀请者
@@ -664,7 +664,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                                 invitation.getInviterName(), guild, true);
                         } else {
                             plugin.getLogger().warning("[Accept-Debug] 邀请处理失败，邀请ID=" + invitation.getId());
-                            String message = languageManager.getMessage(player, "guild.accept.error", "&c加入公会时发生错误！");
+                            String message = languageManager.getCoreMessage(player, "guild.accept.error", "&c加入公会时发生错误！");
                             player.sendMessage(ColorUtils.colorize(message));
                         }
                     });
@@ -675,7 +675,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleDecline(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.decline.usage", "&c用法: /guild decline <公会名称>");
+            String message = languageManager.getCoreMessage(player, "guild.decline.usage", "&c用法: /guild decline <公会名称>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -684,7 +684,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         
         guildService.getGuildByNameAsync(guildName).thenAccept(guild -> {
             if (guild == null) {
-                String message = languageManager.getMessage(player, "guild.decline.guild-not-found", "&c公会不存在！");
+                String message = languageManager.getCoreMessage(player, "guild.decline.guild-not-found", "&c公会不存在！");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
@@ -692,7 +692,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             // 检查玩家是否有该公会的有效邀请
             guildService.getPendingInvitationAsync(player.getUniqueId(), guild.getId()).thenAccept(invitation -> {
                 if (invitation == null) {
-                    String message = languageManager.getMessage(player, "guild.decline.no-invitation", "&c您没有该公会的邀请或邀请已过期！");
+                    String message = languageManager.getCoreMessage(player, "guild.decline.no-invitation", "&c您没有该公会的邀请或邀请已过期！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -700,14 +700,14 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 处理邀请拒绝
                 guildService.processInvitationDirectAsync(invitation, false).thenAccept(success -> {
                     if (success) {
-                        String message = languageManager.getMessage(player, "guild.decline.success", "&a已拒绝加入公会！");
+                        String message = languageManager.getCoreMessage(player, "guild.decline.success", "&a已拒绝加入公会！");
                         player.sendMessage(ColorUtils.colorize(message));
                         
                         // 通知邀请者
                         NotifyUtils.notifyInviterInvitationProcessed(plugin, invitation.getInviterUuid(), 
                             invitation.getInviterName(), guild, false);
                     } else {
-                        String message = languageManager.getMessage(player, "guild.decline.error", "&c拒绝邀请时发生错误！");
+                        String message = languageManager.getCoreMessage(player, "guild.decline.error", "&c拒绝邀请时发生错误！");
                         player.sendMessage(ColorUtils.colorize(message));
                     }
                 });
@@ -720,28 +720,28 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 GuildMember member = guildService.getGuildMember(player.getUniqueId());
                 if (member == null) {
-                    String message = languageManager.getMessage(player, "guild.leave.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.leave.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (member.getRole() == Role.LEADER) {
-                    String message = languageManager.getMessage(player, "guild.leave.cannot-leave-as-master", "&c会长不能离开公会，请先转让会长或删除公会！");
+                    String message = languageManager.getCoreMessage(player, "guild.leave.cannot-leave-as-master", "&c会长不能离开公会，请先转让会长或删除公会！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 boolean success = guildService.removeGuildMember(player.getUniqueId(), player.getUniqueId());
                 if (success) {
-                    String message = languageManager.getMessage(player, "guild.leave.success", "&a已成功离开公会！");
+                    String message = languageManager.getCoreMessage(player, "guild.leave.success", "&a已成功离开公会！");
                     player.sendMessage(ColorUtils.colorize(message));
                 } else {
-                    String message = languageManager.getMessage(player, "guild.leave.error", "&c离开公会时发生错误！");
+                    String message = languageManager.getCoreMessage(player, "guild.leave.error", "&c离开公会时发生错误！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.leave.error", "&c离开公会时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.leave.error", "&c离开公会时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -749,7 +749,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleDelete(Player player) {
         if (!plugin.getPermissionManager().hasPermission(player, "guild.delete")) {
-            String message = languageManager.getMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
+            String message = languageManager.getCoreMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -758,13 +758,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.delete.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.delete.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.isGuildLeader(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.delete.only-master", "&c只有会长可以删除公会！");
+                    String message = languageManager.getCoreMessage(player, "guild.delete.only-master", "&c只有会长可以删除公会！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -774,7 +774,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 plugin.getGuiManager().openGUI(player, confirmGUI);
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.delete.error", "&c删除公会时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.delete.error", "&c删除公会时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -782,7 +782,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleDeleteConfirm(Player player) {
         if (!plugin.getPermissionManager().hasPermission(player, "guild.delete")) {
-            String message = languageManager.getMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
+            String message = languageManager.getCoreMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -791,41 +791,41 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.delete.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.delete.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.isGuildLeader(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.delete.only-master", "&c只有会长可以删除公会！");
+                    String message = languageManager.getCoreMessage(player, "guild.delete.only-master", "&c只有会长可以删除公会！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 boolean success = guildService.deleteGuild(guild.getId(), player.getUniqueId());
                 if (success) {
-                    String message = languageManager.getMessage(player, "guild.delete.success", "&a公会已成功删除！");
+                    String message = languageManager.getCoreMessage(player, "guild.delete.success", "&a公会已成功删除！");
                     player.sendMessage(ColorUtils.colorize(message));
                 } else {
-                    String message = languageManager.getMessage(player, "guild.delete.error", "&c删除公会时发生错误！");
+                    String message = languageManager.getCoreMessage(player, "guild.delete.error", "&c删除公会时发生错误！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.delete.error", "&c删除公会时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.delete.error", "&c删除公会时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
     }
     
     private void handleDeleteCancel(Player player) {
-        String message = languageManager.getMessage(player, "guild.delete.cancel", "&a已取消删除公会！");
+        String message = languageManager.getCoreMessage(player, "guild.delete.cancel", "&a已取消删除公会！");
         player.sendMessage(ColorUtils.colorize(message));
     }
     
     private void handleSetHome(Player player) {
         if (!plugin.getPermissionManager().hasPermission(player, "guild.sethome")) {
-            String message = languageManager.getMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
+            String message = languageManager.getCoreMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -834,13 +834,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.sethome.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.sethome.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.hasGuildPermission(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.sethome.no-permission", "&c您没有设置公会 home 的权限！");
+                    String message = languageManager.getCoreMessage(player, "guild.sethome.no-permission", "&c您没有设置公会 home 的权限！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -848,11 +848,11 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 设置公会 home 位置
                 plugin.getGuildService().setGuildHome(guild.getId(), player.getLocation(), player.getUniqueId());
                 
-                String message = languageManager.getMessage(player, "guild.sethome.success", "&a公会 home 位置已设置！");
+                String message = languageManager.getCoreMessage(player, "guild.sethome.success", "&a公会 home 位置已设置！");
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.sethome.error", "&c设置公会 home 位置时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.sethome.error", "&c设置公会 home 位置时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -860,14 +860,14 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleHome(Player player) {
         if (!plugin.getPermissionManager().hasPermission(player, "guild.home")) {
-            String message = languageManager.getMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
+            String message = languageManager.getCoreMessage(player, "general.no-permission", "&c您没有权限执行此操作！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
 
         // Folia 环境下传送功能因线程隔离无法使用，直接禁用
         if (ServerUtils.isFolia()) {
-            String message = languageManager.getMessage(player, "home.folia-disabled", "&c传送功能在Folia环境下暂不可用！");
+            String message = languageManager.getCoreMessage(player, "home.folia-disabled", "&c传送功能在Folia环境下暂不可用！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -875,14 +875,14 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         // 校验玩家是否为公会成员
         com.guild.models.GuildMember member = guildService.getGuildMember(player.getUniqueId());
         if (member == null) {
-            String message = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
+            String message = languageManager.getCoreMessage(player, "gui.no-permission", "&c权限不足");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
 
         Guild guild = guildService.getPlayerGuild(player.getUniqueId());
         if (guild == null) {
-            String message = languageManager.getMessage(player, "guild.home.not-in-guild", "&c您不在任何公会中！");
+            String message = languageManager.getCoreMessage(player, "guild.home.not-in-guild", "&c您不在任何公会中！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -891,10 +891,10 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (location != null) {
                     player.teleport(location);
-                    String message = languageManager.getMessage(player, "home.success", "&a已传送到工会家！");
+                    String message = languageManager.getCoreMessage(player, "home.success", "&a已传送到工会家！");
                     player.sendMessage(ColorUtils.colorize(message));
                 } else {
-                    String message = languageManager.getMessage(player, "home.not-set", "&c工会家未设置！");
+                    String message = languageManager.getCoreMessage(player, "home.not-set", "&c工会家未设置！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
@@ -903,7 +903,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleRelation(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.relation.usage", "&c用法: /guild relation <list|create|delete|accept|reject>");
+            String message = languageManager.getCoreMessage(player, "guild.relation.usage", "&c用法: /guild relation <list|create|delete|accept|reject>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -916,7 +916,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 break;
             case "create":
                 if (args.length < 3) {
-                    String message = languageManager.getMessage(player, "guild.relation.create.usage", "&c用法: /guild relation create <公会名称> <关系类型>");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.create.usage", "&c用法: /guild relation create <公会名称> <关系类型>");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -926,7 +926,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 break;
             case "delete":
                 if (args.length < 3) {
-                    String message = languageManager.getMessage(player, "guild.relation.delete.usage", "&c用法: /guild relation delete <公会名称>");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.delete.usage", "&c用法: /guild relation delete <公会名称>");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -935,7 +935,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 break;
             case "accept":
                 if (args.length < 3) {
-                    String message = languageManager.getMessage(player, "guild.relation.accept.usage", "&c用法: /guild relation accept <公会名称>");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.accept.usage", "&c用法: /guild relation accept <公会名称>");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -944,7 +944,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 break;
             case "reject":
                 if (args.length < 3) {
-                    String message = languageManager.getMessage(player, "guild.relation.reject.usage", "&c用法: /guild relation reject <公会名称>");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.reject.usage", "&c用法: /guild relation reject <公会名称>");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -952,7 +952,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 handleRelationReject(player, targetGuildName);
                 break;
             default:
-                String message = languageManager.getMessage(player, "guild.relation.invalid-subcommand", "&c无效的子命令！");
+                String message = languageManager.getCoreMessage(player, "guild.relation.invalid-subcommand", "&c无效的子命令！");
                 player.sendMessage(ColorUtils.colorize(message));
                 break;
         }
@@ -963,25 +963,25 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.relation.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 List<GuildRelation> relations = plugin.getGuildService().getGuildRelationsAsync(guild.getId()).join();
                 if (relations.isEmpty()) {
-                    String message = languageManager.getMessage(player, "guild.relation.no-relations", "&c公会没有任何关系！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.no-relations", "&c公会没有任何关系！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
-                String message = languageManager.getMessage(player, "guild.relation.list.title", "&a公会关系列表：");
+                String message = languageManager.getCoreMessage(player, "guild.relation.list.title", "&a公会关系列表：");
                 player.sendMessage(ColorUtils.colorize(message));
                 
                 for (GuildRelation relation : relations) {
                     Guild targetGuild = guildService.getGuildById(relation.getOtherGuildId(guild.getId()));
                     if (targetGuild != null) {
-                        String relationMessage = languageManager.getMessage(player, "guild.relation.list.item", "&b{0} - &f{1}");
+                        String relationMessage = languageManager.getCoreMessage(player, "guild.relation.list.item", "&b{0} - &f{1}");
                         relationMessage = relationMessage.replace("{0}", targetGuild.getName());
                         relationMessage = relationMessage.replace("{1}", relation.getType().name());
                         player.sendMessage(ColorUtils.colorize(relationMessage));
@@ -989,7 +989,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.relation.error", "&c获取公会关系时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.relation.error", "&c获取公会关系时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1000,26 +1000,26 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.relation.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.hasGuildPermission(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.relation.no-permission", "&c您没有管理公会关系的权限！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.no-permission", "&c您没有管理公会关系的权限！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 Guild targetGuild = guildService.getGuildByName(targetGuildName);
                 if (targetGuild == null) {
-                    String message = languageManager.getMessage(player, "guild.relation.guild-not-found", "&c目标公会不存在！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.guild-not-found", "&c目标公会不存在！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (targetGuild.getId() == guild.getId()) {
-                    String message = languageManager.getMessage(player, "guild.relation.cannot-relate-self", "&c您不能与自己的公会建立关系！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.cannot-relate-self", "&c您不能与自己的公会建立关系！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1027,7 +1027,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 检查是否已存在关系
                 GuildRelation existingRelation = plugin.getGuildService().getGuildRelationAsync(guild.getId(), targetGuild.getId()).join();
                 if (existingRelation != null) {
-                    String message = languageManager.getMessage(player, "guild.relation.already-exists", "&c与该公会的关系已存在！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.already-exists", "&c与该公会的关系已存在！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1035,11 +1035,11 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 创建关系
                 boolean success = plugin.getGuildService().createGuildRelationAsync(guild.getId(), targetGuild.getId(), guild.getName(), targetGuild.getName(), GuildRelation.RelationType.valueOf(relationType.toUpperCase()), player.getUniqueId(), player.getName()).join();
                 
-                String message = languageManager.getMessage(player, "guild.relation.create.success", "&a关系请求已发送！");
+                String message = languageManager.getCoreMessage(player, "guild.relation.create.success", "&a关系请求已发送！");
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.relation.error", "&c创建公会关系时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.relation.error", "&c创建公会关系时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1050,20 +1050,20 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.relation.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.hasGuildPermission(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.relation.no-permission", "&c您没有管理公会关系的权限！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.no-permission", "&c您没有管理公会关系的权限！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 Guild targetGuild = guildService.getGuildByName(targetGuildName);
                 if (targetGuild == null) {
-                    String message = languageManager.getMessage(player, "guild.relation.guild-not-found", "&c目标公会不存在！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.guild-not-found", "&c目标公会不存在！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1071,7 +1071,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 检查关系是否存在
                 GuildRelation relation = plugin.getGuildService().getGuildRelationAsync(guild.getId(), targetGuild.getId()).join();
                 if (relation == null) {
-                    String message = languageManager.getMessage(player, "guild.relation.not-found", "&c与该公会的关系不存在！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.not-found", "&c与该公会的关系不存在！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1079,11 +1079,11 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 删除关系
                 boolean success = plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).join();
                 
-                String message = languageManager.getMessage(player, "guild.relation.delete.success", "&a关系已删除！");
+                String message = languageManager.getCoreMessage(player, "guild.relation.delete.success", "&a关系已删除！");
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.relation.error", "&c删除公会关系时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.relation.error", "&c删除公会关系时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1094,20 +1094,20 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.relation.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.hasGuildPermission(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.relation.no-permission", "&c您没有管理公会关系的权限！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.no-permission", "&c您没有管理公会关系的权限！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 Guild targetGuild = guildService.getGuildByName(targetGuildName);
                 if (targetGuild == null) {
-                    String message = languageManager.getMessage(player, "guild.relation.guild-not-found", "&c目标公会不存在！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.guild-not-found", "&c目标公会不存在！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1115,7 +1115,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 检查是否有待处理的关系请求
                 GuildRelation relation = plugin.getGuildService().getGuildRelationAsync(targetGuild.getId(), guild.getId()).join();
                 if (relation == null || relation.getStatus() != GuildRelation.RelationStatus.PENDING) {
-                    String message = languageManager.getMessage(player, "guild.relation.no-pending-request", "&c没有来自该公会的待处理关系请求！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.no-pending-request", "&c没有来自该公会的待处理关系请求！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1124,11 +1124,11 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 relation.setStatus(GuildRelation.RelationStatus.ACTIVE);
                 boolean success = plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.ACTIVE).join();
                 
-                String message = languageManager.getMessage(player, "guild.relation.accept.success", "&a关系请求已接受！");
+                String message = languageManager.getCoreMessage(player, "guild.relation.accept.success", "&a关系请求已接受！");
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.relation.error", "&c接受公会关系请求时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.relation.error", "&c接受公会关系请求时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1139,20 +1139,20 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.relation.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.hasGuildPermission(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.relation.no-permission", "&c您没有管理公会关系的权限！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.no-permission", "&c您没有管理公会关系的权限！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 Guild targetGuild = guildService.getGuildByName(targetGuildName);
                 if (targetGuild == null) {
-                    String message = languageManager.getMessage(player, "guild.relation.guild-not-found", "&c目标公会不存在！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.guild-not-found", "&c目标公会不存在！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1160,7 +1160,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 检查是否有待处理的关系请求
                 GuildRelation relation = plugin.getGuildService().getGuildRelationAsync(targetGuild.getId(), guild.getId()).join();
                 if (relation == null || relation.getStatus() != GuildRelation.RelationStatus.PENDING) {
-                    String message = languageManager.getMessage(player, "guild.relation.no-pending-request", "&c没有来自该公会的待处理关系请求！");
+                    String message = languageManager.getCoreMessage(player, "guild.relation.no-pending-request", "&c没有来自该公会的待处理关系请求！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1168,11 +1168,11 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 拒绝关系请求
                 boolean success = plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).join();
                 
-                String message = languageManager.getMessage(player, "guild.relation.reject.success", "&a关系请求已拒绝！");
+                String message = languageManager.getCoreMessage(player, "guild.relation.reject.success", "&a关系请求已拒绝！");
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.relation.error", "&c拒绝公会关系请求时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.relation.error", "&c拒绝公会关系请求时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1180,7 +1180,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleEconomy(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.economy.usage", "&c用法: /guild economy <info|deposit|withdraw|transfer>");
+            String message = languageManager.getCoreMessage(player, "guild.economy.usage", "&c用法: /guild economy <info|deposit|withdraw|transfer>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -1193,7 +1193,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 break;
             case "deposit":
                 if (args.length < 3) {
-                    String message = languageManager.getMessage(player, "guild.economy.deposit.usage", "&c用法: /guild economy deposit <金额>");
+                    String message = languageManager.getCoreMessage(player, "guild.economy.deposit.usage", "&c用法: /guild economy deposit <金额>");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1201,13 +1201,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     double amount = Double.parseDouble(args[2]);
                     handleDeposit(player, amount);
                 } catch (NumberFormatException e) {
-                    String message = languageManager.getMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
+                    String message = languageManager.getCoreMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
                 break;
             case "withdraw":
                 if (args.length < 3) {
-                    String message = languageManager.getMessage(player, "guild.economy.withdraw.usage", "&c用法: /guild economy withdraw <金额>");
+                    String message = languageManager.getCoreMessage(player, "guild.economy.withdraw.usage", "&c用法: /guild economy withdraw <金额>");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1215,13 +1215,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     double amount = Double.parseDouble(args[2]);
                     handleWithdraw(player, amount);
                 } catch (NumberFormatException e) {
-                    String message = languageManager.getMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
+                    String message = languageManager.getCoreMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
                 break;
             case "transfer":
                 if (args.length < 4) {
-                    String message = languageManager.getMessage(player, "guild.economy.transfer.usage", "&c用法: /guild economy transfer <公会名称> <金额>");
+                    String message = languageManager.getCoreMessage(player, "guild.economy.transfer.usage", "&c用法: /guild economy transfer <公会名称> <金额>");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1230,12 +1230,12 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     double amount = Double.parseDouble(args[3]);
                     handleTransfer(player, targetGuildName, amount);
                 } catch (NumberFormatException e) {
-                    String message = languageManager.getMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
+                    String message = languageManager.getCoreMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
                 break;
             default:
-                String message = languageManager.getMessage(player, "guild.economy.invalid-subcommand", "&c无效的子命令！");
+                String message = languageManager.getCoreMessage(player, "guild.economy.invalid-subcommand", "&c无效的子命令！");
                 player.sendMessage(ColorUtils.colorize(message));
                 break;
         }
@@ -1246,19 +1246,19 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.economy.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.economy.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 double balance = guild.getBalance();
                 
-                String message = languageManager.getMessage(player, "guild.economy.info", "&a公会经济信息：\n&b余额: &f{0} 金币");
+                String message = languageManager.getCoreMessage(player, "guild.economy.info", "&a公会经济信息：\n&b余额: &f{0} 金币");
                 message = message.replace("{0}", String.format("%.2f", balance));
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.economy.error", "&c获取公会经济信息时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.economy.error", "&c获取公会经济信息时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1266,7 +1266,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleDeposit(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.deposit.usage", "&c用法: /guild deposit <金额>");
+            String message = languageManager.getCoreMessage(player, "guild.deposit.usage", "&c用法: /guild deposit <金额>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -1275,14 +1275,14 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             double amount = Double.parseDouble(args[1]);
             handleDeposit(player, amount);
         } catch (NumberFormatException e) {
-            String message = languageManager.getMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
+            String message = languageManager.getCoreMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
             player.sendMessage(ColorUtils.colorize(message));
         }
     }
     
     private void handleDeposit(Player player, double amount) {
         if (amount <= 0) {
-            String message = languageManager.getMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
+            String message = languageManager.getCoreMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -1291,20 +1291,20 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.deposit.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.deposit.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!plugin.getEconomyManager().hasBalance(player, amount)) {
-                    String message = languageManager.getMessage(player, "guild.deposit.insufficient-funds", "&c您的余额不足！");
+                    String message = languageManager.getCoreMessage(player, "guild.deposit.insufficient-funds", "&c您的余额不足！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 // 扣除玩家余额
                 if (!plugin.getEconomyManager().withdraw(player, amount)) {
-                    String message = languageManager.getMessage(player, "guild.deposit.error", "&c存入金币时发生错误！");
+                    String message = languageManager.getCoreMessage(player, "guild.deposit.error", "&c存入金币时发生错误！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1318,7 +1318,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     plugin.getGuildService().addGuildContributionAsync(guild.getId(), player.getUniqueId(),
                             player.getName(), amount,
                             com.guild.models.GuildContribution.ContributionType.DEPOSIT,
-                            languageManager.getMessage(player, "deposit.contribution-desc",
+                            languageManager.getCoreMessage(player, "deposit.contribution-desc",
                                     "{player}存入{amount}")
                                     .replace("{player}", player.getName())
                                     .replace("{amount}", String.format("%.2f", amount)));
@@ -1326,23 +1326,23 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     plugin.getGuildService().logGuildActionAsync(guild.getId(), guild.getName(),
                             player.getUniqueId().toString(), player.getName(),
                             com.guild.models.GuildLog.LogType.FUND_DEPOSITED,
-                            languageManager.getMessage(player, "deposit.log-desc",
+                            languageManager.getCoreMessage(player, "deposit.log-desc",
                                     "{player}存入了{amount}")
                                     .replace("{player}", player.getName())
                                     .replace("{amount}", String.format("%.2f", amount)),
-                            languageManager.getMessage(player, "deposit.log-details",
+                            languageManager.getCoreMessage(player, "deposit.log-details",
                                     "金额:{amount}")
                                     .replace("{amount}", String.format("%.2f", amount)));
                     // 分发存款事件给模块
                     plugin.getGuildService().notifyEconomyDeposit(guild.getId(), guild.getName(), player.getUniqueId(), player.getName(), amount);
                 }
                 
-                String message = languageManager.getMessage(player, "guild.deposit.success", "&a已成功存入 {0} 金币到公会账户！");
+                String message = languageManager.getCoreMessage(player, "guild.deposit.success", "&a已成功存入 {0} 金币到公会账户！");
                 message = message.replace("{0}", String.format("%.2f", amount));
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.deposit.error", "&c存入金币时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.deposit.error", "&c存入金币时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1350,7 +1350,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleWithdraw(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.withdraw.usage", "&c用法: /guild withdraw <金额>");
+            String message = languageManager.getCoreMessage(player, "guild.withdraw.usage", "&c用法: /guild withdraw <金额>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -1359,14 +1359,14 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             double amount = Double.parseDouble(args[1]);
             handleWithdraw(player, amount);
         } catch (NumberFormatException e) {
-            String message = languageManager.getMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
+            String message = languageManager.getCoreMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
             player.sendMessage(ColorUtils.colorize(message));
         }
     }
     
     private void handleWithdraw(Player player, double amount) {
         if (amount <= 0) {
-            String message = languageManager.getMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
+            String message = languageManager.getCoreMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -1375,26 +1375,26 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.withdraw.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.withdraw.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.isGuildLeader(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.withdraw.only-master", "&c只有会长可以从公会账户提现！");
+                    String message = languageManager.getCoreMessage(player, "guild.withdraw.only-master", "&c只有会长可以从公会账户提现！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (guild.getBalance() < amount) {
-                    String message = languageManager.getMessage(player, "guild.withdraw.insufficient-funds", "&c公会账户余额不足！");
+                    String message = languageManager.getCoreMessage(player, "guild.withdraw.insufficient-funds", "&c公会账户余额不足！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 // 增加玩家余额
                 if (!plugin.getEconomyManager().deposit(player, amount)) {
-                    String message = languageManager.getMessage(player, "guild.withdraw.error", "&c提现金币时发生错误！");
+                    String message = languageManager.getCoreMessage(player, "guild.withdraw.error", "&c提现金币时发生错误！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1406,12 +1406,12 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 分发取款事件给模块
                 plugin.getGuildService().notifyEconomyWithdraw(guild.getId(), guild.getName(), player.getUniqueId(), player.getName(), amount);
                 
-                String message = languageManager.getMessage(player, "guild.withdraw.success", "&a已成功从公会账户提现 {0} 金币！");
+                String message = languageManager.getCoreMessage(player, "guild.withdraw.success", "&a已成功从公会账户提现 {0} 金币！");
                 message = message.replace("{0}", String.format("%.2f", amount));
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.withdraw.error", "&c提现金币时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.withdraw.error", "&c提现金币时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1419,7 +1419,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleTransfer(Player player, String[] args) {
         if (args.length < 3) {
-            String message = languageManager.getMessage(player, "guild.transfer.usage", "&c用法: /guild transfer <玩家名称> <金额>");
+            String message = languageManager.getCoreMessage(player, "guild.transfer.usage", "&c用法: /guild transfer <玩家名称> <金额>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -1429,21 +1429,21 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             double amount = Double.parseDouble(args[2]);
             Player targetPlayer = Bukkit.getPlayer(targetName);
             if (targetPlayer == null) {
-                String message = languageManager.getMessage(player, "guild.transfer.player-not-found", "&c目标玩家不在线！");
+                String message = languageManager.getCoreMessage(player, "guild.transfer.player-not-found", "&c目标玩家不在线！");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
             
             handleTransfer(player, targetPlayer, amount);
         } catch (NumberFormatException e) {
-            String message = languageManager.getMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
+            String message = languageManager.getCoreMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
             player.sendMessage(ColorUtils.colorize(message));
         }
     }
     
     private void handleTransfer(Player player, String targetGuildName, double amount) {
         if (amount <= 0) {
-            String message = languageManager.getMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
+            String message = languageManager.getCoreMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -1452,32 +1452,32 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild sourceGuild = guildService.getPlayerGuild(player.getUniqueId());
                 if (sourceGuild == null) {
-                    String message = languageManager.getMessage(player, "guild.transfer.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.transfer.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.isGuildLeader(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.transfer.only-master", "&c只有会长可以进行公会间转账！");
+                    String message = languageManager.getCoreMessage(player, "guild.transfer.only-master", "&c只有会长可以进行公会间转账！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 Guild targetGuild = guildService.getGuildByName(targetGuildName);
                 if (targetGuild == null) {
-                    String message = languageManager.getMessage(player, "guild.transfer.target-not-found", "&c目标公会不存在！");
+                    String message = languageManager.getCoreMessage(player, "guild.transfer.target-not-found", "&c目标公会不存在！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (sourceGuild.getId() == targetGuild.getId()) {
-                    String message = languageManager.getMessage(player, "guild.transfer.same-guild", "&c您不能向自己的公会转账！");
+                    String message = languageManager.getCoreMessage(player, "guild.transfer.same-guild", "&c您不能向自己的公会转账！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (sourceGuild.getBalance() < amount) {
-                    String message = languageManager.getMessage(player, "guild.transfer.insufficient-funds", "&c公会账户余额不足！");
+                    String message = languageManager.getCoreMessage(player, "guild.transfer.insufficient-funds", "&c公会账户余额不足！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1488,13 +1488,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 // 增加目标公会余额
                 boolean targetSuccess = plugin.getGuildService().updateGuildBalanceAsync(targetGuild.getId(), targetGuild.getBalance() + amount).join();
                 
-                String message = languageManager.getMessage(player, "guild.transfer.success", "&a已成功转账 {0} 金币到 {1}！");
+                String message = languageManager.getCoreMessage(player, "guild.transfer.success", "&a已成功转账 {0} 金币到 {1}！");
                 message = message.replace("{0}", String.format("%.2f", amount));
                 message = message.replace("{1}", targetGuild.getName());
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.transfer.error", "&c转账时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.transfer.error", "&c转账时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1502,7 +1502,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleTransfer(Player player, Player targetPlayer, double amount) {
         if (amount <= 0) {
-            String message = languageManager.getMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
+            String message = languageManager.getCoreMessage(player, "guild.economy.invalid-amount", "&c无效的金额！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -1511,19 +1511,19 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.transfer.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.transfer.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.hasGuildPermission(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.transfer.no-permission", "&c您没有转账的权限！");
+                    String message = languageManager.getCoreMessage(player, "guild.transfer.no-permission", "&c您没有转账的权限！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (guild.getBalance() < amount) {
-                    String message = languageManager.getMessage(player, "guild.transfer.insufficient-funds", "&c公会账户余额不足！");
+                    String message = languageManager.getCoreMessage(player, "guild.transfer.insufficient-funds", "&c公会账户余额不足！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1535,23 +1535,23 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 if (!plugin.getEconomyManager().deposit(targetPlayer, amount)) {
                     // 如果转账失败，恢复公会余额
                     plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), guild.getBalance() + amount).join();
-                    String message = languageManager.getMessage(player, "guild.transfer.error", "&c转账时发生错误！");
+                    String message = languageManager.getCoreMessage(player, "guild.transfer.error", "&c转账时发生错误！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
-                String message = languageManager.getMessage(player, "guild.transfer.success", "&a已成功转账 {0} 金币给 {1}！");
+                String message = languageManager.getCoreMessage(player, "guild.transfer.success", "&a已成功转账 {0} 金币给 {1}！");
                 message = message.replace("{0}", String.format("%.2f", amount));
                 message = message.replace("{1}", targetPlayer.getName());
                 player.sendMessage(ColorUtils.colorize(message));
                 
                 // 通知目标玩家
-                String targetMessage = languageManager.getMessage(targetPlayer, "guild.transfer.received", "&a您收到了 {0} 金币的转账！");
+                String targetMessage = languageManager.getCoreMessage(targetPlayer, "guild.transfer.received", "&a您收到了 {0} 金币的转账！");
                 targetMessage = targetMessage.replace("{0}", String.format("%.2f", amount));
                 targetPlayer.sendMessage(ColorUtils.colorize(targetMessage));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.transfer.error", "&c转账时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.transfer.error", "&c转账时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1562,25 +1562,25 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.logs.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.logs.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 if (!guildService.hasGuildPermission(player.getUniqueId())) {
-                    String message = languageManager.getMessage(player, "guild.logs.no-permission", "&c您没有查看日志的权限！");
+                    String message = languageManager.getCoreMessage(player, "guild.logs.no-permission", "&c您没有查看日志的权限！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
                 
                 // 这里应该显示公会日志
                 // 暂时简化处理
-                String message = languageManager.getMessage(player, "guild.logs.title", "&a公会日志：");
+                String message = languageManager.getCoreMessage(player, "guild.logs.title", "&a公会日志：");
                 player.sendMessage(ColorUtils.colorize(message));
                 player.sendMessage(ColorUtils.colorize("&b- 日志功能正在开发中..."));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.logs.error", "&c获取公会日志时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.logs.error", "&c获取公会日志时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1588,7 +1588,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handlePlaceholder(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getMessage(player, "guild.placeholder.usage", "&c用法: /guild placeholder <player|guild|rank>");
+            String message = languageManager.getCoreMessage(player, "guild.placeholder.usage", "&c用法: /guild placeholder <player|guild|rank>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -1601,42 +1601,42 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     case "player":
                         String playerName = player.getName();
                         String playerPlaceholder = String.format("{guild_player_%s}", playerName.toLowerCase());
-                        String message = languageManager.getMessage(player, "guild.placeholder.player", "&a玩家占位符: &f{0}");
+                        String message = languageManager.getCoreMessage(player, "guild.placeholder.player", "&a玩家占位符: &f{0}");
                         message = message.replace("{0}", playerPlaceholder);
                         player.sendMessage(ColorUtils.colorize(message));
                         break;
                     case "guild":
                         Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                         if (guild == null) {
-                            String message1 = languageManager.getMessage(player, "guild.placeholder.not-in-guild", "&c您不在任何公会中！");
+                            String message1 = languageManager.getCoreMessage(player, "guild.placeholder.not-in-guild", "&c您不在任何公会中！");
                             player.sendMessage(ColorUtils.colorize(message1));
                             return;
                         }
                         String guildPlaceholder = String.format("{guild_%s}", guild.getName().toLowerCase().replace(" ", "_"));
-                        String message2 = languageManager.getMessage(player, "guild.placeholder.guild", "&a公会占位符: &f{0}");
+                        String message2 = languageManager.getCoreMessage(player, "guild.placeholder.guild", "&a公会占位符: &f{0}");
                         message2 = message2.replace("{0}", guildPlaceholder);
                         player.sendMessage(ColorUtils.colorize(message2));
                         break;
                     case "rank":
                         GuildMember member = guildService.getGuildMember(player.getUniqueId());
                         if (member == null) {
-                            String message3 = languageManager.getMessage(player, "guild.placeholder.not-in-guild", "&c您不在任何公会中！");
+                            String message3 = languageManager.getCoreMessage(player, "guild.placeholder.not-in-guild", "&c您不在任何公会中！");
                             player.sendMessage(ColorUtils.colorize(message3));
                             return;
                         }
                         String rankPlaceholder = String.format("{guild_rank_%s}", member.getRole().name().toLowerCase());
-                        String message4 = languageManager.getMessage(player, "guild.placeholder.rank", "&a职位占位符: &f{0}");
+                        String message4 = languageManager.getCoreMessage(player, "guild.placeholder.rank", "&a职位占位符: &f{0}");
                         message4 = message4.replace("{0}", rankPlaceholder);
                         player.sendMessage(ColorUtils.colorize(message4));
                         break;
                     default:
-                        String message5 = languageManager.getMessage(player, "guild.placeholder.invalid-type", "&c无效的占位符类型！");
+                        String message5 = languageManager.getCoreMessage(player, "guild.placeholder.invalid-type", "&c无效的占位符类型！");
                         player.sendMessage(ColorUtils.colorize(message5));
                         break;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.placeholder.error", "&c获取占位符时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.placeholder.error", "&c获取占位符时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -1647,7 +1647,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             try {
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
-                    String message = languageManager.getMessage(player, "guild.time.not-in-guild", "&c您不在任何公会中！");
+                    String message = languageManager.getCoreMessage(player, "guild.time.not-in-guild", "&c您不在任何公会中！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -1657,45 +1657,45 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                 long days = duration.toDays();
                 long hours = duration.toHours() % 24;
                 
-                String message = languageManager.getMessage(player, "guild.time.age", "&a公会创建时间：{0}\n&a公会年龄：&f{1} 天 {2} 小时");
+                String message = languageManager.getCoreMessage(player, "guild.time.age", "&a公会创建时间：{0}\n&a公会年龄：&f{1} 天 {2} 小时");
                 message = message.replace("{0}", guild.getCreatedAt().toString());
                 message = message.replace("{1}", String.valueOf(days));
                 message = message.replace("{2}", String.valueOf(hours));
                 player.sendMessage(ColorUtils.colorize(message));
             } catch (Exception e) {
                 e.printStackTrace();
-                String message = languageManager.getMessage(player, "guild.time.error", "&c获取公会时间信息时发生错误！");
+                String message = languageManager.getCoreMessage(player, "guild.time.error", "&c获取公会时间信息时发生错误！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
     }
     
     private void handleHelp(Player player) {
-        String message = languageManager.getMessage(player, "help.title", "&a=== Guild System Help ===");
+        String message = languageManager.getCoreMessage(player, "help.title", "&a=== Guild System Help ===");
         player.sendMessage(ColorUtils.colorize(message));
         
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.main-menu", "&e/guild &7- Open guild main menu")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.create", "&e/guild create <name> [tag] [description] &7- Create guild")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.info", "&e/guild info &7- View guild information")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.members", "&e/guild members &7- View guild members")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.invite", "&e/guild invite <player> &7- Invite player to join guild")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.kick", "&e/guild kick <player> &7- Kick guild member")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.promote", "&e/guild promote <player> &7- Promote guild member")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.demote", "&e/guild demote <player> &7- Demote guild member")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.accept", "&e/guild accept <inviter> &7- Accept guild invitation")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.decline", "&e/guild decline <inviter> &7- Decline guild invitation")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.leave", "&e/guild leave &7- Leave guild")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.delete", "&e/guild delete &7- Delete guild")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.sethome", "&e/guild sethome &7- Set guild home")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.home", "&e/guild home &7- Teleport to guild home")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.relation", "&e/guild relation &7- Manage guild relations")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.economy", "&e/guild economy &7- Manage guild economy")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.deposit", "&e/guild deposit <amount> &7- Deposit funds to guild")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.withdraw", "&e/guild withdraw <amount> &7- Withdraw funds from guild")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.transfer", "&e/guild transfer <guild> <amount> &7- Transfer funds to another guild")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.logs", "&e/guild logs &7- View guild operation logs")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.placeholder", "&e/guild placeholder <player|guild|rank> &7- Get placeholders")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.time", "&e/guild time &7- View guild time info")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "help.help", "&e/guild help &7- Show this help")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.main-menu", "&e/guild &7- Open guild main menu")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.create", "&e/guild create <name> [tag] [description] &7- Create guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.info", "&e/guild info &7- View guild information")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.members", "&e/guild members &7- View guild members")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.invite", "&e/guild invite <player> &7- Invite player to join guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.kick", "&e/guild kick <player> &7- Kick guild member")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.promote", "&e/guild promote <player> &7- Promote guild member")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.demote", "&e/guild demote <player> &7- Demote guild member")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.accept", "&e/guild accept <inviter> &7- Accept guild invitation")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.decline", "&e/guild decline <inviter> &7- Decline guild invitation")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.leave", "&e/guild leave &7- Leave guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.delete", "&e/guild delete &7- Delete guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.sethome", "&e/guild sethome &7- Set guild home")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.home", "&e/guild home &7- Teleport to guild home")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.relation", "&e/guild relation &7- Manage guild relations")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.economy", "&e/guild economy &7- Manage guild economy")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.deposit", "&e/guild deposit <amount> &7- Deposit funds to guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.withdraw", "&e/guild withdraw <amount> &7- Withdraw funds from guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.transfer", "&e/guild transfer <guild> <amount> &7- Transfer funds to another guild")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.logs", "&e/guild logs &7- View guild operation logs")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.placeholder", "&e/guild placeholder <player|guild|rank> &7- Get placeholders")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.time", "&e/guild time &7- View guild time info")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.help", "&e/guild help &7- Show this help")));
     }
 }

@@ -1,4 +1,4 @@
-package com.guild.listeners;
+﻿package com.guild.listeners;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUIManager;
@@ -57,7 +57,7 @@ public class PlayerListener implements Listener {
                     CompatibleScheduler.runTask(plugin, () -> {
                         for (com.guild.models.GuildRelation relation : relations) {
                             if (relation.isWar()) {
-                                String message = languageManager.getMessage(player, "relations.war-notification", "&4[工会战争] &c您的工会与 {guild} 处于开战状态！", "{guild}", relation.getOtherGuildName(guild.getId()));
+                                String message = languageManager.getCoreMessage(player, "relations.war-notification", "&4[工会战争] &c您的工会与 {guild} 处于开战状态！", "{guild}", relation.getOtherGuildName(guild.getId()));
                                 player.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                             }
                         }

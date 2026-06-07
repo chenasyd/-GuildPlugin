@@ -1,4 +1,4 @@
-package com.guild.models;
+﻿package com.guild.models;
 
 import java.time.LocalDateTime;
 import com.guild.core.language.LanguageManager;
@@ -148,55 +148,55 @@ public class GuildLog {
 
             switch (this) {
                 case GUILD_CREATED:
-                    return languageManager.getMessage(lang, key, "Guild Created");
+                    return languageManager.getCoreMessage(lang, key, "Guild Created");
                 case GUILD_DISSOLVED:
-                    return languageManager.getMessage(lang, key, "Guild Dissolved");
+                    return languageManager.getCoreMessage(lang, key, "Guild Dissolved");
                 case GUILD_RENAMED:
-                    return languageManager.getMessage(lang, key, "Guild Renamed");
+                    return languageManager.getCoreMessage(lang, key, "Guild Renamed");
                 case MEMBER_JOINED:
-                    return languageManager.getMessage(lang, key, "Member Joined");
+                    return languageManager.getCoreMessage(lang, key, "Member Joined");
                 case MEMBER_LEFT:
-                    return languageManager.getMessage(lang, key, "Member Left");
+                    return languageManager.getCoreMessage(lang, key, "Member Left");
                 case MEMBER_KICKED:
-                    return languageManager.getMessage(lang, key, "Member Kicked");
+                    return languageManager.getCoreMessage(lang, key, "Member Kicked");
                 case MEMBER_PROMOTED:
-                    return languageManager.getMessage(lang, key, "Member Promoted");
+                    return languageManager.getCoreMessage(lang, key, "Member Promoted");
                 case MEMBER_DEMOTED:
-                    return languageManager.getMessage(lang, key, "Member Demoted");
+                    return languageManager.getCoreMessage(lang, key, "Member Demoted");
                 case LEADER_TRANSFERRED:
-                    return languageManager.getMessage(lang, key, "Leader Transferred");
+                    return languageManager.getCoreMessage(lang, key, "Leader Transferred");
                 case FUND_DEPOSITED:
-                    return languageManager.getMessage(lang, key, "Fund Deposited");
+                    return languageManager.getCoreMessage(lang, key, "Fund Deposited");
                 case FUND_WITHDRAWN:
-                    return languageManager.getMessage(lang, key, "Fund Withdrawn");
+                    return languageManager.getCoreMessage(lang, key, "Fund Withdrawn");
                 case FUND_TRANSFERRED:
-                    return languageManager.getMessage(lang, key, "Fund Transferred");
+                    return languageManager.getCoreMessage(lang, key, "Fund Transferred");
                 case RELATION_CREATED:
-                    return languageManager.getMessage(lang, key, "Relation Created");
+                    return languageManager.getCoreMessage(lang, key, "Relation Created");
                 case RELATION_DELETED:
-                    return languageManager.getMessage(lang, key, "Relation Deleted");
+                    return languageManager.getCoreMessage(lang, key, "Relation Deleted");
                 case RELATION_ACCEPTED:
-                    return languageManager.getMessage(lang, key, "Relation Accepted");
+                    return languageManager.getCoreMessage(lang, key, "Relation Accepted");
                 case RELATION_REJECTED:
-                    return languageManager.getMessage(lang, key, "Relation Rejected");
+                    return languageManager.getCoreMessage(lang, key, "Relation Rejected");
                 case GUILD_FROZEN:
-                    return languageManager.getMessage(lang, key, "Guild Frozen");
+                    return languageManager.getCoreMessage(lang, key, "Guild Frozen");
                 case GUILD_UNFROZEN:
-                    return languageManager.getMessage(lang, key, "Guild Unfrozen");
+                    return languageManager.getCoreMessage(lang, key, "Guild Unfrozen");
                 case GUILD_LEVEL_UP:
-                    return languageManager.getMessage(lang, key, "Guild Level Up");
+                    return languageManager.getCoreMessage(lang, key, "Guild Level Up");
                 case APPLICATION_SUBMITTED:
-                    return languageManager.getMessage(lang, key, "Application Submitted");
+                    return languageManager.getCoreMessage(lang, key, "Application Submitted");
                 case APPLICATION_ACCEPTED:
-                    return languageManager.getMessage(lang, key, "Application Accepted");
+                    return languageManager.getCoreMessage(lang, key, "Application Accepted");
                 case APPLICATION_REJECTED:
-                    return languageManager.getMessage(lang, key, "Application Rejected");
+                    return languageManager.getCoreMessage(lang, key, "Application Rejected");
                 case INVITATION_SENT:
-                    return languageManager.getMessage(lang, key, "Invitation Sent");
+                    return languageManager.getCoreMessage(lang, key, "Invitation Sent");
                 case INVITATION_ACCEPTED:
-                    return languageManager.getMessage(lang, key, "Invitation Accepted");
+                    return languageManager.getCoreMessage(lang, key, "Invitation Accepted");
                 case INVITATION_REJECTED:
-                    return languageManager.getMessage(lang, key, "Invitation Rejected");
+                    return languageManager.getCoreMessage(lang, key, "Invitation Rejected");
                 default:
                     return name();
             }
@@ -264,8 +264,8 @@ public class GuildLog {
         LanguageManager languageManager = GuildPlugin.getInstance().getLanguageManager();
         if (args.length > 0) {
             // LanguageManager.getMessage 需要成对传参: 占位符名 + 值
-            return languageManager.getMessage(lang, "log.time." + key, defaultValue, "{0}", args[0]);
+            return languageManager.getCoreMessage(lang, "log.time." + key, defaultValue, "{0}", args[0]);
         }
-        return languageManager.getMessage(lang, "log.time." + key, defaultValue);
+        return languageManager.getCoreMessage(lang, "log.time." + key, defaultValue);
     }
 }

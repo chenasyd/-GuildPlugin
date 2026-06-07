@@ -214,7 +214,7 @@ public class GuildService {
                                         org.bukkit.entity.Player leaderPlayer = org.bukkit.Bukkit.getPlayer(guild.getLeaderUuid());
                                         if (leaderPlayer != null && leaderPlayer.isOnline()) {
                                             plugin.getEconomyManager().deposit(leaderPlayer, guildBalance);
-                                            String message = plugin.getLanguageManager().getMessage(leaderPlayer, "economy.disband-compensation", "&a工会解散，您获得了 {amount} 金币补偿！", "{amount}", plugin.getEconomyManager().format(guildBalance));
+                                            String message = plugin.getLanguageManager().getCoreMessage(leaderPlayer, "economy.disband-compensation", "&a工会解散，您获得了 {amount} 金币补偿！", "{amount}", plugin.getEconomyManager().format(guildBalance));
                                             leaderPlayer.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                                         }
                                     } catch (Exception e) {
@@ -2630,7 +2630,7 @@ public class GuildService {
                 for (GuildMember member : members) {
                     Player player = Bukkit.getPlayer(member.getPlayerUuid());
                     if (player != null && player.isOnline()) {
-                        String message = plugin.getLanguageManager().getMessage(player, "economy.level-up", "&a工会升级成功！当前等级：{level}", "{level}", String.valueOf(newLevel), "{max_members}", String.valueOf(newMaxMembers));
+                        String message = plugin.getLanguageManager().getCoreMessage(player, "economy.level-up", "&a工会升级成功！当前等级：{level}", "{level}", String.valueOf(newLevel), "{max_members}", String.valueOf(newMaxMembers));
                         player.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                     }
                 }

@@ -25,6 +25,8 @@ public class LanguageManager {
     private final Logger logger;
     private final Map<String, FileConfiguration> languageConfigs = new HashMap<>();
     private final Map<String, FileConfiguration> guiConfigs = new HashMap<>();
+    /** lang/core/ 目录下的核心（非GUI）消息配置 */
+    private final Map<String, FileConfiguration> coreConfigs = new HashMap<>();
     private final Map<UUID, String> playerLanguages = new HashMap<>();
     private String defaultLanguage = "en";
     
@@ -35,11 +37,14 @@ public class LanguageManager {
     
     private static final String MESSAGE_FILE_PREFIX = "messages_";
     private static final String MESSAGE_FILE_SUFFIX = ".yml";
+    private static final String CORE_LANG_PATH = "lang/core/";
+    private static final String CORE_LANG_FILE_SUFFIX = ".yml";
     
     public LanguageManager(GuildPlugin plugin) {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
         loadLanguages();
+        loadCoreLanguages();
     }
     
     private void loadLanguages() {
@@ -73,6 +78,30 @@ public class LanguageManager {
 
         logger.info("Language system loaded, default language: " + defaultLanguage
             + ", loaded languages: " + String.join(", ", getLoadedLanguages()));
+    }
+
+    /**
+     * 从插件 JAR 内的 lang/core/ 目录加载核心（非GUI）语言文件
+     */
+    private void loadCoreLanguages() {
+        String[] knownLangs = {LANG_EN, LANG_ZH, LANG_PL, LANG_BR};
+        for (String lang : knownLangs) {
+            String resourcePath = CORE_LANG_PATH + lang + CORE_LANG_FILE_SUFFIX;
+            try (InputStream in = plugin.getResource(resourcePath)) {
+                if (in != null) {
+                    String yaml = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                    FileConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
+                    if (!config.getKeys(false).isEmpty()) {
+                        coreConfigs.put(lang, config);
+                        logger.info("Loaded core language file: " + resourcePath);
+                    }
+                } else {
+                    logger.warning("Core language file not found in JAR: " + resourcePath);
+                }
+            } catch (Exception e) {
+                logger.warning("Failed to load core language file " + resourcePath + ": " + e.getMessage());
+            }
+        }
     }
     
     private void discoverAndLoadLanguageFiles() {
@@ -325,8 +354,10 @@ public class LanguageManager {
     
     public void reloadLanguages() {
         languageConfigs.clear();
+        coreConfigs.clear();
         loadLanguages();
-        logger.info("Reloading all language files");
+        loadCoreLanguages();
+        logger.info("Reloaded all language files (main + core)");
     }
     
     public FileConfiguration getLanguageConfig(String lang) {
@@ -398,5 +429,72 @@ public class LanguageManager {
     public String getGuiColoredMessage(Player player, String path, String defaultValue, String... placeholders) {
         String message = getGuiMessage(player, path, defaultValue, placeholders);
         return message.replace("&", "\u00a7");
+    }
+
+    // ==================== Core 消息（lang/core/）====================
+
+    public FileConfiguration getCoreConfig(String lang) {
+        if (lang != null) {
+            lang = lang.toLowerCase();
+        }
+        FileConfiguration config = coreConfigs.get(lang);
+        if (config == null) {
+            config = coreConfigs.get(defaultLanguage);
+        }
+        return config;
+    }
+
+    public String getCoreMessage(String lang, String path, String defaultValue) {
+        FileConfiguration config = getCoreConfig(lang);
+        if (config == null) {
+            return defaultValue;
+        }
+        String message = config.getString(path, defaultValue);
+        return message != null ? message : defaultValue;
+    }
+
+    public String getCoreMessage(String path, String defaultValue) {
+        return getCoreMessage(defaultLanguage, path, defaultValue);
+    }
+
+    public String getCoreMessage(Player player, String path, String defaultValue) {
+        String lang = getPlayerLanguage(player);
+        return getCoreMessage(lang, path, defaultValue);
+    }
+
+    public String getCoreMessage(String lang, String path, String defaultValue, String... placeholders) {
+        String message = getCoreMessage(lang, path, defaultValue);
+        for (int i = 0; i < placeholders.length; i += 2) {
+            if (i + 1 < placeholders.length) {
+                String placeholder = placeholders[i];
+                String value = placeholders[i + 1];
+                message = message.replace(placeholder, value != null ? value : "");
+            }
+        }
+        return message;
+    }
+
+    public String getCoreMessage(Player player, String path, String defaultValue, String... placeholders) {
+        String lang = getPlayerLanguage(player);
+        return getCoreMessage(lang, path, defaultValue, placeholders);
+    }
+
+    public String getCoreIndexedMessage(String lang, String path, String defaultValue, String[] args) {
+        String message = getCoreMessage(lang, path, defaultValue);
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                message = message.replace("{" + i + "}", args[i] != null ? args[i] : "");
+            }
+        }
+        return message;
+    }
+
+    public String getCoreIndexedMessage(String path, String defaultValue, String... args) {
+        return getCoreIndexedMessage(defaultLanguage, path, defaultValue, args);
+    }
+
+    public String getCoreIndexedMessage(Player player, String path, String defaultValue, String... args) {
+        String lang = getPlayerLanguage(player);
+        return getCoreIndexedMessage(lang, path, defaultValue, args);
     }
 }

@@ -1,4 +1,4 @@
-package com.guild.models;
+﻿package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -106,11 +106,11 @@ public class GuildMember {
 
             switch (this) {
                 case LEADER:
-                    return languageManager.getMessage(lang, key, "Leader");
+                    return languageManager.getCoreMessage(lang, key, "Leader");
                 case OFFICER:
-                    return languageManager.getMessage(lang, key, "Officer");
+                    return languageManager.getCoreMessage(lang, key, "Officer");
                 case MEMBER:
-                    return languageManager.getMessage(lang, key, "Member");
+                    return languageManager.getCoreMessage(lang, key, "Member");
                 default:
                     return name();
             }

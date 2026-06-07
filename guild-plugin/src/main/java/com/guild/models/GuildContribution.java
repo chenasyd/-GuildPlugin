@@ -1,4 +1,4 @@
-package com.guild.models;
+﻿package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -38,17 +38,17 @@ public class GuildContribution {
 
             switch (this) {
                 case DEPOSIT:
-                    return languageManager.getMessage(lang, key, "Deposit");
+                    return languageManager.getCoreMessage(lang, key, "Deposit");
                 case WITHDRAW:
-                    return languageManager.getMessage(lang, key, "Withdraw");
+                    return languageManager.getCoreMessage(lang, key, "Withdraw");
                 case TRANSFER:
-                    return languageManager.getMessage(lang, key, "Transfer");
+                    return languageManager.getCoreMessage(lang, key, "Transfer");
                 case CREATION:
-                    return languageManager.getMessage(lang, key, "Guild Creation");
+                    return languageManager.getCoreMessage(lang, key, "Guild Creation");
                 case UPGRADE:
-                    return languageManager.getMessage(lang, key, "Guild Upgrade");
+                    return languageManager.getCoreMessage(lang, key, "Guild Upgrade");
                 case ADMIN:
-                    return languageManager.getMessage(lang, key, "Admin Operation");
+                    return languageManager.getCoreMessage(lang, key, "Admin Operation");
                 default:
                     return name();
             }

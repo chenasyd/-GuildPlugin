@@ -1,4 +1,4 @@
-package com.guild.models;
+﻿package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -130,13 +130,13 @@ public class GuildInvitation {
 
             switch (this) {
                 case PENDING:
-                    return languageManager.getMessage(lang, key, "Pending");
+                    return languageManager.getCoreMessage(lang, key, "Pending");
                 case ACCEPTED:
-                    return languageManager.getMessage(lang, key, "Accepted");
+                    return languageManager.getCoreMessage(lang, key, "Accepted");
                 case DECLINED:
-                    return languageManager.getMessage(lang, key, "Declined");
+                    return languageManager.getCoreMessage(lang, key, "Declined");
                 case EXPIRED:
-                    return languageManager.getMessage(lang, key, "Expired");
+                    return languageManager.getCoreMessage(lang, key, "Expired");
                 default:
                     return name();
             }

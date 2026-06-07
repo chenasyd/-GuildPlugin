@@ -1,4 +1,4 @@
-package com.guild.commands;
+﻿package com.guild.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission("guild.admin")) {
-            String msg = languageManager.getMessage("general.no-permission", "&c您没有权限执行此操作！");
+            String msg = languageManager.getCoreMessage("general.no-permission", "&c您没有权限执行此操作！");
             sender.sendMessage(ColorUtils.colorize(msg));
             return true;
         }
@@ -95,7 +95,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 handleHelp(sender);
                 break;
             default:
-                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("general.unknown-command", "&c未知命令！使用 /guildadmin help 查看帮助。")));
+                sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("general.unknown-command", "&c未知命令！使用 /guildadmin help 查看帮助。")));
                 break;
         }
         
@@ -185,18 +185,18 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     
     private void handleList(CommandSender sender, String[] args) {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            String title = languageManager.getMessage("admin.list.title", "&6=== 工会列表 ===");
+            String title = languageManager.getCoreMessage("admin.list.title", "&6=== 工会列表 ===");
             sender.sendMessage(ColorUtils.colorize(title));
             if (guilds.isEmpty()) {
-                String empty = languageManager.getMessage("admin.list.empty", "&c暂无工会");
+                String empty = languageManager.getCoreMessage("admin.list.empty", "&c暂无工会");
                 sender.sendMessage(ColorUtils.colorize(empty));
                 return;
             }
 
             for (Guild guild : guilds) {
                 String statusKey = guild.isFrozen() ? "admin.list.status-frozen" : "admin.list.status-normal";
-                String status = languageManager.getMessage(statusKey, guild.isFrozen() ? "&c[冻结]" : "&a[正常]");
-                String format = languageManager.getMessage("admin.list.format",
+                String status = languageManager.getCoreMessage(statusKey, guild.isFrozen() ? "&c[冻结]" : "&a[正常]");
+                String format = languageManager.getCoreMessage("admin.list.format",
                     "&e{name} &7- 会长: &f{leader} &7- 等级: &f{level} &7{status}");
                 String message = format
                     .replace("{name}", guild.getName())
@@ -210,7 +210,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     
     private void handleInfo(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            String usage = languageManager.getMessage("admin.info.usage", "&c用法: /guildadmin info <工会名称>");
+            String usage = languageManager.getCoreMessage("admin.info.usage", "&c用法: /guildadmin info <工会名称>");
             sender.sendMessage(ColorUtils.colorize(usage));
             return;
         }
@@ -218,43 +218,43 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         String guildName = args[1];
         plugin.getGuildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
             if (guild == null) {
-                String notFound = languageManager.getMessage("admin.info.not-found", "&c工会 {guild} 不存在！")
+                String notFound = languageManager.getCoreMessage("admin.info.not-found", "&c工会 {guild} 不存在！")
                     .replace("{guild}", guildName);
                 sender.sendMessage(ColorUtils.colorize(notFound));
                 return;
             }
 
-            String title = languageManager.getMessage("admin.info.title", "&6=== 工会信息 ===");
+            String title = languageManager.getCoreMessage("admin.info.title", "&6=== 工会信息 ===");
             sender.sendMessage(ColorUtils.colorize(title));
 
-            String nameMsg = languageManager.getMessage("admin.info.name", "&e名称: &f{name}")
+            String nameMsg = languageManager.getCoreMessage("admin.info.name", "&e名称: &f{name}")
                 .replace("{name}", guild.getName());
             sender.sendMessage(ColorUtils.colorize(nameMsg));
 
             String tagDisplay = guild.getTag() != null ? guild.getTag() :
-                languageManager.getMessage("admin.info.no-tag", "无");
-            String tagMsg = languageManager.getMessage("admin.info.tag", "&e标签: &f{tag}")
+                languageManager.getCoreMessage("admin.info.no-tag", "无");
+            String tagMsg = languageManager.getCoreMessage("admin.info.tag", "&e标签: &f{tag}")
                 .replace("{tag}", tagDisplay);
             sender.sendMessage(ColorUtils.colorize(tagMsg));
 
-            String leaderMsg = languageManager.getMessage("admin.info.leader", "&e会长: &f{leader}")
+            String leaderMsg = languageManager.getCoreMessage("admin.info.leader", "&e会长: &f{leader}")
                 .replace("{leader}", guild.getLeaderName());
             sender.sendMessage(ColorUtils.colorize(leaderMsg));
 
-            String levelMsg = languageManager.getMessage("admin.info.level", "&e等级: &f{level}")
+            String levelMsg = languageManager.getCoreMessage("admin.info.level", "&e等级: &f{level}")
                 .replace("{level}", String.valueOf(guild.getLevel()));
             sender.sendMessage(ColorUtils.colorize(levelMsg));
 
-            String balanceMsg = languageManager.getMessage("admin.info.balance", "&e资金: &f{balance}")
+            String balanceMsg = languageManager.getCoreMessage("admin.info.balance", "&e资金: &f{balance}")
                 .replace("{balance}", String.valueOf(guild.getBalance()));
             sender.sendMessage(ColorUtils.colorize(balanceMsg));
 
             String statusKey = guild.isFrozen() ? "admin.info.status-frozen" : "admin.info.status-normal";
-            String statusText = languageManager.getMessage(statusKey, guild.isFrozen() ? "冻结" : "正常");
+            String statusText = languageManager.getCoreMessage(statusKey, guild.isFrozen() ? "冻结" : "正常");
             sender.sendMessage(ColorUtils.colorize("&e状态: &f" + statusText));
 
             plugin.getGuildService().getGuildMemberCountAsync(guild.getId()).thenAccept(count -> {
-                String membersMsg = languageManager.getMessage("admin.info.members", "&e成员数量: &f{count}/{max}")
+                String membersMsg = languageManager.getCoreMessage("admin.info.members", "&e成员数量: &f{count}/{max}")
                     .replace("{count}", String.valueOf(count))
                     .replace("{max}", String.valueOf(guild.getMaxMembers()));
                 sender.sendMessage(ColorUtils.colorize(membersMsg));
@@ -264,7 +264,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     
     private void handleDelete(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            String usage = languageManager.getMessage("admin.delete.usage", "&c用法: /guildadmin delete <工会名称>");
+            String usage = languageManager.getCoreMessage("admin.delete.usage", "&c用法: /guildadmin delete <工会名称>");
             sender.sendMessage(ColorUtils.colorize(usage));
             return;
         }
@@ -272,7 +272,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         String guildName = args[1];
         plugin.getGuildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
             if (guild == null) {
-                String notFound = languageManager.getMessage("admin.delete.not-found", "&c工会 {guild} 不存在！")
+                String notFound = languageManager.getCoreMessage("admin.delete.not-found", "&c工会 {guild} 不存在！")
                     .replace("{guild}", guildName);
                 sender.sendMessage(ColorUtils.colorize(notFound));
                 return;
@@ -284,11 +284,11 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             } else {
                 plugin.getGuildService().deleteGuildAsync(guild.getId(), UUID.randomUUID()).thenAccept(success -> {
                     if (success) {
-                        String successMsg = languageManager.getMessage("admin.delete.success", "&a工会 {guild} 已被强制删除！")
+                        String successMsg = languageManager.getCoreMessage("admin.delete.success", "&a工会 {guild} 已被强制删除！")
                             .replace("{guild}", guildName);
                         sender.sendMessage(ColorUtils.colorize(successMsg));
                     } else {
-                        String failed = languageManager.getMessage("admin.delete.failed", "&c删除工会失败！");
+                        String failed = languageManager.getCoreMessage("admin.delete.failed", "&c删除工会失败！");
                         sender.sendMessage(ColorUtils.colorize(failed));
                     }
                 });
@@ -298,7 +298,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     
     private void handleFreeze(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            String usage = languageManager.getMessage("admin.freeze.usage", "&c用法: /guildadmin freeze <工会名称>");
+            String usage = languageManager.getCoreMessage("admin.freeze.usage", "&c用法: /guildadmin freeze <工会名称>");
             sender.sendMessage(ColorUtils.colorize(usage));
             return;
         }
@@ -306,13 +306,13 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         String guildName = args[1];
         plugin.getGuildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
             if (guild == null) {
-                String notFound = languageManager.getMessage("admin.freeze.not-found", "&c工会 {guild} 不存在！")
+                String notFound = languageManager.getCoreMessage("admin.freeze.not-found", "&c工会 {guild} 不存在！")
                     .replace("{guild}", guildName);
                 sender.sendMessage(ColorUtils.colorize(notFound));
                 return;
             }
 
-            String success = languageManager.getMessage("admin.freeze.success", "&a工会 {guild} 已被冻结！")
+            String success = languageManager.getCoreMessage("admin.freeze.success", "&a工会 {guild} 已被冻结！")
                 .replace("{guild}", guildName);
             sender.sendMessage(ColorUtils.colorize(success));
         });
@@ -320,7 +320,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     
     private void handleUnfreeze(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            String usage = languageManager.getMessage("admin.unfreeze.usage", "&c用法: /guildadmin unfreeze <工会名称>");
+            String usage = languageManager.getCoreMessage("admin.unfreeze.usage", "&c用法: /guildadmin unfreeze <工会名称>");
             sender.sendMessage(ColorUtils.colorize(usage));
             return;
         }
@@ -328,13 +328,13 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         String guildName = args[1];
         plugin.getGuildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
             if (guild == null) {
-                String notFound = languageManager.getMessage("admin.unfreeze.not-found", "&c工会 {guild} 不存在！")
+                String notFound = languageManager.getCoreMessage("admin.unfreeze.not-found", "&c工会 {guild} 不存在！")
                     .replace("{guild}", guildName);
                 sender.sendMessage(ColorUtils.colorize(notFound));
                 return;
             }
 
-            String success = languageManager.getMessage("admin.unfreeze.success", "&a工会 {guild} 已被解冻！")
+            String success = languageManager.getCoreMessage("admin.unfreeze.success", "&a工会 {guild} 已被解冻！")
                 .replace("{guild}", guildName);
             sender.sendMessage(ColorUtils.colorize(success));
         });
@@ -342,7 +342,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     
     private void handleTransfer(CommandSender sender, String[] args) {
         if (args.length < 3) {
-            String usage = languageManager.getMessage("admin.transfer.usage", "&c用法: /guildadmin transfer <工会名称> <新会长>");
+            String usage = languageManager.getCoreMessage("admin.transfer.usage", "&c用法: /guildadmin transfer <工会名称> <新会长>");
             sender.sendMessage(ColorUtils.colorize(usage));
             return;
         }
@@ -352,7 +352,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
         Player newLeader = Bukkit.getPlayer(newLeaderName);
         if (newLeader == null) {
-            String notOnline = languageManager.getMessage("admin.transfer.player-not-online", "&c玩家 {player} 不在线！")
+            String notOnline = languageManager.getCoreMessage("admin.transfer.player-not-online", "&c玩家 {player} 不在线！")
                 .replace("{player}", newLeaderName);
             sender.sendMessage(ColorUtils.colorize(notOnline));
             return;
@@ -360,7 +360,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
         plugin.getGuildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
             if (guild == null) {
-                String notFound = languageManager.getMessage("admin.transfer.not-found", "&c工会 {guild} 不存在！")
+                String notFound = languageManager.getCoreMessage("admin.transfer.not-found", "&c工会 {guild} 不存在！")
                     .replace("{guild}", guildName);
                 sender.sendMessage(ColorUtils.colorize(notFound));
                 return;
@@ -368,13 +368,13 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
             plugin.getGuildService().getGuildMemberAsync(guild.getId(), newLeader.getUniqueId()).thenAccept(member -> {
                 if (member == null) {
-                    String notMember = languageManager.getMessage("admin.transfer.not-member", "&c玩家 {player} 不是该工会成员！")
+                    String notMember = languageManager.getCoreMessage("admin.transfer.not-member", "&c玩家 {player} 不是该工会成员！")
                         .replace("{player}", newLeaderName);
                     sender.sendMessage(ColorUtils.colorize(notMember));
                     return;
                 }
 
-                String success = languageManager.getMessage("admin.transfer.success", "&a工会 {guild} 的会长已转让给 {player}！")
+                String success = languageManager.getCoreMessage("admin.transfer.success", "&a工会 {guild} 的会长已转让给 {player}！")
                     .replace("{guild}", guildName)
                     .replace("{player}", newLeaderName);
                 sender.sendMessage(ColorUtils.colorize(success));
@@ -384,7 +384,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     
     private void handleEconomy(CommandSender sender, String[] args) {
         if (args.length < 4) {
-            String usage = languageManager.getMessage("admin.economy.usage", "&c用法: /guildadmin economy <工会名称> <set|add|remove> <金额>");
+            String usage = languageManager.getCoreMessage("admin.economy.usage", "&c用法: /guildadmin economy <工会名称> <set|add|remove> <金额>");
             sender.sendMessage(ColorUtils.colorize(usage));
             return;
         }
@@ -396,14 +396,14 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         try {
             amount = Double.parseDouble(args[3]);
         } catch (NumberFormatException e) {
-            String invalidAmount = languageManager.getMessage("admin.economy.invalid-amount", "&c金额格式错误！");
+            String invalidAmount = languageManager.getCoreMessage("admin.economy.invalid-amount", "&c金额格式错误！");
             sender.sendMessage(ColorUtils.colorize(invalidAmount));
             return;
         }
 
         plugin.getGuildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
             if (guild == null) {
-                String notFound = languageManager.getMessage("admin.economy.not-found", "&c工会 {guild} 不存在！")
+                String notFound = languageManager.getCoreMessage("admin.economy.not-found", "&c工会 {guild} 不存在！")
                     .replace("{guild}", guildName);
                 sender.sendMessage(ColorUtils.colorize(notFound));
                 return;
@@ -422,7 +422,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                     if (newBalance[0] < 0) newBalance[0] = 0;
                     break;
                 default:
-                    String invalidOp = languageManager.getMessage("admin.economy.invalid-operation", "&c无效的操作！使用 set|add|remove");
+                    String invalidOp = languageManager.getCoreMessage("admin.economy.invalid-operation", "&c无效的操作！使用 set|add|remove");
                     sender.sendMessage(ColorUtils.colorize(invalidOp));
                     return;
             }
@@ -430,12 +430,12 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), newBalance[0]).thenAccept(success -> {
                 if (success) {
                     String formattedAmount = plugin.getEconomyManager().format(newBalance[0]);
-                    String successMsg = languageManager.getMessage("admin.economy.success", "&a工会 {guild} 的资金已更新为: {balance}")
+                    String successMsg = languageManager.getCoreMessage("admin.economy.success", "&a工会 {guild} 的资金已更新为: {balance}")
                         .replace("{guild}", guildName)
                         .replace("{balance}", formattedAmount);
                     sender.sendMessage(ColorUtils.colorize(successMsg));
                 } else {
-                    String failed = languageManager.getMessage("admin.economy.failed", "&c更新工会资金失败！");
+                    String failed = languageManager.getCoreMessage("admin.economy.failed", "&c更新工会资金失败！");
                     sender.sendMessage(ColorUtils.colorize(failed));
                 }
             });
@@ -444,7 +444,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     
     private void handleRelation(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            String usage = languageManager.getMessage("admin.relation.usage", "&c用法: /guildadmin relation <list|create|delete|gui>");
+            String usage = languageManager.getCoreMessage("admin.relation.usage", "&c用法: /guildadmin relation <list|create|delete|gui>");
             sender.sendMessage(ColorUtils.colorize(usage));
             return;
         }
@@ -455,12 +455,12 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                     RelationManagementGUI relationGUI = new RelationManagementGUI(plugin, player);
                     plugin.getGuiManager().openGUI(player, relationGUI);
                 } else {
-                    String playerOnly = languageManager.getMessage("admin.relation.gui-player-only", "&c此命令只能由玩家执行！");
+                    String playerOnly = languageManager.getCoreMessage("admin.relation.gui-player-only", "&c此命令只能由玩家执行！");
                     sender.sendMessage(ColorUtils.colorize(playerOnly));
                 }
                 break;
             case "list":
-                String title = languageManager.getMessage("admin.relation.title", "&6=== 工会关系列表 ===");
+                String title = languageManager.getCoreMessage("admin.relation.title", "&6=== 工会关系列表 ===");
                 sender.sendMessage(ColorUtils.colorize(title));
                 plugin.getGuildService().getAllGuildsAsync().thenCompose(guilds -> {
                     List<CompletableFuture<List<GuildRelation>>> relationFutures = new ArrayList<>();
@@ -476,7 +476,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                                 try {
                                     allRelations.addAll(future.get());
                                 } catch (Exception e) {
-                                    String errorMsg = languageManager.getMessage("admin.relation.fetch-error", "获取工会关系时发生错误: {error}")
+                                    String errorMsg = languageManager.getCoreMessage("admin.relation.fetch-error", "获取工会关系时发生错误: {error}")
                                         .replace("{error}", e.getMessage());
                                     plugin.getLogger().warning(errorMsg);
                                 }
@@ -485,7 +485,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                         });
                 }).thenAccept(relations -> {
                     if (relations.isEmpty()) {
-                        String empty = languageManager.getMessage("admin.relation.empty", "&c暂无工会关系");
+                        String empty = languageManager.getCoreMessage("admin.relation.empty", "&c暂无工会关系");
                         sender.sendMessage(ColorUtils.colorize(empty));
                         return;
                     }
@@ -493,7 +493,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                     for (GuildRelation relation : relations) {
                         String status = getRelationStatusText(relation.getStatus());
                         String type = getRelationTypeText(relation.getType());
-                        String format = languageManager.getMessage("admin.relation.format", "&e{guild1} ↔ {guild2} &7- {type} &7- {status}")
+                        String format = languageManager.getCoreMessage("admin.relation.format", "&e{guild1} ↔ {guild2} &7- {type} &7- {status}")
                             .replace("{guild1}", relation.getGuild1Name())
                             .replace("{guild2}", relation.getGuild2Name())
                             .replace("{type}", type)
@@ -504,8 +504,8 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 break;
             case "create":
                 if (args.length < 5) {
-                    String usage = languageManager.getMessage("admin.relation.create-usage", "&c用法: /guildadmin relation create <工会1> <工会2> <关系类型>");
-                    String types = languageManager.getMessage("admin.relation.create-types", "&7关系类型: ally|enemy|war|truce|neutral");
+                    String usage = languageManager.getCoreMessage("admin.relation.create-usage", "&c用法: /guildadmin relation create <工会1> <工会2> <关系类型>");
+                    String types = languageManager.getCoreMessage("admin.relation.create-types", "&7关系类型: ally|enemy|war|truce|neutral");
                     sender.sendMessage(ColorUtils.colorize(usage));
                     sender.sendMessage(ColorUtils.colorize(types));
                     return;
@@ -514,14 +514,14 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 break;
             case "delete":
                 if (args.length < 4) {
-                    String usage = languageManager.getMessage("admin.relation.delete-usage", "&c用法: /guildadmin relation delete <工会1> <工会2>");
+                    String usage = languageManager.getCoreMessage("admin.relation.delete-usage", "&c用法: /guildadmin relation delete <工会1> <工会2>");
                     sender.sendMessage(ColorUtils.colorize(usage));
                     return;
                 }
                 handleDeleteRelation(sender, args);
                 break;
             default:
-                String invalid = languageManager.getMessage("admin.relation.invalid-operation", "&c无效的关系操作！使用 list|create|delete|gui");
+                String invalid = languageManager.getCoreMessage("admin.relation.invalid-operation", "&c无效的关系操作！使用 list|create|delete|gui");
                 sender.sendMessage(ColorUtils.colorize(invalid));
                 break;
         }
@@ -536,7 +536,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         try {
             relationType = GuildRelation.RelationType.valueOf(relationTypeStr.toUpperCase());
         } catch (IllegalArgumentException e) {
-            String invalidType = languageManager.getMessage("admin.relation.invalid-type", "&c无效的关系类型！使用: ally, enemy, war, truce, neutral");
+            String invalidType = languageManager.getCoreMessage("admin.relation.invalid-type", "&c无效的关系类型！使用: ally, enemy, war, truce, neutral");
             sender.sendMessage(ColorUtils.colorize(invalidType));
             return;
         }
@@ -550,19 +550,19 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 Guild guild2 = guild2Future.get();
 
                 if (guild1 == null) {
-                    String notFound = languageManager.getMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
+                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
                         .replace("{guild}", guild1Name);
                     sender.sendMessage(ColorUtils.colorize(notFound));
                     return;
                 }
                 if (guild2 == null) {
-                    String notFound = languageManager.getMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
+                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
                         .replace("{guild}", guild2Name);
                     sender.sendMessage(ColorUtils.colorize(notFound));
                     return;
                 }
                 if (guild1.getId() == guild2.getId()) {
-                    String cantSelf = languageManager.getMessage("admin.relation.cannot-relation-self", "&c不能与自己建立关系！");
+                    String cantSelf = languageManager.getCoreMessage("admin.relation.cannot-relation-self", "&c不能与自己建立关系！");
                     sender.sendMessage(ColorUtils.colorize(cantSelf));
                     return;
                 }
@@ -574,19 +574,19 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 ).thenAccept(success -> {
                     if (success) {
                         String typeText = getRelationTypeText(relationType);
-                        String successMsg = languageManager.getMessage("admin.relation.create-success", "&a已创建关系: {guild1} ↔ {guild2} ({type})")
+                        String successMsg = languageManager.getCoreMessage("admin.relation.create-success", "&a已创建关系: {guild1} ↔ {guild2} ({type})")
                             .replace("{guild1}", guild1Name)
                             .replace("{guild2}", guild2Name)
                             .replace("{type}", typeText);
                         sender.sendMessage(ColorUtils.colorize(successMsg));
                     } else {
-                        String failed = languageManager.getMessage("admin.relation.create-failed", "&c创建关系失败！");
+                        String failed = languageManager.getCoreMessage("admin.relation.create-failed", "&c创建关系失败！");
                         sender.sendMessage(ColorUtils.colorize(failed));
                     }
                 });
 
             } catch (Exception e) {
-                String error = languageManager.getMessage("admin.relation.create-error", "&c创建关系时发生错误: {error}")
+                String error = languageManager.getCoreMessage("admin.relation.create-error", "&c创建关系时发生错误: {error}")
                     .replace("{error}", e.getMessage());
                 sender.sendMessage(ColorUtils.colorize(error));
             }
@@ -606,13 +606,13 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 Guild guild2 = guild2Future.get();
 
                 if (guild1 == null) {
-                    String notFound = languageManager.getMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
+                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
                         .replace("{guild}", guild1Name);
                     sender.sendMessage(ColorUtils.colorize(notFound));
                     return;
                 }
                 if (guild2 == null) {
-                    String notFound = languageManager.getMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
+                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
                         .replace("{guild}", guild2Name);
                     sender.sendMessage(ColorUtils.colorize(notFound));
                     return;
@@ -625,26 +625,26 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
                             plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
                                 if (success) {
-                                    String successMsg = languageManager.getMessage("admin.relation.delete-success", "&a已删除关系: {guild1} ↔ {guild2}")
+                                    String successMsg = languageManager.getCoreMessage("admin.relation.delete-success", "&a已删除关系: {guild1} ↔ {guild2}")
                                         .replace("{guild1}", guild1Name)
                                         .replace("{guild2}", guild2Name);
                                     sender.sendMessage(ColorUtils.colorize(successMsg));
                                 } else {
-                                    String failed = languageManager.getMessage("admin.relation.delete-failed", "&c删除关系失败！");
+                                    String failed = languageManager.getCoreMessage("admin.relation.delete-failed", "&c删除关系失败！");
                                     sender.sendMessage(ColorUtils.colorize(failed));
                                 }
                             });
                             return;
                         }
                     }
-                    String notFound = languageManager.getMessage("admin.relation.not-found", "&c未找到工会 {guild1} 和 {guild2} 之间的关系！")
+                    String notFound = languageManager.getCoreMessage("admin.relation.not-found", "&c未找到工会 {guild1} 和 {guild2} 之间的关系！")
                         .replace("{guild1}", guild1Name)
                         .replace("{guild2}", guild2Name);
                     sender.sendMessage(ColorUtils.colorize(notFound));
                 });
 
             } catch (Exception e) {
-                String error = languageManager.getMessage("admin.relation.delete-error", "&c删除关系时发生错误: {error}")
+                String error = languageManager.getCoreMessage("admin.relation.delete-error", "&c删除关系时发生错误: {error}")
                     .replace("{error}", e.getMessage());
                 sender.sendMessage(ColorUtils.colorize(error));
             }
@@ -659,7 +659,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             case EXPIRED: key = "admin.relation.status.expired"; break;
             case CANCELLED: key = "admin.relation.status.cancelled"; break;
         }
-        return languageManager.getMessage(key, "未知");
+        return languageManager.getCoreMessage(key, "未知");
     }
     
     private String getRelationTypeText(GuildRelation.RelationType type) {
@@ -671,7 +671,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             case TRUCE: key = "admin.relation.type.truce"; break;
             case NEUTRAL: key = "admin.relation.type.neutral"; break;
         }
-        return languageManager.getMessage(key, "未知");
+        return languageManager.getCoreMessage(key, "未知");
     }
     
     private void handleReload(CommandSender sender) {
@@ -679,10 +679,10 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             plugin.getConfigManager().reloadAllConfigs();
             plugin.getPermissionManager().reloadFromConfig();
             plugin.getLanguageManager().reloadLanguages();
-            String success = languageManager.getMessage("admin.reload.success", "&a配置已重新加载！");
+            String success = languageManager.getCoreMessage("admin.reload.success", "&a配置已重新加载！");
             sender.sendMessage(ColorUtils.colorize(success));
         } catch (Exception e) {
-            String failed = languageManager.getMessage("admin.reload.failed", "&c重新加载配置失败: {error}")
+            String failed = languageManager.getCoreMessage("admin.reload.failed", "&c重新加载配置失败: {error}")
                 .replace("{error}", e.getMessage());
             sender.sendMessage(ColorUtils.colorize(failed));
         }
@@ -694,21 +694,21 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         if (args.length >= 2 && "download".equalsIgnoreCase(args[1])) {
             // Download the update
             if (!sender.hasPermission("guild.admin.update")) {
-                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                     "general.no-permission", "&cYou do not have permission!")));
                 return;
             }
 
             // Pre-download warning about old plugin JARs
-            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+            sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                 "admin.update.cleanup-notice", "&6[GuildPlugin] &eImportant: After downloading, please ensure ALL old "
                     + "GuildPlugin JARs are deleted from the plugins folder before restarting!")));
-            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+            sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                 "admin.update.checking", "&6[GuildPlugin] &eChecking for latest version...")));
             CompatibleScheduler.runTaskAsync(plugin, () -> {
                 VersionInfo info = updateManager.checkLatestVersion();
                 if (info == null) {
-                    sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                    sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                         "admin.update.fetch-failed", "&c[GuildPlugin] Failed to fetch version info.")));
                     return;
                 }
@@ -716,7 +716,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 String localVersion = plugin.getDescription().getVersion();
                 int cmp = UpdateManager.compareVersions(localVersion, info.version);
                 if (cmp >= 0) {
-                    sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                    sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                         "admin.update.already-latest", "&a[GuildPlugin] You are already running the latest version (v{version}).")
                         .replace("{version}", localVersion)));
                     return;
@@ -725,13 +725,13 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 updateManager.downloadUpdate(info, sender);
 
                 // Post-download reminder
-                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                     "admin.update.manual-cleanup-reminder",
                     "&6[GuildPlugin] &eREMINDER: Check the plugins folder and delete ALL old "
                         + "GuildPlugin JARs (including renamed ones) before restarting the server!")));
 
                 // Notify all online admins
-                String broadcastMsg = languageManager.getMessage(
+                String broadcastMsg = languageManager.getCoreMessage(
                     "admin.update.download-broadcast", "&6[GuildPlugin] &e{player} downloaded v{version}. "
                         + "Remove all old GuildPlugin JARs and restart to apply.")
                     .replace("{player}", sender.getName())
@@ -746,12 +746,12 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         }
 
         // Check for updates (no download)
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
             "admin.update.checking-dual", "&6[GuildPlugin] &eChecking for updates from GitHub & Modrinth...")));
         CompatibleScheduler.runTaskAsync(plugin, () -> {
             VersionInfo info = updateManager.checkLatestVersion();
             if (info == null) {
-                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                     "admin.update.unreachable", "&c[GuildPlugin] Unable to check for updates. Both GitHub and Modrinth are unreachable.")));
                 return;
             }
@@ -759,39 +759,39 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             String localVersion = plugin.getDescription().getVersion();
             int cmp = UpdateManager.compareVersions(localVersion, info.version);
 
-            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+            sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                 "admin.update.header", "&6======== GuildPlugin Update ========")));
-            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+            sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                 "admin.update.source", "&eSource: &f{source}").replace("{source}", info.source)));
-            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+            sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                 "admin.update.current", "&eCurrent: &fv{version}").replace("{version}", localVersion)));
-            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+            sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                 cmp < 0 ? "admin.update.latest" : "admin.update.latest-up-to-date",
                 "&eLatest: &fv{version}").replace("{version}", info.version)));
 
             if (cmp < 0) {
                 if (!info.changelog.isEmpty()) {
-                    sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                    sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                         "admin.update.changelog-title", "&eChangelog:")));
                     for (String line : info.changelog.split("\n")) {
                         sender.sendMessage(ColorUtils.colorize("&7  " + line));
                     }
                 }
-                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                     "admin.update.usage-download", "&eUsage: &f/guildadmin update download &7to download the update")));
             } else {
-                sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+                sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                     "admin.update.up-to-date", "&aYou are running the latest version.")));
             }
-            sender.sendMessage(ColorUtils.colorize(languageManager.getMessage(
+            sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(
                 "admin.update.footer", "&6====================================")));
         });
     }
 
     private void handleTest(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            String usage = languageManager.getMessage("admin.test.usage", "&c用法: /guildadmin test <test-type>");
-            String types = languageManager.getMessage("admin.test.types", "&7test-type: gui, economy, relation");
+            String usage = languageManager.getCoreMessage("admin.test.usage", "&c用法: /guildadmin test <test-type>");
+            String types = languageManager.getCoreMessage("admin.test.types", "&7test-type: gui, economy, relation");
             sender.sendMessage(ColorUtils.colorize(usage));
             sender.sendMessage(ColorUtils.colorize(types));
             return;
@@ -803,16 +803,16 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 if (sender instanceof Player player) {
                     AdminGuildGUI adminGUI = new AdminGuildGUI(plugin, player);
                     plugin.getGuiManager().openGUI(player, adminGUI);
-                    String success = languageManager.getMessage("admin.test.gui-success", "&a已打开管理员GUI进行测试。");
+                    String success = languageManager.getCoreMessage("admin.test.gui-success", "&a已打开管理员GUI进行测试。");
                     sender.sendMessage(ColorUtils.colorize(success));
                 } else {
-                    String playerOnly = languageManager.getMessage("admin.test.gui-player-only", "&c此命令只能由玩家执行！");
+                    String playerOnly = languageManager.getCoreMessage("admin.test.gui-player-only", "&c此命令只能由玩家执行！");
                     sender.sendMessage(ColorUtils.colorize(playerOnly));
                 }
                 break;
             case "economy":
                 if (args.length < 4) {
-                    String usage = languageManager.getMessage("admin.test.economy-usage", "&c用法: /guildadmin test economy <工会名称> <操作> <金额>");
+                    String usage = languageManager.getCoreMessage("admin.test.economy-usage", "&c用法: /guildadmin test economy <工会名称> <操作> <金额>");
                     sender.sendMessage(ColorUtils.colorize(usage));
                     return;
                 }
@@ -822,13 +822,13 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 try {
                     amount = Double.parseDouble(args[4]);
                 } catch (NumberFormatException e) {
-                    String invalid = languageManager.getMessage("admin.economy.invalid-amount", "&c金额格式错误！");
+                    String invalid = languageManager.getCoreMessage("admin.economy.invalid-amount", "&c金额格式错误！");
                     sender.sendMessage(ColorUtils.colorize(invalid));
                     return;
                 }
                 plugin.getGuildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
                     if (guild == null) {
-                        String notFound = languageManager.getMessage("admin.economy.not-found", "&c工会 {guild} 不存在！")
+                        String notFound = languageManager.getCoreMessage("admin.economy.not-found", "&c工会 {guild} 不存在！")
                             .replace("{guild}", guildName);
                         sender.sendMessage(ColorUtils.colorize(notFound));
                         return;
@@ -846,19 +846,19 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                             if (newBalance[0] < 0) newBalance[0] = 0;
                             break;
                         default:
-                            String invalidOp = languageManager.getMessage("admin.economy.invalid-operation", "&c无效的操作！使用 set|add|remove");
+                            String invalidOp = languageManager.getCoreMessage("admin.economy.invalid-operation", "&c无效的操作！使用 set|add|remove");
                             sender.sendMessage(ColorUtils.colorize(invalidOp));
                             return;
                     }
                     plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), newBalance[0]).thenAccept(success -> {
                         if (success) {
                             String formattedAmount = plugin.getEconomyManager().format(newBalance[0]);
-                            String successMsg = languageManager.getMessage("admin.economy.success", "&a工会 {guild} 的资金已更新为: {balance}")
+                            String successMsg = languageManager.getCoreMessage("admin.economy.success", "&a工会 {guild} 的资金已更新为: {balance}")
                                 .replace("{guild}", guildName)
                                 .replace("{balance}", formattedAmount);
                             sender.sendMessage(ColorUtils.colorize(successMsg));
                         } else {
-                            String failed = languageManager.getMessage("admin.economy.failed", "&c更新工会资金失败！");
+                            String failed = languageManager.getCoreMessage("admin.economy.failed", "&c更新工会资金失败！");
                             sender.sendMessage(ColorUtils.colorize(failed));
                         }
                     });
@@ -866,8 +866,8 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 break;
             case "relation":
                 if (args.length < 5) {
-                    String usage = languageManager.getMessage("admin.test.relation-usage", "&c用法: /guildadmin test relation create <工会1> <工会2> <关系类型>");
-                    String types = languageManager.getMessage("admin.relation.create-types", "&7关系类型: ally|enemy|war|truce|neutral");
+                    String usage = languageManager.getCoreMessage("admin.test.relation-usage", "&c用法: /guildadmin test relation create <工会1> <工会2> <关系类型>");
+                    String types = languageManager.getCoreMessage("admin.relation.create-types", "&7关系类型: ally|enemy|war|truce|neutral");
                     sender.sendMessage(ColorUtils.colorize(usage));
                     sender.sendMessage(ColorUtils.colorize(types));
                     return;
@@ -879,26 +879,26 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 try {
                     relationTypeTest = GuildRelation.RelationType.valueOf(relationTypeStrTest.toUpperCase());
                 } catch (IllegalArgumentException e) {
-                    String invalid = languageManager.getMessage("admin.relation.invalid-type", "&c无效的关系类型！使用: ally, enemy, war, truce, neutral");
+                    String invalid = languageManager.getCoreMessage("admin.relation.invalid-type", "&c无效的关系类型！使用: ally, enemy, war, truce, neutral");
                     sender.sendMessage(ColorUtils.colorize(invalid));
                     return;
                 }
                 plugin.getGuildService().getGuildByNameAsync(guild1NameTest).thenAccept(guild1 -> {
                     if (guild1 == null) {
-                        String notFound = languageManager.getMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
+                        String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
                             .replace("{guild}", guild1NameTest);
                         sender.sendMessage(ColorUtils.colorize(notFound));
                         return;
                     }
                     plugin.getGuildService().getGuildByNameAsync(guild2NameTest).thenAccept(guild2 -> {
                         if (guild2 == null) {
-                            String notFound = languageManager.getMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
+                            String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
                                 .replace("{guild}", guild2NameTest);
                             sender.sendMessage(ColorUtils.colorize(notFound));
                             return;
                         }
                         if (guild1.getId() == guild2.getId()) {
-                            String cantSelf = languageManager.getMessage("admin.relation.cannot-relation-self", "&c不能与自己建立关系！");
+                            String cantSelf = languageManager.getCoreMessage("admin.relation.cannot-relation-self", "&c不能与自己建立关系！");
                             sender.sendMessage(ColorUtils.colorize(cantSelf));
                             return;
                         }
@@ -909,13 +909,13 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                         ).thenAccept(success -> {
                             if (success) {
                                 String typeText = getRelationTypeText(relationTypeTest);
-                                String successMsg = languageManager.getMessage("admin.relation.create-success", "&a已创建关系: {guild1} ↔ {guild2} ({type})")
+                                String successMsg = languageManager.getCoreMessage("admin.relation.create-success", "&a已创建关系: {guild1} ↔ {guild2} ({type})")
                                     .replace("{guild1}", guild1NameTest)
                                     .replace("{guild2}", guild2NameTest)
                                     .replace("{type}", typeText);
                                 sender.sendMessage(ColorUtils.colorize(successMsg));
                             } else {
-                                String failed = languageManager.getMessage("admin.relation.create-failed", "&c创建关系失败！");
+                                String failed = languageManager.getCoreMessage("admin.relation.create-failed", "&c创建关系失败！");
                                 sender.sendMessage(ColorUtils.colorize(failed));
                             }
                         });
@@ -923,28 +923,28 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 });
                 break;
             default:
-                String invalid = languageManager.getMessage("admin.test.invalid-type", "&c无效的测试类型！使用 gui, economy, relation");
+                String invalid = languageManager.getCoreMessage("admin.test.invalid-type", "&c无效的测试类型！使用 gui, economy, relation");
                 sender.sendMessage(ColorUtils.colorize(invalid));
                 break;
         }
     }
     
     private void handleHelp(CommandSender sender) {
-        String title = languageManager.getMessage("admin.help.title", "&6=== 工会管理员命令 ===");
+        String title = languageManager.getCoreMessage("admin.help.title", "&6=== 工会管理员命令 ===");
         sender.sendMessage(ColorUtils.colorize(title));
 
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.main", "&e/guildadmin &7- 打开管理员GUI")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.list", "&e/guildadmin list &7- 列出所有工会")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.info", "&e/guildadmin info <工会> &7- 查看工会信息")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.delete", "&e/guildadmin delete <工会> &7- 强制删除工会")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.freeze", "&e/guildadmin freeze <工会> &7- 冻结工会")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.unfreeze", "&e/guildadmin unfreeze <工会> &7- 解冻工会")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.transfer", "&e/guildadmin transfer <工会> <玩家> &7- 转让会长")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.economy", "&e/guildadmin economy <工会> <操作> <金额> &7- 管理工会经济")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.relation", "&e/guildadmin relation <操作> &7- 管理工会关系")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.reload", "&e/guildadmin reload &7- 重新加载配置")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.update", "&e/guildadmin update &7- Check for plugin updates")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.update-download", "&e/guildadmin update download &7- Download and install update")));
-        sender.sendMessage(ColorUtils.colorize(languageManager.getMessage("admin.help.help", "&e/guildadmin help &7- 显示帮助信息")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.main", "&e/guildadmin &7- 打开管理员GUI")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.list", "&e/guildadmin list &7- 列出所有工会")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.info", "&e/guildadmin info <工会> &7- 查看工会信息")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.delete", "&e/guildadmin delete <工会> &7- 强制删除工会")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.freeze", "&e/guildadmin freeze <工会> &7- 冻结工会")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.unfreeze", "&e/guildadmin unfreeze <工会> &7- 解冻工会")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.transfer", "&e/guildadmin transfer <工会> <玩家> &7- 转让会长")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.economy", "&e/guildadmin economy <工会> <操作> <金额> &7- 管理工会经济")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.relation", "&e/guildadmin relation <操作> &7- 管理工会关系")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.reload", "&e/guildadmin reload &7- 重新加载配置")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.update", "&e/guildadmin update &7- Check for plugin updates")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.update-download", "&e/guildadmin update download &7- Download and install update")));
+        sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage("admin.help.help", "&e/guildadmin help &7- 显示帮助信息")));
     }
 }

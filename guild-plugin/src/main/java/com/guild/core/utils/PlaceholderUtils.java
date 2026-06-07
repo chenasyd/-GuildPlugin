@@ -1,4 +1,4 @@
-package com.guild.core.utils;
+﻿package com.guild.core.utils;
 
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
@@ -413,7 +413,7 @@ public class PlaceholderUtils {
      */
     private static String getPlaceholderMessage(String lang, String key, String defaultValue) {
         if (languageManager != null) {
-            return languageManager.getMessage(lang, "placeholder." + key, defaultValue);
+            return languageManager.getCoreMessage(lang, "placeholder." + key, defaultValue);
         }
         return defaultValue;
     }
