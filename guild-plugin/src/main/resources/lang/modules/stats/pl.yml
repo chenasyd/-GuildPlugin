@@ -1,0 +1,6 @@
+# ============ Stats Module Messages ============
+module.stats.init-done: "&a[Stats] Initialization complete, CustomGUI x2 registered"
+module.stats.loaded: "&a[Stats] Guild stats system enabled"
+module.stats.unloaded: "&e[Stats] Stats system disabled"
+module.stats.button-name: "Statistics"
+module.stats.ranking-button: "Guild Ranking"
