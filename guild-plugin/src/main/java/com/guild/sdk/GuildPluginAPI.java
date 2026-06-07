@@ -18,6 +18,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.module.hook.GUIExtensionHook;
+import com.guild.core.time.TimeProvider;
 import com.guild.sdk.command.ModuleCommandHandler;
 import com.guild.sdk.data.GuildData;
 import com.guild.sdk.data.MemberData;
@@ -483,6 +484,57 @@ public class GuildPluginAPI {
     /** 获取 HTTP 客户端提供者（用于高级配置） */
     public HttpClientProvider getHttpClient() {
         return httpClient;
+    }
+
+    // ==================== Server time API ====================
+
+    /**
+     * Get the current server local time.
+     */
+    public LocalDateTime getServerTime() {
+        return TimeProvider.nowLocalDateTime();
+    }
+
+    /**
+     * Get the current server local time as yyyy-MM-dd HH:mm:ss.
+     */
+    public String getServerTimeString() {
+        return TimeProvider.nowString();
+    }
+
+    /**
+     * Get the current server local date as yyyy-MM-dd.
+     */
+    public String getServerDateString() {
+        return TimeProvider.formatDate(TimeProvider.nowLocalDateTime());
+    }
+
+    /**
+     * Get the server local time after adding the given minutes.
+     */
+    public String getServerTimePlusMinutes(int minutes) {
+        return TimeProvider.plusMinutesString(minutes);
+    }
+
+    /**
+     * Get the server local time after adding the given days.
+     */
+    public String getServerTimePlusDays(int days) {
+        return TimeProvider.plusDaysString(days);
+    }
+
+    /**
+     * Format a LocalDateTime using the server full formatter.
+     */
+    public String formatServerTime(LocalDateTime dateTime) {
+        return TimeProvider.format(dateTime);
+    }
+
+    /**
+     * Format a LocalDateTime using the server date-only formatter.
+     */
+    public String formatServerDate(LocalDateTime dateTime) {
+        return TimeProvider.formatDate(dateTime);
     }
 
     // ==================== Module language resource API ====================

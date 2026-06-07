@@ -315,6 +315,20 @@ HttpClientProvider getHttpClient();
 new HttpClientProvider(int connectTimeout, int readTimeout);
 ```
 
+#### Server time API
+
+```java
+LocalDateTime getServerTime();
+String getServerTimeString();
+String getServerDateString();
+String getServerTimePlusMinutes(int minutes);
+String getServerTimePlusDays(int days);
+String formatServerTime(LocalDateTime dateTime);
+String formatServerDate(LocalDateTime dateTime);
+```
+
+Use these methods when you need shared server-local time formatting in modules.
+
 #### Module language resources
 
 Modules can request the core plugin to expose or load module-specific language files stored under `plugins/GuildPlugin/lang/modules/{moduleId}/{lang}.yml`.

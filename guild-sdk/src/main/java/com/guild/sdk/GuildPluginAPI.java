@@ -17,6 +17,7 @@ import com.guild.sdk.placeholder.PlaceholderProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import java.io.File;
+import java.time.LocalDateTime;
 
 import java.util.List;
 import java.util.Map;
@@ -104,6 +105,57 @@ public class GuildPluginAPI {
 
     public HttpClientProvider getHttpClient() {
         return httpClient;
+    }
+
+    // ==================== Server time API ====================
+
+    /**
+     * Get the current server local time.
+     */
+    public LocalDateTime getServerTime() {
+        return null;
+    }
+
+    /**
+     * Get the current server local time as yyyy-MM-dd HH:mm:ss.
+     */
+    public String getServerTimeString() {
+        return null;
+    }
+
+    /**
+     * Get the current server local date as yyyy-MM-dd.
+     */
+    public String getServerDateString() {
+        return null;
+    }
+
+    /**
+     * Get the server local time after adding the given minutes.
+     */
+    public String getServerTimePlusMinutes(int minutes) {
+        return null;
+    }
+
+    /**
+     * Get the server local time after adding the given days.
+     */
+    public String getServerTimePlusDays(int days) {
+        return null;
+    }
+
+    /**
+     * Format a LocalDateTime using the server full formatter.
+     */
+    public String formatServerTime(LocalDateTime dateTime) {
+        return null;
+    }
+
+    /**
+     * Format a LocalDateTime using the server date-only formatter.
+     */
+    public String formatServerDate(LocalDateTime dateTime) {
+        return null;
     }
 
     // ==================== Module language resource API ====================
