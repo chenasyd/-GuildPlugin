@@ -4,7 +4,7 @@ version: 1.0.0
 author: "GuildPlugin Team"
 description: "Guild plugin announcement system - allows guild admins to publish and manage guild announcements"
 type: gui
-api-version: 1.6.2
+api-version: 1.5.7
 main: com.guild.module.example.announcement.AnnouncementModule
 depends: []
 soft-depends: []

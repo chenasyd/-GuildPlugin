@@ -4,7 +4,7 @@ version: 1.0.0
 author: "GuildPlugin Dev"
 description: "Test and verification module covering all SDK APIs"
 type: mixed
-api-version: 1.6.2
+api-version: 1.6.3
 main: com.guild.module.example.apitest.ApiTestModule
 depends: []
 soft-depends: ["WorldGuard"]
