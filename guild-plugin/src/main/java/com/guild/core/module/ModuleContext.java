@@ -111,7 +111,7 @@ public class ModuleContext {
             }
             fallback = strArgs[0];
         }
-        return ColorUtils.colorize(plugin.getLanguageManager().getIndexedMessage(key, fallback, strArgs));
+        return ColorUtils.colorize(plugin.getLanguageManager().getModuleIndexedMessage(key, fallback, strArgs));
     }
 
     // ==================== 线程调度 ====================
