@@ -521,7 +521,7 @@ admin.unfreeze.usage: "&c用法: /guildadmin unfreeze <工会名称>"
 admin.unfreeze.success: "&a工会 {guild} 已被解冻！"
 admin.unfreeze.not-found: "&c工会 {guild} 不存在！"
 
-# ============ 通知消息# ============ 通知消息 ============
+# ============ 通知消息 ============
 notify.new-application: "&6[工会通知] &e玩家 &f{player} &e申请加入 &f{guild}&e！"
 notify.application-tip: "&7提示: 输入 /guild applications 查看并处理申请"
 notify.pending-applications: "&6[工会通知] &e您有 &c{count} &e个待处理的加入申请！"
