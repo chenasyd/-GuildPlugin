@@ -329,6 +329,27 @@ String formatServerDate(LocalDateTime dateTime);
 
 Use these methods when you need shared server-local time formatting in modules.
 
+#### Console output API
+
+```java
+void consoleInfo(String message);
+void consoleWarn(String message);
+void consoleSevere(String message);
+
+void consoleInfo(String message, String... args);
+void consoleWarn(String message, String... args);
+void consoleSevere(String message, String... args);
+```
+
+The console methods support Minecraft-style color codes via `&` and indexed placeholders `{0}`, `{1}`, etc.
+
+Example:
+```java
+api.consoleInfo("&a[MyModule] loaded successfully");
+api.consoleWarn("&e[MyModule] missing config: {0}", "settings.yml");
+api.consoleSevere("&c[MyModule] fatal error: {0}", e.getMessage());
+```
+
 #### Module language resources
 
 Modules can request the core plugin to expose or load module-specific language files stored under `plugins/GuildPlugin/lang/modules/{moduleId}/{lang}.yml`.

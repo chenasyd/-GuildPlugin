@@ -158,6 +158,44 @@ public class GuildPluginAPI {
         return null;
     }
 
+    // ==================== Console output API ====================
+
+    /**
+     * Print a green console INFO message with color codes.
+     */
+    public void consoleInfo(String message) {
+    }
+
+    /**
+     * Print a yellow console WARN message with color codes.
+     */
+    public void consoleWarn(String message) {
+    }
+
+    /**
+     * Print a red console SEVERE message with color codes.
+     */
+    public void consoleSevere(String message) {
+    }
+
+    /**
+     * Print a green console INFO message with indexed placeholders.
+     */
+    public void consoleInfo(String message, String... args) {
+    }
+
+    /**
+     * Print a yellow console WARN message with indexed placeholders.
+     */
+    public void consoleWarn(String message, String... args) {
+    }
+
+    /**
+     * Print a red console SEVERE message with indexed placeholders.
+     */
+    public void consoleSevere(String message, String... args) {
+    }
+
     // ==================== Module language resource API ====================
 
     /**

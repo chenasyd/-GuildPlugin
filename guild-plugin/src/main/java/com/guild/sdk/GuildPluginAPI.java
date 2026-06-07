@@ -19,6 +19,7 @@ import com.guild.core.gui.GUI;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.module.hook.GUIExtensionHook;
 import com.guild.core.time.TimeProvider;
+import com.guild.core.utils.ConsoleLogger;
 import com.guild.sdk.command.ModuleCommandHandler;
 import com.guild.sdk.data.GuildData;
 import com.guild.sdk.data.MemberData;
@@ -535,6 +536,50 @@ public class GuildPluginAPI {
      */
     public String formatServerDate(LocalDateTime dateTime) {
         return TimeProvider.formatDate(dateTime);
+    }
+
+    // ==================== Console output API ====================
+
+    /**
+     * Print a green console INFO message with color codes.
+     */
+    public void consoleInfo(String message) {
+        ConsoleLogger.info(message);
+    }
+
+    /**
+     * Print a yellow console WARN message with color codes.
+     */
+    public void consoleWarn(String message) {
+        ConsoleLogger.warn(message);
+    }
+
+    /**
+     * Print a red console SEVERE message with color codes.
+     */
+    public void consoleSevere(String message) {
+        ConsoleLogger.severe(message);
+    }
+
+    /**
+     * Print a green console INFO message with indexed placeholders.
+     */
+    public void consoleInfo(String message, String... args) {
+        ConsoleLogger.info(message, args);
+    }
+
+    /**
+     * Print a yellow console WARN message with indexed placeholders.
+     */
+    public void consoleWarn(String message, String... args) {
+        ConsoleLogger.warn(message, args);
+    }
+
+    /**
+     * Print a red console SEVERE message with indexed placeholders.
+     */
+    public void consoleSevere(String message, String... args) {
+        ConsoleLogger.severe(message, args);
     }
 
     // ==================== Module language resource API ====================
