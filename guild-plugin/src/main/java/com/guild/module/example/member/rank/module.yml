@@ -4,7 +4,7 @@ version: 1.0.0
 author: "GuildPlugin Team"
 description: "Guild member contribution ranking system - tracks and displays member contribution leaderboard"
 type: gui
-api-version: 1.0.0
+api-version: 1.6.2
 main: com.guild.module.example.member.rank.MemberRankModule
 depends: []
 soft-depends: []

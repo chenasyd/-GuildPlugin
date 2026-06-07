@@ -33,8 +33,10 @@ public class ModuleManager {
     /** 共享 API 实例（所有模块共用，确保事件集中分发） */
     private final GuildPluginAPI sharedApi;
 
-    /** 核心支持的 API 版本号 */
-    private static final String CORE_API_VERSION = "1.0.0";
+    /** 核心支持的 API 版本号（运行时从插件描述读取） */
+    private String getCoreApiVersion() {
+        return plugin.getDescription().getVersion();
+    }
 
     public ModuleManager(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -423,7 +425,12 @@ public class ModuleManager {
                     "", descriptor.getId()));
             return;
         }
-        // TODO: 可在此处添加更精细的版本比较逻辑
+
+        String pluginVersion = getCoreApiVersion();
+        if (!pluginVersion.equals(requiredApi)) {
+            ConsoleLogger.warn(lang.getCoreIndexedMessage("module.warning.api-version-mismatch", "",
+                    descriptor.getId(), requiredApi, pluginVersion));
+        }
     }
 
     private void checkDependents(String moduleId) throws ModuleConflictException {

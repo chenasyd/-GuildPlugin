@@ -616,6 +616,7 @@ module.error.unload-failed-during-shutdown: "关闭时卸载模块失败: {0}"
 # 警告信息
 module.warning.soft-depend-missing: "&6[模块警告] 软依赖 [{0}] 未满足，模块 [{1}] 可能部分功能不可用"
 module.warning.no-api-version: "&6[模块警告] 模块 [{0}] 未声明 API 版本要求"
+module.warning.api-version-mismatch: "&e[模块警告] 模块 [{0}] 的 API 版本 ({1}) 与插件版本 ({2}) 不一致，可能导致兼容性问题！"
 
 # 模块管理命令
 module.command.usage-header: "&e&l====== &6&l模块管理命令 &e&l======"

@@ -617,6 +617,7 @@ module.error.unload-failed-during-shutdown: "Failed to unload module during shut
 # Warning messages
 module.warning.soft-depend-missing: "&6[Module Warning] Soft dependency [{0}] not met, module [{1}] may have partial functionality unavailable"
 module.warning.no-api-version: "&6[Module Warning] Module [{0}] did not declare API version requirement"
+module.warning.api-version-mismatch: "&e[Module Warning] Module [{0}] API version ({1}) does not match plugin version ({2}), may cause compatibility issues!"
 
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&lModule Management Commands &e&l======"

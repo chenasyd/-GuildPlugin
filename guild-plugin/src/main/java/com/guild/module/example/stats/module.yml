@@ -4,7 +4,7 @@ version: 1.0.0
 author: "GuildPlugin Team"
 description: "提供公会的多维度数据统计分析、可视化面板和全服排行榜"
 type: mixed
-api-version: 1.0.0
+api-version: 1.6.2
 main: com.guild.module.example.stats.GuildStatsModule
 depends: []
 soft-depends: []

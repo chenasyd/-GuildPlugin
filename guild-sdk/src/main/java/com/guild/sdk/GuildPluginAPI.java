@@ -27,6 +27,9 @@ import java.util.concurrent.CompletableFuture;
  * 运行时由主插件中的同名类提供真实实现。
  */
 public class GuildPluginAPI {
+    /** SDK API 版本号，与插件版本保持一致 */
+    public static final String API_VERSION = "1.6.2";
+
     private final HttpClientProvider httpClient = new HttpClientProvider();
 
     public GuildPluginAPI() {
