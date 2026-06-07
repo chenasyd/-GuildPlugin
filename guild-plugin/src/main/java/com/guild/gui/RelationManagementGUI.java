@@ -248,7 +248,7 @@ public class RelationManagementGUI implements GUI {
                         try {
                             allRelationsList.addAll(future.get());
                         } catch (Exception e) {
-                            plugin.getLogger().warning("加载工会关系时发生错误: " + e.getGuiMessage());
+                            plugin.getLogger().warning("加载工会关系时发生错误: " + e.getMessage());
                         }
                     }
                     return allRelationsList;
@@ -268,7 +268,7 @@ public class RelationManagementGUI implements GUI {
             CompatibleScheduler.runTask(plugin, () -> {
                 isLoading = false;
                 if (player.isOnline()) {
-                    player.sendMessage(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "relation-management.load-error", "加载关系数据时发生错误: {error}", "{error}", throwable.getGuiMessage())));
+                    player.sendMessage(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "relation-management.load-error", "加载关系数据时发生错误: {error}", "{error}", throwable.getMessage())));
                     plugin.getGuiManager().refreshGUI(player);
                 }
             });
@@ -385,7 +385,7 @@ public class RelationManagementGUI implements GUI {
             });
         }).exceptionally(throwable -> {
             CompatibleScheduler.runTask(plugin, () -> {
-                player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "relation-management.delete-error", "&c删除关系时发生错误: {0}", throwable.getGuiMessage())));
+                player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "relation-management.delete-error", "&c删除关系时发生错误: {0}", throwable.getMessage())));
             });
             return null;
         });

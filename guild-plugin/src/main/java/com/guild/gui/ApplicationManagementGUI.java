@@ -267,7 +267,7 @@ public class ApplicationManagementGUI implements GUI {
                 name = PlaceholderUtils.replaceApplicationPlaceholders("&e{applicant_name} " + languageManager.getGuiMessage(player, "application-management.application-suffix", "'s Application"), application.getPlayerName(), guild.getName(), application.getCreatedAt());
                 lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "application-management.status", "Status") + ": &e" + languageManager.getGuiMessage(player, "application-management.status-pending", "Pending")));
                 lore.add(PlaceholderUtils.replaceApplicationPlaceholders("&7" + languageManager.getGuiMessage(player, "application-management.apply-time", "Apply time") + ": {apply_time}", application.getPlayerName(), guild.getName(), application.getCreatedAt()));
-                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "application-management.message", "Message") + ": " + application.getGuiMessage()));
+                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "application-management.message", "Message") + ": " + application.getMessage()));
                 lore.add("");
                 lore.add(ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "application-management.left-accept", "Left click: Accept")));
                 lore.add(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "application-management.right-reject", "Right click: Reject")));

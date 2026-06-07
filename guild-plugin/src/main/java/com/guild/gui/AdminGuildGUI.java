@@ -170,7 +170,7 @@ public class AdminGuildGUI implements GUI {
                         try {
                             totalMembers[0] += future.get();
                         } catch (Exception e) {
-                            plugin.getLogger().severe("获取成员数量时发生错误: " + e.getGuiMessage());
+                            plugin.getLogger().severe("获取成员数量时发生错误: " + e.getMessage());
                         }
                     }
 

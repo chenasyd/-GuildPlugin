@@ -150,7 +150,7 @@ public class GuildFundsGUI implements GUI {
                 if (totals == null) totals = new ArrayList<>();
                 return true;
             } catch (Exception e) {
-                plugin.getLogger().warning("加载工会资金数据失败: " + e.getGuiMessage());
+                plugin.getLogger().warning("加载工会资金数据失败: " + e.getMessage());
                 totals = new ArrayList<>();
                 totalPlayers = 0;
                 return false;

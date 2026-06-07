@@ -107,7 +107,7 @@ public class GuildLogsGUI implements GUI {
                 
                 return true;
             } catch (Exception e) {
-                plugin.getLogger().severe("加载工会日志时发生错误: " + e.getGuiMessage());
+                plugin.getLogger().severe("加载工会日志时发生错误: " + e.getMessage());
                 e.printStackTrace();
                 
                 // 设置默认值

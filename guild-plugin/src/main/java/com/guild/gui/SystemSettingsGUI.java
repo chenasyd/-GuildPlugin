@@ -415,7 +415,7 @@ public class SystemSettingsGUI implements GUI {
             plugin.getLanguageManager().reloadLanguages();
             player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "system-settings.reload-success", "&a配置重载成功！")));
         } catch (Exception e) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "system-settings.reload-failed", "&c配置重载失败：{0}", e.getGuiMessage())));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "system-settings.reload-failed", "&c配置重载失败：{0}", e.getMessage())));
         }
     }
 
@@ -436,7 +436,7 @@ public class SystemSettingsGUI implements GUI {
             plugin.getConfigManager().saveMainConfig();
             player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "system-settings.save-success", "&a设置保存成功！")));
         } catch (Exception e) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "system-settings.save-failed", "&c设置保存失败：{0}", e.getGuiMessage())));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "system-settings.save-failed", "&c设置保存失败：{0}", e.getMessage())));
         }
     }
     
