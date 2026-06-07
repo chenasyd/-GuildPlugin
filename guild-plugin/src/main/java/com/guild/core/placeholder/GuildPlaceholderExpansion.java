@@ -4,12 +4,14 @@ import com.guild.GuildPlugin;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.services.GuildService;
+import com.guild.sdk.placeholder.PlaceholderProvider;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import com.guild.core.utils.PlaceholderUtils;
 
 import com.guild.core.time.TimeProvider;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -120,12 +122,43 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
                     return canSetHome(player);
                 case "canmanageeconomy":
                     return canManageEconomy(player);
+                case "module":
+                    return handleModulePlaceholder(player, args);
                 
                 default:
                     return "";
             }
         } catch (Exception e) {
             plugin.getLogger().warning("处理占位符时发生错误: " + e.getMessage());
+            return "";
+        }
+    }
+
+    private String handleModulePlaceholder(Player player, String[] args) {
+        if (args.length < 2 || plugin.getModuleManager() == null) {
+            return "";
+        }
+
+        var providers = plugin.getModuleManager().getSharedApi().getPlaceholderProviders();
+        if (providers == null || providers.isEmpty()) {
+            return "";
+        }
+
+        String identifier = args[1].toLowerCase();
+        var provider = providers.get(identifier);
+        if (provider == null) {
+            return "";
+        }
+
+        String params = "";
+        if (args.length > 2) {
+            params = String.join("_", Arrays.copyOfRange(args, 2, args.length));
+        }
+
+        try {
+            return provider.onRequest(player, params);
+        } catch (Exception e) {
+            plugin.getLogger().warning("占位符提供者 '" + identifier + "' 执行失败: " + e.getMessage());
             return "";
         }
     }

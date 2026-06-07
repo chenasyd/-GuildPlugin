@@ -301,6 +301,25 @@ Placeholder format: `%guild_module_<identifier>_<params>_<fallback>%`
 
 The `fallback` suffix is optional — when no guild or data exists, the fallback text is returned instead.
 
+Example:
+```java
+api.registerPlaceholderProvider(new PlaceholderProvider() {
+    @Override
+    public String getIdentifier() {
+        return "regioncount";
+    }
+
+    @Override
+    public String onRequest(Player player, String params) {
+        // params = "invested" for %guild_module_regioncount_invested%
+        return String.valueOf(getRegionCountFor(player, params));
+    }
+});
+```
+Use in PlaceholderAPI: `%guild_module_regioncount_invested%`
+
+> Requires the PlaceholderAPI plugin installed on the server. SDK modules can still register providers, but placeholders only resolve when PlaceholderAPI is available.
+
 #### HTTP Client
 
 ```java

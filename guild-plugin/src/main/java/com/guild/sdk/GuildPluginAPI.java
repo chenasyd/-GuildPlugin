@@ -451,12 +451,18 @@ public class GuildPluginAPI {
 
     /** 注册自定义占位符提供者 */
     public void registerPlaceholderProvider(PlaceholderProvider provider) {
-        placeholderProviders.put(provider.getIdentifier(), provider);
+        if (provider == null || provider.getIdentifier() == null || provider.getIdentifier().trim().isEmpty()) {
+            return;
+        }
+        placeholderProviders.put(provider.getIdentifier().toLowerCase(), provider);
     }
 
     /** 注销占位符提供者 */
     public void unregisterPlaceholderProvider(String identifier) {
-        placeholderProviders.remove(identifier);
+        if (identifier == null) {
+            return;
+        }
+        placeholderProviders.remove(identifier.toLowerCase());
     }
 
     /** 获取所有已注册的占位符提供者 */
