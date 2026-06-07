@@ -289,6 +289,8 @@ public class LanguageManager {
         if (langFiles == null) {
             return;
         }
+        // 对文件进行排序，确保输出顺序一致
+        java.util.Arrays.sort(langFiles, java.util.Comparator.comparing(File::getName));
 
         for (File langFile : langFiles) {
             String fileName = langFile.getName();
@@ -315,6 +317,8 @@ public class LanguageManager {
         if (langFiles == null) {
             return;
         }
+        // 对文件进行排序，确保输出顺序一致
+        java.util.Arrays.sort(langFiles, java.util.Comparator.comparing(File::getName));
 
         for (File langFile : langFiles) {
             String fileName = langFile.getName();
@@ -342,12 +346,17 @@ public class LanguageManager {
         if (moduleDirs == null) {
             return;
         }
+        // 对模块目录进行排序，确保输出顺序一致
+        java.util.Arrays.sort(moduleDirs, java.util.Comparator.comparing(File::getName));
 
         for (File moduleDir : moduleDirs) {
             File[] langFiles = moduleDir.listFiles((dir, name) -> name.endsWith(LANG_FILE_SUFFIX));
             if (langFiles == null) {
                 continue;
             }
+            // 对语言文件进行排序，确保输出顺序一致
+            java.util.Arrays.sort(langFiles, java.util.Comparator.comparing(File::getName));
+            
             for (File langFile : langFiles) {
                 String fileName = langFile.getName();
                 String lang = fileName.substring(0, fileName.length() - LANG_FILE_SUFFIX.length()).toLowerCase();
