@@ -41,7 +41,14 @@ public class LanguageManager {
     private static final String CORE_LANG_PATH = "lang/core/";
     private static final String MODULES_LANG_PATH = "lang/modules/";
     private static final String LANG_FILE_SUFFIX = ".yml";
-    private static final String[] KNOWN_LANGS = {LANG_EN, LANG_ZH, LANG_PL, LANG_BR};
+    private static final String[] KNOWN_LANGS = {
+        "en", "zh", "pl", "br",
+        // 欧洲语系 & 服务器常见
+        "de", "fr", "ru", "zh_tw", "ms",
+        // 常见 Minecraft 用户语言
+        "ja", "ko", "es", "pt", "it", "nl", "sv", "tr",
+        "vi", "th", "ar", "cs", "uk", "ro", "hu", "da", "fi", "no"
+    };
     
     public LanguageManager(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -514,7 +521,7 @@ public class LanguageManager {
         List<String> names = new ArrayList<>();
         Map<String, String> codeToName = new HashMap<>();
         codeToName.put("en", "English");
-        codeToName.put("zh", "Chinese");
+        codeToName.put("zh", "\u4e2d\u6587"); // 中文
         codeToName.put("pl", "Polski");
         codeToName.put("br", "Portugu\u00eas (BR)");
         codeToName.put("de", "Deutsch");
@@ -523,6 +530,8 @@ public class LanguageManager {
         codeToName.put("ja", "\u65e5\u672c\u8a9e");
         codeToName.put("ko", "\ud55c\uad6d\uc5b4");
         codeToName.put("ru", "\u0420\u0443\u0441\u0441\u043a\u0438\u0439");
+        codeToName.put("zh_tw", "\u7e41\u9ad4\u4e2d\u6587"); // 繁體中文
+        codeToName.put("ms", "Bahasa Melayu"); // 马来语
         codeToName.put("it", "Italiano");
         codeToName.put("nl", "Nederlands");
         codeToName.put("sv", "Svenska");
