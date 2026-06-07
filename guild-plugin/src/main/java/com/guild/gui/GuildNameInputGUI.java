@@ -37,7 +37,7 @@ public class GuildNameInputGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.title",
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.title",
                 "&6修改工会名称"));
     }
     
@@ -93,10 +93,10 @@ public class GuildNameInputGUI implements GUI {
      */
     private void displayCurrentName(Inventory inventory) {
         String nameText = currentName.isEmpty() ?
-            languageManager.getGuiMessage(player, "gui.no-name", "无名称") : currentName;
+            languageManager.getGuiMessage(player, "gui.common.no-name", "无名称") : currentName;
         ItemStack currentNameItem = createItem(
             Material.NAME_TAG,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.current-name", "&e当前工会名称")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.current-name", "&e当前工会名称")),
             ColorUtils.colorize("&7" + nameText)
         );
         inventory.setItem(11, currentNameItem);
@@ -109,17 +109,17 @@ public class GuildNameInputGUI implements GUI {
         // 确认按钮
         ItemStack confirmButton = createItem(
             Material.EMERALD,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.confirm-button", "&a确认修改")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.confirm-lore-1", "&7点击确认修改工会名称")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.confirm-lore-2", "&7注意：工会名称修改后需要重新登录才能生效"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.confirm-button", "&a确认修改")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.confirm-lore-1", "&7点击确认修改工会名称")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.confirm-lore-2", "&7注意：工会名称修改后需要重新登录才能生效"))
         );
         inventory.setItem(15, confirmButton);
         
         // 取消按钮
         ItemStack cancelButton = createItem(
             Material.REDSTONE,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.cancel-button", "&c取消")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.cancel-lore", "&7返回上一级菜单"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.cancel-button", "&c取消")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.cancel-lore", "&7返回上一级菜单"))
         );
         inventory.setItem(13, cancelButton);
     }
@@ -133,11 +133,11 @@ public class GuildNameInputGUI implements GUI {
         plugin.getGuiManager().setInputMode(player, "guild_name_input", this);
 
         // 发送输入提示
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.input-prompt", "&6请输入新的工会名称:")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.input-current", "&7当前名称: &f{current_name}", "{current_name}", currentName)));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.input-cancel", "&7输入 &c取消 &7来取消操作")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.input-color-support", "&7支持颜色字符，例如: &a&l绿色粗体 &7或 &c&o红色斜体")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.input-no-duplicate", "&7注意：工会名称不能与其他工会重复")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.input-prompt", "&6请输入新的工会名称:")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.input-current", "&7当前名称: &f{current_name}", "{current_name}", currentName)));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.input-cancel", "&7输入 &c取消 &7来取消操作")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.input-color-support", "&7支持颜色字符，例如: &a&l绿色粗体 &7或 &c&o红色斜体")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.input-no-duplicate", "&7注意：工会名称不能与其他工会重复")));
     }
     
     /**
@@ -146,7 +146,7 @@ public class GuildNameInputGUI implements GUI {
     private void handleConfirm(Player player) {
         // 检查权限（只有会长可以修改工会名称）
         if (!plugin.getGuildService().isGuildLeader(player.getUniqueId(), guild.getId())) {
-            String message = languageManager.getGuiMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
+            String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -174,7 +174,7 @@ public class GuildNameInputGUI implements GUI {
      */
     public void handleInputComplete(Player player, String input) {
         if (input == null || input.trim().isEmpty()) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.error-empty", "&c工会名称不能为空！")));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.error-empty", "&c工会名称不能为空！")));
             plugin.getGuiManager().openGUI(player, this);
             return;
         }
@@ -184,27 +184,27 @@ public class GuildNameInputGUI implements GUI {
         // 检查名称长度（基于清理后的名称，不包括颜色字符）
         String cleanName = newName.replaceAll("§[0-9a-fk-or]", "").replaceAll("&[0-9a-fk-or]", "");
         if (cleanName.length() < 2) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.error-too-short", "&c工会名称至少需要2个字符（不包括颜色字符）！")));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.error-too-short", "&c工会名称至少需要2个字符（不包括颜色字符）！")));
             plugin.getGuiManager().openGUI(player, this);
             return;
         }
 
         if (cleanName.length() > 16) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.error-too-long", "&c工会名称不能超过16个字符（不包括颜色字符）！")));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.error-too-long", "&c工会名称不能超过16个字符（不包括颜色字符）！")));
             plugin.getGuiManager().openGUI(player, this);
             return;
         }
 
         // 检查是否与当前名称相同
         if (newName.equalsIgnoreCase(currentName)) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.error-same-name", "&c新名称与当前名称相同！")));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.error-same-name", "&c新名称与当前名称相同！")));
             plugin.getGuiManager().openGUI(player, this);
             return;
         }
 
         // 检查名称格式（允许中文、英文、数字和颜色字符）
         if (!cleanName.matches("^[\\u4e00-\\u9fa5a-zA-Z0-9]+$")) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.error-invalid-char", "&c工会名称只能包含中文、英文和数字！")));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.error-invalid-char", "&c工会名称只能包含中文、英文和数字！")));
             plugin.getGuiManager().openGUI(player, this);
             return;
         }
@@ -222,7 +222,7 @@ public class GuildNameInputGUI implements GUI {
             if (existingGuild != null) {
                 // 名称已存在
                 CompatibleScheduler.runTask(plugin, () -> {
-                    player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.error-name-taken", "&c工会名称 &f{name} &c已被使用！", "{name}", newName)));
+                    player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.error-name-taken", "&c工会名称 &f{name} &c已被使用！", "{name}", newName)));
                     plugin.getGuiManager().openGUI(player, this);
                 });
                 return;
@@ -234,8 +234,8 @@ public class GuildNameInputGUI implements GUI {
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (success) {
                             // 更新成功
-                            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.success", "&a工会名称修改成功！")));
-                            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.success-new-name", "&7新名称: &f{new_name}", "{new_name}", newName)));
+                            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.success", "&a工会名称修改成功！")));
+                            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.success-new-name", "&7新名称: &f{new_name}", "{new_name}", newName)));
 
                             // 记录日志
                             plugin.getGuildService().logGuildActionAsync(
@@ -261,7 +261,7 @@ public class GuildNameInputGUI implements GUI {
                             });
                         } else {
                             // 更新失败
-                            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-name-input.error-failed", "&c工会名称修改失败！请重试")));
+                            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.error-failed", "&c工会名称修改失败！请重试")));
                             plugin.getGuiManager().openGUI(player, this);
                         }
                     });

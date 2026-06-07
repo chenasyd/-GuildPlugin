@@ -45,7 +45,7 @@ public class ConfirmLeaveGuildGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getGuiMessage(player, "confirm-leave-guild.title",
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.title",
                 "&c确认离开工会"));
     }
     
@@ -100,10 +100,10 @@ public class ConfirmLeaveGuildGUI implements GUI {
         String guildName = ColorUtils.stripColor(guild.getName());
         ItemStack info = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "confirm-leave-guild.info-title", "&c确认离开工会")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "confirm-leave-guild.guild", "&7工会: &e{guild}", "{guild}", guildName)),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "confirm-leave-guild.confirm-question", "&7你确定要离开这个工会吗？")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "confirm-leave-guild.warning", "&c此操作不可撤销！"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.info-title", "&c确认离开工会")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.guild", "&7工会: &e{guild}", "{guild}", guildName)),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.confirm-question", "&7你确定要离开这个工会吗？")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.warning", "&c此操作不可撤销！"))
         );
         inventory.setItem(13, info);
     }
@@ -115,16 +115,16 @@ public class ConfirmLeaveGuildGUI implements GUI {
         // 确认离开按钮
         ItemStack confirm = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "confirm-leave-guild.confirm-button", "&c确认离开")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "confirm-leave-guild.confirm-lore", "&7点击确认离开工会"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.confirm-button", "&c确认离开")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.confirm-lore", "&7点击确认离开工会"))
         );
         inventory.setItem(11, confirm);
         
         // 取消按钮
         ItemStack cancel = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "confirm-leave-guild.cancel-button", "&a取消")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "confirm-leave-guild.cancel-lore", "&7取消离开工会"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.cancel-button", "&a取消")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.cancel-lore", "&7取消离开工会"))
         );
         inventory.setItem(15, cancel);
     }
@@ -135,7 +135,7 @@ public class ConfirmLeaveGuildGUI implements GUI {
     private void handleConfirmLeave(Player player) {
         // 检查是否是会长
         if (player.getUniqueId().equals(guild.getLeaderUuid())) {
-            String message = languageManager.getGuiMessage(player, "leave.leader-cannot-leave", "&c工会会长不能离开工会！请先转让会长职位或删除工会。");
+            String message = languageManager.getGuiMessage(player, "gui.confirm-leave-guild.leave.leader-cannot-leave", "&c工会会长不能离开工会！请先转让会长职位或删除工会。");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -144,13 +144,13 @@ public class ConfirmLeaveGuildGUI implements GUI {
         plugin.getGuildService().removeGuildMemberAsync(player.getUniqueId(), player.getUniqueId()).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
-                    String message = languageManager.getGuiMessage(player, "leave.success", "&a你已成功离开工会 &e{guild} &a！", "{guild}", guild.getName());
+                    String message = languageManager.getGuiMessage(player, "gui.confirm-leave-guild.leave.success", "&a你已成功离开工会 &e{guild} &a！", "{guild}", guild.getName());
                     player.sendMessage(ColorUtils.colorize(message));
 
                     // 关闭GUI
                     player.closeInventory();
                 } else {
-                    String message = languageManager.getGuiMessage(player, "leave.failed", "&c离开工会失败！");
+                    String message = languageManager.getGuiMessage(player, "gui.confirm-leave-guild.leave.failed", "&c离开工会失败！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });

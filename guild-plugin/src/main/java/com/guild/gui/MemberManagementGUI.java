@@ -42,7 +42,7 @@ public class MemberManagementGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.title", "&6成员管理"));
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.title", "&6成员管理"));
     }
     
     @Override
@@ -102,40 +102,40 @@ public class MemberManagementGUI implements GUI {
         // 邀请成员按钮
         ItemStack inviteMember = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.invite-member.name", "&a邀请成员")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.invite-member.lore.1", "&7邀请新成员加入"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.invite-member.name", "&a邀请成员")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.invite-member.lore.1", "&7邀请新成员加入"))
         );
         inventory.setItem(45, inviteMember);
 
         // 踢出成员按钮
         ItemStack kickMember = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.kick-member.name", "&c踢出成员")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.kick-member.lore.1", "&7踢出工会成员"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.kick-member.name", "&c踢出成员")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.kick-member.lore.1", "&7踢出工会成员"))
         );
         inventory.setItem(47, kickMember);
 
         // 提升成员按钮
         ItemStack promoteMember = createItem(
             Material.GOLD_INGOT,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.promote-member.name", "&6提升成员")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.promote-member.lore.1", "&7提升成员职位"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.promote-member.name", "&6提升成员")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.promote-member.lore.1", "&7提升成员职位"))
         );
         inventory.setItem(49, promoteMember);
 
         // 降级成员按钮
         ItemStack demoteMember = createItem(
             Material.IRON_INGOT,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.demote-member.name", "&7降级成员")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.demote-member.lore.1", "&7降级成员职位"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.demote-member.name", "&7降级成员")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.demote-member.lore.1", "&7降级成员职位"))
         );
         inventory.setItem(51, demoteMember);
 
         // 返回按钮
         ItemStack back = createItem(
             Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.back.name", "&7返回")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.back.lore.1", "&7返回主菜单"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.back.name", "&7返回")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.back.lore.1", "&7返回主菜单"))
         );
         inventory.setItem(53, back);
     }
@@ -149,8 +149,8 @@ public class MemberManagementGUI implements GUI {
                 // 显示无成员信息
                 ItemStack noMembers = createItem(
                     Material.BARRIER,
-                    ColorUtils.colorize(languageManager.getGuiMessage(player, "member-mgmt.no-members", "&c暂无成员")),
-                    ColorUtils.colorize(languageManager.getGuiMessage(player, "member-mgmt.no-members.desc", "&7工会中还没有成员"))
+                    ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.member-mgmt.no-members", "&c暂无成员")),
+                    ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.member-mgmt.no-members.desc", "&7工会中还没有成员"))
                 );
                 inventory.setItem(22, noMembers);
                 return;
@@ -193,8 +193,8 @@ public class MemberManagementGUI implements GUI {
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.previous-page.name", "&c上一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.previous-page.lore.1", "&7查看上一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.previous-page.name", "&c上一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.previous-page.lore.1", "&7查看上一页"))
             );
             inventory.setItem(18, previousPage);
         }
@@ -203,8 +203,8 @@ public class MemberManagementGUI implements GUI {
         if (currentPage < totalPages) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.next-page.name", "&a下一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "member-management.items.next-page.lore.1", "&7查看下一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.next-page.name", "&a下一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-management.items.next-page.lore.1", "&7查看下一页"))
             );
             inventory.setItem(26, nextPage);
         }
@@ -222,26 +222,26 @@ public class MemberManagementGUI implements GUI {
         switch (member.getRole()) {
             case LEADER:
                 name = PlaceholderUtils.replaceMemberPlaceholders("&c{member_name}", member, guild, player);
-                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getGuiMessage(player, "member-details.role", "Role") + ": &c{member_role}", member, guild, player));
+                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getGuiMessage(player, "gui.member-management.member-details.role", "Role") + ": &c{member_role}", member, guild, player));
                 break;
             case OFFICER:
                 name = PlaceholderUtils.replaceMemberPlaceholders("&6{member_name}", member, guild, player);
-                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getGuiMessage(player, "member-details.role", "Role") + ": &6{member_role}", member, guild, player));
+                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getGuiMessage(player, "gui.member-management.member-details.role", "Role") + ": &6{member_role}", member, guild, player));
                 break;
             default:
                 name = PlaceholderUtils.replaceMemberPlaceholders("&f{member_name}", member, guild, player);
-                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getGuiMessage(player, "member-details.role", "Role") + ": &f{member_role}", member, guild, player));
+                lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getGuiMessage(player, "gui.member-management.member-details.role", "Role") + ": &f{member_role}", member, guild, player));
                 break;
         }
 
-        lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getGuiMessage(player, "member-details.join-time", "Join time") + ": {member_join_time}", member, guild, player));
-        lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getGuiMessage(player, "member-details.permissions", "Permissions") + ": " + getRolePermissions(member.getRole()), member, guild, player));
+        lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getGuiMessage(player, "gui.member-management.member-details.join-time", "Join time") + ": {member_join_time}", member, guild, player));
+        lore.add(PlaceholderUtils.replaceMemberPlaceholders("&7" + languageManager.getGuiMessage(player, "gui.member-management.member-details.permissions", "Permissions") + ": " + getRolePermissions(member.getRole()), member, guild, player));
         lore.add("");
-        lore.add(ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "member-details.view-details", "Left click: View details")));
+        lore.add(ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "gui.member-management.member-details.view-details", "Left click: View details")));
 
         if (member.getRole() != GuildMember.Role.LEADER) {
-            lore.add(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "member-details.kick-member", "Right click: Kick member")));
-            lore.add(ColorUtils.colorize("&6" + languageManager.getGuiMessage(player, "member-details.promote-demote", "Shift+Left click: Promote/Demote")));
+            lore.add(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.member-management.member-details.kick-member", "Right click: Kick member")));
+            lore.add(ColorUtils.colorize("&6" + languageManager.getGuiMessage(player, "gui.member-management.member-details.promote-demote", "Shift+Left click: Promote/Demote")));
         }
 
         if (meta != null) {
@@ -260,11 +260,11 @@ public class MemberManagementGUI implements GUI {
     private String getRolePermissions(GuildMember.Role role) {
         switch (role) {
             case LEADER:
-                return languageManager.getGuiMessage(player, "member-mgmt.role.leader-perms", "所有权限");
+                return languageManager.getGuiMessage(player, "gui.member-management.member-mgmt.role.leader-perms", "所有权限");
             case OFFICER:
-                return languageManager.getGuiMessage(player, "member-mgmt.role.officer-perms", "邀请、踢出");
+                return languageManager.getGuiMessage(player, "gui.member-management.member-mgmt.role.officer-perms", "邀请、踢出");
             default:
-                return languageManager.getGuiMessage(player, "member-mgmt.role.member-perms", "基础权限");
+                return languageManager.getGuiMessage(player, "gui.member-management.member-mgmt.role.member-perms", "基础权限");
         }
     }
     
@@ -384,20 +384,20 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             if (executor == null || !executor.getRole().canKick()) {
-                String message = languageManager.getGuiMessage(player, "gui.no-permission", "&c权限不足");
+                String message = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
             
             // 不能踢出会长
             if (member.getRole() == GuildMember.Role.LEADER) {
-                String message = languageManager.getGuiMessage(player, "gui.cannot-kick-leader", "&c不能踢出工会会长");
+                String message = languageManager.getGuiMessage(player, "gui.common.cannot-kick-leader", "&c不能踢出工会会长");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
             
             // 确认踢出
-            String message = languageManager.getGuiMessage(player, "gui.confirm-kick", "&c确定要踢出成员 {member} 吗？输入 &f/guild kick {member} confirm &c确认", "{member}", member.getPlayerName());
+            String message = languageManager.getGuiMessage(player, "gui.common.confirm-kick", "&c确定要踢出成员 {member} 吗？输入 &f/guild kick {member} confirm &c确认", "{member}", member.getPlayerName());
             player.sendMessage(ColorUtils.colorize(message));
         });
     }
@@ -409,25 +409,25 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             if (executor == null || executor.getRole() != GuildMember.Role.LEADER) {
-                String message = languageManager.getGuiMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
+                String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
             
             // 不能操作会长
             if (member.getRole() == GuildMember.Role.LEADER) {
-                String message = languageManager.getGuiMessage(player, "gui.cannot-modify-leader", "&c不能修改工会会长的职位");
+                String message = languageManager.getGuiMessage(player, "gui.common.cannot-modify-leader", "&c不能修改工会会长的职位");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
             
             if (member.getRole() == GuildMember.Role.OFFICER) {
                 // 降级为普通成员
-                String message = languageManager.getGuiMessage(player, "gui.confirm-demote", "&c确定要降级成员 {member} 吗？输入 &f/guild demote {member} confirm &c确认", "{member}", member.getPlayerName());
+                String message = languageManager.getGuiMessage(player, "gui.common.confirm-demote", "&c确定要降级成员 {member} 吗？输入 &f/guild demote {member} confirm &c确认", "{member}", member.getPlayerName());
                 player.sendMessage(ColorUtils.colorize(message));
             } else {
                 // 提升为官员
-                String message = languageManager.getGuiMessage(player, "gui.confirm-promote", "&a确定要提升成员 {member} 为官员吗？输入 &f/guild promote {member} confirm &a确认", "{member}", member.getPlayerName());
+                String message = languageManager.getGuiMessage(player, "gui.common.confirm-promote", "&a确定要提升成员 {member} 为官员吗？输入 &f/guild promote {member} confirm &a确认", "{member}", member.getPlayerName());
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -440,7 +440,7 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || !member.getRole().canInvite()) {
-                String message = languageManager.getGuiMessage(player, "gui.no-permission", "&c权限不足");
+                String message = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
@@ -458,7 +458,7 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || !member.getRole().canKick()) {
-                String message = languageManager.getGuiMessage(player, "gui.no-permission", "&c权限不足");
+                String message = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
@@ -476,7 +476,7 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-                String message = languageManager.getGuiMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
+                String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
@@ -494,7 +494,7 @@ public class MemberManagementGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
             if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-                String message = languageManager.getGuiMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
+                String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }

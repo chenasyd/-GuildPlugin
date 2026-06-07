@@ -47,7 +47,7 @@ public class InviteMemberGUI implements GUI {
     @Override
     public String getTitle() {
         String defaultTitle = "&6邀请成员 - 第" + (currentPage + 1) + "页";
-        return ColorUtils.colorize(languageManager.getGuiMessage(player, "invite-member.title",
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.invite-member.title",
                 defaultTitle, "{page}", String.valueOf(currentPage + 1), "{guild}", guild.getName()));
     }
     
@@ -169,8 +169,8 @@ public class InviteMemberGUI implements GUI {
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.previous-page", "&e上一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.view-previous", "&7点击查看上一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&e上一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-previous", "&7点击查看上一页"))
             );
             inventory.setItem(45, prevPage);
         }
@@ -180,8 +180,8 @@ public class InviteMemberGUI implements GUI {
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.next-page", "&e下一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.view-next", "&7点击查看下一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&e下一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-next", "&7点击查看下一页"))
             );
             inventory.setItem(53, nextPage);
         }
@@ -189,8 +189,8 @@ public class InviteMemberGUI implements GUI {
         // 返回按钮
         ItemStack back = createItem(
             Material.BARRIER,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.back", "&c返回")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "invite-member.back-to-settings", "&7返回工会设置"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "&c返回")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.invite-member.back-to-settings", "&7返回工会设置"))
         );
         inventory.setItem(49, back);
     }
@@ -206,8 +206,8 @@ public class InviteMemberGUI implements GUI {
             meta.setOwningPlayer(player);
             meta.setDisplayName(ColorUtils.colorize("&a" + player.getName()));
             meta.setLore(Arrays.asList(
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(this.player, "invite-member.click-invite", "点击邀请该玩家")),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(this.player, "invite-member.join-guild", "加入工会"))
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(this.player, "gui.invite-member.click-invite", "点击邀请该玩家")),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(this.player, "gui.invite-member.join-guild", "加入工会"))
             ));
             head.setItemMeta(meta);
         }

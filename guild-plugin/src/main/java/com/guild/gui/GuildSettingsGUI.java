@@ -80,7 +80,7 @@ public class GuildSettingsGUI implements GUI {
 
     @Override
     public String getTitle() {
-        String baseTitle = ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-settings-title",
+        String baseTitle = ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-settings.guild-settings-title",
                 "&6工会设置 - {guild_name}", "{guild_name}",
                 guild.getName() != null ? guild.getName() : "未知工会"));
         if (totalPages > 1) {
@@ -279,30 +279,30 @@ public class GuildSettingsGUI implements GUI {
         // 上一页按钮 (slot 45)
         if (currentPage > 1) {
             ItemStack prevItem = createItem(Material.ARROW,
-                    languageManager.getGuiMessage(player, "gui.previous-page", "&e&l上一页"),
+                    languageManager.getGuiMessage(player, "gui.common.previous-page", "&e&l上一页"),
                     false,
-                    languageManager.getGuiMessage(player, "gui.previous-page-hint", "&7点击返回上一页"));
+                    languageManager.getGuiMessage(player, "gui.common.previous-page-hint", "&7点击返回上一页"));
             inventory.setItem(45, prevItem);
         } else {
             // 第一页时显示灰色的不可用箭头
             ItemStack disabledPrev = createItem(Material.GRAY_DYE,
-                    languageManager.getGuiMessage(player, "gui.no-previous", "&7上一页"), false,
-                    languageManager.getGuiMessage(player, "gui.already-first-page", "&7已经是第一页"));
+                    languageManager.getGuiMessage(player, "gui.common.no-previous", "&7上一页"), false,
+                    languageManager.getGuiMessage(player, "gui.common.already-first-page", "&7已经是第一页"));
             inventory.setItem(45, disabledPrev);
         }
 
         // 下一页按钮 (slot 53)
         if (currentPage < totalPages) {
             ItemStack nextItem = createItem(Material.ARROW,
-                    languageManager.getGuiMessage(player, "gui.next-page", "&e&l下一页"),
+                    languageManager.getGuiMessage(player, "gui.common.next-page", "&e&l下一页"),
                     false,
-                    languageManager.getGuiMessage(player, "gui.next-page-hint", "&7点击查看更多功能"));
+                    languageManager.getGuiMessage(player, "gui.common.next-page-hint", "&7点击查看更多功能"));
             inventory.setItem(53, nextItem);
         } else {
             // 最后一页时显示灰色的不可用箭头
             ItemStack disabledNext = createItem(Material.GRAY_DYE,
-                    languageManager.getGuiMessage(player, "gui.no-next", "&7下一页"), false,
-                    languageManager.getGuiMessage(player, "gui.already-last-page", "&7已经是最后一页"));
+                    languageManager.getGuiMessage(player, "gui.common.no-next", "&7下一页"), false,
+                    languageManager.getGuiMessage(player, "gui.common.already-last-page", "&7已经是最后一页"));
             inventory.setItem(53, disabledNext);
         }
     }
@@ -312,63 +312,63 @@ public class GuildSettingsGUI implements GUI {
      */
     private void setupBackButton(Inventory inventory) {
         ItemStack back = createItem(Material.ARROW,
-                languageManager.getGuiMessage(player, "guild-settings.back", "&7返回"), false,
-                languageManager.getGuiMessage(player, "guild-settings.back-desc", "&7单击 &f返回主菜单"));
+                languageManager.getGuiMessage(player, "gui.guild-settings.back", "&7返回"), false,
+                languageManager.getGuiMessage(player, "gui.guild-settings.back-desc", "&7单击 &f返回主菜单"));
         inventory.setItem(49, back);
     }
 
     /** 设置设置按钮（简约化） - 仅第1页使用 */
     private void setupSettingsButtons(Inventory inventory) {
         ItemStack textEdit = createItem(Material.WRITABLE_BOOK,
-            languageManager.getGuiMessage(player, "guild-settings.text-edit", "&e文本编辑"), false,
-            languageManager.getGuiMessage(player, "guild-settings.text-edit-desc-left", "&7左键 &f修改名称"),
-            languageManager.getGuiMessage(player, "guild-settings.text-edit-desc-right", "&7右键 &f修改描述"),
-            languageManager.getGuiMessage(player, "guild-settings.text-edit-desc-shift-left", "&7Shift+左键 &f修改标签"));
+            languageManager.getGuiMessage(player, "gui.guild-settings.text-edit", "&e文本编辑"), false,
+            languageManager.getGuiMessage(player, "gui.guild-settings.text-edit-desc-left", "&7左键 &f修改名称"),
+            languageManager.getGuiMessage(player, "gui.guild-settings.text-edit-desc-right", "&7右键 &f修改描述"),
+            languageManager.getGuiMessage(player, "gui.guild-settings.text-edit-desc-shift-left", "&7Shift+左键 &f修改标签"));
         inventory.setItem(11, textEdit);
 
         ItemStack memberMgmt = createItem(Material.SHIELD,
-            languageManager.getGuiMessage(player, "guild-settings.member-mgmt", "&a成员管理"), false,
-            languageManager.getGuiMessage(player, "guild-settings.member-mgmt-desc-left", "&7左键 &f邀请成员"),
-            languageManager.getGuiMessage(player, "guild-settings.member-mgmt-desc-right", "&7右键 &f踢出成员"),
-            languageManager.getGuiMessage(player, "guild-settings.member-mgmt-desc-shift-left", "&7Shift+左键 &f提升/降级"));
+            languageManager.getGuiMessage(player, "gui.guild-settings.member-mgmt", "&a成员管理"), false,
+            languageManager.getGuiMessage(player, "gui.guild-settings.member-mgmt-desc-left", "&7左键 &f邀请成员"),
+            languageManager.getGuiMessage(player, "gui.guild-settings.member-mgmt-desc-right", "&7右键 &f踢出成员"),
+            languageManager.getGuiMessage(player, "gui.guild-settings.member-mgmt-desc-shift-left", "&7Shift+左键 &f提升/降级"));
         inventory.setItem(15, memberMgmt);
 
         ItemStack setHome = createItem(Material.COMPASS,
-            languageManager.getGuiMessage(player, "guild-settings.set-home", "&b设置工会家"), false,
-            languageManager.getGuiMessage(player, "guild-settings.set-home-desc", "&7单击 &f设置工会家"));
+            languageManager.getGuiMessage(player, "gui.guild-settings.set-home", "&b设置工会家"), false,
+            languageManager.getGuiMessage(player, "gui.guild-settings.set-home-desc", "&7单击 &f设置工会家"));
         inventory.setItem(13, setHome);
     }
 
     /** 设置功能按钮 - 仅第1页使用 */
     private void setupFunctionButtons(Inventory inventory) {
         ItemStack guildFunds = createItem(Material.EMERALD,
-            languageManager.getGuiMessage(player, "guild-settings.guild-funds", "&a工会资金"), false,
-            languageManager.getGuiMessage(player, "guild-settings.guild-funds-desc", "&7单击 &f查看成员存款"));
+            languageManager.getGuiMessage(player, "gui.guild-settings.guild-funds", "&a工会资金"), false,
+            languageManager.getGuiMessage(player, "gui.guild-settings.guild-funds-desc", "&7单击 &f查看成员存款"));
         inventory.setItem(28, guildFunds);
 
         ItemStack reservedSlot = createItem(Material.PAPER,
-            languageManager.getGuiMessage(player, "guild-settings.reserved", "&7预留扩展"), false,
-            languageManager.getGuiMessage(player, "guild-settings.reserved-desc", "&7功能开发中..."));
+            languageManager.getGuiMessage(player, "gui.guild-settings.reserved", "&7预留扩展"), false,
+            languageManager.getGuiMessage(player, "gui.guild-settings.reserved-desc", "&7功能开发中..."));
         inventory.setItem(29, reservedSlot);
 
         ItemStack guildLogs = createItem(Material.BOOK,
-            languageManager.getGuiMessage(player, "guild-settings.logs", "&6工会日志"), false,
-            languageManager.getGuiMessage(player, "guild-settings.logs-desc", "&7单击 &f查看工会日志"));
+            languageManager.getGuiMessage(player, "gui.guild-settings.logs", "&6工会日志"), false,
+            languageManager.getGuiMessage(player, "gui.guild-settings.logs-desc", "&7单击 &f查看工会日志"));
         inventory.setItem(31, guildLogs);
 
         ItemStack homeTeleport = createItem(Material.ENDER_PEARL,
-            languageManager.getGuiMessage(player, "guild-settings.home-teleport", "&d工会家传送"), false,
-            languageManager.getGuiMessage(player, "guild-settings.home-teleport-desc", "&7单击 &f传送到工会家"));
+            languageManager.getGuiMessage(player, "gui.guild-settings.home-teleport", "&d工会家传送"), false,
+            languageManager.getGuiMessage(player, "gui.guild-settings.home-teleport-desc", "&7单击 &f传送到工会家"));
         inventory.setItem(33, homeTeleport);
 
         ItemStack leaveGuild = createItem(Material.BARRIER,
-            languageManager.getGuiMessage(player, "guild-settings.leave", "&c离开工会"), false,
-            languageManager.getGuiMessage(player, "guild-settings.leave-desc", "&7单击 &f离开当前工会"));
+            languageManager.getGuiMessage(player, "gui.guild-settings.leave", "&c离开工会"), false,
+            languageManager.getGuiMessage(player, "gui.guild-settings.leave-desc", "&7单击 &f离开当前工会"));
         inventory.setItem(34, leaveGuild);
 
         ItemStack deleteGuild = createItem(Material.TNT,
-            languageManager.getGuiMessage(player, "guild-settings.delete", "&4删除工会"), false,
-            languageManager.getGuiMessage(player, "guild-settings.delete-desc", "&7单击 &f删除当前工会"));
+            languageManager.getGuiMessage(player, "gui.guild-settings.delete", "&4删除工会"), false,
+            languageManager.getGuiMessage(player, "gui.guild-settings.delete-desc", "&7单击 &f删除当前工会"));
         inventory.setItem(36, deleteGuild);
 
         // 返回主菜单（第1页也显示）
@@ -378,21 +378,21 @@ public class GuildSettingsGUI implements GUI {
     /** 显示当前设置信息 - 仅第1页使用 */
     private void displayCurrentSettings(Inventory inventory) {
         String name = guild.getName() != null ? guild.getName() :
-            languageManager.getGuiMessage(player, "guild-settings.overview-no-name", "无名称");
+            languageManager.getGuiMessage(player, "gui.guild-settings.overview-no-name", "无名称");
         String tag = guild.getTag() != null ? "&7[" + guild.getTag() + "&7]" :
-            languageManager.getGuiMessage(player, "guild-settings.overview-no-tag", "无标签");
+            languageManager.getGuiMessage(player, "gui.guild-settings.overview-no-tag", "无标签");
         String desc = guild.getDescription() != null ? guild.getDescription() :
-            languageManager.getGuiMessage(player, "guild-settings.overview-no-desc", "无描述");
+            languageManager.getGuiMessage(player, "gui.guild-settings.overview-no-desc", "无描述");
         String homeStatus = guild.hasHome() ?
-            languageManager.getGuiMessage(player, "guild-settings.overview-home-set", "&a已设置") :
-            languageManager.getGuiMessage(player, "guild-settings.overview-home-not-set", "&c未设置");
+            languageManager.getGuiMessage(player, "gui.guild-settings.overview-home-set", "&a已设置") :
+            languageManager.getGuiMessage(player, "gui.guild-settings.overview-home-not-set", "&c未设置");
 
         ItemStack overview = createItem(Material.PAPER,
-            languageManager.getGuiMessage(player, "guild-settings.overview", "&6工会概览"), false,
-            languageManager.getGuiMessage(player, "guild-settings.overview-name", "&7名称: &e{name}", "{name}", name),
-            languageManager.getGuiMessage(player, "guild-settings.overview-tag", "&7标签: &e{tag}", "{tag}", tag),
-            languageManager.getGuiMessage(player, "guild-settings.overview-desc", "&7描述: &7{desc}", "{desc}", desc),
-            languageManager.getGuiMessage(player, "guild-settings.overview-home", "&7工会家: {home}", "{home}", homeStatus)
+            languageManager.getGuiMessage(player, "gui.guild-settings.overview", "&6工会概览"), false,
+            languageManager.getGuiMessage(player, "gui.guild-settings.overview-name", "&7名称: &e{name}", "{name}", name),
+            languageManager.getGuiMessage(player, "gui.guild-settings.overview-tag", "&7标签: &e{tag}", "{tag}", tag),
+            languageManager.getGuiMessage(player, "gui.guild-settings.overview-desc", "&7描述: &7{desc}", "{desc}", desc),
+            languageManager.getGuiMessage(player, "gui.guild-settings.overview-home", "&7工会家: {home}", "{home}", homeStatus)
         );
         inventory.setItem(10, overview);
     }
@@ -412,7 +412,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleChangeName(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = languageManager.getGuiMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
+            String msg = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -422,7 +422,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleChangeDescription(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = languageManager.getGuiMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
+            String msg = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -432,7 +432,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleChangeTag(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = languageManager.getGuiMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
+            String msg = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -442,7 +442,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleInviteMember(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
-            String msg = languageManager.getGuiMessage(player, "gui.officer-or-higher", "&c需要官员或更高权限");
+            String msg = languageManager.getGuiMessage(player, "gui.common.officer-or-higher", "&c需要官员或更高权限");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -452,7 +452,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleKickMember(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
-            String msg = languageManager.getGuiMessage(player, "gui.officer-or-higher", "&c需要官员或更高权限");
+            String msg = languageManager.getGuiMessage(player, "gui.common.officer-or-higher", "&c需要官员或更高权限");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -462,18 +462,18 @@ public class GuildSettingsGUI implements GUI {
     private void handleSetHome(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = languageManager.getGuiMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
+            String msg = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
         plugin.getGuildService().setGuildHomeAsync(guild.getId(), player.getLocation(), player.getUniqueId()).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
-                    String message = languageManager.getGuiMessage(player, "sethome.success", "&a工会家设置成功！");
+                    String message = languageManager.getGuiMessage(player, "gui.guild-settings.sethome.success", "&a工会家设置成功！");
                     player.sendMessage(ColorUtils.colorize(message));
                     plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
                 } else {
-                    String message = languageManager.getGuiMessage(player, "sethome.failed", "&c工会家设置失败！");
+                    String message = languageManager.getGuiMessage(player, "gui.guild-settings.sethome.failed", "&c工会家设置失败！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
@@ -483,7 +483,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleGuildFunds(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null) {
-            String msg = languageManager.getGuiMessage(player, "gui.no-permission", "&c权限不足");
+            String msg = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -493,7 +493,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleGuildLogs(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null) {
-            String msg = languageManager.getGuiMessage(player, "gui.no-permission", "&c权限不足");
+            String msg = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -503,14 +503,14 @@ public class GuildSettingsGUI implements GUI {
     private void handleHomeTeleport(Player player) {
         // Folia 环境下传送功能因线程隔离无法使用，直接禁用
         if (ServerUtils.isFolia()) {
-            String message = languageManager.getGuiMessage(player, "home.folia-disabled", "&c传送功能在Folia环境下暂不可用！");
+            String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.folia-disabled", "&c传送功能在Folia环境下暂不可用！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
 
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null) {
-            String msg = languageManager.getGuiMessage(player, "gui.no-permission", "&c权限不足");
+            String msg = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -518,10 +518,10 @@ public class GuildSettingsGUI implements GUI {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (location != null) {
                     player.teleport(location);
-                    String message = languageManager.getGuiMessage(player, "home.success", "&a已传送到工会家！");
+                    String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.success", "&a已传送到工会家！");
                     player.sendMessage(ColorUtils.colorize(message));
                 } else {
-                    String message = languageManager.getGuiMessage(player, "home.not-set", "&c工会家未设置！");
+                    String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.not-set", "&c工会家未设置！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
@@ -536,7 +536,7 @@ public class GuildSettingsGUI implements GUI {
     private void handleDeleteGuild(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = languageManager.getGuiMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
+            String msg = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }

@@ -32,7 +32,7 @@ public class MainGuildGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.title", "&6工会系统"));
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.title", "&6工会系统"));
     }
     
     @Override
@@ -48,63 +48,63 @@ public class MainGuildGUI implements GUI {
         // 工会信息按钮
         ItemStack guildInfo = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-info.name", "&eGuild Info")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-info.lore.1", "&7View detailed guild information")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-info.lore.2", "&7Including basic info, statistics, etc."))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-info.name", "&eGuild Info")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-info.lore.1", "&7View detailed guild information")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-info.lore.2", "&7Including basic info, statistics, etc."))
         );
         inventory.setItem(20, guildInfo);
 
         // 成员管理按钮
         ItemStack memberManagement = createItem(
             Material.PLAYER_HEAD,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.member-management.name", "&eMember Management")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.member-management.lore.1", "&7Manage guild members")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.member-management.lore.2", "&7Invite, kick, permission management"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.member-management.name", "&eMember Management")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.member-management.lore.1", "&7Manage guild members")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.member-management.lore.2", "&7Invite, kick, permission management"))
         );
         inventory.setItem(22, memberManagement);
 
         // 申请管理按钮
         ItemStack applicationManagement = createItem(
             Material.PAPER,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.application-management.name", "&eApplication Management")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.application-management.lore.1", "&7Handle join applications")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.application-management.lore.2", "&7View application history"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.application-management.name", "&eApplication Management")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.application-management.lore.1", "&7Handle join applications")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.application-management.lore.2", "&7View application history"))
         );
         inventory.setItem(24, applicationManagement);
 
         // 工会设置按钮
         ItemStack guildSettings = createItem(
             Material.COMPASS,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-settings.name", "&eGuild Settings")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-settings.lore.1", "&7Modify guild settings")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-settings.lore.2", "&7Description, tag, permissions, etc."))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-settings.name", "&eGuild Settings")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-settings.lore.1", "&7Modify guild settings")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-settings.lore.2", "&7Description, tag, permissions, etc."))
         );
         inventory.setItem(29, guildSettings);
 
         // 工会列表按钮
         ItemStack guildList = createItem(
             Material.BOOKSHELF,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-list.name", "&eGuild List")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-list.lore.1", "&7View all guilds")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-list.lore.2", "&7Search, filter functions"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-list.name", "&eGuild List")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-list.lore.1", "&7View all guilds")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-list.lore.2", "&7Search, filter functions"))
         );
         inventory.setItem(31, guildList);
 
         // 工会关系按钮
         ItemStack guildRelations = createItem(
             Material.RED_WOOL,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-relations.name", "&eGuild Relations")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-relations.lore.1", "&7Manage guild relations")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.guild-relations.lore.2", "&7Allies, enemies, etc."))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-relations.name", "&eGuild Relations")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-relations.lore.1", "&7Manage guild relations")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-relations.lore.2", "&7Allies, enemies, etc."))
         );
         inventory.setItem(33, guildRelations);
 
         // 创建工会按钮
         ItemStack createGuild = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.create-guild.name", "&aCreate Guild")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.create-guild.lore.1", "&7Create a new guild")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "main-menu.create-guild.lore.2", "&7Requires coins"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.create-guild.name", "&aCreate Guild")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.create-guild.lore.1", "&7Create a new guild")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.create-guild.lore.2", "&7Requires coins"))
         );
         inventory.setItem(4, createGuild);
     }
@@ -145,7 +145,7 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
-                    String message = languageManager.getGuiMessage(player, "gui.no-guild", "&c您还没有工会");
+                    String message = languageManager.getGuiMessage(player, "gui.common.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -166,7 +166,7 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
-                    String message = languageManager.getGuiMessage(player, "gui.no-guild", "&c您还没有工会");
+                    String message = languageManager.getGuiMessage(player, "gui.common.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -187,7 +187,7 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
-                    String message = languageManager.getGuiMessage(player, "gui.no-guild", "&c您还没有工会");
+                    String message = languageManager.getGuiMessage(player, "gui.common.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -197,7 +197,7 @@ public class MainGuildGUI implements GUI {
                     // 确保在主线程中执行GUI操作
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null || !member.getRole().canInvite()) {
-                            String message = languageManager.getGuiMessage(player, "gui.no-permission", "&c权限不足");
+                            String message = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
@@ -220,7 +220,7 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
-                    String message = languageManager.getGuiMessage(player, "gui.no-guild", "&c您还没有工会");
+                    String message = languageManager.getGuiMessage(player, "gui.common.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -229,7 +229,7 @@ public class MainGuildGUI implements GUI {
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null) {
-                            String message = languageManager.getGuiMessage(player, "gui.leader-only", "&c只有工会会长才能执行此操作");
+                            String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
@@ -267,7 +267,7 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild == null) {
-                    String message = languageManager.getGuiMessage(player, "gui.no-guild", "&c您还没有工会");
+                    String message = languageManager.getGuiMessage(player, "gui.common.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -277,7 +277,7 @@ public class MainGuildGUI implements GUI {
                     // 确保在主线程中执行GUI操作
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (member == null || member.getRole() != com.guild.models.GuildMember.Role.LEADER) {
-                            String message = languageManager.getGuiMessage(player, "gui.manage-relations-leader-only", "&c只有工会会长才能管理关系");
+                            String message = languageManager.getGuiMessage(player, "gui.common.manage-relations-leader-only", "&c只有工会会长才能管理关系");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
@@ -300,7 +300,7 @@ public class MainGuildGUI implements GUI {
             // 确保在主线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, () -> {
                 if (guild != null) {
-                    String message = languageManager.getGuiMessage(player, "create.already-in-guild", "&c您已经在一个工会中了！");
+                    String message = languageManager.getGuiMessage(player, "gui.create-guild.create.already-in-guild", "&c您已经在一个工会中了！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }

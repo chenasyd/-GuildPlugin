@@ -35,7 +35,7 @@ public class GuildTagInputGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-tag-input.title",
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-tag-input.title",
                 "&6修改工会标签"));
     }
     
@@ -91,10 +91,10 @@ public class GuildTagInputGUI implements GUI {
      */
     private void displayCurrentTag(Inventory inventory) {
         String tagText = currentTag.isEmpty() ?
-            languageManager.getGuiMessage(player, "gui.no-tag", "无标签") : "[" + currentTag + "]";
+            languageManager.getGuiMessage(player, "gui.common.no-tag", "无标签") : "[" + currentTag + "]";
         ItemStack currentTagItem = createItem(
             Material.OAK_SIGN,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-tag-input.current-tag", "&e当前标签")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-tag-input.current-tag", "&e当前标签")),
             ColorUtils.colorize("&7" + tagText)
         );
         inventory.setItem(11, currentTagItem);
@@ -107,16 +107,16 @@ public class GuildTagInputGUI implements GUI {
         // 确认按钮
         ItemStack confirm = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-tag-input.confirm-button", "&a确认修改")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-tag-input.confirm-lore", "&7确认修改工会标签"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-tag-input.confirm-button", "&a确认修改")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-tag-input.confirm-lore", "&7确认修改工会标签"))
         );
         inventory.setItem(15, confirm);
         
         // 取消按钮
         ItemStack cancel = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-tag-input.cancel-button", "&c取消")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-tag-input.cancel-lore", "&7取消修改"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-tag-input.cancel-button", "&c取消")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-tag-input.cancel-lore", "&7取消修改"))
         );
         inventory.setItem(13, cancel);
     }
@@ -130,14 +130,14 @@ public class GuildTagInputGUI implements GUI {
 
         // 发送消息提示输入
         int maxLength = plugin.getConfigManager().getMainConfig().getInt("guild.max-tag-length", 6);
-        String message = languageManager.getGuiMessage(player, "gui.input-tag", "&a请在聊天框中输入新的工会标签（最多{max}字符）：", "{max}", String.valueOf(maxLength));
+        String message = languageManager.getGuiMessage(player, "gui.common.input-tag", "&a请在聊天框中输入新的工会标签（最多{max}字符）：", "{max}", String.valueOf(maxLength));
         player.sendMessage(ColorUtils.colorize(message));
 
         // 设置玩家为输入模式
         final int finalMaxLength = maxLength; // 使用final变量避免lambda中的变量冲突
         plugin.getGuiManager().setInputMode(player, input -> {
             if (input.length() > finalMaxLength) {
-                String errorMessage = languageManager.getGuiMessage(player, "gui.tag-too-long", "&c标签过长，最多{max}字符！", "{max}", String.valueOf(finalMaxLength));
+                String errorMessage = languageManager.getGuiMessage(player, "gui.common.tag-too-long", "&c标签过长，最多{max}字符！", "{max}", String.valueOf(finalMaxLength));
                 player.sendMessage(ColorUtils.colorize(errorMessage));
                 return false;
             }
@@ -148,13 +148,13 @@ public class GuildTagInputGUI implements GUI {
             // 保存到数据库
             plugin.getGuildService().updateGuildAsync(guild.getId(), guild.getName(), input, guild.getDescription(), player.getUniqueId()).thenAccept(success -> {
                 if (success) {
-                    String successMessage = languageManager.getGuiMessage(player, "gui.tag-updated", "&a工会标签已更新！");
+                    String successMessage = languageManager.getGuiMessage(player, "gui.common.tag-updated", "&a工会标签已更新！");
                     player.sendMessage(ColorUtils.colorize(successMessage));
 
                     // 安全刷新GUI
                     plugin.getGuiManager().refreshGUI(player);
                 } else {
-                    String errorMessage = languageManager.getGuiMessage(player, "gui.tag-update-failed", "&c工会标签更新失败！");
+                    String errorMessage = languageManager.getGuiMessage(player, "gui.common.tag-update-failed", "&c工会标签更新失败！");
                     player.sendMessage(ColorUtils.colorize(errorMessage));
                 }
             });

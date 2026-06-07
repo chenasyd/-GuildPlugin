@@ -83,7 +83,7 @@ public class GuildInfoGUI implements GUI {
 
     @Override
     public String getTitle() {
-        String baseTitle = ColorUtils.colorize(plugin.getLanguageManager().getGuiMessage(player, "guild-info.title", "&6工会信息"));
+        String baseTitle = ColorUtils.colorize(plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.title", "&6工会信息"));
         if (totalPages > 1) {
             baseTitle += ColorUtils.colorize(" &7(" +
                     plugin.getLanguageManager().getIndexedMessage(player, "gui.page-info",
@@ -184,19 +184,19 @@ public class GuildInfoGUI implements GUI {
 
         List<String> summaryLore = new ArrayList<>();
         summaryLore.add(ColorUtils.colorize("&7" +
-            plugin.getLanguageManager().getGuiMessage(player, "guild-info.tag", "标签") +
+            plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.tag", "标签") +
             ": " + (guild.getTag() != null ? "&7[" + guild.getTag() + "&7]" :
-            plugin.getLanguageManager().getGuiMessage(player, "guild-info.no-tag", "无"))));
+            plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.no-tag", "无"))));
         if (guild.getDescription() != null && !guild.getDescription().isEmpty()) {
             summaryLore.add(ColorUtils.colorize("&7" +
-                plugin.getLanguageManager().getGuiMessage(player, "guild-info.description", "描述") +
+                plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.description", "描述") +
                 ": " + guild.getDescription()));
         }
         summaryLore.add(ColorUtils.colorize("&7" +
-            plugin.getLanguageManager().getGuiMessage(player, "guild-info.leader", "会长") +
+            plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.leader", "会长") +
             ": &e" + guild.getLeaderName()));
         summaryLore.add(ColorUtils.colorize("&7" +
-            plugin.getLanguageManager().getGuiMessage(player, "guild-info.created-time", "创建时间") +
+            plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.created-time", "创建时间") +
             ": " + createdTime));
 
         ItemStack summaryItem = createItem(Material.PAPER,
@@ -207,9 +207,9 @@ public class GuildInfoGUI implements GUI {
         // 统计
         ItemStack statsItem = createItem(
             Material.EXPERIENCE_BOTTLE,
-            ColorUtils.colorize("&e" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.stats-title", "工会统计")),
-            ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.level", "等级") + ": &e" + guild.getLevel()),
-            ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.members", "成员") + ": &e" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.loading", "加载中...")),
+            ColorUtils.colorize("&e" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.stats-title", "工会统计")),
+            ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.level", "等级") + ": &e" + guild.getLevel()),
+            ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.members", "成员") + ": &e" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.loading", "加载中...")),
             getProgressBar(guild.getLevel(), guild.getBalance(), 8)
         );
         inventory.setItem(19, statsItem);
@@ -217,29 +217,29 @@ public class GuildInfoGUI implements GUI {
         // 经济
         ItemStack economyItem = createItem(
             Material.GOLD_INGOT,
-            ColorUtils.colorize("&6" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.economy-title", "经济信息")),
-            ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.balance", "资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())),
-            ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.next-level-requirement", "下级所需") + ": " + getNextLevelRequirement(guild.getLevel())),
+            ColorUtils.colorize("&6" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.economy-title", "经济信息")),
+            ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.balance", "资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())),
+            ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.next-level-requirement", "下级所需") + ": " + getNextLevelRequirement(guild.getLevel())),
             getProgressBar(guild.getLevel(), guild.getBalance(), 8),
             "",
-            ColorUtils.colorize("&e" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.funds-hint", "单击查看成员存款详情"))
+            ColorUtils.colorize("&e" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.funds-hint", "单击查看成员存款详情"))
         );
         inventory.setItem(28, economyItem);
 
         // 状态
         String status = guild.isFrozen()
-            ? "\u00a7c" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.status-frozen", "已冻结")
-            : "\u00a7a" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.status-normal", "正常");
+            ? "\u00a7c" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.status-frozen", "已冻结")
+            : "\u00a7a" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.status-normal", "正常");
         ItemStack statusItem = createItem(Material.BEACON,
-            "\u00a76" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.status", "工会状态"),
+            "\u00a76" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.status", "工会状态"),
             status);
         inventory.setItem(36, statusItem);
 
         // 返回按钮
         ItemStack backItem = createItem(
             Material.ARROW,
-            "\u00a7c" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.back", "返回"),
-            "\u00a7e" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.back-hint", "点击返回主菜单")
+            "\u00a7c" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.back", "返回"),
+            "\u00a7e" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.back-hint", "点击返回主菜单")
         );
         inventory.setItem(49, backItem);
 
@@ -252,21 +252,21 @@ public class GuildInfoGUI implements GUI {
 
                 ItemStack updatedStats = createItem(
                     Material.EXPERIENCE_BOTTLE,
-                    ColorUtils.colorize("&e" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.stats-title", "工会统计")),
-                    ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.level", "等级") + ": &e" + guild.getLevel()),
-                    ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.members", "成员") + ": &e" + memberCount + "/" + guild.getMaxMembers() + " " + plugin.getLanguageManager().getGuiMessage(player, "guild-info.people", "人")),
+                    ColorUtils.colorize("&e" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.stats-title", "工会统计")),
+                    ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.level", "等级") + ": &e" + guild.getLevel()),
+                    ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.members", "成员") + ": &e" + memberCount + "/" + guild.getMaxMembers() + " " + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.people", "人")),
                     getProgressBar(guild.getLevel(), guild.getBalance(), 8)
                 );
                 inventory.setItem(19, updatedStats);
 
                 ItemStack updatedEconomy = createItem(
                     Material.GOLD_INGOT,
-                    ColorUtils.colorize("&6" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.economy-title", "经济信息")),
-                    ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.balance", "资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())),
-                    ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.next-level-requirement", "下级所需") + ": " + getNextLevelRequirement(guild.getLevel())),
+                    ColorUtils.colorize("&6" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.economy-title", "经济信息")),
+                    ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.balance", "资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())),
+                    ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.next-level-requirement", "下级所需") + ": " + getNextLevelRequirement(guild.getLevel())),
                     getProgressBar(guild.getLevel(), guild.getBalance(), 8),
                     "",
-                    ColorUtils.colorize("&e" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.funds-hint", "单击查看成员存款详情"))
+                    ColorUtils.colorize("&e" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.funds-hint", "单击查看成员存款详情"))
                 );
                 inventory.setItem(28, updatedEconomy);
             });
@@ -385,34 +385,34 @@ public class GuildInfoGUI implements GUI {
         // 上一页 (slot 45)
         if (currentPage > 1) {
             ItemStack prev = createItem(Material.ARROW,
-                plugin.getLanguageManager().getGuiMessage(player, "gui.previous-page", "&e&l上一页"),
-                plugin.getLanguageManager().getGuiMessage(player, "gui.previous-page-hint", "&7点击返回上一页"));
+                plugin.getLanguageManager().getGuiMessage(player, "gui.common.previous-page", "&e&l上一页"),
+                plugin.getLanguageManager().getGuiMessage(player, "gui.common.previous-page-hint", "&7点击返回上一页"));
             inventory.setItem(45, prev);
         } else {
             ItemStack disabled = createItem(Material.GRAY_DYE,
-                plugin.getLanguageManager().getGuiMessage(player, "gui.no-previous", "&7上一页"),
-                plugin.getLanguageManager().getGuiMessage(player, "gui.already-first-page", "&7已经是第一页"));
+                plugin.getLanguageManager().getGuiMessage(player, "gui.common.no-previous", "&7上一页"),
+                plugin.getLanguageManager().getGuiMessage(player, "gui.common.already-first-page", "&7已经是第一页"));
             inventory.setItem(45, disabled);
         }
 
         // 下一页 (slot 53)
         if (currentPage < totalPages) {
             ItemStack next = createItem(Material.ARROW,
-                plugin.getLanguageManager().getGuiMessage(player, "gui.next-page", "&e&l下一页"),
-                plugin.getLanguageManager().getGuiMessage(player, "gui.next-page-hint", "&7点击查看更多"));
+                plugin.getLanguageManager().getGuiMessage(player, "gui.common.next-page", "&e&l下一页"),
+                plugin.getLanguageManager().getGuiMessage(player, "gui.common.next-page-hint", "&7点击查看更多"));
             inventory.setItem(53, next);
         } else {
             ItemStack disabled = createItem(Material.GRAY_DYE,
-                plugin.getLanguageManager().getGuiMessage(player, "gui.no-next", "&7下一页"),
-                plugin.getLanguageManager().getGuiMessage(player, "gui.already-last-page", "&7已经是最后一页"));
+                plugin.getLanguageManager().getGuiMessage(player, "gui.common.no-next", "&7下一页"),
+                plugin.getLanguageManager().getGuiMessage(player, "gui.common.already-last-page", "&7已经是最后一页"));
             inventory.setItem(53, disabled);
         }
     }
 
     private void setupBackButton(Inventory inventory) {
         ItemStack back = createItem(Material.ARROW,
-                "\u00a7c" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.back", "返回"),
-                "\u00a7e" + plugin.getLanguageManager().getGuiMessage(player, "guild-info.back-hint", "点击返回主菜单"));
+                "\u00a7c" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.back", "返回"),
+                "\u00a7e" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.back-hint", "点击返回主菜单"));
         inventory.setItem(49, back);
     }
 
@@ -464,7 +464,7 @@ public class GuildInfoGUI implements GUI {
     
     private String getNextLevelRequirement(int currentLevel) {
         if (currentLevel >= plugin.getMaxGuildLevel()) {
-            return plugin.getLanguageManager().getGuiMessage(player, "guild-info.max-level-reached", "已达到最高等级");
+            return plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.max-level-reached", "已达到最高等级");
         }
         double required = plugin.getRequirementForNextLevel(currentLevel);
         return plugin.getEconomyManager().format(required);
