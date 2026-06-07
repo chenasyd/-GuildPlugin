@@ -3,71 +3,79 @@ version: ${guild.version}
 main: com.guild.GuildPlugin
 api-version: '1.21'
 authors: [chenasyd]
-description: 一个功能完整的我的世界工会插件，支持Spigot和Folia
+description: A feature-complete Minecraft guild/faction system supporting Spigot and Folia
 website: https://github.com/chenasyd
 softdepend: [PlaceholderAPI, Vault]
 
-# 支持的最低版本
 load: POSTWORLD
-
-# Folia支持标记
 folia-supported: true
 
 commands:
   guild:
-    description: 工会系统主命令
+    description: Main guild command and GUI
     usage: /guild help
     aliases: [g, 工会]
     permission: guild.use
   guildadmin:
-    description: 工会管理员命令
+    description: Guild admin commands and GUI
     usage: /guildadmin help
     aliases: [ga, 工会管理]
     permission: guild.admin
+  guildmodule:
+    description: Hot-load/unload modules at runtime
+    usage: /guildmodule list
+    aliases: [gm]
+    permission: guild.admin.module
 
 permissions:
   guild.use:
-    description: 允许使用工会系统
+    description: Allows using the guild system
     default: true
   guild.admin:
-    description: 工会管理员权限
+    description: Guild administrator privileges
     default: op
   guild.create:
-    description: 允许创建工会
+    description: Allows creating a guild
     default: true
   guild.invite:
-    description: 允许邀请玩家加入工会
+    description: Allows inviting players to join the guild
     default: true
   guild.kick:
-    description: 允许踢出工会成员
+    description: Allows kicking guild members
     default: true
   guild.promote:
-    description: 允许提升工会成员
+    description: Allows promoting guild members
     default: true
   guild.demote:
-    description: 允许降级工会成员
+    description: Allows demoting guild members
     default: true
   guild.delete:
-    description: 允许删除工会
+    description: Allows deleting the guild
     default: op
   guild.sethome:
-    description: 允许设置工会家
+    description: Allows setting the guild home
     default: true
   guild.home:
-    description: 允许传送到工会家
+    description: Allows teleporting to the guild home
     default: true
   guild.relation:
-    description: 允许管理工会关系
+    description: Allows managing guild relations
     default: true
   guild.economy:
-    description: 允许管理工会经济
+    description: Allows managing guild economy
     default: true
   guild.deposit:
-    description: 允许向工会存入资金
+    description: Allows depositing funds to the guild
     default: true
   guild.withdraw:
-    description: 允许从工会取出资金
+    description: Allows withdrawing funds from the guild
     default: true
   guild.transfer:
-    description: 允许向其他工会转账
+    description: Allows transferring funds to other guilds
     default: true
+  guild.admin.module:
+    description: Allows managing modules (list/load/unload/reload)
+    default: op
+  guild.admin.update:
+    description: Allows downloading and installing plugin updates
+    default: op
