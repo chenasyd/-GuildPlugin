@@ -795,4 +795,10 @@ member-mgmt.no-members.desc: "&7There are no members in the guild yet"
 member-role.leader: "Leader"
 member-role.officer: "Officer"
 member-role.member: "Member"
+
+# ==================== Create Guild Feedback ====================
+create.name-too-short: "&cGuild name is too short! Minimum {min} characters required."
+create.name-too-long: "&cGuild name is too long! Maximum {max} characters allowed."
+create.tag-too-long: "&cGuild tag is too long! Maximum {max} characters allowed."
+create.economy-not-available: "&cEconomy system is not available, cannot create guild!"
 # ==================== Member Rank Module (member-rank) ====================

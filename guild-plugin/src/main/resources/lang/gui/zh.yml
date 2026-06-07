@@ -767,5 +767,11 @@ member-mgmt.no-members.desc: "&7工会中还没有成员"
 member-role.leader: "会长"
 member-role.officer: "官员"
 member-role.member: "成员"
+
+# ==================== 创建工会反馈 ====================
+create.name-too-short: "&c工会名称太短！最少需要 {min} 个字符。"
+create.name-too-long: "&c工会名称太长！最多只能有 {max} 个字符。"
+create.tag-too-long: "&c工会标签太长！最多只能有 {max} 个字符。"
+create.economy-not-available: "&c经济系统不可用，无法创建工会！"
 # ==================== 成员贡献排名模块 (member-rank) ====================
 # 模块生命周期 （来自member-rank模块，可删除）
