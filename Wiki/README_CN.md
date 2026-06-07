@@ -58,12 +58,14 @@
 | `/guild leave` | `guild.use` | 离开公会 |
 | `/guild delete` | `guild.delete` | 删除公会（打开确认 GUI） |
 | `/guild delete confirm` | `guild.delete` | 确认删除公会 |
+| `/guild delete cancel` | `guild.delete` | 取消删除公会 |
 | `/guild sethome` | `guild.sethome` | 设置公会传送点 |
 | `/guild home` | `guild.home` | 传送到公会传送点 |
-| `/guild apply <公会> [留言]` | `guild.use` | 申请加入公会 |
 | `/guild deposit <金额>` | `guild.deposit` | 存入资金 |
 | `/guild withdraw <金额>` | `guild.withdraw` | 提取资金 |
 | `/guild transfer <玩家> <金额>` | `guild.transfer` | 转账给其他玩家 |
+| `/guild logs` | `guild.use` | 查看公会操作日志 |
+| `/guild placeholder <player\|guild\|rank>` | `guild.use` | 获取占位符信息 |
 | `/guild time` | `guild.use` | 查看公会创建时长 |
 | `/guild help` | `guild.use` | 显示帮助信息 |
 
@@ -103,6 +105,7 @@
 | `/guildadmin economy <公会> <set\|add\|remove> <金额>` | `guild.admin` | 管理公会经济 |
 | `/guildadmin update` | `guild.admin` | 检查更新 |
 | `/guildadmin update download` | `guild.admin.update` | 下载并安装更新 |
+| `/guildadmin test <gui\|economy\|relation>` | `guild.admin` | 运行测试（GUI/经济/关系） |
 | `/guildadmin help` | `guild.admin` | 显示帮助信息 |
 
 #### `/guildadmin relation` 关系管理

@@ -42,12 +42,14 @@ Integrations: Vault (economy), PlaceholderAPI
 | `/guild leave` | `guild.use` | Leave guild |
 | `/guild delete` | `guild.delete` | Delete guild (opens confirm GUI) |
 | `/guild delete confirm` | `guild.delete` | Confirm deletion |
+| `/guild delete cancel` | `guild.delete` | Cancel deletion |
 | `/guild sethome` | `guild.sethome` | Set guild home |
 | `/guild home` | `guild.home` | Teleport to guild home |
-| `/guild apply <guild> [message]` | `guild.use` | Apply to join |
 | `/guild deposit <amount>` | `guild.deposit` | Deposit funds |
 | `/guild withdraw <amount>` | `guild.withdraw` | Withdraw funds |
 | `/guild transfer <player> <amount>` | `guild.transfer` | Transfer to player |
+| `/guild logs` | `guild.use` | View guild operation logs |
+| `/guild placeholder <player\|guild\|rank>` | `guild.use` | Get placeholders |
 | `/guild time` | `guild.use` | View guild age |
 | `/guild help` | `guild.use` | Show help |
 
@@ -87,6 +89,7 @@ Relation types: `neutral`, `ally`, `enemy`, `war`, `truce`
 | `/guildadmin economy <guild> <set\|add\|remove> <amount>` | `guild.admin` | Manage guild economy |
 | `/guildadmin update` | `guild.admin` | Check for updates |
 | `/guildadmin update download` | `guild.admin.update` | Download & install update |
+| `/guildadmin test <gui\|economy\|relation>` | `guild.admin` | Run admin tests |
 | `/guildadmin help` | `guild.admin` | Show help |
 
 #### `/guildadmin relation`
