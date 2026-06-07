@@ -286,12 +286,13 @@ public class LanguageManager {
         }
 
         File[] langFiles = coreDir.listFiles((dir, name) -> name.endsWith(LANG_FILE_SUFFIX));
-        if (langFiles == null) {
+        if (langFiles == null || langFiles.length == 0) {
             return;
         }
         // 对文件进行排序，确保输出顺序一致
         java.util.Arrays.sort(langFiles, java.util.Comparator.comparing(File::getName));
 
+        java.util.List<String> loadedLangs = new java.util.ArrayList<>();
         for (File langFile : langFiles) {
             String fileName = langFile.getName();
             String lang = fileName.substring(0, fileName.length() - LANG_FILE_SUFFIX.length()).toLowerCase();
@@ -299,11 +300,14 @@ public class LanguageManager {
                 FileConfiguration config = YamlConfiguration.loadConfiguration(langFile);
                 if (!config.getKeys(false).isEmpty()) {
                     registerCoreLanguageConfig(lang, config);
-                    logger.info("Loaded external core language file: " + langFile.getPath());
+                    loadedLangs.add(lang);
                 }
             } catch (Exception e) {
                 logger.warning("Failed to load external core language file " + langFile.getPath() + ": " + e.getMessage());
             }
+        }
+        if (!loadedLangs.isEmpty()) {
+            logger.info("Loaded external core languages: " + String.join(", ", loadedLangs));
         }
     }
 
@@ -314,12 +318,13 @@ public class LanguageManager {
         }
 
         File[] langFiles = guiDir.listFiles((dir, name) -> name.endsWith(LANG_FILE_SUFFIX));
-        if (langFiles == null) {
+        if (langFiles == null || langFiles.length == 0) {
             return;
         }
         // 对文件进行排序，确保输出顺序一致
         java.util.Arrays.sort(langFiles, java.util.Comparator.comparing(File::getName));
 
+        java.util.List<String> loadedLangs = new java.util.ArrayList<>();
         for (File langFile : langFiles) {
             String fileName = langFile.getName();
             String lang = fileName.substring(0, fileName.length() - LANG_FILE_SUFFIX.length()).toLowerCase();
@@ -328,11 +333,14 @@ public class LanguageManager {
                 if (!config.getKeys(false).isEmpty()) {
                     guiConfigs.put(lang, config);
                     supportedLanguages.add(lang);
-                    logger.info("Loaded external GUI language file: " + langFile.getPath());
+                    loadedLangs.add(lang);
                 }
             } catch (Exception e) {
                 logger.warning("Failed to load external GUI language file " + langFile.getPath() + ": " + e.getMessage());
             }
+        }
+        if (!loadedLangs.isEmpty()) {
+            logger.info("Loaded external GUI languages: " + String.join(", ", loadedLangs));
         }
     }
 
@@ -351,12 +359,14 @@ public class LanguageManager {
 
         for (File moduleDir : moduleDirs) {
             File[] langFiles = moduleDir.listFiles((dir, name) -> name.endsWith(LANG_FILE_SUFFIX));
-            if (langFiles == null) {
+            if (langFiles == null || langFiles.length == 0) {
                 continue;
             }
             // 对语言文件进行排序，确保输出顺序一致
             java.util.Arrays.sort(langFiles, java.util.Comparator.comparing(File::getName));
             
+            String moduleName = moduleDir.getName();
+            java.util.List<String> loadedLangs = new java.util.ArrayList<>();
             for (File langFile : langFiles) {
                 String fileName = langFile.getName();
                 String lang = fileName.substring(0, fileName.length() - LANG_FILE_SUFFIX.length()).toLowerCase();
@@ -365,11 +375,14 @@ public class LanguageManager {
                     if (!config.getKeys(false).isEmpty()) {
                         mergeModuleConfig(lang, config);
                         supportedLanguages.add(lang);
-                        logger.info("Loaded external module language file: " + langFile.getPath());
+                        loadedLangs.add(lang);
                     }
                 } catch (Exception e) {
                     logger.warning("Failed to load external module language file " + langFile.getPath() + ": " + e.getMessage());
                 }
+            }
+            if (!loadedLangs.isEmpty()) {
+                logger.info("Loaded external module '" + moduleName + "' languages: " + String.join(", ", loadedLangs));
             }
         }
     }
