@@ -96,9 +96,9 @@ language:
   default: "en"
   # Whether players can switch languages
   allow-player-switch: true
-  # Additional language list (for loading built-in language files not in the plugin data folder)
-  # The plugin automatically scans the data directory for all messages_*.yml files
-  # This list is only used to ensure the corresponding default language files are extracted from the JAR
+  # Additional language list (for loading languages by code from the plugin data folder or bundled resources)
+  # The plugin automatically scans the data directory for language files under lang/core/, lang/gui/, and lang/modules/
+  # This list is used to attempt loading these languages at startup.
   # Example: ["de", "fr", "es", "ja"]
   additional-languages: []
 
