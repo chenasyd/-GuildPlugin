@@ -362,12 +362,12 @@ public class GuildDetailGUI implements GUI {
     
     private void deleteGuild(Player player) {
         if (!player.hasPermission("guild.admin")) {
-            player.sendMessage(ColorUtils.colorize("&c您没有权限执行此操作！"));
+            player.sendMessage(ColorUtils.colorize(languageManager.getMessage(player, "general.no-permission", "&c您没有权限执行此操作！")));
             return;
         }
-        // 打开统一的确认删除GUI
+        // 打开统一的确认删除GUI（注：不需要也不能先 closeInventory，
+        // GUI 管理器会在 openGUI 中处理界面切换）
         plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player));
-        player.closeInventory();
     }
     
     private String formatTime(java.time.LocalDateTime dateTime) {
