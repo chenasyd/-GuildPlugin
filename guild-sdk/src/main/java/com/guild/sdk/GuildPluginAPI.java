@@ -16,6 +16,7 @@ import com.guild.sdk.http.HttpClientProvider;
 import com.guild.sdk.placeholder.PlaceholderProvider;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import java.io.File;
 
 import java.util.List;
 import java.util.Map;
@@ -103,6 +104,30 @@ public class GuildPluginAPI {
 
     public HttpClientProvider getHttpClient() {
         return httpClient;
+    }
+
+    // ==================== Module language resource API ====================
+
+    /**
+     * Load a module language file from plugins/GuildPlugin/lang/modules/{moduleId}/{lang}.yml.
+     * This only reads external module language files and falls back to bundled resources if needed.
+     */
+    public boolean loadModuleLanguageResource(String moduleId, String lang) {
+        return false;
+    }
+
+    /**
+     * Release a bundled module language file to the plugin data folder under lang/modules/{moduleId}/{lang}.yml.
+     */
+    public boolean releaseModuleLanguageResource(String moduleId, String lang) {
+        return false;
+    }
+
+    /**
+     * Get the local module language file path for the given module and language code.
+     */
+    public File getModuleLanguageFile(String moduleId, String lang) {
+        return null;
     }
 
     // ==================== 成员管理 API（v1.5 新增） ====================

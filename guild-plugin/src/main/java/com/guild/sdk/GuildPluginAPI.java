@@ -33,6 +33,7 @@ import com.guild.sdk.event.MemberRoleChangeEventHandler;
 import com.guild.sdk.gui.ModuleGUIFactory;
 import com.guild.sdk.http.HttpClientProvider;
 import com.guild.sdk.placeholder.PlaceholderProvider;
+import java.io.File;
 
 /**
  * 公会插件 SDK - 统一 API 门面
@@ -482,6 +483,53 @@ public class GuildPluginAPI {
     /** 获取 HTTP 客户端提供者（用于高级配置） */
     public HttpClientProvider getHttpClient() {
         return httpClient;
+    }
+
+    // ==================== Module language resource API ====================
+
+    /**
+     * Load module language resources for the given module ID.
+     * Delegates to LanguageManager which will attempt external then bundled files.
+     */
+    public boolean loadModuleLanguageResource(String moduleId, String lang) {
+        if (moduleId == null || moduleId.trim().isEmpty()) return false;
+        // Current LanguageManager API loads all languages for a module; use that for now.
+        return plugin.getLanguageManager().loadModuleLanguageResourcesForModule(moduleId);
+    }
+
+    /**
+     * Release a bundled module language resource for a specific language to disk.
+     */
+    public boolean releaseModuleLanguageResource(String moduleId, String lang) {
+        if (moduleId == null || moduleId.trim().isEmpty() || lang == null || lang.trim().isEmpty()) return false;
+        String moduleDirName = moduleId.toLowerCase();
+        String language = lang.toLowerCase();
+        String resourcePath = "lang/modules/" + moduleDirName + "/" + language + ".yml";
+        if (plugin.getResource(resourcePath) == null) {
+            return false;
+        }
+        File file = new File(plugin.getDataFolder(), resourcePath);
+        if (file.exists()) return false;
+        try {
+            plugin.saveResource(resourcePath, false);
+            plugin.getLogger().info("Extracted bundled module language file: " + resourcePath);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        } catch (Exception e) {
+            plugin.getLogger().warning("Failed to extract bundled module language file " + resourcePath + ": " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Return the File object for module language file under plugin data folder.
+     */
+    public File getModuleLanguageFile(String moduleId, String lang) {
+        if (moduleId == null || moduleId.trim().isEmpty() || lang == null || lang.trim().isEmpty()) return null;
+        String moduleDirName = moduleId.toLowerCase();
+        String language = lang.toLowerCase();
+        return new File(plugin.getDataFolder(), "lang/modules/" + moduleDirName + "/" + language + ".yml");
     }
 
     // ==================== 内部工具方法 ====================

@@ -343,6 +343,42 @@ public class LanguageManager {
         return loaded;
     }
 
+    public boolean releaseModuleLanguageResourcesForModule(String moduleId) {
+        if (moduleId == null || moduleId.trim().isEmpty()) {
+            return false;
+        }
+
+        String moduleDirName = moduleId.toLowerCase();
+        File moduleDir = new File(plugin.getDataFolder(), MODULES_LANG_PATH + moduleDirName);
+        if (!moduleDir.exists()) {
+            moduleDir.mkdirs();
+        }
+
+        boolean extracted = false;
+        for (String lang : KNOWN_LANGS) {
+            String resourcePath = MODULES_LANG_PATH + moduleDirName + "/" + lang + LANG_FILE_SUFFIX;
+            if (plugin.getResource(resourcePath) != null) {
+                File file = new File(plugin.getDataFolder(), resourcePath);
+                if (!file.exists()) {
+                    try {
+                        plugin.saveResource(resourcePath, false);
+                        extracted = true;
+                        logger.info("Extracted bundled module language file: " + resourcePath);
+                    } catch (IllegalArgumentException e) {
+                        // no bundled resource for this path
+                    } catch (Exception e) {
+                        logger.warning("Failed to extract bundled module language file " + resourcePath + ": " + e.getMessage());
+                    }
+                }
+            }
+        }
+
+        if (extracted) {
+            logger.info("Released bundled module language resources for module '" + moduleDirName + "'.");
+        }
+        return extracted;
+    }
+
     private boolean loadExternalModuleLanguageDirectory(File moduleDir) {
         File[] langFiles = moduleDir.listFiles((dir, name) -> name.endsWith(LANG_FILE_SUFFIX));
         if (langFiles == null || langFiles.length == 0) {

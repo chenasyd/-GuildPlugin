@@ -315,6 +315,26 @@ HttpClientProvider getHttpClient();
 new HttpClientProvider(int connectTimeout, int readTimeout);
 ```
 
+#### Module language resources
+
+Modules can request the core plugin to expose or load module-specific language files stored under `plugins/GuildPlugin/lang/modules/{moduleId}/{lang}.yml`.
+
+```java
+// Extract bundled module language file (if present) for a specific language
+boolean released = api.releaseModuleLanguageResource("my-module", "zh");
+
+// Load module language resources (will try external files first, then bundled ones)
+boolean loaded = api.loadModuleLanguageResource("my-module", "zh");
+
+// Get the on-disk File for a module language file
+File langFile = api.getModuleLanguageFile("my-module", "zh");
+```
+
+Notes:
+- `releaseModuleLanguageResource` extracts a bundled language file to the plugin data folder.
+- `loadModuleLanguageResource` delegates to the LanguageManager and may load all available languages for the module.
+- `getModuleLanguageFile` returns the expected path under the plugin data folder; the file may not exist until released.
+
 ### Data Models
 
 #### GuildData
