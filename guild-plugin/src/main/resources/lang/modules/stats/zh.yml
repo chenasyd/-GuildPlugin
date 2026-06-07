@@ -1,0 +1,6 @@
+# ============ 统计模块消息 ============
+module.stats.init-done: "&a[数据统计] 初始化完成，已注册CustomGUI x2"
+module.stats.loaded: "&a[数据统计] 公会统计系统已启用"
+module.stats.unloaded: "&e[数据统计] 统计系统已关闭"
+module.stats.button-name: "数据统计"
+module.stats.ranking-button: "公会排行"

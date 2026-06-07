@@ -1,9 +1,9 @@
-# ==========================================
-# GuildPlugin - Mensagens do Núcleo (não GUI)
-# Prompt de comandos, erros, notificações, nomes de modelo
+﻿# ==========================================
+# GuildPlugin - Core Messages (non-GUI)
+# Command prompts, error messages, model display names, notifications
 # ==========================================
 
-# ============ Geral ============
+# ============ General ============
 general.prefix: "&6[Guild] &r"
 general.no-permission: "&cVocê não tem permissão!"
 general.player-only: "&cApenas jogadores podem executar!"
@@ -15,7 +15,7 @@ general.service-error: "&cServiço não inicializado!"
 general.unknown-command: "&cComando desconhecido! Use /guild help."
 general.no-guild: "&cVocê não está em nenhuma guilda!"
 
-# ============ Criar ============
+# ============ Create Guild ============
 create.usage: "&eUso: /guild create <nome> [tag] [descrição]"
 create.name-too-short: "&cNome muito curto! Mín {min} caracteres."
 create.name-too-long: "&cNome muito longo! Máx {max} caracteres."
@@ -41,7 +41,7 @@ guild.create.success: "&aGuilda criada!"
 guild.create.exists: "&cNome já existe!"
 guild.create.error: "&cErro ao criar!"
 
-# ============ Info ============
+# ============ Guild Info ============
 guild.info.not-in-guild: "&cVocê não está em nenhuma guilda!"
 guild.info.message: "&aInfo:\n&bNome: &f{0}\n&bNível: &f{1}\n&bLíder: &f{2}\n&bMembros: &f{3}\n&bCriada: &f{4}"
 guild.info.error: "&cErro ao buscar info!"
@@ -55,7 +55,7 @@ info.role: "&eSeu cargo: &f{role}"
 info.created: "&eCriada: &f{date}"
 info.no-guild: "&cVocê não está em nenhuma guilda!"
 
-# ============ Membros ============
+# ============ Members ============
 guild.members.not-in-guild: "&cVocê não está em nenhuma guilda!"
 guild.members.empty: "&cSem membros na guilda!"
 guild.members.title: "&aLista de Membros:"
@@ -66,7 +66,7 @@ members.member-format: "&e{role} {name} &7- {status}"
 members.total: "&eTotal: {count} membros"
 members.no-members: "&cSem membros!"
 
-# ============ Convite ============
+# ============ Invite ============
 guild.invite.usage: "&cUso: /guild invite <jogador>"
 guild.invite.player-not-found: "&cJogador não online!"
 guild.invite.self: "&cNão pode se convidar!"
@@ -105,7 +105,7 @@ invitation.status.accepted: "Aceito"
 invitation.status.declined: "Recusado"
 invitation.status.expired: "Expirado"
 
-# ============ Aceitar/Recusar ============
+# ============ Accept/Decline ============
 guild.accept.usage: "&cUso: /guild accept <guilda>"
 guild.accept.already-in-guild: "&cJá está em uma guilda!"
 guild.accept.guild-not-found: "&cGuilda não existe!"
@@ -118,7 +118,7 @@ guild.decline.no-invitation: "&cSem convite ou expirou!"
 guild.decline.success: "&aConvite recusado!"
 guild.decline.error: "&cErro ao recusar!"
 
-# ============ Expulsar/Sair ============
+# ============ Kick / Leave ============
 guild.kick.usage: "&cUso: /guild kick <jogador>"
 guild.kick.player-not-found: "&cJogador não online!"
 guild.kick.not-in-guild: "&cVocê não está em nenhuma guilda!"
@@ -146,7 +146,7 @@ leave.use-delete: "&cUse /guild delete."
 leave.success-with-guild: "&aVocê saiu de: {guild}"
 leave.failed: "&cFalha ao sair!"
 
-# ============ Deletar ============
+# ============ Delete ============
 guild.delete.not-in-guild: "&cVocê não está em nenhuma guilda!"
 guild.delete.only-master: "&cSó o líder pode deletar!"
 guild.delete.error: "&cErro ao deletar!"
@@ -158,7 +158,7 @@ delete.success: "&aGuilda {guild} deletada!"
 delete.failed: "&cFalha ao deletar!"
 delete.canceled: "&aCancelado!"
 
-# ============ Promover/Rebaixar ============
+# ============ Promote / Demote ============
 guild.promote.usage: "&cUso: /guild promote <jogador>"
 guild.promote.player-not-found: "&cJogador não online!"
 guild.promote.only-master: "&cSó o líder!"
@@ -180,7 +180,22 @@ demote.success: "&aRebaixado &e{player}&a!"
 demote.demoted: "&aRebaixado em &e{guild}&a!"
 demote.failed: "&cFalha!"
 permissions.promote.no-permission: "&cSem permissão!"
+permissions.promote.usage: "&eUsage: /guild promote <player>"
+permissions.promote.player-not-found: "&cPlayer {player} is not online!"
+permissions.promote.not-in-guild: "&cPlayer {player} is not in your guild!"
+permissions.promote.cannot-promote-self: "&cYou cannot promote yourself!"
+permissions.promote.already-highest: "&cPlayer {player} is already at the highest rank!"
+permissions.promote.success: "&aPromoted {player} to {role}!"
+permissions.promote.cannot-promote: "&cCannot promote this player!"
 permissions.demote.no-permission: "&cSem permissão!"
+permissions.demote.usage: "&eUsage: /guild demote <player>"
+permissions.demote.player-not-found: "&cPlayer {player} is not online!"
+permissions.demote.not-in-guild: "&cPlayer {player} is not in your guild!"
+permissions.demote.cannot-demote-self: "&cYou cannot demote yourself!"
+permissions.demote.cannot-demote-leader: "&cCannot demote the guild leader!"
+permissions.demote.already-lowest: "&cPlayer {player} is already at the lowest rank!"
+permissions.demote.success: "&aDemoted {player} to {role}!"
+permissions.demote.cannot-demote: "&cCannot demote this player!"
 
 # ============ Home ============
 guild.sethome.not-in-guild: "&cVocê não está em nenhuma guilda!"
@@ -195,7 +210,7 @@ sethome.only-leader: "&cSó o líder!"
 sethome.success: "&aHome definida!"
 sethome.failed: "&cFalha!"
 
-# ============ Economia ============
+# ============ Economy ============
 guild.deposit.usage: "&cUso: /guild deposit <valor>"
 guild.deposit.not-in-guild: "&cVocê não está em nenhuma guilda!"
 guild.deposit.insufficient-funds: "&cSaldo insuficiente!"
@@ -227,9 +242,18 @@ guild.economy.invalid-amount: "&cValor inválido!"
 guild.economy.invalid-subcommand: "&cSubcomando inválido!"
 guild.economy.info: "&aInfo Econômica:\n&bSaldo: &f{0}"
 guild.economy.error: "&cErro!"
+deposit.usage: "&cUsage: /guild deposit <amount>"
+deposit.invalid-amount: "&cInvalid amount format!"
+deposit.must-be-positive: "&cAmount must be greater than 0!"
 deposit.contribution-desc: "{player} depositou {amount}"
 deposit.log-desc: "{player} depositou {amount}"
 deposit.log-details: "Valor:{amount}"
+withdraw.usage: "&cUsage: /guild withdraw <amount>"
+withdraw.invalid-amount: "&cInvalid amount format!"
+withdraw.must-be-positive: "&cAmount must be greater than 0!"
+transfer.usage: "&cUsage: /guild transfer <guild> <amount>"
+transfer.invalid-amount: "&cInvalid amount format!"
+transfer.must-be-positive: "&cAmount must be greater than 0!"
 economy.no-guild: "&cVocê não está em nenhuma guilda!"
 economy.info: "&6Info Econômica"
 economy.balance: "&7Saldo: &e{balance}"
@@ -248,8 +272,11 @@ economy.target-guild-not-found: "&cGuilda não existe!"
 economy.cannot-transfer-to-self: "&cNão pode transferir para si!"
 economy.disband-compensation: "&aCompensação: {amount}"
 economy.level-up: "&aGuilda subiu! Nível: {level}"
+guild.deposit.insufficient-funds: "&cSaldo insuficiente!"
+guild.withdraw.insufficient-funds: "&cSaldo insuficiente!"
+guild.transfer.insufficient-funds: "&cSaldo insuficiente!"
 
-# ============ Relações ============
+# ============ Relations ============
 guild.relation.usage: "&cUso: /guild relation <list|create|delete|accept|reject>"
 guild.relation.not-in-guild: "&cVocê não está em nenhuma guilda!"
 guild.relation.no-permission: "&cSem permissão!"
@@ -272,6 +299,13 @@ guild.relation.list.title: "&aLista de Relações:"
 guild.relation.list.item: "&b{0} - &f{1}"
 relation.no-guild: "&cVocê não está em nenhuma guilda!"
 relation.only-leader: "&cSó o líder!"
+relation.help-title: "&6=== Guild Relations Management ==="
+relation.help-list: "&e/guild relation list &7- View all relations"
+relation.help-create: "&e/guild relation create <guild> <type> &7- Create relation"
+relation.help-delete: "&e/guild relation delete <guild> &7- Delete relation"
+relation.help-accept: "&e/guild relation accept <guild> &7- Accept relation request"
+relation.help-reject: "&e/guild relation reject <guild> &7- Reject relation request"
+relation.help-types: "&7Relation types: &eally(ally), enemy(enemy), war(war), truce(truce), neutral(neutral)"
 relation.no-relations: "&7Sem relações."
 relation.list-title: "&6=== Relações ==="
 relation.list-format: "&e{other_guild} &7- {type} ({status})"
@@ -298,6 +332,15 @@ relation.truce-end-failed: "&cFalha!"
 relation.truce-proposed: "&aProposta de trégua enviada para {guild}"
 relation.truce-propose-failed: "&cFalha!"
 relation.war-notification: "&4[Guerra] &cSua guilda está em guerra com {guild}!"
+relations.type-ally: "Ally"
+relations.type-enemy: "Enemy"
+relations.type-war: "War"
+relations.type-truce: "Truce"
+relations.type-neutral: "Neutral"
+relations.status-pending: "Pending"
+relations.status-active: "Active"
+relations.status-expired: "Expired"
+relations.status-cancelled: "Cancelled"
 relation.type.ally: "Aliado"
 relation.type.enemy: "Inimigo"
 relation.type.war: "Guerra"
@@ -314,7 +357,7 @@ guild.logs.no-permission: "&cSem permissão!"
 guild.logs.title: "&aLogs:"
 guild.logs.error: "&cErro!"
 
-# ============ Placeholder ============
+# ============ Placeholders ============
 guild.placeholder.usage: "&cUso: /guild placeholder <player|guild|rank>"
 guild.placeholder.player: "&aPlaceholder: &f{0}"
 guild.placeholder.guild: "&aPlaceholder: &f{0}"
@@ -322,13 +365,25 @@ guild.placeholder.rank: "&aPlaceholder: &f{0}"
 guild.placeholder.not-in-guild: "&cVocê não está em nenhuma guilda!"
 guild.placeholder.invalid-type: "&cTipo inválido!"
 guild.placeholder.error: "&cErro!"
+placeholder.role-leader: "Leader"
+placeholder.role-officer: "Officer"
+placeholder.role-member: "Member"
+placeholder.role-unknown: "Unknown"
+placeholder.home-not-set: "None"
+placeholder.level-max: "Max level reached"
+placeholder.usage: "&cUsage: /guild placeholder <variable name>"
+placeholder.example: "&eExample: /guild placeholder name"
+placeholder.available: "&eAvailable variables: name, tag, description, leader, membercount, role, hasguild, isleader, isofficer"
 
-# ============ Tempo ============
+# ============ Time ============
 guild.time.not-in-guild: "&cVocê não está em nenhuma guilda!"
 guild.time.age: "&aCriada: {0}\n&aIdade: &f{1} dias {2} horas"
 guild.time.error: "&cErro!"
+time.title: "&6=== Time Test ==="
+time.real-time: "&eReal time: &f"
+time.game-time: "&eGame time: &f"
 
-# ============ Ajuda ============
+# ============ Help ============
 help.title: "&a=== Guild Help ==="
 help.main-menu: "&e/guild &7- Menu principal"
 help.create: "&e/guild create <nome> &7- Criar guilda"
@@ -354,7 +409,7 @@ help.placeholder: "&e/guild placeholder &7- Placeholders"
 help.time: "&e/guild time &7- Tempo"
 help.help: "&e/guild help &7- Ajuda"
 
-# ============ Admin ============
+# ============ Admin Commands ============
 admin.delete.usage: "&cUso: /guildadmin delete <guilda>"
 admin.delete.success: "&aGuilda {guild} deletada!"
 admin.delete.failed: "&cFalha!"
@@ -381,6 +436,21 @@ admin.help.reload: "&e/guildadmin reload &7- Recarregar"
 admin.help.help: "&e/guildadmin help &7- Ajuda"
 admin.help.update: "&e/guildadmin update &7- Atualizar"
 admin.help.update-download: "&e/guildadmin update download &7- Baixar"
+admin.update.checking: "&6[GuildPlugin] &eChecking for latest version..."
+admin.update.fetch-failed: "&c[GuildPlugin] Failed to fetch version info."
+admin.update.already-latest: "&a[GuildPlugin] You are already running the latest version (v{version})."
+admin.update.download-broadcast: "&6[GuildPlugin] &e{player} downloaded v{version}. Restart to apply."
+admin.update.checking-dual: "&6[GuildPlugin] &eChecking for updates from GitHub & Modrinth..."
+admin.update.unreachable: "&c[GuildPlugin] Unable to check for updates. Both GitHub and Modrinth are unreachable."
+admin.update.header: "&6======== GuildPlugin Update ========"
+admin.update.source: "&eSource: &f{source}"
+admin.update.current: "&eCurrent: &fv{version}"
+admin.update.latest: "&eLatest: &f&av{version}"
+admin.update.latest-up-to-date: "&eLatest: &f&7v{version}"
+admin.update.changelog-title: "&eChangelog:"
+admin.update.usage-download: "&eUsage: &f/guildadmin update download &7to download the update"
+admin.update.up-to-date: "&aYou are running the latest version."
+admin.update.footer: "&6===================================="
 admin.info.usage: "&cUso: /guildadmin info <guilda>"
 admin.info.title: "&6=== Info ==="
 admin.info.name: "&eNome: &f{name}"
@@ -398,8 +468,46 @@ admin.list.empty: "&cNenhuma guilda"
 admin.list.format: "&e{name} &7- Líder: &f{leader} &7- Nível: &f{level} &7{status}"
 admin.list.status-frozen: "&c[Congelada]"
 admin.list.status-normal: "&a[Normal]"
+admin.relation.usage: "&cUsage: /guildadmin relation <list|create|delete|gui>"
+admin.relation.title: "&6=== Guild Relation List ==="
+admin.relation.empty: "&cNo guild relations"
+admin.relation.format: "&e{guild1} \u2194 {guild2} &7- {type} &7- {status}"
+admin.relation.gui-player-only: "&cThis command can only be executed by a player!"
+admin.relation.invalid-operation: "&cInvalid relation operation! Use list|create|delete|gui"
+admin.relation.create-usage: "&cUsage: /guildadmin relation create <guild1> <guild2> <relation type>"
+admin.relation.create-types: "&7Relation types: ally|enemy|war|truce|neutral"
+admin.relation.delete-usage: "&cUsage: /guildadmin relation delete <guild1> <guild2>"
+admin.relation.invalid-type: "&cInvalid relation type! Use: ally, enemy, war, truce, neutral"
+admin.relation.create-success: "&aRelation created: {guild1} \u2194 {guild2} ({type})"
+admin.relation.create-failed: "&cFailed to create relation!"
+admin.relation.delete-success: "&aRelation deleted: {guild1} \u2194 {guild2}"
+admin.relation.delete-failed: "&cFailed to delete relation!"
+admin.relation.not-found: "&cNo relation found between guild {guild1} and {guild2}!"
+admin.relation.not-found-guild: "&cGuild {guild} does not exist!"
+admin.relation.cannot-relation-self: "&cCannot establish a relation with yourself!"
+admin.relation.create-error: "&cError creating relation: {error}"
+admin.relation.delete-error: "&cError deleting relation: {error}"
+admin.relation.fetch-error: "Error fetching guild relations: {error}"
+admin.relation.status.pending: "Pending"
+admin.relation.status.active: "Active"
+admin.relation.status.expired: "Expired"
+admin.relation.status.cancelled: "Cancelled"
+admin.relation.status.unknown: "Unknown"
+admin.relation.type.ally: "Ally"
+admin.relation.type.enemy: "Enemy"
+admin.relation.type.war: "War"
+admin.relation.type.truce: "Truce"
+admin.relation.type.neutral: "Neutral"
+admin.relation.type.unknown: "Unknown"
 admin.reload.success: "&aConfiguração recarregada!"
 admin.reload.failed: "&cFalha ao recarregar: {error}"
+admin.test.usage: "&cUsage: /guildadmin test <test-type>"
+admin.test.types: "&7test-type: gui, economy, relation"
+admin.test.gui-success: "&aAdmin GUI opened for testing."
+admin.test.gui-player-only: "&cThis command can only be executed by a player!"
+admin.test.economy-usage: "&cUsage: /guildadmin test economy <guild name> <operation> <amount>"
+admin.test.relation-usage: "&cUsage: /guildadmin test relation create <guild1> <guild2> <relation type>"
+admin.test.invalid-type: "&cInvalid test type! Use gui, economy, relation"
 admin.transfer.usage: "&cUso: /guildadmin transfer <guilda> <novo líder>"
 admin.transfer.player-not-online: "&cJogador não online!"
 admin.transfer.not-member: "&cJogador não é membro!"
@@ -409,22 +517,28 @@ admin.unfreeze.usage: "&cUso: /guildadmin unfreeze <guilda>"
 admin.unfreeze.success: "&aGuilda {guild} descongelada!"
 admin.unfreeze.not-found: "&cGuilda não existe!"
 
-# ============ Notificações ============
+# ============ Notifications ============
 notify.new-application: "&6[Notificação] &eJogador &f{player} &ese candidatou a &f{guild}&e!"
+notify.application-tip: "&7Tip: Type /guild applications to view and process applications"
 notify.pending-applications: "&6[Notificação] &eVocê tem &c{count} &ecandidaturas pendentes!"
+notify.applications-tip: "&7Tip: Type /guild applications for details"
+notify.applications-actionbar: "&eYou have {count} pending applications!"
 notify.pending-invitations: "&6[Convite] &eVocê tem &a{count} &econvites pendentes!"
 notify.invitation-item: "&7- De &f{guild} &7(por {inviter})"
 notify.application-approved: "&a[Notificação] &fCandidatura aprovada!"
+notify.application-approved-actionbar: "&aYou have successfully joined guild &f{guild}"
 notify.application-rejected: "&c[Notificação] &fCandidatura rejeitada!"
 notify.invitation-accepted: "&a[Notificação] &f{target} aceitou seu convite!"
 notify.invitation-declined: "&c[Notificação] &f{target} recusou seu convite!"
 
-# ============ Modelos ============
+# ============ Model Display Names ============
+# Guild roles
 guild-role.leader: "&6Líder"
 guild-role.officer: "&eOficial"
 guild-role.member: "&7Membro"
 guild-role.unknown: "&7Desconhecido"
 
+# Log types
 log.type.guild-created: "Guilda Criada"
 log.type.guild-dissolved: "Guilda Dissolvida"
 log.type.guild-renamed: "Renomeada"
@@ -451,12 +565,14 @@ log.type.invitation-sent: "Convite"
 log.type.invitation-accepted: "Convite Aceito"
 log.type.invitation-rejected: "Convite Rejeitado"
 
+# Log time
 log.time.unknown: "Desconhecido"
 log.time.days-ago: "{0} dias atrás"
 log.time.hours-ago: "{0} horas atrás"
 log.time.minutes-ago: "{0} minutos atrás"
 log.time.just-now: "Agora"
 
+# Contribution types
 contribution.type.deposit: "Depósito"
 contribution.type.withdraw: "Saque"
 contribution.type.transfer: "Transferência"
@@ -464,6 +580,10 @@ contribution.type.creation: "Criação"
 contribution.type.upgrade: "Upgrade"
 contribution.type.admin: "Admin"
 
+# Application status
 application.status.pending: "Pendente"
 application.status.approved: "Aprovado"
 application.status.rejected: "Rejeitado"
+
+
+
