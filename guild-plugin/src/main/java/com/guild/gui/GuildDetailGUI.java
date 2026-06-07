@@ -222,8 +222,8 @@ public class GuildDetailGUI implements GUI {
 
         // 会长转移（仅管理员）
         if (viewer.hasPermission("guild.admin")) {
-            String transferKey = transferMode ? "guild-detail.transfer-leader-active" : "guild-detail.transfer-leader";
-            String transferDescKey = transferMode ? "guild-detail.transfer-leader-active-desc" : "guild-detail.transfer-leader-desc";
+            String transferKey = transferMode ? "gui.guild-detail.transfer-leader-active" : "gui.guild-detail.transfer-leader";
+            String transferDescKey = transferMode ? "gui.guild-detail.transfer-leader-active-desc" : "gui.guild-detail.transfer-leader-desc";
             inventory.setItem(51, createItem(Material.GOLD_INGOT,
                 ColorUtils.colorize(languageManager.getGuiMessage(viewer, transferKey,
                         transferMode ? "&e请点击要转移给的成员..." : "&c转移会长")),
