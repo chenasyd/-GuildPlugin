@@ -205,7 +205,7 @@ public class SystemSettingsGUI implements GUI {
             Material.EMERALD,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-reload", "&a重载配置")),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-reload-lore-1", "&7重新加载所有配置文件")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-reload-lore-2", "&7包括messages.yml等")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-reload-lore-2", "&7包括配置文件等")),
             "",
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.system-settings-click-to-reload", "&e点击重载配置"))
         );

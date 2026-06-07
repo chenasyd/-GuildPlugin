@@ -34,9 +34,6 @@ public class ConfigManager {
         // 主配置文件
         loadConfig("config.yml");
 
-        // GUI配置文件（已废弃，现在使用多语言GUI配置）
-        // gui.yml已废弃，所有内容已迁移到messages.yml
-
         // 数据库配置文件
         loadConfig("database.yml");
     }
@@ -71,17 +68,6 @@ public class ConfigManager {
      */
     public FileConfiguration getMainConfig() {
         return getConfig("config.yml");
-    }
-    
-    /**
-     * 获取GUI配置文件（已废弃，请使用LanguageManager.getMessage）
-     * @deprecated 请使用 {@code LanguageManager.getMessage()} 方法
-     */
-    @Deprecated
-    public FileConfiguration getGuiConfig() {
-        // gui.yml已废弃，所有内容已迁移到messages.yml
-        // 直接返回空配置，不再加载gui.yml文件
-        return new YamlConfiguration();
     }
     
     /**
