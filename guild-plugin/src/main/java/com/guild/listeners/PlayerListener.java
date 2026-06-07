@@ -1,4 +1,4 @@
-﻿package com.guild.listeners;
+package com.guild.listeners;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUIManager;

@@ -1,4 +1,4 @@
-﻿package com.guild.commands;
+package com.guild.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;

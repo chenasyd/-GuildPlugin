@@ -1,4 +1,4 @@
-﻿package com.guild.commands;
+package com.guild.commands;
 
 import com.guild.GuildPlugin;
 import com.guild.core.module.GuildModule;

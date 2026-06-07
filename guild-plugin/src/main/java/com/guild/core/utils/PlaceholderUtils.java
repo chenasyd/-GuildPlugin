@@ -1,4 +1,4 @@
-﻿package com.guild.core.utils;
+package com.guild.core.utils;
 
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;

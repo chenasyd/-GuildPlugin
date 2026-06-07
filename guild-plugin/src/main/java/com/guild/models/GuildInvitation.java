@@ -1,4 +1,4 @@
-﻿package com.guild.models;
+package com.guild.models;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
