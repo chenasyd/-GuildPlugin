@@ -7,7 +7,6 @@ import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import com.guild.models.GuildLog;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -46,7 +45,7 @@ public class GuildLogsGUI implements GUI {
     @Override
     public String getTitle() {
         String title = plugin.getLanguageManager().getMessage(player, "guild-logs.title", "&6工会日志 - {guild_name}");
-        return ColorUtils.colorize(title.replace("{guild_name}", guild.getName()));
+        return ColorUtils.colorize(title.replace("{guild_name}", ColorUtils.stripColor(guild.getName())));
     }
     
     @Override
@@ -165,15 +164,15 @@ public class GuildLogsGUI implements GUI {
         String name = ColorUtils.colorize("&e" + log.getLogType().getDisplayName());
 
         List<String> lore = new java.util.ArrayList<>();
-        lore.add(ColorUtils.colorize("&7操作者: &f" + log.getPlayerName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.operator", "Operator") + ": &f" + ColorUtils.stripColor(log.getPlayerName())));
         if (log.getPlayerUuid() != null && !log.getPlayerUuid().equals("SYSTEM")) {
             lore.add(ColorUtils.colorize("&8UUID: " + log.getPlayerUuid().substring(0, 8) + "..."));
         }
-        lore.add(ColorUtils.colorize("&7时间: &f" + log.getSimpleTime(languageManager.getPlayerLanguage(player))));
-        lore.add(ColorUtils.colorize("&7描述: &f" + log.getDescription()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.time", "Time") + ": &f" + log.getSimpleTime(languageManager.getPlayerLanguage(player))));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.description", "Description") + ": &f" + ColorUtils.stripColor(log.getDescription())));
 
         if (log.getDetails() != null && !log.getDetails().isEmpty()) {
-            lore.add(ColorUtils.colorize("&7详情: &f" + log.getDetails()));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.details", "Details") + ": &f" + ColorUtils.stripColor(log.getDetails())));
         }
 
         if (log.getLogType() == GuildLog.LogType.FUND_DEPOSITED ||
@@ -181,10 +180,10 @@ public class GuildLogsGUI implements GUI {
             log.getLogType() == GuildLog.LogType.FUND_TRANSFERRED) {
             if ("SYSTEM".equals(log.getPlayerUuid())) {
                 lore.add(ColorUtils.colorize(""));
-                lore.add(ColorUtils.colorize("&c⚠ 操作者为系统（可能为旧版记录）"));
+                lore.add(ColorUtils.colorize(languageManager.getMessage(player, "guild-logs.system-operator", "&c\u26A0 Operator is SYSTEM (may be legacy record)")));
             } else {
                 lore.add(ColorUtils.colorize(""));
-                lore.add(ColorUtils.colorize("&a✓ 已记录真实操作者"));
+                lore.add(ColorUtils.colorize(languageManager.getMessage(player, "guild-logs.real-operator", "&a\u2713 Real operator recorded")));
             }
         }
 
@@ -346,11 +345,11 @@ public class GuildLogsGUI implements GUI {
         String header = ColorUtils.colorize("&6" + languageManager.getMessage(player, "guild-logs.details-header", "=== 日志详情 ==="));
         player.sendMessage(header);
         player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.type", "类型") + ": &f" + log.getLogType().getDisplayName()));
-        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.operator", "操作者") + ": &f" + log.getPlayerName()));
+        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.operator", "操作者") + ": &f" + ColorUtils.stripColor(log.getPlayerName())));
         player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.time", "时间") + ": &f" + log.getSimpleTime(languageManager.getPlayerLanguage(player))));
-        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.description", "描述") + ": &f" + log.getDescription()));
+        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.description", "描述") + ": &f" + ColorUtils.stripColor(log.getDescription())));
         if (log.getDetails() != null && !log.getDetails().isEmpty()) {
-            player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.details", "详情") + ": &f" + log.getDetails()));
+            player.sendMessage(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-logs.details", "详情") + ": &f" + ColorUtils.stripColor(log.getDetails())));
         }
         player.sendMessage(ColorUtils.colorize("&6=================="));
     }
