@@ -142,11 +142,13 @@ public class CloudModuleRepository {
 
             CompatibleScheduler.runTask(plugin, () -> {
                 if (grouped.isEmpty()) {
-                    replyLang(sender, "cloud.empty", "&cNo cloud modules found.");
+                    sender.sendMessage(ColorUtils.colorize(
+                            getLang(sender, "cloud.empty", "&cNo cloud modules found.")));
                     return;
                 }
 
-                replyLang(sender, "cloud.title", "&b&l=== Cloud Modules ===");
+                sender.sendMessage(ColorUtils.colorize(
+                        getLang(sender, "cloud.title", "&b&l=== Cloud Modules ===")));
                 boolean first = true;
                 for (Map.Entry<String, List<ModuleInfo>> entry : grouped.entrySet()) {
                     if (!first) {
