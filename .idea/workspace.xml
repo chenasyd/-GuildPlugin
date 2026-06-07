@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ce3a3fec-7ae5-4b2f-b319-4e62129f5b23" name="更改" comment="" />
+    <list default="true" id="ce3a3fec-7ae5-4b2f-b319-4e62129f5b23" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/core/module/ModuleManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/core/module/ModuleManager.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -80,7 +83,7 @@
       <workItem from="1770911774378" duration="272000" />
       <workItem from="1780749703210" duration="773000" />
       <workItem from="1780754014165" duration="8923000" />
-      <workItem from="1780820063712" duration="5537000" />
+      <workItem from="1780820063712" duration="6200000" />
     </task>
     <servers />
   </component>
