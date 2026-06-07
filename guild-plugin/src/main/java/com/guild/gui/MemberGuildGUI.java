@@ -1,4 +1,4 @@
-package com.guild.gui;
+﻿package com.guild.gui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class MemberGuildGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getMessage(player, "member-guild-gui.title",
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "member-guild-gui.title",
                 "&6我的工会 - {guild_name}", "{guild_name}",
                 guild.getName() != null ? guild.getName() : "未知工会"));
     }
@@ -97,32 +97,32 @@ public class MemberGuildGUI implements GUI {
 
     private void displayGuildInfo(Inventory inventory) {
         String name = guild.getName() != null ? guild.getName() :
-                languageManager.getMessage(player, "member-guild-gui.no-name", "无名称");
+                languageManager.getGuiMessage(player, "member-guild-gui.no-name", "无名称");
         String tag = guild.getTag() != null ? "&7[" + guild.getTag() + "&7]" :
-                languageManager.getMessage(player, "member-guild-gui.no-tag", "无标签");
+                languageManager.getGuiMessage(player, "member-guild-gui.no-tag", "无标签");
         String homeStatus = guild.hasHome() ?
-                languageManager.getMessage(player, "member-guild-gui.home-set", "&a已设置") :
-                languageManager.getMessage(player, "member-guild-gui.home-not-set", "&c未设置");
+                languageManager.getGuiMessage(player, "member-guild-gui.home-set", "&a已设置") :
+                languageManager.getGuiMessage(player, "member-guild-gui.home-not-set", "&c未设置");
 
         ItemStack info = createItem(Material.PAPER,
-                languageManager.getMessage(player, "member-guild-gui.info-title", "&6工会信息"),
-                languageManager.getMessage(player, "member-guild-gui.info-name", "&7名称: &e{name}", "{name}", name),
-                languageManager.getMessage(player, "member-guild-gui.info-tag", "&7标签: &e{tag}", "{tag}", tag),
-                languageManager.getMessage(player, "member-guild-gui.info-home", "&7工会家: {status}", "{status}", homeStatus));
+                languageManager.getGuiMessage(player, "member-guild-gui.info-title", "&6工会信息"),
+                languageManager.getGuiMessage(player, "member-guild-gui.info-name", "&7名称: &e{name}", "{name}", name),
+                languageManager.getGuiMessage(player, "member-guild-gui.info-tag", "&7标签: &e{tag}", "{tag}", tag),
+                languageManager.getGuiMessage(player, "member-guild-gui.info-home", "&7工会家: {status}", "{status}", homeStatus));
         inventory.setItem(13, info);
     }
 
     private void setupButtons(Inventory inventory) {
         // 工会家传送
         ItemStack homeTeleport = createItem(Material.ENDER_PEARL,
-                languageManager.getMessage(player, "member-guild-gui.home-teleport", "&d工会家传送"),
-                languageManager.getMessage(player, "member-guild-gui.home-teleport-desc", "&7单击 &f传送到工会家"));
+                languageManager.getGuiMessage(player, "member-guild-gui.home-teleport", "&d工会家传送"),
+                languageManager.getGuiMessage(player, "member-guild-gui.home-teleport-desc", "&7单击 &f传送到工会家"));
         inventory.setItem(11, homeTeleport);
 
         // 离开工会
         ItemStack leaveGuild = createItem(Material.BARRIER,
-                languageManager.getMessage(player, "member-guild-gui.leave", "&c离开工会"),
-                languageManager.getMessage(player, "member-guild-gui.leave-desc", "&7单击 &f离开当前工会"));
+                languageManager.getGuiMessage(player, "member-guild-gui.leave", "&c离开工会"),
+                languageManager.getGuiMessage(player, "member-guild-gui.leave-desc", "&7单击 &f离开当前工会"));
         inventory.setItem(15, leaveGuild);
     }
 
@@ -139,14 +139,14 @@ public class MemberGuildGUI implements GUI {
 
     private void handleHomeTeleport(Player player) {
         if (ServerUtils.isFolia()) {
-            String message = languageManager.getMessage(player, "home.folia-disabled", "&c传送功能在Folia环境下暂不可用！");
+            String message = languageManager.getGuiMessage(player, "home.folia-disabled", "&c传送功能在Folia环境下暂不可用！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
 
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null) {
-            String msg = languageManager.getMessage(player, "gui.no-permission", "&c权限不足");
+            String msg = languageManager.getGuiMessage(player, "gui.no-permission", "&c权限不足");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -154,10 +154,10 @@ public class MemberGuildGUI implements GUI {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (location != null) {
                     player.teleport(location);
-                    String message = languageManager.getMessage(player, "home.success", "&a已传送到工会家！");
+                    String message = languageManager.getGuiMessage(player, "home.success", "&a已传送到工会家！");
                     player.sendMessage(ColorUtils.colorize(message));
                 } else {
-                    String message = languageManager.getMessage(player, "home.not-set", "&c工会家未设置！");
+                    String message = languageManager.getGuiMessage(player, "home.not-set", "&c工会家未设置！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });

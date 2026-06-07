@@ -1,4 +1,4 @@
-package com.guild.gui;
+﻿package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
@@ -50,7 +50,7 @@ public class CreateRelationGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getMessage(player, "create-relation.title",
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "create-relation.title",
                 "&6创建工会关系"));
     }
     
@@ -101,7 +101,7 @@ public class CreateRelationGUI implements GUI {
             if (selectedType != null && targetGuildName != null) {
                 createRelation(player);
             } else {
-                String message = languageManager.getMessage(player, "relations.select-both", "&c请先选择关系类型和目标工会！");
+                String message = languageManager.getGuiMessage(player, "relations.select-both", "&c请先选择关系类型和目标工会！");
                 player.sendMessage(ColorUtils.colorize(message));
             }
             return;
@@ -141,7 +141,7 @@ public class CreateRelationGUI implements GUI {
                     targetGuildName = targetGuild.getName();
                     refreshInventory(player);
 
-                    String message = languageManager.getMessage(player, "relations.target-selected", "&a已选择目标工会: {guild}", "{guild}", targetGuildName);
+                    String message = languageManager.getGuiMessage(player, "relations.target-selected", "&a已选择目标工会: {guild}", "{guild}", targetGuildName);
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             }
@@ -177,16 +177,16 @@ public class CreateRelationGUI implements GUI {
             String displayName = ColorUtils.colorize(color + type.getDisplayName(lang));
 
             List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.relation-type", "关系类型") + ": " + color + type.getDisplayName(lang)));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.relation-type", "关系类型") + ": " + color + type.getDisplayName(lang)));
 
             // 添加关系类型描述
             String descKey = "relations.type." + type.name().toLowerCase() + ".description";
-            lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, descKey, "")));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, descKey, "")));
 
             if (selectedType == type) {
-                lore.add(ColorUtils.colorize("&a✓ " + languageManager.getMessage(player, "gui.selected", "已选择")));
+                lore.add(ColorUtils.colorize("&a✓ " + languageManager.getGuiMessage(player, "gui.selected", "已选择")));
             } else {
-                lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "gui.click-to-select", "点击选择")));
+                lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.click-to-select", "点击选择")));
             }
 
             ItemStack item = createItem(material, displayName, lore.toArray(new String[0]));
@@ -209,16 +209,16 @@ public class CreateRelationGUI implements GUI {
             String displayName = ColorUtils.colorize("&f" + targetGuild.getName());
 
             List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.guild-name", "工会名称") + ": " + targetGuild.getName()));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-name", "工会名称") + ": " + targetGuild.getName()));
             if (targetGuild.getTag() != null && !targetGuild.getTag().isEmpty()) {
-                lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.guild-tag", "工会标签") + ": [" + targetGuild.getTag() + "]"));
+                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-tag", "工会标签") + ": [" + targetGuild.getTag() + "]"));
             }
-            lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.leader", "会长") + ": " + targetGuild.getLeaderName()));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.leader", "会长") + ": " + targetGuild.getLeaderName()));
 
             if (targetGuildName != null && targetGuildName.equals(targetGuild.getName())) {
-                lore.add(ColorUtils.colorize("&a✓ " + languageManager.getMessage(player, "gui.selected", "已选择")));
+                lore.add(ColorUtils.colorize("&a✓ " + languageManager.getGuiMessage(player, "gui.selected", "已选择")));
             } else {
-                lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "gui.click-to-select", "点击选择")));
+                lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.click-to-select", "点击选择")));
             }
 
             ItemStack item = createItem(material, displayName, lore.toArray(new String[0]));
@@ -235,9 +235,9 @@ public class CreateRelationGUI implements GUI {
         // 确认创建按钮
         ItemStack confirmButton = createItem(
             Material.EMERALD,
-            ColorUtils.colorize(languageManager.getMessage(player, "create-relation.confirm-button", "&a确认创建")),
-            ColorUtils.colorize(languageManager.getMessage(player, "create-relation.confirm-lore-1", "&7创建工会关系")),
-            ColorUtils.colorize(languageManager.getMessage(player, "create-relation.confirm-lore-2", "&7需要先选择关系类型和目标工会"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "create-relation.confirm-button", "&a确认创建")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "create-relation.confirm-lore-1", "&7创建工会关系")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "create-relation.confirm-lore-2", "&7需要先选择关系类型和目标工会"))
         );
         inventory.setItem(45, confirmButton);
 
@@ -245,14 +245,14 @@ public class CreateRelationGUI implements GUI {
         List<String> selectionLore = new ArrayList<>();
         String typeText = selectedType != null ?
             selectedType.getColor() + selectedType.getDisplayName(lang) :
-            "&c" + languageManager.getMessage(player, "gui.not-selected", "未选择");
-        selectionLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.relation-type", "关系类型") + ": " + typeText));
-        selectionLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.target-guild", "目标工会") + ": " +
-            (targetGuildName != null ? "&a" + targetGuildName : "&c" + languageManager.getMessage(player, "gui.not-selected", "未选择"))));
+            "&c" + languageManager.getGuiMessage(player, "gui.not-selected", "未选择");
+        selectionLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.relation-type", "关系类型") + ": " + typeText));
+        selectionLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.target-guild", "目标工会") + ": " +
+            (targetGuildName != null ? "&a" + targetGuildName : "&c" + languageManager.getGuiMessage(player, "gui.not-selected", "未选择"))));
 
         ItemStack selectionInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize(languageManager.getMessage(player, "create-relation.current-selection", "&e当前选择")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "create-relation.current-selection", "&e当前选择")),
             selectionLore.toArray(new String[0])
         );
         inventory.setItem(47, selectionInfo);
@@ -266,8 +266,8 @@ public class CreateRelationGUI implements GUI {
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.previous-page", "&c上一页")),
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-previous", "&7查看上一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.previous-page", "&c上一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.view-previous", "&7查看上一页"))
             );
             inventory.setItem(52, previousPage);
         }
@@ -277,8 +277,8 @@ public class CreateRelationGUI implements GUI {
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.next-page", "&a下一页")),
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-next", "&7查看下一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.next-page", "&a下一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.view-next", "&7查看下一页"))
             );
             inventory.setItem(53, nextPage);
         }
@@ -286,8 +286,8 @@ public class CreateRelationGUI implements GUI {
         // 返回按钮
         ItemStack backButton = createItem(
             Material.ARROW,
-            ColorUtils.colorize(languageManager.getMessage(player, "gui.back", "&7返回")),
-            ColorUtils.colorize(languageManager.getMessage(player, "create-relation.back-lore", "&7返回关系管理"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.back", "&7返回")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "create-relation.back-lore", "&7返回关系管理"))
         );
         inventory.setItem(49, backButton);
 
@@ -328,7 +328,7 @@ public class CreateRelationGUI implements GUI {
             refreshInventory(player);
 
             String lang = languageManager.getPlayerLanguage(player);
-            String message = languageManager.getMessage(player, "relations.type-selected", "&a已选择关系类型: {type}", "{type}", selectedType.getDisplayName(lang));
+            String message = languageManager.getGuiMessage(player, "relations.type-selected", "&a已选择关系类型: {type}", "{type}", selectedType.getDisplayName(lang));
             player.sendMessage(ColorUtils.colorize(message));
         }
     }
@@ -347,7 +347,7 @@ public class CreateRelationGUI implements GUI {
         }
         
         if (targetGuild[0] == null) {
-            String message = languageManager.getMessage(player, "relations.target-not-found", "&c目标工会不存在！");
+            String message = languageManager.getGuiMessage(player, "relations.target-not-found", "&c目标工会不存在！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -357,7 +357,7 @@ public class CreateRelationGUI implements GUI {
             .thenAccept(existingRelation -> {
                 CompatibleScheduler.runTask(plugin, () -> {
                     if (existingRelation != null) {
-                        String message = languageManager.getMessage(player, "relations.already-exists", "&c与 {guild} 的关系已存在！", "{guild}", targetGuildName);
+                        String message = languageManager.getGuiMessage(player, "relations.already-exists", "&c与 {guild} 的关系已存在！", "{guild}", targetGuildName);
                         player.sendMessage(ColorUtils.colorize(message));
                         return;
                     }
@@ -370,14 +370,14 @@ public class CreateRelationGUI implements GUI {
                     ).thenAccept(success -> {
                         CompatibleScheduler.runTask(plugin, () -> {
                             if (success) {
-                                String message = languageManager.getMessage(player, "relations.create-success", "&a已向 {guild} 发送 {type} 关系请求！", "{guild}", targetGuildName, "{type}", selectedType.getDisplayName());
+                                String message = languageManager.getGuiMessage(player, "relations.create-success", "&a已向 {guild} 发送 {type} 关系请求！", "{guild}", targetGuildName, "{type}", selectedType.getDisplayName());
                                 player.sendMessage(ColorUtils.colorize(message));
 
                                 // 返回关系管理界面
                                 GuildRelationsGUI relationsGUI = new GuildRelationsGUI(plugin, guild, player);
                                 plugin.getGuiManager().openGUI(player, relationsGUI);
                             } else {
-                                String message = languageManager.getMessage(player, "relations.create-failed", "&c创建关系失败！");
+                                String message = languageManager.getGuiMessage(player, "relations.create-failed", "&c创建关系失败！");
                                 player.sendMessage(ColorUtils.colorize(message));
                             }
                         });

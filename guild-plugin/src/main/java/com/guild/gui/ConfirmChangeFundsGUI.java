@@ -1,4 +1,4 @@
-package com.guild.gui;
+﻿package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
@@ -46,7 +46,7 @@ public class ConfirmChangeFundsGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getMessage(player,
+        return ColorUtils.colorize(languageManager.getGuiMessage(player,
                 "confirm-funds.title", "&6确认资金变更"));
     }
 
@@ -75,34 +75,34 @@ public class ConfirmChangeFundsGUI implements GUI {
         Material operationMaterial = getOperationMaterial();
 
         List<String> infoLore = new ArrayList<>();
-        infoLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player,
+        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                 "confirm-funds.guild", "工会") + ": &e" + guild.getName()));
-        infoLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player,
+        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                 "confirm-funds.operation", "操作") + ": " + operationName));
-        infoLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player,
+        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                 "confirm-funds.current-balance", "当前资金") + ": &6" + plugin.getEconomyManager().format(currentBalance)));
-        infoLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player,
+        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                 "confirm-funds.amount", "金额") + ": &f" + plugin.getEconomyManager().format(amount)));
-        infoLore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player,
+        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                 "confirm-funds.new-balance", "新资金") + ": &a" + plugin.getEconomyManager().format(newBalance)));
 
         inventory.setItem(13, createItem(operationMaterial,
-                ColorUtils.colorize(languageManager.getMessage(player,
+                ColorUtils.colorize(languageManager.getGuiMessage(player,
                         "confirm-funds.info-title", "&6变更详情")),
                 infoLore.toArray(new String[0])));
 
         // 确认按钮 (slot 11)
         inventory.setItem(11, createItem(Material.EMERALD_BLOCK,
-                ColorUtils.colorize("&a" + languageManager.getMessage(player,
+                ColorUtils.colorize("&a" + languageManager.getGuiMessage(player,
                         "confirm-funds.confirm", "确认变更")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player,
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                         "confirm-funds.confirm-desc", "执行资金变更"))));
 
         // 取消按钮 (slot 15)
         inventory.setItem(15, createItem(Material.REDSTONE_BLOCK,
-                ColorUtils.colorize("&c" + languageManager.getMessage(player,
+                ColorUtils.colorize("&c" + languageManager.getGuiMessage(player,
                         "confirm-funds.cancel", "取消")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player,
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                         "confirm-funds.cancel-desc", "取消变更"))));
     }
 
@@ -142,13 +142,13 @@ public class ConfirmChangeFundsGUI implements GUI {
                             switch (operationType) {
                                 case "add":
                                     contribType = GuildContribution.ContributionType.DEPOSIT;
-                                    contribDesc = languageManager.getMessage(player,
+                                    contribDesc = languageManager.getGuiMessage(player,
                                             "funds.change.add-contrib",
                                             "{player}增加了{amount}")
                                             .replace("{player}", playerName)
                                             .replace("{amount}", formattedAmount);
                                     logType = GuildLog.LogType.FUND_DEPOSITED;
-                                    logDesc = languageManager.getMessage(player,
+                                    logDesc = languageManager.getGuiMessage(player,
                                             "funds.change.add-log",
                                             "{player}为{guild}增加资金{amount}")
                                             .replace("{player}", playerName)
@@ -157,13 +157,13 @@ public class ConfirmChangeFundsGUI implements GUI {
                                     break;
                                 case "remove":
                                     contribType = GuildContribution.ContributionType.WITHDRAW;
-                                    contribDesc = languageManager.getMessage(player,
+                                    contribDesc = languageManager.getGuiMessage(player,
                                             "funds.change.remove-contrib",
                                             "{player}扣除了{amount}")
                                             .replace("{player}", playerName)
                                             .replace("{amount}", formattedAmount);
                                     logType = GuildLog.LogType.FUND_WITHDRAWN;
-                                    logDesc = languageManager.getMessage(player,
+                                    logDesc = languageManager.getGuiMessage(player,
                                             "funds.change.remove-log",
                                             "{player}从{guild}扣除资金{amount}")
                                             .replace("{player}", playerName)
@@ -178,26 +178,26 @@ public class ConfirmChangeFundsGUI implements GUI {
                                     String newBalanceStr = String.format("%.2f", newBalance);
 
                                     if (diff >= 0) {
-                                        contribDesc = languageManager.getMessage(player,
+                                        contribDesc = languageManager.getGuiMessage(player,
                                                 "funds.change.set-contrib-increase",
                                                 "{player}设置资金为{new}(+{diff})")
                                                 .replace("{player}", playerName)
                                                 .replace("{new}", newBalanceStr)
                                                 .replace("{diff}", diffStr);
-                                        logDesc = languageManager.getMessage(player,
+                                        logDesc = languageManager.getGuiMessage(player,
                                                 "funds.change.set-log-increase",
                                                 "{player}将{guild}资金设置为{new}")
                                                 .replace("{player}", playerName)
                                                 .replace("{guild}", guildName)
                                                 .replace("{new}", newBalanceStr);
                                     } else {
-                                        contribDesc = languageManager.getMessage(player,
+                                        contribDesc = languageManager.getGuiMessage(player,
                                                 "funds.change.set-contrib-decrease",
                                                 "{player}设置资金为{new}(-{diff})")
                                                 .replace("{player}", playerName)
                                                 .replace("{new}", newBalanceStr)
                                                 .replace("{diff}", diffStr);
-                                        logDesc = languageManager.getMessage(player,
+                                        logDesc = languageManager.getGuiMessage(player,
                                                 "funds.change.set-log-decrease",
                                                 "{player}将{guild}资金设置为{new}")
                                                 .replace("{player}", playerName)
@@ -217,17 +217,17 @@ public class ConfirmChangeFundsGUI implements GUI {
                                     guild.getId(), guild.getName(),
                                     player.getUniqueId().toString(), player.getName(),
                                     logType, logDesc,
-                                    languageManager.getMessage(player,
+                                    languageManager.getGuiMessage(player,
                                             "funds.change.log-details",
                                             "金额:{amount}")
                                             .replace("{amount}", formattedAmount));
 
                             player.sendMessage(ColorUtils.colorize(
-                                    "&a" + languageManager.getMessage(player,
+                                    "&a" + languageManager.getGuiMessage(player,
                                             "confirm-funds.success", "资金变更成功！")));
                         } else {
                             player.sendMessage(ColorUtils.colorize(
-                                    "&c" + languageManager.getMessage(player,
+                                    "&c" + languageManager.getGuiMessage(player,
                                             "confirm-funds.failed", "资金变更失败！")));
                         }
                         returnToEconomyManagement(player);
@@ -257,11 +257,11 @@ public class ConfirmChangeFundsGUI implements GUI {
         String key = "confirm-funds.operation-" + operationType;
         switch (operationType) {
             case "set":
-                return languageManager.getMessage(player, key, "&e设置资金");
+                return languageManager.getGuiMessage(player, key, "&e设置资金");
             case "add":
-                return languageManager.getMessage(player, key, "&a增加资金");
+                return languageManager.getGuiMessage(player, key, "&a增加资金");
             case "remove":
-                return languageManager.getMessage(player, key, "&c扣除资金");
+                return languageManager.getGuiMessage(player, key, "&c扣除资金");
             default:
                 return operationType;
         }

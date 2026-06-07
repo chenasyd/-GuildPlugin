@@ -1,4 +1,4 @@
-package com.guild.gui;
+﻿package com.guild.gui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class GuildListManagementGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getMessage(player, "guild-list-management-title",
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-list-management-title",
                 "&4工会列表管理"));
     }
     
@@ -89,9 +89,9 @@ public class GuildListManagementGUI implements GUI {
         Material material = guild.isFrozen() ? Material.RED_WOOL : Material.GREEN_WOOL;
 
         List<String> lore = new ArrayList<>();
-        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.leader", "会长") + ": &e" + guild.getLeaderName()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list.level", "等级") + ": &e" + guild.getLevel() + "  &7" + languageManager.getMessage(player, "guild-list.balance", "资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())));
-        lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "guild-list.left-click-view", "左键: 查看") + "  &c" + languageManager.getMessage(player, "guild-list.right-click-delete", "右键: 删除") + "  &6" + languageManager.getMessage(player, "guild-list.shift-right-freeze", "Shift+右键: 冻结/解冻")));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.leader", "会长") + ": &e" + guild.getLeaderName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-list.level", "等级") + ": &e" + guild.getLevel() + "  &7" + languageManager.getGuiMessage(player, "guild-list.balance", "资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())));
+        lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "guild-list.left-click-view", "左键: 查看") + "  &c" + languageManager.getGuiMessage(player, "guild-list.right-click-delete", "右键: 删除") + "  &6" + languageManager.getGuiMessage(player, "guild-list.shift-right-freeze", "Shift+右键: 冻结/解冻")));
 
         return createItem(material, ColorUtils.colorize("&6" + guild.getName()), lore.toArray(new String[0]));
     }
@@ -105,7 +105,7 @@ public class GuildListManagementGUI implements GUI {
         // 上一页按钮
         if (currentPage > 0) {
             inventory.setItem(PREVIOUS_PAGE_SLOT, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.previous-page", "&a上一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.previous-page", "&a上一页")),
                 ColorUtils.colorize("&7" + languageManager.getIndexedMessage(player, "gui.page-info", "第 {0} 页，共 {1} 页", String.valueOf(currentPage), String.valueOf(totalPages)))));
         }
 
@@ -116,7 +116,7 @@ public class GuildListManagementGUI implements GUI {
         // 下一页按钮
         if (currentPage < totalPages - 1) {
             inventory.setItem(NEXT_PAGE_SLOT, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.next-page", "&a下一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.next-page", "&a下一页")),
                 ColorUtils.colorize("&7" + languageManager.getIndexedMessage(player, "gui.page-info", "第 {0} 页，共 {1} 页", String.valueOf(currentPage + 2), String.valueOf(totalPages)))));
         }
     }
@@ -124,11 +124,11 @@ public class GuildListManagementGUI implements GUI {
     private void setupActionButtons(Inventory inventory) {
         // 返回按钮
         inventory.setItem(46, createItem(Material.BARRIER,
-            ColorUtils.colorize(languageManager.getMessage(player, "gui.back", "&c返回"))));
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.back", "&c返回"))));
 
         // 刷新按钮
         inventory.setItem(52, createItem(Material.EMERALD,
-            ColorUtils.colorize(languageManager.getMessage(player, "gui-refresh", "&a刷新列表"))));
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui-refresh", "&a刷新列表"))));
     }
     
     private void fillBorder(Inventory inventory) {

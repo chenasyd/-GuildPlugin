@@ -1,4 +1,4 @@
-package com.guild.gui;
+﻿package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
@@ -51,7 +51,7 @@ public class DemoteMemberGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getMessage(player, "demote-member.title",
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "demote-member.title",
                 "&6降级成员 - 第" + (currentPage + 1) + "页", "{page}", String.valueOf(currentPage + 1)));
     }
     
@@ -173,8 +173,8 @@ public class DemoteMemberGUI implements GUI {
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.previous-page", "&e上一页")),
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-previous", "&7点击查看上一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.previous-page", "&e上一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.view-previous", "&7点击查看上一页"))
             );
             inventory.setItem(45, prevPage);
         }
@@ -184,8 +184,8 @@ public class DemoteMemberGUI implements GUI {
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.next-page", "&e下一页")),
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-next", "&7点击查看下一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.next-page", "&e下一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.view-next", "&7点击查看下一页"))
             );
             inventory.setItem(53, nextPage);
         }
@@ -193,8 +193,8 @@ public class DemoteMemberGUI implements GUI {
         // 返回按钮
         ItemStack back = createItem(
             Material.BARRIER,
-            ColorUtils.colorize(languageManager.getMessage(player, "gui.back", "&c返回")),
-            ColorUtils.colorize(languageManager.getMessage(player, "member-operation.back-to-settings", "&7返回工会设置"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.back", "&c返回")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-operation.back-to-settings", "&7返回工会设置"))
         );
         inventory.setItem(49, back);
     }
@@ -210,9 +210,9 @@ public class DemoteMemberGUI implements GUI {
             meta.setOwningPlayer(member.getOfflinePlayer());
             meta.setDisplayName(ColorUtils.colorize("&7" + member.getPlayerName()));
             meta.setLore(Arrays.asList(
-                ColorUtils.colorize("&7" + languageManager.getMessage(player, "member-operation.current-position", "当前职位") + ": &e" + member.getRole().getDisplayName()),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player, "member-operation.join-time", "加入时间") + ": &e" + member.getJoinedAt()),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player, "demote-member.click-demote", "点击降级为成员"))
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "member-operation.current-position", "当前职位") + ": &e" + member.getRole().getDisplayName()),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "member-operation.join-time", "加入时间") + ": &e" + member.getJoinedAt()),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "demote-member.click-demote", "点击降级为成员"))
             ));
             head.setItemMeta(meta);
         }
@@ -226,7 +226,7 @@ public class DemoteMemberGUI implements GUI {
     private void handleDemoteMember(Player demoter, GuildMember member) {
         // 检查权限
         if (!demoter.hasPermission("guild.demote")) {
-            String message = languageManager.getMessage(demoter, "gui.no-permission", "&c权限不足");
+            String message = languageManager.getGuiMessage(demoter, "gui.no-permission", "&c权限不足");
             demoter.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -234,20 +234,20 @@ public class DemoteMemberGUI implements GUI {
         // 降级成员
         plugin.getGuildService().updateMemberRoleAsync(member.getPlayerUuid(), GuildMember.Role.MEMBER, demoter.getUniqueId()).thenAccept(success -> {
             if (success) {
-                String demoterMessage = languageManager.getMessage(demoter, "demote.success", "&a已降级 &e{player} &a为成员！", "{player}", member.getPlayerName());
+                String demoterMessage = languageManager.getGuiMessage(demoter, "demote.success", "&a已降级 &e{player} &a为成员！", "{player}", member.getPlayerName());
                 demoter.sendMessage(ColorUtils.colorize(demoterMessage));
 
                 // 通知被降级的玩家
                 Player demotedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
                 if (demotedPlayer != null) {
-                    String demotedMessage = languageManager.getMessage(demotedPlayer, "demote.demoted", "&c你被降级为工会 &e{guild} &c的成员！", "{guild}", guild.getName());
+                    String demotedMessage = languageManager.getGuiMessage(demotedPlayer, "demote.demoted", "&c你被降级为工会 &e{guild} &c的成员！", "{guild}", guild.getName());
                     demotedPlayer.sendMessage(ColorUtils.colorize(demotedMessage));
                 }
 
                 // 刷新GUI
                 plugin.getGuiManager().openGUI(demoter, new DemoteMemberGUI(plugin, guild, demoter));
             } else {
-                String message = languageManager.getMessage(demoter, "demote.failed", "&c降级成员失败！");
+                String message = languageManager.getGuiMessage(demoter, "demote.failed", "&c降级成员失败！");
                 demoter.sendMessage(ColorUtils.colorize(message));
             }
         });

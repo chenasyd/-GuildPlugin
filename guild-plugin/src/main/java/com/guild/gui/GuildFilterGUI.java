@@ -1,4 +1,4 @@
-package com.guild.gui;
+﻿package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
@@ -75,7 +75,7 @@ public class GuildFilterGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getMessage(player, "guild-filter.title", "&6工会筛选"));
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-filter.title", "&6工会筛选"));
     }
 
     @Override
@@ -139,18 +139,18 @@ public class GuildFilterGUI implements GUI {
         // 最低等级 (slot 46)
         ItemStack minLevelItem = createItem(
             Material.IRON_INGOT,
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-filter.min-level.name", "&e最低等级")),
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-filter.min-level.lore-1", "&7左键: +1 | 右键: -1")),
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-filter.min-level.lore-2", "&7当前: {level}", "{level}", String.valueOf(minLevel)))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-filter.min-level.name", "&e最低等级")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-filter.min-level.lore-1", "&7左键: +1 | 右键: -1")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-filter.min-level.lore-2", "&7当前: {level}", "{level}", String.valueOf(minLevel)))
         );
         inventory.setItem(SLOT_MIN_LEVEL, minLevelItem);
 
         // 最高等级 (slot 47)
         ItemStack maxLevelItem = createItem(
             Material.GOLD_INGOT,
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-filter.max-level.name", "&e最高等级")),
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-filter.max-level.lore-1", "&7左键: +1 | 右键: -1")),
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-filter.max-level.lore-2", "&7当前: {level}", "{level}", String.valueOf(maxLevel)))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-filter.max-level.name", "&e最高等级")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-filter.max-level.lore-1", "&7左键: +1 | 右键: -1")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-filter.max-level.lore-2", "&7当前: {level}", "{level}", String.valueOf(maxLevel)))
         );
         inventory.setItem(SLOT_MAX_LEVEL, maxLevelItem);
 
@@ -161,19 +161,19 @@ public class GuildFilterGUI implements GUI {
         // 返回按钮 (slot 52)
         ItemStack backItem = createItem(
             Material.ARROW,
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-filter.back.name", "&c返回")),
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-filter.back.lore-1", "&7返回工会列表"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-filter.back.name", "&c返回")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-filter.back.lore-1", "&7返回工会列表"))
         );
         inventory.setItem(SLOT_BACK, backItem);
     }
 
     private ItemStack createSortItem() {
-        String markerOn = languageManager.getMessage(player, "guild-filter.marker-on", "&a✔");
-        String markerOff = languageManager.getMessage(player, "guild-filter.marker-off", "&7");
+        String markerOn = languageManager.getGuiMessage(player, "guild-filter.marker-on", "&a✔");
+        String markerOff = languageManager.getGuiMessage(player, "guild-filter.marker-off", "&7");
 
-        String descLore = languageManager.getMessage(player, "guild-filter.sort.lore-desc", "人数降序 #人数从多到少");
-        String ascLore = languageManager.getMessage(player, "guild-filter.sort.lore-asc", "人数升序 #人数从少到多");
-        String fullLore = languageManager.getMessage(player, "guild-filter.sort.lore-full", "仅满员");
+        String descLore = languageManager.getGuiMessage(player, "guild-filter.sort.lore-desc", "人数降序 #人数从多到少");
+        String ascLore = languageManager.getGuiMessage(player, "guild-filter.sort.lore-asc", "人数升序 #人数从少到多");
+        String fullLore = languageManager.getGuiMessage(player, "guild-filter.sort.lore-full", "仅满员");
 
         String line1, line2, line3;
         switch (sortMode) {
@@ -196,7 +196,7 @@ public class GuildFilterGUI implements GUI {
 
         return createItem(
             Material.COMPARATOR,
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-filter.sort.name", "&e人数排序")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-filter.sort.name", "&e人数排序")),
             ColorUtils.colorize(line1),
             ColorUtils.colorize(line2),
             ColorUtils.colorize(line3)
@@ -377,8 +377,8 @@ public class GuildFilterGUI implements GUI {
     private void showEmpty(Inventory inventory) {
         ItemStack noGuilds = createItem(
             Material.BARRIER,
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-list.no-guilds", "&c暂无工会")),
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-list.no-guilds-lore", "&7服务器中还没有工会"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-list.no-guilds", "&c暂无工会")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-list.no-guilds-lore", "&7服务器中还没有工会"))
         );
         inventory.setItem(22, noGuilds);
         this.displayedGuilds = new ArrayList<>();
@@ -387,8 +387,8 @@ public class GuildFilterGUI implements GUI {
     private void showNoResults(Inventory inventory) {
         ItemStack noResults = createItem(
             Material.BARRIER,
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-list.no-results", "&c无匹配结果")),
-            ColorUtils.colorize(languageManager.getMessage(player, "guild-list.no-results-lore", "&7没有找到匹配的工会"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-list.no-results", "&c无匹配结果")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-list.no-results-lore", "&7没有找到匹配的工会"))
         );
         inventory.setItem(22, noResults);
         this.displayedGuilds = new ArrayList<>();
@@ -432,8 +432,8 @@ public class GuildFilterGUI implements GUI {
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage(player, "guild-list.items.previous-page.name", "&c上一页")),
-                ColorUtils.colorize(languageManager.getMessage(player, "guild-list.items.previous-page.lore.1", "&7查看上一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-list.items.previous-page.name", "&c上一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-list.items.previous-page.lore.1", "&7查看上一页"))
             );
             inventory.setItem(18, previousPage);
         }
@@ -441,8 +441,8 @@ public class GuildFilterGUI implements GUI {
         if (currentPage < totalPages) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage(player, "guild-list.items.next-page.name", "&a下一页")),
-                ColorUtils.colorize(languageManager.getMessage(player, "guild-list.items.next-page.lore.1", "&7查看下一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-list.items.next-page.name", "&a下一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "guild-list.items.next-page.lore.1", "&7查看下一页"))
             );
             inventory.setItem(26, nextPage);
         }
@@ -450,14 +450,14 @@ public class GuildFilterGUI implements GUI {
 
     private ItemStack createGuildItemWithMemberCount(Guild guild, int memberCount) {
         List<String> lore = new ArrayList<>();
-        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7" + languageManager.getMessage(player, "gui.guild-tag", "标签") + ": {guild_tag}", guild, null));
-        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7" + languageManager.getMessage(player, "gui.leader", "会长") + ": {leader_name}", guild, null));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list.members", "成员") + ": " + memberCount));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-list.level", "等级") + ": " + guild.getLevel()));
-        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7" + languageManager.getMessage(player, "guild-list.created-time", "创建时间") + ": {guild_created_time}", guild, null));
+        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7" + languageManager.getGuiMessage(player, "gui.guild-tag", "标签") + ": {guild_tag}", guild, null));
+        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7" + languageManager.getGuiMessage(player, "gui.leader", "会长") + ": {leader_name}", guild, null));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-list.members", "成员") + ": " + memberCount));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-list.level", "等级") + ": " + guild.getLevel()));
+        lore.add(PlaceholderUtils.replaceGuildPlaceholders("&7" + languageManager.getGuiMessage(player, "guild-list.created-time", "创建时间") + ": {guild_created_time}", guild, null));
         lore.add("");
-        lore.add(ColorUtils.colorize("&a" + languageManager.getMessage(player, "guild-list.left-click-detail", "左键: 查看详情")));
-        lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "guild-list.right-click-join", "右键: 申请加入")));
+        lore.add(ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "guild-list.left-click-detail", "左键: 查看详情")));
+        lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "guild-list.right-click-join", "右键: 申请加入")));
 
         return createItem(
             Material.SHIELD,
@@ -510,7 +510,7 @@ public class GuildFilterGUI implements GUI {
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(playerGuild -> {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (playerGuild != null) {
-                    String message = languageManager.getMessage(player, "create.already-in-guild", "&c您已经在一个工会中了！");
+                    String message = languageManager.getGuiMessage(player, "create.already-in-guild", "&c您已经在一个工会中了！");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
@@ -518,7 +518,7 @@ public class GuildFilterGUI implements GUI {
                 plugin.getGuildService().hasPendingApplicationAsync(player.getUniqueId(), guild.getId()).thenAccept(hasPending -> {
                     CompatibleScheduler.runTask(plugin, () -> {
                         if (hasPending) {
-                            String message = languageManager.getMessage(player, "apply.already-applied", "&c您已经申请过这个工会了！");
+                            String message = languageManager.getGuiMessage(player, "apply.already-applied", "&c您已经申请过这个工会了！");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
@@ -526,10 +526,10 @@ public class GuildFilterGUI implements GUI {
                         plugin.getGuildService().submitApplicationAsync(guild.getId(), player.getUniqueId(), player.getName(), "").thenAccept(success -> {
                             CompatibleScheduler.runTask(plugin, () -> {
                                 if (success) {
-                                    String message = languageManager.getMessage(player, "apply.success", "&a申请已提交！");
+                                    String message = languageManager.getGuiMessage(player, "apply.success", "&a申请已提交！");
                                     player.sendMessage(ColorUtils.colorize(message));
                                 } else {
-                                    String message = languageManager.getMessage(player, "apply.failed", "&c申请提交失败！");
+                                    String message = languageManager.getGuiMessage(player, "apply.failed", "&c申请提交失败！");
                                     player.sendMessage(ColorUtils.colorize(message));
                                 }
                             });

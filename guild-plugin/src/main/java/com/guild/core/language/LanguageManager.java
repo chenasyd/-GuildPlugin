@@ -39,6 +39,7 @@ public class LanguageManager {
     
     private static final String MESSAGE_FILE_PREFIX = "messages_";
     private static final String MESSAGE_FILE_SUFFIX = ".yml";
+    private static final String GUI_LANG_PATH = "lang/gui/";
     private static final String CORE_LANG_PATH = "lang/core/";
     private static final String MODULES_LANG_PATH = "lang/modules/";
     private static final String LANG_FILE_SUFFIX = ".yml";
@@ -49,6 +50,7 @@ public class LanguageManager {
         loadLanguages();
         loadCoreLanguages();
         loadModuleLanguages();
+        loadGuiLanguages();
     }
     
     private void loadLanguages() {
@@ -236,8 +238,28 @@ public class LanguageManager {
         }
     }
     
-    @Deprecated
-    private void loadGuiLanguageFile(String lang) {
+    /**
+     * 从插件 JAR 内的 lang/gui/ 目录加载 GUI 专用语言文件
+     */
+    private void loadGuiLanguages() {
+        String[] knownLangs = {LANG_EN, LANG_ZH, LANG_PL, LANG_BR};
+        for (String lang : knownLangs) {
+            String resourcePath = GUI_LANG_PATH + lang + LANG_FILE_SUFFIX;
+            try (InputStream in = plugin.getResource(resourcePath)) {
+                if (in != null) {
+                    String yaml = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                    FileConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
+                    if (!config.getKeys(false).isEmpty()) {
+                        guiConfigs.put(lang, config);
+                        logger.info("Loaded GUI language file: " + resourcePath);
+                    }
+                } else {
+                    logger.warning("GUI language file not found in JAR: " + resourcePath);
+                }
+            } catch (Exception e) {
+                logger.warning("Failed to load GUI language file " + resourcePath + ": " + e.getMessage());
+            }
+        }
     }
     
     public boolean isLanguageSupported(String lang) {
@@ -395,10 +417,12 @@ public class LanguageManager {
         languageConfigs.clear();
         coreConfigs.clear();
         moduleConfigs.clear();
+        guiConfigs.clear();
         loadLanguages();
         loadCoreLanguages();
         loadModuleLanguages();
-        logger.info("Reloaded all language files (main + core + modules)");
+        loadGuiLanguages();
+        logger.info("Reloaded all language files (main + core + modules + gui)");
     }
     
     public FileConfiguration getLanguageConfig(String lang) {

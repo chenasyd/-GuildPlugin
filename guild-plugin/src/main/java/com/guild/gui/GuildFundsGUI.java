@@ -1,4 +1,4 @@
-package com.guild.gui;
+﻿package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
@@ -61,7 +61,7 @@ public class GuildFundsGUI implements GUI {
     @Override
     public String getTitle() {
         return ColorUtils.colorize(
-                languageManager.getMessage(player, "guild-funds.title",
+                languageManager.getGuiMessage(player, "guild-funds.title",
                         "&6工会资金 - {guild}", "{guild}", guild.getName()));
     }
 
@@ -82,9 +82,9 @@ public class GuildFundsGUI implements GUI {
                     setupPageInfo(inventory);
                 } else {
                     ItemStack error = createItem(Material.BARRIER,
-                            ColorUtils.colorize("&c" + languageManager.getMessage(player,
+                            ColorUtils.colorize("&c" + languageManager.getGuiMessage(player,
                                     "guild-funds.load-failed", "加载失败")),
-                            ColorUtils.colorize("&7" + languageManager.getMessage(player,
+                            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                                     "guild-funds.load-error", "无法加载资金数据，请重试")));
                     inventory.setItem(22, error);
                     setupBasicNav(inventory);
@@ -150,7 +150,7 @@ public class GuildFundsGUI implements GUI {
                 if (totals == null) totals = new ArrayList<>();
                 return true;
             } catch (Exception e) {
-                plugin.getLogger().warning("加载工会资金数据失败: " + e.getMessage());
+                plugin.getLogger().warning("加载工会资金数据失败: " + e.getGuiMessage());
                 totals = new ArrayList<>();
                 totalPlayers = 0;
                 return false;
@@ -163,9 +163,9 @@ public class GuildFundsGUI implements GUI {
     private void setupContentItems(Inventory inventory) {
         if (totals.isEmpty()) {
             ItemStack empty = createItem(Material.BARRIER,
-                    ColorUtils.colorize("&c" + languageManager.getMessage(player,
+                    ColorUtils.colorize("&c" + languageManager.getGuiMessage(player,
                             "guild-funds.no-data", "暂无存款记录")),
-                    ColorUtils.colorize("&7" + languageManager.getMessage(player,
+                    ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                             "guild-funds.no-data-desc", "工会成员还没有存入资金")));
             inventory.setItem(22, empty);
             return;
@@ -193,20 +193,20 @@ public class GuildFundsGUI implements GUI {
 
         List<String> lore = new ArrayList<>();
         lore.add(ColorUtils.colorize(
-                "&7" + languageManager.getMessage(player, "guild-funds.deposit-total", "存款总额")
+                "&7" + languageManager.getGuiMessage(player, "guild-funds.deposit-total", "存款总额")
                         + ": &a" + formattedAmount));
         lore.add(ColorUtils.colorize(
-                "&7" + languageManager.getMessage(player, "guild-funds.rank", "排名")
+                "&7" + languageManager.getGuiMessage(player, "guild-funds.rank", "排名")
                         + ": &e#" + rank));
         lore.add(ColorUtils.colorize(
-                "&7" + languageManager.getMessage(player, "guild-funds.status", "状态")
-                        + ": " + (isOnline ? "&a" + languageManager.getMessage(player,
+                "&7" + languageManager.getGuiMessage(player, "guild-funds.status", "状态")
+                        + ": " + (isOnline ? "&a" + languageManager.getGuiMessage(player,
                                 "guild-funds.online", "在线")
-                                : "&7" + languageManager.getMessage(player,
+                                : "&7" + languageManager.getGuiMessage(player,
                                         "guild-funds.offline", "离线"))));
         lore.add("");
         lore.add(ColorUtils.colorize(
-                "&a" + languageManager.getMessage(player, "guild-funds.click-details",
+                "&a" + languageManager.getGuiMessage(player, "guild-funds.click-details",
                         "点击查看详细记录")));
 
         if (meta != null) {
@@ -224,35 +224,35 @@ public class GuildFundsGUI implements GUI {
     private void setupNavigation(Inventory inventory) {
         if (page > 0) {
             inventory.setItem(48, createItem(Material.ARROW,
-                    ColorUtils.colorize("&e" + languageManager.getMessage(player,
+                    ColorUtils.colorize("&e" + languageManager.getGuiMessage(player,
                             "gui.previous-page", "上一页")),
-                    ColorUtils.colorize("&7" + languageManager.getMessage(player,
+                    ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                             "gui.view-previous", "查看上一页"))));
         }
 
         inventory.setItem(49, createItem(Material.ARROW,
-                ColorUtils.colorize("&c" + languageManager.getMessage(player,
+                ColorUtils.colorize("&c" + languageManager.getGuiMessage(player,
                         "gui.back", "返回")),
                 ColorUtils.colorize("&7" + getBackLore())));
 
         if ((page + 1) * itemsPerPage < totalPlayers) {
             inventory.setItem(50, createItem(Material.ARROW,
-                    ColorUtils.colorize("&a" + languageManager.getMessage(player,
+                    ColorUtils.colorize("&a" + languageManager.getGuiMessage(player,
                             "gui.next-page", "下一页")),
-                    ColorUtils.colorize("&7" + languageManager.getMessage(player,
+                    ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                             "gui.view-next", "查看下一页"))));
         }
 
         inventory.setItem(51, createItem(Material.EMERALD,
-                ColorUtils.colorize("&a" + languageManager.getMessage(player,
+                ColorUtils.colorize("&a" + languageManager.getGuiMessage(player,
                         "guild-funds.refresh", "刷新")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player,
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                         "guild-funds.refresh-desc", "刷新资金数据"))));
     }
 
     private void setupBasicNav(Inventory inventory) {
         inventory.setItem(49, createItem(Material.ARROW,
-                ColorUtils.colorize("&c" + languageManager.getMessage(player,
+                ColorUtils.colorize("&c" + languageManager.getGuiMessage(player,
                         "gui.back", "返回")),
                 ColorUtils.colorize("&7" + getBackLore())));
     }
@@ -267,10 +267,10 @@ public class GuildFundsGUI implements GUI {
 
     private String getBackLore() {
         if ("GuildInfoGUI".equals(sourceGuiType)) {
-            return languageManager.getMessage(player,
+            return languageManager.getGuiMessage(player,
                     "guild-funds.back-to-info", "返回工会信息");
         }
-        return languageManager.getMessage(player,
+        return languageManager.getGuiMessage(player,
                 "guild-funds.back-to-settings", "返回工会设置");
     }
 
@@ -278,15 +278,15 @@ public class GuildFundsGUI implements GUI {
         int totalPages = (totalPlayers - 1) / itemsPerPage + 1;
         if (totalPages < 1) totalPages = 1;
         inventory.setItem(46, createItem(Material.PAPER,
-                ColorUtils.colorize("&e" + languageManager.getMessage(player,
+                ColorUtils.colorize("&e" + languageManager.getGuiMessage(player,
                         "guild-funds.page-info", "页码信息")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player,
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                         "guild-funds.current-page", "当前页: {page}",
                         "{page}", String.valueOf(page + 1))),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player,
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                         "guild-funds.total-pages", "总页数: {total}",
                         "{total}", String.valueOf(totalPages))),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player,
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                         "guild-funds.total-players", "人数: {count}",
                         "{count}", String.valueOf(totalPlayers)))));
     }
@@ -311,13 +311,13 @@ public class GuildFundsGUI implements GUI {
 
     private void showPlayerDetails(Player player, GuildContribution entry) {
         player.sendMessage(ColorUtils.colorize(
-                "&6=== " + languageManager.getMessage(player,
+                "&6=== " + languageManager.getGuiMessage(player,
                         "guild-funds.details-header", "存款详情") + " ==="));
         player.sendMessage(ColorUtils.colorize(
-                "&7" + languageManager.getMessage(player, "guild-funds.player", "玩家")
+                "&7" + languageManager.getGuiMessage(player, "guild-funds.player", "玩家")
                         + ": &f" + entry.getPlayerName()));
         player.sendMessage(ColorUtils.colorize(
-                "&7" + languageManager.getMessage(player, "guild-funds.total-deposit", "总存款")
+                "&7" + languageManager.getGuiMessage(player, "guild-funds.total-deposit", "总存款")
                         + ": &a" + formatAmount(entry.getAmount())));
 
         // 异步查询该玩家的详细记录
@@ -325,7 +325,7 @@ public class GuildFundsGUI implements GUI {
                 .thenAccept(records -> {
                     CompatibleScheduler.runTask(plugin, () -> {
                         player.sendMessage(ColorUtils.colorize(
-                                "&7" + languageManager.getMessage(player,
+                                "&7" + languageManager.getGuiMessage(player,
                                         "guild-funds.deposit-count", "存款次数")
                                         + ": &f" + records.size() + " 次"));
                         player.sendMessage(ColorUtils.colorize("&6=================="));

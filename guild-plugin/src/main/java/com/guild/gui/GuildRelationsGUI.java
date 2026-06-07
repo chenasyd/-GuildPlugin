@@ -1,4 +1,4 @@
-package com.guild.gui;
+﻿package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
@@ -44,7 +44,7 @@ public class GuildRelationsGUI implements GUI {
     
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "guild-relations.title", "&6工会关系"));
+        return ColorUtils.colorize(plugin.getLanguageManager().getGuiMessage(player, "guild-relations.title", "&6工会关系"));
     }
 
     @Override
@@ -165,13 +165,13 @@ public class GuildRelationsGUI implements GUI {
         String displayName = color + otherGuildName + " - " + type.getDisplayName();
 
         List<String> lore = new ArrayList<>();
-        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.relation-type", "关系类型") + ": " + color + type.getDisplayName()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.status", "状态") + ": " + getStatusColor(status) + status.getDisplayName()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.initiator", "发起人") + ": " + relation.getInitiatorName()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.created-time", "创建时间") + ": " + formatDateTime(relation.getCreatedAt())));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-relations.relation-type", "关系类型") + ": " + color + type.getDisplayName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-relations.status", "状态") + ": " + getStatusColor(status) + status.getDisplayName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-relations.initiator", "发起人") + ": " + relation.getInitiatorName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-relations.created-time", "创建时间") + ": " + formatDateTime(relation.getCreatedAt())));
 
         if (relation.getExpiresAt() != null) {
-            lore.add(ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.expires-time", "过期时间") + ": " + formatDateTime(relation.getExpiresAt())));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-relations.expires-time", "过期时间") + ": " + formatDateTime(relation.getExpiresAt())));
         }
 
         lore.add("");
@@ -179,18 +179,18 @@ public class GuildRelationsGUI implements GUI {
         // 根据关系类型和状态添加操作提示
         if (status == GuildRelation.RelationStatus.PENDING) {
             if (relation.getInitiatorUuid().equals(player.getUniqueId())) {
-                lore.add(ColorUtils.colorize("&c" + languageManager.getMessage(player, "guild-relations.right-cancel", "右键: 取消关系")));
+                lore.add(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "guild-relations.right-cancel", "右键: 取消关系")));
             } else {
-                lore.add(ColorUtils.colorize("&a" + languageManager.getMessage(player, "guild-relations.left-accept", "左键: 接受关系")));
-                lore.add(ColorUtils.colorize("&c" + languageManager.getMessage(player, "guild-relations.right-reject", "右键: 拒绝关系")));
+                lore.add(ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "guild-relations.left-accept", "左键: 接受关系")));
+                lore.add(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "guild-relations.right-reject", "右键: 拒绝关系")));
             }
         } else if (status == GuildRelation.RelationStatus.ACTIVE) {
             if (type == GuildRelation.RelationType.TRUCE) {
-                lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "guild-relations.left-end-truce", "左键: 结束停战")));
+                lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "guild-relations.left-end-truce", "左键: 结束停战")));
             } else if (type == GuildRelation.RelationType.WAR) {
-                lore.add(ColorUtils.colorize("&e" + languageManager.getMessage(player, "guild-relations.left-propose-truce", "左键: 提议停战")));
+                lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "guild-relations.left-propose-truce", "左键: 提议停战")));
             } else {
-                lore.add(ColorUtils.colorize("&c" + languageManager.getMessage(player, "guild-relations.right-delete", "右键: 删除关系")));
+                lore.add(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "guild-relations.right-delete", "右键: 删除关系")));
             }
         }
 
@@ -228,7 +228,7 @@ public class GuildRelationsGUI implements GUI {
      * 格式化日期时间
      */
     private String formatDateTime(java.time.LocalDateTime dateTime) {
-        if (dateTime == null) return languageManager.getMessage(player, "guild-relations.unknown", "未知");
+        if (dateTime == null) return languageManager.getGuiMessage(player, "guild-relations.unknown", "未知");
         return dateTime.format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
     }
     
@@ -239,9 +239,9 @@ public class GuildRelationsGUI implements GUI {
         // 创建关系按钮
         ItemStack createRelation = createItem(
             Material.EMERALD,
-            ColorUtils.colorize("&a" + languageManager.getMessage(player, "guild-relations.create-relation", "创建关系")),
-            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.create-relation-desc", "创建新的工会关系")),
-            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.types", "盟友、敌对、开战等"))
+            ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "guild-relations.create-relation", "创建关系")),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-relations.create-relation-desc", "创建新的工会关系")),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-relations.types", "盟友、敌对、开战等"))
         );
         inventory.setItem(45, createRelation);
     }
@@ -256,8 +256,8 @@ public class GuildRelationsGUI implements GUI {
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&c" + languageManager.getMessage(player, "gui.previous-page", "上一页")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.view-previous", "查看上一页"))
+                ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.previous-page", "上一页")),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.view-previous", "查看上一页"))
             );
             inventory.setItem(48, previousPage);
         }
@@ -266,8 +266,8 @@ public class GuildRelationsGUI implements GUI {
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&a" + languageManager.getMessage(player, "gui.next-page", "下一页")),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player, "gui.view-next", "查看下一页"))
+                ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "gui.next-page", "下一页")),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.view-next", "查看下一页"))
             );
             inventory.setItem(50, nextPage);
         }
@@ -275,17 +275,17 @@ public class GuildRelationsGUI implements GUI {
         // 返回按钮 (槽位49)
         ItemStack backButton = createItem(
             Material.BARRIER,
-            ColorUtils.colorize("&c" + languageManager.getMessage(player, "gui.back", "返回")),
-            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.back-to-menu", "返回主菜单"))
+            ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.back", "返回")),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-relations.back-to-menu", "返回主菜单"))
         );
         inventory.setItem(49, backButton);
 
         // 页码显示 (槽位46)
         ItemStack pageInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize("&e" + languageManager.getMessage(player, "guild-relations.page-info", "第 {current} 页", "{current}", String.valueOf(currentPage + 1))),
-            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.total-pages", "共 {total} 页", "{total}", String.valueOf(maxPage + 1))),
-            ColorUtils.colorize("&7" + languageManager.getMessage(player, "guild-relations.total-relations", "总计 {count} 个关系", "{count}", String.valueOf(relations.size())))
+            ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "guild-relations.page-info", "第 {current} 页", "{current}", String.valueOf(currentPage + 1))),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-relations.total-pages", "共 {total} 页", "{total}", String.valueOf(maxPage + 1))),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "guild-relations.total-relations", "总计 {count} 个关系", "{count}", String.valueOf(relations.size())))
         );
         inventory.setItem(46, pageInfo);
     }
@@ -336,11 +336,11 @@ public class GuildRelationsGUI implements GUI {
             .thenAccept(success -> {
                 CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
-                        String message = languageManager.getMessage(player, "relations.accept-success", "&a已接受与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
+                        String message = languageManager.getGuiMessage(player, "relations.accept-success", "&a已接受与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));
                         refreshInventory(player);
                     } else {
-                        String message = languageManager.getMessage(player, "relations.accept-failed", "&c接受关系失败！");
+                        String message = languageManager.getGuiMessage(player, "relations.accept-failed", "&c接受关系失败！");
                         player.sendMessage(ColorUtils.colorize(message));
                     }
                 });
@@ -355,11 +355,11 @@ public class GuildRelationsGUI implements GUI {
             .thenAccept(success -> {
                 CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
-                        String message = languageManager.getMessage(player, "relations.reject-success", "&c已拒绝与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
+                        String message = languageManager.getGuiMessage(player, "relations.reject-success", "&c已拒绝与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));
                         refreshInventory(player);
                     } else {
-                        String message = languageManager.getMessage(player, "relations.reject-failed", "&c拒绝关系失败！");
+                        String message = languageManager.getGuiMessage(player, "relations.reject-failed", "&c拒绝关系失败！");
                         player.sendMessage(ColorUtils.colorize(message));
                     }
                 });
@@ -374,11 +374,11 @@ public class GuildRelationsGUI implements GUI {
             .thenAccept(success -> {
                 CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
-                        String message = languageManager.getMessage(player, "relations.cancel-success", "&c已取消与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
+                        String message = languageManager.getGuiMessage(player, "relations.cancel-success", "&c已取消与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));
                         refreshInventory(player);
                     } else {
-                        String message = languageManager.getMessage(player, "relations.cancel-failed", "&c取消关系失败！");
+                        String message = languageManager.getGuiMessage(player, "relations.cancel-failed", "&c取消关系失败！");
                         player.sendMessage(ColorUtils.colorize(message));
                     }
                 });
@@ -406,11 +406,11 @@ public class GuildRelationsGUI implements GUI {
                     // 删除旧的停战关系
                     plugin.getGuildService().deleteGuildRelationAsync(relation.getId());
 
-                    String message = languageManager.getMessage(player, "relations.truce-end", "&a与 {guild} 的停战已结束，关系转为中立！", "{guild}", relation.getOtherGuildName(guild.getId()));
+                    String message = languageManager.getGuiMessage(player, "relations.truce-end", "&a与 {guild} 的停战已结束，关系转为中立！", "{guild}", relation.getOtherGuildName(guild.getId()));
                     player.sendMessage(ColorUtils.colorize(message));
                     refreshInventory(player);
                 } else {
-                    String message = languageManager.getMessage(player, "relations.truce-end-failed", "&c结束停战失败！");
+                    String message = languageManager.getGuiMessage(player, "relations.truce-end-failed", "&c结束停战失败！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
@@ -435,11 +435,11 @@ public class GuildRelationsGUI implements GUI {
         ).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (success) {
-                    String message = languageManager.getMessage(player, "relations.truce-proposed", "&e已向 {guild} 提议停战！", "{guild}", relation.getOtherGuildName(guild.getId()));
+                    String message = languageManager.getGuiMessage(player, "relations.truce-proposed", "&e已向 {guild} 提议停战！", "{guild}", relation.getOtherGuildName(guild.getId()));
                     player.sendMessage(ColorUtils.colorize(message));
                     refreshInventory(player);
                 } else {
-                    String message = languageManager.getMessage(player, "relations.truce-propose-failed", "&c提议停战失败！");
+                    String message = languageManager.getGuiMessage(player, "relations.truce-propose-failed", "&c提议停战失败！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
@@ -454,11 +454,11 @@ public class GuildRelationsGUI implements GUI {
             .thenAccept(success -> {
                 CompatibleScheduler.runTask(plugin, () -> {
                     if (success) {
-                        String message = languageManager.getMessage(player, "relations.delete-success", "&a已删除与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
+                        String message = languageManager.getGuiMessage(player, "relations.delete-success", "&a已删除与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));
                         refreshInventory(player);
                     } else {
-                        String message = languageManager.getMessage(player, "relations.delete-failed", "&c删除关系失败！");
+                        String message = languageManager.getGuiMessage(player, "relations.delete-failed", "&c删除关系失败！");
                         player.sendMessage(ColorUtils.colorize(message));
                     }
                 });

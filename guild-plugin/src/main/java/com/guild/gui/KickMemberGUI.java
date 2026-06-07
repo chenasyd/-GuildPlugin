@@ -1,4 +1,4 @@
-package com.guild.gui;
+﻿package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
@@ -50,7 +50,7 @@ public class KickMemberGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getMessage(player, "kick-member.title",
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "kick-member.title",
                 "&6踢出成员 - 第" + (currentPage + 1) + "页", "{page}", String.valueOf(currentPage + 1)));
     }
     
@@ -172,8 +172,8 @@ public class KickMemberGUI implements GUI {
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.previous-page", "&e上一页")),
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-previous", "&7点击查看上一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.previous-page", "&e上一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.view-previous", "&7点击查看上一页"))
             );
             inventory.setItem(45, prevPage);
         }
@@ -183,8 +183,8 @@ public class KickMemberGUI implements GUI {
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.next-page", "&e下一页")),
-                ColorUtils.colorize(languageManager.getMessage(player, "gui.view-next", "&7点击查看下一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.next-page", "&e下一页")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.view-next", "&7点击查看下一页"))
             );
             inventory.setItem(53, nextPage);
         }
@@ -192,8 +192,8 @@ public class KickMemberGUI implements GUI {
         // 返回按钮
         ItemStack back = createItem(
             Material.BARRIER,
-            ColorUtils.colorize(languageManager.getMessage(player, "gui.back", "&c返回")),
-            ColorUtils.colorize(languageManager.getMessage(player, "member-operation.back-to-settings", "&7返回工会设置"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.back", "&c返回")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "member-operation.back-to-settings", "&7返回工会设置"))
         );
         inventory.setItem(49, back);
     }
@@ -209,9 +209,9 @@ public class KickMemberGUI implements GUI {
             meta.setOwningPlayer(member.getOfflinePlayer());
             meta.setDisplayName(ColorUtils.colorize("&c" + member.getPlayerName()));
             meta.setLore(Arrays.asList(
-                ColorUtils.colorize("&7" + languageManager.getMessage(player, "member-operation.position", "职位") + ": &e" + member.getRole().getDisplayName()),
-                ColorUtils.colorize("&7" + languageManager.getMessage(player, "member-operation.join-time", "加入时间") + ": &e" + member.getJoinedAt()),
-                ColorUtils.colorize("&c" + languageManager.getMessage(player, "kick-member.click-kick", "点击踢出该成员"))
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "member-operation.position", "职位") + ": &e" + member.getRole().getDisplayName()),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "member-operation.join-time", "加入时间") + ": &e" + member.getJoinedAt()),
+                ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "kick-member.click-kick", "点击踢出该成员"))
             ));
             head.setItemMeta(meta);
         }
@@ -225,7 +225,7 @@ public class KickMemberGUI implements GUI {
     private void handleKickMember(Player kicker, GuildMember member) {
         // 检查权限
         if (!kicker.hasPermission("guild.kick")) {
-            String message = languageManager.getMessage(kicker, "gui.no-permission", "&c权限不足");
+            String message = languageManager.getGuiMessage(kicker, "gui.no-permission", "&c权限不足");
             kicker.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -233,20 +233,20 @@ public class KickMemberGUI implements GUI {
         // 踢出成员
         plugin.getGuildService().removeGuildMemberAsync(member.getPlayerUuid(), kicker.getUniqueId()).thenAccept(success -> {
             if (success) {
-                String kickerMessage = languageManager.getMessage(kicker, "kick.success", "&a已踢出成员 &e{player} &a！", "{player}", member.getPlayerName());
+                String kickerMessage = languageManager.getGuiMessage(kicker, "kick.success", "&a已踢出成员 &e{player} &a！", "{player}", member.getPlayerName());
                 kicker.sendMessage(ColorUtils.colorize(kickerMessage));
 
                 // 通知被踢出的玩家
                 Player kickedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
                 if (kickedPlayer != null) {
-                    String kickedMessage = languageManager.getMessage(kickedPlayer, "kick.kicked", "&c你被踢出了工会 &e{guild} &c！", "{guild}", guild.getName());
+                    String kickedMessage = languageManager.getGuiMessage(kickedPlayer, "kick.kicked", "&c你被踢出了工会 &e{guild} &c！", "{guild}", guild.getName());
                     kickedPlayer.sendMessage(ColorUtils.colorize(kickedMessage));
                 }
 
                 // 刷新GUI
                 plugin.getGuiManager().openGUI(kicker, new KickMemberGUI(plugin, guild, kicker));
             } else {
-                String message = languageManager.getMessage(kicker, "kick.failed", "&c踢出成员失败！");
+                String message = languageManager.getGuiMessage(kicker, "kick.failed", "&c踢出成员失败！");
                 kicker.sendMessage(ColorUtils.colorize(message));
             }
         });
