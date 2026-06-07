@@ -1,28 +1,28 @@
-# 工会插件主配置文件
+# GuildPlugin main configuration file
 
-# 工会配置
+# Guild configuration
 guild:
-  # 工会名称最小长度
+  # Minimum guild name length
   min-name-length: 3
-  # 工会名称最大长度
+  # Maximum guild name length
   max-name-length: 20
-  # 工会标签最大长度
+  # Maximum guild tag length
   max-tag-length: 6
-  # 工会描述最大长度
+  # Maximum guild description length
   max-description-length: 100
-  # 工会最大成员数量
+  # Maximum members per guild
   max-members: 50
-  # 创建工会所需费用（需要Vault）
+  # Cost to create a guild (requires Vault)
   creation-cost: 1000.0
-  # 无经济模式：当服务器未安装Vault等经济插件时，设为true可跳过经济检查，免费创建工会
+  # No-economy mode: set to true to skip economy checks when no economy plugin (e.g. Vault) is installed
   no-economy-mode: false
-  # 工会标签颜色
+  # Guild tag color
   tag-color: "&6"
-  # 工会名称颜色
+  # Guild name color
   name-color: "&e"
-  # 等级系统配置
-  # max-level: 最大等级（达到该等级后不再有下一级）
-  # levels: 每个等级（当前等级）到下一等级所需的资金（键为当前等级）
+  # Level system configuration
+  # max-level: Maximum level (no further levels beyond this)
+  # levels: Funds required to reach the next level (key = current level)
   max-level: 10
   levels:
     1: 5000.0
@@ -35,32 +35,32 @@ guild:
     8: 150000.0
     9: 200000.0
 
-# 显示配置
+# Display configuration
 display:
-  # 职位颜色（可自定义）
+  # Role colors (customizable)
   role-colors:
-    leader: "&6"    # 会长：金色
-    officer: "&b"   # 官员：亮蓝色
-    member: "&7"    # 成员：灰色
-  # 职位左侧分隔符配置
+    leader: "&6"    # Leader: gold
+    officer: "&b"   # Officer: aqua
+    member: "&7"    # Member: gray
+  # Role separator configuration
   role-separator:
     enabled: true
     text: " | "
-    color-per-role: true      # 分隔符是否跟随职位颜色
-    default-color: "&7"      # 无职位或未入会时的默认颜色（一般不会使用）
+    color-per-role: true      # Whether the separator follows the role color
+    default-color: "&7"       # Default color when no role or not in a guild
 
-# 权限配置
+# Permission configuration
 permissions:
-  # 默认权限
+  # Default permissions
   default:
-    can-create: true         # 允许创建工会（未入会时）
-    can-invite: false        # 非成员默认不可邀请
-    can-kick: false          # 非成员默认不可踢人
-    can-promote: false       # 非成员默认不可升职
-    can-demote: false        # 非成员默认不可降职
-    can-delete: false        # 非成员默认不可删会
+    can-create: true         # Allow creating a guild (when not in one)
+    can-invite: false        # Non-members cannot invite by default
+    can-kick: false          # Non-members cannot kick by default
+    can-promote: false       # Non-members cannot promote by default
+    can-demote: false        # Non-members cannot demote by default
+    can-delete: false        # Non-members cannot delete by default
   
-  # 会长权限（若缺省则视为全开）
+  # Leader permissions (if omitted, all are granted)
   leader:
     can-create: true
     can-invite: true
@@ -69,87 +69,87 @@ permissions:
     can-demote: true
     can-delete: true
 
-  # 官员权限
+  # Officer permissions
   officer:
-    can-create: true         # 允许代操作与创建
+    can-create: true         # Allow deputy operations and creation
     can-invite: true
     can-kick: true
-    can-promote: false       # 是否允许升职成员（通常只会长）
-    can-demote: false        # 是否允许降职成员（通常只会长）
-    can-delete: false        # 是否允许删除工会（通常只会长）
+    can-promote: false       # Whether to allow promoting members (usually leader only)
+    can-demote: false        # Whether to allow demoting members (usually leader only)
+    can-delete: false        # Whether to allow deleting the guild (usually leader only)
   
-  # 成员权限
+  # Member permissions
   member:
-    can-create: true         # 允许退会后再创建新工会
+    can-create: true         # Allow creating a new guild after leaving
     can-invite: false
     can-kick: false
     can-promote: false
     can-demote: false
     can-delete: false
 
-# 语言配置
+# Language configuration
 language:
-  # 默认语言（必须与 messages_xx.yml 中的语言代码一致）
-  # 内置语言: en(英文), zh(中文), pl(波兰语), br(巴西葡萄牙语)
-  # 你可以添加任意语言，只需在插件目录下放置对应的 messages_xx.yml 文件
-  # 例如: 添加法语只需创建 messages_fr.yml 并将 default 设为 "fr"
+  # Default language (must match the language code in messages_xx.yml)
+  # Built-in languages: en (English), zh (Chinese), pl (Polish), br (Brazilian Portuguese)
+  # You can add any language by placing the corresponding messages_xx.yml file in the plugin directory
+  # Example: to add French, create messages_fr.yml and set default to "fr"
   default: "en"
-  # 是否允许玩家切换语言
+  # Whether players can switch languages
   allow-player-switch: true
-  # 额外语言列表（用于加载不在插件数据目录中的内置语言文件）
-  # 插件会自动扫描数据目录下所有 messages_*.yml 文件并加载
-  # 此列表仅用于确保从 JAR 包中释放对应的默认语言文件
-  # 示例: ["de", "fr", "es", "ja"]
+  # Additional language list (for loading built-in language files not in the plugin data folder)
+  # The plugin automatically scans the data directory for all messages_*.yml files
+  # This list is only used to ensure the corresponding default language files are extracted from the JAR
+  # Example: ["de", "fr", "es", "ja"]
   additional-languages: []
 
-# 消息配置
+# Message configuration
 messages:
-  # 是否启用消息
+  # Whether messages are enabled
   enabled: true
-  # 消息前缀
-  prefix: "&6[工会] &r"
-  # 消息颜色
+  # Message prefix
+  prefix: "&6[Guild] &r"
+  # Message colors
   colors:
     success: "&a"
     error: "&c"
     info: "&e"
     warning: "&6"
 
-# GUI配置
+# GUI configuration
 gui:
-  # 是否启用GUI
+  # Whether GUI is enabled
   enabled: true
-  # GUI标题
-  title: "&6工会系统"
-  # GUI大小（必须是9的倍数）
+  # GUI title
+  title: "&6Guild System"
+  # GUI size (must be a multiple of 9)
   size: 54
-  # 是否显示工会标签
+  # Whether to show the guild tag
   show-tag: true
-  # 是否显示工会描述
+  # Whether to show the guild description
   show-description: true
 
-# 占位符配置
+# Placeholder configuration
 placeholders:
-  # 是否启用占位符
+  # Whether placeholders are enabled
   enabled: true
-  # 占位符前缀
+  # Placeholder prefix
   prefix: "guild_"
-  # 是否缓存占位符
+  # Whether to cache placeholders
   cache-enabled: true
-  # 缓存时间（秒）
+  # Cache time (seconds)
   cache-time: 30
 
-# 日志配置
+# Logging configuration
 logging:
-  # 是否启用日志
+  # Whether logging is enabled
   enabled: true
-  # 日志级别: DEBUG, INFO, WARN, ERROR
+  # Log level: DEBUG, INFO, WARN, ERROR
   level: INFO
-  # 是否记录到文件
+  # Whether to log to file
   file-logging: true
-  # 日志文件路径
+  # Log file path
   log-file: "logs/guild.log"
-  # 最大日志文件大小（MB）
+  # Maximum log file size (MB)
   max-file-size: 10
-  # 保留的日志文件数量
+  # Number of log files to retain
   max-files: 5
