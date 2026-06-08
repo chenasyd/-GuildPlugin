@@ -238,7 +238,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     
     private void handleCreate(Player player, String[] args) {
         if (args.length < 2) {
-            String message = languageManager.getCoreMessage(player, "guild.create.usage", "&c用法: /guild create <公会名称>");
+            String message = languageManager.getCoreMessage(player, "guild.create.usage", "&c用法: /guild create <公会名称> [标签] [描述]");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -249,25 +249,104 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             return;
         }
         
-        String guildName = String.join(" ", Arrays.copyOfRange(args, 1, args.length)).replaceAll("[\"']", "").trim();
-        String guildTag = guildName.substring(0, Math.min(guildName.length(), 3)).toUpperCase();
-        String description = "欢迎加入我们的公会！";
+        // 解析参数：名称（必填）、标签（可选）、描述（可选）
+        // 支持引号包裹包含空格的内容，Bukkit 自动处理引号分割
+        String guildName = args[1].replaceAll("[\"']", "").trim();
+        String guildTag = args.length >= 3 ? args[2].replaceAll("[\"']", "").trim() : null;
+        String guildDescription = args.length >= 4
+            ? String.join(" ", Arrays.copyOfRange(args, 3, args.length)).replaceAll("[\"']", "").trim()
+            : null;
         
-        if (guildName.length() < 2 || guildName.length() > 10) {
-            String message = languageManager.getCoreMessage(player, "guild.create.name-length", "&c公会名称长度必须在2-10个字符之间！");
+        // 从配置文件读取长度限制
+        int minNameLength = plugin.getConfigManager().getMainConfig().getInt("guild.min-name-length", 3);
+        int maxNameLength = plugin.getConfigManager().getMainConfig().getInt("guild.max-name-length", 20);
+        int maxTagLength = plugin.getConfigManager().getMainConfig().getInt("guild.max-tag-length", 6);
+        int maxDescriptionLength = plugin.getConfigManager().getMainConfig().getInt("guild.max-description-length", 100);
+        
+        // 名称验证（去掉正则限制，与GUI一致，支持颜色字符等特殊字符）
+        if (guildName.isEmpty()) {
+            String message = languageManager.getCoreMessage(player, "guild.create.name-required", "&c请输入公会名称！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
         
-        if (!guildName.matches("[a-zA-Z0-9\\u4e00-\\u9fa5]")) {
-            String message = languageManager.getCoreMessage(player, "guild.create.invalid-name", "&c公会名称只能包含字母、数字和中文！");
+        if (guildName.length() < minNameLength || guildName.length() > maxNameLength) {
+            String message = languageManager.getCoreMessage(player, "guild.create.name-length", "&c公会名称长度必须在" + minNameLength + "-" + maxNameLength + "个字符之间！");
+            message = message.replace("{min}", String.valueOf(minNameLength)).replace("{max}", String.valueOf(maxNameLength));
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
+        
+        // 标签验证（空字符串视为未设置，传递 null）
+        if (guildTag != null && !guildTag.isEmpty()) {
+            if (guildTag.length() > maxTagLength) {
+                String message = languageManager.getCoreMessage(player, "guild.create.tag-too-long", "&c公会标签最多 {max} 个字符！");
+                message = message.replace("{max}", String.valueOf(maxTagLength));
+                player.sendMessage(ColorUtils.colorize(message));
+                return;
+            }
+        } else {
+            guildTag = null;
+        }
+        
+        // 描述验证（空字符串视为未设置，传递 null）
+        if (guildDescription != null && !guildDescription.isEmpty()) {
+            if (guildDescription.length() > maxDescriptionLength) {
+                String message = languageManager.getCoreMessage(player, "guild.create.description-too-long", "&c公会描述不能超过 {max} 个字符！");
+                message = message.replace("{max}", String.valueOf(maxDescriptionLength));
+                player.sendMessage(ColorUtils.colorize(message));
+                return;
+            }
+        } else {
+            guildDescription = null;
+        }
+        
+        final String finalTag = guildTag;
+        final String finalDescription = guildDescription;
         
         CompletableFuture.runAsync(() -> {
             try {
-                boolean success = guildService.createGuild(guildName, guildTag, description, player.getUniqueId(), player.getName());
+                // 检查玩家是否已在公会中
+                Guild existingGuild = guildService.getPlayerGuild(player.getUniqueId());
+                if (existingGuild != null) {
+                    String message = languageManager.getCoreMessage(player, "create.already-in-guild", "&c您已经在一个公会中，无法创建新公会！");
+                    player.sendMessage(ColorUtils.colorize(message));
+                    return;
+                }
+                
+                // 经济系统检查
+                boolean vaultAvailable = plugin.getEconomyManager().isVaultAvailable();
+                boolean noEconomyMode = plugin.getEconomyManager().isNoEconomyMode();
+                
+                if (!vaultAvailable && !noEconomyMode) {
+                    String message = languageManager.getCoreMessage(player, "guild.create.economy-not-available", "&c经济系统不可用，无法创建公会！");
+                    player.sendMessage(ColorUtils.colorize(message));
+                    return;
+                }
+                
+                // 获取创建费用（无经济模式下费用为0）
+                double creationCost = vaultAvailable
+                    ? plugin.getConfigManager().getMainConfig().getDouble("guild.creation-cost", 1000.0)
+                    : 0.0;
+                
+                // 仅在有经济系统时检查余额并扣费
+                if (vaultAvailable && !noEconomyMode) {
+                    if (!plugin.getEconomyManager().hasBalance(player, creationCost)) {
+                        String message = languageManager.getCoreMessage(player, "guild.create.insufficient-funds", "&c您的余额不足！创建公会需要 {amount} 金币！");
+                        message = message.replace("{amount}", plugin.getEconomyManager().format(creationCost));
+                        player.sendMessage(ColorUtils.colorize(message));
+                        return;
+                    }
+                    
+                    if (!plugin.getEconomyManager().withdraw(player, creationCost)) {
+                        String message = languageManager.getCoreMessage(player, "guild.create.payment-failed", "&c扣除创建费用失败！");
+                        player.sendMessage(ColorUtils.colorize(message));
+                        return;
+                    }
+                }
+                
+                final double finalCost = creationCost;
+                boolean success = guildService.createGuild(guildName, finalTag, finalDescription, player.getUniqueId(), player.getName());
                 if (success) {
                     String message = languageManager.getCoreMessage(player, "guild.create.success", "&a公会创建成功！");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -276,6 +355,14 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     MainGuildGUI mainGuildGUI = new MainGuildGUI(plugin, player);
                     plugin.getGuiManager().openGUI(player, mainGuildGUI);
                 } else {
+                    // 如果创建失败且有扣费，退还费用
+                    if (vaultAvailable && !noEconomyMode && finalCost > 0) {
+                        plugin.getEconomyManager().deposit(player, finalCost);
+                        String refundMessage = languageManager.getCoreMessage(player, "guild.create.payment-refunded", "&e已退还创建费用 {amount}。");
+                        refundMessage = refundMessage.replace("{amount}", plugin.getEconomyManager().format(finalCost));
+                        player.sendMessage(ColorUtils.colorize(refundMessage));
+                    }
+                    
                     String message = languageManager.getCoreMessage(player, "guild.create.exists", "&c该公会名称已存在！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
