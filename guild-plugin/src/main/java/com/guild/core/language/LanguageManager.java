@@ -534,7 +534,7 @@ public class LanguageManager {
         codeToName.put("ms", "Bahasa Melayu"); // 马来语
         codeToName.put("it", "Italiano"); // 意大利语
         codeToName.put("nl", "Nederlands"); // 荷兰语
-        codeToName.put("sv", "Svenska");
+        codeToName.put("sv", "Svenska"); // 瑞典语
         codeToName.put("tr", "T\u00fcrk\u00e7e");
         codeToName.put("vi", "Ti\u1ebfng Vi\u1ec7t");
         codeToName.put("th", "\u0e44\u0e17\u0e22");
