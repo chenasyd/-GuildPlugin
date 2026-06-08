@@ -16,7 +16,7 @@ gui:
     application-reject-failed: "&cJelentkez\u00e9s elutas\u00edt\u00e1sa sikertelen"
     back: "Vissza"
     back-to-main-menu: "Vissza a f\u0151men\u00fch\u00f6z"
-    cannot-kick-leader: "&cNem r\u00fghat\u00f3 ki a c\u00e9h vezet\u0151je"
+    cannot-kick-leader: "&cNem r\u0151hat\u00f3 ki a c\u00e9h vezet\u0151je"
     cannot-modify-leader: "&cNem m\u00f3dos\u00edthat\u00f3 a c\u00e9h vezet\u0151j\u00e9nek poz\u00edci\u00f3ja"
     click-to-select: "Kattints a kiv\u00e1laszt\u00e1shoz"
     confirm-demote: "&cBiztosan le akarod fokozni {member} tagot? \u00cdrd be: &f/guild demote {member} confirm &ca meger\u0151s\u00edt\u00e9shez"

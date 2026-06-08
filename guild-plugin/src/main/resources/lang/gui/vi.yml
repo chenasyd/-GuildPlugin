@@ -720,7 +720,7 @@ gui:
   # ================================================
   # GuildLogsGUI (21 keys)
   # ================================================
-guild-logs:
+  guild-logs:
     back-to-guild: "Quay l\u1EA1i th\xF4ng tin c\xF4ng h\u1ED9i"
     back-to-settings: "Quay l\u1EA1i c\xE0i \u0111\u1EB7t c\xF4ng h\u1ED9i"
     current-page: "Trang hi\u1EC7n t\u1EA1i: {page}"
