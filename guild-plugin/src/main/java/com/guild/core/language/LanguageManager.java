@@ -520,13 +520,13 @@ public class LanguageManager {
     public List<String> getAvailableLanguageNames() {
         List<String> names = new ArrayList<>();
         Map<String, String> codeToName = new HashMap<>();
-        codeToName.put("en", "English");
+        codeToName.put("en", "English"); // 英语
         codeToName.put("zh", "\u4e2d\u6587"); // 中文
-        codeToName.put("pl", "Polski");
-        codeToName.put("br", "Portugu\u00eas (BR)");
-        codeToName.put("de", "Deutsch");
-        codeToName.put("fr", "Fran\u00e7ais");
-        codeToName.put("es", "Espa\u00f1ol");
+        codeToName.put("pl", "Polski"); // 波兰语
+        codeToName.put("br", "Portugu\u00eas (BR)"); // 葡萄牙语（巴西）
+        codeToName.put("de", "Deutsch"); // 德语
+        codeToName.put("fr", "Fran\u00e7ais"); // 法语
+        codeToName.put("es", "Espa\u00f1ol"); // 西班牙语
         codeToName.put("ja", "\u65e5\u672c\u8a9e");
         codeToName.put("ko", "\ud55c\uad6d\uc5b4");
         codeToName.put("ru", "\u0420\u0443\u0441\u0441\u043a\u0438\u0439");
