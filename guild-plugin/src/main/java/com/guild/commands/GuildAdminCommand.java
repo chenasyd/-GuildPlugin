@@ -676,13 +676,19 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     
     private void handleReload(CommandSender sender) {
         try {
+            // 配置和权限轻量，同步执行
             plugin.getConfigManager().reloadAllConfigs();
             plugin.getPermissionManager().reloadFromConfig();
-            plugin.getLanguageManager().reloadLanguages();
-            String success = languageManager.getCoreMessage("admin.reload.success", "&a配置已重新加载！");
-            sender.sendMessage(ColorUtils.colorize(success));
+
+            // 语言文件重载量大（54+ YAML），异步执行
+            plugin.getLanguageManager().reloadLanguagesAsync(() -> {
+                String success = languageManager.getCoreMessage(
+                        "admin.reload.success", "&a配置已重新加载！");
+                sender.sendMessage(ColorUtils.colorize(success));
+            });
         } catch (Exception e) {
-            String failed = languageManager.getCoreMessage("admin.reload.failed", "&c重新加载配置失败: {error}")
+            String failed = languageManager.getCoreMessage("admin.reload.failed",
+                    "&c重新加载配置失败: {error}")
                 .replace("{error}", e.getMessage());
             sender.sendMessage(ColorUtils.colorize(failed));
         }

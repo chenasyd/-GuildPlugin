@@ -6,6 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="ce3a3fec-7ae5-4b2f-b319-4e62129f5b23" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/commands/GuildAdminCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/commands/GuildAdminCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/core/language/LanguageManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/core/language/LanguageManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/SystemSettingsGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/guild-plugin/src/main/java/com/guild/gui/SystemSettingsGUI.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,6 +87,7 @@
       <workItem from="1780754014165" duration="8923000" />
       <workItem from="1780820063712" duration="12361000" />
       <workItem from="1780850349329" duration="5519000" />
+      <workItem from="1780925634030" duration="1645000" />
     </task>
     <servers />
   </component>

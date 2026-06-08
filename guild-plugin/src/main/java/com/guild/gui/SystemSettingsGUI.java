@@ -412,10 +412,14 @@ public class SystemSettingsGUI implements GUI {
     private void reloadConfigs(Player player) {
         try {
             plugin.getConfigManager().reloadAllConfigs();
-            plugin.getLanguageManager().reloadLanguages();
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.reload-success", "&a配置重载成功！")));
+            plugin.getPermissionManager().reloadFromConfig();
+            plugin.getLanguageManager().reloadLanguagesAsync(() -> {
+                player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(
+                        player, "gui.system-settings.reload-success", "&a配置重载成功！")));
+            });
         } catch (Exception e) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.reload-failed", "&c配置重载失败：{0}", e.getMessage())));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(
+                    player, "gui.system-settings.reload-failed", "&c配置重载失败：{0}", e.getMessage())));
         }
     }
 

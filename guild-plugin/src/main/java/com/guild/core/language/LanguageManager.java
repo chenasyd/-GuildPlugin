@@ -1,6 +1,7 @@
 package com.guild.core.language;
 
 import com.guild.GuildPlugin;
+import com.guild.core.utils.CompatibleScheduler;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -49,6 +50,10 @@ public class LanguageManager {
         "ja", "ko", "es", "pt", "it", "nl", "sv", "tr",
         "vi", "th", "ar", "cs", "uk", "ro", "hu", "da", "fi", "no"
     };
+
+    private static final String[] MODULE_DIRS = {
+        "announcement", "member-rank", "quest", "stats"
+    };
     
     public LanguageManager(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -67,6 +72,11 @@ public class LanguageManager {
             saveBundledLanguageResource(CORE_LANG_PATH + lang + LANG_FILE_SUFFIX);
             saveBundledLanguageResource(GUI_LANG_PATH + lang + LANG_FILE_SUFFIX);
         }
+        for (String md : MODULE_DIRS) {
+            for (String lang : KNOWN_LANGS) {
+                saveBundledLanguageResource(MODULES_LANG_PATH + md + "/" + lang + LANG_FILE_SUFFIX);
+            }
+        }
     }
     
     private void prepareLanguageFolders() {
@@ -77,6 +87,9 @@ public class LanguageManager {
         createDirectory(CORE_LANG_PATH);
         createDirectory(GUI_LANG_PATH);
         createDirectory(MODULES_LANG_PATH);
+        for (String md : MODULE_DIRS) {
+            createDirectory(MODULES_LANG_PATH + md + "/");
+        }
     }
     
     private void createDirectory(String relativePath) {
@@ -212,6 +225,7 @@ public class LanguageManager {
         loadExternalCoreLanguages();
 
         for (String lang : KNOWN_LANGS) {
+            if (coreConfigs.containsKey(lang)) continue;
             String resourcePath = CORE_LANG_PATH + lang + LANG_FILE_SUFFIX;
             try (InputStream in = plugin.getResource(resourcePath)) {
                 if (in != null) {
@@ -219,7 +233,6 @@ public class LanguageManager {
                     FileConfiguration config = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
                     if (!config.getKeys(false).isEmpty()) {
                         registerCoreLanguageConfig(lang, config);
-                        logger.info("Loaded core language file: " + resourcePath);
                     }
                 } else {
                     logger.warning("Core language file not found in JAR: " + resourcePath);
@@ -673,6 +686,187 @@ public class LanguageManager {
         loadModuleLanguages();
         loadGuiLanguages();
         logger.info("Reloaded all language files (main + core + modules + gui)");
+    }
+
+    /**
+     * 异步重载所有语言文件 — 磁盘 I/O 在异步线程执行，缓存更新在主线程，不卡服。
+     *
+     * @param callback 缓存更新完成后的回调（在主线程执行），可为 null
+     */
+    public void reloadLanguagesAsync(Runnable callback) {
+        CompatibleScheduler.runTaskAsync(plugin, () -> {
+            // ========== 异步线程：读取所有语言文件 ==========
+            String newDefault = loadDefaultLanguageFromConfig();
+
+            Map<String, FileConfiguration> newCore = new HashMap<>();
+            Map<String, FileConfiguration> newGui = new HashMap<>();
+            Map<String, FileConfiguration> newModule = new HashMap<>();
+            Set<String> newLangs = new HashSet<>();
+
+            // 外部磁盘文件
+            readExternalLangFiles(CORE_LANG_PATH, newCore, newLangs, true);
+            readExternalLangFiles(GUI_LANG_PATH, newGui, newLangs, false);
+            readExternalModuleFiles(newModule, newLangs);
+
+            // JAR 内置语言（仅补缺失）
+            for (String lang : KNOWN_LANGS) {
+                readBundledCoreLang(lang, newCore, newLangs);
+                readBundledGuiLang(lang, newGui, newLangs);
+            }
+            for (String md : MODULE_DIRS) {
+                for (String lang : KNOWN_LANGS) {
+                    readBundledModuleLang(md, lang, newModule, newLangs);
+                }
+            }
+
+            final String finalDefault = newDefault;
+
+            // ========== 主线程：原子切换缓存 ==========
+            CompatibleScheduler.runTask(plugin, () -> {
+                languageConfigs.clear();
+                coreConfigs.clear();
+                guiConfigs.clear();
+                moduleConfigs.clear();
+                supportedLanguages.clear();
+
+                languageConfigs.putAll(newCore);
+                coreConfigs.putAll(newCore);
+                guiConfigs.putAll(newGui);
+                moduleConfigs.putAll(newModule);
+                supportedLanguages.addAll(newLangs);
+                defaultLanguage = finalDefault;
+
+                logger.info("Reloaded all language files asynchronously"
+                        + " (core: " + newCore.size()
+                        + ", gui: " + newGui.size()
+                        + ", modules: " + newModule.size() + ")");
+
+                if (callback != null) {
+                    callback.run();
+                }
+            });
+        });
+    }
+
+    // ==================== 异步读取工具方法 ====================
+
+    /** 从 config.yml 读取默认语言 */
+    private String loadDefaultLanguageFromConfig() {
+        FileConfiguration cfg = plugin.getConfigManager().getMainConfig();
+        String lang = cfg.getString("language.default", LANG_EN);
+        return (lang != null ? lang.trim().toLowerCase() : LANG_EN);
+    }
+
+    /** 读取外部目录下所有 .yml 文件到指定 map */
+    private void readExternalLangFiles(String dirPath,
+                                        Map<String, FileConfiguration> target,
+                                        Set<String> langs, boolean isCore) {
+        File dir = new File(plugin.getDataFolder(), dirPath);
+        if (!dir.exists() || !dir.isDirectory()) return;
+        File[] files = dir.listFiles((d, n) -> n.endsWith(LANG_FILE_SUFFIX));
+        if (files == null || files.length == 0) return;
+        java.util.Arrays.sort(files, java.util.Comparator.comparing(File::getName));
+        for (File f : files) {
+            String lang = f.getName().substring(0,
+                    f.getName().length() - LANG_FILE_SUFFIX.length()).toLowerCase();
+            try {
+                FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+                if (!cfg.getKeys(false).isEmpty()) {
+                    target.put(lang, cfg);
+                    langs.add(lang);
+                }
+            } catch (Exception e) {
+                logger.warning("Failed to read " + f.getPath() + ": " + e.getMessage());
+            }
+        }
+    }
+
+    /** 读取外部模块语言文件 */
+    private void readExternalModuleFiles(Map<String, FileConfiguration> target, Set<String> langs) {
+        File root = new File(plugin.getDataFolder(), MODULES_LANG_PATH);
+        if (!root.exists() || !root.isDirectory()) return;
+        File[] dirs = root.listFiles(File::isDirectory);
+        if (dirs == null) return;
+        for (File md : dirs) {
+            File[] files = md.listFiles((d, n) -> n.endsWith(LANG_FILE_SUFFIX));
+            if (files == null) continue;
+            for (File f : files) {
+                String lang = f.getName().substring(0,
+                        f.getName().length() - LANG_FILE_SUFFIX.length()).toLowerCase();
+                try {
+                    FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+                    if (!cfg.getKeys(false).isEmpty()) {
+                        mergeInto(lang, cfg, target);
+                        langs.add(lang);
+                    }
+                } catch (Exception e) {
+                    logger.warning("Failed to read " + f.getPath() + ": " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    /** 从 JAR 读取内置 core 语言（仅当目标 map 中没有该语言时） */
+    private void readBundledCoreLang(String lang,
+                                      Map<String, FileConfiguration> target,
+                                      Set<String> langs) {
+        if (target.containsKey(lang)) return;
+        String path = CORE_LANG_PATH + lang + LANG_FILE_SUFFIX;
+        try (InputStream in = plugin.getResource(path)) {
+            if (in == null) return;
+            String yaml = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
+            if (!cfg.getKeys(false).isEmpty()) {
+                target.put(lang, cfg);
+                langs.add(lang);
+            }
+        } catch (Exception ignored) {}
+    }
+
+    /** 从 JAR 读取内置 GUI 语言 */
+    private void readBundledGuiLang(String lang,
+                                     Map<String, FileConfiguration> target,
+                                     Set<String> langs) {
+        if (target.containsKey(lang)) return;
+        String path = GUI_LANG_PATH + lang + LANG_FILE_SUFFIX;
+        try (InputStream in = plugin.getResource(path)) {
+            if (in == null) return;
+            String yaml = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
+            if (!cfg.getKeys(false).isEmpty()) {
+                target.put(lang, cfg);
+                langs.add(lang);
+            }
+        } catch (Exception ignored) {}
+    }
+
+    /** 从 JAR 读取内置模块语言 */
+    private void readBundledModuleLang(String moduleDir, String lang,
+                                        Map<String, FileConfiguration> target,
+                                        Set<String> langs) {
+        String path = MODULES_LANG_PATH + moduleDir + "/" + lang + LANG_FILE_SUFFIX;
+        try (InputStream in = plugin.getResource(path)) {
+            if (in == null) return;
+            String yaml = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
+            if (!cfg.getKeys(false).isEmpty()) {
+                mergeInto(lang, cfg, target);
+                langs.add(lang);
+            }
+        } catch (Exception ignored) {}
+    }
+
+    /** 合并模块配置（同名语言累加） */
+    private static void mergeInto(String lang, FileConfiguration src,
+                                   Map<String, FileConfiguration> target) {
+        FileConfiguration existing = target.get(lang);
+        if (existing == null) {
+            target.put(lang, src);
+        } else {
+            for (String key : src.getKeys(true)) {
+                existing.set(key, src.get(key));
+            }
+        }
     }
     
     public FileConfiguration getLanguageConfig(String lang) {
