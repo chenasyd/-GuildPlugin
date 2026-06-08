@@ -537,16 +537,16 @@ public class LanguageManager {
         codeToName.put("sv", "Svenska"); // 瑞典语
         codeToName.put("tr", "T\u00fcrk\u00e7e"); // 土耳其语
         codeToName.put("vi", "Ti\u1ebfng Vi\u1ec7t"); // 越南语
-        codeToName.put("th", "\u0e44\u0e17\u0e22");
-        codeToName.put("ar", "\u0627\u0644\u0639\u0631\u0628\u064a\u0629");
-        codeToName.put("cs", "\u010ce\u0161tina");
-        codeToName.put("pt", "Portugu\u00eas");
-        codeToName.put("uk", "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430");
-        codeToName.put("ro", "Rom\u00e2n\u0103");
-        codeToName.put("hu", "Magyar");
-        codeToName.put("da", "Dansk");
-        codeToName.put("fi", "Suomi");
-        codeToName.put("no", "Norsk");
+        codeToName.put("th", "\u0e44\u0e17\u0e22"); // 泰语
+        codeToName.put("ar", "\u0627\u0644\u0639\u0631\u0628\u064a\u0629"); // 阿拉伯语
+        codeToName.put("cs", "\u010ce\u0161tina"); // 捷克语
+        codeToName.put("pt", "Portugu\u00eas"); // 葡萄牙语
+        codeToName.put("uk", "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430"); // 乌克兰语
+        codeToName.put("ro", "Rom\u00e2n\u0103"); // 罗马尼亚语
+        codeToName.put("hu", "Magyar"); // 匈牙利语
+        codeToName.put("da", "Dansk"); // 丹麦语
+        codeToName.put("fi", "Suomi"); // 芬兰语
+        codeToName.put("no", "Norsk"); // 挪威语
 
         for (String code : supportedLanguages) {
             String displayName = codeToName.getOrDefault(code, code.toUpperCase());
