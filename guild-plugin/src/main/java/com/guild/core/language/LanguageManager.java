@@ -529,7 +529,7 @@ public class LanguageManager {
         codeToName.put("es", "Espa\u00f1ol"); // 西班牙语
         codeToName.put("ja", "\u65e5\u672c\u8a9e"); // 日语
         codeToName.put("ko", "\ud55c\uad6d\uc5b4"); // 韩语
-        codeToName.put("ru", "\u0420\u0443\u0441\u0441\u043a\u0438\u0439");
+        codeToName.put("ru", "\u0420\u0443\u0441\u0441\u043a\u0438\u0439"); // 俄语
         codeToName.put("zh_tw", "\u7e41\u9ad4\u4e2d\u6587"); // 繁體中文
         codeToName.put("ms", "Bahasa Melayu"); // 马来语
         codeToName.put("it", "Italiano");
