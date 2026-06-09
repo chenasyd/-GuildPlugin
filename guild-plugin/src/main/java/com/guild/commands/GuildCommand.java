@@ -748,7 +748,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                             
                             // 通知邀请者
                             NotifyUtils.notifyInviterInvitationProcessed(plugin, invitation.getInviterUuid(), 
-                                invitation.getInviterName(), guild, true);
+                                invitation.getInviterName(), player.getName(), guild, true);
                         } else {
                             plugin.getLogger().warning("[Accept-Debug] 邀请处理失败，邀请ID=" + invitation.getId());
                             String message = languageManager.getCoreMessage(player, "guild.accept.error", "&c加入公会时发生错误！");
@@ -792,7 +792,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                         
                         // 通知邀请者
                         NotifyUtils.notifyInviterInvitationProcessed(plugin, invitation.getInviterUuid(), 
-                            invitation.getInviterName(), guild, false);
+                            invitation.getInviterName(), player.getName(), guild, false);
                     } else {
                         String message = languageManager.getCoreMessage(player, "guild.decline.error", "&c拒绝邀请时发生错误！");
                         player.sendMessage(ColorUtils.colorize(message));

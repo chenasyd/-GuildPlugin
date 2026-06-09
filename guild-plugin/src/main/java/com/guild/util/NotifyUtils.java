@@ -282,9 +282,11 @@ public final class NotifyUtils {
 
     /**
      * 通知邀请者邀请已被处理
+     *
+     * @param targetName 接受/拒绝邀请的玩家名称
      */
     public static void notifyInviterInvitationProcessed(GuildPlugin plugin, UUID inviterUuid, 
-            String inviterName, Guild guild, boolean accepted) {
+            String inviterName, String targetName, Guild guild, boolean accepted) {
         Player inviter = Bukkit.getPlayer(inviterUuid);
         if (inviter != null && inviter.isOnline()) {
             CompatibleScheduler.runTask(plugin, () -> {
@@ -293,13 +295,13 @@ public final class NotifyUtils {
                 if (accepted) {
                     String msg = plugin.getLanguageManager().getMessage(inviter, "notify.invitation-accepted",
                         "&a[工会通知] &f{target} &a已接受&f您的邀请加入了工会！",
-                        "{target}", inviterName, "{guild}", guildName);
+                        "{target}", targetName, "{guild}", guildName);
                     inviter.sendMessage(ColorUtils.colorize("&a"));
                     inviter.sendMessage(ColorUtils.colorize(msg));
                 } else {
                     String msg = plugin.getLanguageManager().getMessage(inviter, "notify.invitation-declined",
                         "&c[工会通知] &f{target} &c已拒绝&f您的邀请！",
-                        "{target}", inviterName);
+                        "{target}", targetName);
                     inviter.sendMessage(ColorUtils.colorize("&a"));
                     inviter.sendMessage(ColorUtils.colorize(msg));
                 }
