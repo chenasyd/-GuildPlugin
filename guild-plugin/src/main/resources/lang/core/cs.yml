@@ -542,7 +542,7 @@ notify.pending-invitations: "&6[Pozv\u00e1n\u00ed do gildy] &eM\u00e1te &a{count
 notify.invitation-item: "&7- Od &f{guild} &7(od {inviter})"
 notify.application-approved: "&a[Ozn\u00e1men\u00ed gildy] &fVa\u0161e \u017e\u00e1dost o p\u0159ipojen\u00ed byla &aschv\u00e1lena&f!"
 notify.application-approved-actionbar: "&a\u00dasp\u011b\u0161n\u011b jste se p\u0159ipojili k gild\u011b &f{guild}"
-guild.chat.enabled: "&aChat gildy je &apovol\u011ben&a. Va\u0161e zpr\u00e1vy budou posl\u00e1ny \u010dlen\u00f\u016fm gildy."
+guild.chat.enabled: "&aChat gildy je &apovol\u011ben&a. Va\u0161e zpr\u00e1vy budou posl\u00e1ny \u010dlen\u000f\u016fm gildy."
 guild.chat.disabled: "&eChat gildy je vypnut\u00fd. Va\u0161e zpr\u00e1vy budou posl\u00e1ny do hlavn\u00edho kan\u00e1lu."
 guild.chat.not-in-guild: "&cNejste v \u017e\u00e1dn\u00e9 gild\u011b! Re\u017eeim chatu byl vypnut."
 notify.application-rejected: "&c[Ozn\u00e1men\u00ed gildy] &fVa\u0161e \u017e\u00e1dost o p\u0159ipojen\u00ed byla &codm\u00edtnuta&f!"

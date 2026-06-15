@@ -2450,7 +2450,7 @@ public class GuildService {
                      
                          int affectedRows = stmt.executeUpdate();
                          if (affectedRows > 0) {
-                             logger.info("工会余额更新成功: " + guild.getName() + " (ID: " + guildId + ") 新余额: " + balance);
+                             logger.info("Guild balance updated: " + guild.getName() + " (ID: " + guildId + ") new balance: " + balance);
                              
                              // 异步检查是否需要自动升级，不阻塞当前操作
                              CompletableFuture.runAsync(() -> {
@@ -2462,11 +2462,11 @@ public class GuildService {
                             double change = balance - oldBalance;
                             if (change != 0) {
                                 GuildLog.LogType logType = change > 0 ? GuildLog.LogType.FUND_DEPOSITED : GuildLog.LogType.FUND_WITHDRAWN;
-                                String description = change > 0 ? "资金存入" : "资金取出";
-                                String details = "变更金额: " + (change > 0 ? "+" : "") + change + " 金币, 新余额: " + balance + " 金币";
+                                String description = change > 0 ? "Fund deposited" : "Fund withdrawn";
+                                String details = "Change: " + (change > 0 ? "+" : "") + change + " coins, New balance: " + balance + " coins";
 
                                 String logUuid = (operatorUuid != null && !operatorUuid.isEmpty()) ? operatorUuid : "SYSTEM";
-                                String logName = (operatorName != null && !operatorName.isEmpty()) ? operatorName : "系统";
+                                String logName = (operatorName != null && !operatorName.isEmpty()) ? operatorName : "System";
                                 logGuildActionAsync(guildId, guild.getName(), logUuid, logName,
                                     logType, description, details);
                             }
@@ -2475,7 +2475,7 @@ public class GuildService {
                          }
                      }
                  } catch (SQLException e) {
-                     logger.severe("更新工会余额时发生错误: " + e.getMessage());
+                     logger.severe("An error occurred while updating the guild balance: " + e.getMessage());
                  }
                  return false;
              });

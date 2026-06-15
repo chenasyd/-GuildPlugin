@@ -326,8 +326,8 @@ public class GuildFundsGUI implements GUI {
                     CompatibleScheduler.runTask(plugin, () -> {
                         player.sendMessage(ColorUtils.colorize(
                                 "&7" + languageManager.getGuiMessage(player,
-                                        "gui.guild-funds.deposit-count", "存款次数")
-                                        + ": &f" + records.size() + " 次"));
+                                        "gui.guild-funds.deposit-count", "Deposit times")
+                                        + ": &f" + records.size()));
                         player.sendMessage(ColorUtils.colorize("&6=================="));
                     });
                 });
