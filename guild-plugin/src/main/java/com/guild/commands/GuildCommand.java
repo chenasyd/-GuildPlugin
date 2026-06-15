@@ -141,6 +141,9 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             case "help":
                 handleHelp(player);
                 break;
+            case "applications":
+                handleApplications(player);
+                break;
             case "chat":
             case "c":
                 handleChat(player, args);
@@ -182,7 +185,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         
         if (args.length == 1) {
             List<String> subCommands = new ArrayList<>(Arrays.asList(
-                "create", "info", "members", "invite", "kick", "promote", "demote", "accept", "decline", "leave", "delete", "sethome", "home", "relation", "economy", "deposit", "withdraw", "transfer", "logs", "placeholder", "time", "help", "chat"
+                "create", "info", "members", "invite", "kick", "promote", "demote", "accept", "decline", "leave", "delete", "sethome", "home", "relation", "economy", "deposit", "withdraw", "transfer", "logs", "placeholder", "time", "applications", "help", "chat"
             ));
             
             // 添加模块注册的子命令
@@ -1808,6 +1811,33 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
     }
 
     /**
+     * /guild applications — 打开申请管理GUI（仅会长/官员可访问）
+     */
+    private void handleApplications(Player player) {
+        plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
+            CompatibleScheduler.runTask(plugin, () -> {
+                if (guild == null) {
+                    String msg = languageManager.getCoreMessage(player, "general.no-guild", "&cYou are not in any guild!");
+                    player.sendMessage(ColorUtils.colorize(msg));
+                    return;
+                }
+                // 异步检查角色权限（与 MainGuildGUI.openApplicationManagementGUI 一致）
+                plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
+                    CompatibleScheduler.runTask(plugin, () -> {
+                        if (member == null || !member.getRole().canInvite()) {
+                            String msg = languageManager.getCoreMessage(player, "general.no-permission", "&cInsufficient role permission!");
+                            player.sendMessage(ColorUtils.colorize(msg));
+                            return;
+                        }
+                        plugin.getGuiManager().openGUI(player,
+                            new com.guild.gui.ApplicationManagementGUI(plugin, guild, player));
+                    });
+                });
+            });
+        });
+    }
+
+    /**
      * /guild chat — 切换公会聊天模式或发送单条消息
      */
     private void handleChat(Player player, String[] args) {
@@ -1886,6 +1916,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.logs", "&e/guild logs &7- View guild operation logs")));
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.placeholder", "&e/guild placeholder <player|guild|rank> &7- Get placeholders")));
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.time", "&e/guild time &7- View guild time info")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.applications", "&e/guild applications &7- Manage guild applications")));
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.chat", "&e/guild chat &7- Toggle guild chat mode &7| &e/guild chat <msg> &7- Send guild message")));
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.help", "&e/guild help &7- Show this help")));
     }

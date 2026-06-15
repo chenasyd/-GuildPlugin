@@ -40,13 +40,21 @@ public final class NotifyUtils {
             if (leader != null && leader.isOnline()) {
                 CompatibleScheduler.runTask(plugin, () -> {
                     String message = plugin.getLanguageManager().getMessage(leader, "notify.new-application",
-                        "&6[工会通知] &e玩家 &f{player} &e申请加入 &f{guild}&e！",
+                        "&6[Guild] &ePlayer &f{player} &eapplied to join &f{guild}&e！",
                         "{player}", application.getPlayerName(), "{guild}", guild.getName());
-                    
+
                     leader.sendMessage(ColorUtils.colorize("&a"));
                     leader.sendMessage(ColorUtils.colorize(message));
-                    leader.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getMessage(leader, "notify.application-tip",
-                        "&7提示: 输入 /guild applications 查看并处理申请")));
+
+                    // Clickable tip → opens ApplicationManagementGUI
+                    String tipText = plugin.getLanguageManager().getMessage(leader, "notify.application-tip",
+                        "&7[&a&lClick here&7] &7to review applications");
+                    String hoverText = plugin.getLanguageManager().getMessage(leader, "notify.application-tip-hover",
+                        "&7Click to open application management");
+                    TextComponent tipComponent = new TextComponent(ColorUtils.colorize(tipText));
+                    tipComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/guild applications"));
+                    tipComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ColorUtils.colorize(hoverText))));
+                    leader.spigot().sendMessage(tipComponent);
                 });
             }
         });
@@ -150,13 +158,21 @@ public final class NotifyUtils {
                     
                     CompatibleScheduler.runTask(plugin, () -> {
                         String msg = plugin.getLanguageManager().getMessage(leader, "notify.pending-applications",
-                            "&6[工会通知] &e您有 &c{count} &e个待处理的加入申请！",
+                            "&6[Guild] &eYou have &c{count} &epending applications!",
                             "{count}", String.valueOf(applications.size()));
                         
                         leader.sendMessage(ColorUtils.colorize("&a"));
                         leader.sendMessage(ColorUtils.colorize(msg));
-                        leader.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getMessage(leader, "notify.applications-tip",
-                            "&7提示: 输入 /guild applications 查看详情")));
+
+                        // Clickable tip → opens ApplicationManagementGUI
+                        String tipText = plugin.getLanguageManager().getMessage(leader, "notify.applications-tip",
+                            "&7[&a&lClick here&7] &7to review pending applications");
+                        String hoverText = plugin.getLanguageManager().getMessage(leader, "notify.applications-tip-hover",
+                            "&7Click to open application management");
+                        TextComponent tipComponent = new TextComponent(ColorUtils.colorize(tipText));
+                        tipComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/guild applications"));
+                        tipComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ColorUtils.colorize(hoverText))));
+                        leader.spigot().sendMessage(tipComponent);
                         
                         // 如果申请超过0个，发送ActionBar
                         if (!applications.isEmpty()) {
