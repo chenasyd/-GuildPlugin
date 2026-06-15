@@ -18,6 +18,7 @@ import com.guild.core.language.LanguageManager;
 import com.guild.core.permissions.PermissionManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.ScheduledTaskHandle;
 import com.guild.core.utils.ServerUtils;
 import com.guild.gui.ConfirmDeleteGuildGUI;
 import com.guild.gui.MainGuildGUI;
@@ -962,7 +963,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         // 校验玩家是否为公会成员
         com.guild.models.GuildMember member = guildService.getGuildMember(player.getUniqueId());
         if (member == null) {
-            String message = languageManager.getCoreMessage(player, "gui.no-permission", "&c权限不足");
+            String message = languageManager.getCoreMessage(player, "guild.home.not-in-guild", "&c您不在任何公会中！");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -977,15 +978,60 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         plugin.getGuildService().getGuildHomeAsync(guild.getId()).thenAccept(location -> {
             CompatibleScheduler.runTask(plugin, () -> {
                 if (location != null) {
-                    player.teleport(location);
-                    String message = languageManager.getCoreMessage(player, "home.success", "&a已传送到工会家！");
-                    player.sendMessage(ColorUtils.colorize(message));
+                    startHomeTeleportDelay(player, location);
                 } else {
                     String message = languageManager.getCoreMessage(player, "home.not-set", "&c工会家未设置！");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
         });
+    }
+
+    private void doHomeTeleport(Player player, org.bukkit.Location targetLocation) {
+        player.teleport(targetLocation);
+        String message = languageManager.getCoreMessage(player, "home.success", "&a已传送到工会家！");
+        player.sendMessage(ColorUtils.colorize(message));
+    }
+
+    private void startHomeTeleportDelay(Player player, org.bukkit.Location targetLocation) {
+        int delay = plugin.getConfigManager().getMainConfig().getInt("guild.home-teleport-delay", 0);
+        if (delay <= 0) {
+            doHomeTeleport(player, targetLocation);
+            return;
+        }
+
+        org.bukkit.Location startLocation = player.getLocation().clone();
+        org.bukkit.World startWorld = startLocation.getWorld();
+        int[] countdown = {delay};
+        boolean[] done = {false};
+        ScheduledTaskHandle[] handleRef = new ScheduledTaskHandle[1];
+
+        handleRef[0] = com.guild.core.utils.CompatibleScheduler.runTaskTimer(plugin, player, () -> {
+            if (!player.isOnline() || done[0]) {
+                handleRef[0].cancel();
+                return;
+            }
+            // Folia safety: check world first before distanceSquared to avoid IllegalArgumentException
+            if (!startWorld.equals(player.getWorld())
+                    || player.getLocation().distanceSquared(startLocation) > 0.5) {
+                done[0] = true;
+                String cancelled = languageManager.getCoreMessage(player, "home.teleport-cancelled",
+                    "&c传送已取消（请不要移动）！");
+                player.sendMessage(ColorUtils.colorize(cancelled));
+                handleRef[0].cancel();
+                return;
+            }
+            if (countdown[0] <= 0) {
+                done[0] = true;
+                handleRef[0].cancel();
+                doHomeTeleport(player, targetLocation);
+            } else {
+                String msg = languageManager.getCoreMessage(player, "home.teleporting",
+                    "&a正在传送 &e{seconds} &a秒", "{seconds}", String.valueOf(countdown[0]));
+                com.guild.util.NotifyUtils.sendActionBar(plugin, player, msg);
+                countdown[0]--;
+            }
+        }, 0L, 20L);
     }
     
     private void handleRelation(Player player, String[] args) {

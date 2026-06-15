@@ -214,6 +214,63 @@ public class CompatibleScheduler {
     }
     
     /**
+     * 在指定实体所在区域重复执行任务 — Folia 使用 entity.getScheduler().runAtFixedRate，
+     * 确保对实体的所有操作（获取位置、发送消息、传送）在正确的区域线程内执行。
+     */
+    public static ScheduledTaskHandle runTaskTimer(Plugin plugin, Entity entity, Runnable task, long delay, long period) {
+        if (plugin != null && !plugin.isEnabled()) {
+            return () -> {};
+        }
+
+        if (ServerUtils.isFolia()) {
+            try {
+                Object entityScheduler = entity.getClass().getMethod("getScheduler").invoke(entity);
+                java.util.concurrent.atomic.AtomicReference<Object> taskRef = new java.util.concurrent.atomic.AtomicReference<>();
+                Object scheduledTask = entityScheduler.getClass()
+                    .getMethod("runAtFixedRate", Plugin.class, java.util.function.Consumer.class, Runnable.class, long.class, long.class)
+                    .invoke(entityScheduler, plugin,
+                        (java.util.function.Consumer<Object>) t -> {
+                            taskRef.set(t);
+                            task.run();
+                        },
+                        (Runnable) () -> {}, delay, period);
+                taskRef.set(scheduledTask);
+                return new ScheduledTaskHandle() {
+                    private volatile boolean cancelled = false;
+                    @Override
+                    public void cancel() {
+                        if (cancelled) return;
+                        cancelled = true;
+                        try {
+                            taskRef.get().getClass().getMethod("cancel").invoke(taskRef.get());
+                        } catch (Exception ignored) {}
+                    }
+                    @Override
+                    public boolean isCancelled() { return cancelled; }
+                };
+            } catch (Exception e) {
+                return new ScheduledTaskHandle() {
+                    private final org.bukkit.scheduler.BukkitTask bt = Bukkit.getScheduler().runTaskTimer(plugin, task, delay, period);
+                    private volatile boolean cancelled = false;
+                    @Override
+                    public void cancel() { if (!cancelled) { cancelled = true; bt.cancel(); } }
+                    @Override
+                    public boolean isCancelled() { return cancelled || bt.isCancelled(); }
+                };
+            }
+        } else {
+            return new ScheduledTaskHandle() {
+                private final org.bukkit.scheduler.BukkitTask bt = Bukkit.getScheduler().runTaskTimer(plugin, task, delay, period);
+                private volatile boolean cancelled = false;
+                @Override
+                public void cancel() { if (!cancelled) { cancelled = true; bt.cancel(); } }
+                @Override
+                public boolean isCancelled() { return cancelled || bt.isCancelled(); }
+            };
+        }
+    }
+
+    /**
      * 检查是否在主线程
      */
     public static boolean isPrimaryThread() {

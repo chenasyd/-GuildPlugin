@@ -14,6 +14,8 @@ guild:
   max-members: 50
   # Cost to create a guild (requires Vault)
   creation-cost: 1000.0
+  # Teleport countdown in seconds (0 = instant, no delay)
+  home-teleport-delay: 0
   # No-economy mode: set to true to skip economy checks when no economy plugin (e.g. Vault) is installed
   no-economy-mode: false
   # Guild tag color
