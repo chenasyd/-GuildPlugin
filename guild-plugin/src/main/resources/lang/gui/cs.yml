@@ -1,4 +1,4 @@
-﻿# Guild Plugin GUI Language File
+# Guild Plugin GUI Language File
 # Organized by GUI component
 gui:
 
@@ -735,7 +735,8 @@ gui:
     page-info: "Informace o str\u00e1nce"
     real-operator: "&a\u2713 Skute\u010dn\u00fd oper\u00e1tor byl zaznamen\u00e1n"
     refresh-logs: "Obnovit seznam z\u00e1znam\u016f"
-    system-operator: "&c\u26a0 Oper\u00e1torem je syst\u00e9m (m\u016f\u017ee j\u00edt o star\u00fd z\u00e1znam)"
+separator: "=================="
+system-operator: "&c\u26a0 Oper\u00e1torem je syst\u00e9m (m\u016f\u017ee j\u00edt o star\u00fd z\u00e1znam)"
     time: "\u010cas"
     title: "&6Z\u00e1znamy gildy - {guild_name}"
     total-pages: "Celkov\u00fd po\u010det stran: {total}"

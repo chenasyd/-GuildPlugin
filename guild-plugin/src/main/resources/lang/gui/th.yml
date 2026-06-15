@@ -1,4 +1,4 @@
-﻿# Guild Plugin GUI Language File - ภาษาไทย
+# Guild Plugin GUI Language File - ภาษาไทย
 # Organized by GUI component
 gui:
 
@@ -735,7 +735,8 @@ gui:
     page-info: "ข้อมูลหน้า"
     real-operator: "&a✓ บันทึกผู้ดำเนินการจริงแล้ว"
     refresh-logs: "รีเฟรชรายชื่อบันทึก"
-    system-operator: "&c⚠ ผู้ดำเนินการคือระบบ (อาจเป็นบันทึกเวอร์ชันเก่า)"
+separator: "=================="
+system-operator: "&c⚠ ผู้ดำเนินการคือระบบ (อาจเป็นบันทึกเวอร์ชันเก่า)"
     time: "เวลา"
     title: "&6บันทึกกิลด์ - {guild_name}"
     total-pages: "จำนวนหน้าทั้งหมด: {total}"

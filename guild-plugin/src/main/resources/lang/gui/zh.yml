@@ -741,6 +741,7 @@ gui:
     total-pages: "总页数: {total}"
     total-records: "总记录: {count}"
     type: "类型"
+    separator: "=================="
     wait-for-logs: "请等待工会活动产生日志"
 
   # ================================================

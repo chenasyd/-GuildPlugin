@@ -1,4 +1,4 @@
-﻿# ==========================================
+# ==========================================
 # GuildPlugin - Core Messages (non-GUI)
 # Command prompts, error messages, model display names, notifications, etc.
 # ==========================================
@@ -214,6 +214,8 @@ guild.home.not-in-guild: "&c어떤 길드에도 소속되어 있지 않습니다
 home.not-set: "&c길드 홈이 아직 설정되지 않았습니다!"
 home.success: "&a길드 홈으로 텔레포트했습니다!"
 home.folia-disabled: "&cFolia 환경에서는 텔레포트를 사용할 수 없습니다!"
+home.teleporting: "&a텔레포트 중... &e{seconds} &a초"
+home.teleport-cancelled: "&c텔레포트 취소됨 (움직이지 마세요)"
 sethome.only-leader: "&c길드 마스터만 길드 홈을 설정할 수 있습니다!"
 sethome.success: "&a길드 홈이 설정되었습니다!"
 sethome.failed: "&c길드 홈 설정에 실패했습니다!"
@@ -407,6 +409,8 @@ help.leave: "&e/guild leave &8- 길드 탈퇴"
 help.delete: "&e/guild delete &8- 길드 삭제"
 help.sethome: "&e/guild sethome &8- 길드 홈 설정"
 help.home: "&e/guild home &8- 길드 홈으로 텔레포트"
+help.applications: "&e/guild applications &8- 길드 신청 관리"
+help.chat: "&e/guild chat &8- 길드 채팅 모드 전환 | 길드 메시지 전송"
 help.relation: "&e/guild relation &8- 길드 관계 관리"
 help.economy: "&e/guild economy &8- 길드 경제 관리"
 help.deposit: "&e/guild deposit <금액> &8- 길드에 입금"
@@ -529,13 +533,18 @@ admin.unfreeze.not-found: "&c길드 {guild} 가 존재하지 않습니다!"
 # ============ Notifications ============
 notify.new-application: "&6[길드 알림] &e플레이어 &f{player} &e님이 &f{guild}&e에 가입을 신청했습니다!"
 notify.application-tip: "&8힌트: /guild applications 로 신청서를 확인하고 처리하세요"
+notify.application-tip-hover: "&7신청 관리 화면을 열려면 클릭하세요"
 notify.pending-applications: "&6[길드 알림] &e대기 중인 가입 신청이 &c{count} &e건 있습니다!"
 notify.applications-tip: "&8힌트: /guild applications 로 자세히 보기"
+notify.applications-tip-hover: "&7클릭하여 신청 관리를 엽니다"
 notify.applications-actionbar: "&e대기 중인 신청이 {count}건 있습니다!"
 notify.pending-invitations: "&6[길드 초대] &e대기 중인 길드 초대가 &a{count} &e건 있습니다!"
 notify.invitation-item: "&8- &f{guild}&8 에서 (초대자: {inviter})"
 notify.application-approved: "&a[길드 알림] &f귀하의 가입 신청이 &a승인&f되었습니다!"
 notify.application-approved-actionbar: "&a길드 &f{guild}&a에 가입했습니다"
+guild.chat.enabled: "&a길드 채팅 &a활성화&a. 메시지가 길드원에게 전송됩니다."
+guild.chat.disabled: "&e길드 채팅 비활성화. 메시지가 공개 채널로 전송됩니다."
+guild.chat.not-in-guild: "&c어떤 길드에도 소속되어 있지 않습니다! 채팅 모드가 비활성화되었습니다."
 notify.application-rejected: "&c[길드 알림] &f귀하의 가입 신청이 &c거부&f되었습니다!"
 notify.invitation-accepted: "&a[길드 알림] &f{target} &a님이 귀하의 초대를 수락하고 길드에 가입했습니다!"
 notify.invitation-declined: "&c[길드 알림] &f{target} &c님이 귀하의 초대를 거절했습니다!"

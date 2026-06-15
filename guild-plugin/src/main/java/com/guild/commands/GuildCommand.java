@@ -1449,8 +1449,10 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     return;
                 }
                 
-                // 增加公会余额
-                boolean success = plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), guild.getBalance() + amount).join();
+                // 增加公会余额（传入操作者信息，避免 updateGuildBalanceAsync 内部产生 SYSTEM 匿名日志）
+                boolean success = plugin.getGuildService().updateGuildBalanceAsync(
+                        guild.getId(), guild.getBalance() + amount,
+                        player.getUniqueId().toString(), player.getName()).join();
                 if (success) {
                     // 记录投资
                     plugin.getGuildInvestmentService().recordDeposit(guild.getId(), player.getUniqueId(), player.getName(), amount);
@@ -1461,17 +1463,6 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                             languageManager.getCoreMessage(player, "deposit.contribution-desc",
                                     "{player}存入{amount}")
                                     .replace("{player}", player.getName())
-                                    .replace("{amount}", String.format("%.2f", amount)));
-                    // 写入 guild_logs 表（供 GuildLogsGUI 展示，记录真实操作者）
-                    plugin.getGuildService().logGuildActionAsync(guild.getId(), guild.getName(),
-                            player.getUniqueId().toString(), player.getName(),
-                            com.guild.models.GuildLog.LogType.FUND_DEPOSITED,
-                            languageManager.getCoreMessage(player, "deposit.log-desc",
-                                    "{player}存入了{amount}")
-                                    .replace("{player}", player.getName())
-                                    .replace("{amount}", String.format("%.2f", amount)),
-                            languageManager.getCoreMessage(player, "deposit.log-details",
-                                    "金额:{amount}")
                                     .replace("{amount}", String.format("%.2f", amount)));
                     // 分发存款事件给模块
                     plugin.getGuildService().notifyEconomyDeposit(guild.getId(), guild.getName(), player.getUniqueId(), player.getName(), amount);
@@ -1539,8 +1530,10 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     return;
                 }
                 
-                // 减少公会余额
-                plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), guild.getBalance() - amount).join();
+                // 减少公会余额（传入操作者信息，避免产生 SYSTEM 匿名日志）
+                plugin.getGuildService().updateGuildBalanceAsync(
+                        guild.getId(), guild.getBalance() - amount,
+                        player.getUniqueId().toString(), player.getName()).join();
                 // 记录取款
                 plugin.getGuildInvestmentService().recordWithdraw(guild.getId(), player.getUniqueId(), amount);
                 // 分发取款事件给模块

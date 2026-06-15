@@ -1,4 +1,4 @@
-﻿# Guild Plugin GUI Language File
+# Guild Plugin GUI Language File
 # Organized by GUI component
 gui:
 
@@ -735,7 +735,8 @@ gui:
     page-info: "Th\xF4ng tin trang"
     real-operator: "&a\u2713 \u0110\xE3 ghi nh\u1EADn ng\u01B0\u1EDDi th\u1EF1c hi\u1EC7n th\u1EF1c t\u1EBF"
     refresh-logs: "L\xE0m m\u1EDBi danh s\xE1ch nh\u1EADt k\xFD"
-    system-operator: "&c\u26A0 Ng\u01B0\u1EDDi th\u1EF1c hi\u1EC7n l\xE0 h\u1EC7 th\u1ED1ng (c\xF3 th\u1EC3 l\xE0 b\u1EA3n ghi c\u0169)"
+separator: "=================="
+system-operator: "&c\u26A0 Ng\u01B0\u1EDDi th\u1EF1c hi\u1EC7n l\xE0 h\u1EC7 th\u1ED1ng (c\xF3 th\u1EC3 l\xE0 b\u1EA3n ghi c\u0169)"
     time: "Th\u1EDDi gian"
     title: "&6Nh\u1EADt k\xFD c\xF4ng h\u1ED9i - {guild_name}"
     total-pages: "T\u1ED5ng s\u1ED1 trang: {total}"

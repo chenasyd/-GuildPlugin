@@ -1,4 +1,4 @@
-﻿# ==========================================
+# ==========================================
 # GuildPlugin - Core Messages (Non-GUI)
 # Command prompts, error messages, model display names, notifications, etc.
 # ==========================================
@@ -214,6 +214,8 @@ guild.home.not-in-guild: "&cB\u1EA1n kh\xF4ng \u1EDF trong b\u1EA5t k\u1EF3 c\xF
 home.not-set: "&cNh\xE0 c\xF4ng h\u1ED9i ch\u01B0a \u0111\u01B0\u1EE3c thi\u1EBFt l\u1EADp!"
 home.success: "&a\u0110\xE3 d\u1ECBch chuy\u1EC3n v\u1EC1 nh\xE0 c\xF4ng h\u1ED9i!"
 home.folia-disabled: "&cCh\u1EE9c n\u0103ng d\u1ECBch chuy\u1EC3n t\u1EA1m th\u1EDDi kh\xF4ng kh\u1EA3 d\u1EE5ng trong m\xF4i tr\u01B0\u1EDDng Folia!"
+home.teleporting: "&a\u0110ang d\u1ECBch chuy\u1EC3n &e{seconds} &agi\u00e2y..."
+home.teleport-cancelled: "&cD\u1ECBch chuy\u1EC3n \u0111\u00e3 b\u1ecb h\u01a1y (vui l\u00f2ng \u0111\u00f9ng \u0111\u1ee7ng)!"
 sethome.only-leader: "&cCh\u1EC9 c\xF3 ch\u1EE7 t\u1ECBch c\xF4ng h\u1ED9i m\u1EDBi c\xF3 th\u1EC3 thi\u1EBFt l\u1EADp nh\xE0 c\xF4ng h\u1ED9i!"
 sethome.success: "&aThi\u1EBFt l\u1EADp nh\xE0 c\xF4ng h\u1ED9i th\xE0nh c\xF4ng!"
 sethome.failed: "&cThi\u1EBFt l\u1EADp nh\xE0 c\xF4ng h\u1ED9i th\u1EA5t b\u1EA1i!"
@@ -407,6 +409,8 @@ help.leave: "&e/guild leave &7- R\u1EDDi c\xF4ng h\u1ED9i"
 help.delete: "&e/guild delete &7- X\xF3a c\xF4ng h\u1ED9i"
 help.sethome: "&e/guild sethome &7- Thi\u1EBFt l\u1EADp nh\xE0 c\xF4ng h\u1ED9i"
 help.home: "&e/guild home &7- D\u1ECBch chuy\u1EC3n v\u1EC1 nh\xE0 c\xF4ng h\u1ED9i"
+help.applications: "&e/guild applications &7- Qu\u1EA3n l\xFD \u0111\u01A1n xin gia nh\u1EADp c\xF4ng h\u1ED9i"
+help.chat: "&e/guild chat &7- B\u1EADt/t\u1EAFt ch\u1EBF \u0111\u1ED9 tr\xF2 chuy\u1EC7n c\xF4ng h\u1ED9i | G\u1EEDi tin nh\u1EAFn c\xF4ng h\u1ED9i"
 help.relation: "&e/guild relation &7- Qu\u1EA3n l\xFD quan h\u1EC7 c\xF4ng h\u1ED9i"
 help.economy: "&e/guild economy &7- Qu\u1EA3n l\xFD kinh t\u1EBF c\xF4ng h\u1ED9i"
 help.deposit: "&e/guild deposit <s\u1ED1 ti\u1EC1n> &7- G\u1EEDi ti\u1EC1n v\xE0o qu\u1EF9 c\xF4ng h\u1ED9i"
@@ -529,13 +533,18 @@ admin.unfreeze.not-found: "&cC\xF4ng h\u1ED9i {guild} kh\xF4ng t\u1ED3n t\u1EA1i
 # ============ Notification Messages ============
 notify.new-application: "&6[Th\xF4ng b\xE1o c\xF4ng h\u1ED9i] &eNg\u01B0\u1EDDi ch\u01A1i &f{player} &e\u0111\xE3 g\u1EEDi \u0111\u01A1n tham gia &f{guild}&e!"
 notify.application-tip: "&7G\u1EE3i \xFD: Nh\u1EADp /guild applications \u0111\u1EC3 xem v\xE0 x\u1EED l\xFD \u0111\u01A1n"
+notify.application-tip-hover: "&7Nh\u1EA5p \u0111\u1EC3 m\u1EDF giao di\u1EC7n qu\u1EA3n l\xFD \u0111\u01A1n"
 notify.pending-applications: "&6[Th\xF4ng b\xE1o c\xF4ng h\u1ED9i] &eB\u1EA1n c\xF3 &c{count} &e\u0111\u01A1n tham gia \u0111ang ch\u1EDD x\u1EED l\xFD!"
 notify.applications-tip: "&7G\u1EE3i \xFD: Nh\u1EADp /guild applications \u0111\u1EC3 xem chi ti\u1EBFt"
+notify.applications-tip-hover: "&7Nh\u1EA5p \u0111\u1EC3 m\u1EDF giao di\u1EC7n qu\u1EA3n l\xFD \u0111\u01A1n"
 notify.applications-actionbar: "&eB\u1EA1n c\xF3 {count} \u0111\u01A1n \u0111ang ch\u1EDD x\u1EED l\xFD!"
 notify.pending-invitations: "&6[L\u1EDDi m\u1EDDi c\xF4ng h\u1ED9i] &eB\u1EA1n c\xF3 &a{count} &el\u1EDDi m\u1EDDi c\xF4ng h\u1ED9i \u0111ang ch\u1EDD!"
 notify.invitation-item: "&7- T\u1EEB &f{guild} &7(b\u1EDFi {inviter})"
 notify.application-approved: "&a[Th\xF4ng b\xE1o c\xF4ng h\u1ED9i] &f\u0110\u01A1n tham gia c\u1EE7a b\u1EA1n \u0111\xE3 \u0111\u01B0\u1EE3c &ach\u1EA5p thu\u1EADn&f!"
 notify.application-approved-actionbar: "&aB\u1EA1n \u0111\xE3 tham gia c\xF4ng h\u1ED9i th\xE0nh c\xF4ng &f{guild}"
+guild.chat.enabled: "&aTr\xF2 chuy\u1EC7n c\xF4ng h\u1ED9i \u0111\xE3 b\u1EADt. Tin nh\u1EAFn c\u1EE7a b\u1EA1n s\u1EBD \u0111\u01B0\u1EE3c g\u1EEDi \u0111\u1EBFn c\xE1c th\xE0nh vi\xEAn c\xF4ng h\u1ED9i."
+guild.chat.disabled: "&eTr\xF2 chuy\u1EC7n c\xF4ng h\u1ED9i \u0111\xE3 t\u1EAFt. Tin nh\u1EAFn c\u1EE7a b\u1EA1n s\u1EBD \u0111\u01B0\u1EE3c g\u1EEDi \u0111\u1EBFn k\xEAnh c\xF4ng c\u1ED9ng."
+guild.chat.not-in-guild: "&cB\u1EA1n kh\xF4ng \u1EDF trong b\u1EA5t k\u1EF3 c\xF4ng h\u1ED9i n\xE0o! Ch\u1EBF \u0111\u1ED9 tr\xF2 chuy\u1EC7n \u0111\xE3 b\u1ECB v\xF4 hi\u1EC7u h\xF3a."
 notify.application-rejected: "&c[Th\xF4ng b\xE1o c\xF4ng h\u1ED9i] &f\u0110\u01A1n tham gia c\u1EE7a b\u1EA1n \u0111\xE3 b\u1ECB &ct\u1EEB ch\u1ED1i&f!"
 notify.invitation-accepted: "&a[Th\xF4ng b\xE1o c\xF4ng h\u1ED9i] &f{target} &a\u0111\xE3 ch\u1EA5p nh\u1EADn&f l\u1EDDi m\u1EDDi c\u1EE7a b\u1EA1n v\xE0 tham gia c\xF4ng h\u1ED9i!"
 notify.invitation-declined: "&c[Th\xF4ng b\xE1o c\xF4ng h\u1ED9i] &f{target} &c\u0111\xE3 t\u1EEB ch\u1ED1i&f l\u1EDDi m\u1EDDi c\u1EE7a b\u1EA1n!"

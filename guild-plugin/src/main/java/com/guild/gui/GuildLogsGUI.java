@@ -88,26 +88,26 @@ public class GuildLogsGUI implements GUI {
     private CompletableFuture<Boolean> loadLogsAsync() {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                plugin.getLogger().info("开始加载工会 " + guild.getName() + " 的日志数据...");
+                plugin.getLogger().info("Loading guild logs for " + guild.getName() + "...");
                 
                 // 检查工会ID是否有效
                 if (guild.getId() <= 0) {
-                    plugin.getLogger().warning("工会ID无效: " + guild.getId());
+                    plugin.getLogger().warning("Invalid guild ID: " + guild.getId());
                     return false;
                 }
                 
                 // 获取日志总数
                 totalLogs = plugin.getGuildService().getGuildLogsCountAsync(guild.getId()).get();
-                plugin.getLogger().info("工会 " + guild.getName() + " 共有 " + totalLogs + " 条日志记录");
+                plugin.getLogger().info("Guild " + guild.getName() + " has " + totalLogs + " log records");
                 
                 // 获取当前页的日志
                 int offset = page * itemsPerPage;
                 logs = plugin.getGuildService().getGuildLogsAsync(guild.getId(), itemsPerPage, offset).get();
-                plugin.getLogger().info("成功加载第 " + (page + 1) + " 页的 " + logs.size() + " 条日志记录");
+                plugin.getLogger().info("Loaded page " + (page + 1) + " with " + logs.size() + " log records");
                 
                 return true;
             } catch (Exception e) {
-                plugin.getLogger().severe("加载工会日志时发生错误: " + e.getMessage());
+                plugin.getLogger().severe("Error loading guild logs: " + e.getMessage());
                 e.printStackTrace();
                 
                 // 设置默认值
@@ -123,14 +123,14 @@ public class GuildLogsGUI implements GUI {
      * 设置日志物品
      */
     private void setupLogItems(Inventory inventory) {
-        plugin.getLogger().info("设置日志物品，logs大小: " + (logs != null ? logs.size() : "null"));
+        plugin.getLogger().info("Setting up log items, logs size: " + (logs != null ? logs.size() : "null"));
         
         if (logs == null) {
             logs = new java.util.ArrayList<>(); // 确保logs不为null
         }
         
         if (logs.isEmpty()) {
-            plugin.getLogger().info("日志列表为空，显示无日志信息");
+            plugin.getLogger().info("Log list is empty, showing no-logs message");
             // 显示无日志信息
             ItemStack noLogs = createItem(
                 Material.BARRIER,
@@ -142,14 +142,14 @@ public class GuildLogsGUI implements GUI {
             return;
         }
         
-        plugin.getLogger().info("开始显示 " + logs.size() + " 条日志记录");
+        plugin.getLogger().info("Displaying " + logs.size() + " log records");
         
         // 显示日志列表
         for (int i = 0; i < Math.min(logs.size(), itemsPerPage); i++) {
             GuildLog log = logs.get(i);
             int slot = getLogSlot(i);
             
-            plugin.getLogger().info("设置日志项目 " + i + " 到槽位 " + slot + ": " + log.getLogType().getDisplayName());
+            plugin.getLogger().info("Set log item " + i + " to slot " + slot + ": " + log.getLogType().getDisplayName());
             
             ItemStack logItem = createLogItem(log);
             inventory.setItem(slot, logItem);
@@ -164,15 +164,15 @@ public class GuildLogsGUI implements GUI {
         String name = ColorUtils.colorize("&e" + log.getLogType().getDisplayName());
 
         List<String> lore = new java.util.ArrayList<>();
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.operator", "gui.guild-logs.operator") + ": &f" + ColorUtils.stripColor(log.getPlayerName())));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.operator", "Operator") + ": &f" + ColorUtils.stripColor(log.getPlayerName())));
         if (log.getPlayerUuid() != null && !log.getPlayerUuid().equals("SYSTEM")) {
             lore.add(ColorUtils.colorize("&8UUID: " + log.getPlayerUuid().substring(0, 8) + "..."));
         }
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.time", "gui.guild-logs.time") + ": &f" + log.getSimpleTime(languageManager.getPlayerLanguage(player))));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.description", "gui.guild-logs.description") + ": &f" + ColorUtils.stripColor(log.getDescription())));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.time", "Time") + ": &f" + log.getSimpleTime(languageManager.getPlayerLanguage(player))));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.description", "Description") + ": &f" + ColorUtils.stripColor(log.getDescription())));
 
         if (log.getDetails() != null && !log.getDetails().isEmpty()) {
-            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.details", "gui.guild-logs.details") + ": &f" + ColorUtils.stripColor(log.getDetails())));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.details", "Details") + ": &f" + ColorUtils.stripColor(log.getDetails())));
         }
 
         if (log.getLogType() == GuildLog.LogType.FUND_DEPOSITED ||
@@ -351,7 +351,7 @@ public class GuildLogsGUI implements GUI {
         if (log.getDetails() != null && !log.getDetails().isEmpty()) {
             player.sendMessage(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.details", "详情") + ": &f" + ColorUtils.stripColor(log.getDetails())));
         }
-        player.sendMessage(ColorUtils.colorize("&6=================="));
+        player.sendMessage(ColorUtils.colorize("&6" + languageManager.getGuiMessage(player, "gui.guild-logs.separator", "==================")));
     }
     
     @Override

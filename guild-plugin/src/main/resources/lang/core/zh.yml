@@ -214,6 +214,8 @@ guild.home.not-in-guild: "&c您不在任何公会中！"
 home.not-set: "&c工会家尚未设置！"
 home.success: "&a已传送到工会家！"
 home.folia-disabled: "&c传送功能在Folia环境下暂不可用！"
+home.teleporting: "&a正在传送 &e{seconds} &a秒"
+home.teleport-cancelled: "&c传送已取消（请不要移动）！"
 sethome.only-leader: "&c只有工会会长才能设置工会家！"
 sethome.success: "&a工会家设置成功！"
 sethome.failed: "&c设置工会家失败！"
@@ -285,6 +287,11 @@ economy.level-up: "&a工会升级成功！当前等级: {level}"
 guild.deposit.insufficient-funds: "&c您的余额不足！"
 guild.withdraw.insufficient-funds: "&c公会账户余额不足！"
 guild.transfer.insufficient-funds: "&c公会账户余额不足！"
+
+# ============ 公会聊天 ============
+guild.chat.enabled: "&a公会聊天 &a已开启&a。您的消息将发送给公会成员。"
+guild.chat.disabled: "&e公会聊天 &c已关闭&e。您的消息将发送到公共频道。"
+guild.chat.not-in-guild: "&c您不在任何公会中！聊天模式已关闭。"
 
 # ============ 关系 ============
 guild.relation.usage: "&c用法: /guild relation <list|create|delete|accept|reject>"
@@ -417,6 +424,8 @@ help.transfer: "&e/guild transfer <工会> <金额> &7- 向其他工会转账"
 help.logs: "&e/guild logs &7- 查看工会操作日志"
 help.placeholder: "&e/guild placeholder <player|guild|rank> &7- 获取占位符"
 help.time: "&e/guild time &7- 查看公会时间信息"
+help.applications: "&e/guild applications &7- 管理公会申请"
+help.chat: "&e/guild chat &7- 切换公会聊天模式 | &e/guild chat <消息> &7- 发送公会消息"
 help.help: "&e/guild help &7- 显示此帮助"
 
 # ============ 管理员命令 ============
@@ -530,9 +539,11 @@ admin.unfreeze.not-found: "&c工会 {guild} 不存在！"
 
 # ============ 通知消息 ============
 notify.new-application: "&6[工会通知] &e玩家 &f{player} &e申请加入 &f{guild}&e！"
-notify.application-tip: "&7提示: 输入 /guild applications 查看并处理申请"
+notify.application-tip: "&7[&a&l点击此处&7] &7查看和处理申请"
+notify.application-tip-hover: "&7点击打开申请管理界面"
 notify.pending-applications: "&6[工会通知] &e您有 &c{count} &e个待处理的加入申请！"
-notify.applications-tip: "&7提示: 输入 /guild applications 查看详情"
+notify.applications-tip: "&7[&a&l点击此处&7] &7查看待处理申请"
+notify.applications-tip-hover: "&7点击打开申请管理界面"
 notify.applications-actionbar: "&e您有 {count} 个待处理申请！"
 notify.pending-invitations: "&6[工会邀请] &e您有 &a{count} &e个待处理的工会邀请！"
 notify.invitation-item: "&7- 来自 &f{guild} &7(由 {inviter})"

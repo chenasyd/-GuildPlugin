@@ -1,4 +1,4 @@
-﻿# Guild Plugin GUI Language File
+# Guild Plugin GUI Language File
 # Organized by GUI component
 gui:
 
@@ -735,7 +735,8 @@ gui:
     page-info: "Informações da Página"
     real-operator: "&a\u2713 Operador real registrado"
     refresh-logs: "Atualizar lista de logs"
-    system-operator: "&c\u26A0 Operador é SYSTEM (pode ser registro antigo)"
+separator: "=================="
+system-operator: "&c\u26A0 Operador é SYSTEM (pode ser registro antigo)"
     time: "Hora"
     title: "&6Logs da Guilda - {guild_name}"
     total-pages: "Total de páginas: {total}"

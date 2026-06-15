@@ -1,4 +1,4 @@
-﻿# ==========================================
+# ==========================================
 # GuildPlugin - Core Messages (non-GUI)
 # Command prompts, error messages, model display names, notifications
 # ==========================================
@@ -214,6 +214,8 @@ guild.home.not-in-guild: "&cYou are not in any guild!"
 home.not-set: "&cGuild home has not been set yet!"
 home.success: "&aTeleported to guild home!"
 home.folia-disabled: "&cTeleport is unavailable in Folia environment!"
+home.teleporting: "&aTeleporting &e{seconds} &asec"
+home.teleport-cancelled: "&cTeleport cancelled (do not move)!"
 sethome.only-leader: "&cOnly the guild leader can set the guild home!"
 sethome.success: "&aGuild home set successfully!"
 sethome.failed: "&cFailed to set guild home!"
@@ -285,6 +287,11 @@ economy.level-up: "&aGuild level up successful! Current level: {level}"
 guild.deposit.insufficient-funds: "&cYou don't have enough money!"
 guild.withdraw.insufficient-funds: "&cInsufficient guild account balance!"
 guild.transfer.insufficient-funds: "&cInsufficient guild account balance!"
+
+# ============ Guild Chat ============
+guild.chat.enabled: "&aGuild chat &aenabled&a. Your messages will be sent to guild members."
+guild.chat.disabled: "&eGuild chat &cdisabled&e. Your messages will be sent to global chat."
+guild.chat.not-in-guild: "&cYou are not in a guild! Chat mode disabled."
 
 # ============ Relations ============
 guild.relation.usage: "&cUsage: /guild relation <list|create|delete|accept|reject>"
@@ -417,6 +424,8 @@ help.transfer: "&e/guild transfer <guild> <amount> &7- Transfer to another guild
 help.logs: "&e/guild logs &7- View guild operation logs"
 help.placeholder: "&e/guild placeholder <player|guild|rank> &7- Get placeholders"
 help.time: "&e/guild time &7- View guild time info"
+help.applications: "&e/guild applications &7- Manage guild applications"
+help.chat: "&e/guild chat &7- Toggle guild chat mode | Send guild message"
 help.help: "&e/guild help &7- Show this help"
 
 # ============ Admin Commands ============
@@ -528,12 +537,13 @@ admin.unfreeze.usage: "&cUsage: /guildadmin unfreeze <guild name>"
 admin.unfreeze.success: "&aGuild {guild} has been unfrozen!"
 admin.unfreeze.not-found: "&cGuild {guild} does not exist!"
 
-# ============ Notifications
 # ============ Notifications ============
 notify.new-application: "&6[Guild Notification] &ePlayer &f{player} &ehas applied to join &f{guild}&e!"
-notify.application-tip: "&7Tip: Type /guild applications to view and process applications"
+notify.application-tip: "&7[&a&lClick here&7] &7to review applications"
+notify.application-tip-hover: "&7Click to open application management"
 notify.pending-applications: "&6[Guild Notification] &eYou have &c{count} &epending join applications!"
-notify.applications-tip: "&7Tip: Type /guild applications for details"
+notify.applications-tip: "&7[&a&lClick here&7] &7to review pending applications"
+notify.applications-tip-hover: "&7Click to open application management"
 notify.applications-actionbar: "&eYou have {count} pending applications!"
 notify.pending-invitations: "&6[Guild Invitation] &eYou have &a{count} &epending guild invitations!"
 notify.invitation-item: "&7- From &f{guild} &7(by {inviter})"
