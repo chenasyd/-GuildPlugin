@@ -11,3 +11,6 @@
 /.idea/
 *.iml
 .DS_Store
+
+# i18n pending translation tracking (dev-local only)
+Wiki/i18n-pending-keys.md

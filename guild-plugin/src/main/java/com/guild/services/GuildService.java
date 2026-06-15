@@ -252,6 +252,72 @@ public class GuildService {
             return false;
         }
     }
+
+    /**
+     * 管理员强制删除工会 (异步) — 跳过会长身份验证，但资金仍退还至会长
+     * @param guildId 工会ID
+     * @param adminUuid 管理员UUID（执行删除的人，非会长）
+     */
+    public CompletableFuture<Boolean> forceDeleteGuildAsync(int guildId, UUID adminUuid) {
+        return getGuildByIdAsync(guildId).thenCompose(guild -> {
+            if (guild == null) {
+                return CompletableFuture.completedFuture(false);
+            }
+            
+            return CompletableFuture.supplyAsync(() -> {
+                try {
+                    // 获取工会余额用于退款（退款给会长，而非管理员）
+                    double guildBalance = guild.getBalance();
+                    
+                    // 删除所有工会成员
+                    String deleteMembersSql = "DELETE FROM guild_members WHERE guild_id = ?";
+                    try (Connection conn = databaseManager.getConnection();
+                         PreparedStatement stmt = conn.prepareStatement(deleteMembersSql)) {
+                        stmt.setInt(1, guildId);
+                        stmt.executeUpdate();
+                    }
+                    
+                    // 删除工会
+                    String deleteGuildSql = "DELETE FROM guilds WHERE id = ?";
+                    try (Connection conn = databaseManager.getConnection();
+                         PreparedStatement stmt = conn.prepareStatement(deleteGuildSql)) {
+                        stmt.setInt(1, guildId);
+                        int affectedRows = stmt.executeUpdate();
+                        if (affectedRows > 0) {
+                            logger.info("Admin force-deleted guild: " + guild.getName() + " (ID: " + guildId + ", by: " + adminUuid + ")");
+                            
+                            // 退款给会长（如果经济系统可用）— 注意：退款给会长而非管理员
+                            if (guildBalance > 0 && plugin.getEconomyManager().isVaultAvailable()) {
+                                try {
+                                    org.bukkit.entity.Player leaderPlayer = org.bukkit.Bukkit.getPlayer(guild.getLeaderUuid());
+                                    if (leaderPlayer != null && leaderPlayer.isOnline()) {
+                                        plugin.getEconomyManager().deposit(leaderPlayer, guildBalance);
+                                        String message = plugin.getLanguageManager().getCoreMessage(leaderPlayer, "economy.disband-compensation", "&a工会解散，您获得了 {amount} 金币补偿！", "{amount}", plugin.getEconomyManager().format(guildBalance));
+                                        leaderPlayer.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
+                                    }
+                                } catch (Exception e) {
+                                    logger.warning("Error refunding to guild leader: " + e.getMessage());
+                                }
+                            }
+                            
+                            // 记录工会强制解散日志
+                            logGuildActionAsync(guildId, guild.getName(), guild.getLeaderUuid().toString(), guild.getLeaderName(),
+                                GuildLog.LogType.GUILD_DISSOLVED, "Admin force deleted",
+                                "By: " + adminUuid + ", balance: " + guildBalance + " coins");
+                            
+                            // 分发工会解散事件给模块
+                            fireGuildDelete(guildId, guild.getName(), guild.getLeaderName());
+                            
+                            return true;
+                        }
+                    }
+                } catch (SQLException e) {
+                    logger.severe("Error during admin force-delete: " + e.getMessage());
+                }
+                return false;
+            });
+        });
+    }
     
     /**
      * 更新工会信息 (异步)

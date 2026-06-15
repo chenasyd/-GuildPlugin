@@ -212,8 +212,8 @@ public class GuildListManagementGUI implements GUI {
             player.sendMessage(ColorUtils.colorize("&c您没有权限执行此操作！"));
             return;
         }
-        // 打开统一的确认删除GUI
-        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player));
+        // 打开统一的确认删除GUI，标记来源为 GuildListManagementGUI 以便跳过会长验证
+        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player, "GuildListManagementGUI"));
     }
     
     private void toggleGuildFreeze(Player player, Guild guild) {

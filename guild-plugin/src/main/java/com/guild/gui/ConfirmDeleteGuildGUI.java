@@ -25,7 +25,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
     private final LanguageManager languageManager;
     private final Guild guild;
     private final Player player;
-    /** 记录打开本 GUI 的来源，取消时返回对应的 GUI。可选值: "GuildDetailGUI", "GuildSettingsGUI" 等 */
+    /** 记录打开本 GUI 的来源，取消时返回对应的 GUI。可选值: "GuildDetailGUI", "GuildSettingsGUI", "GuildListManagementGUI" 等 */
     private final String sourceGuiType;
 
     public ConfirmDeleteGuildGUI(GuildPlugin plugin, Guild guild, Player player) {
@@ -133,16 +133,28 @@ public class ConfirmDeleteGuildGUI implements GUI {
      * 处理确认删除
      */
     private void handleConfirmDelete(Player player) {
-        // 检查权限（只有当前工会会长可以删除）
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || member.getGuildId() != guild.getId() || member.getRole() != GuildMember.Role.LEADER) {
-            String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
-            player.sendMessage(ColorUtils.colorize(message));
-            return;
+        // 如果是从 GuildListManagementGUI 打开的，代表管理员强制删除，跳过会长身份验证
+        boolean isAdminForceDelete = "GuildListManagementGUI".equals(sourceGuiType);
+
+        if (!isAdminForceDelete) {
+            // 正常路径：检查权限（只有当前工会会长可以删除）
+            GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
+            if (member == null || member.getGuildId() != guild.getId() || member.getRole() != GuildMember.Role.LEADER) {
+                String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
+                player.sendMessage(ColorUtils.colorize(message));
+                return;
+            }
         }
 
-        // 删除工会
-        plugin.getGuildService().deleteGuildAsync(guild.getId(), player.getUniqueId()).thenAccept(success -> {
+        // 删除工会（管理员强制删除走 forceDeleteGuildAsync，资金仍转至会长）
+        java.util.concurrent.CompletableFuture<Boolean> deleteFuture;
+        if (isAdminForceDelete) {
+            deleteFuture = plugin.getGuildService().forceDeleteGuildAsync(guild.getId(), player.getUniqueId());
+        } else {
+            deleteFuture = plugin.getGuildService().deleteGuildAsync(guild.getId(), player.getUniqueId());
+        }
+
+        deleteFuture.thenAccept(success -> {
             if (success) {
                 // 去除名称中的颜色代码，避免影响提示消息颜色
                 String cleanGuildName = ColorUtils.stripColor(guild.getName());
@@ -152,7 +164,12 @@ public class ConfirmDeleteGuildGUI implements GUI {
                     player.sendMessage(ColorUtils.colorize(message));
                     // 使用GUIManager以确保主线程安全关闭与打开
                     plugin.getGuiManager().closeGUI(player);
-                    plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
+                    if (isAdminForceDelete) {
+                        // 管理员强制删除后返回工会列表管理GUI
+                        plugin.getGuiManager().openGUI(player, new GuildListManagementGUI(plugin, player));
+                    } else {
+                        plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
+                    }
                 });
             } else {
                 String message = languageManager.getGuiMessage(player, "gui.confirm-delete-guild.delete.failed", "&c删除工会失败！");
@@ -165,7 +182,10 @@ public class ConfirmDeleteGuildGUI implements GUI {
      * 处理取消
      */
     private void handleCancel(Player player) {
-        if ("GuildDetailGUI".equals(sourceGuiType)) {
+        if ("GuildListManagementGUI".equals(sourceGuiType)) {
+            // 管理员取消删除，返回工会列表管理GUI
+            plugin.getGuiManager().openGUI(player, new GuildListManagementGUI(plugin, player));
+        } else if ("GuildDetailGUI".equals(sourceGuiType)) {
             plugin.getGuiManager().openGUI(player, new GuildDetailGUI(plugin, guild, player));
         } else {
             // 默认返回工会设置GUI
