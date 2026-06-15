@@ -141,6 +141,10 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             case "help":
                 handleHelp(player);
                 break;
+            case "chat":
+            case "c":
+                handleChat(player, args);
+                break;
             default:
                 // 检查是否为模块注册的子命令
                 if (api.hasSubCommand("guild", args[0])) {
@@ -178,7 +182,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         
         if (args.length == 1) {
             List<String> subCommands = new ArrayList<>(Arrays.asList(
-                "create", "info", "members", "invite", "kick", "promote", "demote", "accept", "decline", "leave", "delete", "sethome", "home", "relation", "economy", "deposit", "withdraw", "transfer", "logs", "placeholder", "time", "help"
+                "create", "info", "members", "invite", "kick", "promote", "demote", "accept", "decline", "leave", "delete", "sethome", "home", "relation", "economy", "deposit", "withdraw", "transfer", "logs", "placeholder", "time", "help", "chat"
             ));
             
             // 添加模块注册的子命令
@@ -1802,7 +1806,60 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             }
         });
     }
-    
+
+    /**
+     * /guild chat — 切换公会聊天模式或发送单条消息
+     */
+    private void handleChat(Player player, String[] args) {
+        com.guild.chat.GuildChatManager chatManager = plugin.getGuildChatManager();
+        if (chatManager == null) {
+            player.sendMessage(ColorUtils.colorize("&cGuild chat is not available."));
+            return;
+        }
+
+        // /guild chat <消息> — 直接发送一条公会消息（不切换模式）
+        if (args.length > 1) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 1; i < args.length; i++) {
+                if (i > 1) sb.append(" ");
+                sb.append(args[i]);
+            }
+            String msg = sb.toString();
+            com.guild.models.GuildMember member = guildService.getGuildMember(player.getUniqueId());
+            if (member == null) {
+                String err = languageManager.getCoreMessage(player, "guild.chat.not-in-guild",
+                    "&cYou are not in a guild!");
+                player.sendMessage(ColorUtils.colorize(err));
+                return;
+            }
+            com.guild.models.Guild guild = guildService.getPlayerGuild(player.getUniqueId());
+            if (guild == null) {
+                player.sendMessage(ColorUtils.colorize("&cGuild not found!"));
+                return;
+            }
+            String formatted = chatManager.formatMessage(player, member.getRole(), msg);
+            for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
+                com.guild.models.GuildMember pm = guildService.getGuildMember(p.getUniqueId());
+                if (pm != null && pm.getGuildId() == guild.getId()) {
+                    p.sendMessage(ColorUtils.colorize(formatted));
+                }
+            }
+            return;
+        }
+
+        // /guild chat — 切换聊天模式
+        boolean enabled = chatManager.toggleChatMode(player);
+        if (enabled) {
+            String msg = languageManager.getCoreMessage(player, "guild.chat.enabled",
+                "&aGuild chat &aenabled&a. Your messages will be sent to guild members.");
+            player.sendMessage(ColorUtils.colorize(msg));
+        } else {
+            String msg = languageManager.getCoreMessage(player, "guild.chat.disabled",
+                "&eGuild chat &cdisabled&e. Your messages will be sent to global chat.");
+            player.sendMessage(ColorUtils.colorize(msg));
+        }
+    }
+
     private void handleHelp(Player player) {
         String message = languageManager.getCoreMessage(player, "help.title", "&a=== Guild System Help ===");
         player.sendMessage(ColorUtils.colorize(message));
@@ -1829,6 +1886,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.logs", "&e/guild logs &7- View guild operation logs")));
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.placeholder", "&e/guild placeholder <player|guild|rank> &7- Get placeholders")));
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.time", "&e/guild time &7- View guild time info")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.chat", "&e/guild chat &7- Toggle guild chat mode &7| &e/guild chat <msg> &7- Send guild message")));
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.help", "&e/guild help &7- Show this help")));
     }
 }

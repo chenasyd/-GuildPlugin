@@ -1,16 +1,26 @@
 package com.guild.listeners;
 
 import com.guild.GuildPlugin;
+import com.guild.chat.GuildChatManager;
 import com.guild.core.gui.GUIManager;
 import com.guild.core.language.LanguageManager;
+import com.guild.events.GuildChatEvent;
+import com.guild.models.GuildMember;
 import com.guild.util.NotifyUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * 玩家事件监听器
@@ -19,10 +29,12 @@ public class PlayerListener implements Listener {
     
     private final GuildPlugin plugin;
     private final LanguageManager languageManager;
+    private final GuildChatManager chatManager;
     
     public PlayerListener(GuildPlugin plugin) {
         this.plugin = plugin;
         this.languageManager = plugin.getLanguageManager();
+        this.chatManager = plugin.getGuildChatManager();
     }
     
     /**
@@ -35,6 +47,9 @@ public class PlayerListener implements Listener {
         
         // 检查待处理的申请和邀请通知
         checkPendingNotifications(event.getPlayer());
+
+        // 发送缓存的离线公会聊天消息
+        chatManager.deliverOfflineMessages(event.getPlayer());
     }
     
     /**
@@ -72,6 +87,8 @@ public class PlayerListener implements Listener {
      */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        // 清理聊天模式
+        chatManager.removePlayer(event.getPlayer().getUniqueId());
         // 清理玩家的GUI状态
         GUIManager guiManager = plugin.getGuiManager();
         if (guiManager != null) {
@@ -80,28 +97,96 @@ public class PlayerListener implements Listener {
     }
     
     /**
-     * 处理聊天输入事件（用于GUI输入模式）
+     * 处理聊天输入事件（GUI输入 / 公会聊天）
      */
     @EventHandler
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
         GUIManager guiManager = plugin.getGuiManager();
         
-        if (guiManager != null && guiManager.isInInputMode(event.getPlayer())) {
-            // 取消事件，防止消息发送到聊天
+        // GUI 输入模式优先处理
+        if (guiManager != null && guiManager.isInInputMode(player)) {
             event.setCancelled(true);
-            
-            // 处理输入 - 在主线程中执行
             String input = event.getMessage();
             CompatibleScheduler.runTask(plugin, () -> {
                 try {
-                    guiManager.handleInput(event.getPlayer(), input);
+                    guiManager.handleInput(player, input);
                 } catch (Exception e) {
-                    plugin.getLogger().severe("处理GUI输入时发生错误: " + e.getMessage());
+                    plugin.getLogger().severe("Error handling GUI input: " + e.getMessage());
                     e.printStackTrace();
-                    // 发生错误时清除输入模式
-                    guiManager.clearInputMode(event.getPlayer());
+                    guiManager.clearInputMode(player);
                 }
             });
+            return;
         }
+
+        // 公会聊天模式处理
+        if (chatManager != null && chatManager.isInGuildChat(player.getUniqueId())) {
+            handleGuildChat(event);
+        }
+    }
+
+    /**
+     * 处理公会聊天消息 — 线性异步链获取成员→公会→成员列表，然后广播
+     */
+    private void handleGuildChat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+        event.setCancelled(true);
+        String rawMessage = event.getMessage();
+
+        plugin.getGuildService().getGuildMemberAsync(player.getUniqueId()).thenAccept(member -> {
+            if (member == null) {
+                String msg = languageManager.getCoreMessage(player, "guild.chat.not-in-guild",
+                    "&cYou are not in a guild! Chat mode disabled.");
+                player.sendMessage(ColorUtils.colorize(msg));
+                chatManager.removePlayer(player.getUniqueId());
+                return;
+            }
+            int guildId = member.getGuildId();
+            GuildMember.Role role = member.getRole();
+
+            plugin.getGuildService().getGuildByIdAsync(guildId).thenAccept(guild -> {
+                if (guild == null) {
+                    chatManager.removePlayer(player.getUniqueId());
+                    return;
+                }
+
+                String formatted = chatManager.formatMessage(player, role, rawMessage);
+
+                plugin.getGuildService().getGuildMembersAsync(guildId).thenAccept(allMembers -> {
+                    // Build online recipients set
+                    Set<UUID> onlineUuids = new HashSet<>();
+                    for (GuildMember m : allMembers) {
+                        Player p = Bukkit.getPlayer(m.getPlayerUuid());
+                        if (p != null && p.isOnline()) {
+                            onlineUuids.add(m.getPlayerUuid());
+                        }
+                    }
+
+                    // Fire GuildChatEvent for module hooks
+                    GuildChatEvent chatEvent = new GuildChatEvent(
+                        player, guild.getId(), guild.getName(),
+                        onlineUuids, rawMessage, formatted);
+                    Bukkit.getPluginManager().callEvent(chatEvent);
+
+                    if (chatEvent.isCancelled()) return;
+
+                    String finalMessage = ColorUtils.colorize(chatEvent.getFormat());
+                    for (UUID uuid : chatEvent.getRecipients()) {
+                        Player recipient = Bukkit.getPlayer(uuid);
+                        if (recipient != null && recipient.isOnline()) {
+                            recipient.sendMessage(finalMessage);
+                        }
+                    }
+
+                    // Cache for offline members
+                    for (GuildMember m : allMembers) {
+                        if (!onlineUuids.contains(m.getPlayerUuid())) {
+                            chatManager.cacheOfflineMessage(m.getPlayerUuid(), finalMessage);
+                        }
+                    }
+                });
+            });
+        });
     }
 }

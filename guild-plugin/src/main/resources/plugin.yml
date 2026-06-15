@@ -73,6 +73,9 @@ permissions:
   guild.transfer:
     description: Allows transferring funds to other guilds
     default: true
+  guild.chat:
+    description: Allows using guild chat
+    default: true
   guild.admin.module:
     description: Allows managing modules (list/load/unload/reload)
     default: op

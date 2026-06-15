@@ -130,6 +130,16 @@ gui:
   # Whether to show the guild description
   show-description: true
 
+# Guild chat configuration
+guild-chat:
+  enabled: true
+  format: "&7[&bGuild&7]&r {role} {player}&f: {message}"
+  role-leader: "&c&lLeader"
+  role-officer: "&6Officer"
+  role-member: "&aMember"
+  offline-cache-size: 20
+  allow-color-codes: true
+
 # Placeholder configuration
 placeholders:
   # Whether placeholders are enabled

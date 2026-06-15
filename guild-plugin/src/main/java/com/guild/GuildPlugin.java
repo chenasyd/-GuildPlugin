@@ -43,6 +43,7 @@ public class GuildPlugin extends JavaPlugin {
     private LanguageManager languageManager;
     private GuildService guildService;
     private com.guild.services.GuildInvestmentService guildInvestmentService;
+    private com.guild.chat.GuildChatManager guildChatManager;
     private ModuleManager moduleManager;
     private GuildMetrics guildMetrics;
     private UpdateManager updateManager;
@@ -126,7 +127,10 @@ public class GuildPlugin extends JavaPlugin {
             // 初始化投资记录服务
             guildInvestmentService = new com.guild.services.GuildInvestmentService(this);
             serviceContainer.register(com.guild.services.GuildInvestmentService.class, guildInvestmentService);
-            
+
+            // 初始化公会聊天管理器
+            guildChatManager = new com.guild.chat.GuildChatManager(this);
+
             // 初始化模块系统（在所有核心服务就绪后）
             moduleManager = new ModuleManager(this);
             serviceContainer.register(ModuleManager.class, moduleManager);
@@ -285,6 +289,10 @@ public class GuildPlugin extends JavaPlugin {
 
     public com.guild.services.GuildInvestmentService getGuildInvestmentService() {
         return guildInvestmentService;
+    }
+
+    public com.guild.chat.GuildChatManager getGuildChatManager() {
+        return guildChatManager;
     }
     
     public ModuleManager getModuleManager() {
