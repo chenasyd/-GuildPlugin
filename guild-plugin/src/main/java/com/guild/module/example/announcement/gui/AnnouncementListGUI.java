@@ -62,7 +62,7 @@ public class AnnouncementListGUI implements GUI {
         int totalPages = getTotalPages();
         if (totalPages > 1) {
             baseTitle += ColorUtils.colorize(" &7(" +
-                    module.getContext().getPlugin().getLanguageManager().getIndexedMessage(player,
+                    module.getContext().getLanguageManager().getGuiMessage(player,
                             "gui.page-info", "第{0}页/共{1}页",
                             String.valueOf(currentPage), String.valueOf(totalPages)) +
                     ")");

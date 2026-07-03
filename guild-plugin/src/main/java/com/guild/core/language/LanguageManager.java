@@ -248,6 +248,12 @@ public class LanguageManager {
      */
     private void loadModuleLanguages() {
         loadExternalModuleLanguages();
+
+        // Ensure bundled module languages are loaded on first startup, even if the
+        // external language files have not been extracted yet.
+        for (String moduleId : MODULE_DIRS) {
+            loadBundledModuleLanguagesForModule(moduleId);
+        }
     }
 
     private void loadExternalCoreLanguages() {
