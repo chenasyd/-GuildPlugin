@@ -58,6 +58,14 @@ public class ApiTestModule implements GuildModule {
         api.registerPlaceholderProvider(new RegionCountProvider());
 
         context.getLogger().info("[ApiTest] Module enabled — use /guild apitest help to see test commands");
+
+        // Load module language resources for all currently loaded languages
+        try {
+            var lm = context.getLanguageManager();
+            for (String lang : lm.getLoadedLanguages()) {
+                context.getApi().loadModuleLanguageResource(context.getDescriptor().getId(), lang);
+            }
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -189,14 +197,14 @@ public class ApiTestModule implements GuildModule {
             }
             if (params.equals("invested")) {
                 try {
-                    GuildData g = context.getApi().getPlayerGuild(player.getUniqueId()).get();
-                    if (g == null) return "0";
-                    // 随机找一个 member 展示 investedBalance
-                    List<MemberData> members = context.getApi().getGuildMembers(g.getId()).get();
-                    MemberData self = members.stream()
+                        GuildData g = context.getApi().getPlayerGuild(player.getUniqueId()).getNow(null);
+                        if (g == null) return "0";
+                        // 尽量非阻塞地获取成员列表；若不可用则返回默认
+                        List<MemberData> members = context.getApi().getGuildMembers(g.getId()).getNow(Collections.emptyList());
+                        MemberData self = members.stream()
                             .filter(m -> m.getPlayerUuid().equals(player.getUniqueId()))
                             .findFirst().orElse(null);
-                    return String.format("%.0f", self != null ? self.getInvestedBalance() : 0.0);
+                        return String.format("%.0f", self != null ? self.getInvestedBalance() : 0.0);
                 } catch (Exception ignored) { return "0"; }
             }
             return "§7[ApiTest:" + params + "]";

@@ -107,6 +107,13 @@ public class AnnouncementModule implements GuildModule {
         context.getLogger().info("[Announcement-Lang] Dynamic message lookup: "
             + langManager.getMessage(welcomeKey,
                 "Hint: use /guild announcement to manage announcements"));
+
+        // Attempt to load module language resources for all currently loaded languages
+        try {
+            for (String lang : langManager.getLoadedLanguages()) {
+                api.loadModuleLanguageResource(context.getDescriptor().getId(), lang);
+            }
+        } catch (Exception ignored) {}
     }
 
     @Override

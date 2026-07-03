@@ -76,7 +76,7 @@ public class QuestRewardHandler {
                                            List<String> successList, 
                                            List<String> failedList) {
         try {
-            var guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
+            var guild = context.getApi().getPlayerGuild(player.getUniqueId()).getNow(null);
             if (guild == null) {
                 String msg = "C-Coins+" + (int)amount + " (failed: not in guild)";
                 failedList.add(msg);
@@ -297,8 +297,7 @@ public class QuestRewardHandler {
     public boolean canReceiveReward(Player player, QuestReward.RewardType type) {
         switch (type) {
             case CONTRIBUTION:
-                return context.getPlugin().getGuildService()
-                    .getPlayerGuild(player.getUniqueId()) != null;
+                return context.getApi().getPlayerGuild(player.getUniqueId()).getNow(null) != null;
                     
             case MONEY:
                 return isEconomyAvailable() && 
@@ -321,8 +320,7 @@ public class QuestRewardHandler {
         for (QuestReward reward : definition.getRewards()) {
             switch (reward.getType()) {
                 case CONTRIBUTION:
-                    if (context.getPlugin().getGuildService()
-                        .getPlayerGuild(player.getUniqueId()) == null) {
+                    if (context.getApi().getPlayerGuild(player.getUniqueId()).getNow(null) == null) {
                         issues.add("C-Coins reward: you are not in a guild");
                     }
                     break;

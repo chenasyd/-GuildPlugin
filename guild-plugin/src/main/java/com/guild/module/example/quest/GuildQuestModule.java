@@ -113,6 +113,14 @@ public class GuildQuestModule implements GuildModule {
             context.getLogger().info("[Quest] Quest system enabled");
         });
 
+        // Load module language resources for currently loaded languages
+        try {
+            var lm = context.getLanguageManager();
+            for (String lang : lm.getLoadedLanguages()) {
+                context.getApi().loadModuleLanguageResource(context.getDescriptor().getId(), lang);
+            }
+        } catch (Exception ignored) {}
+
         context.getEventBus().subscribe(QuestCompletedEvent.class, event -> {});
     }
 
@@ -209,12 +217,17 @@ public class GuildQuestModule implements GuildModule {
         Player player = (Player) sender;
         if (args.length > 0 && args[0].equalsIgnoreCase("reset")) {
             if (player.hasPermission("guild.quest.admin.reset")) {
-                var guild = context.getPlugin().getGuildService()
-                    .getPlayerGuild(player.getUniqueId());
-                if (guild != null) {
-                    questManager.resetDailyQuests(guild.getId());
-                    context.sendMessage(player, "module.quest.reset-done", "&a[Quest] Daily quests have been reset");
-                }
+                context.getApi().getPlayerGuild(player.getUniqueId()).thenAccept(guildData -> {
+                    if (guildData != null) {
+                        questManager.resetDailyQuests(guildData.getId());
+                        context.runSync(() -> context.sendMessage(player, "module.quest.reset-done", "&a[Quest] Daily quests have been reset"));
+                    } else {
+                        context.runSync(() -> context.sendMessage(player, "module.quest.error.no-guild", context.getMessage("module.quest.error.no-guild", "&cYou are not in any guild")));
+                    }
+                }).exceptionally(ex -> {
+                    context.runSync(() -> context.sendMessage(player, "module.quest.error.load-fail", "&cFailed to query guild: " + ex.getMessage()));
+                    return null;
+                });
             } else {
                 context.sendMessage(player, "module.quest.no-permission", "&cInsufficient permission");
             }
@@ -226,39 +239,42 @@ public class GuildQuestModule implements GuildModule {
     private void handleCurrenciesCommand(org.bukkit.command.CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) return;
         Player player = (Player) sender;
-        
-        var guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
-        if (guild == null) {
-            context.sendMessage(player, "module.quest.error.no-guild", "&cYou are not in any guild");
-            return;
-        }
-        
-        int guildId = guild.getId();
-        UUID playerUuid = player.getUniqueId();
-        
-        StringBuilder message = new StringBuilder();
-        message.append(ColorUtils.colorize("&6=== Currency Info ===\n"));
-        
-        // Query Vault economy
-        var economyManager = context.getPlugin().getServiceContainer().get(com.guild.core.economy.EconomyManager.class);
-        double goldBalance = economyManager.getBalance(player);
-        String goldName = economyManager.getCurrencyName();
-        message.append(ColorUtils.colorize("&e{currency}: &f{balance}"
-            .replace("{currency}", goldName).replace("{balance}", economyManager.format(goldBalance))))
-            .append("\n");
-        
-        // Query guild currencies (A/B/C coins)
-        var currencyManager = context.getApi().getCurrencyManager();
-        for (CurrencyManager.CurrencyType type : CurrencyManager.CurrencyType.values()) {
-            double balance = currencyManager.getBalance(guildId, playerUuid, type);
+        context.getApi().getPlayerGuild(player.getUniqueId()).thenAccept(guild -> {
+            if (guild == null) {
+                context.runSync(() -> context.sendMessage(player, "module.quest.error.no-guild", "&cYou are not in any guild"));
+                return;
+            }
+
+            int guildId = guild.getId();
+            UUID playerUuid = player.getUniqueId();
+
+            StringBuilder message = new StringBuilder();
+            message.append(ColorUtils.colorize("&6=== Currency Info ===\n"));
+
+            // Query Vault economy
+            var economyManager = context.getPlugin().getServiceContainer().get(com.guild.core.economy.EconomyManager.class);
+            double goldBalance = economyManager.getBalance(player);
+            String goldName = economyManager.getCurrencyName();
             message.append(ColorUtils.colorize("&e{currency}: &f{balance}"
-                .replace("{currency}", type.getDisplayName()).replace("{balance}", String.format("%.0f", balance))))
+                .replace("{currency}", goldName).replace("{balance}", economyManager.format(goldBalance))))
                 .append("\n");
-        }
-        
-        message.append(ColorUtils.colorize("&6================"));
-        
-        player.sendMessage(message.toString());
+
+            // Query guild currencies (A/B/C coins)
+            var currencyManager = context.getApi().getCurrencyManager();
+            for (CurrencyManager.CurrencyType type : CurrencyManager.CurrencyType.values()) {
+                double balance = currencyManager.getBalance(guildId, playerUuid, type);
+                message.append(ColorUtils.colorize("&e{currency}: &f{balance}"
+                    .replace("{currency}", type.getDisplayName()).replace("{balance}", String.format("%.0f", balance))))
+                    .append("\n");
+            }
+
+            message.append(ColorUtils.colorize("&6================"));
+
+            context.runSync(() -> player.sendMessage(message.toString()));
+        }).exceptionally(ex -> {
+            context.runSync(() -> context.sendMessage(player, "module.quest.error.load-fail", "&cFailed to query guild: " + ex.getMessage()));
+            return null;
+        });
     }
 
     private void registerEventHandlers(GuildPluginAPI api) {
@@ -401,26 +417,35 @@ public class GuildQuestModule implements GuildModule {
     private void openQuestList(Player player, Object... ctx) {
         int guildId = extractGuildId(ctx);
         if (guildId <= 0) {
-            // If guild ID not found in ctx, try getting it from the player directly
-            var guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
-            if (guild == null) {
-                context.sendMessage(player, "module.quest.error.no-guild", context.getMessage("module.quest.error.no-guild", "&cYou are not in any guild"));
-                return;
-            }
-            guildId = guild.getId();
+            // If guild ID not provided, fetch asynchronously
+            context.getApi().getPlayerGuild(player.getUniqueId()).thenAccept(guildData -> {
+                if (guildData == null) {
+                    context.runSync(() -> context.sendMessage(player, "module.quest.error.no-guild", context.getMessage("module.quest.error.no-guild", "&cYou are not in any guild")));
+                    return;
+                }
+                int resolvedGuildId = guildData.getId();
+                context.runSync(() -> context.openGUI(player, new QuestListGUI(this, resolvedGuildId, player.getUniqueId())));
+            }).exceptionally(ex -> {
+                context.runSync(() -> context.sendMessage(player, "module.quest.error.load-fail", "&cFailed to query guild: " + ex.getMessage()));
+                return null;
+            });
+            return;
         }
         context.openGUI(player, new QuestListGUI(this, guildId, player.getUniqueId()));
     }
 
     private void openActiveQuests(Player player) {
-        var guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
-        if (guild == null) {
-            context.sendMessage(player, "module.quest.error.no-guild", context.getMessage("module.quest.error.no-guild", "&cYou are not in any guild"));
-            return;
-        }
-        List<QuestProgress> active = questManager.getPlayerActiveQuests(
-            guild.getId(), player.getUniqueId());
-        context.openGUI(player, new ActiveQuestsGUI(this, active, guild.getId(), player.getUniqueId()));
+        context.getApi().getPlayerGuild(player.getUniqueId()).thenAccept(guild -> {
+            if (guild == null) {
+                context.runSync(() -> context.sendMessage(player, "module.quest.error.no-guild", context.getMessage("module.quest.error.no-guild", "&cYou are not in any guild")));
+                return;
+            }
+            List<QuestProgress> active = questManager.getPlayerActiveQuests(guild.getId(), player.getUniqueId());
+            context.runSync(() -> context.openGUI(player, new ActiveQuestsGUI(this, active, guild.getId(), player.getUniqueId())));
+        }).exceptionally(ex -> {
+            context.runSync(() -> context.sendMessage(player, "module.quest.error.load-fail", "&cFailed to query guild: " + ex.getMessage()));
+            return null;
+        });
     }
 
     private void notifyQuestReset(int guildId, String resetType) {
@@ -440,9 +465,8 @@ public class GuildQuestModule implements GuildModule {
             if (ctx[0] instanceof Integer) return (Integer) ctx[0];
             if (ctx[0] instanceof com.guild.models.Guild) return ((com.guild.models.Guild) ctx[0]).getId();
             if (ctx[0] instanceof Player) {
-                var guild = context.getPlugin().getGuildService().getPlayerGuild(
-                    ((Player) ctx[0]).getUniqueId());
-                return guild != null ? guild.getId() : 0;
+                // Do not perform blocking lookup here; caller should resolve player guild asynchronously
+                return 0;
             }
         }
         return 0;

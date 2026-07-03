@@ -56,7 +56,9 @@ public class GuildStatsModule implements GuildModule {
 
         this.statsManager = new GuildStatsManager(statsDir, context.getLogger());
         this.dataCache = new StatsDataCache();
-        this.webReporter = new WebReporter(context.getApi(), context.getLogger(), context.getConfig());
+        // 延迟创建 WebReporter，仅在配置启用时实例化，避免无谓的资源消耗
+        boolean webEnabled = context.getConfig().getBoolean("web-report.enabled", false);
+        this.webReporter = webEnabled ? new WebReporter(context.getApi(), context.getLogger(), context.getConfig()) : null;
         this.activityPersistence = new ActivityDataPersistence(dataDir, context.getLogger());
         this.activityTracker = new ActivityTracker(this, activityPersistence);
         this.economyFetcher = new EconomyContributionFetcher(this, context.getLogger());
@@ -84,6 +86,14 @@ public class GuildStatsModule implements GuildModule {
 
         context.getLogger().info(
             context.getMessage("module.stats.loaded", "[Stats] Guild stats system enabled"));
+
+        // Load module language resources for currently loaded languages
+        try {
+            var lm = context.getLanguageManager();
+            for (String lang : lm.getLoadedLanguages()) {
+                context.getApi().loadModuleLanguageResource(context.getDescriptor().getId(), lang);
+            }
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -254,10 +264,8 @@ public class GuildStatsModule implements GuildModule {
     private void startScheduledTasks() {
         context.runTimer(100L, 6000L, () -> updateAllGuildsStatistics());
 
-        boolean webEnabled = context.getConfig().getBoolean("web-report.enabled", false);
-        if (webEnabled) {
-            context.runTimer(200L, 72000L, () ->
-                webReporter.reportAllGuilds(dataCache.getAllCachedStats()));
+        if (webReporter != null) {
+            context.runTimer(200L, 72000L, () -> webReporter.reportAllGuilds(dataCache.getAllCachedStats()));
         }
 
         int retentionDays = context.getConfig().getInt("retention-days", 30);
@@ -426,13 +434,21 @@ public class GuildStatsModule implements GuildModule {
 
     private void openMyGuildStats(Player player) {
         UUID uuid = player.getUniqueId();
-        GuildPlugin plugin = context.getPlugin();
-        Guild guild = plugin.getGuildService().getPlayerGuild(uuid);
-        if (guild != null) {
-            openStatsOverview(player, guild);
-        } else {
-            context.sendMessage(player, "stats.error.no-guild-member", "&c你不在任何公会中");
-        }
+        GuildPluginAPI api = context.getApi();
+        api.getPlayerGuild(uuid).thenAccept(guildData -> {
+            if (guildData != null) {
+                com.guild.models.Guild guild = new com.guild.models.Guild(
+                    guildData.getName(), "", "", guildData.getMasterUuid(), guildData.getMasterName());
+                guild.setId(guildData.getId());
+                guild.setLevel(guildData.getLevel());
+                context.runSync(() -> openStatsOverview(player, guild));
+            } else {
+                context.runSync(() -> context.sendMessage(player, "stats.error.no-guild-member", "&c你不在任何公会中"));
+            }
+        }).exceptionally(ex -> {
+            context.runSync(() -> context.sendMessage(player, "stats.error.load-fail", "&c[Stats] 查询失败: " + ex.getMessage()));
+            return null;
+        });
     }
 
     private void forceRefresh(Player player) {

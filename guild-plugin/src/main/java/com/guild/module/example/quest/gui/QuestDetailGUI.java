@@ -411,9 +411,9 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         if (hasProgress) return "&cAlready accepted this quest";
         
         try {
-            var guild = module.getContext().getPlugin().getGuildService().getPlayerGuild(playerUuid);
-            if (guild != null && guild.getLevel() < minGuildLevel) {
-                return "&cRequires guild level: " + minGuildLevel + " (current: &f" + guild.getLevel() + "&c)";
+            var guildData = module.getContext().getApi().getPlayerGuild(playerUuid).getNow(null);
+            if (guildData != null && guildData.getLevel() < minGuildLevel) {
+                return "&cRequires guild level: " + minGuildLevel + " (current: &f" + guildData.getLevel() + "&c)";
             }
         } catch (Exception ignored) {}
         

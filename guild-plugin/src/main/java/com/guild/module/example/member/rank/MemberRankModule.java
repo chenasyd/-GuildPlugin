@@ -164,6 +164,14 @@ public class MemberRankModule implements GuildModule {
         ModuleDescriptor desc = context.getDescriptor();
         context.getLogger().info(String.format("[Rank-Meta] Module metadata: id=%s name=%s version=%s author=%s",
             desc.getId(), desc.getName(), desc.getVersion(), desc.getAuthor()));
+
+        // Load module language resources for all currently loaded languages
+        try {
+            var lm = context.getLanguageManager();
+            for (String lang : lm.getLoadedLanguages()) {
+                context.getApi().loadModuleLanguageResource(context.getDescriptor().getId(), lang);
+            }
+        } catch (Exception ignored) {}
     }
 
     @Override
@@ -195,9 +203,19 @@ public class MemberRankModule implements GuildModule {
     private void handleOpenRankGUIFromSettings(Player player, Object... ctx) {
         Guild guild = extractGuild(ctx);
         if (guild == null) {
-            player.sendMessage(ColorUtils.colorize(
-                    context.getMessage("module.member-rank.error.no-guild",
-                            "&cCannot retrieve guild info")));
+            context.getApi().getPlayerGuild(player.getUniqueId()).thenAccept(gd -> {
+                if (gd == null) {
+                    context.runSync(() -> player.sendMessage(ColorUtils.colorize(context.getMessage("module.member-rank.error.no-guild", "&cCannot retrieve guild info"))));
+                    return;
+                }
+                Guild g = new Guild();
+                g.setId(gd.getId());
+                g.setName(gd.getName());
+                context.runSync(() -> context.openGUI(player, new MemberRankGUI(this, g, player, true)));
+            }).exceptionally(ex -> {
+                context.runSync(() -> player.sendMessage(ColorUtils.colorize(context.getMessage("module.member-rank.error.no-guild", "&cCannot retrieve guild info"))));
+                return null;
+            });
             return;
         }
         context.openGUI(player, new MemberRankGUI(this, guild, player, true));
@@ -206,9 +224,19 @@ public class MemberRankModule implements GuildModule {
     private void handleOpenRankGUIFromInfo(Player player, Object... ctx) {
         Guild guild = extractGuild(ctx);
         if (guild == null) {
-            player.sendMessage(ColorUtils.colorize(
-                    context.getMessage("module.member-rank.error.no-guild",
-                            "&cCannot retrieve guild info")));
+            context.getApi().getPlayerGuild(player.getUniqueId()).thenAccept(gd -> {
+                if (gd == null) {
+                    context.runSync(() -> player.sendMessage(ColorUtils.colorize(context.getMessage("module.member-rank.error.no-guild", "&cCannot retrieve guild info"))));
+                    return;
+                }
+                Guild g = new Guild();
+                g.setId(gd.getId());
+                g.setName(gd.getName());
+                context.runSync(() -> context.openGUI(player, new MemberRankGUI(this, g, player, false)));
+            }).exceptionally(ex -> {
+                context.runSync(() -> player.sendMessage(ColorUtils.colorize(context.getMessage("module.member-rank.error.no-guild", "&cCannot retrieve guild info"))));
+                return null;
+            });
             return;
         }
         // Info entry = browse mode: hide admin hints and disable +/- actions
@@ -309,9 +337,25 @@ public class MemberRankModule implements GuildModule {
     private void handleOpenRankSettingsGUI(Player player, Object... ctx) {
         Guild guild = extractGuild(ctx);
         if (guild == null) {
-            player.sendMessage(ColorUtils.colorize(
-                    context.getMessage("module.member-rank.error.no-guild",
-                            "&cCannot retrieve guild info")));
+            context.getApi().getPlayerGuild(player.getUniqueId()).thenAccept(gd -> {
+                if (gd == null) {
+                    context.runSync(() -> player.sendMessage(ColorUtils.colorize(context.getMessage("module.member-rank.error.no-guild", "&cCannot retrieve guild info"))));
+                    return;
+                }
+                Guild g = new Guild();
+                g.setId(gd.getId());
+                g.setName(gd.getName());
+                context.runSync(() -> {
+                    if (!hasManagePermission(player)) {
+                        player.sendMessage(ColorUtils.colorize(context.getMessage("module.member-rank.error.no-permission", "&cYou don't have permission to manage A-Coin settings")));
+                        return;
+                    }
+                    context.openGUI(player, new MemberRankSettingsGUI(this, g, player));
+                });
+            }).exceptionally(ex -> {
+                context.runSync(() -> player.sendMessage(ColorUtils.colorize(context.getMessage("module.member-rank.error.no-guild", "&cCannot retrieve guild info"))));
+                return null;
+            });
             return;
         }
         if (!hasManagePermission(player)) {
