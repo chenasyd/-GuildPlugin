@@ -57,7 +57,7 @@ public class LanguageManager {
     };
 
     private static final String[] MODULE_DIRS = {
-        "announcement", "member-rank", "quest", "stats", "apitest"
+        "announcement", "apitest", "member-rank", "quest", "stats", "testlang"
     };
     
     public LanguageManager(GuildPlugin plugin) {
@@ -369,7 +369,14 @@ public class LanguageManager {
         if (existing == null) {
             moduleConfigs.put(lang, config);
         } else {
+            // getKeys(true) 返回递归所有层级键，包括中间 section 节点
+            // 若直接 existing.set("module", newModuleSection)，会把之前已合并的
+            // 模块数据整体替换掉，导致只剩最后一个模块的键。
+            // 因此必须跳过中间 section key，只设置叶子值。
             for (String key : config.getKeys(true)) {
+                if (config.isConfigurationSection(key)) {
+                    continue; // 跳过中间节点，避免覆盖已有 section
+                }
                 existing.set(key, config.get(key));
             }
         }
@@ -1066,6 +1073,60 @@ public class LanguageManager {
     /** 获取模块默认语言 */
     public String getModuleDefaultLanguage() {
         return moduleDefaultLanguage;
+    }
+
+    /** 诊断：已加载的模块语言配置数量（moduleConfigs.size） */
+    public int getModuleConfigCount() {
+        return moduleConfigs.size();
+    }
+
+    /** 诊断：模块支持的语言代码集合 */
+    public java.util.Set<String> getModuleSupportedLanguages() {
+        return new java.util.LinkedHashSet<>(moduleSupportedLanguages);
+    }
+
+    /** 诊断：已标记为加载的模块 ID 集合 */
+    public java.util.Set<String> getLoadedModuleIds() {
+        return new java.util.LinkedHashSet<>(loadedModuleLanguages);
+    }
+
+    /** 诊断：尝试为指定模块加载内置语言文件（不依赖磁盘已有文件，直接从 JAR 流式读取） */
+    public boolean forceLoadBundledModule(String moduleId) {
+        if (moduleId == null || moduleId.trim().isEmpty()) return false;
+        return loadBundledModuleLanguagesForModule(moduleId.toLowerCase());
+    }
+
+    /** 诊断：dump 指定语言的 moduleConfig 顶层键和前 20 个键值对 */
+    public String dumpModuleConfig(String lang) {
+        FileConfiguration config = moduleConfigs.get(lang != null ? lang.toLowerCase() : "en");
+        if (config == null) {
+            return "&cmoduleConfigs.get(\"" + lang + "\") == null";
+        }
+        java.util.Set<String> topKeys = config.getKeys(false);
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("&7moduleConfigs[\"%s\"] 顶层键(&f%d&7): &f", lang, topKeys.size()));
+        sb.append(topKeys.toString());
+        
+        // 同时检查具体路径是否存在
+        sb.append("\n&7路径逐层检查:");
+        String[] testPaths = {
+            "module",
+            "module.announcement",
+            "module.announcement.button-name",
+            "module.quest",
+            "module.quest.button-name",
+            "module.stats",
+            "module.stats.button-name"
+        };
+        for (String path : testPaths) {
+            boolean exists = config.contains(path);
+            Object val = config.get(path);
+            sb.append(String.format("\n  &7%s → %s → &f%s",
+                path,
+                exists ? "&a存在" : "&c不存在",
+                val != null ? val.toString() : "&cnull"));
+        }
+        return sb.toString();
     }
 
     public String getModuleMessage(String lang, String path, String defaultValue) {

@@ -3,11 +3,26 @@ module.testlang.name: "Language Test Module"
 module.testlang.description: "Diagnostic module for multi-language testing"
 module.testlang.status-active: "Module is ACTIVE"
 module.testlang.status-inactive: "Module is INACTIVE"
-module.testlang.gui.button-name: "&b&lLanguage Test"
-module.testlang.gui.button-lore-1: "&7Language system diagnostic tool"
-module.testlang.gui.button-lore-2: "&7Click to run diagnostic tests"
-module.testlang.gui.button-lore-3: "&8Module Default: {0}"
+
+# -- MainGuildGUI button --
+module.testlang.gui.main.button-name: "&b&lLanguage Test"
+module.testlang.gui.main.button-lore-1: "&7Language system diagnostic tool"
+module.testlang.gui.main.button-lore-2: "&7Click to run diagnostic tests"
+module.testlang.gui.main.button-lore-3: "&8Module Default: {0}"
+
+# -- GuildSettingsGUI button --
+module.testlang.gui.settings.button-name: "&d&lLangTest: Settings"
+module.testlang.gui.settings.button-lore-1: "&7Test button on GuildSettingsGUI"
+module.testlang.gui.settings.button-lore-2: "&7Click to verify module localization"
+
+# -- GuildInfoGUI button (fixed slot) --
+module.testlang.gui.info.button-name: "&a&lLangTest: Info"
+module.testlang.gui.info.button-lore-1: "&7Test button on GuildInfoGUI"
+module.testlang.gui.info.button-lore-2: "&7Click to verify module localization"
+
+# -- Shared / Diagnostic --
 module.testlang.gui.click-message: "&a[LangTest] Running language diagnostics..."
+module.testlang.gui.instance-id: "&8Instance: {0}"
 module.testlang.diag.default-lang: "Module Default Language: {0}"
 module.testlang.diag.no-player: "Without Player context"
 module.testlang.diag.with-player: "With Player context"

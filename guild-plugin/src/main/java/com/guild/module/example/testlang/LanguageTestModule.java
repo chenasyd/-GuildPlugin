@@ -8,24 +8,35 @@ import com.guild.core.module.hook.GUIExtensionHook;
 import com.guild.core.language.LanguageManager;
 import com.guild.sdk.GuildPluginAPI;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 语言系统测试模块
+ * 语言系统测试模块 — 完整版
  * <p>
- * 用途：验证模块语言加载、moduleDefaultLanguage 切换、
- *       ModuleContext.getMessage() 行为、以及 Player 感知的消息解析。
+ * 用于验证以下链路：
+ * <ol>
+ *   <li>mergeModuleConfig 多模块数据合并正确性 (onEnable 日志)</li>
+ *   <li>context.getMessage() 在 moduleDefaultLanguage 下的行为</li>
+ *   <li>3 个目标 GUI (MainGuildGUI / GuildSettingsGUI / GuildInfoGUI) 按钮注册</li>
+ *   <li>reloadModule() 后按钮 ItemStack 是否重新创建 (通过实例时间戳验证)</li>
+ * </ol>
  * <p>
- * 启动时输出完整诊断日志，并注册一个 GuildSettingsGUI 测试按钮。
+ * 每个按钮的 lore 最后一行为 "&8实例: {timestamp}"，用于在 module-reload
+ * 测试中对比前后实例是否不同。
  */
 public class LanguageTestModule implements GuildModule {
 
     private ModuleContext context;
     private ModuleDescriptor descriptor;
     private ModuleState state = ModuleState.UNLOADED;
+
+    /** 实例标识 — 每次 onEnable() 生成，用于验证 reload 是否重建了对象 */
+    private final String instanceId = String.valueOf(System.currentTimeMillis());
 
     @Override
     public ModuleDescriptor getDescriptor() {
@@ -51,6 +62,7 @@ public class LanguageTestModule implements GuildModule {
 
         // ========== 启动诊断日志 ==========
         context.getLogger().info("==============================================");
+        context.getLogger().info("[LangTest] >>> onEnable() instance=" + instanceId);
         context.getLogger().info("[LangTest] Module Default Language: " + lm.getModuleDefaultLanguage());
         context.getLogger().info("[LangTest] Plugin Default Language: " + lm.getDefaultLanguage());
         context.getLogger().info("[LangTest] --- 无 Player getMessage 测试 ---");
@@ -68,11 +80,11 @@ public class LanguageTestModule implements GuildModule {
         for (int i = 0; i < keys.length; i++) {
             String result = context.getMessage(keys[i], fallbacks[i]);
             context.getLogger().info(
-                String.format("[LangTest] getMessage(%s, fallback) → \"%s\"", keys[i], result));
+                String.format("[LangTest] getMessage(%s) → \"%s\"", keys[i], result));
         }
 
-        // 强制测试各语言查找
-        context.getLogger().info("[LangTest] --- 强制语言查找 ---");
+        // 强制测试各语言查找 (同时验证 mergeModuleConfig 修复是否生效)
+        context.getLogger().info("[LangTest] --- 跨语言 moduleConfigs 验证 ---");
         for (String lang : new String[]{"en", "zh", "pl", "br"}) {
             String val = lm.getModuleMessage(lang, "module.testlang.name", "NOT_FOUND");
             context.getLogger().info(
@@ -81,41 +93,97 @@ public class LanguageTestModule implements GuildModule {
 
         context.getLogger().info("==============================================");
 
-        // ========== 注册测试 GUI 按钮 ==========
-        registerTestButton();
+        // ========== 注册全部 3 个 GUI 的测试按钮 ==========
+        registerAllButtons();
     }
 
-    private void registerTestButton() {
+    /**
+     * 构建带有实例时间戳的 lore 行
+     */
+    private List<String> buildLore(String line1Key, String line1Fallback,
+                                    String line2Key, String line2Fallback) {
+        List<String> lore = new ArrayList<>();
+        lore.add(context.getMessage(line1Key, line1Fallback));
+        lore.add(context.getMessage(line2Key, line2Fallback));
+        lore.add("");
+        lore.add(context.getMessage("module.testlang.gui.instance-id", "&8Instance: {0}")
+            .replace("{0}", instanceId));
+        return lore;
+    }
+
+    private void registerAllButtons() {
         GuildPluginAPI api = context.getApi();
 
-        ItemStack button = new ItemStack(Material.BOOK);
-        ItemMeta meta = button.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(
-                context.getMessage("module.testlang.gui.button-name", "&b&lLanguage Test"));
-            meta.setLore(Arrays.asList(
-                context.getMessage("module.testlang.gui.button-lore-1", "&7Language system diagnostic"),
-                context.getMessage("module.testlang.gui.button-lore-2", "&7Click to run tests"),
-                "",
-                context.getMessage("module.testlang.gui.button-lore-3",
-                    "&8Default: " + context.getLanguageManager().getModuleDefaultLanguage())
-            ));
-            button.setItemMeta(meta);
+        // ==== 1) MainGuildGUI (AUTO_SLOT) ====
+        {
+            ItemStack btn = new ItemStack(Material.BOOK);
+            ItemMeta meta = btn.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(context.getMessage(
+                    "module.testlang.gui.main.button-name", "&b&lLanguage Test"));
+                meta.setLore(buildLore(
+                    "module.testlang.gui.main.button-lore-1", "&7Language system diagnostic",
+                    "module.testlang.gui.main.button-lore-2", "&7Click to run tests"));
+                btn.setItemMeta(meta);
+            }
+            api.registerGUIButton("MainGuildGUI", GUIExtensionHook.AUTO_SLOT,
+                btn, "lang-test",
+                (player, ctx) -> {
+                    player.sendMessage(context.getMessage(player,
+                        "module.testlang.gui.click-message", "&a[LangTest] Button clicked!"));
+                    runDiagnosticReport(player);
+                });
+            context.getLogger().info("[LangTest] Registered MainGuildGUI button (AUTO_SLOT)");
         }
 
-        api.registerGUIButton("MainGuildGUI", GUIExtensionHook.AUTO_SLOT,
-            button, "lang-test",
-            (player, ctx) -> {
-                player.sendMessage(context.getMessage(player,
-                    "module.testlang.gui.click-message", "&a[LangTest] Button clicked!"));
-                runDiagnosticReport(player);
-            });
+        // ==== 2) GuildSettingsGUI (AUTO_SLOT — 模块页面) ====
+        {
+            ItemStack btn = new ItemStack(Material.ENCHANTED_BOOK);
+            ItemMeta meta = btn.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(context.getMessage(
+                    "module.testlang.gui.settings.button-name", "&d&lLangTest: Settings"));
+                meta.setLore(buildLore(
+                    "module.testlang.gui.settings.button-lore-1", "&7Test on GuildSettingsGUI",
+                    "module.testlang.gui.settings.button-lore-2", "&7Verify module localization"));
+                btn.setItemMeta(meta);
+            }
+            api.registerGUIButton("GuildSettingsGUI", GUIExtensionHook.AUTO_SLOT,
+                btn, "lang-test",
+                (player, ctx) -> {
+                    player.sendMessage("§d[LangTest] GuildSettingsGUI button clicked! instance=" + instanceId);
+                    runDiagnosticReport(player);
+                });
+            context.getLogger().info("[LangTest] Registered GuildSettingsGUI button (AUTO_SLOT)");
+        }
+
+        // ==== 3) GuildInfoGUI (固定槽位 — 第1页模块区) ====
+        {
+            ItemStack btn = new ItemStack(Material.KNOWLEDGE_BOOK);
+            ItemMeta meta = btn.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(context.getMessage(
+                    "module.testlang.gui.info.button-name", "&a&lLangTest: Info"));
+                meta.setLore(buildLore(
+                    "module.testlang.gui.info.button-lore-1", "&7Test on GuildInfoGUI",
+                    "module.testlang.gui.info.button-lore-2", "&7Verify module localization"));
+                btn.setItemMeta(meta);
+            }
+            // GuildInfoGUI 使用固定槽位注册 (非 AUTO_SLOT)
+            api.registerGUIButton("GuildInfoGUI", 17, // slot 17 = row2, col8
+                btn, "lang-test",
+                (player, ctx) -> {
+                    player.sendMessage("§a[LangTest] GuildInfoGUI button clicked! instance=" + instanceId);
+                    runDiagnosticReport(player);
+                });
+            context.getLogger().info("[LangTest] Registered GuildInfoGUI button (slot=17)");
+        }
     }
 
-    private void runDiagnosticReport(org.bukkit.entity.Player player) {
+    private void runDiagnosticReport(Player player) {
         LanguageManager lm = context.getLanguageManager();
 
-        player.sendMessage("§6========== [LangTest] Diagnostic Report ==========");
+        player.sendMessage("§6========== [LangTest] Diagnostic (instance=" + instanceId + ") ==========");
         player.sendMessage("§7Module Default: §f" + lm.getModuleDefaultLanguage());
         player.sendMessage("§7Plugin Default: §f" + lm.getDefaultLanguage());
         player.sendMessage("");
@@ -145,7 +213,8 @@ public class LanguageTestModule implements GuildModule {
     public void onDisable() {
         this.state = ModuleState.UNLOADED;
         if (context != null) {
-            context.getLogger().info("[LangTest] Module disabled.");
+            context.getLogger().info("[LangTest] <<< onDisable() instance=" + instanceId
+                + " — GUI buttons should be cleaned by registry.unregister()");
         }
     }
 }

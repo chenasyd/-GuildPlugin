@@ -3,11 +3,26 @@ module.testlang.name: "语言测试模块"
 module.testlang.description: "用于多语言系统诊断的测试模块"
 module.testlang.status-active: "模块已激活"
 module.testlang.status-inactive: "模块未激活"
-module.testlang.gui.button-name: "&b&l语言测试"
-module.testlang.gui.button-lore-1: "&7多语言系统诊断工具"
-module.testlang.gui.button-lore-2: "&7点击运行诊断测试"
-module.testlang.gui.button-lore-3: "&8模块默认语言: {0}"
+
+# -- MainGuildGUI 按钮 --
+module.testlang.gui.main.button-name: "&b&l语言测试"
+module.testlang.gui.main.button-lore-1: "&7多语言系统诊断工具"
+module.testlang.gui.main.button-lore-2: "&7点击运行诊断测试"
+module.testlang.gui.main.button-lore-3: "&8模块默认语言: {0}"
+
+# -- GuildSettingsGUI 按钮 --
+module.testlang.gui.settings.button-name: "&d&lLangTest: 设置"
+module.testlang.gui.settings.button-lore-1: "&7GuildSettingsGUI 上的测试按钮"
+module.testlang.gui.settings.button-lore-2: "&7点击测试模块本地化"
+
+# -- GuildInfoGUI 按钮 (固定槽位) --
+module.testlang.gui.info.button-name: "&a&lLangTest: 信息"
+module.testlang.gui.info.button-lore-1: "&7GuildInfoGUI 上的测试按钮"
+module.testlang.gui.info.button-lore-2: "&7点击测试模块本地化"
+
+# -- 共享 / 诊断 --
 module.testlang.gui.click-message: "&a[LangTest] 正在运行语言诊断..."
+module.testlang.gui.instance-id: "&8实例: {0}"
 module.testlang.diag.default-lang: "模块默认语言: {0}"
 module.testlang.diag.no-player: "无Player上下文"
 module.testlang.diag.with-player: "有Player上下文"
