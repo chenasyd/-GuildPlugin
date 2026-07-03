@@ -22,6 +22,7 @@ import com.guild.gui.RelationManagementGUI;
 import com.guild.models.Guild;
 import com.guild.models.GuildRelation;
 import com.guild.core.language.LanguageManager; // 新增
+import com.guild.core.module.ModuleManager;
 import com.guild.update.UpdateManager;
 import com.guild.update.UpdateManager.VersionInfo;
 

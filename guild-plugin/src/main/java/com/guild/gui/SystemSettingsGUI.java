@@ -3,6 +3,7 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.language.LanguageManager;
+import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.ColorUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
