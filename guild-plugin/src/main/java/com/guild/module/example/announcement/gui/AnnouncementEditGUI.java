@@ -360,13 +360,13 @@ public class AnnouncementEditGUI implements GUI {
             }
         } else {
             lore.add(ColorUtils.colorize("&7&o" +
-                    module.getContext().getModuleMessage("module.announcement.edit.no-preview",
+                    module.getContext().getMessage("module.announcement.edit.no-preview",
                             "&7&o预览将在此处显示...")));
         }
 
         return createItem(Material.MAP,
                 ColorUtils.colorize("&6" +
-                        module.getContext().getModuleMessage("module.announcement.edit.preview",
+                        module.getContext().getMessage("module.announcement.edit.preview",
                                 "&6预览")),
                 lore.toArray(new String[0]));
     }
