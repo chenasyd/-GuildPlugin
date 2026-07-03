@@ -37,6 +37,7 @@ public class AnnouncementViewGUI implements GUI {
 
     private final AnnouncementModule module;
     private final Guild guild;
+    private final Player viewer;
     private Inventory inventory;
 
     private static final int PER_PAGE = 14;
@@ -45,9 +46,10 @@ public class AnnouncementViewGUI implements GUI {
     private Announcement selectedAnnouncement = null;
     private int currentPage = 1;
 
-    public AnnouncementViewGUI(AnnouncementModule module, Guild guild) {
+    public AnnouncementViewGUI(AnnouncementModule module, Guild guild, Player viewer) {
         this.module = module;
         this.guild = guild;
+        this.viewer = viewer;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class AnnouncementViewGUI implements GUI {
         int totalPages = getTotalPages();
         if (totalPages > 1) {
             baseTitle += ColorUtils.colorize(" &7(" +
-                    module.getContext().getLanguageManager().getGuiMessage(player,
+                    module.getContext().getLanguageManager().getGuiMessage(viewer,
                             "gui.page-info", "第{0}页/共{1}页",
                             String.valueOf(currentPage), String.valueOf(totalPages)) +
                     ")");
@@ -299,10 +301,10 @@ public class AnnouncementViewGUI implements GUI {
         if (currentPage > 1) {
             inv.setItem(45, createItem(Material.ARROW,
                     ColorUtils.colorize("&e&l" +
-                            module.getContext().getLanguageManager().getGuiMessage(player,
+                            module.getContext().getLanguageManager().getGuiMessage(viewer,
                                     "gui.previous-page", "&e&l上一页")),
                     ColorUtils.colorize("&7" +
-                            module.getContext().getLanguageManager().getGuiMessage(player,
+                            module.getContext().getLanguageManager().getGuiMessage(viewer,
                                     "gui.previous-page-hint",
                                     "&7点击返回上一页"))));
         }
@@ -310,10 +312,10 @@ public class AnnouncementViewGUI implements GUI {
         if (currentPage < totalPages) {
             inv.setItem(53, createItem(Material.ARROW,
                     ColorUtils.colorize("&e&l" +
-                            module.getContext().getLanguageManager().getGuiMessage(player,
+                            module.getContext().getLanguageManager().getGuiMessage(viewer,
                                     "gui.next-page", "&e&l下一页")),
                     ColorUtils.colorize("&7" +
-                            module.getContext().getLanguageManager().getGuiMessage(player,
+                            module.getContext().getLanguageManager().getGuiMessage(viewer,
                                     "gui.next-page-hint",
                                     "&7点击查看更多"))));
         }

@@ -95,7 +95,7 @@ public class MemberRankGUI extends AbstractModuleGUI {
         // Pagination buttons
         setupPagination(inventory, currentPage, totalPages,
                 module.getContext().getMessage("gui.previous-page", "&e&lPrevious"),
-                module.getContext().getLanguageManager().getGuiMessage(player,
+                module.getContext().getLanguageManager().getGuiMessage(viewer,
                         "gui.next-page", "&e&lNext"));
 
         // Back button

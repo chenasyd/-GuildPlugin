@@ -162,7 +162,7 @@ public class AnnouncementModule implements GuildModule {
         }
 
         context.openGUI(player,
-                new AnnouncementViewGUI(this, guild));
+                new AnnouncementViewGUI(this, guild, player));
     }
 
     /** 打开编辑公告界面 */
