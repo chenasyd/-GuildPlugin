@@ -96,6 +96,29 @@ public class ModuleContext {
     }
 
     /**
+     * 获取本地化消息文本（根据玩家语言解析）
+     * <p>
+     * 与 {@link #getMessage(String, Object...)} 不同，此方法会根据玩家的语言设置
+     * 从对应语言的配置中查找消息，实现真正的按玩家本地化。
+     *
+     * @param player 目标玩家（用于获取其语言偏好）
+     * @param key    消息键名
+     * @param args   占位符参数（第一个参数同时作为 fallback）
+     */
+    public String getMessage(Player player, String key, Object... args) {
+        String[] strArgs = null;
+        String fallback = "";
+        if (args != null && args.length > 0) {
+            strArgs = new String[args.length];
+            for (int i = 0; i < args.length; i++) {
+                strArgs[i] = args[i] != null ? args[i].toString() : "";
+            }
+            fallback = strArgs[0];
+        }
+        return ColorUtils.colorize(plugin.getLanguageManager().getModuleIndexedMessage(player, key, fallback, strArgs));
+    }
+
+    /**
      * 格式化消息（使用索引占位符 {0}, {1}, {2} ...）
      * <p>
      * 首个参数同时用作 getIndexedMessage 的 defaultValue，

@@ -3,4 +3,7 @@ module.stats.init-done: "&a[Stats] Initialization complete, CustomGUI x2 registe
 module.stats.loaded: "&a[Stats] Guild stats system enabled"
 module.stats.unloaded: "&e[Stats] Stats system disabled"
 module.stats.button-name: "Statistics"
+module.stats.button-desc: "Ver dados operacionais detalhados da guilda"
+module.stats.button-lore: "Atividade de membros &8| &7Economia &8| &7Rankings"
 module.stats.ranking-button: "Guild Ranking"
+module.stats.ranking-button-desc: "Ver ranking de guildas do servidor"

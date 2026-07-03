@@ -1,0 +1,3 @@
+# ============ API Test Module Messages ============
+module.apitest.button-name: "Painel de Teste de API"
+module.apitest.button-desc: "Clique para abrir a interface de teste do SDK"

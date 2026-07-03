@@ -121,14 +121,14 @@ public class GuildStatsModule implements GuildModule {
     private void registerGUIButtons(GuildPluginAPI api) {
         ItemStack statsButton = createItem(Material.BOOK,
             "&6&l" + context.getMessage("module.stats.button-name", "数据统计"),
-            "&7查看公会详细运营数据",
-            "&7成员活跃度 &8| &7经济报表 &8| &7排行榜");
+            "&7" + context.getMessage("module.stats.button-desc", "查看公会详细运营数据"),
+            "&7" + context.getMessage("module.stats.button-lore", "成员活跃度 &8| &7经济报表 &8| &7排行榜"));
         api.registerGUIButton("GuildInfoGUI", 16, statsButton, "guild-stats",
             (player, ctx) -> openStatsOverview(player, ctx));
 
         ItemStack rankingButton = createItem(Material.GOLD_BLOCK,
             "&e&l" + context.getMessage("module.stats.ranking-button", "公会排行"),
-            "&7查看全服公会综合实力排行");
+            "&7" + context.getMessage("module.stats.ranking-button-desc", "查看全服公会综合实力排行"));
         api.registerGUIButton("MainGuildGUI", GUIExtensionHook.AUTO_SLOT,
             rankingButton, "guild-stats",
             (player, ctx) -> openGuildRanking(player));

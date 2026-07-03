@@ -36,6 +36,9 @@ public class ConfigManager {
 
         // 数据库配置文件
         loadConfig("database.yml");
+
+        // 模块配置文件
+        loadConfig("modules.yml");
     }
     
     /**
@@ -75,6 +78,13 @@ public class ConfigManager {
      */
     public FileConfiguration getDatabaseConfig() {
         return getConfig("database.yml");
+    }
+
+    /**
+     * 获取模块配置文件
+     */
+    public FileConfiguration getModulesConfig() {
+        return getConfig("modules.yml");
     }
     
     /**

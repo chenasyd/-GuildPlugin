@@ -335,7 +335,7 @@ public class AnnouncementEditGUI implements GUI {
     private void handleCancel(Player player) {
         LanguageManager lang = module.getContext().getLanguageManager();
         player.sendMessage(ColorUtils.colorize("&e" +
-                lang.getMessage(player,
+                lang.getModuleMessage(player,
                         "module.announcement.edit.cancel-msg",
                         "&e已取消编辑")));
         module.getContext().navigateBack(player);

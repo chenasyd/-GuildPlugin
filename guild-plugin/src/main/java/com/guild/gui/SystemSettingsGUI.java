@@ -414,16 +414,9 @@ public class SystemSettingsGUI implements GUI {
         try {
             plugin.getConfigManager().reloadAllConfigs();
             plugin.getPermissionManager().reloadFromConfig();
-            plugin.getLanguageManager().reloadLanguagesAsync(() -> {
-                // 通知 SDK 让模块加载其语言资源
-                try {
-                    ModuleManager mm = plugin.getModuleManager();
-                    var api = mm.getSharedApi();
-                    for (String moduleId : mm.getRegistry().getModuleIds()) {
-                        try { api.loadModuleLanguageResource(moduleId, null); } catch (Exception ignored) {}
-                    }
-                } catch (Exception ignored) {}
 
+            // 插件本体语言（core/gui）异步重载 — 与模块语言完全独立
+            plugin.getLanguageManager().reloadLanguagesAsync(() -> {
                 // 刷新所有打开的 GUI
                 try {
                     for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
@@ -433,6 +426,18 @@ public class SystemSettingsGUI implements GUI {
 
                 player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(
                         player, "gui.system-settings.reload-success", "&a配置重载成功！")));
+            });
+
+            // 模块语言异步重载 — 与插件本体并行执行
+            plugin.getLanguageManager().reloadModuleLanguagesAsync(() -> {
+                // 通知 SDK 让模块加载其语言资源
+                try {
+                    ModuleManager mm = plugin.getModuleManager();
+                    var api = mm.getSharedApi();
+                    for (String moduleId : mm.getRegistry().getModuleIds()) {
+                        try { api.loadModuleLanguageResource(moduleId, null); } catch (Exception ignored) {}
+                    }
+                } catch (Exception ignored) {}
             });
         } catch (Exception e) {
             player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(

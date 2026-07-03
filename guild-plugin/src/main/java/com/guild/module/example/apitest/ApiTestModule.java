@@ -44,8 +44,10 @@ public class ApiTestModule implements GuildModule {
         ItemStack btn = new ItemStack(Material.ENCHANTED_BOOK);
         org.bukkit.inventory.meta.ItemMeta meta = btn.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName("§d§lAPI Test Panel");
-            meta.setLore(List.of("§7Click to open SDK test interface"));
+            meta.setDisplayName(org.bukkit.ChatColor.LIGHT_PURPLE + "" + org.bukkit.ChatColor.BOLD
+                    + context.getMessage("module.apitest.button-name", "API Test Panel"));
+            meta.setLore(List.of(org.bukkit.ChatColor.GRAY
+                    + context.getMessage("module.apitest.button-desc", "Click to open SDK test interface")));
             btn.setItemMeta(meta);
         }
         api.registerGUIButton("GuildSettingsGUI", GUIExtensionHook.AUTO_SLOT,
