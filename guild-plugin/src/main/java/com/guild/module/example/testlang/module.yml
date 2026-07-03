@@ -1,0 +1,11 @@
+id: testlang
+name: "Language Test Module"
+version: 1.0.0
+author: "GuildPlugin Team"
+description: "Diagnostic module for testing the multi-language system"
+type: utility
+api-version: 1.6.4
+main: com.guild.module.example.testlang.LanguageTestModule
+depends: []
+soft-depends: []
+permissions: []
