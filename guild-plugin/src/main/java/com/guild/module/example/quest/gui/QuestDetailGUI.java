@@ -269,7 +269,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
             definition.getObjectives().size());
         
         if (module.getQuestManager().acceptQuest(newProgress)) {
-            module.getContext().sendMessage(player, "quest.accepted",
+            module.getContext().sendMessage(player, "module.quest.accepted",
                 "&a[Quest] Accepted quest: &f" + questName);
             
             notifyOtherGUIsRefresh();
@@ -297,7 +297,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         module.getContext().getEventBus().publish(
             new GuildQuestModule.QuestCompletedEvent(
                 player.getName(), questName, guildId));
-        module.getContext().sendMessage(player, "quest.claimed", "&a[Quest] Rewards granted!");
+        module.getContext().sendMessage(player, "module.quest.reward-claimed", "&a[Quest] Rewards granted!");
         
         notifyOtherGUIsRefresh();
         forceRefreshContent(player);

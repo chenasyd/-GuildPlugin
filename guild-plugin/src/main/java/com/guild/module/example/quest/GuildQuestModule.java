@@ -109,9 +109,9 @@ public class GuildQuestModule implements GuildModule {
             return new ActiveQuestsGUI(this, active, guildId, playerUuid);
         });
 
-        context.runLater(100L, () -> {
+            context.runLater(100L, () -> {
             questTracker.start();
-            context.getLogger().info("[Quest] Quest system enabled");
+            context.getLogger().info(context.getMessage("module.quest.loaded", questManager.getDefinitions().size()));
         });
 
         context.getEventBus().subscribe(QuestCompletedEvent.class, event -> {});
@@ -242,13 +242,15 @@ public class GuildQuestModule implements GuildModule {
             UUID playerUuid = player.getUniqueId();
 
             StringBuilder message = new StringBuilder();
-            message.append(ColorUtils.colorize("&6=== Currency Info ===\n"));
+            message.append(ColorUtils.colorize(context.getLanguageManager().getModuleMessage(
+                "module.quest.currency.title", "=== Currency Info ==="))).append("\n");
 
             // Query Vault economy
             var economyManager = context.getPlugin().getServiceContainer().get(com.guild.core.economy.EconomyManager.class);
             double goldBalance = economyManager.getBalance(player);
             String goldName = economyManager.getCurrencyName();
-            message.append(ColorUtils.colorize("&e{currency}: &f{balance}"
+            message.append(ColorUtils.colorize(context.getLanguageManager().getModuleMessage(
+                "module.quest.currency.gold", "{currency}: {balance}")
                 .replace("{currency}", goldName).replace("{balance}", economyManager.format(goldBalance))))
                 .append("\n");
 
@@ -256,12 +258,14 @@ public class GuildQuestModule implements GuildModule {
             var currencyManager = context.getApi().getCurrencyManager();
             for (CurrencyManager.CurrencyType type : CurrencyManager.CurrencyType.values()) {
                 double balance = currencyManager.getBalance(guildId, playerUuid, type);
-                message.append(ColorUtils.colorize("&e{currency}: &f{balance}"
+                message.append(ColorUtils.colorize(context.getLanguageManager().getModuleMessage(
+                    "module.quest.currency.coin", "{currency}: {balance}")
                     .replace("{currency}", type.getDisplayName()).replace("{balance}", String.format("%.0f", balance))))
                     .append("\n");
             }
 
-            message.append(ColorUtils.colorize("&6================"));
+            message.append(ColorUtils.colorize(context.getLanguageManager().getModuleMessage(
+                "module.quest.currency.footer", "================")));
 
             context.runSync(() -> player.sendMessage(message.toString()));
         }).exceptionally(ex -> {
