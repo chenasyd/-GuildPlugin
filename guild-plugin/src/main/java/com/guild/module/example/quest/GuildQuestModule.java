@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.guild.core.module.GuildModule;
 import com.guild.core.module.ModuleContext;
+import com.guild.core.module.ModuleDataDirectory;
 import com.guild.core.module.ModuleDescriptor;
 import com.guild.core.module.ModuleState;
 import com.guild.core.module.hook.GUIExtensionHook;
@@ -45,7 +46,7 @@ public class GuildQuestModule implements GuildModule {
     public void onEnable(ModuleContext context) throws Exception {
         this.context = context;
         this.state = ModuleState.ACTIVE;
-        File dataDir = new File(context.getPlugin().getDataFolder(), "modules/quest");
+        File dataDir = ModuleDataDirectory.getModuleDataRoot(context);
 
         this.questManager = new QuestManager(dataDir, context.getLogger());
         questManager.setContext(context);

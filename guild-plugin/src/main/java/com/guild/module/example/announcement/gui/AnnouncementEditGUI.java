@@ -217,11 +217,11 @@ public class AnnouncementEditGUI implements GUI {
         LanguageManager lang = module.getContext().getLanguageManager();
         String prompt;
         if ("title".equals(field)) {
-            prompt = lang.getMessage(player,
+            prompt = lang.getModuleMessage(player,
                     "module.announcement.edit.input-title-prompt",
                     "&e请在聊天中输入公告标题（输入 &ccancel &e取消）：");
         } else {
-            prompt = lang.getMessage(player,
+            prompt = lang.getModuleMessage(player,
                     "module.announcement.edit.input-content-prompt",
                     "&e请在聊天中输入公告内容（支持多行，输入 &csave &e保存，输入 &ccancel &e取消）：");
         }
@@ -232,30 +232,27 @@ public class AnnouncementEditGUI implements GUI {
             String trimmed = input.trim();
 
             if ("cancel".equalsIgnoreCase(trimmed)) {
-                player.sendMessage(ColorUtils.colorize("&e" +
-                        lang.getMessage(player,
-                                "module.announcement.edit.input-cancelled",
-                                "&e已取消输入")));
+                player.sendMessage(ColorUtils.colorize(lang.getModuleMessage(player,
+                        "module.announcement.edit.input-cancelled",
+                        "&e已取消输入")));
                 module.getContext().navigateBack(player);
                 return true;
             }
 
             if ("title".equals(field)) {
                 currentTitle = trimmed;
-                player.sendMessage(ColorUtils.colorize("&a" +
-                        lang.getIndexedMessage(player,
-                                "module.announcement.edit.title-set",
-                                "&a标题已设置为: {0}", trimmed)));
+                player.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage(player,
+                        "module.announcement.edit.title-set",
+                        "&a标题已设置为: {0}", trimmed)));
                 module.getContext().getGuiManager().openGUI(player,
                         new AnnouncementEditGUI(module, guild, editingId, player,
                                 currentTitle, currentContent));
                 return true;
             } else {
                 if ("save".equalsIgnoreCase(trimmed)) {
-                    player.sendMessage(ColorUtils.colorize("&a" +
-                            lang.getMessage(player,
-                                    "module.announcement.edit.content-set",
-                                    "&a内容已保存")));
+                    player.sendMessage(ColorUtils.colorize(lang.getModuleMessage(player,
+                            "module.announcement.edit.content-set",
+                            "&a内容已保存")));
                     module.getContext().getGuiManager().openGUI(player,
                             new AnnouncementEditGUI(module, guild, editingId, player,
                                     currentTitle, currentContent));
@@ -266,11 +263,10 @@ public class AnnouncementEditGUI implements GUI {
                 } else {
                     currentContent = trimmed;
                 }
-                player.sendMessage(ColorUtils.colorize("&a" +
-                        lang.getIndexedMessage(player,
-                                "module.announcement.edit.content-updated",
-                                "&a内容已更新（已追加 {0} 行）",
-                                String.valueOf(currentContent.split("\n").length))));
+                player.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage(player,
+                        "module.announcement.edit.content-updated",
+                        "&a内容已更新（已追加 {0} 行）",
+                        String.valueOf(currentContent.split("\n").length))));
                 return false;
             }
         });
@@ -283,17 +279,15 @@ public class AnnouncementEditGUI implements GUI {
         LanguageManager lang = module.getContext().getLanguageManager();
 
         if (currentTitle.isEmpty()) {
-            player.sendMessage(ColorUtils.colorize("&c" +
-                    lang.getMessage(player,
-                            "module.announcement.edit.error-empty-title",
-                            "&c公告标题不能为空！请先填写标题。")));
+            player.sendMessage(ColorUtils.colorize(lang.getModuleMessage(player,
+                    "module.announcement.edit.error-empty-title",
+                    "&c公告标题不能为空！请先填写标题。")));
             return;
         }
         if (currentContent.isEmpty()) {
-            player.sendMessage(ColorUtils.colorize("&c" +
-                    lang.getMessage(player,
-                            "module.announcement.edit.error-empty-content",
-                            "&c公告内容不能为空！请先填写内容。")));
+            player.sendMessage(ColorUtils.colorize(lang.getModuleMessage(player,
+                    "module.announcement.edit.error-empty-content",
+                    "&c公告内容不能为空！请先填写内容。")));
             return;
         }
 
@@ -309,30 +303,26 @@ public class AnnouncementEditGUI implements GUI {
             );
             success = (created != null);
             if (success) {
-                player.sendMessage(ColorUtils.colorize("&a" +
-                        lang.getIndexedMessage(player,
-                                "module.announce.create.success",
-                                "&a公告发布成功: {0}", currentTitle)));
+                player.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage(player,
+                        "module.announcement.create.success",
+                        "&a公告发布成功: {0}", currentTitle)));
             } else {
-                player.sendMessage(ColorUtils.colorize("&c" +
-                        lang.getIndexedMessage(player,
-                                "module.announcement.create.max-reached",
-                                "&c已达到最大公告数量限制({0}条)", "10")));
+                player.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage(player,
+                        "module.announcement.create.max-reached",
+                        "&c已达到最大公告数量限制({0}条)", "10")));
             }
         } else {
             // 更新现有公告
             success = module.getAnnouncementManager().update(
                     editingId, currentTitle, currentContent);
             if (success) {
-                player.sendMessage(ColorUtils.colorize("&a" +
-                        lang.getIndexedMessage(player,
-                                "module.announcement.update.success",
-                                "&a公告更新成功: {0}", currentTitle)));
+                player.sendMessage(ColorUtils.colorize(lang.getModuleIndexedMessage(player,
+                        "module.announcement.update.success",
+                        "&a公告更新成功: {0}", currentTitle)));
             } else {
-                player.sendMessage(ColorUtils.colorize("&c" +
-                        lang.getMessage(player,
-                                "module.announcement.update.failed",
-                                "&c公告更新失败")));
+                player.sendMessage(ColorUtils.colorize(lang.getModuleMessage(player,
+                        "module.announcement.update.failed",
+                        "&c公告更新失败")));
             }
         }
 
@@ -370,13 +360,13 @@ public class AnnouncementEditGUI implements GUI {
             }
         } else {
             lore.add(ColorUtils.colorize("&7&o" +
-                    module.getContext().getMessage("module.announcement.edit.no-preview",
+                    module.getContext().getModuleMessage("module.announcement.edit.no-preview",
                             "&7&o预览将在此处显示...")));
         }
 
         return createItem(Material.MAP,
                 ColorUtils.colorize("&6" +
-                        module.getContext().getMessage("module.announcement.edit.preview",
+                        module.getContext().getModuleMessage("module.announcement.edit.preview",
                                 "&6预览")),
                 lore.toArray(new String[0]));
     }

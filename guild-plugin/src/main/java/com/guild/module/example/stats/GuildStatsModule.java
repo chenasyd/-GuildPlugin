@@ -3,6 +3,7 @@ package com.guild.module.example.stats;
 import com.guild.GuildPlugin;
 import com.guild.core.module.GuildModule;
 import com.guild.core.module.ModuleContext;
+import com.guild.core.module.ModuleDataDirectory;
 import com.guild.core.module.ModuleDescriptor;
 import com.guild.core.module.ModuleState;
 import com.guild.core.module.hook.GUIExtensionHook;
@@ -50,8 +51,7 @@ public class GuildStatsModule implements GuildModule {
         this.context = context;
         this.state = ModuleState.ACTIVE;
 
-        File dataDir = new File(context.getPlugin().getDataFolder(),
-            "data" + File.separator + "guild-stats");
+        File dataDir = ModuleDataDirectory.getModuleDataRoot(context);
         File statsDir = new File(dataDir, "statistics");
 
         this.statsManager = new GuildStatsManager(statsDir, context.getLogger());

@@ -3,6 +3,7 @@ package com.guild.module.example.announcement;
 import com.guild.GuildPlugin;
 import com.guild.core.module.GuildModule;
 import com.guild.core.module.ModuleContext;
+import com.guild.core.module.ModuleDataDirectory;
 import com.guild.core.module.ModuleDescriptor;
 import com.guild.core.module.ModuleState;
 import com.guild.core.module.hook.GUIExtensionHook;
@@ -48,8 +49,8 @@ public class AnnouncementModule implements GuildModule {
         this.context = context;
         this.state = ModuleState.ACTIVE;
 
-        // 数据目录: plugins/GuildPlugin/data/announcements/
-        File dataDir = new File(context.getPlugin().getDataFolder(), "data" + File.separator + "announcements");
+        // 模块数据目录: plugins/GuildPlugin/modules/announcement/data/
+        File dataDir = ModuleDataDirectory.getModuleDataRoot(context);
         this.announcementManager = new AnnouncementManager(dataDir, context.getLogger());
 
         // 从磁盘加载已保存的公告数据
