@@ -87,13 +87,6 @@ public class GuildStatsModule implements GuildModule {
         context.getLogger().info(
             context.getMessage("module.stats.loaded", "[Stats] Guild stats system enabled"));
 
-        // Load module language resources for currently loaded languages
-        try {
-            var lm = context.getLanguageManager();
-            for (String lang : lm.getLoadedLanguages()) {
-                context.getApi().loadModuleLanguageResource(context.getDescriptor().getId(), lang);
-            }
-        } catch (Exception ignored) {}
     }
 
     @Override

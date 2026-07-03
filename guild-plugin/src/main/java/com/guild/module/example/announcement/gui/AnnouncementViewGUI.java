@@ -63,7 +63,8 @@ public class AnnouncementViewGUI implements GUI {
         int totalPages = getTotalPages();
         if (totalPages > 1) {
             baseTitle += ColorUtils.colorize(" &7(" +
-                    module.getContext().getMessage("gui.page-info",
+                    module.getContext().getLanguageManager().getGuiMessage(player,
+                            "gui.page-info", "第{0}页/共{1}页",
                             String.valueOf(currentPage), String.valueOf(totalPages)) +
                     ")");
         }
@@ -298,18 +299,22 @@ public class AnnouncementViewGUI implements GUI {
         if (currentPage > 1) {
             inv.setItem(45, createItem(Material.ARROW,
                     ColorUtils.colorize("&e&l" +
-                            module.getContext().getMessage("gui.previous-page", "&e&l上一页")),
+                            module.getContext().getLanguageManager().getGuiMessage(player,
+                                    "gui.previous-page", "&e&l上一页")),
                     ColorUtils.colorize("&7" +
-                            module.getContext().getMessage("gui.previous-page-hint",
+                            module.getContext().getLanguageManager().getGuiMessage(player,
+                                    "gui.previous-page-hint",
                                     "&7点击返回上一页"))));
         }
 
         if (currentPage < totalPages) {
             inv.setItem(53, createItem(Material.ARROW,
                     ColorUtils.colorize("&e&l" +
-                            module.getContext().getMessage("gui.next-page", "&e&l下一页")),
+                            module.getContext().getLanguageManager().getGuiMessage(player,
+                                    "gui.next-page", "&e&l下一页")),
                     ColorUtils.colorize("&7" +
-                            module.getContext().getMessage("gui.next-page-hint",
+                            module.getContext().getLanguageManager().getGuiMessage(player,
+                                    "gui.next-page-hint",
                                     "&7点击查看更多"))));
         }
     }

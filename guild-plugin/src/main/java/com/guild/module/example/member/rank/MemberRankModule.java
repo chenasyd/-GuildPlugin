@@ -164,14 +164,6 @@ public class MemberRankModule implements GuildModule {
         ModuleDescriptor desc = context.getDescriptor();
         context.getLogger().info(String.format("[Rank-Meta] Module metadata: id=%s name=%s version=%s author=%s",
             desc.getId(), desc.getName(), desc.getVersion(), desc.getAuthor()));
-
-        // Load module language resources for all currently loaded languages
-        try {
-            var lm = context.getLanguageManager();
-            for (String lang : lm.getLoadedLanguages()) {
-                context.getApi().loadModuleLanguageResource(context.getDescriptor().getId(), lang);
-            }
-        } catch (Exception ignored) {}
     }
 
     @Override

@@ -596,8 +596,10 @@ public class GuildPluginAPI {
      */
     public boolean loadModuleLanguageResource(String moduleId, String lang) {
         if (moduleId == null || moduleId.trim().isEmpty()) return false;
-        // Current LanguageManager API loads all languages for a module; use that for now.
-        return plugin.getLanguageManager().loadModuleLanguageResourcesForModule(moduleId);
+        if (lang == null || lang.trim().isEmpty()) {
+            return plugin.getLanguageManager().loadModuleLanguageResourcesForModule(moduleId);
+        }
+        return plugin.getLanguageManager().loadModuleLanguageResourcesForModule(moduleId, lang.toLowerCase());
     }
 
     /**

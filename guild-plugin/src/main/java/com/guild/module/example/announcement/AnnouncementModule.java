@@ -102,19 +102,6 @@ public class AnnouncementModule implements GuildModule {
 
         ConsoleLogger.info(context.getMessage("module.announcement.loaded",
                 "[Announcement] Announcement system enabled"));
-
-        var langManager = context.getLanguageManager();
-        String welcomeKey = "module.announcement.welcome-hint";
-        context.getLogger().info("[Announcement-Lang] Dynamic message lookup: "
-            + langManager.getMessage(welcomeKey,
-                "Hint: use /guild announcement to manage announcements"));
-
-        // Attempt to load module language resources for all currently loaded languages
-        try {
-            for (String lang : langManager.getLoadedLanguages()) {
-                api.loadModuleLanguageResource(context.getDescriptor().getId(), lang);
-            }
-        } catch (Exception ignored) {}
     }
 
     @Override

@@ -30,6 +30,7 @@ public class LanguageManager {
     /** lang/modules/ 目录下的模块消息配置（合并存储，按语言索引） */
     private final Map<String, FileConfiguration> moduleConfigs = new HashMap<>();
     private final Set<String> supportedLanguages = new HashSet<>();
+    private final Set<String> loadedModuleLanguages = new HashSet<>();
     private final Map<UUID, String> playerLanguages = new HashMap<>();
     private String defaultLanguage = "en";
     
@@ -252,7 +253,11 @@ public class LanguageManager {
         // Ensure bundled module languages are loaded on first startup, even if the
         // external language files have not been extracted yet.
         for (String moduleId : MODULE_DIRS) {
-            loadBundledModuleLanguagesForModule(moduleId);
+            if (!loadedModuleLanguages.contains(moduleId)) {
+                if (loadBundledModuleLanguagesForModule(moduleId)) {
+                    loadedModuleLanguages.add(moduleId);
+                }
+            }
         }
     }
 
@@ -355,6 +360,10 @@ public class LanguageManager {
             return false;
         }
         String moduleDirName = moduleId.toLowerCase();
+        if (loadedModuleLanguages.contains(moduleDirName)) {
+            return true;
+        }
+
         File moduleDir = new File(plugin.getDataFolder(), MODULES_LANG_PATH + moduleDirName);
 
         boolean loaded = false;
@@ -366,7 +375,17 @@ public class LanguageManager {
             loaded = loadBundledModuleLanguagesForModule(moduleDirName);
         }
 
+        if (loaded) {
+            loadedModuleLanguages.add(moduleDirName);
+        }
         return loaded;
+    }
+
+    public boolean loadModuleLanguageResourcesForModule(String moduleId, String lang) {
+        if (moduleId == null || moduleId.trim().isEmpty() || lang == null || lang.trim().isEmpty()) {
+            return false;
+        }
+        return loadModuleLanguageResourcesForModule(moduleId);
     }
 
     public boolean releaseModuleLanguageResourcesForModule(String moduleId) {
@@ -430,7 +449,7 @@ public class LanguageManager {
         }
 
         if (!loadedLangs.isEmpty()) {
-            logger.info("Loaded external module '" + moduleDir.getName() + "' languages: " + String.join(", ", loadedLangs));
+            loadedModuleLanguages.add(moduleDir.getName().toLowerCase());
             return true;
         }
         return false;
@@ -466,7 +485,7 @@ public class LanguageManager {
         }
 
         if (anyLoaded) {
-            logger.info("Loaded bundled module languages for module '" + moduleDirName + "': " + String.join(", ", loadedLangs));
+            logger.info("Loaded bundled module languages for module '" + moduleDirName + "'.");
         }
 
         return anyLoaded;

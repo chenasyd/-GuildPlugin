@@ -58,14 +58,6 @@ public class ApiTestModule implements GuildModule {
         api.registerPlaceholderProvider(new RegionCountProvider());
 
         context.getLogger().info("[ApiTest] Module enabled — use /guild apitest help to see test commands");
-
-        // Load module language resources for all currently loaded languages
-        try {
-            var lm = context.getLanguageManager();
-            for (String lang : lm.getLoadedLanguages()) {
-                context.getApi().loadModuleLanguageResource(context.getDescriptor().getId(), lang);
-            }
-        } catch (Exception ignored) {}
     }
 
     @Override

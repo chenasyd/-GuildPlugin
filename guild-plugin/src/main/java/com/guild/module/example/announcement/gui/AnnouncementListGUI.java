@@ -275,9 +275,11 @@ public class AnnouncementListGUI implements GUI {
         if (currentPage > 1) {
             inv.setItem(45, createItem(Material.ARROW,
                     ColorUtils.colorize("&e&l" +
-                            module.getContext().getMessage("gui.previous-page", "&e&l上一页")),
+                            module.getContext().getLanguageManager().getGuiMessage(player,
+                                    "gui.previous-page", "&e&l上一页")),
                     ColorUtils.colorize("&7" +
-                            module.getContext().getMessage("gui.previous-page-hint",
+                            module.getContext().getLanguageManager().getGuiMessage(player,
+                                    "gui.previous-page-hint",
                                     "&7点击返回上一页"))));
         }
 
@@ -285,9 +287,11 @@ public class AnnouncementListGUI implements GUI {
         if (currentPage < totalPages) {
             inv.setItem(53, createItem(Material.ARROW,
                     ColorUtils.colorize("&e&l" +
-                            module.getContext().getMessage("gui.next-page", "&e&l下一页")),
+                            module.getContext().getLanguageManager().getGuiMessage(player,
+                                    "gui.next-page", "&e&l下一页")),
                     ColorUtils.colorize("&7" +
-                            module.getContext().getMessage("gui.next-page-hint",
+                            module.getContext().getLanguageManager().getGuiMessage(player,
+                                    "gui.next-page-hint",
                                     "&7点击查看更多"))));
         }
     }

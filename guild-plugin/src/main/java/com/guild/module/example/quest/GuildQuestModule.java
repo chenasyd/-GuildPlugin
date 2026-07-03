@@ -114,14 +114,6 @@ public class GuildQuestModule implements GuildModule {
             context.getLogger().info("[Quest] Quest system enabled");
         });
 
-        // Load module language resources for currently loaded languages
-        try {
-            var lm = context.getLanguageManager();
-            for (String lang : lm.getLoadedLanguages()) {
-                context.getApi().loadModuleLanguageResource(context.getDescriptor().getId(), lang);
-            }
-        } catch (Exception ignored) {}
-
         context.getEventBus().subscribe(QuestCompletedEvent.class, event -> {});
     }
 
