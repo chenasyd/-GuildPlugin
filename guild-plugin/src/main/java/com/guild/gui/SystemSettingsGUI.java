@@ -414,6 +414,22 @@ public class SystemSettingsGUI implements GUI {
             plugin.getConfigManager().reloadAllConfigs();
             plugin.getPermissionManager().reloadFromConfig();
             plugin.getLanguageManager().reloadLanguagesAsync(() -> {
+                // 通知 SDK 让模块加载其语言资源
+                try {
+                    ModuleManager mm = plugin.getModuleManager();
+                    var api = mm.getSharedApi();
+                    for (String moduleId : mm.getRegistry().getModuleIds()) {
+                        try { api.loadModuleLanguageResource(moduleId, null); } catch (Exception ignored) {}
+                    }
+                } catch (Exception ignored) {}
+
+                // 刷新所有打开的 GUI
+                try {
+                    for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
+                        if (plugin.getGuiManager().hasOpenGUI(p)) plugin.getGuiManager().refreshGUI(p);
+                    }
+                } catch (Exception ignored) {}
+
                 player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(
                         player, "gui.system-settings.reload-success", "&a配置重载成功！")));
             });

@@ -682,6 +682,26 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
             // 语言文件重载量大（54+ YAML），异步执行
             plugin.getLanguageManager().reloadLanguagesAsync(() -> {
+                // 让 SDK / 模块层加载模块语言资源（兼容模块自行为载入）
+                try {
+                    ModuleManager mm = plugin.getModuleManager();
+                    var api = mm.getSharedApi();
+                    for (String moduleId : mm.getRegistry().getModuleIds()) {
+                        try {
+                            api.loadModuleLanguageResource(moduleId, null);
+                        } catch (Exception ignored) {}
+                    }
+                } catch (Exception ignored) {}
+
+                // 刷新所有打开的 GUI 界面（使用现有 GUI 管理器）
+                try {
+                    for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
+                        if (plugin.getGuiManager().hasOpenGUI(p)) {
+                            plugin.getGuiManager().refreshGUI(p);
+                        }
+                    }
+                } catch (Exception ignored) {}
+
                 String success = languageManager.getCoreMessage(
                         "admin.reload.success", "&a配置已重新加载！");
                 sender.sendMessage(ColorUtils.colorize(success));
