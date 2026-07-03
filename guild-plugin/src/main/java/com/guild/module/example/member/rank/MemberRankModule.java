@@ -22,7 +22,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -135,7 +134,9 @@ public class MemberRankModule implements GuildModule {
                 GUIExtensionHook.AUTO_SLOT,
                 settingsButton,
                 "member-rank",
-                (player, ctx) -> handleOpenRankGUIFromSettings(player, ctx)
+                (player, ctx) -> handleOpenRankGUIFromSettings(player, ctx),
+                "module.member-rank.button-name",
+                "module.member-rank.button-desc"
         );
 
         // Register "A-Coin Settings" button in GuildSettingsGUI (config entry, auto-slot)
@@ -145,7 +146,10 @@ public class MemberRankModule implements GuildModule {
                 GUIExtensionHook.AUTO_SLOT,
                 rankSettingsButton,
                 "member-rank",
-                (player, ctx) -> handleOpenRankSettingsGUI(player, ctx)
+                (player, ctx) -> handleOpenRankSettingsGUI(player, ctx),
+                "module.member-rank.settings.button-name",
+                "module.member-rank.settings.button-desc",
+                "module.member-rank.settings.button-hint"
         );
 
         // Register "Leaderboard" button in GuildInfoGUI (slot 14, visible to all members)
@@ -155,7 +159,10 @@ public class MemberRankModule implements GuildModule {
                 14,
                 infoButton,
                 "member-rank",
-                (player, ctx) -> handleOpenRankGUIFromInfo(player, ctx)
+                (player, ctx) -> handleOpenRankGUIFromInfo(player, ctx),
+                "module.member-rank.info-button-name",
+                "module.member-rank.info-button-desc",
+                "module.member-rank.info-button-hint"
         );
 
         ConsoleLogger.info(context.getMessage("module.member-rank.loaded",
@@ -264,13 +271,8 @@ public class MemberRankModule implements GuildModule {
         ItemStack item = new ItemStack(Material.GOLD_INGOT);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ColorUtils.colorize("&6&l" +
-                    context.getMessage("module.member-rank.button-name", "A-Coin Ranking")));
-            List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7" +
-                    context.getMessage("module.member-rank.button-desc",
-                            "Manage member A-Coins and rankings")));
-            meta.setLore(lore);
+            meta.setDisplayName("Contribution Rank"); // 回退文本，实际由 getDisplayItem 按模块语言解析
+            meta.setLore(List.of("Manage member contributions and rankings"));
             item.setItemMeta(meta);
         }
         return item;
@@ -286,16 +288,8 @@ public class MemberRankModule implements GuildModule {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ColorUtils.colorize("&e&l" +
-                    context.getMessage("module.member-rank.info-button-name", "A-Coin Leaderboard")));
-            List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7" +
-                    context.getMessage("module.member-rank.info-button-desc",
-                            "View guild member A-Coin rankings")));
-            lore.add(ColorUtils.colorize("&7" +
-                    context.getMessage("module.member-rank.info-button-hint",
-                            "&7Click to view leaderboard")));
-            meta.setLore(lore);
+            meta.setDisplayName("Leaderboard"); // 回退文本
+            meta.setLore(List.of("View guild member contribution rankings", "Click to view leaderboard"));
             item.setItemMeta(meta);
         }
         return item;
@@ -311,16 +305,8 @@ public class MemberRankModule implements GuildModule {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ColorUtils.colorize("&6&l" +
-                    context.getMessage("module.member-rank.settings.button-name", "A-Coin Settings")));
-            List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7" +
-                    context.getMessage("module.member-rank.settings.button-desc",
-                            "Configure A-Coin growth rules")));
-            lore.add(ColorUtils.colorize("&7" +
-                    context.getMessage("module.member-rank.settings.button-hint",
-                            "&7Click to open configuration")));
-            meta.setLore(lore);
+            meta.setDisplayName("A-Coin Settings"); // 回退文本
+            meta.setLore(List.of("Manage A-Coin growth rules", "Click to open configuration"));
             item.setItemMeta(meta);
         }
         return item;

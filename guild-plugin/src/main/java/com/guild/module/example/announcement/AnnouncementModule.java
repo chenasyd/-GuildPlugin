@@ -23,7 +23,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,7 +64,9 @@ public class AnnouncementModule implements GuildModule {
                 GUIExtensionHook.AUTO_SLOT,
                 settingsButton,
                 "announcement",
-                (player, ctx) -> handleOpenAnnouncementList(player, ctx)
+                (player, ctx) -> handleOpenAnnouncementList(player, ctx),
+                "module.announcement.button-name",
+                "module.announcement.button-desc"
         );
 
         // 在 GuildInfoGUI 中注册"告示牌"按钮（固定槽位12，查看入口）
@@ -75,7 +76,10 @@ public class AnnouncementModule implements GuildModule {
                 12,
                 infoButton,
                 "announcement",
-                (player, ctx) -> handleOpenAnnouncementView(player, ctx)
+                (player, ctx) -> handleOpenAnnouncementView(player, ctx),
+                "module.announcement.info-button-name",
+                "module.announcement.info-button-desc",
+                "module.announcement.info-button-hint"
         );
 
         api.onMemberJoin(new MemberEventHandler() {
@@ -207,13 +211,8 @@ public class AnnouncementModule implements GuildModule {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ColorUtils.colorize("&e&l" +
-                    context.getMessage("module.announcement.button-name", "插件公告")));
-            List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7" +
-                    context.getMessage("module.announcement.button-desc",
-                            "管理和发布工会公告")));
-            meta.setLore(lore);
+            meta.setDisplayName("Announcements"); // 回退文本，实际由 getDisplayItem 按模块语言解析
+            meta.setLore(List.of("Manage and publish guild announcements"));
             item.setItemMeta(meta);
         }
         return item;
@@ -229,16 +228,8 @@ public class AnnouncementModule implements GuildModule {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(ColorUtils.colorize("&6&l" +
-                    context.getMessage("module.announcement.info-button-name", "告示牌")));
-            List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7" +
-                    context.getMessage("module.announcement.info-button-desc",
-                            "查看工会公告")));
-            lore.add(ColorUtils.colorize("&7" +
-                    context.getMessage("module.announcement.info-button-hint",
-                            "&7点击查看全部公告")));
-            meta.setLore(lore);
+            meta.setDisplayName("Bulletin Board"); // 回退文本，实际由 getDisplayItem 按模块语言解析
+            meta.setLore(List.of("View guild announcements", "Click to view all announcements"));
             item.setItemMeta(meta);
         }
         return item;

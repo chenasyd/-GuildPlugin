@@ -1,7 +1,10 @@
 package com.guild.core.module.hook;
 
+import com.guild.core.language.LanguageManager;
+import com.guild.core.utils.ColorUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,6 +18,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  *   <li><b>直接槽位模式</b>: 模块指定具体槽位号（如 GuildInfoGUI 的预留区域）</li>
  *   <li><b>自动分页模式</b>: 模块不指定槽位或使用特殊值，由宿主GUI按页分配槽位</li>
  * </ul>
+ * <p>
+ * 支持多语言按钮：使用 {@link #registerButton(String, int, ItemStack, String, GUIClickAction, String, String...)}
+ * 注册带语言键的按钮，GUI 渲染时会通过 {@link GUIInjectionSlot#getDisplayItem(Player, LanguageManager)}
+ * 按玩家语言实时解析文本。
  */
 public class GUIExtensionHook implements HookPoint {
 
@@ -25,7 +32,7 @@ public class GUIExtensionHook implements HookPoint {
     private final Map<String, List<GUIInjectionSlot>> injections = new ConcurrentHashMap<>();
 
     /**
-     * 注册 GUI 按钮注入
+     * 注册 GUI 按钮注入（无多语言键，文本固定）
      *
      * @param guiType  目标GUI类型标识符（如 "GuildSettingsGUI"、"GuildInfoGUI"）
      * @param slot     注入槽位(0-based)，传入 {@link #AUTO_SLOT} 表示由宿主GUI自动分配
@@ -40,12 +47,43 @@ public class GUIExtensionHook implements HookPoint {
     }
 
     /**
+     * 注册多语言 GUI 按钮注入
+     * <p>
+     * 使用此方法注册的按钮在 GUI 渲染时会通过 {@link LanguageManager#getModuleMessage(Player, String, String)}
+     * 按玩家语言实时解析 displayName 和 lore 文本（而非使用注册时固化在 ItemMeta 中的文本）。
+     *
+     * @param guiType        目标GUI类型标识符
+     * @param slot           注入槽位，传入 {@link #AUTO_SLOT} 表示自动分配
+     * @param item           显示物品图标（含材质和回退文本）
+     * @param moduleId       模块ID
+     * @param action         点击回调
+     * @param displayNameKey 显示名称的语言键（如 {@code "module.testlang.gui.info.button-name"}）
+     * @param loreKeys       lore 各行的语言键（按顺序对应）
+     */
+    public void registerButton(String guiType, int slot, ItemStack item,
+                               String moduleId, GUIClickAction action,
+                               String displayNameKey, String... loreKeys) {
+        injections.computeIfAbsent(guiType, k -> new CopyOnWriteArrayList<>())
+                .add(new GUIInjectionSlot(moduleId, slot, item, action, displayNameKey,
+                        loreKeys.length > 0 ? Arrays.asList(loreKeys) : Collections.emptyList()));
+    }
+
+    /**
      * 注册 GUI 按钮注入（自动分配槽位模式）
      * 使用此方法注册的按钮将由宿主GUI按页自动排列
      */
     public void registerButtonAuto(String guiType, ItemStack item,
                                    String moduleId, GUIClickAction action) {
         registerButton(guiType, AUTO_SLOT, item, moduleId, action);
+    }
+
+    /**
+     * 注册多语言 GUI 按钮注入（自动分配槽位模式）
+     */
+    public void registerButtonAuto(String guiType, ItemStack item,
+                                   String moduleId, GUIClickAction action,
+                                   String displayNameKey, String... loreKeys) {
+        registerButton(guiType, AUTO_SLOT, item, moduleId, action, displayNameKey, loreKeys);
     }
 
     /**
@@ -190,17 +228,89 @@ public class GUIExtensionHook implements HookPoint {
         private final ItemStack item;
         private final GUIClickAction action;
 
+        /** 显示名称的语言键（为 null 时回退到 ItemStack 固化文本） */
+        private final String displayNameKey;
+        /** lore 各行的语言键列表（为空时回退到 ItemStack 固化文本） */
+        private final List<String> loreKeys;
+
         public GUIInjectionSlot(String moduleId, int slot, ItemStack item,
                                 GUIClickAction action) {
+            this(moduleId, slot, item, action, null, Collections.emptyList());
+        }
+
+        public GUIInjectionSlot(String moduleId, int slot, ItemStack item,
+                                GUIClickAction action,
+                                String displayNameKey, List<String> loreKeys) {
             this.moduleId = moduleId;
             this.slot = slot;
             this.item = item;
             this.action = action;
+            this.displayNameKey = displayNameKey;
+            this.loreKeys = loreKeys != null ? Collections.unmodifiableList(new ArrayList<>(loreKeys)) : Collections.emptyList();
         }
 
         public String getModuleId() { return moduleId; }
         public int getSlot() { return slot; }
+
+        /**
+         * 获取原始 ItemStack（可能含固化文本，用于不支持多语言解析的旧代码）
+         */
         public ItemStack getItem() { return item; }
+
+        /**
+         * 获取按模块全局语言配置解析后的显示物品
+         * <p>
+         * 如果注册时提供了 displayNameKey，则通过 {@link LanguageManager#getModuleMessage(String, String, String)}
+         * 按模块默认语言解析显示名称和 lore，并自动转换 {@code &} 颜色码；
+         * 否则直接返回原始 ItemStack。
+         *
+         * @param player 当前查看 GUI 的玩家（保留参数兼容性，实际不使用玩家语言）
+         * @param lm     LanguageManager 实例
+         * @return 已解析语言和颜色码的 ItemStack（新副本，不影响原始 item）
+         */
+        public ItemStack getDisplayItem(Player player, LanguageManager lm) {
+            if (displayNameKey == null || lm == null) {
+                return item; // 无语言键 / 无法解析，回退到原始 ItemStack
+            }
+
+            ItemStack resolved = item.clone();
+            ItemMeta meta = resolved.getItemMeta();
+            if (meta == null) return resolved;
+
+            // 使用模块全局语言配置（不感知玩家个人语言）
+            String lang = lm.getModuleDefaultLanguage();
+
+            // 解析显示名称并转换颜色码
+            String fallback = meta.hasDisplayName() ? meta.getDisplayName() : null;
+            String displayName = lm.getModuleMessage(lang, displayNameKey, fallback);
+            if (displayName != null) {
+                meta.setDisplayName(ColorUtils.colorize(displayName));
+            }
+
+            // 解析 lore 并转换颜色码（仅当提供了 lore 语言键时）
+            if (!loreKeys.isEmpty()) {
+                List<String> originalLore = meta.hasLore() ? meta.getLore() : Collections.emptyList();
+                List<String> resolvedLore = new ArrayList<>();
+                for (int i = 0; i < loreKeys.size(); i++) {
+                    String fallbackLine = i < originalLore.size() ? originalLore.get(i) : "";
+                    String line = lm.getModuleMessage(lang, loreKeys.get(i), fallbackLine);
+                    if (!line.isEmpty()) {
+                        resolvedLore.add(ColorUtils.colorize(line));
+                    }
+                }
+                // 保留原始 lore 中超出语言键范围的尾随行（如空行、运行时动态内容等）
+                for (int i = loreKeys.size(); i < originalLore.size(); i++) {
+                    resolvedLore.add(originalLore.get(i));
+                }
+                if (!resolvedLore.isEmpty()) {
+                    meta.setLore(resolvedLore);
+                }
+            }
+
+            resolved.setItemMeta(meta);
+            return resolved;
+        }
+
         public GUIClickAction getAction() { return action; }
 
         /** 是否为自动分配槽位 */

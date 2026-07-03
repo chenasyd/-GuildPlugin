@@ -293,7 +293,7 @@ public class GuildInfoGUI implements GUI {
         for (GUIExtensionHook.GUIInjectionSlot inj : fixedInjections) {
             if (slotIndex >= PAGE1_MODULE_SLOTS.length) break;
             int targetSlot = PAGE1_MODULE_SLOTS[slotIndex];
-            inv.setItem(targetSlot, inj.getItem());
+            inv.setItem(targetSlot, inj.getDisplayItem(player, plugin.getLanguageManager()));
             fixedSlotMap.put(targetSlot, inj);
             slotIndex++;
         }
@@ -327,7 +327,7 @@ public class GuildInfoGUI implements GUI {
         // 放置到预定义槽位上
         for (int i = 0; i < pageInjections.size() && i < EXTRA_PAGE_SLOT_LAYOUT.length; i++) {
             GUIExtensionHook.GUIInjectionSlot inj = pageInjections.get(i);
-            inv.setItem(EXTRA_PAGE_SLOT_LAYOUT[i], inj.getItem());
+            inv.setItem(EXTRA_PAGE_SLOT_LAYOUT[i], inj.getDisplayItem(player, plugin.getLanguageManager()));
         }
 
         // 填充未使用槽位

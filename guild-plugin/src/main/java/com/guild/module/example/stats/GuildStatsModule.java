@@ -119,19 +119,32 @@ public class GuildStatsModule implements GuildModule {
     public ModuleState getState() { return state; }
 
     private void registerGUIButtons(GuildPluginAPI api) {
-        ItemStack statsButton = createItem(Material.BOOK,
-            "&6&l" + context.getMessage("module.stats.button-name", "数据统计"),
-            "&7" + context.getMessage("module.stats.button-desc", "查看公会详细运营数据"),
-            "&7" + context.getMessage("module.stats.button-lore", "成员活跃度 &8| &7经济报表 &8| &7排行榜"));
+        ItemStack statsButton = new ItemStack(Material.BOOK);
+        ItemMeta statsMeta = statsButton.getItemMeta();
+        if (statsMeta != null) {
+            statsMeta.setDisplayName("Statistics"); // 回退文本，实际由 getDisplayItem 按模块语言解析
+            statsMeta.setLore(List.of("View detailed guild operational data",
+                    "Member activity | Economy | Rankings"));
+            statsButton.setItemMeta(statsMeta);
+        }
         api.registerGUIButton("GuildInfoGUI", 16, statsButton, "guild-stats",
-            (player, ctx) -> openStatsOverview(player, ctx));
+            (player, ctx) -> openStatsOverview(player, ctx),
+            "module.stats.button-name",
+            "module.stats.button-desc",
+            "module.stats.button-lore");
 
-        ItemStack rankingButton = createItem(Material.GOLD_BLOCK,
-            "&e&l" + context.getMessage("module.stats.ranking-button", "公会排行"),
-            "&7" + context.getMessage("module.stats.ranking-button-desc", "查看全服公会综合实力排行"));
+        ItemStack rankingButton = new ItemStack(Material.GOLD_BLOCK);
+        ItemMeta rankMeta = rankingButton.getItemMeta();
+        if (rankMeta != null) {
+            rankMeta.setDisplayName("Guild Ranking"); // 回退文本
+            rankMeta.setLore(List.of("View server-wide guild ranking"));
+            rankingButton.setItemMeta(rankMeta);
+        }
         api.registerGUIButton("MainGuildGUI", GUIExtensionHook.AUTO_SLOT,
             rankingButton, "guild-stats",
-            (player, ctx) -> openGuildRanking(player));
+            (player, ctx) -> openGuildRanking(player),
+            "module.stats.ranking-button",
+            "module.stats.ranking-button-desc");
 
         api.registerCustomGUI("stats-player-detail", (player, data) -> {
             UUID targetUuid = (UUID) data.get("targetUuid");

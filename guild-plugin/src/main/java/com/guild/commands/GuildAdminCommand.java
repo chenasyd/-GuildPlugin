@@ -743,6 +743,14 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                         } catch (Exception ignored) {}
                     }
                 } catch (Exception ignored) {}
+                // 刷新所有打开的 GUI，模块按钮通过 getDisplayItem() 实时解析新语言文本
+                try {
+                    for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
+                        if (plugin.getGuiManager().hasOpenGUI(p)) {
+                            plugin.getGuiManager().refreshGUI(p);
+                        }
+                    }
+                } catch (Exception ignored) {}
             });
         } catch (Exception e) {
             String failed = languageManager.getCoreMessage("admin.reload.failed",

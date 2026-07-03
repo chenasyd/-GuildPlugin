@@ -215,11 +215,11 @@ public class GuildSettingsGUI implements GUI {
         List<GUIExtensionHook.GUIInjectionSlot> pageInjections =
                 guiHook.getPageInjections(GUI_TYPE, currentPage - 1, MODULE_BUTTONS_PER_PAGE);
 
-        // 将注入项按顺序放置到预定义槽位上
+        // 将注入项按顺序放置到预定义槽位上（使用语言感知渲染）
         for (int i = 0; i < pageInjections.size() && i < MODULE_SLOT_LAYOUT.length; i++) {
             GUIExtensionHook.GUIInjectionSlot inj = pageInjections.get(i);
             int targetSlot = MODULE_SLOT_LAYOUT[i];
-            inventory.setItem(targetSlot, inj.getItem());
+            inventory.setItem(targetSlot, inj.getDisplayItem(player, languageManager));
         }
 
         // 用灰色玻璃填充未使用的槽位

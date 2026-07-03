@@ -122,7 +122,7 @@ public class GuildPluginAPI {
     // ==================== GUI 扩展 API ====================
 
     /**
-     * 在指定 GUI 界面中注入自定义按钮
+     * 在指定 GUI 界面中注入自定义按钮（固定文本，无多语言支持）
      *
      * @param guiType  目标 GUI 类型标识符
      * @param slot     注入的槽位编号（0-based）
@@ -139,6 +139,33 @@ public class GuildPluginAPI {
         ModuleManager mm = plugin.getServiceContainer().get(ModuleManager.class);
         mm.getRegistry().getGuiExtensionHook()
                 .registerButton(guiType, slot, item, moduleId, handler);
+    }
+
+    /**
+     * 在指定 GUI 界面中注入多语言自定义按钮
+     * <p>
+     * 使用此方法注册的按钮在 GUI 渲染时会按模块全局语言配置实时解析 displayName 和 lore，
+     * 无需手动在 ItemStack 中使用 ColorUtils.colorize 设置文本。
+     * 适用于支持模块重载后自动切换语言的场景。
+     *
+     * @param guiType        目标 GUI 类型标识符
+     * @param slot           注入的槽位编号（0-based），传入 {@link GUIExtensionHook#AUTO_SLOT} 表示自动分配
+     * @param item           显示物品图标（含材质和回退文本，回退文本不含颜色码）
+     * @param moduleId       当前模块 ID（用于卸载时自动清理）
+     * @param handler        点击回调处理
+     * @param displayNameKey 显示名称的语言键（如 {@code "module.announcement.button-name"}）
+     * @param loreKeys       lore 各行的语言键（按顺序对应，不含空行和动态内容）
+     */
+    public void registerGUIButton(String guiType, int slot, ItemStack item,
+                                  String moduleId,
+                                  GUIExtensionHook.GUIClickAction handler,
+                                  String displayNameKey, String... loreKeys) {
+        if (moduleId == null || moduleId.isEmpty()) {
+            throw new IllegalArgumentException("moduleId 不能为空");
+        }
+        ModuleManager mm = plugin.getServiceContainer().get(ModuleManager.class);
+        mm.getRegistry().getGuiExtensionHook()
+                .registerButton(guiType, slot, item, moduleId, handler, displayNameKey, loreKeys);
     }
 
     /** 注册全新的自定义 GUI 页面 */

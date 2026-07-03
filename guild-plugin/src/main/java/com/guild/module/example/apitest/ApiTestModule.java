@@ -40,18 +40,18 @@ public class ApiTestModule implements GuildModule {
         api.registerSubCommand("guild", "apitest",
                 new ApiTestCommandHandler(this), "guild.apitest.use");
 
-        // 2. 注册 GUI 按钮（在 GuildSettingsGUI 自动找一个槽位）
+        // 2. 注册 GUI 按钮（在 GuildSettingsGUI 自动找一个槽位，多语言支持）
         ItemStack btn = new ItemStack(Material.ENCHANTED_BOOK);
         org.bukkit.inventory.meta.ItemMeta meta = btn.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(org.bukkit.ChatColor.LIGHT_PURPLE + "" + org.bukkit.ChatColor.BOLD
-                    + context.getMessage("module.apitest.button-name", "API Test Panel"));
-            meta.setLore(List.of(org.bukkit.ChatColor.GRAY
-                    + context.getMessage("module.apitest.button-desc", "Click to open SDK test interface")));
+            meta.setDisplayName("API Test Panel"); // 回退文本，实际由 getDisplayItem 按模块语言解析
+            meta.setLore(List.of("Click to open SDK test interface"));
             btn.setItemMeta(meta);
         }
         api.registerGUIButton("GuildSettingsGUI", GUIExtensionHook.AUTO_SLOT,
-                btn, "api-test", (player, ctx) -> openTestGUI(player));
+                btn, "api-test", (player, ctx) -> openTestGUI(player),
+                "module.apitest.button-name",
+                "module.apitest.button-desc");
 
         // 3. 注册事件监听器
         registerAllEventHandlers(api);

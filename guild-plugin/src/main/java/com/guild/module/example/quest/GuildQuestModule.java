@@ -181,21 +181,35 @@ public class GuildQuestModule implements GuildModule {
     }
 
     private void registerGUIButtons(GuildPluginAPI api) {
-        ItemStack questButton = createItem(Material.BOOK,
-            "&6&l" + context.getMessage("module.quest.button-name", "Guild Quests"),
-            "&7" + context.getMessage("module.quest.quest-list-lore", "Accept and track guild quests"),
-            "&7" + context.getMessage("module.quest.quest-types", "Daily &8| &7Weekly &8| &7One-time"),
-            "",
-            "&e" + context.getMessage("module.quest.click-open", "Click to open quest panel"));
+        ItemStack questButton = new ItemStack(Material.BOOK);
+        ItemMeta questMeta = questButton.getItemMeta();
+        if (questMeta != null) {
+            questMeta.setDisplayName("Guild Quests"); // 回退文本，实际由 getDisplayItem 按模块语言解析
+            questMeta.setLore(List.of("Accept and track guild quests",
+                    "Daily | Weekly | One-time",
+                    "Click to open quest panel",
+                    ""));
+            questButton.setItemMeta(questMeta);
+        }
         api.registerGUIButton("GuildInfoGUI", 14, questButton, "guild-quest",
-            (player, ctx) -> openQuestList(player, ctx));
+            (player, ctx) -> openQuestList(player, ctx),
+            "module.quest.button-name",
+            "module.quest.quest-list-lore",
+            "module.quest.quest-types",
+            "module.quest.click-open");
 
-        ItemStack activeButton = createItem(Material.COMPASS,
-            "&a&l" + context.getMessage("module.quest.active-quests", "Active Quests"),
-            "&7" + context.getMessage("module.quest.active-quests-lore", "View progress of your ongoing quests"));
+        ItemStack activeButton = new ItemStack(Material.COMPASS);
+        ItemMeta activeMeta = activeButton.getItemMeta();
+        if (activeMeta != null) {
+            activeMeta.setDisplayName("Active Quests"); // 回退文本
+            activeMeta.setLore(List.of("View your current quest progress"));
+            activeButton.setItemMeta(activeMeta);
+        }
         api.registerGUIButton("GuildInfoGUI", GUIExtensionHook.AUTO_SLOT,
             activeButton, "guild-quest",
-            (player, ctx) -> openActiveQuests(player));
+            (player, ctx) -> openActiveQuests(player),
+            "module.quest.active-quests",
+            "module.quest.active-quests-lore");
     }
 
     private void registerCommands(GuildPluginAPI api) {
