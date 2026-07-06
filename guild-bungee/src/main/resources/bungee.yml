@@ -1,0 +1,7 @@
+name: GuildBungee
+main: com.guild.bungee.GuildBungeePlugin
+version: ${guild.version}
+author: GuildPlugin Team
+description: Cross-server guild data synchronization bridge for BungeeCord networks
+
+softDepends: []
