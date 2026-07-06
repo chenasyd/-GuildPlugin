@@ -17,19 +17,11 @@
     <name>Guild BungeeCord Bridge</name>
     <description>BungeeCord proxy plugin for cross-server guild data synchronization</description>
 
-    <repositories>
-        <!-- BungeeCord API snapshots (from MD-5 repository) -->
-        <repository>
-            <id>bungeecord-repo</id>
-            <url>https://repo.md-5.net/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
-        <!-- BungeeCord API (provided by the proxy at runtime) -->
+        <!-- Waterfall API (BungeeCord fork, provided by the proxy at runtime) -->
         <dependency>
-            <groupId>net.md-5</groupId>
-            <artifactId>bungeecord-api</artifactId>
+            <groupId>io.github.waterfallmc</groupId>
+            <artifactId>waterfall-api</artifactId>
             <scope>provided</scope>
         </dependency>
 

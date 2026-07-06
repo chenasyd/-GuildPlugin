@@ -38,8 +38,8 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
-            <id>md5-repo</id>
-            <url>https://repo.md-5.net/content/repositories/snapshots/</url>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>placeholderapi</id>
@@ -61,10 +61,10 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- BungeeCord API (for guild-bungee module) -->
+            <!-- Waterfall API (BungeeCord fork, for guild-bungee module) -->
             <dependency>
-                <groupId>net.md-5</groupId>
-                <artifactId>bungeecord-api</artifactId>
+                <groupId>io.github.waterfallmc</groupId>
+                <artifactId>waterfall-api</artifactId>
                 <version>1.20-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
