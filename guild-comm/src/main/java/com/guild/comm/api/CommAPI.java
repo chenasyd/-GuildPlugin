@@ -49,6 +49,11 @@ public final class CommAPI {
         ExtensionBridge.getInstance().shutdown();
     }
 
+    /** @return true if the bridge has been {@link #initialize}d. */
+    public static boolean isInitialized() {
+        return ExtensionBridge.getInstance().isInitialized();
+    }
+
     // ── Convenience: Registration ────────────────────────────────
 
     /**

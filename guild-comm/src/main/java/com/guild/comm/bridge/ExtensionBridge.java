@@ -42,6 +42,11 @@ public class ExtensionBridge {
         return INSTANCE;
     }
 
+    /** @return true if the bridge has been initialized via {@link #initialize}. */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
     // ── Lifecycle ────────────────────────────────────────────────
 
     /**
