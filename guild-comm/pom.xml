@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.guild</groupId>
+        <artifactId>guild-parent</artifactId>
+        <version>${guild.version}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>guild-comm</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Guild Communication Bridge</name>
+    <description>Extension middleware for inter-plugin communication and cross-server messaging</description>
+
+    <dependencies>
+        <!-- Guild SDK (compile-time stubs) -->
+        <dependency>
+            <groupId>com.guild</groupId>
+            <artifactId>guild-sdk</artifactId>
+            <version>${guild.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Spigot API (for Plugin Messaging Channel) -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Gson (already shaded in guild-plugin, compile-only here) -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
