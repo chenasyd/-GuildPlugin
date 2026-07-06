@@ -14,7 +14,9 @@
 
     <modules>
         <module>guild-sdk</module>
+        <module>guild-comm</module>
         <module>guild-plugin</module>
+        <module>guild-bungee</module>
     </modules>
 
     <properties>
@@ -36,6 +38,10 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
+            <id>md5-repo</id>
+            <url>https://repo.md-5.net/content/repositories/snapshots/</url>
+        </repository>
+        <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
@@ -52,6 +58,14 @@
                 <groupId>org.spigotmc</groupId>
                 <artifactId>spigot-api</artifactId>
                 <version>${spigot.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- BungeeCord API (for guild-bungee module) -->
+            <dependency>
+                <groupId>net.md-5</groupId>
+                <artifactId>bungeecord-api</artifactId>
+                <version>1.20-R0.1-SNAPSHOT</version>
                 <scope>provided</scope>
             </dependency>
 

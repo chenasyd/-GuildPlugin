@@ -24,6 +24,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Guild Communication Bridge -->
+        <dependency>
+            <groupId>com.guild</groupId>
+            <artifactId>guild-comm</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Spigot API -->
         <dependency>
             <groupId>org.spigotmc</groupId>
