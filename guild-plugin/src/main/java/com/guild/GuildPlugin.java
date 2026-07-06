@@ -18,6 +18,7 @@ import com.guild.listeners.GuildListener;
 import com.guild.services.GuildService;
 import com.guild.comm.api.BungeeClientAPI;
 import com.guild.comm.api.CommAPI;
+import com.guild.core.gui.GUI;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ServerUtils;
@@ -25,6 +26,7 @@ import com.guild.core.utils.TestUtils;
 import com.guild.metrics.GuildMetrics;
 import com.guild.update.UpdateChecker;
 import com.guild.update.UpdateManager;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -113,6 +115,20 @@ public class GuildPlugin extends JavaPlugin {
             // 初始化通信桥接器（供外置插件扩展连接）
             CommAPI.initialize(logger);
 
+            // 注册 GuildPlugin 为桥接扩展，供 ImagoCore 等外部插件通信
+            try {
+                CommAPI.connect("guild-core", "Guild Plugin",
+                        getDescription().getVersion(),
+                        "gui.image.ready", "gui.image.render");
+                CommAPI.on("gui.image.ready", packet ->
+                        logger.info("[Bridge] ImagoCore reports GUI ready: " + packet.getPayload()));
+                CommAPI.on("gui.image.render", packet ->
+                        logger.info("[Bridge] ImagoCore reports image rendered: " + packet.getPayload()));
+                logger.info("[Bridge] GuildPlugin registered as 'guild-core' extension.");
+            } catch (Exception e) {
+                logger.warning("[Bridge] Failed to register as extension: " + e.getMessage());
+            }
+
             // 初始化 BungeeCord 客户端 API（跨服通信子服端）
             BungeeClientAPI.initialize(logger);
             // 加载等级需求配置
@@ -191,6 +207,7 @@ public class GuildPlugin extends JavaPlugin {
             }
 
             // 关闭通信桥接
+            CommAPI.disconnect("guild-core");
             CommAPI.shutdown();
             BungeeClientAPI.shutdown();
             
@@ -360,5 +377,25 @@ public class GuildPlugin extends JavaPlugin {
     public double getRequirementForNextLevel(int currentLevel) {
         if (currentLevel >= maxGuildLevel) return 0;
         return levelRequirements.getOrDefault(currentLevel, getDefaultRequirementForLevel(currentLevel));
+    }
+
+    // ── Bridge to ImagoCore ───────────────────────────────────────
+
+    /**
+     * Send a GUI lifecycle event to ImagoCore via the comm bridge.
+     * Called by {@link GUIManager} when a GUI is opened or closed.
+     */
+    public void notifyBridgeGuiEvent(String messageType, Player player, GUI gui) {
+        if (!CommAPI.isConnected("imago-gui")) {
+            return; // ImagoCore not connected, skip
+        }
+        String guiType = gui.getGuiType();
+        String payload = "{\"playerUuid\":\"" + player.getUniqueId()
+                + "\",\"guiId\":\"" + guiType
+                + "\",\"size\":" + gui.getSize()
+                + ",\"title\":\"" + gui.getTitle().replace("\"", "\\\"") + "\"}";
+        CommAPI.send(messageType, "guild-core", "imago-gui", payload);
+        getLogger().fine("[Bridge] Sent " + messageType + " for " + guiType
+                + " (player=" + player.getName() + ")");
     }
 }

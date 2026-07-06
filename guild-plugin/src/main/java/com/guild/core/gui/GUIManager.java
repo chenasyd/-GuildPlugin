@@ -80,6 +80,9 @@ public class GUIManager implements Listener {
             
             // 记录打开的GUI
             openGuis.put(player.getUniqueId(), gui);
+
+            // 通知 ImagoCore 桥接：GUI 已打开
+            plugin.notifyBridgeGuiEvent("gui.image.bind", player, gui);
             
             if (isDebugEnabled()) {
                 logger.info("Player " + player.getName() + " opened GUI: " + gui.getClass().getSimpleName());
@@ -101,8 +104,14 @@ public class GUIManager implements Listener {
         }
         
         try {
-            GUI gui = openGuis.remove(player.getUniqueId());
+            GUI gui = openGuis.get(player.getUniqueId());
             if (gui != null) {
+                // 通知 ImagoCore 桥接：GUI 即将关闭
+                plugin.notifyBridgeGuiEvent("gui.image.unbind", player, gui);
+
+                // 从记录中移除
+                openGuis.remove(player.getUniqueId());
+
                 // 关闭库存
                 if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() != null) {
                     player.closeInventory();
