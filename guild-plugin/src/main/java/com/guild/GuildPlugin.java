@@ -16,6 +16,8 @@ import com.guild.commands.GuildModuleCommand;
 import com.guild.listeners.PlayerListener;
 import com.guild.listeners.GuildListener;
 import com.guild.services.GuildService;
+import com.guild.comm.api.BungeeClientAPI;
+import com.guild.comm.api.CommAPI;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ServerUtils;
@@ -107,6 +109,12 @@ public class GuildPlugin extends JavaPlugin {
             // 初始化语言管理器
             languageManager = new LanguageManager(this);
             serviceContainer.register(LanguageManager.class, languageManager);
+
+            // 初始化通信桥接器（供外置插件扩展连接）
+            CommAPI.initialize(logger);
+
+            // 初始化 BungeeCord 客户端 API（跨服通信子服端）
+            BungeeClientAPI.initialize(logger);
             // 加载等级需求配置
             loadLevelRequirements();
 
@@ -181,6 +189,10 @@ public class GuildPlugin extends JavaPlugin {
             if (serviceContainer != null) {
                 serviceContainer.shutdown();
             }
+
+            // 关闭通信桥接
+            CommAPI.shutdown();
+            BungeeClientAPI.shutdown();
             
             // 卸载所有扩展模块
             if (moduleManager != null) {
