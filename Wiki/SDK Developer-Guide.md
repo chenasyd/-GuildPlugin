@@ -995,6 +995,78 @@ Copy the JAR to `plugins/GuildPlugin/modules/`, then:
 
 **How does `/guildadmin test lang` help debug language issues?** Run subcommands like `overview` (all modules), `lookup <module> <key>` (single key), `files` (file existence check), or `module-context` (trace call chain). See `DEV-GUIDE.md` §"多语言系统" for full details.
 
+## Extension Communication APIs (v1.6.5+)
+
+These APIs are provided by the `guild-comm` module and are available when the Guild Plugin runs on the server. External extensions (such as GUI image processors) use them to communicate with Guild Plugin.
+
+### CommAPI (Extension Bridge)
+
+`CommAPI` provides a facade for connecting external plugins to Guild Plugin's extension bridge. All methods delegate to the `ExtensionBridge` singleton.
+
+```java
+import com.guild.comm.api.CommAPI;
+import com.guild.comm.bridge.MessagePacket;
+
+// Connect your extension to the bridge
+CommAPI.connect("my-extension", "1.0.0");
+
+// Send a message to Guild Plugin
+CommAPI.send("my-extension", "gui.image.bind",
+    "{\"imageId\":\"abc123\",\"width\":128,\"height\":128}");
+
+// Listen for messages from Guild Plugin
+CommAPI.on(packet -> {
+    if ("gui.image.render".equals(packet.getType())) {
+        // Handle render request
+        processRender(packet.getPayload());
+    }
+});
+
+// Disconnect on plugin disable
+CommAPI.disconnect("my-extension");
+```
+
+### BungeeClientAPI (Cross-Server Communication)
+
+`BungeeClientAPI` enables modules and Guild Plugin to send data across BungeeCord-connected sub-servers. Requires `guild-bungee` plugin installed on the proxy.
+
+```java
+import com.guild.comm.api.BungeeClientAPI;
+
+// Push guild data to BungeeCord (for sync to all servers)
+BungeeClientAPI.pushGuildData(guildDataJson);
+
+// Request guild data from another server
+BungeeClientAPI.requestGuildData(42);
+
+// Send cross-server guild chat
+BungeeClientAPI.sendCrossChat(guildId, playerName, "Hello from another server!");
+
+// Broadcast a custom guild event
+BungeeClientAPI.broadcastEvent("custom.announcement",
+    "{\"guildId\":42,\"message\":\"Guild level up!\"}");
+```
+
+### Extension Events (Event Bus)
+
+```java
+import com.guild.comm.event.ExtensionConnectedEvent;
+import com.guild.comm.event.ExtensionDisconnectedEvent;
+import com.guild.comm.event.ExtensionMessageEvent;
+
+// Listen for extension lifecycle events via Bukkit's event system
+@EventHandler
+public void onExtensionConnect(ExtensionConnectedEvent event) {
+    getLogger().info("Extension connected: " + event.getExtensionId());
+}
+
+@EventHandler
+public void onExtensionMessage(ExtensionMessageEvent event) {
+    MessagePacket packet = event.getPacket();
+    // Handle the message
+}
+```
+
 ## Links
 
 - GitHub: [chenasyd/-GuildPlugin](https://github.com/chenasyd/-GuildPlugin)
