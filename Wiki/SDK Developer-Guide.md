@@ -165,6 +165,7 @@ Logger getLogger();
 // Messaging (i18n-aware)
 void sendMessage(Player player, String key, Object... args);
 String getMessage(String key, Object... args);
+String getMessage(Player player, String key, Object... args);  // v1.6.5: player-language aware
 
 // Scheduler (Folia/Spigot compatible)
 void runSync(Runnable task);
@@ -175,6 +176,33 @@ void runTimer(long delayTicks, long periodTicks, Runnable task);
 // GUI navigation
 void openGUI(Player player, GUI gui);
 boolean navigateBack(Player player);
+```
+
+#### ModuleContext I18n Details
+
+The two `getMessage` variants behave differently:
+
+| Method | Language Source | Use Case |
+|:------:|:--------------:|:--------:|
+| `getMessage(String key, Object... args)` | Module default language (`modules.yml` → `language.default`, default `"en"`) | Module-level logs, static GUI content |
+| `getMessage(Player player, String key, Object... args)` | Player's language preference (from player locale or config) | Player-facing GUI text, in-game messages |
+
+> **Important**: Always use the `Player` variant when rendering GUI content so the text follows the player's language. The no-Player variant always uses the module default language regardless of who is viewing the GUI.
+
+**Best practice for GUI classes:**
+```java
+// Store the viewer in your GUI class
+public class MyGUI implements GUI {
+    private final Player viewer;
+    // ...
+    
+    @Override
+    public String getTitle() {
+        // ✅ Player-aware: respects viewer's language
+        return ColorUtils.colorize(
+            context.getMessage(viewer, "module.xxx.gui.title", "&6Default Title"));
+    }
+}
 ```
 
 ## API Reference
@@ -215,12 +243,56 @@ Role values: `"LEADER"`, `"OFFICER"`, `"MEMBER"`
 
 #### GUI Extension
 
+##### Button Registration (fixed text)
+
 ```java
-// Register button in existing GUI
+// Register button in existing GUI (static text, no i18n)
 void registerGUIButton(String guiType, int slot, ItemStack item,
                        String moduleId, GUIClickAction handler);
+```
 
-// Custom GUI
+##### Button Registration (i18n-aware, v1.6.5+)
+
+```java
+// Register button with language keys for automatic i18n resolution
+void registerGUIButton(String guiType, int slot, ItemStack item,
+                       String moduleId, GUIClickAction handler,
+                       String displayNameKey, String... loreKeys);
+```
+
+This overload stores language keys in the GUI slot. During rendering, the display name and lore are resolved from the module's language files using the viewer's preferred language. The `displayNameKey` and each `loreKeys` entry are looked up via `LanguageManager.getModuleMessage(player, key, fallback)` where the fallback is the text already set on the `ItemStack`.
+
+**Example:**
+```java
+ItemStack btn = new ItemStack(Material.OAK_SIGN);
+ItemMeta meta = btn.getItemMeta();
+meta.setDisplayName("Announcements"); // fallback if key not found
+btn.setItemMeta(meta);
+
+api.registerGUIButton(
+    "GuildSettingsGUI",
+    GUIExtensionHook.AUTO_SLOT,  // or fixed slot number
+    btn,
+    "my-module",
+    (player, ctx) -> { /* handle click */ },
+    "module.my-module.button-name",      // displayNameKey
+    "module.my-module.button-desc"       // loreKeys (varargs, one per line)
+);
+```
+
+**Language file layout** (`lang/modules/my-module/en.yml`):
+```yaml
+module:
+  my-module:
+    button-name: "&e&lMy Feature"
+    button-desc: "&7Click to open feature settings"
+```
+
+> **Note**: Items created via `createItem()` that set displayName/lore directly are treated as fallback only. The actual rendered text comes from the language file resolved per-player at render time. This enables language switching via `/guildadmin test lang` without recreating the module.
+
+##### Custom GUI
+
+```java
 void registerCustomGUI(String guiId, ModuleGUIFactory factory);
 void unregisterCustomGUI(String guiId);
 void openCustomGUI(String guiId, Player player, Map<String, Object> data);
@@ -369,25 +441,137 @@ api.consoleWarn("&e[MyModule] missing config: {0}", "settings.yml");
 api.consoleSevere("&c[MyModule] fatal error: {0}", e.getMessage());
 ```
 
-#### Module language resources
+#### Module Language System (i18n)
 
-Modules can request the core plugin to expose or load module-specific language files stored under `plugins/GuildPlugin/lang/modules/{moduleId}/{lang}.yml`.
+Modules can provide multi-language support for all player-facing text. The language system supports 3 independent domains:
+
+| Domain | Language File | Default Language Config | API |
+|:------:|:------------:|:-----------------------:|:---:|
+| **Core** | `lang/core/{lang}.yml` | `config.yml` → `language.default` | `getCoreMessage()` |
+| **GUI** | `lang/gui/{lang}.yml` | `config.yml` → `language.default` | `getGuiMessage()` |
+| **Module** | `lang/modules/{moduleId}/{lang}.yml` | `modules.yml` → `language.default` | `getModuleMessage()`, `context.getMessage()` |
+
+> **Warning**: Core/GUI and Module language defaults are configured in **different files** (`config.yml` vs `modules.yml`). Changing one does not affect the other.
+
+##### Language File Setup
+
+Module language files are placed at `lang/modules/{moduleId}/{lang}.yml` inside your JAR:
+
+```
+src/main/resources/
+└── lang/
+    └── modules/
+        └── my-module/
+            ├── en.yml
+            ├── zh.yml
+            ├── pl.yml
+            └── br.yml
+```
+
+**Example `en.yml`:**
+```yaml
+module:
+  my-module:
+    gui:
+      title: "&6&lMy Feature"
+    button-name: "&eMy Feature"
+    button-desc: "&7Open feature settings"
+    info-button-name: "&eFeature Info"
+    info-button-desc: "&7View current status"
+    info-button-hint: "&7Click to view details"
+    loaded: "[MyModule] Feature enabled"
+    unloaded: "[MyModule] Feature disabled"
+```
+
+Built-in language codes: `en` (English), `zh` (Chinese), `pl` (Polish), `br` (Brazilian Portuguese).
+
+##### LanguageManager API (via `context.getLanguageManager()`)
+
+**Core Messages** (from `lang/core/`):
+```java
+LanguageManager lang = context.getLanguageManager();
+
+// Get core message for a player (follows player's language)
+String msg = lang.getCoreMessage(player, "guild.create.success", "Guild created");
+
+// Get core message with placeholders
+String msg = lang.getIndexedMessage(player, "guild.join.notify",
+    "Player {0} joined guild {1}", playerName, guildName);
+```
+
+**GUI Messages** (from `lang/gui/`):
+```java
+// GUI common elements (pagination, navigation, etc.)
+String prev = lang.getGuiMessage(player, "gui.previous-page", "&e&lPrevious");
+String next = lang.getGuiMessage(player, "gui.next-page", "&e&lNext");
+String page = lang.getGuiMessage(player, "gui.page-info", "Page {0}/{1}", "1", "5");
+```
+
+**Module Messages** (from `lang/modules/{moduleId}/`):
+```java
+// Get message by player's language
+String title = lang.getModuleMessage(player, "module.my-module.gui.title", "&6Default Title");
+
+// Get message with indexed placeholders {0}, {1}, {2}...
+String msg = lang.getModuleIndexedMessage(player, "module.my-module.welcome",
+    "Welcome {0} to {1}", playerName, guildName);
+
+// Get message using a specific language code (for admin tools)
+String enMsg = lang.getModuleMessage("en", "module.my-module.gui.title", "&6Title");
+String zhMsg = lang.getModuleMessage("zh", "module.my-module.gui.title", "&6标题");
+```
+
+##### Module language resource API
 
 ```java
-// Extract bundled module language file (if present) for a specific language
+// Extract bundled module language file from JAR to disk
 boolean released = api.releaseModuleLanguageResource("my-module", "zh");
 
-// Load module language resources (will try external files first, then bundled ones)
+// Load module language resources (external first, then bundled fallback)
 boolean loaded = api.loadModuleLanguageResource("my-module", "zh");
 
-// Get the on-disk File for a module language file
+// Get the on-disk File reference for a module language file
 File langFile = api.getModuleLanguageFile("my-module", "zh");
 ```
 
 Notes:
 - `releaseModuleLanguageResource` extracts a bundled language file to the plugin data folder.
-- `loadModuleLanguageResource` delegates to the LanguageManager and may load all available languages for the module.
-- `getModuleLanguageFile` returns the expected path under the plugin data folder; the file may not exist until released.
+- `loadModuleLanguageResource` delegates to `LanguageManager` to load all available languages for the module.
+- `getModuleLanguageFile` returns the expected disk path; the file may not exist until released.
+
+##### Complete Usage Example
+
+```java
+@Override
+public void onEnable(ModuleContext context) throws Exception {
+    this.context = context;
+    LanguageManager lang = context.getLanguageManager();
+    GuildPluginAPI api = context.getApi();
+
+    // Register GUI button with i18n keys
+    ItemStack btn = new ItemStack(Material.BOOK);
+    ItemMeta meta = btn.getItemMeta();
+    meta.setDisplayName("My Feature"); // fallback
+    btn.setItemMeta(meta);
+
+    api.registerGUIButton("GuildSettingsGUI",
+        GUIExtensionHook.AUTO_SLOT, btn,
+        "my-module",
+        (player, ctx) -> {
+            // Player-aware message lookup
+            String msg = lang.getModuleMessage(player,
+                "module.my-module.clicked",
+                "&aFeature opened!");
+            player.sendMessage(ColorUtils.colorize(msg));
+        },
+        "module.my-module.button-name",      // displayNameKey
+        "module.my-module.button-desc"       // loreKey
+    );
+
+    // Console log (no player context, uses module default language)
+    ConsoleLogger.info(context.getMessage("module.my-module.loaded",
+        "[MyModule] Feature system enabled"));
+}
 
 ### Data Models
 
@@ -787,7 +971,7 @@ Copy the JAR to `plugins/GuildPlugin/modules/`, then:
 3. Use async for I/O operations, sync for Bukkit API
 4. Implement `getModuleInstance()` in all event handlers (return `this`)
 5. Catch exceptions and log errors; re-throw to let framework know loading failed
-6. Use `context.getMessage()` and `context.sendMessage()` for i18n instead of hardcoded strings
+6. Use `context.getMessage(player, key, fallback)` for player-facing i18n, `LanguageManager.getCoreMessage()/getGuiMessage()/getModuleMessage()` for domain-specific needs
 7. Do not directly access other modules' internals — use events and API
 8. **New (v1.5+)**: Use the string-based currency API for runtime flexibility (e.g. `"A_COIN"` vs `CurrencyType.A_COIN`)
 
@@ -804,6 +988,12 @@ Copy the JAR to `plugins/GuildPlugin/modules/`, then:
 **How to handle both left and right clicks in GUI?** The `onClick` method now receives `ClickType clickType` — check `clickType == ClickType.RIGHT` for right-click behavior.
 
 **Why does my EconomyEventHandler need getModuleInstance()?** Unlike other handlers, `EconomyEventHandler.getModuleInstance()` has no default implementation — you must implement it explicitly for proper cleanup on unload.
+
+**How to add multi-language support to my module?** Create language files under `lang/modules/{moduleId}/{en,zh,pl,br}.yml` in your JAR resources. Use `context.getMessage(player, key, fallback)` for player-aware text and the i18n `registerGUIButton()` overload with `displayNameKey`/`loreKeys` for GUI buttons.
+
+**Module GUI always shows English despite player language?** Check that you are using `context.getMessage(player, key, fallback)` (with Player parameter) instead of `context.getMessage(key, fallback)` (without Player). The no-Player variant always uses the module default language from `modules.yml`.
+
+**How does `/guildadmin test lang` help debug language issues?** Run subcommands like `overview` (all modules), `lookup <module> <key>` (single key), `files` (file existence check), or `module-context` (trace call chain). See `DEV-GUIDE.md` §"多语言系统" for full details.
 
 ## Links
 
