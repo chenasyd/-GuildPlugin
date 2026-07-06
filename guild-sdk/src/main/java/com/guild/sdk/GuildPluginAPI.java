@@ -30,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class GuildPluginAPI {
     /** SDK API 版本号，与插件版本保持一致 */
-    public static final String API_VERSION = "1.6.5";
+    public static final String API_VERSION = "1.6.6";
 
     private final HttpClientProvider httpClient = new HttpClientProvider();
 
