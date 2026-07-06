@@ -49,6 +49,8 @@ jobs:
           guild-plugin/target/*.jar
           guild-plugin/target/modules/*.jar
           guild-sdk/target/*.jar
+          guild-comm/target/*.jar
+          guild-bungee/target/*.jar
         retention-days: 30
 
     - name: Upload to release
@@ -59,3 +61,5 @@ jobs:
           guild-plugin/target/*.jar
           guild-plugin/target/modules/*.jar
           guild-sdk/target/*.jar
+          guild-comm/target/*.jar
+          guild-bungee/target/*.jar
