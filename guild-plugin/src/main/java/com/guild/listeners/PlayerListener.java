@@ -2,6 +2,7 @@ package com.guild.listeners;
 
 import com.guild.GuildPlugin;
 import com.guild.chat.GuildChatManager;
+import com.guild.core.geyser.GeyserAPI;
 import com.guild.core.gui.GUIManager;
 import com.guild.core.language.LanguageManager;
 import com.guild.events.GuildChatEvent;
@@ -87,13 +88,16 @@ public class PlayerListener implements Listener {
      */
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        UUID uuid = event.getPlayer().getUniqueId();
         // 清理聊天模式
-        chatManager.removePlayer(event.getPlayer().getUniqueId());
+        chatManager.removePlayer(uuid);
         // 清理玩家的GUI状态
         GUIManager guiManager = plugin.getGuiManager();
         if (guiManager != null) {
             guiManager.closeGUI(event.getPlayer());
         }
+        // 清理 GeyserAPI 玩家缓存
+        GeyserAPI.onPlayerQuit(uuid);
     }
     
     /**
