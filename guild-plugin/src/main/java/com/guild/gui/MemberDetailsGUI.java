@@ -4,6 +4,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PlaceholderUtils;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
@@ -321,16 +322,18 @@ public class MemberDetailsGUI implements GUI {
     private void handleKickMember(Player player) {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
-            if (executor == null || !executor.getRole().canKick()) {
-                String message = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
-                player.sendMessage(ColorUtils.colorize(message));
-                return;
-            }
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (executor == null || !executor.getRole().canKick()) {
+                    String message = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
+                    player.sendMessage(ColorUtils.colorize(message));
+                    return;
+                }
 
-            // 确认踢出
-            String message = languageManager.getGuiMessage(player, "gui.common.confirm-kick", "&c确定要踢出成员 {member} 吗？输入 &f/guild kick {member} confirm &c确认", "{member}", member.getPlayerName());
-            player.sendMessage(ColorUtils.colorize(message));
-            player.closeInventory();
+                // 确认踢出
+                String message = languageManager.getGuiMessage(player, "gui.common.confirm-kick", "&c确定要踢出成员 {member} 吗？输入 &f/guild kick {member} confirm &c确认", "{member}", member.getPlayerName());
+                player.sendMessage(ColorUtils.colorize(message));
+                player.closeInventory();
+            });
         });
     }
     
@@ -340,22 +343,24 @@ public class MemberDetailsGUI implements GUI {
     private void handlePromoteDemoteMember(Player player) {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
-            if (executor == null || executor.getRole() != GuildMember.Role.LEADER) {
-                String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
-                player.sendMessage(ColorUtils.colorize(message));
-                return;
-            }
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (executor == null || executor.getRole() != GuildMember.Role.LEADER) {
+                    String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
+                    player.sendMessage(ColorUtils.colorize(message));
+                    return;
+                }
 
-            if (member.getRole() == GuildMember.Role.OFFICER) {
-                // 降级
-                String message = languageManager.getGuiMessage(player, "gui.common.confirm-demote", "&c确定要降级成员 {member} 吗？输入 &f/guild demote {member} confirm &c确认", "{member}", member.getPlayerName());
-                player.sendMessage(ColorUtils.colorize(message));
-            } else {
-                // 提升
-                String message = languageManager.getGuiMessage(player, "gui.common.confirm-promote", "&a确定要提升成员 {member} 为官员吗？输入 &f/guild promote {member} confirm &a确认", "{member}", member.getPlayerName());
-                player.sendMessage(ColorUtils.colorize(message));
-            }
-            player.closeInventory();
+                if (member.getRole() == GuildMember.Role.OFFICER) {
+                    // 降级
+                    String message = languageManager.getGuiMessage(player, "gui.common.confirm-demote", "&c确定要降级成员 {member} 吗？输入 &f/guild demote {member} confirm &c确认", "{member}", member.getPlayerName());
+                    player.sendMessage(ColorUtils.colorize(message));
+                } else {
+                    // 提升
+                    String message = languageManager.getGuiMessage(player, "gui.common.confirm-promote", "&a确定要提升成员 {member} 为官员吗？输入 &f/guild promote {member} confirm &a确认", "{member}", member.getPlayerName());
+                    player.sendMessage(ColorUtils.colorize(message));
+                }
+                player.closeInventory();
+            });
         });
     }
 

@@ -254,7 +254,7 @@ public class RelationManagementGUI implements GUI {
                     return allRelationsList;
                 });
         }).thenAccept(relations -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 allRelations.clear();
                 allRelations.addAll(relations);
                 isLoading = false;
@@ -265,7 +265,7 @@ public class RelationManagementGUI implements GUI {
                 }
             });
         }).exceptionally(throwable -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 isLoading = false;
                 if (player.isOnline()) {
                     player.sendMessage(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.relation-management.load-error", "加载关系数据时发生错误: {error}", "{error}", throwable.getMessage())));
@@ -357,7 +357,7 @@ public class RelationManagementGUI implements GUI {
         plugin.getGuiManager().refreshGUI(player);
         
         // 设置超时任务
-        CompatibleScheduler.runTaskLater(plugin, () -> {
+        CompatibleScheduler.runTaskLater(plugin, player, () -> {
             if (pendingDeletions.containsKey(player.getUniqueId()) && 
                 pendingDeletions.get(player.getUniqueId()).getId() == relation.getId()) {
                 cancelDeleteRelation(player);
@@ -372,7 +372,7 @@ public class RelationManagementGUI implements GUI {
         
         // 执行删除
         plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.delete-success", "&a已删除关系: {0} ↔ {1}", relation.getGuild1Name(), relation.getGuild2Name())));
                     // 从列表中移除
@@ -384,7 +384,7 @@ public class RelationManagementGUI implements GUI {
                 }
             });
         }).exceptionally(throwable -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.delete-error", "&c删除关系时发生错误: {0}", throwable.getMessage())));
             });
             return null;

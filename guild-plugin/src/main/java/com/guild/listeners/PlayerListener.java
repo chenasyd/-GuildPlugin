@@ -69,8 +69,8 @@ public class PlayerListener implements Listener {
             if (guild != null) {
                 // 检查工会的所有关系
                 plugin.getGuildService().getGuildRelationsAsync(guild.getId()).thenAccept(relations -> {
-                    // 确保在主线程中执行
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    // 确保在玩家所在区域线程中执行
+                    CompatibleScheduler.runTask(plugin, player, () -> {
                         for (com.guild.models.GuildRelation relation : relations) {
                             if (relation.isWar()) {
                                 String message = languageManager.getCoreMessage(player, "relations.war-notification", "&4[工会战争] &c您的工会与 {guild} 处于开战状态！", "{guild}", relation.getOtherGuildName(guild.getId()));
@@ -112,7 +112,7 @@ public class PlayerListener implements Listener {
         if (guiManager != null && guiManager.isInInputMode(player)) {
             event.setCancelled(true);
             String input = event.getMessage();
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 try {
                     guiManager.handleInput(player, input);
                 } catch (Exception e) {

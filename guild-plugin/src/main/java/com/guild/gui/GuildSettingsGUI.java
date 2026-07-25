@@ -468,7 +468,7 @@ public class GuildSettingsGUI implements GUI {
             return;
         }
         plugin.getGuildService().setGuildHomeAsync(guild.getId(), player.getLocation(), player.getUniqueId()).thenAccept(success -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     String message = languageManager.getGuiMessage(player, "gui.guild-settings.sethome.success", "&a工会家设置成功！");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -516,7 +516,7 @@ public class GuildSettingsGUI implements GUI {
             return;
         }
         plugin.getGuildService().getGuildHomeAsync(guild.getId()).thenAccept(location -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (location != null) {
                     startHomeTeleportDelay(player, location);
                 } else {

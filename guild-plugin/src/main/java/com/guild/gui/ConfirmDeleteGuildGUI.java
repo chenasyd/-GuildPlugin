@@ -160,7 +160,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
                 String cleanGuildName = ColorUtils.stripColor(guild.getName());
                 String message = languageManager.getGuiMessage(player, "gui.confirm-delete-guild.delete.success", "&a工会 &e{guild} &a已被删除！", "{guild}", cleanGuildName);
                 // 回到主线程进行界面操作
-                CompatibleScheduler.runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
                     player.sendMessage(ColorUtils.colorize(message));
                     // 使用GUIManager以确保主线程安全关闭与打开
                     plugin.getGuiManager().closeGUI(player);

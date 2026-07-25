@@ -59,9 +59,9 @@ public class GUIManager implements Listener {
      * 打开GUI
      */
     public void openGUI(Player player, GUI gui) {
-        // 确保在主线程中执行
-        if (!CompatibleScheduler.isPrimaryThread()) {
-            CompatibleScheduler.runTask(plugin, () -> openGUI(player, gui));
+        // Folia: 玩家 API 必须在实体所属的区域线程执行，而非全局区域线程
+        if (!CompatibleScheduler.isEntityThread(player)) {
+            CompatibleScheduler.runTask(plugin, player, () -> openGUI(player, gui));
             return;
         }
         
@@ -94,9 +94,9 @@ public class GUIManager implements Listener {
      * 关闭GUI
      */
     public void closeGUI(Player player) {
-        // 确保在主线程中执行
-        if (!CompatibleScheduler.isPrimaryThread()) {
-            CompatibleScheduler.runTask(plugin, () -> closeGUI(player));
+        // Folia: 玩家 API 必须在实体所属的区域线程执行
+        if (!CompatibleScheduler.isEntityThread(player)) {
+            CompatibleScheduler.runTask(plugin, player, () -> closeGUI(player));
             return;
         }
         
@@ -213,9 +213,9 @@ public class GUIManager implements Listener {
      * 刷新GUI
      */
     public void refreshGUI(Player player) {
-        // 确保在主线程中执行
-        if (!CompatibleScheduler.isPrimaryThread()) {
-            CompatibleScheduler.runTask(plugin, () -> refreshGUI(player));
+        // Folia: 玩家 API 必须在实体所属的区域线程执行
+        if (!CompatibleScheduler.isEntityThread(player)) {
+            CompatibleScheduler.runTask(plugin, player, () -> refreshGUI(player));
             return;
         }
         
@@ -281,22 +281,19 @@ public class GUIManager implements Listener {
      * 关闭所有GUI
      */
     public void closeAllGUIs() {
-        // 确保在主线程中执行
-        if (!CompatibleScheduler.isPrimaryThread()) {
-            // 如果插件已禁用，直接返回，不尝试调度任务
-            if (!plugin.isEnabled()) {
-                logger.warning("Plugin disabled, skipping GUI close task scheduling");
-                openGuis.clear();
-                return;
-            }
-            CompatibleScheduler.runTask(plugin, this::closeAllGUIs);
+        // 如果插件已禁用，直接清理记录，不尝试调度任务
+        if (!plugin.isEnabled()) {
+            logger.warning("Plugin disabled, skipping GUI close task scheduling");
+            openGuis.clear();
             return;
         }
 
         try {
-            for (UUID playerUuid : openGuis.keySet()) {
+            // 快照避免 ConcurrentModificationException（closeGUI 会修改 openGuis）
+            for (UUID playerUuid : new java.util.ArrayList<>(openGuis.keySet())) {
                 Player player = Bukkit.getPlayer(playerUuid);
                 if (player != null && player.isOnline()) {
+                    // closeGUI 内部会检查 isEntityThread 并调度到正确的区域线程
                     closeGUI(player);
                 }
             }

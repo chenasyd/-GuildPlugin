@@ -128,7 +128,7 @@ public class GuildListGUI implements GUI {
      */
     private void loadGuilds(Inventory inventory) {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (guilds == null || guilds.isEmpty()) {
                     ItemStack noGuilds = createItem(
                         Material.BARRIER,
@@ -339,13 +339,13 @@ public class GuildListGUI implements GUI {
             if (input.equalsIgnoreCase(cancelKey) || input.trim().isEmpty()) {
                 String cancelMsg = languageManager.getGuiMessage(player, "gui.guild-list.search-cancelled", "&e已取消搜索");
                 player.sendMessage(ColorUtils.colorize(cancelMsg));
-                CompatibleScheduler.runTask(plugin, () -> plugin.getGuiManager().openGUI(player, self));
+                CompatibleScheduler.runTask(plugin, player, () -> plugin.getGuiManager().openGUI(player, self));
                 return true;
             }
 
             self.searchQuery = input.trim();
             self.currentPage = 0;
-            CompatibleScheduler.runTask(plugin, () -> plugin.getGuiManager().openGUI(player, self));
+            CompatibleScheduler.runTask(plugin, player, () -> plugin.getGuiManager().openGUI(player, self));
             return true;
         });
     }
@@ -359,7 +359,7 @@ public class GuildListGUI implements GUI {
 
     private void handleApplyToGuild(Player player, Guild guild) {
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(playerGuild -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (playerGuild != null) {
                     String message = languageManager.getGuiMessage(player, "gui.create-guild.create.already-in-guild", "&c您已经在一个工会中了！");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -367,7 +367,7 @@ public class GuildListGUI implements GUI {
                 }
 
                 plugin.getGuildService().hasPendingApplicationAsync(player.getUniqueId(), guild.getId()).thenAccept(hasPending -> {
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, player, () -> {
                         if (hasPending) {
                             String message = languageManager.getGuiMessage(player, "gui.application-mgmt.apply.already-applied", "&c您已经申请过这个工会了！");
                             player.sendMessage(ColorUtils.colorize(message));
@@ -375,7 +375,7 @@ public class GuildListGUI implements GUI {
                         }
 
                         plugin.getGuildService().submitApplicationAsync(guild.getId(), player.getUniqueId(), player.getName(), "").thenAccept(success -> {
-                            CompatibleScheduler.runTask(plugin, () -> {
+                            CompatibleScheduler.runTask(plugin, player, () -> {
                                 if (success) {
                                     String message = languageManager.getGuiMessage(player, "gui.application-mgmt.apply.success", "&a申请已提交！");
                                     player.sendMessage(ColorUtils.colorize(message));

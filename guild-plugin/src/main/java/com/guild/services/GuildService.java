@@ -2691,16 +2691,16 @@ public class GuildService {
      */
     private void notifyGuildMembersOfUpgrade(int guildId, int newLevel, int newMaxMembers) {
         getGuildMembersAsync(guildId).thenAccept(members -> {
-            // 在主线程中发送消息
-            CompatibleScheduler.runTask(plugin, () -> {
-                for (GuildMember member : members) {
-                    Player player = Bukkit.getPlayer(member.getPlayerUuid());
-                    if (player != null && player.isOnline()) {
+            // 在每位成员所在区域线程中发送消息（Folia 实体调度）
+            for (GuildMember member : members) {
+                Player player = Bukkit.getPlayer(member.getPlayerUuid());
+                if (player != null && player.isOnline()) {
+                    CompatibleScheduler.runTask(plugin, player, () -> {
                         String message = plugin.getLanguageManager().getCoreMessage(player, "economy.level-up", "&a工会升级成功！当前等级：{level}", "{level}", String.valueOf(newLevel), "{max_members}", String.valueOf(newMaxMembers));
                         player.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
-                    }
+                    });
                 }
-            });
+            }
         }).exceptionally(throwable -> {
             logger.warning("通知工会成员升级时发生错误: " + throwable.getMessage());
             return null;

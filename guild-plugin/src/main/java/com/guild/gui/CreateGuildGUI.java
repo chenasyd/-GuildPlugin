@@ -225,7 +225,7 @@ public class CreateGuildGUI implements GUI {
         plugin.getGuiManager().closeGUI(player);
 
         // 延迟设置输入模式，确保GUI完全关闭
-        CompatibleScheduler.runTaskLater(plugin, () -> {
+        CompatibleScheduler.runTaskLater(plugin, player, () -> {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() < 3) {
@@ -265,7 +265,7 @@ public class CreateGuildGUI implements GUI {
         plugin.getGuiManager().closeGUI(player);
 
         // 延迟设置输入模式，确保GUI完全关闭
-        CompatibleScheduler.runTaskLater(plugin, () -> {
+        CompatibleScheduler.runTaskLater(plugin, player, () -> {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() > 6) {
@@ -299,7 +299,7 @@ public class CreateGuildGUI implements GUI {
         plugin.getGuiManager().closeGUI(player);
 
         // 延迟设置输入模式，确保GUI完全关闭
-        CompatibleScheduler.runTaskLater(plugin, () -> {
+        CompatibleScheduler.runTaskLater(plugin, player, () -> {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() > 100) {
@@ -390,8 +390,8 @@ public class CreateGuildGUI implements GUI {
         final double finalCost = creationCost;
 
         plugin.getGuildService().createGuildAsync(guildName, finalTag, finalDescription, player.getUniqueId(), player.getName()).thenAccept(success -> {
-            // 确保在主线程中执行GUI操作
-            CompatibleScheduler.runTask(plugin, () -> {
+            // 确保在玩家所在区域线程中执行GUI操作
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     String message = languageManager.getGuiMessage(player, "gui.create-guild.create.success", "&a工会 {name} 创建成功！", "{name}", guildName);
                     player.sendMessage(ColorUtils.colorize(message));

@@ -142,8 +142,8 @@ public class MainGuildGUI implements GUI {
     private void openGuildInfoGUI(Player player) {
         // 检查玩家是否有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
-            CompatibleScheduler.runTask(plugin, () -> {
+            // 确保在玩家实体线程中执行GUI操作
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (guild == null) {
                     String message = languageManager.getGuiMessage(player, "gui.common.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -163,8 +163,8 @@ public class MainGuildGUI implements GUI {
     private void openMemberManagementGUI(Player player) {
         // 检查玩家是否有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
-            CompatibleScheduler.runTask(plugin, () -> {
+            // 确保在玩家实体线程中执行GUI操作
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (guild == null) {
                     String message = languageManager.getGuiMessage(player, "gui.common.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -184,8 +184,8 @@ public class MainGuildGUI implements GUI {
     private void openApplicationManagementGUI(Player player) {
         // 检查玩家是否有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
-            CompatibleScheduler.runTask(plugin, () -> {
+            // 确保在玩家实体线程中执行GUI操作
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (guild == null) {
                     String message = languageManager.getGuiMessage(player, "gui.common.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -194,8 +194,8 @@ public class MainGuildGUI implements GUI {
 
                 // 检查权限
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
-                    // 确保在主线程中执行GUI操作
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    // 确保在玩家实体线程中执行GUI操作
+                    CompatibleScheduler.runTask(plugin, player, () -> {
                         if (member == null || !member.getRole().canInvite()) {
                             String message = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
                             player.sendMessage(ColorUtils.colorize(message));
@@ -217,8 +217,8 @@ public class MainGuildGUI implements GUI {
     private void openGuildSettingsGUI(Player player) {
         // 检查玩家是否有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
-            CompatibleScheduler.runTask(plugin, () -> {
+            // 确保在玩家实体线程中执行GUI操作
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (guild == null) {
                     String message = languageManager.getGuiMessage(player, "gui.common.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -227,7 +227,7 @@ public class MainGuildGUI implements GUI {
 
                 // 检查角色：会长 → 完整设置GUI，普通成员 → 成员专用GUI
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, player, () -> {
                         if (member == null) {
                             String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
                             player.sendMessage(ColorUtils.colorize(message));
@@ -264,8 +264,8 @@ public class MainGuildGUI implements GUI {
     private void openGuildRelationsGUI(Player player) {
         // 检查玩家是否有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
-            CompatibleScheduler.runTask(plugin, () -> {
+            // 确保在玩家实体线程中执行GUI操作
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (guild == null) {
                     String message = languageManager.getGuiMessage(player, "gui.common.no-guild", "&c您还没有工会");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -274,8 +274,8 @@ public class MainGuildGUI implements GUI {
 
                 // 检查权限
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
-                    // 确保在主线程中执行GUI操作
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    // 确保在玩家实体线程中执行GUI操作
+                    CompatibleScheduler.runTask(plugin, player, () -> {
                         if (member == null || member.getRole() != com.guild.models.GuildMember.Role.LEADER) {
                             String message = languageManager.getGuiMessage(player, "gui.common.manage-relations-leader-only", "&c只有工会会长才能管理关系");
                             player.sendMessage(ColorUtils.colorize(message));
@@ -297,8 +297,8 @@ public class MainGuildGUI implements GUI {
     private void openCreateGuildGUI(Player player) {
         // 检查玩家是否已有工会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
-            // 确保在主线程中执行GUI操作
-            CompatibleScheduler.runTask(plugin, () -> {
+            // 确保在玩家实体线程中执行GUI操作
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (guild != null) {
                     String message = languageManager.getGuiMessage(player, "gui.create-guild.create.already-in-guild", "&c您已经在一个工会中了！");
                     player.sendMessage(ColorUtils.colorize(message));

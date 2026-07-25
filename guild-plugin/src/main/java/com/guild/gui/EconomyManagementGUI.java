@@ -153,7 +153,7 @@ public class EconomyManagementGUI implements GUI {
     private void loadGuilds() {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
             this.allGuilds = guilds;
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (player.isOnline()) {
                     refresh(player);
                 }

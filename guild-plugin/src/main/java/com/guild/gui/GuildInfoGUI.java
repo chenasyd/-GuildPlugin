@@ -247,7 +247,7 @@ public class GuildInfoGUI implements GUI {
 
         // 异步刷新动态信息
         plugin.getGuildService().getGuildMemberCountAsync(guild.getId()).thenAccept(memberCount -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (inventory == null) return;
 
                 ItemStack updatedStats = createItem(

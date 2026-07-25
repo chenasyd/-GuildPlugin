@@ -127,7 +127,7 @@ public class ConfirmChangeFundsGUI implements GUI {
         plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), newBalance,
                 player.getUniqueId().toString(), player.getName())
                 .thenAccept(success -> {
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, player, () -> {
                         if (success) {
                             String formattedAmount = String.format("%.2f", amount);
                             String playerName = player.getName();

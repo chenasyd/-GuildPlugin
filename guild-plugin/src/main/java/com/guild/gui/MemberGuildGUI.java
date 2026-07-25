@@ -152,7 +152,7 @@ public class MemberGuildGUI implements GUI {
             return;
         }
         plugin.getGuildService().getGuildHomeAsync(guild.getId()).thenAccept(location -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (location != null) {
                     startHomeTeleportDelay(player, location);
                 } else {

@@ -61,15 +61,15 @@ public class GuildLogsGUI implements GUI {
         // 异步加载日志数据
         loadLogsAsync().thenAccept(success -> {
             if (success) {
-                // 在主线程中设置物品和完整的导航按钮
-                CompatibleScheduler.runTask(plugin, () -> {
+                // 在玩家实体线程中设置物品和完整的导航按钮
+                CompatibleScheduler.runTask(plugin, player, () -> {
                     setupLogItems(inventory);
                     setupBasicNavigationButtons(inventory);
                     setupFullNavigationButtons(inventory);
                 });
             } else {
-                // 如果加载失败，在主线程中显示错误信息
-                CompatibleScheduler.runTask(plugin, () -> {
+                // 如果加载失败，在玩家实体线程中显示错误信息
+                CompatibleScheduler.runTask(plugin, player, () -> {
                     ItemStack errorItem = createItem(
                         Material.BARRIER,
                         ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.guild-logs.load-failed", "加载失败")),

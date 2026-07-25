@@ -288,7 +288,7 @@ public class GuildFilterGUI implements GUI {
      */
     private void loadFilteredGuilds(Inventory inventory) {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (guilds == null || guilds.isEmpty()) {
                     showEmpty(inventory);
                     return;
@@ -343,7 +343,7 @@ public class GuildFilterGUI implements GUI {
         }
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 // 仅满员筛选
                 if ("FULL_ONLY".equals(sortMode)) {
                     itemDataList.removeIf(data -> data.getMemberCount() < data.getGuild().getMaxMembers());
@@ -508,7 +508,7 @@ public class GuildFilterGUI implements GUI {
 
     private void handleApplyToGuild(Player player, Guild guild) {
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(playerGuild -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (playerGuild != null) {
                     String message = languageManager.getGuiMessage(player, "gui.create-guild.create.already-in-guild", "&c您已经在一个工会中了！");
                     player.sendMessage(ColorUtils.colorize(message));
@@ -516,7 +516,7 @@ public class GuildFilterGUI implements GUI {
                 }
 
                 plugin.getGuildService().hasPendingApplicationAsync(player.getUniqueId(), guild.getId()).thenAccept(hasPending -> {
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, player, () -> {
                         if (hasPending) {
                             String message = languageManager.getGuiMessage(player, "gui.application-mgmt.apply.already-applied", "&c您已经申请过这个工会了！");
                             player.sendMessage(ColorUtils.colorize(message));
@@ -524,7 +524,7 @@ public class GuildFilterGUI implements GUI {
                         }
 
                         plugin.getGuildService().submitApplicationAsync(guild.getId(), player.getUniqueId(), player.getName(), "").thenAccept(success -> {
-                            CompatibleScheduler.runTask(plugin, () -> {
+                            CompatibleScheduler.runTask(plugin, player, () -> {
                                 if (success) {
                                     String message = languageManager.getGuiMessage(player, "gui.application-mgmt.apply.success", "&a申请已提交！");
                                     player.sendMessage(ColorUtils.colorize(message));

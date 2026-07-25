@@ -75,7 +75,7 @@ public class GuildFundsGUI implements GUI {
         fillBorder(inventory);
 
         loadDataAsync().thenAccept(success -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     setupContentItems(inventory);
                     setupNavigation(inventory);
@@ -323,7 +323,7 @@ public class GuildFundsGUI implements GUI {
         // 异步查询该玩家的详细记录
         plugin.getGuildService().getPlayerContributionsAsync(entry.getPlayerUuid())
                 .thenAccept(records -> {
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, player, () -> {
                         player.sendMessage(ColorUtils.colorize(
                                 "&7" + languageManager.getGuiMessage(player,
                                         "gui.guild-funds.deposit-count", "Deposit times")

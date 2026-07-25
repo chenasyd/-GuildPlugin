@@ -250,7 +250,7 @@ public class GuildDetailGUI implements GUI {
     private void loadMembers() {
         plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(membersList -> {
             this.members = membersList != null ? membersList : new ArrayList<>();
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, viewer, () -> {
                 if (viewer.isOnline()) {
                     refresh(viewer);
                 }
@@ -346,17 +346,19 @@ public class GuildDetailGUI implements GUI {
     private void toggleGuildFreeze(Player player) {
         boolean newStatus = !guild.isFrozen();
         plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus).thenAccept(success -> {
-            if (success) {
-                String message = newStatus ?
-                    languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&a工会 {guild} 已被冻结！", "{guild}", guild.getName()) :
-                    languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen", "&a工会 {guild} 已被解冻！", "{guild}", guild.getName());
-                player.sendMessage(ColorUtils.colorize(message));
-                // 更新本地guild对象
-                guild.setFrozen(newStatus);
-                refresh(player);
-            } else {
-                player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.operation-failed", "&c操作失败！")));
-            }
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (success) {
+                    String message = newStatus ?
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&a工会 {guild} 已被冻结！", "{guild}", guild.getName()) :
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen", "&a工会 {guild} 已被解冻！", "{guild}", guild.getName());
+                    player.sendMessage(ColorUtils.colorize(message));
+                    // 更新本地guild对象
+                    guild.setFrozen(newStatus);
+                    refresh(player);
+                } else {
+                    player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.operation-failed", "&c操作失败！")));
+                }
+            });
         });
     }
     
@@ -401,7 +403,7 @@ public class GuildDetailGUI implements GUI {
         // 执行转移
         plugin.getGuildService().transferGuildLeadershipAsync(guild.getId(), target.getPlayerUuid(), target.getPlayerName())
             .thenAccept(success -> {
-                CompatibleScheduler.runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
                     if (success) {
                         player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
                                 "gui.guild-detail.transfer-success", "&a成功将会长转移给 &e{name}")

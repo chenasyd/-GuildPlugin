@@ -142,7 +142,7 @@ public class ConfirmLeaveGuildGUI implements GUI {
 
         // 离开工会
         plugin.getGuildService().removeGuildMemberAsync(player.getUniqueId(), player.getUniqueId()).thenAccept(success -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     String message = languageManager.getGuiMessage(player, "gui.confirm-leave-guild.leave.success", "&a你已成功离开工会 &e{guild} &a！", "{guild}", guild.getName());
                     player.sendMessage(ColorUtils.colorize(message));

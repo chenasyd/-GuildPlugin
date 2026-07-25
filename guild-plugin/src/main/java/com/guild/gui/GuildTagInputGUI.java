@@ -3,6 +3,7 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import org.bukkit.Material;
@@ -147,16 +148,18 @@ public class GuildTagInputGUI implements GUI {
 
             // 保存到数据库
             plugin.getGuildService().updateGuildAsync(guild.getId(), guild.getName(), input, guild.getDescription(), player.getUniqueId()).thenAccept(success -> {
-                if (success) {
-                    String successMessage = languageManager.getGuiMessage(player, "gui.common.tag-updated", "&a工会标签已更新！");
-                    player.sendMessage(ColorUtils.colorize(successMessage));
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (success) {
+                        String successMessage = languageManager.getGuiMessage(player, "gui.common.tag-updated", "&a工会标签已更新！");
+                        player.sendMessage(ColorUtils.colorize(successMessage));
 
-                    // 安全刷新GUI
-                    plugin.getGuiManager().refreshGUI(player);
-                } else {
-                    String errorMessage = languageManager.getGuiMessage(player, "gui.common.tag-update-failed", "&c工会标签更新失败！");
-                    player.sendMessage(ColorUtils.colorize(errorMessage));
-                }
+                        // 安全刷新GUI
+                        plugin.getGuiManager().refreshGUI(player);
+                    } else {
+                        String errorMessage = languageManager.getGuiMessage(player, "gui.common.tag-update-failed", "&c工会标签更新失败！");
+                        player.sendMessage(ColorUtils.colorize(errorMessage));
+                    }
+                });
             });
 
             return true;

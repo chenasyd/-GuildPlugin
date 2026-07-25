@@ -221,7 +221,7 @@ public class GuildNameInputGUI implements GUI {
         plugin.getGuildService().getGuildByNameAsync(newName).thenAccept(existingGuild -> {
             if (existingGuild != null) {
                 // 名称已存在
-                CompatibleScheduler.runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
                     player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.error-name-taken", "&c工会名称 &f{name} &c已被使用！", "{name}", newName)));
                     plugin.getGuiManager().openGUI(player, this);
                 });
@@ -231,7 +231,7 @@ public class GuildNameInputGUI implements GUI {
             // 名称可用，执行更新
             plugin.getGuildService().updateGuildAsync(guild.getId(), newName, guild.getTag(), guild.getDescription(), player.getUniqueId())
                 .thenAccept(success -> {
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, player, () -> {
                         if (success) {
                             // 更新成功
                             player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-name-input.success", "&a工会名称修改成功！")));

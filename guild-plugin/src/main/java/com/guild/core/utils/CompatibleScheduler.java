@@ -286,4 +286,50 @@ public class CompatibleScheduler {
             return Bukkit.isPrimaryThread();
         }
     }
+
+    /**
+     * 检查当前线程是否为指定实体所在的区域线程。
+     * <p>
+     * Folia 下 {@link #isPrimaryThread()} 仅检查全局区域线程，
+     * 而 {@code Player#openInventory}、{@code Player#closeInventory} 等
+     * 玩家/实体 API 必须在实体所属的区域线程执行。
+     * 涉及玩家 API 的操作应使用此方法代替 {@code isPrimaryThread()}。
+     */
+    public static boolean isEntityThread(Entity entity) {
+        if (ServerUtils.isFolia()) {
+            try {
+                return (Boolean) Bukkit.class.getMethod("isOwnedByCurrentRegion", Entity.class)
+                    .invoke(null, entity);
+            } catch (Exception e) {
+                return Bukkit.isPrimaryThread();
+            }
+        } else {
+            return Bukkit.isPrimaryThread();
+        }
+    }
+
+    /**
+     * 在指定实体所在区域延迟执行任务 — Folia 使用 entity.getScheduler().runDelayed，
+     * 确保延迟回调中对实体的操作在正确的区域线程内执行。
+     */
+    public static void runTaskLater(Plugin plugin, Entity entity, Runnable task, long delay) {
+        if (plugin != null && !plugin.isEnabled()) {
+            return;
+        }
+
+        if (ServerUtils.isFolia()) {
+            try {
+                Object entityScheduler = entity.getClass().getMethod("getScheduler").invoke(entity);
+                entityScheduler.getClass()
+                    .getMethod("runDelayed", Plugin.class, java.util.function.Consumer.class, Runnable.class, long.class)
+                    .invoke(entityScheduler, plugin,
+                        (java.util.function.Consumer<Object>) scheduledTask -> task.run(),
+                        (Runnable) () -> {}, delay);
+            } catch (Exception e) {
+                Bukkit.getScheduler().runTaskLater(plugin, task, delay);
+            }
+        } else {
+            Bukkit.getScheduler().runTaskLater(plugin, task, delay);
+        }
+    }
 }

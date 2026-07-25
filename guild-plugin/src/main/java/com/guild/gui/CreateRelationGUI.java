@@ -68,8 +68,8 @@ public class CreateRelationGUI implements GUI {
         loadAvailableGuilds().thenAccept(guilds -> {
             this.availableGuilds = guilds;
             
-            // 确保在主线程中执行GUI操作
-            CompatibleScheduler.runTask(plugin, () -> {
+            // 确保在玩家区域线程中执行GUI操作（Folia 兼容）
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 // 显示关系类型选择
                 displayRelationTypes(inventory);
                 
@@ -355,7 +355,7 @@ public class CreateRelationGUI implements GUI {
         // 检查是否已有关系
         plugin.getGuildService().getGuildRelationAsync(guild.getId(), targetGuild[0].getId())
             .thenAccept(existingRelation -> {
-                CompatibleScheduler.runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
                     if (existingRelation != null) {
                         String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.already-exists", "&c与 {guild} 的关系已存在！", "{guild}", targetGuildName);
                         player.sendMessage(ColorUtils.colorize(message));
@@ -368,7 +368,7 @@ public class CreateRelationGUI implements GUI {
                         guild.getName(), targetGuild[0].getName(),
                         selectedType, player.getUniqueId(), player.getName()
                     ).thenAccept(success -> {
-                        CompatibleScheduler.runTask(plugin, () -> {
+                        CompatibleScheduler.runTask(plugin, player, () -> {
                             if (success) {
                                 String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.create-success", "&a已向 {guild} 发送 {type} 关系请求！", "{guild}", targetGuildName, "{type}", selectedType.getDisplayName());
                                 player.sendMessage(ColorUtils.colorize(message));

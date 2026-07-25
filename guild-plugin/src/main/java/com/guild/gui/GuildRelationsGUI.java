@@ -61,8 +61,8 @@ public class GuildRelationsGUI implements GUI {
         loadRelations().thenAccept(relationsList -> {
             this.relations = relationsList;
             
-            // 确保在主线程中执行GUI操作
-            CompatibleScheduler.runTask(plugin, () -> {
+            // 确保在玩家区域线程中执行GUI操作（Folia 兼容）
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 // 显示关系列表
                 displayRelations(inventory);
                 
@@ -334,7 +334,7 @@ public class GuildRelationsGUI implements GUI {
     private void acceptRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.ACTIVE)
             .thenAccept(success -> {
-                CompatibleScheduler.runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
                     if (success) {
                         String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.accept-success", "&a已接受与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));
@@ -353,7 +353,7 @@ public class GuildRelationsGUI implements GUI {
     private void rejectRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.CANCELLED)
             .thenAccept(success -> {
-                CompatibleScheduler.runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
                     if (success) {
                         String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.reject-success", "&c已拒绝与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));
@@ -372,7 +372,7 @@ public class GuildRelationsGUI implements GUI {
     private void cancelRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), GuildRelation.RelationStatus.CANCELLED)
             .thenAccept(success -> {
-                CompatibleScheduler.runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
                     if (success) {
                         String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.cancel-success", "&c已取消与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));
@@ -401,7 +401,7 @@ public class GuildRelationsGUI implements GUI {
             newRelation.getGuild1Name(), newRelation.getGuild2Name(),
             newRelation.getType(), newRelation.getInitiatorUuid(), newRelation.getInitiatorName()
         ).thenAccept(success -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     // 删除旧的停战关系
                     plugin.getGuildService().deleteGuildRelationAsync(relation.getId());
@@ -433,7 +433,7 @@ public class GuildRelationsGUI implements GUI {
             truceRelation.getGuild1Name(), truceRelation.getGuild2Name(),
             truceRelation.getType(), truceRelation.getInitiatorUuid(), truceRelation.getInitiatorName()
         ).thenAccept(success -> {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.truce-proposed", "&e已向 {guild} 提议停战！", "{guild}", relation.getOtherGuildName(guild.getId()));
                     player.sendMessage(ColorUtils.colorize(message));
@@ -452,7 +452,7 @@ public class GuildRelationsGUI implements GUI {
     private void deleteRelation(Player player, GuildRelation relation) {
         plugin.getGuildService().deleteGuildRelationAsync(relation.getId())
             .thenAccept(success -> {
-                CompatibleScheduler.runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
                     if (success) {
                         String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.delete-success", "&a已删除与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId()));
                         player.sendMessage(ColorUtils.colorize(message));

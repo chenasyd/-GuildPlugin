@@ -10,6 +10,7 @@ import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ColorUtils;
 import com.guild.sdk.GuildPluginAPI;
 import com.guild.sdk.config.ModuleConfigSection;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -144,6 +145,16 @@ public class ModuleContext {
         CompatibleScheduler.runTask(plugin, task);
     }
 
+    /**
+     * 在指定实体所在区域线程调度任务。
+     * <p>
+     * 涉及玩家/实体 API（sendMessage、openInventory、teleport 等）的任务应使用此方法，
+     * 以确保在 Folia 下于实体所属的区域线程执行。
+     */
+    public void runSync(Entity entity, Runnable task) {
+        CompatibleScheduler.runTask(plugin, entity, task);
+    }
+
     /** 异步调度任务 */
     public void runAsync(Runnable task) {
         CompatibleScheduler.runTaskAsync(plugin, task);
@@ -152,6 +163,15 @@ public class ModuleContext {
     /** 延迟调度任务（主线程） */
     public void runLater(long delayTicks, Runnable task) {
         CompatibleScheduler.runTaskLater(plugin, task, delayTicks);
+    }
+
+    /**
+     * 在指定实体所在区域线程延迟调度任务。
+     * <p>
+     * 涉及玩家/实体 API 的延迟任务应使用此方法，以确保在 Folia 下于实体所属的区域线程执行。
+     */
+    public void runLater(Entity entity, long delayTicks, Runnable task) {
+        CompatibleScheduler.runTaskLater(plugin, entity, task, delayTicks);
     }
 
     /** 周期性调度任务（主线程） */

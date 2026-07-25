@@ -38,7 +38,7 @@ public final class NotifyUtils {
 
             Player leader = Bukkit.getPlayer(guild.getLeaderUuid());
             if (leader != null && leader.isOnline()) {
-                CompatibleScheduler.runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, leader, () -> {
                     String message = plugin.getLanguageManager().getMessage(leader, "notify.new-application",
                         "&6[Guild] &ePlayer &f{player} &eapplied to join &f{guild}&e！",
                         "{player}", application.getPlayerName(), "{guild}", guild.getName());
@@ -93,7 +93,7 @@ public final class NotifyUtils {
             "&7邀请将在 &c{time} &7过期", "{time}", expireTime);
 
         // 构建可点击消息
-        CompatibleScheduler.runTask(plugin, () -> {
+        CompatibleScheduler.runTask(plugin, target, () -> {
             target.sendMessage(ColorUtils.colorize(title));
             target.sendMessage(ColorUtils.colorize(mainMsg));
             
@@ -156,7 +156,7 @@ public final class NotifyUtils {
                 plugin.getGuildService().getPendingApplicationsAsync(guild.getId()).thenAccept(applications -> {
                     if (applications.isEmpty()) return;
                     
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, leader, () -> {
                         String msg = plugin.getLanguageManager().getMessage(leader, "notify.pending-applications",
                             "&6[Guild] &eYou have &c{count} &epending applications!",
                             "{count}", String.valueOf(applications.size()));
@@ -206,7 +206,7 @@ public final class NotifyUtils {
                 
                 if (validInvitations.isEmpty()) return;
                 
-                CompatibleScheduler.runTask(plugin, () -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
                     String msg = plugin.getLanguageManager().getMessage(player, "notify.pending-invitations",
                         "&6[工会邀请] &e您有 &a{count} &e个待处理的工会邀请！",
                         "{count}", String.valueOf(validInvitations.size()));
@@ -219,7 +219,7 @@ public final class NotifyUtils {
                         plugin.getGuildService().getGuildByIdAsync(invitation.getGuildId()).thenAccept(guild -> {
                             if (guild == null) return;
                             
-                            CompatibleScheduler.runTask(plugin, () -> {
+                            CompatibleScheduler.runTask(plugin, player, () -> {
                                 String guildName = ColorUtils.colorize(guild.getName());
                                 String inviteMsg = plugin.getLanguageManager().getMessage(player, "notify.invitation-item",
                                     "&7- 来自 &f{guild} &7(由 {inviter})",
@@ -274,7 +274,7 @@ public final class NotifyUtils {
             String applicantName, Guild guild, GuildApplication.ApplicationStatus status) {
         Player applicant = Bukkit.getPlayer(applicantUuid);
         if (applicant != null && applicant.isOnline()) {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, applicant, () -> {
                 String guildName = ColorUtils.colorize(guild.getName());
                 
                 if (status == GuildApplication.ApplicationStatus.APPROVED) {
@@ -305,7 +305,7 @@ public final class NotifyUtils {
             String inviterName, String targetName, Guild guild, boolean accepted) {
         Player inviter = Bukkit.getPlayer(inviterUuid);
         if (inviter != null && inviter.isOnline()) {
-            CompatibleScheduler.runTask(plugin, () -> {
+            CompatibleScheduler.runTask(plugin, inviter, () -> {
                 String guildName = ColorUtils.colorize(guild.getName());
                 
                 if (accepted) {

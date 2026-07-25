@@ -222,7 +222,7 @@ public class InviteMemberGUI implements GUI {
         // 检查目标玩家是否已经在工会中
         plugin.getGuildService().getGuildMemberAsync(target.getUniqueId()).thenAccept(member -> {
             if (member != null) {
-                CompatibleScheduler.runTask(plugin, () -> inviter.sendMessage(InviteMessageUtils.formatAlreadyInGuild(plugin, inviter, target.getName())));
+                CompatibleScheduler.runTask(plugin, inviter, () -> inviter.sendMessage(InviteMessageUtils.formatAlreadyInGuild(plugin, inviter, target.getName())));
                 return;
             }
 
@@ -230,7 +230,7 @@ public class InviteMemberGUI implements GUI {
             plugin.getGuildService().sendInvitationAsync(guild.getId(), inviter.getUniqueId(), inviter.getName(), target.getUniqueId(), target.getName())
                 .thenAccept(success -> {
                     // 确保在主线程发送消息
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, inviter, () -> {
                         if (success) {
                             inviter.sendMessage(InviteMessageUtils.formatInviteSent(plugin, inviter, target));
 

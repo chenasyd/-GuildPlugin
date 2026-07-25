@@ -3,6 +3,7 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import org.bukkit.Material;
@@ -147,16 +148,18 @@ public class GuildDescriptionInputGUI implements GUI {
 
             // 保存到数据库
             plugin.getGuildService().updateGuildDescriptionAsync(guild.getId(), input).thenAccept(success -> {
-                if (success) {
-                    String successMessage = languageManager.getGuiMessage(player, "gui.common.description-updated", "&a工会描述已更新！");
-                    player.sendMessage(ColorUtils.colorize(successMessage));
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (success) {
+                        String successMessage = languageManager.getGuiMessage(player, "gui.common.description-updated", "&a工会描述已更新！");
+                        player.sendMessage(ColorUtils.colorize(successMessage));
 
-                    // 安全刷新GUI
-                    plugin.getGuiManager().refreshGUI(player);
-                } else {
-                    String errorMessage = languageManager.getGuiMessage(player, "gui.common.description-update-failed", "&c工会描述更新失败！");
-                    player.sendMessage(ColorUtils.colorize(errorMessage));
-                }
+                        // 安全刷新GUI
+                        plugin.getGuiManager().refreshGUI(player);
+                    } else {
+                        String errorMessage = languageManager.getGuiMessage(player, "gui.common.description-update-failed", "&c工会描述更新失败！");
+                        player.sendMessage(ColorUtils.colorize(errorMessage));
+                    }
+                });
             });
 
             return true;

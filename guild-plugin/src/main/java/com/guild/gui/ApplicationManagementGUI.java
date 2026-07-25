@@ -113,7 +113,9 @@ public class ApplicationManagementGUI implements GUI {
                 ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-pending-applications-lore-1", "&7查看待处理的申请")),
                 ColorUtils.colorize("&f" + pendingCount + " " + languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-applications-count", "个申请"))
             );
-            inventory.setItem(47, pendingApplications);
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                inventory.setItem(47, pendingApplications);
+            });
         });
         
         // 申请历史按钮
@@ -149,29 +151,31 @@ public class ApplicationManagementGUI implements GUI {
      */
     private void loadPendingApplications(Inventory inventory) {
         plugin.getGuildService().getPendingApplicationsAsync(guild.getId()).thenAccept(applications -> {
-            if (applications == null || applications.isEmpty()) {
-                // 显示无申请信息
-                ItemStack noApplications = createItem(
-                    Material.BARRIER,
-                    ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-no-pending", "&a没有待处理的申请")),
-                    ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-no-pending-desc", "&7当前没有待处理的申请"))
-                );
-                inventory.setItem(22, noApplications);
-                return;
-            }
-            
-            // 计算分页
-            this.totalPages = (applications.size() - 1) / APPLICATIONS_PER_PAGE;
-            if (currentPage > totalPages) {
-                currentPage = totalPages;
-            }
-            
-            // 设置分页按钮
-            setupPaginationButtons(inventory, totalPages);
-            inventory.setItem(22, null);
-            
-            // 显示当前页的申请
-            displayApplications(inventory, applications);
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (applications == null || applications.isEmpty()) {
+                    // 显示无申请信息
+                    ItemStack noApplications = createItem(
+                        Material.BARRIER,
+                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-no-pending", "&a没有待处理的申请")),
+                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-no-pending-desc", "&7当前没有待处理的申请"))
+                    );
+                    inventory.setItem(22, noApplications);
+                    return;
+                }
+                
+                // 计算分页
+                this.totalPages = (applications.size() - 1) / APPLICATIONS_PER_PAGE;
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
+                
+                // 设置分页按钮
+                setupPaginationButtons(inventory, totalPages);
+                inventory.setItem(22, null);
+                
+                // 显示当前页的申请
+                displayApplications(inventory, applications);
+            });
         });
     }
     
@@ -180,29 +184,31 @@ public class ApplicationManagementGUI implements GUI {
      */
     private void loadApplicationHistory(Inventory inventory) {
         plugin.getGuildService().getApplicationHistoryAsync(guild.getId()).thenAccept(applications -> {
-            if (applications == null || applications.isEmpty()) {
-                // 显示无历史信息
-                ItemStack noHistory = createItem(
-                    Material.BARRIER,
-                    ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.no-history", "&a没有申请历史")),
-                    ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.no-history.desc", "&7当前没有申请历史记录"))
-                );
-                inventory.setItem(22, noHistory);
-                return;
-            }
-            
-            // 计算分页
-            this.totalPages = (applications.size() - 1) / APPLICATIONS_PER_PAGE;
-            if (currentPage > totalPages) {
-                currentPage = totalPages;
-            }
-            
-            // 设置分页按钮
-            setupPaginationButtons(inventory, totalPages);
-            inventory.setItem(22, null);
-            
-            // 显示当前页的申请
-            displayApplications(inventory, applications);
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (applications == null || applications.isEmpty()) {
+                    // 显示无历史信息
+                    ItemStack noHistory = createItem(
+                        Material.BARRIER,
+                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.no-history", "&a没有申请历史")),
+                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.no-history.desc", "&7当前没有申请历史记录"))
+                    );
+                    inventory.setItem(22, noHistory);
+                    return;
+                }
+                
+                // 计算分页
+                this.totalPages = (applications.size() - 1) / APPLICATIONS_PER_PAGE;
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
+                
+                // 设置分页按钮
+                setupPaginationButtons(inventory, totalPages);
+                inventory.setItem(22, null);
+                
+                // 显示当前页的申请
+                displayApplications(inventory, applications);
+            });
         });
     }
     
@@ -379,8 +385,10 @@ public class ApplicationManagementGUI implements GUI {
         // 获取当前页的申请列表
         plugin.getGuildService().getPendingApplicationsAsync(guild.getId()).thenAccept(applications -> {
             if (applications == null || applications.isEmpty()) {
-                String message = languageManager.getGuiMessage(player, "gui.common.no-pending-applications", "&c没有待处理的申请");
-                player.sendMessage(ColorUtils.colorize(message));
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    String message = languageManager.getGuiMessage(player, "gui.common.no-pending-applications", "&c没有待处理的申请");
+                    player.sendMessage(ColorUtils.colorize(message));
+                });
                 return;
             }
 
@@ -391,7 +399,7 @@ public class ApplicationManagementGUI implements GUI {
 
                 // 处理申请
                 plugin.getGuildService().processApplicationAsync(application.getId(), GuildApplication.ApplicationStatus.APPROVED, player.getUniqueId()).thenAccept(success -> {
-                    CompatibleScheduler.runTask(plugin, () -> {
+                    CompatibleScheduler.runTask(plugin, player, () -> {
                         if (success) {
                             String message = languageManager.getGuiMessage(player, "gui.common.application-accepted", "&a申请已接受！");
                             player.sendMessage(ColorUtils.colorize(message));
@@ -424,8 +432,10 @@ public class ApplicationManagementGUI implements GUI {
         // 获取当前页的申请列表
         plugin.getGuildService().getPendingApplicationsAsync(guild.getId()).thenAccept(applications -> {
             if (applications == null || applications.isEmpty()) {
-                String message = languageManager.getGuiMessage(player, "gui.common.no-pending-applications", "&c没有待处理的申请");
-                player.sendMessage(ColorUtils.colorize(message));
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    String message = languageManager.getGuiMessage(player, "gui.common.no-pending-applications", "&c没有待处理的申请");
+                    player.sendMessage(ColorUtils.colorize(message));
+                });
                 return;
             }
 
@@ -436,16 +446,18 @@ public class ApplicationManagementGUI implements GUI {
 
                 // 处理申请
                 plugin.getGuildService().processApplicationAsync(application.getId(), GuildApplication.ApplicationStatus.REJECTED, player.getUniqueId()).thenAccept(success -> {
-                    if (success) {
-                        String message = languageManager.getGuiMessage(player, "gui.common.application-rejected", "&c申请已拒绝！");
-                        player.sendMessage(ColorUtils.colorize(message));
+                    CompatibleScheduler.runTask(plugin, player, () -> {
+                        if (success) {
+                            String message = languageManager.getGuiMessage(player, "gui.common.application-rejected", "&c申请已拒绝！");
+                            player.sendMessage(ColorUtils.colorize(message));
 
-                        // 刷新GUI
-                        refreshInventory(player);
-                    } else {
-                        String message = languageManager.getGuiMessage(player, "gui.common.application-reject-failed", "&c拒绝申请失败！");
-                        player.sendMessage(ColorUtils.colorize(message));
-                    }
+                            // 刷新GUI
+                            refreshInventory(player);
+                        } else {
+                            String message = languageManager.getGuiMessage(player, "gui.common.application-reject-failed", "&c拒绝申请失败！");
+                            player.sendMessage(ColorUtils.colorize(message));
+                        }
+                    });
                 });
             }
         });
