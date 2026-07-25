@@ -158,17 +158,32 @@ public class GUIManager implements Listener {
                     }
                     if (!specs.isEmpty()) {
                         Inventory inv = imagoHook.createTitledInventory(gui.getSize(), guiType, specs);
-                        if (inv != null) return inv;
+                        if (inv != null) {
+                            if (isDebugEnabled()) {
+                                logger.info("[ImagoCore] " + guiType + ": 使用图片标题 + "
+                                        + specs.size() + " 个叠加层");
+                            }
+                            return inv;
+                        }
                     }
                 }
 
                 // 纯背景（无叠加层）
                 Inventory inv = imagoHook.createTitledInventory(gui.getSize(), guiType);
-                if (inv != null) return inv;
+                if (inv != null) {
+                    if (isDebugEnabled()) {
+                        logger.info("[ImagoCore] " + guiType + ": 使用纯背景图片标题");
+                    }
+                    return inv;
+                }
             }
         }
 
         // 回退：标准字符串标题（无 ImagoCore 或无绑定时）
+        if (isDebugEnabled()) {
+            logger.info("[ImagoCore] " + gui.getGuiType() + ": 回退到字符串标题 \""
+                    + gui.getTitle() + "\"");
+        }
         return Bukkit.createInventory(null, gui.getSize(), gui.getTitle());
     }
     

@@ -116,8 +116,8 @@ public class GuildPlugin extends JavaPlugin {
             // 初始化 CommAPI 桥接器（生命周期由 GuildPlugin 自身管理）
             CommAPI.initialize(logger);
 
-            // 初始化 BungeeCord 客户端 API（跨服通信子服端）
-            BungeeClientAPI.initialize(logger);
+            // 初始化 BungeeCord 客户端 API（跨服通信子服端，注册 Plugin Messaging 通道）
+            BungeeClientAPI.initialize(this);
 
             // 初始化 GeyserAPI（基岩版玩家检测，Geyser 未安装时静默降级）
             GeyserAPI.initialize(logger);

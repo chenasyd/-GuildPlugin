@@ -5,7 +5,6 @@ import org.a.imagoCore.config.CharEntry;
 import org.a.imagoCore.config.GuiEntry;
 import org.a.imagoCore.gui.GuiController;
 import org.a.imagoCore.image.display.gui.GuiTitleRenderer;
-import org.a.imagoCore.image.display.gui.TitleComposition;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
@@ -132,10 +131,10 @@ public class ImagoCoreHook {
             return guiController.createTitledInventory(size, guiType);
         }
 
+        // Build the full title (background + overlays) and pass it directly
         net.kyori.adventure.text.Component title =
                 GuiTitleRenderer.buildWithOverlays(entry, overlays);
-        return guiController.createTitledInventory(size,
-                TitleComposition.builder().background(entry).build());
+        return guiController.createTitledInventory(size, title, guiType);
     }
 
     // ── Char image access ───────────────────────────────────────
@@ -163,37 +162,83 @@ public class ImagoCoreHook {
     /**
      * Builds an OverlaySpec from a char image name and position.
      *
-     * @param charName the char image name
+     * <p>Lookup order: CharRegistry ({@code char/} directory) first,
+     * then GuiRegistry ({@code gui/} directory) as fallback.  This
+     * allows both dedicated char images and GUI background textures
+     * to be used as overlay decorations.
+     *
+     * @param charName the image name (filename without .png)
      * @param x        horizontal offset from background left edge (pixels)
-     * @return the overlay spec, or null if char not found
+     * @return the overlay spec, or null if image not found
      */
     public GuiTitleRenderer.OverlaySpec buildOverlay(String charName, int x) {
+        // 1. Try CharRegistry (char/ directory)
         CharEntry entry = getCharEntry(charName);
-        if (entry == null) return null;
-        return GuiTitleRenderer.OverlaySpec.from(entry, x, 222);
+        if (entry != null) {
+            return GuiTitleRenderer.OverlaySpec.from(entry, x, 222);
+        }
+
+        // 2. Fallback: GuiRegistry (gui/ directory)
+        GuiEntry guiEntry = findGuiEntryByName(charName);
+        if (guiEntry != null) {
+            logger.info("[ImagoCoreHook] Overlay '" + charName
+                    + "' resolved from GuiRegistry (gui/ directory).");
+            return GuiTitleRenderer.OverlaySpec.fromGuiEntry(guiEntry, x);
+        }
+
+        logger.warning("[ImagoCoreHook] Overlay image not found: " + charName
+                + " (searched char/ and gui/ directories)");
+        return null;
     }
 
     /**
      * Builds an OverlaySpec with an optional ascent (Y position) override.
-     * When ascent is non-null, a variant font provider is created in
-     * ImagoCore so the same image renders at a different vertical position.
+     * When ascent is non-null and the image is a char entry, a variant
+     * font provider is created in ImagoCore so the same image renders
+     * at a different vertical position.
      *
-     * @param charName the char image name
+     * <p><b>Note:</b> Ascent variants are only supported for images in
+     * the {@code char/} directory.  GUI background images ({@code gui/}
+     * directory) used as overlays will render at their default ascent;
+     * a warning is logged if an ascent override is requested.
+     *
+     * @param charName the image name
      * @param x        horizontal offset from background left edge (pixels)
      * @param ascent   vertical position override, or null for default
-     * @return the overlay spec, or null if char not found
+     * @return the overlay spec, or null if image not found
      */
     public GuiTitleRenderer.OverlaySpec buildOverlay(String charName, int x,
                                                       Integer ascent) {
         if (ascent != null) {
+            // Variant system only works with CharRegistry entries
             CharEntry variant = imagoCore.getOrCreateCharVariant(charName, ascent);
             if (variant != null) {
                 return GuiTitleRenderer.OverlaySpec.from(variant, x, 222);
             }
-            logger.warning("[ImagoCoreHook] Failed to create variant for "
-                    + charName + " ascent=" + ascent + ", using default.");
+            // Not a char entry — might be a GUI entry; ascent override unavailable
+            logger.warning("[ImagoCoreHook] Ascent variant unavailable for '"
+                    + charName + "' (ascent=" + ascent + "). "
+                    + "Place the image in plugins/ImagoCore/char/ for Y-position control. "
+                    + "Falling back to default ascent.");
         }
         return buildOverlay(charName, x);
+    }
+
+    /**
+     * Searches GuiRegistry for an entry whose entry name matches the
+     * given name.  For example, {@code "gui2"} matches the entry with
+     * ID {@code "54-gui2"}.
+     *
+     * @param name the entry name (without folder prefix)
+     * @return the matching GuiEntry, or null
+     */
+    private GuiEntry findGuiEntryByName(String name) {
+        for (GuiEntry e : imagoCore.getGuiRegistry().getEntries()) {
+            if (e.getEntryName().equals(name)) {
+                return e;
+            }
+        }
+        return null;
     }
 
     /**

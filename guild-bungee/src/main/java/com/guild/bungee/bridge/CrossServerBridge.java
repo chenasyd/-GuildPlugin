@@ -1,5 +1,7 @@
 package com.guild.bungee.bridge;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.guild.bungee.channel.GuildChannelHandler;
 import com.guild.bungee.data.BungeeMessage;
 import net.md_5.bungee.api.ProxyServer;
@@ -236,7 +238,17 @@ public final class CrossServerBridge {
      * Returns -1 if not found.
      */
     private int extractGuildId(BungeeMessage message) {
-        // TODO: Parse payload JSON to extract guildId
+        try {
+            String payload = message.getPayload();
+            if (payload == null || payload.isEmpty()) return -1;
+            JsonObject json = JsonParser.parseString(payload).getAsJsonObject();
+            if (json.has("guildId")) {
+                return json.get("guildId").getAsInt();
+            }
+        } catch (Exception e) {
+            logger.log(Level.FINE,
+                    "[Bridge] Failed to extract guildId from payload: " + e.getMessage());
+        }
         return -1;
     }
 
@@ -244,7 +256,17 @@ public final class CrossServerBridge {
      * Extract the target server name from a sync request payload.
      */
     private String extractTargetServer(BungeeMessage message) {
-        // TODO: Parse payload JSON to extract targetServer field
+        try {
+            String payload = message.getPayload();
+            if (payload == null || payload.isEmpty()) return null;
+            JsonObject json = JsonParser.parseString(payload).getAsJsonObject();
+            if (json.has("targetServer")) {
+                return json.get("targetServer").getAsString();
+            }
+        } catch (Exception e) {
+            logger.log(Level.FINE,
+                    "[Bridge] Failed to extract targetServer from payload: " + e.getMessage());
+        }
         return null;
     }
 

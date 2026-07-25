@@ -5,6 +5,7 @@ import com.guild.comm.bridge.ExtensionBridge;
 import com.guild.comm.bridge.ExtensionHandle;
 import com.guild.comm.bridge.MessagePacket;
 import com.guild.comm.debug.TraceContext;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Set;
 import java.util.logging.Logger;
@@ -14,10 +15,14 @@ import java.util.logging.Logger;
  *
  * <h3>Usage — Guild Plugin (host)</h3>
  * <pre>{@code
+ *   // In onEnable():
  *   CommAPI.initialize(logger);
+ *   CommAPI.initializeBungeeClient(plugin);  // Register Plugin Messaging channels
  *   CommAPI.getBridge().register(new ExtensionHandle("my-ext", "My Extension", "1.0"));
- *   CommAPI.send(MessagePacket.create("gui.image.bind", "guild-core")
- *       .target("my-ext").payload("{\"guiId\":\"main\"}").build());
+ *
+ *   // In onDisable():
+ *   BungeeClientAPI.shutdown();
+ *   CommAPI.shutdown();
  * }</pre>
  *
  * <h3>Usage — External Plugin (extension)</h3>
@@ -26,6 +31,15 @@ import java.util.logging.Logger;
  *   CommAPI.on("gui.image.*", packet -> { ... });
  *   CommAPI.send(MessagePacket.create("gui.image.ready", "imago-core")
  *       .target("guild-core").payload("{}").build());
+ * }</pre>
+ *
+ * <h3>Player Connection Type Detection</h3>
+ * <p>When guild-bungee detects a player's connection type (Java/Bedrock via Geyser),
+ * it sends a {@code guild.player.connect} message to the backend server. The info is
+ * cached in {@link BungeeClientAPI} and accessible via:
+ * <pre>{@code
+ *   BungeeClientAPI.isBedrockPlayer(player.getUniqueId());
+ *   BungeeClientAPI.getConnectionInfo(player.getUniqueId());
  * }</pre>
  */
 public final class CommAPI {
@@ -44,9 +58,25 @@ public final class CommAPI {
         ExtensionBridge.getInstance().initialize(logger);
     }
 
+    /**
+     * Initialize the BungeeCord client API with the owning Bukkit plugin.
+     * This registers the {@code guild:main} Plugin Messaging Channel for
+     * both incoming and outgoing messages.
+     *
+     * @param plugin the owning Bukkit plugin instance
+     */
+    public static void initializeBungeeClient(Plugin plugin) {
+        BungeeClientAPI.initialize(plugin);
+    }
+
     /** Shut down the bridge (call once from Guild Plugin onDisable). */
     public static void shutdown() {
         ExtensionBridge.getInstance().shutdown();
+    }
+
+    /** Shut down the BungeeCord client API and unregister messaging channels. */
+    public static void shutdownBungeeClient() {
+        BungeeClientAPI.shutdown();
     }
 
     /** @return true if the bridge has been {@link #initialize}d. */

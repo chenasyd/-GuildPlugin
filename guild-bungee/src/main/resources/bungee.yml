@@ -4,4 +4,4 @@ version: 1.6.6
 author: GuildPlugin Team
 description: Cross-server guild data synchronization bridge for BungeeCord networks
 
-softDepends: []
+softDepends: [Geyser]

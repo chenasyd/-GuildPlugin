@@ -2,6 +2,7 @@ package com.guild.bungee;
 
 import com.guild.bungee.bridge.CrossServerBridge;
 import com.guild.bungee.channel.GuildChannelHandler;
+import com.guild.bungee.listener.PlayerTypeDetector;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -36,6 +37,7 @@ public final class GuildBungeePlugin extends Plugin {
 
     private CrossServerBridge bridge;
     private GuildChannelHandler channelHandler;
+    private PlayerTypeDetector playerTypeDetector;
 
     // ── Singleton ─────────────────────────────────────────────────
 
@@ -69,7 +71,11 @@ public final class GuildBungeePlugin extends Plugin {
         log.info("[GuildBungee] Channel '" + GuildChannelHandler.CHANNEL_NAME
                 + "' registered.");
 
-        // 3. Log active servers
+        // 3. Register player connection type detector (Java/Bedrock via Geyser)
+        playerTypeDetector = new PlayerTypeDetector(this);
+        ProxyServer.getInstance().getPluginManager().registerListener(this, playerTypeDetector);
+
+        // 4. Log active servers
         int serverCount = ProxyServer.getInstance().getServers().size();
         log.info("[GuildBungee] Monitoring " + serverCount + " connected server(s).");
     }
@@ -101,5 +107,10 @@ public final class GuildBungeePlugin extends Plugin {
     /** @return the Plugin Messaging Channel handler. */
     public GuildChannelHandler getChannelHandler() {
         return channelHandler;
+    }
+
+    /** @return the player connection type detector (Java/Bedrock). */
+    public PlayerTypeDetector getPlayerTypeDetector() {
+        return playerTypeDetector;
     }
 }
