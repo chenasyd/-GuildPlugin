@@ -102,6 +102,14 @@
         </dependency>
     </dependencies>
 
+    <!-- Project-local repository for third-party JARs (e.g. ImagoCore) -->
+    <repositories>
+        <repository>
+            <id>project-local-repo</id>
+            <url>file://${project.basedir}/libs</url>
+        </repository>
+    </repositories>
+
     <build>
         <resources>
             <resource>
