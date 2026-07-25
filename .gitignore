@@ -1,12 +1,6 @@
 # Maven build output
 /target/
 **/target/
-
-# Test reports and temporary build artifacts
-**/surefire-reports/
-**/failsafe-reports/
-**/test-output/
-
 # IDE / OS metadata
 /.idea/
 *.iml
