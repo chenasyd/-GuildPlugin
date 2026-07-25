@@ -52,6 +52,9 @@ public class GUIManager implements Listener {
      * 在 plugin onEnable 中调用，ImagoCore 不存在时静默跳过
      */
     public void initializeImagoHook() {
+        // 始终先清除旧 hook，防止 enabled:false 时残留
+        this.imagoHook = null;
+
         this.imagoConfig = new ImagoGuiConfig(plugin.getDataFolder(), logger);
         this.imagoConfig.load();
 
@@ -73,16 +76,12 @@ public class GUIManager implements Listener {
     }
 
     /**
-     * 重新加载 ImagoCore 配置
+     * 重新加载 ImagoCore 配置。
+     * 处理 enabled 状态切换：true→false 时清除 hook，false→true 时重新检测。
      */
     public void reloadImagoConfig() {
-        if (imagoConfig != null) {
-            imagoConfig.load();
-        }
-        if (imagoHook != null && imagoConfig != null && imagoConfig.isEnabled()) {
-            // Re-bind all entries
-            initializeImagoHook();
-        }
+        // 完整重新初始化（内部会先清除旧 hook）
+        initializeImagoHook();
     }
 
     /**
