@@ -254,7 +254,7 @@ public class ConfirmChangeFundsGUI implements GUI {
     }
 
     private String getOperationName() {
-        String key = "confirm-funds.operation-" + operationType;
+        String key = "gui.confirm-funds.operation-" + operationType;
         switch (operationType) {
             case "set":
                 return languageManager.getGuiMessage(player, key, "&e设置资金");

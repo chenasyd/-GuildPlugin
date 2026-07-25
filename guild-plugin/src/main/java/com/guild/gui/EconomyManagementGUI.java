@@ -211,10 +211,10 @@ public class EconomyManagementGUI implements GUI {
         String promptKey;
         if (clickType == ClickType.LEFT) {
             operationType = "set";
-            promptKey = "economy-management.set-prompt";
+            promptKey = "gui.economy-management.set-prompt";
         } else if (clickType == ClickType.RIGHT) {
             operationType = "add";
-            promptKey = "economy-management.add-prompt";
+            promptKey = "gui.economy-management.add-prompt";
         } else {
             return;
         }

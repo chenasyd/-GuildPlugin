@@ -220,7 +220,9 @@ public class GuildListManagementGUI implements GUI {
         boolean newStatus = !guild.isFrozen();
         plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus).thenAccept(success -> {
             if (success) {
-                String message = newStatus ? "&a工会 " + guild.getName() + " 已被冻结！" : "&a工会 " + guild.getName() + " 已被解冻！";
+                String message = newStatus ?
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&a工会 {guild} 已被冻结！", "{guild}", guild.getName()) :
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen", "&a工会 {guild} 已被解冻！", "{guild}", guild.getName());
                 player.sendMessage(ColorUtils.colorize(message));
                 loadGuilds(); // 刷新列表
             } else {
