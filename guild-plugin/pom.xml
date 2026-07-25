@@ -49,6 +49,22 @@
             <artifactId>VaultAPI</artifactId>
         </dependency>
 
+        <!-- ImagoCore (soft dependency — GUI image integration) -->
+        <dependency>
+            <groupId>org.a</groupId>
+            <artifactId>imagocore</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Adventure API (for ImagoCore hook compilation) -->
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-api</artifactId>
+            <version>4.17.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- MySQL Connector -->
         <dependency>
             <groupId>mysql</groupId>

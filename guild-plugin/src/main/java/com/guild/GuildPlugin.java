@@ -244,6 +244,9 @@ public class GuildPlugin extends JavaPlugin {
         
         // 初始化GUI系统
         guiManager.initialize();
+
+        // 初始化 ImagoCore 图片集成（软依赖，ImagoCore 不存在时静默跳过）
+        guiManager.initializeImagoHook();
     }
     
     /**

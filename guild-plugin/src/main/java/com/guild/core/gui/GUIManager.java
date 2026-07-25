@@ -1,7 +1,10 @@
 package com.guild.core.gui;
 
 import com.guild.GuildPlugin;
+import com.guild.core.hook.ImagoCoreHook;
+import com.guild.core.hook.ImagoGuiConfig;
 import com.guild.gui.GuildNameInputGUI;
+import org.a.imagoCore.image.display.gui.GuiTitleRenderer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,8 +15,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -32,10 +37,52 @@ public class GUIManager implements Listener {
     private final Map<UUID, Function<String, Boolean>> inputModes = new HashMap<>();
     private final Map<UUID, Long> lastClickTime = new HashMap<>();
     private final Map<UUID, Deque<GUI>> navigationStacks = new HashMap<>();
+
+    // ImagoCore integration (null if not available)
+    private ImagoCoreHook imagoHook;
+    private ImagoGuiConfig imagoConfig;
     
     public GUIManager(GuildPlugin plugin) {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
+    }
+
+    /**
+     * 初始化 ImagoCore 集成（软依赖）
+     * 在 plugin onEnable 中调用，ImagoCore 不存在时静默跳过
+     */
+    public void initializeImagoHook() {
+        this.imagoConfig = new ImagoGuiConfig(plugin.getDataFolder(), logger);
+        this.imagoConfig.load();
+
+        if (!imagoConfig.isEnabled()) {
+            logger.info("[ImagoCore] Integration disabled in imago-gui.yml");
+            return;
+        }
+
+        this.imagoHook = ImagoCoreHook.detect(logger);
+        if (imagoHook == null) {
+            logger.info("[ImagoCore] Plugin not found, GUI image integration skipped.");
+            return;
+        }
+
+        // Register bindings from config
+        for (Map.Entry<String, String> entry : imagoConfig.getAllBindings().entrySet()) {
+            imagoHook.bind(entry.getKey(), entry.getValue());
+        }
+    }
+
+    /**
+     * 重新加载 ImagoCore 配置
+     */
+    public void reloadImagoConfig() {
+        if (imagoConfig != null) {
+            imagoConfig.load();
+        }
+        if (imagoHook != null && imagoConfig != null && imagoConfig.isEnabled()) {
+            // Re-bind all entries
+            initializeImagoHook();
+        }
     }
 
     /**
@@ -69,8 +116,8 @@ public class GUIManager implements Listener {
             // 关闭玩家当前打开的GUI
             closeGUI(player);
             
-            // 创建新的GUI
-            Inventory inventory = Bukkit.createInventory(null, gui.getSize(), gui.getTitle());
+            // 创建新的GUI — 优先使用 ImagoCore 图片标题
+            Inventory inventory = createInventoryForGui(gui);
             
             // 设置GUI内容
             gui.setupInventory(inventory);
@@ -88,6 +135,41 @@ public class GUIManager implements Listener {
             logger.severe("Error opening GUI: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 创建 GUI 的 Inventory 实例。
+     * 如果 ImagoCore 可用且该 GUI 类型有绑定，则使用图片标题；
+     * 否则使用原始字符串标题（完全兼容无 ImagoCore 环境）。
+     */
+    private Inventory createInventoryForGui(GUI gui) {
+        if (imagoHook != null && imagoConfig != null && imagoConfig.isEnabled()) {
+            String guiType = gui.getGuiType();
+            if (imagoConfig.hasConfig(guiType)) {
+                // 构建叠加层（如果有配置）
+                List<ImagoGuiConfig.OverlayConfig> overlayConfigs = imagoConfig.getOverlays(guiType);
+                if (!overlayConfigs.isEmpty()) {
+                    List<GuiTitleRenderer.OverlaySpec> specs = new ArrayList<>();
+                    for (ImagoGuiConfig.OverlayConfig oc : overlayConfigs) {
+                        GuiTitleRenderer.OverlaySpec spec = imagoHook.buildOverlay(oc.getCharName(), oc.getX());
+                        if (spec != null) {
+                            specs.add(spec);
+                        }
+                    }
+                    if (!specs.isEmpty()) {
+                        Inventory inv = imagoHook.createTitledInventory(gui.getSize(), guiType, specs);
+                        if (inv != null) return inv;
+                    }
+                }
+
+                // 纯背景（无叠加层）
+                Inventory inv = imagoHook.createTitledInventory(gui.getSize(), guiType);
+                if (inv != null) return inv;
+            }
+        }
+
+        // 回退：标准字符串标题（无 ImagoCore 或无绑定时）
+        return Bukkit.createInventory(null, gui.getSize(), gui.getTitle());
     }
     
     /**
