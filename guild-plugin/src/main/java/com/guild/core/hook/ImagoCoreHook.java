@@ -174,6 +174,29 @@ public class ImagoCoreHook {
     }
 
     /**
+     * Builds an OverlaySpec with an optional ascent (Y position) override.
+     * When ascent is non-null, a variant font provider is created in
+     * ImagoCore so the same image renders at a different vertical position.
+     *
+     * @param charName the char image name
+     * @param x        horizontal offset from background left edge (pixels)
+     * @param ascent   vertical position override, or null for default
+     * @return the overlay spec, or null if char not found
+     */
+    public GuiTitleRenderer.OverlaySpec buildOverlay(String charName, int x,
+                                                      Integer ascent) {
+        if (ascent != null) {
+            CharEntry variant = imagoCore.getOrCreateCharVariant(charName, ascent);
+            if (variant != null) {
+                return GuiTitleRenderer.OverlaySpec.from(variant, x, 222);
+            }
+            logger.warning("[ImagoCoreHook] Failed to create variant for "
+                    + charName + " ascent=" + ascent + ", using default.");
+        }
+        return buildOverlay(charName, x);
+    }
+
+    /**
      * @return the underlying ImagoCore plugin instance
      */
     public ImagoCore getImagoCore() {

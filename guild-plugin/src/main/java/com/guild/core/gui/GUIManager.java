@@ -150,7 +150,8 @@ public class GUIManager implements Listener {
                 if (!overlayConfigs.isEmpty()) {
                     List<GuiTitleRenderer.OverlaySpec> specs = new ArrayList<>();
                     for (ImagoGuiConfig.OverlayConfig oc : overlayConfigs) {
-                        GuiTitleRenderer.OverlaySpec spec = imagoHook.buildOverlay(oc.getCharName(), oc.getX());
+                        GuiTitleRenderer.OverlaySpec spec = imagoHook.buildOverlay(
+                                oc.getCharName(), oc.getX(), oc.getAscent());
                         if (spec != null) {
                             specs.add(spec);
                         }

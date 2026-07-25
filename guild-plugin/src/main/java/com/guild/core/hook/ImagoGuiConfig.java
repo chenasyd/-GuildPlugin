@@ -28,21 +28,18 @@ import java.util.logging.Logger;
  * bindings:
  *   MainGuildGUI: "54-default"
  *   GuildInfoGUI: "54-default"
- *   GuildSettingsGUI: "54-default"
- *   MemberGuildGUI: "54-default"
- *   GuildFundsGUI: "54-default"
- *   GuildLogsGUI: "54-default"
- *   GuildListGUI: "54-default"
- *   GuildRelationsGUI: "54-default"
  *
  * # Decoration overlays (optional)
- * # Each overlay is a char image positioned at a pixel offset
+ * # char:  ImagoCore char/ 下的图片名（不含 .png）
+ * # x:     距背景左边缘的水平像素偏移
+ * # ascent: 垂直位置覆盖（可选，负值下移；省略则用 char.yml 默认值）
  * overlays:
  *   MainGuildGUI:
- *     - char: "guild_icon"
- *       x: 10
- *     - char: "decoration_border"
- *       x: 150
+ *     - char: "guild_banner"
+ *       x: 30
+ *       ascent: -40
+ *     - char: "corner_ornament"
+ *       x: 5
  * }</pre>
  */
 public class ImagoGuiConfig {
@@ -91,8 +88,10 @@ public class ImagoGuiConfig {
                 for (Map<?, ?> map : list) {
                     String charName = (String) map.get("char");
                     int x = map.containsKey("x") ? ((Number) map.get("x")).intValue() : 0;
+                    Integer ascent = map.containsKey("ascent")
+                            ? ((Number) map.get("ascent")).intValue() : null;
                     if (charName != null && !charName.isEmpty()) {
-                        overlayList.add(new OverlayConfig(charName, x));
+                        overlayList.add(new OverlayConfig(charName, x, ascent));
                     }
                 }
                 if (!overlayList.isEmpty()) {
@@ -181,10 +180,12 @@ public class ImagoGuiConfig {
     public static class OverlayConfig {
         private final String charName;
         private final int x;
+        private final Integer ascent; // null = use char.yml default
 
-        public OverlayConfig(String charName, int x) {
+        public OverlayConfig(String charName, int x, Integer ascent) {
             this.charName = charName;
             this.x = x;
+            this.ascent = ascent;
         }
 
         /** The char image name (filename without .png in ImagoCore/char/). */
@@ -195,6 +196,15 @@ public class ImagoGuiConfig {
         /** Horizontal offset from background left edge in pixels. */
         public int getX() {
             return x;
+        }
+
+        /**
+         * Vertical position override (ascent). Negative values move the
+         * image downward into the item area. Null means use the char's
+         * default ascent from char.yml.
+         */
+        public Integer getAscent() {
+            return ascent;
         }
     }
 }
