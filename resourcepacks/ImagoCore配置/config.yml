@@ -1,0 +1,29 @@
+# ImagoCore Configuration
+# Hot-reload: /guildadmin reload
+
+verbose-logging: false
+max-animations: 50
+render-tick-interval: 1
+
+# ── Resource-pack GUI title image ──────────────────────────────────
+# These chars must match the font definitions in the resource pack.
+#   background_char     — char mapped to the background texture
+#   shift_char_coarse   — char with -16px advance (coarse offset)
+#   shift_char_fine     — char with -8px advance  (fine offset)
+#   shift_x             — total negative X offset for alignment
+#   ascent              — font ascent  (must match font JSON)
+#   height              — font height  (must match font JSON)
+gui:
+  title:
+    background_char: "\uE800"
+    shift_char_coarse: "\uE801"
+    shift_char_fine: "\uE802"
+    shift_x: -8
+    ascent: 13
+    height: 222
+
+# ── Resource pack generation ─────────────────────────────────────
+#   output — path to the generated build.zip
+#   (absolute, or relative to server root)
+resource-pack:
+  output: "plugins/ImagoCore/build.zip"

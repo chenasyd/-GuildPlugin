@@ -1,0 +1,19 @@
+shift_char_coarse: 
+shift_char_fine: 
+defaults:
+  ascent: 13
+  height: 222
+  shift_x: -8
+registrations:
+  18-default: 
+  27-default: 
+  36-default: 
+  45-default: 
+  54-default: 
+  9-default: 
+  54-gui2: 
+  54-gui3: 
+  54-menu2: 
+  54-MainGuildGUI: 
+  54-mainguildgui: 
+last_built_fingerprint: b68a88566ca60642

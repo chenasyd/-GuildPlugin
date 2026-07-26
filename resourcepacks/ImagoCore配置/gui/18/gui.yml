@@ -1,0 +1,8 @@
+slots: 18
+defaults:
+  ascent: 13
+  height: 222
+  shift_x: -8
+entries:
+  default:
+    texture: default.png

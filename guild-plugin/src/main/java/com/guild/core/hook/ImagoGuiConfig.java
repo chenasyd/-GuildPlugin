@@ -105,27 +105,93 @@ public class ImagoGuiConfig {
     }
 
     private void createDefault() {
-        YamlConfiguration config = new YamlConfiguration();
-        config.set("enabled", true);
-
-        // Default bindings for common GUIs
-        config.set("bindings.MainGuildGUI", "54-default");
-        config.set("bindings.GuildInfoGUI", "54-default");
-        config.set("bindings.GuildSettingsGUI", "54-default");
-        config.set("bindings.MemberGuildGUI", "54-default");
-        config.set("bindings.GuildFundsGUI", "54-default");
-        config.set("bindings.GuildLogsGUI", "54-default");
-        config.set("bindings.GuildListGUI", "54-default");
-        config.set("bindings.GuildRelationsGUI", "54-default");
-        config.set("bindings.CreateGuildGUI", "54-default");
-        config.set("bindings.EconomyManagementGUI", "54-default");
-
-        // Example overlay (commented out by default)
-        config.set("overlays", null);
-
         try {
             configFile.getParentFile().mkdirs();
-            config.save(configFile);
+
+            String content = """
+# ============================================================
+# ImagoCore GUI 图像集成配置 (imago-gui.yml)
+# ============================================================
+#
+# enabled: 全局开关，设为 false 时所有 GUI 均不使用图像模式
+#
+# bindings: 每个 GUI 的图像模式开关
+#   值 = ImagoCore entry ID (如 "54-mainguildgui") → 启用图像标题+透明化
+#   值 = "false" → 禁用该 GUI 的图像模式，保持纯净样式（原始标题+原始物品）
+#
+# 优先级规则:
+#   本配置 > gui-image-layout.yml
+#   若某 GUI 在此处设为 false，则 gui-image-layout.yml 中该 GUI 的布局不生效
+#
+# overlays: 可选的叠加装饰层（char/ 或 gui/ 中的图片）
+#   char: 图片名（不含 .png）
+#   x:    距背景左边缘的水平像素偏移
+#   ascent: 垂直位置覆盖（可选，负值下移；省略则用默认值）
+# ============================================================
+
+enabled: true
+
+bindings:
+  # ── 主要功能 GUI ──
+  MainGuildGUI: "54-default"          # 工会主界面（入口）
+  GuildInfoGUI: false                  # 工会信息
+  GuildSettingsGUI: false              # 工会设置
+  MemberGuildGUI: false                # 成员列表（工会内）
+  GuildFundsGUI: false                 # 工会资金
+  GuildLogsGUI: false                  # 工会日志
+  GuildListGUI: false                  # 工会列表（浏览所有工会）
+  GuildRelationsGUI: false             # 工会关系
+  CreateGuildGUI: false                # 创建工会
+  EconomyManagementGUI: false          # 经济管理
+
+  # ── 管理/操作 GUI ──
+  ApplicationManagementGUI: false      # 申请管理
+  MemberManagementGUI: false           # 成员管理
+  MemberDetailsGUI: false              # 成员详情
+  GuildDetailGUI: false                # 工会详情（查看其他工会）
+  GuildFilterGUI: false                # 工会筛选
+  GuildPermissionsGUI: false           # 权限设置
+  GuildListManagementGUI: false        # 工会列表管理
+
+  # ── 确认对话框 ──
+  ConfirmDeleteGuildGUI: false         # 确认解散工会
+  ConfirmLeaveGuildGUI: false          # 确认退出工会
+  ConfirmChangeFundsGUI: false         # 确认资金操作
+
+  # ── 成员操作 GUI ──
+  DemoteMemberGUI: false               # 降级成员
+  PromoteMemberGUI: false              # 升级成员
+  KickMemberGUI: false                 # 踢出成员
+  InviteMemberGUI: false               # 邀请成员
+
+  # ── 管理员/系统 GUI ──
+  AdminGuildGUI: false                 # 管理员工会管理
+  SystemSettingsGUI: false             # 系统设置
+
+  # ── 关系 GUI ──
+  CreateRelationGUI: false             # 创建关系
+  RelationManagementGUI: false         # 关系管理
+
+  # ── 输入 GUI ──
+  GuildTagInputGUI: false              # 工会标签输入
+  GuildDescriptionInputGUI: false      # 工会描述输入
+  GuildNameInputGUI: false             # 工会名称输入
+
+# ============================================================
+# 叠加装饰层配置（可选）
+# 示例:
+# overlays:
+#   MainGuildGUI:
+#     - char: "guild_banner"
+#       x: 30
+#       ascent: -40
+#     - char: "corner_ornament"
+#       x: 5
+# ============================================================
+""";
+
+            java.nio.file.Files.writeString(configFile.toPath(), content,
+                    java.nio.charset.StandardCharsets.UTF_8);
             logger.info("[ImagoGuiConfig] Created default imago-gui.yml");
         } catch (IOException e) {
             logger.log(Level.WARNING, "Failed to create imago-gui.yml", e);
@@ -159,10 +225,21 @@ public class ImagoGuiConfig {
     }
 
     /**
-     * Checks if a GUI type has any ImagoCore configuration.
+     * Checks if a GUI type has an active ImagoCore configuration.
+     * Returns false if the GUI is not bound OR if its binding value is "false"
+     * (which explicitly disables image mode for that GUI).
      */
     public boolean hasConfig(String guiType) {
-        return bindings.containsKey(guiType);
+        String value = bindings.get(guiType);
+        return value != null && !"false".equalsIgnoreCase(value);
+    }
+
+    /**
+     * Checks if a GUI type is explicitly disabled in the config (value = "false").
+     */
+    public boolean isGuiDisabled(String guiType) {
+        String value = bindings.get(guiType);
+        return "false".equalsIgnoreCase(value);
     }
 
     /**

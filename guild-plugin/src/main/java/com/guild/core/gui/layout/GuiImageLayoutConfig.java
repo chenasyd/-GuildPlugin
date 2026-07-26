@@ -168,7 +168,8 @@ public class GuiImageLayoutConfig {
             String content = """
 # ============================================================
 # 图像GUI布局配置 (gui-image-layout.yml)
-# 仅在 imago-gui.yml 中 enabled: true 且对应 GUI 有绑定时生效
+# 仅在 imago-gui.yml 中 enabled: true 且对应 GUI 绑定值非 false 时生效
+# 优先级: imago-gui.yml > 本文件
 # ============================================================
 
 # 透明载体物品设置
@@ -184,15 +185,6 @@ transparent_item:
 # GUI 布局配置
 # 格式: layouts.<GUI类型>.<功能常量>: [槽位列表]
 #
-# 功能常量说明（MainGuildGUI）:
-#   CREATE_GUILD      - 创建工会   (原始槽位: 4)
-#   GUILD_INFO        - 工会信息   (原始槽位: 20)
-#   MEMBER_MANAGE     - 成员管理   (原始槽位: 22)
-#   APPLICATION_MANAGE - 申请管理  (原始槽位: 24)
-#   GUILD_SETTINGS    - 工会设置   (原始槽位: 29)
-#   GUILD_LIST        - 工会列表   (原始槽位: 31)
-#   GUILD_RELATIONS   - 工会关系   (原始槽位: 33)
-#
 # 槽位编号参考 (54槽 / 6行9列):
 #   行0:  0  1  2  3  4  5  6  7  8
 #   行1:  9 10 11 12 13 14 15 16 17
@@ -201,8 +193,9 @@ transparent_item:
 #   行4: 36 37 38 39 40 41 42 43 44
 #   行5: 45 46 47 48 49 50 51 52 53
 #
-# 示例: 将"创建工会"设为 3x2 大按钮区域 (行0列0-2 + 行1列0-2)
-#   CREATE_GUILD: [0, 1, 2, 9, 10, 11]
+# 注意: 只有 MainGuildGUI 使用了多槽位布局系统。
+# 其他 GUI 启用图像模式后自动应用透明化（无需布局配置），
+# 若需为其他 GUI 添加多槽位布局，需同时在对应 GUI 类中实现布局逻辑。
 # ============================================================
 
 layouts:
@@ -221,6 +214,100 @@ layouts:
     GUILD_LIST: [24, 25, 26, 33, 34, 35]
     # 工会关系 - 3x2 区域 (行4-5, 列0-2)
     GUILD_RELATIONS: [36, 37, 38, 45, 46, 47]
+
+# ============================================================
+# 以下为其他 GUI 的功能槽位参考（注释状态，启用需配合代码修改）
+# ============================================================
+#
+# GuildInfoGUI (54槽):
+#   SUMMARY: 10, STATS: 19, ECONOMY: 28, STATUS: 36, BACK: 49
+#
+# GuildSettingsGUI (54槽):
+#   OVERVIEW: 10, TEXT_EDIT: 11, SET_HOME: 13, MEMBER_MGMT: 15,
+#   GUILD_FUNDS: 28, LOGS: 31, HOME_TELEPORT: 33, LEAVE: 34,
+#   DELETE: 36, BACK: 49
+#
+# MemberGuildGUI (27槽):
+#   HOME_TELEPORT: 11, GUILD_INFO: 13, LEAVE_GUILD: 15
+#
+# GuildFundsGUI (54槽):
+#   CONTENT: [10-43], PAGE_INFO: 46, PREV_PAGE: 48, BACK: 49,
+#   NEXT_PAGE: 50, REFRESH: 51
+#
+# GuildLogsGUI (54槽):
+#   CONTENT: [10-43], PAGE_INFO: 46, BACK: 49, NEXT_PAGE: 50, REFRESH: 51
+#
+# GuildListGUI (54槽):
+#   CONTENT: [10-44], PREV_PAGE: 18, NEXT_PAGE: 26, SEARCH: 45,
+#   FILTER: 47, BACK: 49
+#
+# GuildRelationsGUI (54槽):
+#   CONTENT: [10-43], CREATE_RELATION: 45, PAGE_INFO: 46,
+#   PREV_PAGE: 48, BACK: 49, NEXT_PAGE: 50
+#
+# CreateGuildGUI (54槽):
+#   CURRENT_NAME: 11, CURRENT_TAG: 13, CURRENT_DESC: 15,
+#   NAME_INPUT: 20, TAG_INPUT: 22, DESC_INPUT: 24,
+#   CONFIRM: 39, CANCEL: 41
+#
+# EconomyManagementGUI (54槽):
+#   CONTENT: [10-43], BACK: 46, PREV_PAGE: 48, PAGE_INFO: 49,
+#   NEXT_PAGE: 50, REFRESH: 52
+#
+# ApplicationManagementGUI (54槽):
+#   CONTENT: [10-44], PREV_PAGE: 18, NEXT_PAGE: 26,
+#   PENDING: 47, BACK: 49, HISTORY: 51
+#
+# MemberManagementGUI (54槽):
+#   CONTENT: [10-43], PREV_PAGE: 18, NEXT_PAGE: 26, INVITE: 45,
+#   KICK: 47, PROMOTE: 49, DEMOTE: 51, BACK: 53
+#
+# MemberDetailsGUI (54槽):
+#   MEMBER_HEAD: 13, BASIC_INFO: 20, ROLE_INFO: 21, TIME_INFO: 22,
+#   CONTRIBUTION: 23, KICK: 37, PROMOTE_DEMOTE: 39, MESSAGE: 41, BACK: 49
+#
+# GuildDetailGUI (54槽):
+#   GUILD_NAME: 4, LEADER_HEAD: 12, DESCRIPTION: 14, ECONOMY: 16,
+#   MEMBERS: [19-25,28-34,37-43], BACK: 45, FREEZE: 47, DELETE: 49,
+#   TRANSFER: 51, REFRESH: 53
+#
+# GuildPermissionsGUI (54槽):
+#   LEADER_PERMS: 10, OFFICER_PERMS: 12, MEMBER_PERMS: 14,
+#   INFO: 16, STATUS: 22, BACK: 49
+#
+# AdminGuildGUI (54槽):
+#   GUILD_LIST_MGMT: 20, ECONOMY_MGMT: 22, RELATION_MGMT: 24,
+#   STATISTICS: 29, SYSTEM_SETTINGS: 31, BACK: 49
+#
+# SystemSettingsGUI (54槽):
+#   DEBUG: 10, AUTO_SAVE: 12, ECONOMY: 14, RELATION: 16,
+#   LEVEL_SYSTEM: 19, APPLICATION: 21, INVITE: 23, GUILD_HOME: 25,
+#   RELOAD: 28, DB_MAINT: 30, BACKUP: 32, BACK: 49, SAVE: 51
+#
+# ConfirmDeleteGuildGUI (27槽): CONFIRM: 11, INFO: 13, CANCEL: 15
+# ConfirmLeaveGuildGUI (27槽): CONFIRM: 11, INFO: 13, CANCEL: 15
+# ConfirmChangeFundsGUI (27槽): CONFIRM: 11, DETAILS: 13, CANCEL: 15
+#
+# DemoteMemberGUI (54槽):  CONTENT: [10-43], PREV: 45, BACK: 49, NEXT: 53
+# PromoteMemberGUI (54槽): CONTENT: [10-43], PREV: 45, BACK: 49, NEXT: 53
+# KickMemberGUI (54槽):    CONTENT: [10-43], PREV: 45, BACK: 49, NEXT: 53
+# InviteMemberGUI (54槽):  CONTENT: [10-43], PREV: 45, BACK: 49, NEXT: 53
+#
+# CreateRelationGUI (54槽):
+#   TYPE_SELECTOR: [0-8], TARGETS: [10-43], CONFIRM: 45,
+#   SELECTION: 47, BACK: 49, PAGE_INFO: 51, PREV: 52, NEXT: 53
+#
+# RelationManagementGUI (54槽):
+#   CONTENT: [10-43], BACK: 46, PREV: 48, PAGE_INFO: 49,
+#   NEXT: 50, REFRESH: 52
+#
+# GuildFilterGUI (54槽):
+#   CONTENT: [10-44], PREV: 18, NEXT: 26, MIN_LEVEL: 46,
+#   MAX_LEVEL: 47, SORT: 48, BACK: 52
+#
+# GuildListManagementGUI (54槽):
+#   CONTENT: [10-13], BACK: 46, PREV: 48, PAGE_INFO: 49,
+#   NEXT: 50, REFRESH: 52
 """;
 
             java.nio.file.Files.writeString(configFile.toPath(), content,

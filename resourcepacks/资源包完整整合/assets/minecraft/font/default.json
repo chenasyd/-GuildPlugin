@@ -1,0 +1,172 @@
+{
+  "providers": [
+    {
+      "type": "space",
+      "advances": {
+        "": -1
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": -2
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": -4
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": -8
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": -16
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": -32
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": -64
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": -128
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": 1
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": 2
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": 4
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": 8
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": 16
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": 32
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": 64
+      }
+    },
+    {
+      "type": "space",
+      "advances": {
+        "": 128
+      }
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:textures/gui/18/default.png",
+      "ascent": 13,
+      "height": 222,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:textures/gui/27/default.png",
+      "ascent": 13,
+      "height": 222,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:textures/gui/36/default.png",
+      "ascent": 13,
+      "height": 222,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:textures/gui/45/default.png",
+      "ascent": 13,
+      "height": 222,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:textures/gui/54/default.png",
+      "ascent": 13,
+      "height": 222,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:textures/gui/54/mainguildgui.png",
+      "ascent": 13,
+      "height": 254,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:textures/gui/9/default.png",
+      "ascent": 13,
+      "height": 222,
+      "chars": [
+        ""
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:textures/char/char1.png",
+      "ascent": 8,
+      "height": 8,
+      "chars": [
+        ""
+      ]
+    }
+  ]
+}

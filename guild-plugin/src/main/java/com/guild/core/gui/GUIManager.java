@@ -76,8 +76,9 @@ public class GUIManager implements Listener {
             return;
         }
 
-        // Register bindings from config
+        // Register bindings from config (skip explicitly disabled GUIs)
         for (Map.Entry<String, String> entry : imagoConfig.getAllBindings().entrySet()) {
+            if ("false".equalsIgnoreCase(entry.getValue())) continue;
             imagoHook.bind(entry.getKey(), entry.getValue());
         }
     }

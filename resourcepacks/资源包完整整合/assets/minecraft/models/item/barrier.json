@@ -1,0 +1,12 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "item/custom/barrier"
+  },
+  "overrides": [
+    {
+      "predicate": { "custom_model_data": 10001 },
+      "model": "item/barrier"
+    }
+  ]
+}

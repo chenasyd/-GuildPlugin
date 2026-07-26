@@ -1,0 +1,22 @@
+last_built_fingerprint: 7719be5bcbc8f24f
+defaults:
+  ascent: 8
+  height: 8
+# 每张图片的独立覆盖（可选，未列出的图片使用 defaults）
+entries:
+  default:
+    ascent: 32
+    height: 32
+  gui2:
+    ascent: 32
+    height: 32
+
+variants:
+  gui2:-5: 
+  gui2:-50: 
+  gui2:-10: 
+  gui2:-6: 
+registrations:
+  default: 
+  gui2: 
+  char1: 

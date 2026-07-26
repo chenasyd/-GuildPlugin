@@ -1,0 +1,13 @@
+slots: 54
+defaults:
+  ascent: 13
+  height: 222
+  shift_x: -8
+entries:
+  default:
+    texture: default.png
+  mainguildgui:
+    texture: mainguildgui.png
+    ascent: 13
+    height: 254
+    shift_x: -9
