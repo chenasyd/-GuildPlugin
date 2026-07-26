@@ -2,7 +2,7 @@ package com.guild.listeners;
 
 import com.guild.GuildPlugin;
 import com.guild.chat.GuildChatManager;
-import com.guild.core.geyser.GeyserAPI;
+import com.guild.core.geyser.PlayerConnectionService;
 import com.guild.core.gui.GUIManager;
 import com.guild.core.language.LanguageManager;
 import com.guild.events.GuildChatEvent;
@@ -43,8 +43,14 @@ public class PlayerListener implements Listener {
      */
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        UUID uuid = player.getUniqueId();
+
+        // 预热玩家连接类型缓存（GeyserAPI 反射检测 + Bungee 推送接收）
+        PlayerConnectionService.onPlayerJoin(uuid);
+
         // 检查工会战争状态
-        checkWarStatus(event.getPlayer());
+        checkWarStatus(player);
         
         // 检查待处理的申请和邀请通知
         checkPendingNotifications(event.getPlayer());
@@ -96,8 +102,8 @@ public class PlayerListener implements Listener {
         if (guiManager != null) {
             guiManager.closeGUI(event.getPlayer());
         }
-        // 清理 GeyserAPI 玩家缓存
-        GeyserAPI.onPlayerQuit(uuid);
+        // 清理玩家连接类型缓存（GeyserAPI + BungeeClientAPI 双缓存）
+        PlayerConnectionService.onPlayerQuit(uuid);
     }
     
     /**

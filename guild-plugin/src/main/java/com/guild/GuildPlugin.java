@@ -20,6 +20,7 @@ import com.guild.comm.api.BungeeClientAPI;
 import com.guild.comm.api.CommAPI;
 import com.guild.core.gui.GUI;
 import com.guild.core.geyser.GeyserAPI;
+import com.guild.core.geyser.PlayerConnectionService;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PluginFileLogger;
@@ -128,6 +129,9 @@ public class GuildPlugin extends JavaPlugin {
 
             // 初始化 GeyserAPI（基岩版玩家检测，Geyser 未安装时静默降级）
             GeyserAPI.initialize(logger);
+
+            // 初始化统一连接服务（整合 GeyserAPI + BungeeClientAPI）
+            PlayerConnectionService.initialize(logger);
 
             // 加载等级需求配置
             loadLevelRequirements();

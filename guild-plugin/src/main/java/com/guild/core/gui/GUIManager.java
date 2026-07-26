@@ -1,6 +1,7 @@
 package com.guild.core.gui;
 
 import com.guild.GuildPlugin;
+import com.guild.core.geyser.PlayerConnectionService;
 import com.guild.core.hook.ImagoCoreHook;
 import com.guild.core.hook.ImagoGuiConfig;
 import com.guild.core.gui.layout.GuiImageLayoutConfig;
@@ -13,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -426,7 +428,9 @@ public class GUIManager implements Listener {
             }
             
             // 处理所有点击，包括空物品的点击
-            gui.onClick(player, slot, clickedItem, event.getClick());
+            // 基岩版玩家的右键点击不可靠，统一映射为左键
+            ClickType adaptedClick = PlayerConnectionService.adaptClick(player, event.getClick());
+            gui.onClick(player, slot, clickedItem, adaptedClick);
         } catch (Exception e) {
             logger.severe("Error handling GUI click: " + e.getMessage());
             e.printStackTrace();
