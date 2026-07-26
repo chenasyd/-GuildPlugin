@@ -60,8 +60,8 @@ public class MainGuildGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
-        // 图像布局模式：透明载体 + 多槽位
-        if (plugin.getGuiManager().isImageLayoutActive(getGuiType())) {
+        // 图像布局模式：透明载体 + 多槽位（基岩版玩家跳过）
+        if (plugin.getGuiManager().isImageLayoutActive(player, getGuiType())) {
             setupImageLayout(inventory);
             return;
         }
@@ -219,8 +219,8 @@ public class MainGuildGUI implements GUI {
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 图像布局模式：通过配置反查功能
-        if (plugin.getGuiManager().isImageLayoutActive(getGuiType())) {
+        // 图像布局模式：通过配置反查功能（基岩版玩家跳过）
+        if (plugin.getGuiManager().isImageLayoutActive(player, getGuiType())) {
             GuiImageLayoutConfig layoutConfig = plugin.getGuiManager().getImageLayoutConfig();
             String func = layoutConfig.getFunctionAtSlot(getGuiType(), slot);
             if (func == null) return;

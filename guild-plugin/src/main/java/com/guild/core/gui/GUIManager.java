@@ -113,6 +113,19 @@ public class GUIManager implements Listener {
     }
 
     /**
+     * 玩家感知的图像布局检查。
+     * 基岩版玩家始终返回 false，确保其看到纯净 GUI。
+     *
+     * @param player  当前玩家（用于基岩版检测）
+     * @param guiType GUI 类型名
+     * @return true 仅当图像布局启用且玩家为 Java 版时
+     */
+    public boolean isImageLayoutActive(Player player, String guiType) {
+        if (player != null && PlayerConnectionService.isBedrockPlayer(player)) return false;
+        return isImageLayoutActive(guiType);
+    }
+
+    /**
      * 获取图像布局配置实例。
      *
      * @return 布局配置，若未初始化则返回 null
@@ -131,6 +144,19 @@ public class GUIManager implements Listener {
                 && imagoConfig != null
                 && imagoConfig.isEnabled()
                 && imagoConfig.hasConfig(guiType);
+    }
+
+    /**
+     * 玩家感知的图像模式检查。
+     * 基岩版玩家始终返回 false，确保其看到纯净 GUI。
+     *
+     * @param player  当前玩家（用于基岩版检测）
+     * @param guiType GUI 类型名
+     * @return true 仅当图像模式启用且玩家为 Java 版时
+     */
+    public boolean isImageGuiActive(Player player, String guiType) {
+        if (player != null && PlayerConnectionService.isBedrockPlayer(player)) return false;
+        return isImageGuiActive(guiType);
     }
 
     /**
