@@ -389,7 +389,7 @@ public class GuildFilterGUI implements GUI {
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-list.no-guilds-lore", "&7服务器中还没有工会"))
         );
         inventory.setItem(22, noGuilds);
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
         this.displayedGuilds = new ArrayList<>();
     }
 
@@ -400,7 +400,7 @@ public class GuildFilterGUI implements GUI {
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-list.no-results-lore", "&7没有找到匹配的工会"))
         );
         inventory.setItem(22, noResults);
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
         this.displayedGuilds = new ArrayList<>();
     }
 
@@ -436,7 +436,7 @@ public class GuildFilterGUI implements GUI {
                 slotIndex += 2;
             }
         }
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
     }
 
     private void setupPaginationButtons(Inventory inventory, int totalPages) {

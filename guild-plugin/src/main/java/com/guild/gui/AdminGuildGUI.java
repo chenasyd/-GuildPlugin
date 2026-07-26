@@ -106,7 +106,7 @@ public class AdminGuildGUI implements GUI {
         );
         inventory.setItem(49, back);
 
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
     }
     
     @Override

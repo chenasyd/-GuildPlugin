@@ -143,15 +143,20 @@ public class GUIManager implements Listener {
      *       替换材质为配置的透明物品 + CustomModelData）</li>
      * </ol>
      *
+     * <p>基岩版玩家不受此方法影响——始终保留原始 GUI 布局。
+     *
      * <p>在 GUI 的 {@code setupInventory()} 末尾调用即可：
      * <pre>{@code
-     * plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+     * plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
      * }</pre>
      *
+     * @param player    当前查看 GUI 的玩家（用于基岩版检测）
      * @param inventory 已设置好内容的 inventory
      * @param guiType   GUI 类型名
      */
-    public void applyImageModeIfNeeded(Inventory inventory, String guiType) {
+    public void applyImageModeIfNeeded(Player player, Inventory inventory, String guiType) {
+        // 基岩版玩家始终使用纯净 GUI，不应用自定义图像配置
+        if (player != null && PlayerConnectionService.isBedrockPlayer(player)) return;
         if (!isImageGuiActive(guiType)) return;
 
         Material transMat = imageLayoutConfig != null
@@ -262,8 +267,8 @@ public class GUIManager implements Listener {
             // 关闭玩家当前打开的GUI
             closeGUI(player);
             
-            // 创建新的GUI — 优先使用 ImagoCore 图片标题
-            Inventory inventory = createInventoryForGui(gui);
+            // 创建新的GUI — 优先使用 ImagoCore 图片标题（基岩版玩家跳过）
+            Inventory inventory = createInventoryForGui(player, gui);
             
             // 设置GUI内容
             gui.setupInventory(inventory);
@@ -293,9 +298,13 @@ public class GUIManager implements Listener {
      * 创建 GUI 的 Inventory 实例。
      * 如果 ImagoCore 可用且该 GUI 类型有绑定，则使用图片标题；
      * 否则使用原始字符串标题（完全兼容无 ImagoCore 环境）。
+     * <p>
+     * 基岩版玩家始终使用原始字符串标题，不启用 ImagoCore 图像标题。
      */
-    private Inventory createInventoryForGui(GUI gui) {
-        if (imagoHook != null && imagoConfig != null && imagoConfig.isEnabled()) {
+    private Inventory createInventoryForGui(Player player, GUI gui) {
+        // 基岩版玩家跳过 ImagoCore，使用纯净字符串标题
+        boolean bedrockPlayer = player != null && PlayerConnectionService.isBedrockPlayer(player);
+        if (!bedrockPlayer && imagoHook != null && imagoConfig != null && imagoConfig.isEnabled()) {
             String guiType = gui.getGuiType();
             if (imagoConfig.hasConfig(guiType)) {
                 // 构建叠加层（如果有配置）

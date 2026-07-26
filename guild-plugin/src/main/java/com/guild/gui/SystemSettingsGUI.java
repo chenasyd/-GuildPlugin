@@ -66,7 +66,7 @@ public class SystemSettingsGUI implements GUI {
         // 设置操作按钮
         setupActionButtons(inventory);
 
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
     }
     
     private void setupSettingsOptions(Inventory inventory) {

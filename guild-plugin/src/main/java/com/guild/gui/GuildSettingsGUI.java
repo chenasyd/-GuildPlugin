@@ -132,7 +132,7 @@ public class GuildSettingsGUI implements GUI {
             setupPaginationButtons(inventory);
         }
 
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
     }
 
     /**

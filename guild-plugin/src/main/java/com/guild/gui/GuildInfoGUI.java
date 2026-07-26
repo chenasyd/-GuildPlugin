@@ -127,7 +127,7 @@ public class GuildInfoGUI implements GUI {
             setupPaginationButtons(inventory);
         }
 
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
     }
 
     /**
@@ -282,7 +282,7 @@ public class GuildInfoGUI implements GUI {
                 inventory.setItem(28, updatedEconomy);
 
                 // 异步刷新后重新应用图像模式（将新放置的物品转换为透明载体）
-                plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+                plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
             });
         });
     }

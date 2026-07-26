@@ -69,7 +69,7 @@ public class GuildListGUI implements GUI {
         setupFunctionButtons(inventory);
         loadGuilds(inventory);
 
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
     }
 
     @Override

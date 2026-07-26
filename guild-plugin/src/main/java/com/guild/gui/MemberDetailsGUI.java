@@ -86,7 +86,7 @@ public class MemberDetailsGUI implements GUI {
         // 设置返回按钮
         setupBackButton(inventory);
 
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+        plugin.getGuiManager().applyImageModeIfNeeded(viewer, inventory, getGuiType());
     }
     
     @Override

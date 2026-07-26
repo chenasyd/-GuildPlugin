@@ -72,7 +72,7 @@ public class GuildLogsGUI implements GUI {
                     setupLogItems(inventory);
                     setupBasicNavigationButtons(inventory);
                     setupFullNavigationButtons(inventory);
-                    plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+                    plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
                 });
             } else {
                 // 如果加载失败，在玩家实体线程中显示错误信息
@@ -84,7 +84,7 @@ public class GuildLogsGUI implements GUI {
                     );
                     inventory.setItem(22, errorItem);
                     setupBasicNavigationButtons(inventory);
-                    plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+                    plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
                 });
             }
         });

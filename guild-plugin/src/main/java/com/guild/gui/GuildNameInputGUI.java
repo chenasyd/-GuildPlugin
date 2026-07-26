@@ -63,7 +63,7 @@ public class GuildNameInputGUI implements GUI {
         setupButtons(inventory);
 
         // 应用图像模式
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
     }
     
     @Override

@@ -71,7 +71,7 @@ public class ApplicationManagementGUI implements GUI {
 
         // 同步处理：立即移除边框并转换已放置的功能物品（49, 51）
         // 异步回调中会再次调用以处理异步放置的物品（47, 列表内容）
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
     }
     
     @Override
@@ -126,7 +126,7 @@ public class ApplicationManagementGUI implements GUI {
             );
             CompatibleScheduler.runTask(plugin, player, () -> {
                 inventory.setItem(47, pendingApplications);
-                plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+                plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
             });
         });
         
@@ -187,7 +187,7 @@ public class ApplicationManagementGUI implements GUI {
                 
                 // 显示当前页的申请
                 displayApplications(inventory, applications);
-                plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+                plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
             });
         });
     }
@@ -221,7 +221,7 @@ public class ApplicationManagementGUI implements GUI {
                 
                 // 显示当前页的申请
                 displayApplications(inventory, applications);
-                plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+                plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
             });
         });
     }
