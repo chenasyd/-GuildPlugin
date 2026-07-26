@@ -210,7 +210,7 @@ public class RelationManagementGUI implements GUI {
 
     private void setupActionButtons(Inventory inventory) {
         // 返回按钮
-        inventory.setItem(46, createItem(Material.BARRIER,
+        inventory.setItem(46, createItem(Material.ARROW,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "&c返回")),
             ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.relation-management.relation-management-back-desc", "返回管理员菜单"))));
 

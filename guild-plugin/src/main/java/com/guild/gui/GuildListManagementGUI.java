@@ -130,7 +130,7 @@ public class GuildListManagementGUI implements GUI {
 
     private void setupActionButtons(Inventory inventory) {
         // 返回按钮
-        inventory.setItem(46, createItem(Material.BARRIER,
+        inventory.setItem(46, createItem(Material.ARROW,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "&c返回"))));
 
         // 刷新按钮

@@ -283,7 +283,7 @@ public class GuildRelationsGUI implements GUI {
 
         // 返回按钮 (槽位49)
         ItemStack backButton = createItem(
-            Material.BARRIER,
+            Material.ARROW,
             ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.common.back", "返回")),
             ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-relations.back-to-menu", "返回主菜单"))
         );
