@@ -68,6 +68,8 @@ public class CreateGuildGUI implements GUI {
         
         // 显示当前输入信息
         displayCurrentInput(inventory);
+
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
     
     @Override

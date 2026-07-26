@@ -91,6 +91,8 @@ public class GuildFundsGUI implements GUI {
                 }
             });
         });
+
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
 
     @Override

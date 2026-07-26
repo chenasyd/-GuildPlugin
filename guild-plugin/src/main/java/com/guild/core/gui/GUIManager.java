@@ -7,6 +7,7 @@ import com.guild.core.gui.layout.GuiImageLayoutConfig;
 import com.guild.gui.GuildNameInputGUI;
 import org.a.imagoCore.image.display.gui.GuiTitleRenderer;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -113,6 +114,85 @@ public class GUIManager implements Listener {
      */
     public GuiImageLayoutConfig getImageLayoutConfig() {
         return imageLayoutConfig;
+    }
+
+    /**
+     * 检查指定 GUI 是否启用了图像模式（不要求有布局配置）。
+     * 条件：ImagoCore 已连接 + enabled + 有绑定。
+     * 用于不需要多槽位布局、只需透明化物品的 GUI。
+     */
+    public boolean isImageGuiActive(String guiType) {
+        return imagoHook != null
+                && imagoConfig != null
+                && imagoConfig.isEnabled()
+                && imagoConfig.hasConfig(guiType);
+    }
+
+    /**
+     * 对已填充好的 Inventory 应用图像模式后处理。
+     *
+     * <p>操作：
+     * <ol>
+     *   <li>移除所有玻璃板 / 填充物（视觉由背景图替代）</li>
+     *   <li>将剩余非空物品转换为透明载体（保留名称和 lore，
+     *       替换材质为配置的透明物品 + CustomModelData）</li>
+     * </ol>
+     *
+     * <p>在 GUI 的 {@code setupInventory()} 末尾调用即可：
+     * <pre>{@code
+     * plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
+     * }</pre>
+     *
+     * @param inventory 已设置好内容的 inventory
+     * @param guiType   GUI 类型名
+     */
+    public void applyImageModeIfNeeded(Inventory inventory, String guiType) {
+        if (!isImageGuiActive(guiType)) return;
+        // 有独立布局配置的 GUI（如 MainGuildGUI）由自身处理，此处跳过
+        if (imageLayoutConfig != null && imageLayoutConfig.hasLayout(guiType)) return;
+
+        Material transMat = imageLayoutConfig != null
+                ? imageLayoutConfig.getTransparentMaterial() : Material.BARRIER;
+        int modelData = imageLayoutConfig != null
+                ? imageLayoutConfig.getTransparentModelData() : 10001;
+
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack item = inventory.getItem(i);
+            if (item == null || item.getType() == Material.AIR) continue;
+
+            // 移除填充物（玻璃板类）
+            if (isFillerItem(item.getType())) {
+                inventory.setItem(i, null);
+                continue;
+            }
+
+            // 转换为透明载体（保留名称和 lore）
+            ItemStack transparent = new ItemStack(transMat);
+            org.bukkit.inventory.meta.ItemMeta oldMeta = item.getItemMeta();
+            org.bukkit.inventory.meta.ItemMeta newMeta = transparent.getItemMeta();
+            if (oldMeta != null && newMeta != null) {
+                if (oldMeta.hasDisplayName()) {
+                    newMeta.setDisplayName(oldMeta.getDisplayName());
+                }
+                if (oldMeta.hasLore()) {
+                    newMeta.setLore(oldMeta.getLore());
+                }
+                newMeta.setCustomModelData(modelData);
+                transparent.setItemMeta(newMeta);
+            }
+            inventory.setItem(i, transparent);
+        }
+    }
+
+    /**
+     * 判断是否为填充/边框物品（玻璃板类）。
+     */
+    private boolean isFillerItem(Material mat) {
+        return mat == Material.BLACK_STAINED_GLASS_PANE
+                || mat == Material.GRAY_STAINED_GLASS_PANE
+                || mat == Material.WHITE_STAINED_GLASS_PANE
+                || mat == Material.GLASS_PANE
+                || mat.name().endsWith("_STAINED_GLASS_PANE");
     }
 
     /**

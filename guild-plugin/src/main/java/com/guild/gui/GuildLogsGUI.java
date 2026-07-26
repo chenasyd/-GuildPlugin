@@ -80,6 +80,8 @@ public class GuildLogsGUI implements GUI {
                 });
             }
         });
+
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
     
     /**

@@ -73,6 +73,8 @@ public class GuildRelationsGUI implements GUI {
                 addPaginationButtons(inventory);
             });
         });
+
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
     
     @Override

@@ -117,6 +117,8 @@ public class GuildInfoGUI implements GUI {
             setupBackButton(inventory);
             setupPaginationButtons(inventory);
         }
+
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
 
     /**

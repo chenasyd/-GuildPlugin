@@ -66,6 +66,8 @@ public class MemberGuildGUI implements GUI {
         displayGuildInfo(inventory);
         setupButtons(inventory);
         fillEmptySlots(inventory);
+
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
 
     @Override
