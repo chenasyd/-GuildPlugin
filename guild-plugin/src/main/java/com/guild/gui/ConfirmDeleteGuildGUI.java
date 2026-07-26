@@ -21,6 +21,11 @@ import java.util.Arrays;
  */
 public class ConfirmDeleteGuildGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_CONFIRM = "CONFIRM";
+    public static final String FUNC_INFO = "INFO";
+    public static final String FUNC_CANCEL = "CANCEL";
+
     private final GuildPlugin plugin;
     private final LanguageManager languageManager;
     private final Guild guild;

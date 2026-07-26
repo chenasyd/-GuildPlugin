@@ -20,6 +20,21 @@ import java.util.List;
  */
 public class SystemSettingsGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_DEBUG_TOGGLE = "DEBUG_TOGGLE";
+    public static final String FUNC_AUTO_SAVE = "AUTO_SAVE";
+    public static final String FUNC_ECONOMY_TOGGLE = "ECONOMY_TOGGLE";
+    public static final String FUNC_RELATION_TOGGLE = "RELATION_TOGGLE";
+    public static final String FUNC_LEVEL_SYSTEM = "LEVEL_SYSTEM";
+    public static final String FUNC_APPLICATION_TOGGLE = "APPLICATION_TOGGLE";
+    public static final String FUNC_INVITE_TOGGLE = "INVITE_TOGGLE";
+    public static final String FUNC_GUILD_HOME = "GUILD_HOME";
+    public static final String FUNC_RELOAD = "RELOAD";
+    public static final String FUNC_DB_MAINT = "DB_MAINT";
+    public static final String FUNC_BACKUP = "BACKUP";
+    public static final String FUNC_SAVE = "SAVE";
+    public static final String FUNC_BACK = "BACK";
+
     private final GuildPlugin plugin;
     private final Player player;
     private final LanguageManager languageManager;

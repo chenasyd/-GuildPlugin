@@ -24,6 +24,13 @@ import java.util.List;
  */
 public class GuildListGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_PREV_PAGE = "PREV_PAGE";
+    public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
+    public static final String FUNC_SEARCH = "SEARCH";
+    public static final String FUNC_FILTER = "FILTER";
+    public static final String FUNC_BACK = "BACK";
+
     private final GuildPlugin plugin;
     private final Player player;
     private final LanguageManager languageManager;

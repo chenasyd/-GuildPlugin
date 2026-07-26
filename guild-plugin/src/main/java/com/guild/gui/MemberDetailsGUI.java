@@ -27,6 +27,20 @@ import java.util.concurrent.CompletableFuture;
  */
 public class MemberDetailsGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_MEMBER_HEAD = "MEMBER_HEAD";
+    public static final String FUNC_BASIC_INFO = "BASIC_INFO";
+    public static final String FUNC_ROLE_INFO = "ROLE_INFO";
+    public static final String FUNC_TIME_INFO = "TIME_INFO";
+    public static final String FUNC_CONTRIBUTION = "CONTRIBUTION";
+    public static final String FUNC_PERM_TITLE = "PERM_TITLE";
+    public static final String FUNC_PERM_LIST = "PERM_LIST";
+    public static final String FUNC_PERM_LEVEL = "PERM_LEVEL";
+    public static final String FUNC_KICK = "KICK";
+    public static final String FUNC_PROMOTE_DEMOTE = "PROMOTE_DEMOTE";
+    public static final String FUNC_MESSAGE = "MESSAGE";
+    public static final String FUNC_BACK = "BACK";
+
     private final GuildPlugin plugin;
     private final LanguageManager languageManager;
     private final Guild guild;

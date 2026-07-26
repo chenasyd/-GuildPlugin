@@ -36,6 +36,11 @@ import com.guild.models.GuildMember;
  */
 public class MemberGuildGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_HOME_TELEPORT = "HOME_TELEPORT";
+    public static final String FUNC_GUILD_INFO = "GUILD_INFO";
+    public static final String FUNC_LEAVE_GUILD = "LEAVE_GUILD";
+
     private final GuildPlugin plugin;
     private final Guild guild;
     private final Player player;

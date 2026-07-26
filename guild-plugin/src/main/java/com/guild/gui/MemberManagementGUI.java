@@ -24,7 +24,16 @@ import com.guild.models.GuildMember;
  * 成员管理GUI
  */
 public class MemberManagementGUI implements GUI {
-    
+
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_PREV_PAGE = "PREV_PAGE";
+    public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
+    public static final String FUNC_INVITE = "INVITE";
+    public static final String FUNC_KICK = "KICK";
+    public static final String FUNC_PROMOTE = "PROMOTE";
+    public static final String FUNC_DEMOTE = "DEMOTE";
+    public static final String FUNC_BACK = "BACK";
+
     private final GuildPlugin plugin;
     private final Guild guild;
     private final Player player;

@@ -23,6 +23,11 @@ import java.util.concurrent.CompletableFuture;
  */
 public class DemoteMemberGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_PREV_PAGE = "PREV_PAGE";
+    public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
+    public static final String FUNC_BACK = "BACK";
+
     private final GuildPlugin plugin;
     private final LanguageManager languageManager;
     private final Guild guild;

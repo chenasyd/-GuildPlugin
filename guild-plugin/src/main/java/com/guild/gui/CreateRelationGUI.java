@@ -25,6 +25,15 @@ import java.util.concurrent.CompletableFuture;
  */
 public class CreateRelationGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_TYPE_SELECTOR = "TYPE_SELECTOR";
+    public static final String FUNC_CONFIRM = "CONFIRM";
+    public static final String FUNC_SELECTION = "SELECTION";
+    public static final String FUNC_PAGE_INFO = "PAGE_INFO";
+    public static final String FUNC_PREV_PAGE = "PREV_PAGE";
+    public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
+    public static final String FUNC_BACK = "BACK";
+
     private final GuildPlugin plugin;
     private final LanguageManager languageManager;
     private final Guild guild;

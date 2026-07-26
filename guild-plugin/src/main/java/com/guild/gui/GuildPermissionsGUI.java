@@ -19,6 +19,14 @@ import java.util.Arrays;
  */
 public class GuildPermissionsGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_LEADER_PERMS = "LEADER_PERMS";
+    public static final String FUNC_OFFICER_PERMS = "OFFICER_PERMS";
+    public static final String FUNC_MEMBER_PERMS = "MEMBER_PERMS";
+    public static final String FUNC_INFO = "INFO";
+    public static final String FUNC_STATUS = "STATUS";
+    public static final String FUNC_BACK = "BACK";
+
     private final GuildPlugin plugin;
     private final Guild guild;
     private final Player player;

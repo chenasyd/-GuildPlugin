@@ -26,6 +26,19 @@ import com.guild.models.GuildMember;
  */
 public class GuildDetailGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_GUILD_NAME = "GUILD_NAME";
+    public static final String FUNC_LEADER_HEAD = "LEADER_HEAD";
+    public static final String FUNC_DESCRIPTION = "DESCRIPTION";
+    public static final String FUNC_ECONOMY_INFO = "ECONOMY_INFO";
+    public static final String FUNC_PREV_PAGE = "PREV_PAGE";
+    public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
+    public static final String FUNC_FREEZE = "FREEZE";
+    public static final String FUNC_DELETE = "DELETE";
+    public static final String FUNC_TRANSFER = "TRANSFER";
+    public static final String FUNC_REFRESH = "REFRESH";
+    public static final String FUNC_BACK = "BACK";
+
     private static final int MEMBERS_PER_PAGE = 21; // 3行×7列
 
     private final GuildPlugin plugin;

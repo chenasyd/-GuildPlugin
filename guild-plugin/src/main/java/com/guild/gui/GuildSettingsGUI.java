@@ -45,6 +45,20 @@ public class GuildSettingsGUI implements GUI {
     /** GUI 类型标识符（用于扩展点注册） */
     public static final String GUI_TYPE = "GuildSettingsGUI";
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_OVERVIEW = "OVERVIEW";
+    public static final String FUNC_TEXT_EDIT = "TEXT_EDIT";
+    public static final String FUNC_SET_HOME = "SET_HOME";
+    public static final String FUNC_MEMBER_MGMT = "MEMBER_MGMT";
+    public static final String FUNC_GUILD_FUNDS = "GUILD_FUNDS";
+    public static final String FUNC_LOGS = "LOGS";
+    public static final String FUNC_HOME_TELEPORT = "HOME_TELEPORT";
+    public static final String FUNC_LEAVE = "LEAVE";
+    public static final String FUNC_DELETE = "DELETE";
+    public static final String FUNC_PREV_PAGE = "PREV_PAGE";
+    public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
+    public static final String FUNC_BACK = "BACK";
+
     /** 模块页面每页可容纳的最大按钮数（中间区域可用槽位数：7列x4行=28个） */
     private static final int MODULE_BUTTONS_PER_PAGE = 28;
 

@@ -23,6 +23,16 @@ import com.guild.core.utils.CompatibleScheduler;
  */
 public class CreateGuildGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_CURRENT_NAME = "CURRENT_NAME";
+    public static final String FUNC_CURRENT_TAG = "CURRENT_TAG";
+    public static final String FUNC_CURRENT_DESC = "CURRENT_DESC";
+    public static final String FUNC_NAME_INPUT = "NAME_INPUT";
+    public static final String FUNC_TAG_INPUT = "TAG_INPUT";
+    public static final String FUNC_DESC_INPUT = "DESC_INPUT";
+    public static final String FUNC_CONFIRM = "CONFIRM";
+    public static final String FUNC_CANCEL = "CANCEL";
+
     private final GuildPlugin plugin;
     private final Player player;
     private final LanguageManager languageManager;

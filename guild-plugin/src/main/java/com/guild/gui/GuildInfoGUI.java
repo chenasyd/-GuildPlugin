@@ -36,6 +36,15 @@ public class GuildInfoGUI implements GUI {
     /** GUI 类型标识符（用于扩展点注册） */
     public static final String GUI_TYPE = "GuildInfoGUI";
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_SUMMARY = "SUMMARY";
+    public static final String FUNC_STATS = "STATS";
+    public static final String FUNC_ECONOMY = "ECONOMY";
+    public static final String FUNC_STATUS = "STATUS";
+    public static final String FUNC_PREV_PAGE = "PREV_PAGE";
+    public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
+    public static final String FUNC_BACK = "BACK";
+
     /** 第1页模块预留槽位映射（按顺序排列） */
     private static final int[] PAGE1_MODULE_SLOTS = {
         // Row 2: 12-16 (跳过10=summary, 11=空)

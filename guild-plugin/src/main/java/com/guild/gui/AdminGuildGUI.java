@@ -21,7 +21,15 @@ import java.util.concurrent.CompletableFuture;
  * 管理员工会GUI
  */
 public class AdminGuildGUI implements GUI {
-    
+
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_GUILD_LIST_MGMT = "GUILD_LIST_MGMT";
+    public static final String FUNC_ECONOMY_MGMT = "ECONOMY_MGMT";
+    public static final String FUNC_RELATION_MGMT = "RELATION_MGMT";
+    public static final String FUNC_STATISTICS = "STATISTICS";
+    public static final String FUNC_SYSTEM_SETTINGS = "SYSTEM_SETTINGS";
+    public static final String FUNC_BACK = "BACK";
+
     private final GuildPlugin plugin;
     private final Player player;
 

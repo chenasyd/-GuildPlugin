@@ -20,8 +20,10 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.function.Function;
@@ -149,40 +151,71 @@ public class GUIManager implements Listener {
      */
     public void applyImageModeIfNeeded(Inventory inventory, String guiType) {
         if (!isImageGuiActive(guiType)) return;
-        // 有独立布局配置的 GUI（如 MainGuildGUI）由自身处理，此处跳过
-        if (imageLayoutConfig != null && imageLayoutConfig.hasLayout(guiType)) return;
 
         Material transMat = imageLayoutConfig != null
                 ? imageLayoutConfig.getTransparentMaterial() : Material.BARRIER;
         int modelData = imageLayoutConfig != null
                 ? imageLayoutConfig.getTransparentModelData() : 10001;
 
+        // 有布局配置时：精确转换配置中的槽位，保留动态内容
+        if (imageLayoutConfig != null && imageLayoutConfig.hasLayout(guiType)) {
+            // 收集布局中所有功能槽位
+            Set<Integer> layoutSlots = new HashSet<>();
+            for (List<Integer> slots : imageLayoutConfig.getLayout(guiType).values()) {
+                layoutSlots.addAll(slots);
+            }
+
+            for (int i = 0; i < inventory.getSize(); i++) {
+                ItemStack item = inventory.getItem(i);
+                if (item == null || item.getType() == Material.AIR) continue;
+
+                // 移除所有填充物（玻璃板类）
+                if (isFillerItem(item.getType())) {
+                    inventory.setItem(i, null);
+                    continue;
+                }
+
+                // 仅转换布局配置中的功能槽位为透明载体
+                if (layoutSlots.contains(i)) {
+                    inventory.setItem(i, toTransparentCarrier(item, transMat, modelData));
+                }
+                // 其余槽位（动态查询内容）保持原样
+            }
+            return;
+        }
+
+        // 无布局配置时的回退行为：转换所有非填充物品
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack item = inventory.getItem(i);
             if (item == null || item.getType() == Material.AIR) continue;
 
-            // 移除填充物（玻璃板类）
             if (isFillerItem(item.getType())) {
                 inventory.setItem(i, null);
                 continue;
             }
 
-            // 转换为透明载体（保留名称和 lore）
-            ItemStack transparent = new ItemStack(transMat);
-            org.bukkit.inventory.meta.ItemMeta oldMeta = item.getItemMeta();
-            org.bukkit.inventory.meta.ItemMeta newMeta = transparent.getItemMeta();
-            if (oldMeta != null && newMeta != null) {
-                if (oldMeta.hasDisplayName()) {
-                    newMeta.setDisplayName(oldMeta.getDisplayName());
-                }
-                if (oldMeta.hasLore()) {
-                    newMeta.setLore(oldMeta.getLore());
-                }
-                newMeta.setCustomModelData(modelData);
-                transparent.setItemMeta(newMeta);
-            }
-            inventory.setItem(i, transparent);
+            inventory.setItem(i, toTransparentCarrier(item, transMat, modelData));
         }
+    }
+
+    /**
+     * 将物品转换为透明载体（保留名称和 lore）。
+     */
+    private ItemStack toTransparentCarrier(ItemStack original, Material transMat, int modelData) {
+        ItemStack transparent = new ItemStack(transMat);
+        org.bukkit.inventory.meta.ItemMeta oldMeta = original.getItemMeta();
+        org.bukkit.inventory.meta.ItemMeta newMeta = transparent.getItemMeta();
+        if (oldMeta != null && newMeta != null) {
+            if (oldMeta.hasDisplayName()) {
+                newMeta.setDisplayName(oldMeta.getDisplayName());
+            }
+            if (oldMeta.hasLore()) {
+                newMeta.setLore(oldMeta.getLore());
+            }
+            newMeta.setCustomModelData(modelData);
+            transparent.setItemMeta(newMeta);
+        }
+        return transparent;
     }
 
     /**
