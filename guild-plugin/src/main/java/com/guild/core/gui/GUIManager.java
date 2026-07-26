@@ -3,6 +3,7 @@ package com.guild.core.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.hook.ImagoCoreHook;
 import com.guild.core.hook.ImagoGuiConfig;
+import com.guild.core.gui.layout.GuiImageLayoutConfig;
 import com.guild.gui.GuildNameInputGUI;
 import org.a.imagoCore.image.display.gui.GuiTitleRenderer;
 import org.bukkit.Bukkit;
@@ -41,6 +42,7 @@ public class GUIManager implements Listener {
     // ImagoCore integration (null if not available)
     private ImagoCoreHook imagoHook;
     private ImagoGuiConfig imagoConfig;
+    private GuiImageLayoutConfig imageLayoutConfig;
     
     public GUIManager(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -57,6 +59,10 @@ public class GUIManager implements Listener {
 
         this.imagoConfig = new ImagoGuiConfig(plugin.getDataFolder(), logger);
         this.imagoConfig.load();
+
+        // 图像布局配置（独立于 ImagoCore 是否存在）
+        this.imageLayoutConfig = new GuiImageLayoutConfig(plugin.getDataFolder(), logger);
+        this.imageLayoutConfig.load();
 
         if (!imagoConfig.isEnabled()) {
             logger.info("[ImagoCore] Integration disabled in imago-gui.yml");
@@ -82,6 +88,31 @@ public class GUIManager implements Listener {
     public void reloadImagoConfig() {
         // 完整重新初始化（内部会先清除旧 hook）
         initializeImagoHook();
+    }
+
+    /**
+     * 检查指定 GUI 是否处于图像布局模式。
+     * 条件：ImagoCore 已连接 + enabled + 有绑定 + 有布局配置。
+     *
+     * @param guiType GUI 类型名（如 "MainGuildGUI"）
+     * @return true 表示该 GUI 应使用图像布局（透明载体 + 多槽位）
+     */
+    public boolean isImageLayoutActive(String guiType) {
+        return imagoHook != null
+                && imagoConfig != null
+                && imagoConfig.isEnabled()
+                && imagoConfig.hasConfig(guiType)
+                && imageLayoutConfig != null
+                && imageLayoutConfig.hasLayout(guiType);
+    }
+
+    /**
+     * 获取图像布局配置实例。
+     *
+     * @return 布局配置，若未初始化则返回 null
+     */
+    public GuiImageLayoutConfig getImageLayoutConfig() {
+        return imageLayoutConfig;
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.guild.gui;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,14 +13,30 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.gui.layout.GuiImageLayoutConfig;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 
 /**
- * 主工会GUI - 六个主要入口
+ * 主工会GUI - 七个主要入口
+ *
+ * <p>支持两种渲染模式：
+ * <ul>
+ *   <li><b>标准模式</b>：使用物品图标 + 玻璃板边框</li>
+ *   <li><b>图像模式</b>：ImagoCore 背景图 + 透明载体物品（多槽位按钮）</li>
+ * </ul>
  */
 public class MainGuildGUI implements GUI {
+
+    // ── 功能常量（对应 gui-image-layout.yml 中的键名）──────────
+    public static final String FUNC_CREATE_GUILD = "CREATE_GUILD";
+    public static final String FUNC_GUILD_INFO = "GUILD_INFO";
+    public static final String FUNC_MEMBER_MANAGE = "MEMBER_MANAGE";
+    public static final String FUNC_APPLICATION_MANAGE = "APPLICATION_MANAGE";
+    public static final String FUNC_GUILD_SETTINGS = "GUILD_SETTINGS";
+    public static final String FUNC_GUILD_LIST = "GUILD_LIST";
+    public static final String FUNC_GUILD_RELATIONS = "GUILD_RELATIONS";
 
     private final GuildPlugin plugin;
     private final Player player;
@@ -42,6 +60,13 @@ public class MainGuildGUI implements GUI {
     
     @Override
     public void setupInventory(Inventory inventory) {
+        // 图像布局模式：透明载体 + 多槽位
+        if (plugin.getGuiManager().isImageLayoutActive(getGuiType())) {
+            setupImageLayout(inventory);
+            return;
+        }
+
+        // ── 标准模式（原始行为）──────────────────────────────────
         // 填充边框
         fillBorder(inventory);
 
@@ -108,9 +133,102 @@ public class MainGuildGUI implements GUI {
         );
         inventory.setItem(4, createGuild);
     }
+
+    /**
+     * 图像布局模式：使用透明载体物品填充配置的功能槽位。
+     * 不填充边框和背景（由 ImagoCore 图片标题渲染）。
+     */
+    private void setupImageLayout(Inventory inventory) {
+        GuiImageLayoutConfig layoutConfig = plugin.getGuiManager().getImageLayoutConfig();
+        Material mat = layoutConfig.getTransparentMaterial();
+        int modelData = layoutConfig.getTransparentModelData();
+
+        // 为每个功能创建透明载体物品并填充到配置的槽位
+        placeTransparentFunction(inventory, mat, modelData, FUNC_CREATE_GUILD,
+                "gui.main-menu.create-guild.name", "&aCreate Guild",
+                new String[]{"gui.main-menu.create-guild.lore.1", "gui.main-menu.create-guild.lore.2"},
+                new String[]{"&7Create a new guild", "&7Requires coins"});
+
+        placeTransparentFunction(inventory, mat, modelData, FUNC_GUILD_INFO,
+                "gui.main-menu.guild-info.name", "&eGuild Info",
+                new String[]{"gui.main-menu.guild-info.lore.1", "gui.main-menu.guild-info.lore.2"},
+                new String[]{"&7View detailed guild information", "&7Including basic info, statistics, etc."});
+
+        placeTransparentFunction(inventory, mat, modelData, FUNC_MEMBER_MANAGE,
+                "gui.main-menu.member-management.name", "&eMember Management",
+                new String[]{"gui.main-menu.member-management.lore.1", "gui.main-menu.member-management.lore.2"},
+                new String[]{"&7Manage guild members", "&7Invite, kick, permission management"});
+
+        placeTransparentFunction(inventory, mat, modelData, FUNC_APPLICATION_MANAGE,
+                "gui.main-menu.application-management.name", "&eApplication Management",
+                new String[]{"gui.main-menu.application-management.lore.1", "gui.main-menu.application-management.lore.2"},
+                new String[]{"&7Handle join applications", "&7View application history"});
+
+        placeTransparentFunction(inventory, mat, modelData, FUNC_GUILD_SETTINGS,
+                "gui.main-menu.guild-settings.name", "&eGuild Settings",
+                new String[]{"gui.main-menu.guild-settings.lore.1", "gui.main-menu.guild-settings.lore.2"},
+                new String[]{"&7Modify guild settings", "&7Description, tag, permissions, etc."});
+
+        placeTransparentFunction(inventory, mat, modelData, FUNC_GUILD_LIST,
+                "gui.main-menu.guild-list.name", "&eGuild List",
+                new String[]{"gui.main-menu.guild-list.lore.1", "gui.main-menu.guild-list.lore.2"},
+                new String[]{"&7View all guilds", "&7Search, filter functions"});
+
+        placeTransparentFunction(inventory, mat, modelData, FUNC_GUILD_RELATIONS,
+                "gui.main-menu.guild-relations.name", "&eGuild Relations",
+                new String[]{"gui.main-menu.guild-relations.lore.1", "gui.main-menu.guild-relations.lore.2"},
+                new String[]{"&7Manage guild relations", "&7Allies, enemies, etc."});
+    }
+
+    /**
+     * 在配置的所有槽位放置透明载体物品（携带功能名称和描述）。
+     */
+    private void placeTransparentFunction(Inventory inventory, Material mat, int modelData,
+                                           String funcName, String nameKey, String defaultName,
+                                           String[] loreKeys, String[] defaultLores) {
+        GuiImageLayoutConfig layoutConfig = plugin.getGuiManager().getImageLayoutConfig();
+        List<Integer> slots = layoutConfig.getSlots(getGuiType(), funcName);
+        if (slots.isEmpty()) return;
+
+        // 构建物品名称和描述
+        String displayName = ColorUtils.colorize(
+                languageManager.getGuiMessage(player, nameKey, defaultName));
+        String[] loreLines = new String[loreKeys.length];
+        for (int i = 0; i < loreKeys.length; i++) {
+            loreLines[i] = ColorUtils.colorize(
+                    languageManager.getGuiMessage(player, loreKeys[i], defaultLores[i]));
+        }
+
+        // 创建透明载体物品
+        ItemStack item = new ItemStack(mat);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(displayName);
+            meta.setLore(Arrays.asList(loreLines));
+            meta.setCustomModelData(modelData);
+            item.setItemMeta(meta);
+        }
+
+        // 填充到所有配置的槽位
+        for (int slot : slots) {
+            if (slot >= 0 && slot < inventory.getSize()) {
+                inventory.setItem(slot, item.clone());
+            }
+        }
+    }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
+        // 图像布局模式：通过配置反查功能
+        if (plugin.getGuiManager().isImageLayoutActive(getGuiType())) {
+            GuiImageLayoutConfig layoutConfig = plugin.getGuiManager().getImageLayoutConfig();
+            String func = layoutConfig.getFunctionAtSlot(getGuiType(), slot);
+            if (func == null) return;
+            dispatchFunction(player, func);
+            return;
+        }
+
+        // ── 标准模式（原始行为）──────────────────────────────────
         switch (slot) {
             case 20: // 工会信息
                 openGuildInfoGUI(player);
@@ -133,6 +251,21 @@ public class MainGuildGUI implements GUI {
             case 4: // 创建工会
                 openCreateGuildGUI(player);
                 break;
+        }
+    }
+
+    /**
+     * 根据功能常量分发点击事件（图像布局模式使用）。
+     */
+    private void dispatchFunction(Player player, String func) {
+        switch (func) {
+            case FUNC_CREATE_GUILD -> openCreateGuildGUI(player);
+            case FUNC_GUILD_INFO -> openGuildInfoGUI(player);
+            case FUNC_MEMBER_MANAGE -> openMemberManagementGUI(player);
+            case FUNC_APPLICATION_MANAGE -> openApplicationManagementGUI(player);
+            case FUNC_GUILD_SETTINGS -> openGuildSettingsGUI(player);
+            case FUNC_GUILD_LIST -> openGuildListGUI(player);
+            case FUNC_GUILD_RELATIONS -> openGuildRelationsGUI(player);
         }
     }
     
