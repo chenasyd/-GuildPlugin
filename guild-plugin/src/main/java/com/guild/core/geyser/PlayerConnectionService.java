@@ -122,6 +122,69 @@ public final class PlayerConnectionService {
         return BedrockGUIAdapter.adapt(player, originalClick);
     }
 
+    // ── Detection with Logging ────────────────────────────────────
+
+    /**
+     * 执行完整的连接类型检测链并逐步输出日志。
+     * <p>
+     * 依次检查 BungeeClientAPI 缓存 → GeyserAPI 反射检测 → 默认 Java，
+     * 每一步均输出到控制台（INFO）以便观察检测过程。
+     *
+     * @param player 加入服务器的玩家
+     * @return 检测结果 ConnectionInfo
+     */
+    public static ConnectionInfo detectAndLog(Player player) {
+        UUID uuid = player.getUniqueId();
+        String name = player.getName();
+
+        logger.info("[PlayerConnection] === 检测开始: " + name + " (" + uuid + ") ===");
+
+        // ── Step 1: BungeeClientAPI 缓存 ──
+        if (BungeeClientAPI.isInitialized()) {
+            BungeeClientAPI.PlayerConnectionInfo bungeeInfo = BungeeClientAPI.getConnectionInfo(uuid);
+            if (bungeeInfo != null) {
+                logger.info("[PlayerConnection] [1/2] BungeeClientAPI: 命中缓存"
+                        + " → type=" + bungeeInfo.getConnectionType()
+                        + ", platform=" + bungeeInfo.getPlatform()
+                        + ", inputMode=" + bungeeInfo.getInputMode());
+                ConnectionInfo result = new ConnectionInfo(uuid, name,
+                        bungeeInfo.isBedrock(), bungeeInfo.getPlatform(),
+                        bungeeInfo.getInputMode(), Source.BUNGEE);
+                logger.info("[PlayerConnection] [结果] " + name + " → "
+                        + (result.isBedrock() ? "BEDROCK" : "JAVA")
+                        + " (来源: BungeeCord 代理推送)");
+                return result;
+            } else {
+                logger.info("[PlayerConnection] [1/2] BungeeClientAPI: 已初始化但无该玩家缓存"
+                        + "（代理尚未推送连接信息）");
+            }
+        } else {
+            logger.info("[PlayerConnection] [1/2] BungeeClientAPI: 未初始化（跳过代理检测）");
+        }
+
+        // ── Step 2: GeyserAPI 反射检测 ──
+        if (GeyserAPI.isAvailable()) {
+            boolean bedrock = GeyserAPI.isBedrockPlayer(uuid);
+            logger.info("[PlayerConnection] [2/2] GeyserAPI: "
+                    + (bedrock ? "检测到基岩版连接 ✓" : "未检测到基岩版连接"));
+            if (bedrock) {
+                ConnectionInfo result = new ConnectionInfo(uuid, name,
+                        true, null, null, Source.GEYSER_LOCAL);
+                logger.info("[PlayerConnection] [结果] " + name + " → BEDROCK"
+                        + " (来源: 本服 Geyser 反射检测)");
+                return result;
+            }
+        } else {
+            logger.info("[PlayerConnection] [2/2] GeyserAPI: 不可用（跳过本地检测）");
+        }
+
+        // ── Step 3: 默认 Java ──
+        ConnectionInfo result = new ConnectionInfo(uuid, name,
+                false, null, null, Source.NONE);
+        logger.info("[PlayerConnection] [结果] " + name + " → JAVA (无检测源命中，默认 Java 版)");
+        return result;
+    }
+
     // ── Cache Management ─────────────────────────────────────────
 
     /**

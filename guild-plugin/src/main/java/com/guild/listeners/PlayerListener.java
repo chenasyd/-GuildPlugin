@@ -44,10 +44,20 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        UUID uuid = player.getUniqueId();
 
-        // 预热玩家连接类型缓存（GeyserAPI 反射检测 + Bungee 推送接收）
-        PlayerConnectionService.onPlayerJoin(uuid);
+        // 检测玩家连接类型并输出完整检测链日志（同时预热 GeyserAPI 缓存）
+        PlayerConnectionService.ConnectionInfo connInfo = PlayerConnectionService.detectAndLog(player);
+
+        // 写入文件日志
+        if (plugin.getFileLogger() != null) {
+            String type = connInfo.isBedrock() ? "BEDROCK" : "JAVA";
+            String detail = String.format("玩家 %s (%s) 加入服务器 → %s, 来源: %s%s%s",
+                    connInfo.getName(), connInfo.getUuid(),
+                    type, connInfo.getSource(),
+                    connInfo.getPlatform() != null ? ", 平台: " + connInfo.getPlatform() : "",
+                    connInfo.getInputMode() != null ? ", 输入: " + connInfo.getInputMode() : "");
+            plugin.getFileLogger().logSystem(detail);
+        }
 
         // 检查工会战争状态
         checkWarStatus(player);
