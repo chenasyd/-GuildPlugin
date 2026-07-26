@@ -271,6 +271,12 @@ public class GUIManager implements Listener {
             
             // 记录打开的GUI
             openGuis.put(player.getUniqueId(), gui);
+
+            // 文件日志：记录 GUI 打开操作
+            if (plugin.getFileLogger() != null) {
+                plugin.getFileLogger().logGui(player.getName(),
+                        "打开 " + gui.getGuiType());
+            }
             
             if (isDebugEnabled()) {
                 logger.info("Player " + player.getName() + " opened GUI: " + gui.getClass().getSimpleName());
@@ -412,6 +418,12 @@ public class GUIManager implements Listener {
                 if (isDebugEnabled()) {
                     logger.info("Player " + player.getName() + " clicked GUI: " + gui.getClass().getSimpleName() + " slot: " + slot);
                 }
+
+            // 文件日志：记录 GUI 点击操作
+            if (plugin.getFileLogger() != null) {
+                plugin.getFileLogger().logGui(player.getName(),
+                        "点击 " + gui.getGuiType() + " slot=" + slot);
+            }
             
             // 处理所有点击，包括空物品的点击
             gui.onClick(player, slot, clickedItem, event.getClick());

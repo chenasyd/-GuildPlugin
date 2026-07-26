@@ -48,6 +48,13 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         
+        // 记录管理指令到文件日志
+        if (plugin.getFileLogger() != null) {
+            String sourceName = (sender instanceof Player) ? ((Player) sender).getName() : "Console";
+            plugin.getFileLogger().logAdmin(sourceName, 
+                "/" + command.getName() + " " + String.join(" ", args));
+        }
+        
         if (args.length == 0) {
             if (sender instanceof Player player) {
                 // 打开管理员GUI

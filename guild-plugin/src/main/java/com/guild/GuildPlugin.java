@@ -22,6 +22,7 @@ import com.guild.core.gui.GUI;
 import com.guild.core.geyser.GeyserAPI;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.PluginFileLogger;
 import com.guild.core.utils.ServerUtils;
 import com.guild.core.utils.TestUtils;
 import com.guild.metrics.GuildMetrics;
@@ -53,6 +54,7 @@ public class GuildPlugin extends JavaPlugin {
     private GuildMetrics guildMetrics;
     private UpdateManager updateManager;
     private UpdateChecker updateChecker;
+    private PluginFileLogger fileLogger;
     // 等级需求配置（key = 当前等级 -> 所需金额达到下一等级）
     private Map<Integer, Double> levelRequirements = new HashMap<>();
     private int maxGuildLevel = 10;
@@ -84,6 +86,11 @@ public class GuildPlugin extends JavaPlugin {
             // 初始化配置管理器
             configManager = new ConfigManager(this);
             serviceContainer.register(ConfigManager.class, configManager);
+
+            // 初始化文件日志管理器（创建 logs/ 目录，按日分割日志文件）
+            fileLogger = new PluginFileLogger(getDataFolder(), getLogger());
+            fileLogger.logSystem("插件启动中... 服务器类型: " + ServerUtils.getServerType()
+                    + ", 版本: " + ServerUtils.getServerVersion());
             
             // 初始化数据库管理器
             databaseManager = new DatabaseManager(this);
@@ -173,6 +180,10 @@ public class GuildPlugin extends JavaPlugin {
             
             logger.info("Guild Plugin started successfully!");
             logger.info("Compatibility mode: " + (ServerUtils.isFolia() ? "Folia" : "Spigot"));
+            if (fileLogger != null) {
+                fileLogger.logSystem("插件启动完成 (兼容模式: "
+                        + (ServerUtils.isFolia() ? "Folia" : "Spigot") + ")");
+            }
             
         } catch (Exception e) {
             logger.severe("Guild Plugin failed to start: " + e.getMessage());
@@ -207,6 +218,12 @@ public class GuildPlugin extends JavaPlugin {
             // 卸载所有扩展模块
             if (moduleManager != null) {
                 moduleManager.unloadAllModules();
+            }
+
+            // 关闭文件日志管理器
+            if (fileLogger != null) {
+                fileLogger.logSystem("插件关闭中...");
+                fileLogger.shutdown();
             }
 
             logger.info("Guild Plugin has been shut down");
@@ -330,6 +347,10 @@ public class GuildPlugin extends JavaPlugin {
 
     public UpdateManager getUpdateManager() {
         return updateManager;
+    }
+
+    public PluginFileLogger getFileLogger() {
+        return fileLogger;
     }
 
     /**

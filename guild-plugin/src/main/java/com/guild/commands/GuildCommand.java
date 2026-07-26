@@ -57,6 +57,12 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         
+        // 记录玩家指令到文件日志
+        if (plugin.getFileLogger() != null) {
+            plugin.getFileLogger().logCommand(player.getName(), 
+                "/" + command.getName() + " " + String.join(" ", args));
+        }
+        
         if (args.length == 0) {
             // 打开主GUI
             MainGuildGUI mainGuildGUI = new MainGuildGUI(plugin, player);

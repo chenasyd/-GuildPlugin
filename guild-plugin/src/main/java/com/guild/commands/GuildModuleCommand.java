@@ -12,6 +12,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.util.Arrays;
@@ -38,6 +39,13 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(ColorUtils.colorize(plugin.getLanguageManager()
                     .getCoreMessage("command.no-permission", "")));
             return true;
+        }
+
+        // 记录管理指令到文件日志
+        if (plugin.getFileLogger() != null) {
+            String sourceName = (sender instanceof Player) ? ((Player) sender).getName() : "Console";
+            plugin.getFileLogger().logAdmin(sourceName, 
+                "/" + command.getName() + " " + String.join(" ", args));
         }
 
         if (args.length == 0) {
