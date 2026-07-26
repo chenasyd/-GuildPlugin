@@ -60,8 +60,11 @@ public class GuildPermissionsGUI implements GUI {
         
         // 添加返回按钮
         setupButtons(inventory);
+
+        // 应用图像模式
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
-    
+
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot == 49) {

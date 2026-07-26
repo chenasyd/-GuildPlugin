@@ -72,6 +72,7 @@ layouts:
     MEMBER_MGMT: [15]
     GUILD_FUNDS: [28]
     LOGS: [31]
+    RESERVED: [29]
     HOME_TELEPORT: [33]
     LEAVE: [34]
     DELETE: [36]
@@ -287,3 +288,19 @@ layouts:
     PAGE_INFO: [49]
     NEXT_PAGE: [50]
     REFRESH: [52]
+
+  # ── 输入 GUI ──
+  GuildNameInputGUI:
+    CURRENT_NAME: [11]
+    CANCEL: [13]
+    CONFIRM: [15]
+
+  GuildDescriptionInputGUI:
+    CURRENT_DESC: [11]
+    CANCEL: [13]
+    CONFIRM: [15]
+
+  GuildTagInputGUI:
+    CURRENT_TAG: [11]
+    CANCEL: [13]
+    CONFIRM: [15]

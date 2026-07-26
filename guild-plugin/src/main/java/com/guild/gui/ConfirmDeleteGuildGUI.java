@@ -66,6 +66,8 @@ public class ConfirmDeleteGuildGUI implements GUI {
         
         // 添加确认和取消按钮
         setupButtons(inventory);
+
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
     
     @Override

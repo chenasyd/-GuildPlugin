@@ -182,6 +182,7 @@ public class ApplicationManagementGUI implements GUI {
                 
                 // 显示当前页的申请
                 displayApplications(inventory, applications);
+                plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
             });
         });
     }
@@ -215,6 +216,7 @@ public class ApplicationManagementGUI implements GUI {
                 
                 // 显示当前页的申请
                 displayApplications(inventory, applications);
+                plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
             });
         });
     }

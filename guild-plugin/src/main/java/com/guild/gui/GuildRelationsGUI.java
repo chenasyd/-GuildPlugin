@@ -78,10 +78,10 @@ public class GuildRelationsGUI implements GUI {
                 
                 // 添加分页按钮
                 addPaginationButtons(inventory);
+
+                plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
             });
         });
-
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
     
     @Override

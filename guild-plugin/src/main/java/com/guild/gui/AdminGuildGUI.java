@@ -105,6 +105,8 @@ public class AdminGuildGUI implements GUI {
             ColorUtils.colorize("&7" + plugin.getLanguageManager().getGuiMessage(player, "gui.common.back-to-main-menu", "返回主菜单"))
         );
         inventory.setItem(49, back);
+
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
     
     @Override

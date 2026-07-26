@@ -20,6 +20,11 @@ import java.util.Arrays;
  */
 public class GuildDescriptionInputGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_CURRENT_DESC = "CURRENT_DESC";
+    public static final String FUNC_CONFIRM = "CONFIRM";
+    public static final String FUNC_CANCEL = "CANCEL";
+
     private final GuildPlugin plugin;
     private final Guild guild;
     private final Player player;
@@ -55,6 +60,9 @@ public class GuildDescriptionInputGUI implements GUI {
         
         // 添加操作按钮
         setupButtons(inventory);
+
+        // 应用图像模式
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
     
     @Override

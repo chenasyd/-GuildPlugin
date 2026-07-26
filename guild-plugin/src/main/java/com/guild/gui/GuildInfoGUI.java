@@ -280,6 +280,9 @@ public class GuildInfoGUI implements GUI {
                     ColorUtils.colorize("&e" + plugin.getLanguageManager().getGuiMessage(player, "gui.guild-info.funds-hint", "单击查看成员存款详情"))
                 );
                 inventory.setItem(28, updatedEconomy);
+
+                // 异步刷新后重新应用图像模式（将新放置的物品转换为透明载体）
+                plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
             });
         });
     }

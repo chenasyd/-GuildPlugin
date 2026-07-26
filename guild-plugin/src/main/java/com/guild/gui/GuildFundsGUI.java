@@ -96,10 +96,9 @@ public class GuildFundsGUI implements GUI {
                     inventory.setItem(22, error);
                     setupBasicNav(inventory);
                 }
+                plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
             });
         });
-
-        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
 
     @Override

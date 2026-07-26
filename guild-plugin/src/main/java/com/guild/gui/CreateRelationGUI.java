@@ -90,6 +90,9 @@ public class CreateRelationGUI implements GUI {
                 
                 // 添加分页按钮
                 addPaginationButtons(inventory);
+
+                // 应用图像模式
+                plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
             });
         });
     }

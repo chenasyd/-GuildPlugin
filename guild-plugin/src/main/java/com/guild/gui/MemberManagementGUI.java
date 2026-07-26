@@ -191,6 +191,7 @@ public class MemberManagementGUI implements GUI {
                     slotIndex += 2;
                 }
             }
+            plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
         });
     }
     

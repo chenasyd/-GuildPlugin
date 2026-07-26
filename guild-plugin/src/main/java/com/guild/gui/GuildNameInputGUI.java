@@ -21,6 +21,11 @@ import java.util.concurrent.CompletableFuture;
  */
 public class GuildNameInputGUI implements GUI {
 
+    // ── 图像模式功能常量 ──
+    public static final String FUNC_CURRENT_NAME = "CURRENT_NAME";
+    public static final String FUNC_CONFIRM = "CONFIRM";
+    public static final String FUNC_CANCEL = "CANCEL";
+
     private final GuildPlugin plugin;
     private final Guild guild;
     private final Player player;
@@ -56,6 +61,9 @@ public class GuildNameInputGUI implements GUI {
         
         // 添加操作按钮
         setupButtons(inventory);
+
+        // 应用图像模式
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
     
     @Override

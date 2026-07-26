@@ -52,6 +52,7 @@ public class GuildSettingsGUI implements GUI {
     public static final String FUNC_MEMBER_MGMT = "MEMBER_MGMT";
     public static final String FUNC_GUILD_FUNDS = "GUILD_FUNDS";
     public static final String FUNC_LOGS = "LOGS";
+    public static final String FUNC_RESERVED = "RESERVED";
     public static final String FUNC_HOME_TELEPORT = "HOME_TELEPORT";
     public static final String FUNC_LEAVE = "LEAVE";
     public static final String FUNC_DELETE = "DELETE";

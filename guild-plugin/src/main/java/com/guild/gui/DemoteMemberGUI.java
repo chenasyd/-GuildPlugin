@@ -75,8 +75,11 @@ public class DemoteMemberGUI implements GUI {
         
         // 添加导航按钮
         setupNavigationButtons(inventory);
+
+        // 应用图像模式
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
-    
+
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         // 检查是否是成员槽位

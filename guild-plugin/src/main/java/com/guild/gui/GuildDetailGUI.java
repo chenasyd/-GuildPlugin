@@ -85,6 +85,8 @@ public class GuildDetailGUI implements GUI {
         
         // 设置操作按钮
         setupActionButtons(inventory);
+
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
     
     private void setupGuildInfo(Inventory inventory) {

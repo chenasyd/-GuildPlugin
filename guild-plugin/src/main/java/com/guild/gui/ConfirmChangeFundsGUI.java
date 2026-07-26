@@ -109,6 +109,8 @@ public class ConfirmChangeFundsGUI implements GUI {
                         "gui.confirm-funds.cancel", "取消")),
                 ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
                         "gui.confirm-funds.cancel-desc", "取消变更"))));
+
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
 
     @Override

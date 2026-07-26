@@ -604,7 +604,8 @@ public class GUIManager implements Listener {
             if ("guild_name_input".equals(mode) && gui instanceof GuildNameInputGUI) {
                 GuildNameInputGUI nameInputGUI = (GuildNameInputGUI) gui;
                 inputModes.put(player.getUniqueId(), input -> {
-                    if ("Cancel".equals(input.trim())) {
+                    String trimmed = input.trim();
+                    if ("取消".equals(trimmed) || "Cancel".equalsIgnoreCase(trimmed)) {
                         nameInputGUI.handleCancel(player);
                         return true;
                     }

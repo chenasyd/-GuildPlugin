@@ -86,6 +86,9 @@ public class RelationManagementGUI implements GUI {
         
         // 设置操作按钮
         setupActionButtons(inventory);
+
+        // 应用图像模式
+        plugin.getGuiManager().applyImageModeIfNeeded(inventory, getGuiType());
     }
     
     private void setupRelationList(Inventory inventory) {
