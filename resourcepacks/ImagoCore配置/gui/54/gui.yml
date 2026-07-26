@@ -11,3 +11,8 @@ entries:
     ascent: 13
     height: 254
     shift_x: -9
+  guildinfogui:
+    texture: guildinfogui.png
+    ascent: 13
+    height: 254
+    shift_x: -9
