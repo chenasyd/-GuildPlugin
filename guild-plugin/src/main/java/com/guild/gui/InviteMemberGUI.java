@@ -193,7 +193,7 @@ public class InviteMemberGUI implements GUI {
 
         // 返回按钮
         ItemStack back = createItem(
-            Material.BARRIER,
+            Material.ARROW,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "&c返回")),
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.invite-member.back-to-settings", "&7返回工会设置"))
         );
