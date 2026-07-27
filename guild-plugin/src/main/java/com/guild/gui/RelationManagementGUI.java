@@ -416,17 +416,17 @@ public class RelationManagementGUI implements GUI {
 
     private void showRelationDetails(Player player, GuildRelation relation) {
         player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.title", "&6=== 关系详情 ===")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.type", "&e关系类型: {0}", getRelationTypeName(relation.getType()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.status", "&e状态: {0}", getRelationStatus(relation.getStatus()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.guild1", "&e工会1: {0} (ID: {1})", relation.getGuild1Name(), String.valueOf(relation.getGuild1Id()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.guild2", "&e工会2: {0} (ID: {1})", relation.getGuild2Name(), String.valueOf(relation.getGuild2Id()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.initiator", "&e发起人: {0}", relation.getInitiatorName())));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.created", "&e创建时间: {0}", formatDateTime(relation.getCreatedAt()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.type", "&e关系类型: {0}", getRelationTypeName(relation.getType()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.status", "&e状态: {0}", getRelationStatus(relation.getStatus()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.guild1", "&e工会1: {0} (ID: {1})", relation.getGuild1Name(), String.valueOf(relation.getGuild1Id()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.guild2", "&e工会2: {0} (ID: {1})", relation.getGuild2Name(), String.valueOf(relation.getGuild2Id()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.initiator", "&e发起人: {0}", relation.getInitiatorName())));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.created", "&e创建时间: {0}", formatDateTime(relation.getCreatedAt()))));
         if (relation.getUpdatedAt() != null) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.updated", "&e更新时间: {0}", formatDateTime(relation.getUpdatedAt()))));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.updated", "&e更新时间: {0}", formatDateTime(relation.getUpdatedAt()))));
         }
         if (relation.getExpiresAt() != null) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.expires", "&e过期时间: {0}", formatDateTime(relation.getExpiresAt()))));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.expires", "&e过期时间: {0}", formatDateTime(relation.getExpiresAt()))));
         }
         player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.separator", "&6==================")));
     }
