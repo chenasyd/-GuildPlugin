@@ -247,7 +247,6 @@ public class GuildPlugin extends JavaPlugin {
         GuildCommand guildCommand = new GuildCommand(this);
         GuildAdminCommand guildAdminCommand = new GuildAdminCommand(this);
         GuildModuleCommand guildModuleCommand = new GuildModuleCommand(this);
-        BedrockFormTestCommand bedrockFormTestCommand = new BedrockFormTestCommand(this);
         
         getCommand("guild").setExecutor(guildCommand);
         getCommand("guild").setTabCompleter(guildCommand);
@@ -255,8 +254,13 @@ public class GuildPlugin extends JavaPlugin {
         getCommand("guildadmin").setTabCompleter(guildAdminCommand);
         getCommand("guildmodule").setExecutor(guildModuleCommand);
         getCommand("guildmodule").setTabCompleter(guildModuleCommand);
-        getCommand("bformtest").setExecutor(bedrockFormTestCommand);
-        getCommand("bformtest").setTabCompleter(bedrockFormTestCommand);
+
+        // 仅在 Geyser/Cumulus 可用时注册基岩表单测试指令（避免 NoClassDefFoundError）
+        if (BedrockFormSender.isAvailable()) {
+            BedrockFormTestCommand bedrockFormTestCommand = new BedrockFormTestCommand(this);
+            getCommand("bformtest").setExecutor(bedrockFormTestCommand);
+            getCommand("bformtest").setTabCompleter(bedrockFormTestCommand);
+        }
     }
     
     private void registerListeners() {
