@@ -16,9 +16,12 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.module.hook.GUIExtensionHook;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PlaceholderUtils;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import com.guild.models.Guild;
 
 /**
@@ -106,7 +109,60 @@ public class GuildInfoGUI implements GUI {
     public int getSize() {
         return 54;
     }
-    
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+
+        // 异步获取成员数量后构建表单
+        plugin.getGuildService().getGuildMemberCountAsync(guild.getId()).thenAccept(memberCount -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (!player.isOnline()) return;
+
+                String createdTime = guild.getCreatedAt() != null
+                        ? guild.getCreatedAt().format(com.guild.core.time.TimeProvider.FULL_FORMATTER)
+                        : "未知";
+                String tagText = guild.getTag() != null ? "[" + guild.getTag() + "]" : "无";
+                String statusText = guild.isFrozen() ? "§c已冻结" : "§a正常";
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("§6").append(guild.getName()).append("\n");
+                sb.append("§f标签: §e").append(tagText).append("\n");
+                if (guild.getDescription() != null && !guild.getDescription().isEmpty()) {
+                    sb.append("§f描述: ").append(guild.getDescription()).append("\n");
+                }
+                sb.append("§f会长: §e").append(guild.getLeaderName()).append("\n");
+                sb.append("§f创建时间: ").append(createdTime).append("\n");
+                sb.append("§f等级: §e").append(guild.getLevel()).append("\n");
+                sb.append("§f成员: §e").append(memberCount).append("/")
+                        .append(guild.getMaxMembers()).append("\n");
+                sb.append("§f资金: §a")
+                        .append(plugin.getEconomyManager().format(guild.getBalance())).append("\n");
+                sb.append("§f下级所需: ").append(getNextLevelRequirement(guild.getLevel())).append("\n");
+                sb.append("§f状态: ").append(statusText);
+
+                SimpleForm form = SimpleForm.builder()
+                        .title("§6工会信息")
+                        .content(sb.toString())
+                        .button("§a工会资金")
+                        .button("§c返回主菜单")
+                        .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                            switch (response.clickedButtonId()) {
+                                case 0 -> plugin.getGuiManager().openGUI(player,
+                                        new GuildFundsGUI(plugin, guild, player, 0, "GuildInfoGUI"));
+                                case 1 -> plugin.getGuiManager().openGUI(player,
+                                        new MainGuildGUI(plugin, player));
+                            }
+                        }))
+                        .build();
+
+                BedrockFormSender.sendForm(player.getUniqueId(), form);
+            });
+        });
+
+        return true; // 异步处理，已接管
+    }
+
     @Override
     public void setupInventory(Inventory inventory) {
         this.inventory = inventory;

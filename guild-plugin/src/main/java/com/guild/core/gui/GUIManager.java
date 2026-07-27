@@ -293,6 +293,20 @@ public class GUIManager implements Listener {
             // 关闭玩家当前打开的GUI
             closeGUI(player);
             
+            // 基岩版玩家：优先尝试原生 Cumulus 表单
+            if (PlayerConnectionService.isBedrockPlayer(player) && gui.openBedrockForm(player)) {
+                openGuis.put(player.getUniqueId(), gui);
+                if (plugin.getFileLogger() != null) {
+                    plugin.getFileLogger().logGui(player.getName(),
+                            "打开 " + gui.getGuiType() + " (Bedrock Form)");
+                }
+                if (isDebugEnabled()) {
+                    logger.info("Player " + player.getName() + " opened Bedrock form: "
+                            + gui.getClass().getSimpleName());
+                }
+                return;
+            }
+            
             // 创建新的GUI — 优先使用 ImagoCore 图片标题（基岩版玩家跳过）
             Inventory inventory = createInventoryForGui(player, gui);
             

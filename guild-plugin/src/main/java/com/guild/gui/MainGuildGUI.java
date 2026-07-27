@@ -16,7 +16,10 @@ import com.guild.core.gui.GUI;
 import com.guild.core.gui.layout.GuiImageLayoutConfig;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.CompatibleScheduler;
+
+import org.geysermc.cumulus.form.SimpleForm;
 
 /**
  * 主工会GUI - 七个主要入口
@@ -57,7 +60,37 @@ public class MainGuildGUI implements GUI {
     public int getSize() {
         return 54;
     }
-    
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+
+        SimpleForm form = SimpleForm.builder()
+                .title("§6工会系统")
+                .content("§f选择一个功能：")
+                .button("§a创建工会")
+                .button("§e工会信息")
+                .button("§e成员管理")
+                .button("§e申请管理")
+                .button("§e工会设置")
+                .button("§e工会列表")
+                .button("§e工会关系")
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    switch (response.clickedButtonId()) {
+                        case 0 -> openCreateGuildGUI(player);
+                        case 1 -> openGuildInfoGUI(player);
+                        case 2 -> openMemberManagementGUI(player);
+                        case 3 -> openApplicationManagementGUI(player);
+                        case 4 -> openGuildSettingsGUI(player);
+                        case 5 -> openGuildListGUI(player);
+                        case 6 -> openGuildRelationsGUI(player);
+                    }
+                }))
+                .build();
+
+        return BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
     @Override
     public void setupInventory(Inventory inventory) {
         // 图像布局模式：透明载体 + 多槽位（基岩版玩家跳过）

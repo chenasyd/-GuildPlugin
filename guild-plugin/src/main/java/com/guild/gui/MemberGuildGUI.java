@@ -15,8 +15,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ScheduledTaskHandle;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import com.guild.core.utils.ServerUtils;
 import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
@@ -63,6 +66,35 @@ public class MemberGuildGUI implements GUI {
     @Override
     public int getSize() {
         return 27; // 3行，简洁布局
+    }
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+
+        String name = guild.getName() != null ? guild.getName() : "未知工会";
+        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" : "无标签";
+        String homeStatus = guild.hasHome() ? "§a已设置" : "§c未设置";
+
+        String content = "§6工会信息\n"
+                + "§f名称: §e" + name + "\n"
+                + "§f标签: §e" + tag + "\n"
+                + "§f工会家: " + homeStatus;
+
+        SimpleForm form = SimpleForm.builder()
+                .title("§6我的工会 - " + name)
+                .content(content)
+                .button("§d工会家传送")
+                .button("§c离开工会")
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    switch (response.clickedButtonId()) {
+                        case 0 -> handleHomeTeleport(player);
+                        case 1 -> handleLeaveGuild(player);
+                    }
+                }))
+                .build();
+
+        return BedrockFormSender.sendForm(player.getUniqueId(), form);
     }
 
     @Override

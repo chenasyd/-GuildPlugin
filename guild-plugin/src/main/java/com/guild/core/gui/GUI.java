@@ -57,4 +57,13 @@ public interface GUI {
     default String getGuiType() {
         return this.getClass().getSimpleName();
     }
+
+    /**
+     * 为基岩版玩家打开原生 Cumulus 表单。
+     * 返回 true 表示已处理（表单已发送），GUIManager 将跳过 Java Inventory 路径。
+     * 返回 false 表示未实现，回退到标准 Inventory（Geyser 自动翻译）。
+     */
+    default boolean openBedrockForm(Player player) {
+        return false;
+    }
 }

@@ -20,6 +20,7 @@ import com.guild.services.GuildService;
 import com.guild.comm.api.BungeeClientAPI;
 import com.guild.comm.api.CommAPI;
 import com.guild.core.gui.GUI;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.geyser.GeyserAPI;
 import com.guild.core.geyser.PlayerConnectionService;
 import com.guild.core.module.ModuleManager;
@@ -133,6 +134,9 @@ public class GuildPlugin extends JavaPlugin {
 
             // 初始化统一连接服务（整合 GeyserAPI + BungeeClientAPI）
             PlayerConnectionService.initialize(logger);
+
+            // 初始化基岩版表单发送器（通过 Geyser API 反射）
+            BedrockFormSender.initialize(logger);
 
             // 加载等级需求配置
             loadLevelRequirements();

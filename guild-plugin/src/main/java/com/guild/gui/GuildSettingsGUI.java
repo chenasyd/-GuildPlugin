@@ -16,9 +16,12 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.module.hook.GUIExtensionHook;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ScheduledTaskHandle;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import com.guild.core.utils.ServerUtils;
 import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
@@ -113,7 +116,63 @@ public class GuildSettingsGUI implements GUI {
     public int getSize() {
         return 54;
     }
-    
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+
+        String name = guild.getName() != null ? guild.getName() : "无名称";
+        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" : "无标签";
+        String desc = guild.getDescription() != null ? guild.getDescription() : "无描述";
+        String homeStatus = guild.hasHome() ? "§a已设置" : "§c未设置";
+
+        String content = "§6工会概览\n"
+                + "§f名称: §e" + name + "\n"
+                + "§f标签: §e" + tag + "\n"
+                + "§f描述: " + desc + "\n"
+                + "§f工会家: " + homeStatus;
+
+        SimpleForm form = SimpleForm.builder()
+                .title("§6工会设置 - " + name)
+                .content(content)
+                .button("§e修改名称")
+                .button("§e修改描述")
+                .button("§e修改标签")
+                .button("§b设置工会家")
+                .button("§a成员管理")
+                .button("§c踢出成员")
+                .button("§e提升/降级")
+                .button("§a工会资金")
+                .button("§6工会日志")
+                .button("§d工会家传送")
+                .button("§c离开工会")
+                .button("§4删除工会")
+                .button("§f返回主菜单")
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    switch (response.clickedButtonId()) {
+                        case 0 -> handleChangeName(player);
+                        case 1 -> handleChangeDescription(player);
+                        case 2 -> handleChangeTag(player);
+                        case 3 -> handleSetHome(player);
+                        case 4 -> plugin.getGuiManager().openGUI(player,
+                                new MemberManagementGUI(plugin, guild, player));
+                        case 5 -> handleKickMember(player);
+                        case 6 -> plugin.getGuiManager().openGUI(player,
+                                new PromoteMemberGUI(plugin, guild, player));
+                        case 7 -> handleGuildFunds(player);
+                        case 8 -> handleGuildLogs(player);
+                        case 9 -> handleHomeTeleport(player);
+                        case 10 -> handleLeaveGuild(player);
+                        case 11 -> handleDeleteGuild(player);
+                        case 12 -> plugin.getGuiManager().openGUI(player,
+                                new MainGuildGUI(plugin, player));
+                    }
+                }))
+                .build();
+
+        return BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
     @Override
     public void setupInventory(Inventory inventory) {
         fillBorder(inventory);

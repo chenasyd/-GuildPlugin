@@ -2,9 +2,13 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PlaceholderUtils;
+
+import org.geysermc.cumulus.form.CustomForm;
+import org.geysermc.cumulus.form.SimpleForm;
 import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import org.bukkit.Material;
@@ -62,6 +66,148 @@ public class GuildListGUI implements GUI {
     public int getSize() {
         return 54;
     }
+
+    // ==================== 基岩版表单 ====================
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockGuildList(player, 0);
+        return true;
+    }
+
+    /**
+     * 构建并发送基岩版工会列表表单（异步加载数据）
+     */
+    private void sendBedrockGuildList(Player player, int page) {
+        plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (!player.isOnline()) return;
+
+                List<Guild> filtered = searchGuilds(guilds != null ? guilds : new ArrayList<>());
+
+                if (filtered.isEmpty()) {
+                    SimpleForm emptyForm = SimpleForm.builder()
+                            .title("§6工会列表")
+                            .content(searchQuery.isEmpty()
+                                    ? "§c服务器中还没有工会"
+                                    : "§c没有找到匹配的工会")
+                            .button("§e搜索工会")
+                            .button("§c返回主菜单")
+                            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                                if (response.clickedButtonId() == 0) {
+                                    sendBedrockSearchForm(player);
+                                } else {
+                                    plugin.getGuiManager().openGUI(player,
+                                            new MainGuildGUI(plugin, player));
+                                }
+                            }))
+                            .build();
+                    BedrockFormSender.sendForm(player.getUniqueId(), emptyForm);
+                    return;
+                }
+
+                int totalPagesLocal = (filtered.size() - 1) / GUILDS_PER_PAGE;
+                final int safePage = Math.max(0, Math.min(page, totalPagesLocal));
+
+                int startIndex = safePage * GUILDS_PER_PAGE;
+                int endIndex = Math.min(startIndex + GUILDS_PER_PAGE, filtered.size());
+
+                StringBuilder content = new StringBuilder();
+                content.append("§f第 ").append(safePage + 1).append("/")
+                        .append(totalPagesLocal + 1).append(" 页");
+                if (!searchQuery.isEmpty()) {
+                    content.append("\n§f搜索: §e").append(searchQuery);
+                }
+
+                SimpleForm.Builder builder = SimpleForm.builder()
+                        .title("§6工会列表")
+                        .content(content.toString());
+
+                // 工会按钮
+                List<Guild> pageGuilds = new ArrayList<>();
+                for (int i = startIndex; i < endIndex; i++) {
+                    Guild g = filtered.get(i);
+                    pageGuilds.add(g);
+                    String tagStr = g.getTag() != null ? " §f[" + g.getTag() + "]" : "";
+                    builder.button("§e" + g.getName() + tagStr + " §f- Lv." + g.getLevel());
+                }
+
+                // 导航按钮（固定顺序：上一页/下一页/搜索/返回）
+                builder.button("§a上一页");
+                builder.button("§a下一页");
+                builder.button("§e搜索工会");
+                builder.button("§c返回主菜单");
+
+                final int guildCount = pageGuilds.size();
+                final int curPage = safePage;
+                final int totPages = totalPagesLocal;
+
+                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    int id = response.clickedButtonId();
+                    if (id < guildCount) {
+                        sendBedrockGuildDetail(player, pageGuilds.get(id));
+                    } else if (id == guildCount) {
+                        // 上一页
+                        sendBedrockGuildList(player, curPage > 0 ? curPage - 1 : curPage);
+                    } else if (id == guildCount + 1) {
+                        // 下一页
+                        sendBedrockGuildList(player, curPage < totPages ? curPage + 1 : curPage);
+                    } else if (id == guildCount + 2) {
+                        sendBedrockSearchForm(player);
+                    } else {
+                        plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
+                    }
+                }));
+
+                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            });
+        });
+    }
+
+    /**
+     * 发送基岩版搜索表单（CustomForm 文本输入）
+     */
+    private void sendBedrockSearchForm(Player player) {
+        CustomForm form = CustomForm.builder()
+                .title("§6搜索工会")
+                .input("§f输入搜索关键词", "留空显示全部", searchQuery)
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    String query = response.getInput(0);
+                    this.searchQuery = query != null ? query.trim() : "";
+                    this.currentPage = 0;
+                    sendBedrockGuildList(player, 0);
+                }))
+                .closedResultHandler(() -> CompatibleScheduler.runTask(plugin, player, () ->
+                        sendBedrockGuildList(player, currentPage)))
+                .build();
+        BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
+    /**
+     * 发送基岩版工会详情子菜单（查看详情 / 申请加入 / 返回列表）
+     */
+    private void sendBedrockGuildDetail(Player player, Guild targetGuild) {
+        String tagStr = targetGuild.getTag() != null ? " [" + targetGuild.getTag() + "]" : "";
+        SimpleForm form = SimpleForm.builder()
+                .title("§6" + targetGuild.getName() + tagStr)
+                .content("§f选择操作：")
+                .button("§e查看详情")
+                .button("§a申请加入")
+                .button("§c返回列表")
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    switch (response.clickedButtonId()) {
+                        case 0 -> plugin.getGuiManager().openGUI(player,
+                                new GuildInfoGUI(plugin, player, targetGuild));
+                        case 1 -> handleApplyToGuild(player, targetGuild);
+                        case 2 -> sendBedrockGuildList(player, currentPage);
+                    }
+                }))
+                .build();
+        BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
+    // ==================== Java Inventory 布局 ====================
 
     @Override
     public void setupInventory(Inventory inventory) {
