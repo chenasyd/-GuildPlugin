@@ -419,7 +419,7 @@ public class CreateRelationGUI implements GUI {
             .content("§f请选择关系类型：");
 
         for (GuildRelation.RelationType type : types) {
-            builder.button(ColorUtils.colorize(type.getColor() + type.getDisplayName(lang)));
+            builder.button(ColorUtils.colorize(type.getColor() + type.getDisplayName(lang)).replace("§7", "§f"));
         }
         builder.button("§c返回");
 

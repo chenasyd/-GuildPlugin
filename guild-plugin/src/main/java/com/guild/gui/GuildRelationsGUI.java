@@ -532,7 +532,7 @@ public class GuildRelationsGUI implements GUI {
                     GuildRelation rel = relationsList.get(i);
                     String otherName = rel.getOtherGuildName(guild.getId());
                     String color = rel.getType().getColor();
-                    builder.button(ColorUtils.colorize(color + otherName + " - " + rel.getType().getDisplayName()));
+                    builder.button(ColorUtils.colorize(color + otherName + " - " + rel.getType().getDisplayName()).replace("§7", "§f"));
                 }
 
                 builder.button("§a创建关系");
