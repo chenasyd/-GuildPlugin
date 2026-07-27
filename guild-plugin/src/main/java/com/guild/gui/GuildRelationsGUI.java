@@ -6,9 +6,12 @@ import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.PlaceholderUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.language.LanguageManager;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.models.GuildRelation;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -482,6 +485,215 @@ public class GuildRelationsGUI implements GUI {
         plugin.getGuiManager().openGUI(player, createRelationGUI);
     }
     
+    // ── 基岩版表单 ──
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockRelationList(player, 0);
+        return true;
+    }
+
+    private void sendBedrockRelationList(Player player, int page) {
+        loadRelations().thenAccept(relationsList -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (relationsList == null || relationsList.isEmpty()) {
+                    SimpleForm form = SimpleForm.builder()
+                        .title("§6工会关系")
+                        .content("§f当前没有任何工会关系")
+                        .button("§a创建关系")
+                        .button("§c返回")
+                        .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                            if (response.clickedButtonId() == 0) {
+                                plugin.getGuiManager().openGUI(player, new CreateRelationGUI(plugin, guild, player));
+                            } else {
+                                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
+                            }
+                        }))
+                        .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                            plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player))))
+                        .build();
+                    BedrockFormSender.sendForm(player.getUniqueId(), form);
+                    return;
+                }
+
+                final int bedrockPerPage = 10;
+                int totalPages = (relationsList.size() - 1) / bedrockPerPage;
+                final int safePage = Math.max(0, Math.min(page, totalPages));
+                final int startIndex = safePage * bedrockPerPage;
+                int endIndex = Math.min(startIndex + bedrockPerPage, relationsList.size());
+                final int relCount = endIndex - startIndex;
+
+                SimpleForm.Builder builder = SimpleForm.builder()
+                    .title("§6工会关系 - 第" + (safePage + 1) + "页")
+                    .content("§f共" + relationsList.size() + "个关系");
+
+                for (int i = startIndex; i < endIndex; i++) {
+                    GuildRelation rel = relationsList.get(i);
+                    String otherName = rel.getOtherGuildName(guild.getId());
+                    String color = rel.getType().getColor();
+                    builder.button(color + otherName + " - " + rel.getType().getDisplayName());
+                }
+
+                builder.button("§a创建关系");
+                builder.button("§e上一页");
+                builder.button("§e下一页");
+                builder.button("§c返回");
+
+                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    int clicked = response.clickedButtonId();
+                    if (clicked < relCount) {
+                        GuildRelation rel = relationsList.get(startIndex + clicked);
+                        sendBedrockRelationActions(player, rel);
+                    } else if (clicked == relCount) {
+                        plugin.getGuiManager().openGUI(player, new CreateRelationGUI(plugin, guild, player));
+                    } else if (clicked == relCount + 1) {
+                        sendBedrockRelationList(player, safePage - 1);
+                    } else if (clicked == relCount + 2) {
+                        sendBedrockRelationList(player, safePage + 1);
+                    } else {
+                        plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
+                    }
+                }));
+
+                builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                    plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player))));
+
+                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            });
+        });
+    }
+
+    private void sendBedrockRelationActions(Player player, GuildRelation relation) {
+        String otherName = relation.getOtherGuildName(guild.getId());
+        GuildRelation.RelationStatus status = relation.getStatus();
+        GuildRelation.RelationType type = relation.getType();
+
+        SimpleForm.Builder builder = SimpleForm.builder()
+            .title("§6关系操作 - " + otherName)
+            .content("§f类型: " + type.getDisplayName() + "\n§f状态: " + status.getDisplayName());
+
+        List<String> actionTypes = new ArrayList<>();
+
+        if (status == GuildRelation.RelationStatus.PENDING) {
+            if (relation.getInitiatorUuid().equals(player.getUniqueId())) {
+                builder.button("§c取消关系");
+                actionTypes.add("cancel");
+            } else {
+                builder.button("§a接受关系");
+                actionTypes.add("accept");
+                builder.button("§c拒绝关系");
+                actionTypes.add("reject");
+            }
+        } else if (status == GuildRelation.RelationStatus.ACTIVE) {
+            if (type == GuildRelation.RelationType.TRUCE) {
+                builder.button("§e结束停战");
+                actionTypes.add("end_truce");
+            } else if (type == GuildRelation.RelationType.WAR) {
+                builder.button("§e提议停战");
+                actionTypes.add("propose_truce");
+            } else {
+                builder.button("§c删除关系");
+                actionTypes.add("delete");
+            }
+        }
+
+        builder.button("§e返回列表");
+
+        final int actionCount = actionTypes.size();
+        builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+            int clicked = response.clickedButtonId();
+            if (clicked < actionCount) {
+                switch (actionTypes.get(clicked)) {
+                    case "accept" -> bedrockUpdateRelation(player, relation, GuildRelation.RelationStatus.ACTIVE, "&a已接受与 " + otherName + " 的关系！");
+                    case "reject" -> bedrockUpdateRelation(player, relation, GuildRelation.RelationStatus.CANCELLED, "&c已拒绝与 " + otherName + " 的关系！");
+                    case "cancel" -> bedrockUpdateRelation(player, relation, GuildRelation.RelationStatus.CANCELLED, "&c已取消与 " + otherName + " 的关系！");
+                    case "end_truce" -> bedrockEndTruce(player, relation);
+                    case "propose_truce" -> bedrockProposeTruce(player, relation);
+                    case "delete" -> bedrockDeleteRelation(player, relation);
+                }
+            } else {
+                sendBedrockRelationList(player, 0);
+            }
+        }));
+
+        builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+            sendBedrockRelationList(player, 0)));
+
+        BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+    }
+
+    private void bedrockUpdateRelation(Player player, GuildRelation relation, GuildRelation.RelationStatus newStatus, String successMsg) {
+        plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), newStatus).thenAccept(success -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (success) {
+                    player.sendMessage(ColorUtils.colorize(successMsg));
+                    sendBedrockRelationList(player, 0);
+                } else {
+                    player.sendMessage(ColorUtils.colorize("&c操作失败！"));
+                }
+            });
+        });
+    }
+
+    private void bedrockEndTruce(Player player, GuildRelation relation) {
+        GuildRelation newRelation = new GuildRelation(
+            relation.getGuild1Id(), relation.getGuild2Id(),
+            relation.getGuild1Name(), relation.getGuild2Name(),
+            GuildRelation.RelationType.NEUTRAL, player.getUniqueId(), player.getName()
+        );
+        plugin.getGuildService().createGuildRelationAsync(
+            newRelation.getGuild1Id(), newRelation.getGuild2Id(),
+            newRelation.getGuild1Name(), newRelation.getGuild2Name(),
+            newRelation.getType(), newRelation.getInitiatorUuid(), newRelation.getInitiatorName()
+        ).thenAccept(success -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (success) {
+                    plugin.getGuildService().deleteGuildRelationAsync(relation.getId());
+                    player.sendMessage(ColorUtils.colorize("&a与 " + relation.getOtherGuildName(guild.getId()) + " 的停战已结束！"));
+                    sendBedrockRelationList(player, 0);
+                } else {
+                    player.sendMessage(ColorUtils.colorize("&c结束停战失败！"));
+                }
+            });
+        });
+    }
+
+    private void bedrockProposeTruce(Player player, GuildRelation relation) {
+        GuildRelation truceRelation = new GuildRelation(
+            relation.getGuild1Id(), relation.getGuild2Id(),
+            relation.getGuild1Name(), relation.getGuild2Name(),
+            GuildRelation.RelationType.TRUCE, player.getUniqueId(), player.getName()
+        );
+        plugin.getGuildService().createGuildRelationAsync(
+            truceRelation.getGuild1Id(), truceRelation.getGuild2Id(),
+            truceRelation.getGuild1Name(), truceRelation.getGuild2Name(),
+            truceRelation.getType(), truceRelation.getInitiatorUuid(), truceRelation.getInitiatorName()
+        ).thenAccept(success -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (success) {
+                    player.sendMessage(ColorUtils.colorize("&e已向 " + relation.getOtherGuildName(guild.getId()) + " 提议停战！"));
+                    sendBedrockRelationList(player, 0);
+                } else {
+                    player.sendMessage(ColorUtils.colorize("&c提议停战失败！"));
+                }
+            });
+        });
+    }
+
+    private void bedrockDeleteRelation(Player player, GuildRelation relation) {
+        plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (success) {
+                    player.sendMessage(ColorUtils.colorize("&a已删除与 " + relation.getOtherGuildName(guild.getId()) + " 的关系！"));
+                    sendBedrockRelationList(player, 0);
+                } else {
+                    player.sendMessage(ColorUtils.colorize("&c删除关系失败！"));
+                }
+            });
+        });
+    }
+
     /**
      * 刷新库存
      */

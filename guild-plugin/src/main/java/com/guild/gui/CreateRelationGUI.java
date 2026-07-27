@@ -5,8 +5,11 @@ import com.guild.core.gui.GUI;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.models.Guild;
 import com.guild.models.GuildRelation;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -398,6 +401,148 @@ public class CreateRelationGUI implements GUI {
             });
     }
     
+    // ── 基岩版表单 ──
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockTypeSelection(player);
+        return true;
+    }
+
+    private void sendBedrockTypeSelection(Player player) {
+        GuildRelation.RelationType[] types = GuildRelation.RelationType.values();
+        String lang = languageManager.getPlayerLanguage(player);
+
+        SimpleForm.Builder builder = SimpleForm.builder()
+            .title("§6创建关系 - 选择类型")
+            .content("§f请选择关系类型：");
+
+        for (GuildRelation.RelationType type : types) {
+            builder.button(type.getColor() + type.getDisplayName(lang));
+        }
+        builder.button("§c返回");
+
+        builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+            int clicked = response.clickedButtonId();
+            if (clicked < types.length) {
+                sendBedrockTargetSelection(player, types[clicked], 0);
+            } else {
+                plugin.getGuiManager().openGUI(player, new GuildRelationsGUI(plugin, guild, player));
+            }
+        }));
+
+        builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+            plugin.getGuiManager().openGUI(player, new GuildRelationsGUI(plugin, guild, player))));
+
+        BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+    }
+
+    private void sendBedrockTargetSelection(Player player, GuildRelation.RelationType type, int page) {
+        loadAvailableGuilds().thenAccept(guilds -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (guilds.isEmpty()) {
+                    SimpleForm form = SimpleForm.builder()
+                        .title("§6创建关系 - 选择目标")
+                        .content("§f没有可用的目标工会")
+                        .button("§c返回")
+                        .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                            plugin.getGuiManager().openGUI(player, new GuildRelationsGUI(plugin, guild, player))))
+                        .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                            plugin.getGuiManager().openGUI(player, new GuildRelationsGUI(plugin, guild, player))))
+                        .build();
+                    BedrockFormSender.sendForm(player.getUniqueId(), form);
+                    return;
+                }
+
+                final int itemsPerPage = 10;
+                int totalPages = (guilds.size() - 1) / itemsPerPage;
+                final int safePage = Math.max(0, Math.min(page, totalPages));
+                final int startIndex = safePage * itemsPerPage;
+                int endIndex = Math.min(startIndex + itemsPerPage, guilds.size());
+                final int guildCount = endIndex - startIndex;
+                final String lang = languageManager.getPlayerLanguage(player);
+
+                SimpleForm.Builder builder = SimpleForm.builder()
+                    .title("§6创建关系 - 选择目标 第" + (safePage + 1) + "页")
+                    .content("§f类型: " + type.getColor() + type.getDisplayName(lang) + "\n§f选择目标工会：");
+
+                for (int i = startIndex; i < endIndex; i++) {
+                    builder.button("§f" + guilds.get(i).getName());
+                }
+
+                builder.button("§e上一页");
+                builder.button("§e下一页");
+                builder.button("§c返回");
+
+                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    int clicked = response.clickedButtonId();
+                    if (clicked < guildCount) {
+                        Guild targetGuild = guilds.get(startIndex + clicked);
+                        sendBedrockConfirmCreate(player, type, targetGuild);
+                    } else if (clicked == guildCount) {
+                        sendBedrockTargetSelection(player, type, safePage - 1);
+                    } else if (clicked == guildCount + 1) {
+                        sendBedrockTargetSelection(player, type, safePage + 1);
+                    } else {
+                        plugin.getGuiManager().openGUI(player, new GuildRelationsGUI(plugin, guild, player));
+                    }
+                }));
+
+                builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                    plugin.getGuiManager().openGUI(player, new GuildRelationsGUI(plugin, guild, player))));
+
+                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            });
+        });
+    }
+
+    private void sendBedrockConfirmCreate(Player player, GuildRelation.RelationType type, Guild targetGuild) {
+        String lang = languageManager.getPlayerLanguage(player);
+        SimpleForm form = SimpleForm.builder()
+            .title("§6确认创建关系")
+            .content("§f类型: " + type.getColor() + type.getDisplayName(lang) + "\n§f目标: " + targetGuild.getName())
+            .button("§a确认创建")
+            .button("§c取消")
+            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                if (response.clickedButtonId() == 0) {
+                    bedrockCreateRelation(player, type, targetGuild);
+                } else {
+                    sendBedrockTypeSelection(player);
+                }
+            }))
+            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                sendBedrockTypeSelection(player)))
+            .build();
+        BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
+    private void bedrockCreateRelation(Player player, GuildRelation.RelationType type, Guild targetGuild) {
+        plugin.getGuildService().getGuildRelationAsync(guild.getId(), targetGuild.getId())
+            .thenAccept(existingRelation -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (existingRelation != null) {
+                        player.sendMessage(ColorUtils.colorize("&c与 " + targetGuild.getName() + " 的关系已存在！"));
+                        return;
+                    }
+                    plugin.getGuildService().createGuildRelationAsync(
+                        guild.getId(), targetGuild.getId(),
+                        guild.getName(), targetGuild.getName(),
+                        type, player.getUniqueId(), player.getName()
+                    ).thenAccept(success -> {
+                        CompatibleScheduler.runTask(plugin, player, () -> {
+                            if (success) {
+                                player.sendMessage(ColorUtils.colorize("&a已向 " + targetGuild.getName() + " 发送 " + type.getDisplayName() + " 关系请求！"));
+                                plugin.getGuiManager().openGUI(player, new GuildRelationsGUI(plugin, guild, player));
+                            } else {
+                                player.sendMessage(ColorUtils.colorize("&c创建关系失败！"));
+                            }
+                        });
+                    });
+                });
+            });
+    }
+
     /**
      * 获取关系类型对应的材料
      */

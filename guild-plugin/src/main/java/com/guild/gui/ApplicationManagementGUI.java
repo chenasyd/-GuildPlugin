@@ -6,8 +6,11 @@ import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PlaceholderUtils;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.models.Guild;
 import com.guild.models.GuildApplication;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -477,6 +480,150 @@ public class ApplicationManagementGUI implements GUI {
         });
     }
     
+    // ── 基岩版表单 ──
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockApplicationList(player, 0, false);
+        return true;
+    }
+
+    private void sendBedrockApplicationList(Player player, int page, boolean history) {
+        java.util.concurrent.CompletableFuture<List<GuildApplication>> future = history
+            ? plugin.getGuildService().getApplicationHistoryAsync(guild.getId())
+            : plugin.getGuildService().getPendingApplicationsAsync(guild.getId());
+        future.thenAccept(applications -> CompatibleScheduler.runTask(plugin, player, () -> {
+            if (applications == null || applications.isEmpty()) {
+                String emptyMsg = history ? "§f没有申请历史记录" : "§f没有待处理的申请";
+                SimpleForm form = SimpleForm.builder()
+                    .title("§6申请管理")
+                    .content(emptyMsg)
+                    .button(history ? "§e待处理申请" : "§e申请历史")
+                    .button("§c返回")
+                    .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                        if (response.clickedButtonId() == 0) {
+                            sendBedrockApplicationList(player, 0, !history);
+                        } else {
+                            plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
+                        }
+                    }))
+                    .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                        plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player))))
+                    .build();
+                BedrockFormSender.sendForm(player.getUniqueId(), form);
+                return;
+            }
+
+            final int itemsPerPage = 10;
+            int totalPages = (applications.size() - 1) / itemsPerPage;
+            final int safePage = Math.max(0, Math.min(page, totalPages));
+            final int startIndex = safePage * itemsPerPage;
+            int endIndex = Math.min(startIndex + itemsPerPage, applications.size());
+            final int appCount = endIndex - startIndex;
+            final boolean isHistory = history;
+
+            String modeText = history ? "申请历史" : "待处理申请";
+            SimpleForm.Builder builder = SimpleForm.builder()
+                .title("§6申请管理 - " + modeText + " 第" + (safePage + 1) + "页")
+                .content("§f共" + applications.size() + "条记录");
+
+            for (int i = startIndex; i < endIndex; i++) {
+                GuildApplication app = applications.get(i);
+                String statusColor = switch (app.getStatus()) {
+                    case PENDING -> "§e";
+                    case APPROVED -> "§a";
+                    case REJECTED -> "§c";
+                    default -> "§f";
+                };
+                builder.button(statusColor + app.getPlayerName());
+            }
+
+            builder.button(history ? "§e待处理申请" : "§e申请历史");
+            builder.button("§e上一页");
+            builder.button("§e下一页");
+            builder.button("§c返回");
+
+            builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                int clicked = response.clickedButtonId();
+                if (clicked < appCount) {
+                    GuildApplication app = applications.get(startIndex + clicked);
+                    if (isHistory) {
+                        player.sendMessage(ColorUtils.colorize("§f申请人: " + app.getPlayerName()));
+                        player.sendMessage(ColorUtils.colorize("§f状态: " + app.getStatus().name()));
+                        if (app.getMessage() != null && !app.getMessage().isEmpty()) {
+                            player.sendMessage(ColorUtils.colorize("§f留言: " + app.getMessage()));
+                        }
+                        sendBedrockApplicationList(player, safePage, true);
+                    } else {
+                        sendBedrockApplicationActions(player, app);
+                    }
+                } else if (clicked == appCount) {
+                    sendBedrockApplicationList(player, 0, !isHistory);
+                } else if (clicked == appCount + 1) {
+                    sendBedrockApplicationList(player, safePage - 1, isHistory);
+                } else if (clicked == appCount + 2) {
+                    sendBedrockApplicationList(player, safePage + 1, isHistory);
+                } else {
+                    plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
+                }
+            }));
+
+            builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player))));
+
+            BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+        }));
+    }
+
+    private void sendBedrockApplicationActions(Player player, GuildApplication application) {
+        String msg = application.getMessage() != null && !application.getMessage().isEmpty()
+            ? application.getMessage() : "无";
+        SimpleForm form = SimpleForm.builder()
+            .title("§6申请处理 - " + application.getPlayerName())
+            .content("§f申请人: " + application.getPlayerName() + "\n§f留言: " + msg)
+            .button("§a接受申请")
+            .button("§c拒绝申请")
+            .button("§e返回列表")
+            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                switch (response.clickedButtonId()) {
+                    case 0 -> bedrockProcessApplication(player, application, GuildApplication.ApplicationStatus.APPROVED);
+                    case 1 -> bedrockProcessApplication(player, application, GuildApplication.ApplicationStatus.REJECTED);
+                    case 2 -> sendBedrockApplicationList(player, 0, false);
+                }
+            }))
+            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                sendBedrockApplicationList(player, 0, false)))
+            .build();
+        BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
+    private void bedrockProcessApplication(Player player, GuildApplication application, GuildApplication.ApplicationStatus status) {
+        plugin.getGuildService().processApplicationAsync(application.getId(), status, player.getUniqueId()).thenAccept(success -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (success) {
+                    if (status == GuildApplication.ApplicationStatus.APPROVED) {
+                        String message = languageManager.getGuiMessage(player, "gui.common.application-accepted", "&a申请已接受！");
+                        player.sendMessage(ColorUtils.colorize(message));
+                        Player applicant = Bukkit.getPlayer(application.getPlayerUuid());
+                        if (applicant != null && applicant.isOnline()) {
+                            String cleanGuildName = ColorUtils.stripColor(guild.getName());
+                            String acceptedMessage = languageManager.getGuiMessage(applicant, "gui.application-mgmt.application.accepted", "&a您的申请已被 {guild} 接受！", "{guild}", cleanGuildName);
+                            applicant.sendMessage(ColorUtils.colorize(acceptedMessage));
+                        }
+                    } else {
+                        String message = languageManager.getGuiMessage(player, "gui.common.application-rejected", "&c申请已拒绝！");
+                        player.sendMessage(ColorUtils.colorize(message));
+                    }
+                    sendBedrockApplicationList(player, 0, false);
+                } else {
+                    String message = languageManager.getGuiMessage(player, "gui.common.application-accept-failed", "&c处理申请失败！");
+                    player.sendMessage(ColorUtils.colorize(message));
+                }
+            });
+        });
+    }
+
     /**
      * 刷新库存
      */

@@ -6,7 +6,10 @@ import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PlaceholderUtils;
 import com.guild.core.language.LanguageManager;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.models.Guild;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -549,6 +552,210 @@ public class GuildFilterGUI implements GUI {
                 });
             });
         });
+    }
+
+    // ── 基岩版表单 ──
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockFilterResults(player, 0);
+        return true;
+    }
+
+    private void sendBedrockFilterResults(Player player, int page) {
+        plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (guilds == null || guilds.isEmpty()) {
+                    SimpleForm form = SimpleForm.builder()
+                        .title("§6工会筛选")
+                        .content("§f服务器中还没有工会")
+                        .button("§c返回")
+                        .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                            plugin.getGuiManager().openGUI(player, new GuildListGUI(plugin, player, returnSearchQuery))))
+                        .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                            plugin.getGuiManager().openGUI(player, new GuildListGUI(plugin, player, returnSearchQuery))))
+                        .build();
+                    BedrockFormSender.sendForm(player.getUniqueId(), form);
+                    return;
+                }
+
+                List<Guild> levelFiltered = new ArrayList<>();
+                for (Guild g : guilds) {
+                    if (g.getLevel() >= minLevel && g.getLevel() <= maxLevel) {
+                        levelFiltered.add(g);
+                    }
+                }
+
+                if (levelFiltered.isEmpty()) {
+                    sendBedrockNoResults(player);
+                    return;
+                }
+
+                processBedrockWithMemberCounts(player, levelFiltered, page);
+            });
+        });
+    }
+
+    private void sendBedrockNoResults(Player player) {
+        String sortText = switch (sortMode) {
+            case "ASC" -> "人数升序";
+            case "FULL_ONLY" -> "仅满员";
+            default -> "人数降序";
+        };
+        SimpleForm form = SimpleForm.builder()
+            .title("§6工会筛选")
+            .content("§f没有符合条件的工会\n§f等级: " + minLevel + "-" + maxLevel + " | 排序: " + sortText)
+            .button("§e调整筛选")
+            .button("§c返回")
+            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                if (response.clickedButtonId() == 0) {
+                    sendBedrockFilterSettings(player);
+                } else {
+                    plugin.getGuiManager().openGUI(player, new GuildListGUI(plugin, player, returnSearchQuery));
+                }
+            }))
+            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                plugin.getGuiManager().openGUI(player, new GuildListGUI(plugin, player, returnSearchQuery))))
+            .build();
+        BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
+    private void processBedrockWithMemberCounts(Player player, List<Guild> levelFiltered, int page) {
+        List<GuildItemData> itemDataList = new ArrayList<>();
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+        for (int i = 0; i < levelFiltered.size(); i++) {
+            Guild g = levelFiltered.get(i);
+            final int originalIdx = i;
+            futures.add(plugin.getGuildService().getGuildMemberCountAsync(g.getId())
+                .thenAccept(count -> {
+                    synchronized (itemDataList) {
+                        itemDataList.add(new GuildItemData(g, count, originalIdx));
+                    }
+                }));
+        }
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).thenRun(() -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if ("FULL_ONLY".equals(sortMode)) {
+                    itemDataList.removeIf(data -> data.getMemberCount() < data.getGuild().getMaxMembers());
+                }
+                if ("ASC".equals(sortMode)) {
+                    itemDataList.sort(Comparator.comparingInt(GuildItemData::getMemberCount));
+                } else if ("FULL_ONLY".equals(sortMode)) {
+                    itemDataList.sort(Comparator.comparingInt(GuildItemData::getOriginalIndex));
+                } else {
+                    itemDataList.sort(Comparator.comparingInt(GuildItemData::getMemberCount).reversed());
+                }
+
+                if (itemDataList.isEmpty()) {
+                    sendBedrockNoResults(player);
+                    return;
+                }
+
+                final int itemsPerPage = 10;
+                int totalPages = (itemDataList.size() - 1) / itemsPerPage;
+                final int safePage = Math.max(0, Math.min(page, totalPages));
+                final int startIndex = safePage * itemsPerPage;
+                int endIndex = Math.min(startIndex + itemsPerPage, itemDataList.size());
+                final int guildCount = endIndex - startIndex;
+
+                String sortText = switch (sortMode) {
+                    case "ASC" -> "人数升序";
+                    case "FULL_ONLY" -> "仅满员";
+                    default -> "人数降序";
+                };
+
+                SimpleForm.Builder builder = SimpleForm.builder()
+                    .title("§6工会筛选 - 第" + (safePage + 1) + "页")
+                    .content("§f等级: " + minLevel + "-" + maxLevel + " | 排序: " + sortText + "\n§f共" + itemDataList.size() + "个结果");
+
+                for (int i = startIndex; i < endIndex; i++) {
+                    GuildItemData data = itemDataList.get(i);
+                    builder.button("§e" + data.getGuild().getName() + " §f(" + data.getMemberCount() + "人)");
+                }
+
+                builder.button("§e调整筛选");
+                builder.button("§e上一页");
+                builder.button("§e下一页");
+                builder.button("§c返回");
+
+                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    int clicked = response.clickedButtonId();
+                    if (clicked < guildCount) {
+                        GuildItemData data = itemDataList.get(startIndex + clicked);
+                        sendBedrockGuildActions(player, data.getGuild());
+                    } else if (clicked == guildCount) {
+                        sendBedrockFilterSettings(player);
+                    } else if (clicked == guildCount + 1) {
+                        sendBedrockFilterResults(player, safePage - 1);
+                    } else if (clicked == guildCount + 2) {
+                        sendBedrockFilterResults(player, safePage + 1);
+                    } else {
+                        plugin.getGuiManager().openGUI(player, new GuildListGUI(plugin, player, returnSearchQuery));
+                    }
+                }));
+
+                builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                    plugin.getGuiManager().openGUI(player, new GuildListGUI(plugin, player, returnSearchQuery))));
+
+                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            });
+        });
+    }
+
+    private void sendBedrockFilterSettings(Player player) {
+        String sortText = switch (sortMode) {
+            case "ASC" -> "人数升序";
+            case "FULL_ONLY" -> "仅满员";
+            default -> "人数降序";
+        };
+
+        SimpleForm form = SimpleForm.builder()
+            .title("§6筛选设置")
+            .content("§f最低等级: " + minLevel + "\n§f最高等级: " + maxLevel + "\n§f排序: " + sortText)
+            .button("§a最低等级 +1")
+            .button("§c最低等级 -1")
+            .button("§a最高等级 +1")
+            .button("§c最高等级 -1")
+            .button("§e切换排序模式")
+            .button("§e返回筛选结果")
+            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                switch (response.clickedButtonId()) {
+                    case 0 -> { if (minLevel < maxLevel) minLevel++; }
+                    case 1 -> { if (minLevel > 1) minLevel--; }
+                    case 2 -> { if (maxLevel < plugin.getMaxGuildLevel()) maxLevel++; }
+                    case 3 -> { if (maxLevel > minLevel) maxLevel--; }
+                    case 4 -> { sortIndex = (sortIndex + 1) % SORT_MODES.length; sortMode = SORT_MODES[sortIndex]; }
+                    case 5 -> { sendBedrockFilterResults(player, 0); return; }
+                }
+                sendBedrockFilterSettings(player);
+            }))
+            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                sendBedrockFilterResults(player, 0)))
+            .build();
+        BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
+    private void sendBedrockGuildActions(Player player, Guild targetGuild) {
+        SimpleForm form = SimpleForm.builder()
+            .title("§6工会操作 - " + targetGuild.getName())
+            .content("§f等级: " + targetGuild.getLevel() + "\n§f会长: " + targetGuild.getLeaderName())
+            .button("§e查看详情")
+            .button("§a申请加入")
+            .button("§e返回筛选")
+            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                switch (response.clickedButtonId()) {
+                    case 0 -> plugin.getGuiManager().openGUI(player, new GuildInfoGUI(plugin, player, targetGuild));
+                    case 1 -> handleApplyToGuild(player, targetGuild);
+                    case 2 -> sendBedrockFilterResults(player, 0);
+                }
+            }))
+            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                sendBedrockFilterResults(player, 0)))
+            .build();
+        BedrockFormSender.sendForm(player.getUniqueId(), form);
     }
 
     // ======================== 内部类 & 工具 ========================
