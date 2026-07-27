@@ -2,8 +2,11 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+
+import org.geysermc.cumulus.form.CustomForm;
 import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import org.bukkit.Material;
@@ -50,7 +53,25 @@ public class GuildNameInputGUI implements GUI {
     public int getSize() {
         return 27;
     }
-    
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+
+        CustomForm form = CustomForm.builder()
+                .title("§6修改工会名称")
+                .input("§f输入新的工会名称", "2-16个字符，支持颜色字符", currentName)
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    String input = response.getInput(0);
+                    handleInputComplete(player, input);
+                }))
+                .closedResultHandler(() -> CompatibleScheduler.runTask(plugin, player, () ->
+                        handleCancel(player)))
+                .build();
+
+        return BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
     @Override
     public void setupInventory(Inventory inventory) {
         // 填充边框

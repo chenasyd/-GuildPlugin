@@ -16,7 +16,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.CompatibleScheduler;
+
+import org.geysermc.cumulus.form.CustomForm;
 
 /**
  * 创建工会GUI
@@ -64,7 +67,32 @@ public class CreateGuildGUI implements GUI {
     public int getSize() {
         return 54;
     }
-    
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+
+        CustomForm form = CustomForm.builder()
+                .title("§6创建工会")
+                .input("§f工会名称 (3-20字符)", "输入工会名称", guildName)
+                .input("§f工会标签 (最多6字符, 可选)", "输入工会标签", guildTag)
+                .input("§f工会描述 (最多100字符, 可选)", "输入工会描述", guildDescription)
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    String name = response.getInput(0);
+                    String tag = response.getInput(1);
+                    String desc = response.getInput(2);
+                    guildName = name != null ? name.trim() : "";
+                    guildTag = tag != null ? tag.trim() : "";
+                    guildDescription = desc != null ? desc.trim() : "";
+                    handleConfirmCreate(player);
+                }))
+                .closedResultHandler(() -> CompatibleScheduler.runTask(plugin, player, () ->
+                        handleCancel(player)))
+                .build();
+
+        return BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
     @Override
     public void setupInventory(Inventory inventory) {
         // 填充边框

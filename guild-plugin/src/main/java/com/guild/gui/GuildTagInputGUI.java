@@ -2,8 +2,11 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+
+import org.geysermc.cumulus.form.CustomForm;
 import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import org.bukkit.Material;
@@ -49,7 +52,57 @@ public class GuildTagInputGUI implements GUI {
     public int getSize() {
         return 27;
     }
-    
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+
+        int maxLength = plugin.getConfigManager().getMainConfig()
+                .getInt("guild.max-tag-length", 6);
+
+        CustomForm form = CustomForm.builder()
+                .title("§6修改工会标签")
+                .input("§f输入新的工会标签", "最多" + maxLength + "字符", currentTag)
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    String input = response.getInput(0);
+                    if (input == null) input = "";
+                    if (input.length() > maxLength) {
+                        player.sendMessage(ColorUtils.colorize(
+                                languageManager.getGuiMessage(player,
+                                        "gui.common.tag-too-long",
+                                        "&c标签过长，最多{max}字符！",
+                                        "{max}", String.valueOf(maxLength))));
+                        openBedrockForm(player);
+                        return;
+                    }
+                    currentTag = input;
+                    plugin.getGuildService().updateGuildAsync(
+                            guild.getId(), guild.getName(), input,
+                            guild.getDescription(), player.getUniqueId())
+                            .thenAccept(success -> CompatibleScheduler.runTask(plugin, player, () -> {
+                                if (success) {
+                                    player.sendMessage(ColorUtils.colorize(
+                                            languageManager.getGuiMessage(player,
+                                                    "gui.common.tag-updated",
+                                                    "&a工会标签已更新！")));
+                                    plugin.getGuiManager().openGUI(player,
+                                            new GuildSettingsGUI(plugin, guild, player));
+                                } else {
+                                    player.sendMessage(ColorUtils.colorize(
+                                            languageManager.getGuiMessage(player,
+                                                    "gui.common.tag-update-failed",
+                                                    "&c工会标签更新失败！")));
+                                }
+                            }));
+                }))
+                .closedResultHandler(() -> CompatibleScheduler.runTask(plugin, player, () ->
+                        plugin.getGuiManager().openGUI(player,
+                                new GuildSettingsGUI(plugin, guild, player))))
+                .build();
+
+        return BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
     @Override
     public void setupInventory(Inventory inventory) {
         // 填充边框

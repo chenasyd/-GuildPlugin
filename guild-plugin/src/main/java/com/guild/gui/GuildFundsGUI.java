@@ -3,8 +3,11 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.language.LanguageManager;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import com.guild.models.Guild;
 import com.guild.models.GuildContribution;
 import org.bukkit.Bukkit;
@@ -76,6 +79,88 @@ public class GuildFundsGUI implements GUI {
     public int getSize() {
         return 54;
     }
+
+    // ==================== 基岩版表单 ====================
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockFundsForm(player, page);
+        return true;
+    }
+
+    private void sendBedrockFundsForm(Player player, int pageNum) {
+        loadDataAsync().thenAccept(success -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (!player.isOnline()) return;
+
+                String guildName = ColorUtils.stripColor(guild.getName());
+
+                if (!success || totals == null || totals.isEmpty()) {
+                    SimpleForm emptyForm = SimpleForm.builder()
+                            .title("§6工会资金 - " + guildName)
+                            .content("§c暂无存款记录")
+                            .button("§c返回")
+                            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                                    navigateBack(player)))
+                            .build();
+                    BedrockFormSender.sendForm(player.getUniqueId(), emptyForm);
+                    return;
+                }
+
+                int totalPages = (totalPlayers - 1) / itemsPerPage + 1;
+                final int safePage = Math.max(0, Math.min(pageNum, totalPages - 1));
+                int startIndex = safePage * itemsPerPage;
+                int endIndex = Math.min(startIndex + itemsPerPage, totals.size());
+
+                String content = "§f第 " + (safePage + 1) + "/" + totalPages + " 页\n"
+                        + "§f总人数: " + totalPlayers;
+
+                SimpleForm.Builder builder = SimpleForm.builder()
+                        .title("§6工会资金 - " + guildName)
+                        .content(content);
+
+                List<GuildContribution> pageEntries = new ArrayList<>();
+                for (int i = startIndex; i < endIndex; i++) {
+                    GuildContribution entry = totals.get(i);
+                    pageEntries.add(entry);
+                    boolean isOnline = Bukkit.getPlayer(entry.getPlayerUuid()) != null;
+                    String status = isOnline ? "§a在线" : "§f离线";
+                    builder.button("§e" + entry.getPlayerName()
+                            + " §f- " + formatAmount(entry.getAmount()) + " " + status);
+                }
+
+                builder.button("§a上一页");
+                builder.button("§a下一页");
+                builder.button("§a刷新");
+                builder.button("§c返回");
+
+                final int entryCount = pageEntries.size();
+                final int curPage = safePage;
+                final int totPages = totalPages;
+
+                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    int id = response.clickedButtonId();
+                    if (id < entryCount) {
+                        showPlayerDetails(player, pageEntries.get(id));
+                        sendBedrockFundsForm(player, curPage);
+                    } else if (id == entryCount) {
+                        sendBedrockFundsForm(player, curPage > 0 ? curPage - 1 : curPage);
+                    } else if (id == entryCount + 1) {
+                        sendBedrockFundsForm(player, curPage < totPages - 1 ? curPage + 1 : curPage);
+                    } else if (id == entryCount + 2) {
+                        sendBedrockFundsForm(player, curPage);
+                    } else {
+                        navigateBack(player);
+                    }
+                }));
+
+                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            });
+        });
+    }
+
+    // ==================== Java Inventory 布局 ====================
 
     @Override
     public void setupInventory(Inventory inventory) {

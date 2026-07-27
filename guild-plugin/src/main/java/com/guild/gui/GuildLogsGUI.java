@@ -2,8 +2,11 @@ package com.guild.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import com.guild.models.GuildLog;
@@ -58,7 +61,93 @@ public class GuildLogsGUI implements GUI {
     public int getSize() {
         return 54;
     }
-    
+
+    // ==================== 基岩版表单 ====================
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockLogsForm(player, page);
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void sendBedrockLogsForm(Player player, int pageNum) {
+        plugin.getGuildService().getGuildLogsCountAsync(guild.getId()).thenAccept(count -> {
+            int offset = pageNum * itemsPerPage;
+            plugin.getGuildService().getGuildLogsAsync(guild.getId(), itemsPerPage, offset)
+                    .thenAccept(pageLogs -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (!player.isOnline()) return;
+
+                    String guildName = ColorUtils.stripColor(guild.getName());
+
+                    if (pageLogs == null || pageLogs.isEmpty()) {
+                        SimpleForm emptyForm = SimpleForm.builder()
+                                .title("§6工会日志 - " + guildName)
+                                .content("§c暂无日志记录")
+                                .button("§c返回")
+                                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                                        plugin.getGuiManager().openGUI(player,
+                                                new GuildSettingsGUI(plugin, guild, player))))
+                                .build();
+                        BedrockFormSender.sendForm(player.getUniqueId(), emptyForm);
+                        return;
+                    }
+
+                    int totalLogsLocal = count;
+                    int totalPages = (totalLogsLocal - 1) / itemsPerPage + 1;
+                    final int safePage = Math.max(0, Math.min(pageNum, totalPages - 1));
+
+                    String content = "§f第 " + (safePage + 1) + "/" + totalPages + " 页\n"
+                            + "§f总记录: " + totalLogsLocal;
+
+                    SimpleForm.Builder builder = SimpleForm.builder()
+                            .title("§6工会日志 - " + guildName)
+                            .content(content);
+
+                    for (GuildLog log : pageLogs) {
+                        String time = log.getSimpleTime(languageManager.getPlayerLanguage(player));
+                        builder.button("§e" + log.getLogType().getDisplayName()
+                                + " §f- " + ColorUtils.stripColor(log.getPlayerName())
+                                + " §f" + time);
+                    }
+
+                    builder.button("§a上一页");
+                    builder.button("§a下一页");
+                    builder.button("§a刷新");
+                    builder.button("§c返回");
+
+                    final int logCount = pageLogs.size();
+                    final int curPage = safePage;
+                    final int totPages = totalPages;
+                    final List<GuildLog> finalLogs = pageLogs;
+
+                    builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                        int id = response.clickedButtonId();
+                        if (id < logCount) {
+                            handleLogClick(player, finalLogs.get(id));
+                            sendBedrockLogsForm(player, curPage);
+                        } else if (id == logCount) {
+                            sendBedrockLogsForm(player, curPage > 0 ? curPage - 1 : curPage);
+                        } else if (id == logCount + 1) {
+                            sendBedrockLogsForm(player, curPage < totPages - 1 ? curPage + 1 : curPage);
+                        } else if (id == logCount + 2) {
+                            sendBedrockLogsForm(player, curPage);
+                        } else {
+                            plugin.getGuiManager().openGUI(player,
+                                    new GuildSettingsGUI(plugin, guild, player));
+                        }
+                    }));
+
+                    BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+                });
+            });
+        });
+    }
+
+    // ==================== Java Inventory 布局 ====================
+
     @Override
     public void setupInventory(Inventory inventory) {
         // 填充边框

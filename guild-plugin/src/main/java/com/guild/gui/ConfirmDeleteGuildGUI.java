@@ -3,8 +3,11 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.language.LanguageManager;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import org.bukkit.Material;
@@ -55,7 +58,37 @@ public class ConfirmDeleteGuildGUI implements GUI {
     public int getSize() {
         return 27;
     }
-    
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+
+        String guildName = ColorUtils.stripColor(guild.getName());
+        String content = "§f工会: §e" + guildName + "\n"
+                + "§f你确定要删除这个工会吗？\n"
+                + "§c此操作将永久删除工会！\n"
+                + "§c所有成员将被移除！\n"
+                + "§c此操作不可撤销！";
+
+        SimpleForm form = SimpleForm.builder()
+                .title("§4确认删除工会")
+                .content(content)
+                .button("§4确认删除")
+                .button("§a取消")
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (response.clickedButtonId() == 0) {
+                        handleConfirmDelete(player);
+                    } else {
+                        handleCancel(player);
+                    }
+                }))
+                .closedResultHandler(() -> CompatibleScheduler.runTask(plugin, player, () ->
+                        handleCancel(player)))
+                .build();
+
+        return BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
     @Override
     public void setupInventory(Inventory inventory) {
         // 填充边框
