@@ -9,17 +9,21 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import org.geysermc.cumulus.form.CustomForm;
+import org.geysermc.cumulus.form.Form;
 import org.geysermc.cumulus.form.ModalForm;
 import org.geysermc.cumulus.form.SimpleForm;
-import org.geysermc.floodgate.api.FloodgateApi;
-import org.geysermc.floodgate.api.player.FloodgatePlayer;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 基岩版表单测试指令 — 用于预览 Cumulus 表单在基岩客户端上的渲染效果。
+ *
+ * <p>通过反射调用 {@code Geyser.api().sendForm(uuid, form)}，
+ * 无需 Floodgate，仅依赖 Geyser-Spigot 运行时。
  *
  * <p>用法：
  * <ul>
@@ -28,15 +32,55 @@ import java.util.List;
  *   <li>{@code /bformtest custom} — 直接打开 CustomForm 示例</li>
  *   <li>{@code /bformtest modal} — 直接打开 ModalForm 示例</li>
  * </ul>
- *
- * <p>仅限基岩版玩家使用。Java 版玩家执行时会提示不支持。
  */
 public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
 
     private final GuildPlugin plugin;
 
+    // 反射句柄：Geyser.api() → GeyserApiBase.sendForm(UUID, Form)
+    private static Object geyserApiInstance;
+    private static Method sendFormMethod;
+    private static boolean reflectionReady = false;
+    private static boolean reflectionFailed = false;
+
     public BedrockFormTestCommand(GuildPlugin plugin) {
         this.plugin = plugin;
+        initReflection();
+    }
+
+    /**
+     * 初始化反射句柄：Geyser.api() 和 GeyserApiBase.sendForm(UUID, Form)
+     */
+    private static void initReflection() {
+        if (reflectionReady || reflectionFailed) return;
+        try {
+            // org.geysermc.api.Geyser.api() → GeyserApiBase
+            Class<?> geyserClass = Class.forName("org.geysermc.api.Geyser");
+            Method apiMethod = geyserClass.getMethod("api");
+            geyserApiInstance = apiMethod.invoke(null);
+
+            // GeyserApiBase.sendForm(UUID, Form)
+            Class<?> formClass = Class.forName("org.geysermc.cumulus.form.Form");
+            sendFormMethod = geyserApiInstance.getClass().getMethod("sendForm", UUID.class, formClass);
+
+            reflectionReady = true;
+        } catch (Exception e) {
+            reflectionFailed = true;
+        }
+    }
+
+    /**
+     * 通过反射向基岩玩家发送表单。
+     */
+    private boolean sendForm(UUID uuid, Form form) {
+        if (!reflectionReady) return false;
+        try {
+            sendFormMethod.invoke(geyserApiInstance, uuid, form);
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().warning("[BFormTest] sendForm failed: " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
@@ -46,32 +90,23 @@ public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        // 检查是否为基岩版玩家
         if (!PlayerConnectionService.isBedrockPlayer(player)) {
             player.sendMessage("§c此指令仅限基岩版玩家使用。你是 Java 版玩家。");
             return true;
         }
 
-        // 获取 Floodgate 玩家实例
-        FloodgateApi floodgateApi = FloodgateApi.getInstance();
-        if (floodgateApi == null) {
-            player.sendMessage("§cFloodgate 未安装或未启用。");
-            return true;
-        }
-
-        FloodgatePlayer fp = floodgateApi.getPlayer(player.getUniqueId());
-        if (fp == null) {
-            player.sendMessage("§c无法获取 Floodgate 玩家实例。");
+        if (!reflectionReady) {
+            player.sendMessage("§cGeyser API 不可用，无法发送表单。");
             return true;
         }
 
         String sub = args.length > 0 ? args[0].toLowerCase() : "";
 
         switch (sub) {
-            case "simple" -> sendSimpleForm(player, fp);
-            case "custom" -> sendCustomForm(player, fp);
-            case "modal" -> sendModalForm(player, fp);
-            default -> sendMainMenu(player, fp);
+            case "simple" -> sendSimpleForm(player);
+            case "custom" -> sendCustomForm(player);
+            case "modal" -> sendModalForm(player);
+            default -> sendMainMenu(player);
         }
 
         return true;
@@ -79,35 +114,35 @@ public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
 
     // ── 主菜单（SimpleForm 导航）──────────────────────────────────
 
-    private void sendMainMenu(Player player, FloodgatePlayer fp) {
+    private void sendMainMenu(Player player) {
         SimpleForm form = SimpleForm.builder()
                 .title("§6工会插件 §r- §e基岩版表单测试")
                 .content("§7选择一个表单类型进行预览：")
-                .button("§aSimpleForm\n§7按钮菜单")
-                .button("§bCustomForm\n§7输入/设置表单")
-                .button("§cModalForm\n§7确认对话框")
+                .button("§aSimpleForm §7- 按钮菜单")
+                .button("§bCustomForm §7- 输入/设置表单")
+                .button("§cModalForm §7- 确认对话框")
                 .validResultHandler(response -> {
                     switch (response.clickedButtonId()) {
-                        case 0 -> sendSimpleForm(player, fp);
-                        case 1 -> sendCustomForm(player, fp);
-                        case 2 -> sendModalForm(player, fp);
+                        case 0 -> sendSimpleForm(player);
+                        case 1 -> sendCustomForm(player);
+                        case 2 -> sendModalForm(player);
                     }
                 })
                 .build();
-        fp.sendForm(form);
+        sendForm(player.getUniqueId(), form);
     }
 
     // ── SimpleForm 示例（模拟工会主菜单）──────────────────────────
 
-    private void sendSimpleForm(Player player, FloodgatePlayer fp) {
+    private void sendSimpleForm(Player player) {
         SimpleForm form = SimpleForm.builder()
                 .title("§6工会主菜单 §r- §7SimpleForm 示例")
                 .content("§7欢迎, §e" + player.getName() + "§7!\n§7这是 SimpleForm 按钮菜单示例。")
-                .button("§a工会信息\n§7查看工会详情")
-                .button("§b成员管理\n§7管理工会成员")
-                .button("§e工会设置\n§7修改工会配置")
-                .button("§6工会列表\n§7浏览所有工会")
-                .button("§c退出工会\n§7离开当前工会")
+                .button("§a工会信息 §7- 查看工会详情")
+                .button("§b成员管理 §7- 管理工会成员")
+                .button("§e工会设置 §7- 修改工会配置")
+                .button("§6工会列表 §7- 浏览所有工会")
+                .button("§c退出工会 §7- 离开当前工会")
                 .validResultHandler(response -> {
                     String[] names = {"工会信息", "成员管理", "工会设置", "工会列表", "退出工会"};
                     int id = response.clickedButtonId();
@@ -117,12 +152,12 @@ public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
                 .closedOrInvalidResultHandler(() ->
                         player.sendMessage("§7[SimpleForm] 表单已关闭"))
                 .build();
-        fp.sendForm(form);
+        sendForm(player.getUniqueId(), form);
     }
 
     // ── CustomForm 示例（模拟工会设置）────────────────────────────
 
-    private void sendCustomForm(Player player, FloodgatePlayer fp) {
+    private void sendCustomForm(Player player) {
         CustomForm form = CustomForm.builder()
                 .title("§6工会设置 §r- §7CustomForm 示例")
                 .label("§7── 基本设置 ──")
@@ -156,12 +191,12 @@ public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
                 .closedOrInvalidResultHandler(() ->
                         player.sendMessage("§7[CustomForm] 表单已关闭，未保存"))
                 .build();
-        fp.sendForm(form);
+        sendForm(player.getUniqueId(), form);
     }
 
     // ── ModalForm 示例（模拟确认对话框）───────────────────────────
 
-    private void sendModalForm(Player player, FloodgatePlayer fp) {
+    private void sendModalForm(Player player) {
         ModalForm form = ModalForm.builder()
                 .title("§c确认操作 §r- §7ModalForm 示例")
                 .content("§7你确定要退出工会 §e测试工会 §7吗？\n\n"
@@ -179,7 +214,7 @@ public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
                 .closedOrInvalidResultHandler(() ->
                         player.sendMessage("§7[ModalForm] 对话框已关闭"))
                 .build();
-        fp.sendForm(form);
+        sendForm(player.getUniqueId(), form);
     }
 
     // ── Tab 补全 ─────────────────────────────────────────────────
