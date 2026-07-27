@@ -419,7 +419,7 @@ public class CreateRelationGUI implements GUI {
             .content("§f请选择关系类型：");
 
         for (GuildRelation.RelationType type : types) {
-            builder.button(type.getColor() + type.getDisplayName(lang));
+            builder.button(ColorUtils.colorize(type.getColor() + type.getDisplayName(lang)));
         }
         builder.button("§c返回");
 
@@ -465,7 +465,7 @@ public class CreateRelationGUI implements GUI {
 
                 SimpleForm.Builder builder = SimpleForm.builder()
                     .title("§6创建关系 - 选择目标 第" + (safePage + 1) + "页")
-                    .content("§f类型: " + type.getColor() + type.getDisplayName(lang) + "\n§f选择目标工会：");
+                    .content(ColorUtils.colorize("§f类型: " + type.getColor() + type.getDisplayName(lang) + "\n§f选择目标工会："));
 
                 for (int i = startIndex; i < endIndex; i++) {
                     builder.button("§f" + guilds.get(i).getName());
@@ -501,7 +501,7 @@ public class CreateRelationGUI implements GUI {
         String lang = languageManager.getPlayerLanguage(player);
         SimpleForm form = SimpleForm.builder()
             .title("§6确认创建关系")
-            .content("§f类型: " + type.getColor() + type.getDisplayName(lang) + "\n§f目标: " + targetGuild.getName())
+            .content(ColorUtils.colorize("§f类型: " + type.getColor() + type.getDisplayName(lang) + "\n§f目标: " + targetGuild.getName()))
             .button("§a确认创建")
             .button("§c取消")
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {

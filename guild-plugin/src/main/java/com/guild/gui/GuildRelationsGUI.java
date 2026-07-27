@@ -532,7 +532,7 @@ public class GuildRelationsGUI implements GUI {
                     GuildRelation rel = relationsList.get(i);
                     String otherName = rel.getOtherGuildName(guild.getId());
                     String color = rel.getType().getColor();
-                    builder.button(color + otherName + " - " + rel.getType().getDisplayName());
+                    builder.button(ColorUtils.colorize(color + otherName + " - " + rel.getType().getDisplayName()));
                 }
 
                 builder.button("§a创建关系");
@@ -571,7 +571,7 @@ public class GuildRelationsGUI implements GUI {
 
         SimpleForm.Builder builder = SimpleForm.builder()
             .title("§6关系操作 - " + otherName)
-            .content("§f类型: " + type.getDisplayName() + "\n§f状态: " + status.getDisplayName());
+            .content(ColorUtils.colorize("§f类型: " + type.getDisplayName() + "\n§f状态: " + status.getDisplayName()));
 
         List<String> actionTypes = new ArrayList<>();
 
