@@ -160,7 +160,7 @@ public class UpdateManager {
                         ? v.get("changelog").getAsString() : "";
 
                 JsonArray files = v.getAsJsonArray("files");
-                if (files.isEmpty()) break;
+                if (files.size() == 0) break;
 
                 JsonObject file = files.get(0).getAsJsonObject();
                 String downloadUrl = file.get("url").getAsString();

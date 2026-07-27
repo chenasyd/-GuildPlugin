@@ -233,7 +233,7 @@ public class AnnouncementManager {
 
     private List<Announcement> loadGuildAnnouncements(File file) {
         try (FileReader reader = new FileReader(file)) {
-            JsonArray array = JsonParser.parseReader(reader).getAsJsonArray();
+            JsonArray array = gson.fromJson(reader, JsonArray.class);
             List<Announcement> list = new ArrayList<>();
             for (JsonElement element : array) {
                 Announcement ann = gson.fromJson(element, Announcement.class);

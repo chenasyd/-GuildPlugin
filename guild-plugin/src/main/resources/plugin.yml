@@ -26,6 +26,10 @@ commands:
     usage: /guildmodule list
     aliases: [gm]
     permission: guild.admin.module
+  bformtest:
+    description: Bedrock form GUI preview test
+    usage: /bformtest [simple|custom|modal]
+    permission: guild.use
 
 permissions:
   guild.use:

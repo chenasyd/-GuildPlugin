@@ -13,6 +13,7 @@ import com.guild.sdk.economy.CurrencyManager;
 import com.guild.commands.GuildCommand;
 import com.guild.commands.GuildAdminCommand;
 import com.guild.commands.GuildModuleCommand;
+import com.guild.commands.BedrockFormTestCommand;
 import com.guild.listeners.PlayerListener;
 import com.guild.listeners.GuildListener;
 import com.guild.services.GuildService;
@@ -242,6 +243,7 @@ public class GuildPlugin extends JavaPlugin {
         GuildCommand guildCommand = new GuildCommand(this);
         GuildAdminCommand guildAdminCommand = new GuildAdminCommand(this);
         GuildModuleCommand guildModuleCommand = new GuildModuleCommand(this);
+        BedrockFormTestCommand bedrockFormTestCommand = new BedrockFormTestCommand(this);
         
         getCommand("guild").setExecutor(guildCommand);
         getCommand("guild").setTabCompleter(guildCommand);
@@ -249,6 +251,8 @@ public class GuildPlugin extends JavaPlugin {
         getCommand("guildadmin").setTabCompleter(guildAdminCommand);
         getCommand("guildmodule").setExecutor(guildModuleCommand);
         getCommand("guildmodule").setTabCompleter(guildModuleCommand);
+        getCommand("bformtest").setExecutor(bedrockFormTestCommand);
+        getCommand("bformtest").setTabCompleter(bedrockFormTestCommand);
     }
     
     private void registerListeners() {
