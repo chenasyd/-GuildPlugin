@@ -17,8 +17,12 @@ import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.PlaceholderUtils;
 import com.guild.core.language.LanguageManager;
+import com.guild.core.geyser.BedrockFormSender;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
+
+import org.geysermc.cumulus.form.SimpleForm;
 
 /**
  * 成员管理GUI
@@ -521,7 +525,117 @@ public class MemberManagementGUI implements GUI {
     private void refreshInventory(Player player) {
         plugin.getGuiManager().refreshGUI(player);
     }
-    
+
+    // ── 基岩版表单 ──
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockMemberList(player, 0);
+        return true;
+    }
+
+    private void sendBedrockMemberList(Player player, int page) {
+        plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(members -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (members == null || members.isEmpty()) {
+                    SimpleForm form = SimpleForm.builder()
+                        .title("§6成员管理")
+                        .content("§f工会中还没有成员")
+                        .button("§a邀请成员")
+                        .button("§c返回")
+                        .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                            if (response.clickedButtonId() == 0) {
+                                plugin.getGuiManager().openGUI(player, new InviteMemberGUI(plugin, guild, player));
+                            } else {
+                                plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
+                            }
+                        }))
+                        .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                            plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player))))
+                        .build();
+                    BedrockFormSender.sendForm(player.getUniqueId(), form);
+                    return;
+                }
+
+                final int itemsPerPage = 10;
+                int totalPages = (members.size() - 1) / itemsPerPage;
+                final int safePage = Math.max(0, Math.min(page, totalPages));
+                final int startIndex = safePage * itemsPerPage;
+                int endIndex = Math.min(startIndex + itemsPerPage, members.size());
+                final int memberCount = endIndex - startIndex;
+
+                SimpleForm.Builder builder = SimpleForm.builder()
+                    .title("§6成员管理 - 第" + (safePage + 1) + "页")
+                    .content("§f成员列表 (共" + members.size() + "人)");
+
+                for (int i = startIndex; i < endIndex; i++) {
+                    GuildMember m = members.get(i);
+                    String roleColor = switch (m.getRole()) {
+                        case LEADER -> "§c";
+                        case OFFICER -> "§6";
+                        default -> "§f";
+                    };
+                    builder.button(roleColor + m.getPlayerName());
+                }
+
+                builder.button("§a邀请成员");
+                builder.button("§e上一页");
+                builder.button("§e下一页");
+                builder.button("§c返回");
+
+                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    int clicked = response.clickedButtonId();
+                    if (clicked < memberCount) {
+                        GuildMember m = members.get(startIndex + clicked);
+                        sendBedrockMemberActions(player, m);
+                    } else if (clicked == memberCount) {
+                        plugin.getGuiManager().openGUI(player, new InviteMemberGUI(plugin, guild, player));
+                    } else if (clicked == memberCount + 1) {
+                        sendBedrockMemberList(player, safePage - 1);
+                    } else if (clicked == memberCount + 2) {
+                        sendBedrockMemberList(player, safePage + 1);
+                    } else {
+                        plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
+                    }
+                }));
+
+                builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                    plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player))));
+
+                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            });
+        });
+    }
+
+    private void sendBedrockMemberActions(Player player, GuildMember member) {
+        String roleText = switch (member.getRole()) {
+            case LEADER -> "§c会长";
+            case OFFICER -> "§6官员";
+            default -> "§f成员";
+        };
+
+        SimpleForm form = SimpleForm.builder()
+            .title("§6成员操作 - " + member.getPlayerName())
+            .content("§f角色: " + roleText)
+            .button("§e查看详情")
+            .button("§c踢出成员")
+            .button("§6提升/降级")
+            .button("§c返回列表")
+            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                switch (response.clickedButtonId()) {
+                    case 0 -> plugin.getGuiManager().openGUI(player, new MemberDetailsGUI(plugin, guild, member, player));
+                    case 1 -> handleKickMemberDirect(player, member);
+                    case 2 -> handlePromoteDemoteMember(player, member);
+                    case 3 -> sendBedrockMemberList(player, 0);
+                }
+            }))
+            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                sendBedrockMemberList(player, 0)))
+            .build();
+        BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
     /**
      * 创建物品
      */

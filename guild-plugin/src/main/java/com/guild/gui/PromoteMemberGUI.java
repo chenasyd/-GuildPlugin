@@ -4,8 +4,12 @@ import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.geyser.BedrockFormSender;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -260,7 +264,79 @@ public class PromoteMemberGUI implements GUI {
             }
         });
     }
-    
+
+    // ── 基岩版表单 ──
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockPromoteList(player, 0);
+        return true;
+    }
+
+    private void sendBedrockPromoteList(Player player, int page) {
+        plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(memberList -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                List<GuildMember> promotable = memberList.stream()
+                    .filter(m -> !m.getPlayerUuid().equals(guild.getLeaderUuid()))
+                    .filter(m -> m.getRole() != GuildMember.Role.OFFICER)
+                    .collect(java.util.stream.Collectors.toList());
+
+                if (promotable.isEmpty()) {
+                    SimpleForm form = SimpleForm.builder()
+                        .title("§6提升成员")
+                        .content("§f没有可提升的成员")
+                        .button("§c返回")
+                        .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                            plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))))
+                        .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                            plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))))
+                        .build();
+                    BedrockFormSender.sendForm(player.getUniqueId(), form);
+                    return;
+                }
+
+                final int itemsPerPage = 10;
+                int totalPages = (promotable.size() - 1) / itemsPerPage;
+                final int safePage = Math.max(0, Math.min(page, totalPages));
+                final int startIndex = safePage * itemsPerPage;
+                int endIndex = Math.min(startIndex + itemsPerPage, promotable.size());
+                final int memberCount = endIndex - startIndex;
+
+                SimpleForm.Builder builder = SimpleForm.builder()
+                    .title("§6提升成员 - 第" + (safePage + 1) + "页")
+                    .content("§f选择要提升为官员的成员");
+
+                for (int i = startIndex; i < endIndex; i++) {
+                    builder.button("§6" + promotable.get(i).getPlayerName());
+                }
+
+                builder.button("§e上一页");
+                builder.button("§e下一页");
+                builder.button("§c返回");
+
+                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    int clicked = response.clickedButtonId();
+                    if (clicked < memberCount) {
+                        GuildMember m = promotable.get(startIndex + clicked);
+                        handlePromoteMember(player, m);
+                    } else if (clicked == memberCount) {
+                        sendBedrockPromoteList(player, safePage - 1);
+                    } else if (clicked == memberCount + 1) {
+                        sendBedrockPromoteList(player, safePage + 1);
+                    } else {
+                        plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player));
+                    }
+                }));
+
+                builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                    plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))));
+
+                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            });
+        });
+    }
+
     /**
      * 创建物品
      */

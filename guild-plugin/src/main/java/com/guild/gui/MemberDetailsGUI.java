@@ -6,8 +6,11 @@ import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PlaceholderUtils;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
+
+import org.geysermc.cumulus.form.SimpleForm;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -521,7 +524,49 @@ public class MemberDetailsGUI implements GUI {
                 return languageManager.getGuiMessage(viewer, "gui.member-management.member-details.basic-actions", "基础操作");
         }
     }
-    
+
+    // ── 基岩版表单 ──
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+
+        String roleText = switch (member.getRole()) {
+            case LEADER -> "§c会长";
+            case OFFICER -> "§6官员";
+            default -> "§f成员";
+        };
+
+        StringBuilder content = new StringBuilder();
+        content.append("§f玩家: ").append(member.getPlayerName()).append("\n");
+        content.append("§f角色: ").append(roleText).append("\n");
+        if (member.getJoinedAt() != null) {
+            content.append("§f加入时间: ").append(member.getJoinedAt().format(com.guild.core.time.TimeProvider.FULL_FORMATTER)).append("\n");
+        }
+        content.append("§f在线: ").append(isPlayerOnline(member.getPlayerUuid()) ? "§a是" : "§c否");
+
+        SimpleForm form = SimpleForm.builder()
+            .title("§6成员详情 - " + member.getPlayerName())
+            .content(content.toString())
+            .button("§c踢出成员")
+            .button("§6提升/降级")
+            .button("§e发送消息")
+            .button("§c返回")
+            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, viewer, () -> {
+                switch (response.clickedButtonId()) {
+                    case 0 -> handleKickMember(viewer);
+                    case 1 -> handlePromoteDemoteMember(viewer);
+                    case 2 -> handleSendMessage(viewer);
+                    case 3 -> plugin.getGuiManager().openGUI(viewer, new MemberManagementGUI(plugin, guild, viewer));
+                }
+            }))
+            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, viewer, () ->
+                plugin.getGuiManager().openGUI(viewer, new MemberManagementGUI(plugin, guild, viewer))))
+            .build();
+
+        return BedrockFormSender.sendForm(viewer.getUniqueId(), form);
+    }
+
     /**
      * 创建物品
      */

@@ -19,8 +19,11 @@ import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
 import com.guild.models.GuildInvitation;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.util.InviteMessageUtils;
 import com.guild.util.NotifyUtils;
+
+import org.geysermc.cumulus.form.SimpleForm;
 
 /**
  * 邀请成员GUI
@@ -255,7 +258,70 @@ public class InviteMemberGUI implements GUI {
                 });
         });
     }
-    
+
+    // ── 基岩版表单 ──
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockInviteList(player, 0);
+        return true;
+    }
+
+    private void sendBedrockInviteList(Player player, int page) {
+        if (onlinePlayers.isEmpty()) {
+            SimpleForm form = SimpleForm.builder()
+                .title("§6邀请成员")
+                .content("§f当前没有可邀请的在线玩家")
+                .button("§c返回")
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                    plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))))
+                .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                    plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))))
+                .build();
+            BedrockFormSender.sendForm(player.getUniqueId(), form);
+            return;
+        }
+
+        final int itemsPerPage = 10;
+        int totalPages = (onlinePlayers.size() - 1) / itemsPerPage;
+        final int safePage = Math.max(0, Math.min(page, totalPages));
+        final int startIndex = safePage * itemsPerPage;
+        int endIndex = Math.min(startIndex + itemsPerPage, onlinePlayers.size());
+        final int playerCount = endIndex - startIndex;
+
+        SimpleForm.Builder builder = SimpleForm.builder()
+            .title("§6邀请成员 - 第" + (safePage + 1) + "页")
+            .content("§f在线玩家 (共" + onlinePlayers.size() + "人)");
+
+        for (int i = startIndex; i < endIndex; i++) {
+            builder.button("§a" + onlinePlayers.get(i).getName());
+        }
+
+        builder.button("§e上一页");
+        builder.button("§e下一页");
+        builder.button("§c返回");
+
+        builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+            int clicked = response.clickedButtonId();
+            if (clicked < playerCount) {
+                Player target = onlinePlayers.get(startIndex + clicked);
+                handleInvitePlayer(player, target);
+            } else if (clicked == playerCount) {
+                sendBedrockInviteList(player, safePage - 1);
+            } else if (clicked == playerCount + 1) {
+                sendBedrockInviteList(player, safePage + 1);
+            } else {
+                plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player));
+            }
+        }));
+
+        builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+            plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))));
+
+        BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+    }
+
     /**
      * 创建物品
      */
