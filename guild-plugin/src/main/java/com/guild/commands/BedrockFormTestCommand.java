@@ -118,9 +118,9 @@ public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
         SimpleForm form = SimpleForm.builder()
                 .title("§6工会插件 §r- §e基岩版表单测试")
                 .content("§7选择一个表单类型进行预览：")
-                .button("§aSimpleForm §7- 按钮菜单")
-                .button("§bCustomForm §7- 输入/设置表单")
-                .button("§cModalForm §7- 确认对话框")
+                .button("§aSimpleForm §f- 按钮菜单")
+                .button("§bCustomForm §f- 输入/设置表单")
+                .button("§cModalForm §f- 确认对话框")
                 .validResultHandler(response -> {
                     switch (response.clickedButtonId()) {
                         case 0 -> sendSimpleForm(player);
@@ -138,11 +138,11 @@ public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
         SimpleForm form = SimpleForm.builder()
                 .title("§6工会主菜单 §r- §7SimpleForm 示例")
                 .content("§7欢迎, §e" + player.getName() + "§7!\n§7这是 SimpleForm 按钮菜单示例。")
-                .button("§a工会信息 §7- 查看工会详情")
-                .button("§b成员管理 §7- 管理工会成员")
-                .button("§e工会设置 §7- 修改工会配置")
-                .button("§6工会列表 §7- 浏览所有工会")
-                .button("§c退出工会 §7- 离开当前工会")
+                .button("§a工会信息 §f- 查看工会详情")
+                .button("§b成员管理 §f- 管理工会成员")
+                .button("§e工会设置 §f- 修改工会配置")
+                .button("§6工会列表 §f- 浏览所有工会")
+                .button("§c退出工会 §f- 离开当前工会")
                 .validResultHandler(response -> {
                     String[] names = {"工会信息", "成员管理", "工会设置", "工会列表", "退出工会"};
                     int id = response.clickedButtonId();
@@ -159,7 +159,7 @@ public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
 
     private void sendCustomForm(Player player) {
         CustomForm form = CustomForm.builder()
-                .title("§6工会设置 §r- §7CustomForm 示例")
+                .title("§6工会设置 §r- §fCustomForm 示例")
                 .label("§7── 基本设置 ──")
                 .input("§f工会名称", "输入新名称...", "我的工会")
                 .input("§f工会描述", "输入描述...", "一个友好的工会")
@@ -198,7 +198,7 @@ public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
 
     private void sendModalForm(Player player) {
         ModalForm form = ModalForm.builder()
-                .title("§c确认操作 §r- §7ModalForm 示例")
+                .title("§c确认操作 §r- §fModalForm 示例")
                 .content("§7你确定要退出工会 §e测试工会 §7吗？\n\n"
                         + "§c此操作不可撤销！\n"
                         + "§7退出后需要重新申请加入。")
