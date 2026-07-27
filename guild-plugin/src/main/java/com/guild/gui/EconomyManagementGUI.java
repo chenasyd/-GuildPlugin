@@ -322,8 +322,8 @@ public class EconomyManagementGUI implements GUI {
                 }
 
                 builder.button("§a刷新列表");
-                if (safePage > 0) builder.button("§e上一页");
-                if (safePage < totalPages - 1) builder.button("§e下一页");
+                builder.button("§e上一页");
+                builder.button("§e下一页");
                 builder.button("§c返回");
 
                 final int navOffset = pageGuilds.size();
@@ -334,10 +334,12 @@ public class EconomyManagementGUI implements GUI {
                         sendBedrockEconomyActions(player, pageGuilds.get(id), safePage);
                     } else if (id == navOffset) {
                         sendBedrockEconomyList(player, safePage);
-                    } else if (id == navOffset + 1 && safePage > 0) {
-                        sendBedrockEconomyList(player, safePage - 1);
-                    } else if ((id == navOffset + 1 && safePage == 0) || (id == navOffset + 2 && safePage > 0)) {
-                        sendBedrockEconomyList(player, safePage + 1);
+                    } else if (id == navOffset + 1) {
+                        if (safePage > 0) sendBedrockEconomyList(player, safePage - 1);
+                        else sendBedrockEconomyList(player, safePage);
+                    } else if (id == navOffset + 2) {
+                        if (safePage < totalPages - 1) sendBedrockEconomyList(player, safePage + 1);
+                        else sendBedrockEconomyList(player, safePage);
                     } else {
                         plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
                     }

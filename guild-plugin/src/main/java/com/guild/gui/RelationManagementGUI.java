@@ -273,8 +273,7 @@ public class RelationManagementGUI implements GUI {
                 isLoading = false;
                 
                 if (player.isOnline()) {
-                    // 使用安全的刷新方法
-                    plugin.getGuiManager().refreshGUI(player);
+                    refresh(player);
                 }
             });
         }).exceptionally(throwable -> {
@@ -282,7 +281,7 @@ public class RelationManagementGUI implements GUI {
                 isLoading = false;
                 if (player.isOnline()) {
                     player.sendMessage(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.relation-management.load-error", "加载关系数据时发生错误: {error}", "{error}", throwable.getMessage())));
-                    plugin.getGuiManager().refreshGUI(player);
+                    refresh(player);
                 }
             });
             return null;
@@ -513,8 +512,8 @@ public class RelationManagementGUI implements GUI {
                 }
 
                 builder.button("§a刷新列表");
-                if (safePage > 0) builder.button("§e上一页");
-                if (safePage < totalPages - 1) builder.button("§e下一页");
+                builder.button("§e上一页");
+                builder.button("§e下一页");
                 builder.button("§c返回");
 
                 final int navOffset = pageRelations.size();
@@ -525,10 +524,12 @@ public class RelationManagementGUI implements GUI {
                         sendBedrockRelationMgmtActions(player, pageRelations.get(id), safePage);
                     } else if (id == navOffset) {
                         sendBedrockRelationMgmtList(player, safePage);
-                    } else if (id == navOffset + 1 && safePage > 0) {
-                        sendBedrockRelationMgmtList(player, safePage - 1);
-                    } else if ((id == navOffset + 1 && safePage == 0) || (id == navOffset + 2 && safePage > 0)) {
-                        sendBedrockRelationMgmtList(player, safePage + 1);
+                    } else if (id == navOffset + 1) {
+                        if (safePage > 0) sendBedrockRelationMgmtList(player, safePage - 1);
+                        else sendBedrockRelationMgmtList(player, safePage);
+                    } else if (id == navOffset + 2) {
+                        if (safePage < totalPages - 1) sendBedrockRelationMgmtList(player, safePage + 1);
+                        else sendBedrockRelationMgmtList(player, safePage);
                     } else {
                         plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
                     }
