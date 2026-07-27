@@ -31,6 +31,7 @@ import com.guild.core.utils.TestUtils;
 import com.guild.metrics.GuildMetrics;
 import com.guild.update.UpdateChecker;
 import com.guild.update.UpdateManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -123,20 +124,58 @@ public class GuildPlugin extends JavaPlugin {
             languageManager = new LanguageManager(this);
             serviceContainer.register(LanguageManager.class, languageManager);
 
-            // 初始化 CommAPI 桥接器（生命周期由 GuildPlugin 自身管理）
-            CommAPI.initialize(logger);
+            // ── 通信与基岩版检测层（隔离初始化 — 非致命，失败不影响插件核心功能）──
+            // 注意：BungeeClientAPI 初始化失败时，PlayerConnectionService 会在首次玩家检测时懒初始化重试
+            try {
+                // 初始化 CommAPI 桥接器（生命周期由 GuildPlugin 自身管理）
+                CommAPI.initialize(logger);
+            } catch (Throwable e) {
+                logger.warning("[Init] CommAPI 初始化失败（跨服桥接不可用）: " + e.getMessage());
+            }
+            try {
+                // 初始化 BungeeCord 客户端 API（跨服通信子服端，注册 Plugin Messaging 通道）
+                BungeeClientAPI.initialize(this);
+            } catch (Throwable e) {
+                logger.warning("[Init] BungeeClientAPI 初始化失败（BungeeCord 代理检测不可用）: " + e.getMessage());
+            }
+            // 注册代理连接信息回调：代理推送到达后，若玩家已打开 GUI 则刷新为基岩版模式
+            // 解决时序竞争：PlayerJoinEvent 时代理消息可能尚未到达，GUI 按 Java 模式打开
+            BungeeClientAPI.setConnectionInfoCallback(info -> {
+                if (!info.isBedrock()) return;
+                Player player = Bukkit.getPlayer(info.getUuid());
+                if (player == null || !player.isOnline()) return;
+                if (guiManager == null || !guiManager.hasOpenGUI(player)) return;
 
-            // 初始化 BungeeCord 客户端 API（跨服通信子服端，注册 Plugin Messaging 通道）
-            BungeeClientAPI.initialize(this);
-
-            // 初始化 GeyserAPI（基岩版玩家检测，Geyser 未安装时静默降级）
-            GeyserAPI.initialize(logger);
-
-            // 初始化统一连接服务（整合 GeyserAPI + BungeeClientAPI）
-            PlayerConnectionService.initialize(logger);
-
-            // 初始化基岩版表单发送器（通过 Geyser API 反射）
-            BedrockFormSender.initialize(logger);
+                // 在实体线程上刷新 GUI（Folia 兼容）
+                CompatibleScheduler.runTask(this, player, () -> {
+                    if (player.isOnline() && guiManager.hasOpenGUI(player)) {
+                        guiManager.refreshGUI(player);
+                        logger.info("[PlayerConnection] 代理推送到达，刷新 "
+                                + player.getName() + " 的 GUI → Bedrock 模式");
+                    }
+                });
+            });
+            try {
+                // 初始化 GeyserAPI（基岩版玩家检测，Geyser 未安装时静默降级）
+                GeyserAPI.initialize(logger);
+            } catch (Throwable e) {
+                logger.warning("[Init] GeyserAPI 初始化失败（本地 Geyser 检测不可用）: " + e.getMessage());
+            }
+            try {
+                // 初始化统一连接服务（整合 GeyserAPI + BungeeClientAPI）
+                PlayerConnectionService.initialize(logger);
+            } catch (Throwable e) {
+                logger.warning("[Init] PlayerConnectionService 初始化失败: " + e.getMessage());
+            }
+            try {
+                // 初始化基岩版表单发送器（通过 Geyser API 反射）
+                BedrockFormSender.initialize(logger);
+            } catch (Throwable e) {
+                logger.warning("[Init] BedrockFormSender 初始化失败（基岩版表单不可用）: " + e.getMessage());
+            }
+            // 注册代理表单响应回调：代理转发的基岩版表单响应 → BedrockFormSender 触发原始 handler
+            BungeeClientAPI.setFormResponseCallback((formId, responseData) ->
+                    BedrockFormSender.handleFormResponse(formId, responseData));
 
             // 加载等级需求配置
             loadLevelRequirements();
@@ -194,7 +233,7 @@ public class GuildPlugin extends JavaPlugin {
                         + (ServerUtils.isFolia() ? "Folia" : "Spigot") + ")");
             }
             
-        } catch (Exception e) {
+        } catch (Throwable e) {
             logger.severe("Guild Plugin failed to start: " + e.getMessage());
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
@@ -223,6 +262,9 @@ public class GuildPlugin extends JavaPlugin {
 
             // 关闭 GeyserAPI
             GeyserAPI.shutdown();
+
+            // 关闭基岩版表单发送器（清理待响应表单）
+            BedrockFormSender.shutdown();
             
             // 卸载所有扩展模块
             if (moduleManager != null) {

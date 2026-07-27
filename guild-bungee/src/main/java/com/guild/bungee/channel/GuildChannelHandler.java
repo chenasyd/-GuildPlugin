@@ -123,7 +123,7 @@ public final class GuildChannelHandler implements Listener {
             String json = gson.toJson(message);
             byte[] data = json.getBytes(StandardCharsets.UTF_8);
 
-            if (!target.sendData(CHANNEL_NAME, data, false)) {
+            if (!target.sendData(CHANNEL_NAME, data, true)) {
                 logger.warning("[Channel] Failed to send data to server '"
                         + target.getName() + "'");
             } else {
@@ -146,7 +146,7 @@ public final class GuildChannelHandler implements Listener {
 
         for (ServerInfo server : ProxyServer.getInstance().getServers().values()) {
             try {
-                server.sendData(CHANNEL_NAME, data, false);
+                server.sendData(CHANNEL_NAME, data, true);
             } catch (Exception e) {
                 logger.log(Level.WARNING,
                         "[Channel] Broadcast error to '" + server.getName()
@@ -168,7 +168,7 @@ public final class GuildChannelHandler implements Listener {
         for (ServerInfo server : ProxyServer.getInstance().getServers().values()) {
             if (server.equals(exclude)) continue;
             try {
-                server.sendData(CHANNEL_NAME, data, false);
+                server.sendData(CHANNEL_NAME, data, true);
             } catch (Exception e) {
                 logger.log(Level.WARNING,
                         "[Channel] Broadcast error to '" + server.getName()

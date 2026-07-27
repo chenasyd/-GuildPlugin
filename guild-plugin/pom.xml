@@ -57,12 +57,16 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Cumulus Form Library (provided by Geyser-Spigot at runtime — Bedrock form/GUI support) -->
+        <!-- Cumulus Form Library — shaded+relocated into plugin JAR.
+             In single-server mode with Geyser, forms are serialized to JSON and
+             re-deserialized via Geyser's ClassLoader (avoids ClassLoader mismatch).
+             In BungeeCord mode without local Geyser, forms are serialized and
+             forwarded to the proxy which sends them via its Geyser instance. -->
         <dependency>
             <groupId>org.geysermc.cumulus</groupId>
             <artifactId>cumulus</artifactId>
             <version>1.1.2</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Adventure API (for ImagoCore hook compilation) -->
@@ -166,6 +170,14 @@
                                         <exclude>com/guild/module/example/**</exclude>
                                     </excludes>
                                 </filter>
+                                <!-- guild-sdk 中的 com/guild/comm/** 是编译期空壳 stub，
+                                     运行时必须使用 guild-comm 的真实实现，否则所有通信功能失效 -->
+                                <filter>
+                                    <artifact>com.guild:guild-sdk</artifact>
+                                    <excludes>
+                                        <exclude>com/guild/comm/**</exclude>
+                                    </excludes>
+                                </filter>
                             </filters>
                             <relocations>
                                 <relocation>
@@ -179,6 +191,13 @@
                                 <relocation>
                                     <pattern>org.bstats</pattern>
                                     <shadedPattern>com.guild.libs.bstats</shadedPattern>
+                                </relocation>
+                                <!-- Cumulus 表单库重定位：避免与 Geyser 内置 Cumulus 的 ClassLoader 冲突。
+                                     本插件使用 com.guild.libs.cumulus，Geyser 使用 org.geysermc.cumulus，
+                                     通过 JSON 序列化/反序列化在两者之间桥接。 -->
+                                <relocation>
+                                    <pattern>org.geysermc.cumulus</pattern>
+                                    <shadedPattern>com.guild.libs.cumulus</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

@@ -54,6 +54,12 @@
                     <exclude>com/guild/module/example/**</exclude>
                   </excludes>
                 </filter>
+                <filter>
+                  <artifact>com.guild:guild-sdk</artifact>
+                  <excludes>
+                    <exclude>com/guild/comm/**</exclude>
+                  </excludes>
+                </filter>
               </filters>
               <relocations>
                 <relocation>
@@ -67,6 +73,10 @@
                 <relocation>
                   <pattern>org.bstats</pattern>
                   <shadedPattern>com.guild.libs.bstats</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.geysermc.cumulus</pattern>
+                  <shadedPattern>com.guild.libs.cumulus</shadedPattern>
                 </relocation>
               </relocations>
             </configuration>
@@ -274,12 +284,6 @@
       <groupId>org.a</groupId>
       <artifactId>imagocore</artifactId>
       <version>1.0-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.geysermc.cumulus</groupId>
-      <artifactId>cumulus</artifactId>
-      <version>1.1.2</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

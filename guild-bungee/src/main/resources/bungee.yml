@@ -4,4 +4,6 @@ version: 1.6.6
 author: GuildPlugin Team
 description: Cross-server guild data synchronization bridge for BungeeCord networks
 
-softDepends: [Geyser]
+# Geyser 在 BungeeCord 上的插件名为 "Geyser-BungeeCord"（非 "Geyser"）
+# BungeeCord 对 softDepends 做精确匹配，名称错误会导致加载顺序不受控
+softDepends: [Geyser-BungeeCord]

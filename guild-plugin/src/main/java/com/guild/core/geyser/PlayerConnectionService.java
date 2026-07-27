@@ -1,5 +1,6 @@
 package com.guild.core.geyser;
 
+import com.guild.GuildPlugin;
 import com.guild.comm.api.BungeeClientAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -52,6 +53,31 @@ public final class PlayerConnectionService {
         // GeyserAPI 和 BungeeClientAPI 各自管理自己的 shutdown
     }
 
+    // ── Lazy Initialization ─────────────────────────────────────
+
+    /**
+     * 确保 BungeeClientAPI 已初始化（懒重试）。
+     * <p>
+     * 若 onEnable 阶段因隔离 try-catch 捕获了异常导致 BungeeClientAPI 未初始化，
+     * 此方法会在首次玩家检测时尝试重新初始化。仅重试一次，失败后不再重复尝试。
+     */
+    private static volatile boolean bungeeRetryAttempted;
+
+    private static void ensureBungeeReady() {
+        if (BungeeClientAPI.isInitialized() || bungeeRetryAttempted) return;
+        bungeeRetryAttempted = true;
+        GuildPlugin plugin = GuildPlugin.getInstance();
+        if (plugin != null && plugin.isEnabled()) {
+            boolean ok = BungeeClientAPI.ensureInitialized(plugin);
+            if (ok && logger != null) {
+                logger.info("[PlayerConnection] BungeeClientAPI 懒初始化成功（onEnable 阶段曾失败）");
+            } else if (logger != null) {
+                logger.warning("[PlayerConnection] BungeeClientAPI 懒初始化仍失败: "
+                        + BungeeClientAPI.getInitializationError());
+            }
+        }
+    }
+
     // ── Detection ────────────────────────────────────────────────
 
     /**
@@ -68,6 +94,7 @@ public final class PlayerConnectionService {
      * 判断 UUID 对应玩家是否为基岩版玩家。
      */
     public static boolean isBedrockPlayer(UUID uuid) {
+        ensureBungeeReady();
         // 优先查 Bungee 推送的缓存（信息更权威，由代理端直接检测）
         if (BungeeClientAPI.isInitialized()) {
             BungeeClientAPI.PlayerConnectionInfo info = BungeeClientAPI.getConnectionInfo(uuid);
@@ -87,6 +114,7 @@ public final class PlayerConnectionService {
      */
     public static ConnectionInfo getConnectionInfo(Player player) {
         UUID uuid = player.getUniqueId();
+        ensureBungeeReady();
 
         // 优先使用 Bungee 推送的丰富信息
         if (BungeeClientAPI.isInitialized()) {
@@ -137,6 +165,9 @@ public final class PlayerConnectionService {
         UUID uuid = player.getUniqueId();
         String name = player.getName();
 
+        // 懒初始化重试（onEnable 阶段可能因隔离 try-catch 跳过）
+        ensureBungeeReady();
+
         logger.info("[PlayerConnection] === 检测开始: " + name + " (" + uuid + ") ===");
 
         // ── Step 1: BungeeClientAPI 缓存 ──
@@ -159,7 +190,9 @@ public final class PlayerConnectionService {
                         + "（代理尚未推送连接信息）");
             }
         } else {
-            logger.info("[PlayerConnection] [1/2] BungeeClientAPI: 未初始化（跳过代理检测）");
+            String err = BungeeClientAPI.getInitializationError();
+            logger.info("[PlayerConnection] [1/2] BungeeClientAPI: 未初始化（跳过代理检测）"
+                    + (err != null ? " 原因: " + err : ""));
         }
 
         // ── Step 2: GeyserAPI 反射检测 ──

@@ -16,6 +16,8 @@ import java.io.DataOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,12 +55,33 @@ public final class BungeeClientAPI implements PluginMessageListener {
     private static BungeeClientAPI instance;
     private static Logger logger;
     private static Plugin plugin;
-    private static boolean initialized;
+    private static volatile boolean initialized;
+    private static String initializationError;
     private static final Gson gson = new Gson();
 
     /** Cache of player connection types, keyed by UUID. Populated by Bungee messages. */
     private static final ConcurrentHashMap<UUID, PlayerConnectionInfo> playerConnectionCache =
             new ConcurrentHashMap<>();
+
+    /**
+     * Optional callback invoked after a player's connection info is cached
+     * from a Bungee proxy message. Allows guild-plugin to react to late-arriving
+     * Bedrock detection (e.g., refresh an already-open GUI).
+     * <p>
+     * The callback is invoked on the thread that processes the plugin message
+     * (main thread on Spigot, potentially a network thread on Folia). Implementations
+     * must schedule entity-thread work themselves if needed.
+     */
+    private static volatile Consumer<PlayerConnectionInfo> connectionInfoCallback;
+
+    /**
+     * Optional callback invoked when a form response is received from the proxy.
+     * Parameters: (formId, responseData). responseData is null if the form was closed.
+     * <p>
+     * Used by guild-plugin's BedrockFormSender to invoke the original form's
+     * response handlers when a Bedrock player interacts with a forwarded form.
+     */
+    private static volatile BiConsumer<String, String> formResponseCallback;
 
     private BungeeClientAPI() {}
 
@@ -72,16 +95,46 @@ public final class BungeeClientAPI implements PluginMessageListener {
      */
     public static void initialize(Plugin bukkitPlugin) {
         if (initialized) return;
-        plugin = bukkitPlugin;
-        logger = bukkitPlugin.getLogger();
-        instance = new BungeeClientAPI();
+        try {
+            plugin = bukkitPlugin;
+            logger = bukkitPlugin.getLogger();
+            instance = new BungeeClientAPI();
 
-        // Register Plugin Messaging Channels
-        Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, CHANNEL_NAME);
-        Bukkit.getMessenger().registerIncomingPluginChannel(plugin, CHANNEL_NAME, instance);
+            // Register Plugin Messaging Channels
+            Bukkit.getMessenger().registerOutgoingPluginChannel(plugin, CHANNEL_NAME);
+            Bukkit.getMessenger().registerIncomingPluginChannel(plugin, CHANNEL_NAME, instance);
 
-        initialized = true;
-        logger.info("[BungeeClient] Initialized. Channel: " + CHANNEL_NAME);
+            initialized = true;
+            initializationError = null;
+            logger.info("[BungeeClient] Initialized. Channel: " + CHANNEL_NAME);
+        } catch (Throwable e) {
+            initializationError = e.getClass().getSimpleName() + ": " + e.getMessage();
+            if (logger != null) {
+                logger.warning("[BungeeClient] Initialization failed: " + initializationError);
+            }
+        }
+    }
+
+    /**
+     * Ensure the Bungee client API is initialized (lazy retry).
+     * <p>
+     * Called by PlayerConnectionService on first player detection if the
+     * initial onEnable call failed. Safe to call multiple times.
+     *
+     * @param bukkitPlugin the owning Bukkit plugin
+     * @return true if initialized (either already or just now)
+     */
+    public static boolean ensureInitialized(Plugin bukkitPlugin) {
+        if (initialized) return true;
+        initialize(bukkitPlugin);
+        return initialized;
+    }
+
+    /**
+     * @return the last initialization error message, or null if initialization succeeded.
+     */
+    public static String getInitializationError() {
+        return initializationError;
     }
 
     /** Shut down the Bungee client API. */
@@ -102,6 +155,29 @@ public final class BungeeClientAPI implements PluginMessageListener {
         return initialized;
     }
 
+    /**
+     * Register a callback to be invoked whenever a player's connection info
+     * is received and cached from the Bungee proxy.
+     * <p>
+     * Used by guild-plugin to refresh GUIs when a late-arriving Bedrock
+     * detection updates a player's connection type after they already
+     * opened a GUI in Java mode.
+     *
+     * @param callback the callback, or null to unregister
+     */
+    public static void setConnectionInfoCallback(Consumer<PlayerConnectionInfo> callback) {
+        connectionInfoCallback = callback;
+    }
+
+    /**
+     * Register a callback for form responses forwarded by the BungeeCord proxy.
+     *
+     * @param callback receives (formId, responseData), or null to unregister
+     */
+    public static void setFormResponseCallback(BiConsumer<String, String> callback) {
+        formResponseCallback = callback;
+    }
+
     // ── Incoming: PluginMessageListener ──────────────────────────
 
     @Override
@@ -120,11 +196,16 @@ public final class BungeeClientAPI implements PluginMessageListener {
 
             String payload = root.has("payload") ? root.get("payload").getAsString() : "{}";
 
-            logger.fine("[BungeeClient] Received: type=" + type);
+            logger.info("[BungeeClient] Received: type=" + type);
 
             // Handle player connection type messages internally
             if ("guild.player.connect".equals(type)) {
                 handlePlayerConnect(payload);
+            }
+
+            // Handle form responses forwarded by the proxy
+            if ("guild.form.response".equals(type)) {
+                handleFormResponse(payload);
             }
 
             // Dispatch to ChannelRouter for guild-plugin listeners
@@ -164,11 +245,51 @@ public final class BungeeClientAPI implements PluginMessageListener {
             );
 
             playerConnectionCache.put(uuid, info);
-            logger.fine("[BungeeClient] Cached connection type for " + name
+            logger.info("[BungeeClient] Cached connection type for " + name
                     + ": " + connectionType);
+
+            // Notify registered callback (e.g., guild-plugin GUI refresh for late Bedrock detection)
+            Consumer<PlayerConnectionInfo> cb = connectionInfoCallback;
+            if (cb != null) {
+                try {
+                    cb.accept(info);
+                } catch (Exception e) {
+                    logger.log(Level.WARNING,
+                            "[BungeeClient] Connection info callback error: " + e.getMessage(), e);
+                }
+            }
         } catch (Exception e) {
             logger.log(Level.WARNING,
                     "[BungeeClient] Error parsing player connect payload: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Handle form response forwarded by the BungeeCord proxy.
+     * Invokes the registered callback with (formId, responseData).
+     */
+    private void handleFormResponse(String payload) {
+        try {
+            JsonObject data = JsonParser.parseString(payload).getAsJsonObject();
+            String formId = data.get("formId").getAsString();
+            String responseData = data.has("responseData")
+                    ? data.get("responseData").getAsString() : null;
+
+            logger.fine("[BungeeClient] Form response received: formId=" + formId
+                    + " closed=" + (responseData == null));
+
+            BiConsumer<String, String> cb = formResponseCallback;
+            if (cb != null) {
+                try {
+                    cb.accept(formId, responseData);
+                } catch (Exception e) {
+                    logger.log(Level.WARNING,
+                            "[BungeeClient] Form response callback error: " + e.getMessage(), e);
+                }
+            }
+        } catch (Exception e) {
+            logger.log(Level.WARNING,
+                    "[BungeeClient] Error parsing form response payload: " + e.getMessage(), e);
         }
     }
 

@@ -2,6 +2,8 @@ package com.guild.comm.api;
 
 import org.bukkit.plugin.Plugin;
 import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * SDK stub for BungeeClientAPI.
@@ -15,8 +17,12 @@ public class BungeeClientAPI {
     private BungeeClientAPI() {}
 
     public static void initialize(Plugin plugin) {}
+    public static boolean ensureInitialized(Plugin plugin) { return false; }
     public static void shutdown() {}
     public static boolean isInitialized() { return false; }
+    public static String getInitializationError() { return null; }
+    public static void setConnectionInfoCallback(Consumer<PlayerConnectionInfo> callback) {}
+    public static void setFormResponseCallback(BiConsumer<String, String> callback) {}
 
     public static void sendToBungee(String type, String payload) {}
     public static void pushGuildData(String guildDataJson) {}

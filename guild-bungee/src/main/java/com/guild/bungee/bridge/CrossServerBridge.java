@@ -43,10 +43,12 @@ public final class CrossServerBridge {
 
     private final Logger logger;
     private GuildChannelHandler channelHandler;
+    private final FormForwardHandler formForwardHandler;
     private boolean initialized;
 
     public CrossServerBridge(Logger logger) {
         this.logger = logger;
+        this.formForwardHandler = new FormForwardHandler(logger, this);
     }
 
     /**
@@ -106,6 +108,8 @@ public final class CrossServerBridge {
                 handleCrossChat(message, sourceServer);
             } else if (type.startsWith("guild.event.")) {
                 handleEventBroadcast(message, sourceServer);
+            } else if (type.startsWith("guild.form.send")) {
+                formForwardHandler.handleFormSend(message, sourceServer);
             } else {
                 logger.fine("[Bridge] Unrecognized message type: " + type
                         + " from " + sourceServer.getName());
@@ -205,6 +209,14 @@ public final class CrossServerBridge {
             logger.warning("[Bridge] Channel handler not wired — cannot forward "
                     + message.getType() + " → " + target.getName());
         }
+    }
+
+    /**
+     * Public forwarding method for {@link FormForwardHandler} to send
+     * form responses back to backend servers.
+     */
+    public void forwardToServerPublic(ServerInfo target, BungeeMessage message) {
+        forwardToServer(target, message);
     }
 
     /**
