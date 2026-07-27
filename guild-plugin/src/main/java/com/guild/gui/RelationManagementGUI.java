@@ -8,6 +8,7 @@ import com.guild.models.Guild;
 import com.guild.models.GuildRelation;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.geyser.BedrockFormSender;
+import com.guild.core.geyser.PlayerConnectionService;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -615,8 +616,10 @@ public class RelationManagementGUI implements GUI {
     
     @Override
     public void refresh(Player player) {
-        // 使用GUIManager的安全刷新方法
+        // 基岩版玩家由 openBedrockForm 的异步方法自行刷新，
+        // 跳过 GUIManager.refreshGUI 避免与 Cumulus 表单冲突
         if (player.isOnline()) {
+            if (PlayerConnectionService.isBedrockPlayer(player)) return;
             plugin.getGuiManager().refreshGUI(player);
         }
     }

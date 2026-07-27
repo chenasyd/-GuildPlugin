@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.geyser.BedrockFormSender;
+import com.guild.core.geyser.PlayerConnectionService;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -381,6 +382,9 @@ public class GuildListManagementGUI implements GUI {
     @Override
     public void refresh(Player player) {
         if (player.isOnline()) {
+            // 基岩版玩家由 openBedrockForm 的异步方法自行刷新，
+            // 跳过 GUIManager.refreshGUI 避免与 Cumulus 表单冲突
+            if (PlayerConnectionService.isBedrockPlayer(player)) return;
             plugin.getGuiManager().refreshGUI(player);
         }
     }
