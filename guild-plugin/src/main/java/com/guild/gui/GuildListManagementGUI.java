@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.geyser.BedrockFormSender;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.geysermc.cumulus.form.SimpleForm;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
@@ -259,6 +261,118 @@ public class GuildListManagementGUI implements GUI {
         return item;
     }
     
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockGuildList(player, 0);
+        return true;
+    }
+
+    private void sendBedrockGuildList(Player player, int page) {
+        plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (!player.isOnline()) return;
+
+                int itemsPerPage = 10;
+                int totalPages = Math.max(1, (int) Math.ceil((double) guilds.size() / itemsPerPage));
+                final int safePage = Math.max(0, Math.min(page, totalPages - 1));
+                int startIndex = safePage * itemsPerPage;
+                int endIndex = Math.min(startIndex + itemsPerPage, guilds.size());
+
+                SimpleForm.Builder builder = SimpleForm.builder()
+                    .title("§4工会列表管理")
+                    .content("§f第 " + (safePage + 1) + "/" + totalPages + " 页 | 共 " + guilds.size() + " 个工会");
+
+                List<Guild> pageGuilds = new ArrayList<>();
+                for (int i = startIndex; i < endIndex; i++) {
+                    Guild g = guilds.get(i);
+                    pageGuilds.add(g);
+                    String prefix = g.isFrozen() ? "§c" : "§6";
+                    builder.button(prefix + g.getName() + " §f[Lv." + g.getLevel() + "]");
+                }
+
+                builder.button("§a刷新列表");
+                if (safePage > 0) builder.button("§e上一页");
+                if (safePage < totalPages - 1) builder.button("§e下一页");
+                builder.button("§c返回");
+
+                final int navOffset = pageGuilds.size();
+
+                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    int id = response.clickedButtonId();
+                    if (id < navOffset) {
+                        sendBedrockGuildActions(player, pageGuilds.get(id), safePage);
+                    } else if (id == navOffset) {
+                        sendBedrockGuildList(player, safePage);
+                    } else if (id == navOffset + 1 && safePage > 0) {
+                        sendBedrockGuildList(player, safePage - 1);
+                    } else if ((id == navOffset + 1 && safePage == 0) || (id == navOffset + 2 && safePage > 0)) {
+                        sendBedrockGuildList(player, safePage + 1);
+                    } else {
+                        plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
+                    }
+                }));
+
+                builder.closedResultHandler(response -> {});
+
+                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            });
+        });
+    }
+
+    private void sendBedrockGuildActions(Player player, Guild guild, int page) {
+        String status = guild.isFrozen() ? "§c已冻结" : "§a正常";
+        SimpleForm.Builder builder = SimpleForm.builder()
+            .title("§6工会操作 - " + guild.getName())
+            .content("§f会长: §e" + guild.getLeaderName() + "\n§f等级: §e" + guild.getLevel()
+                + "\n§f资金: §a" + plugin.getEconomyManager().format(guild.getBalance())
+                + "\n§f状态: " + status);
+
+        builder.button("§e查看详情");
+        builder.button("§c删除工会");
+        builder.button(guild.isFrozen() ? "§a解冻工会" : "§c冻结工会");
+        builder.button("§c返回列表");
+
+        builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+            switch (response.clickedButtonId()) {
+                case 0:
+                    openGuildDetailGUI(player, guild);
+                    break;
+                case 1:
+                    deleteGuild(player, guild);
+                    break;
+                case 2:
+                    bedrockToggleFreeze(player, guild, page);
+                    break;
+                case 3:
+                    sendBedrockGuildList(player, page);
+                    break;
+            }
+        }));
+
+        builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+            sendBedrockGuildList(player, page)));
+
+        BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+    }
+
+    private void bedrockToggleFreeze(Player player, Guild guild, int page) {
+        boolean newStatus = !guild.isFrozen();
+        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus).thenAccept(success -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (success) {
+                    String message = newStatus ?
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&a工会 {guild} 已被冻结！", "{guild}", guild.getName()) :
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen", "&a工会 {guild} 已被解冻！", "{guild}", guild.getName());
+                    player.sendMessage(ColorUtils.colorize(message));
+                } else {
+                    player.sendMessage(ColorUtils.colorize("&c操作失败！"));
+                }
+                sendBedrockGuildList(player, page);
+            });
+        });
+    }
+
     @Override
     public void onClose(Player player) {
         // 关闭时的处理

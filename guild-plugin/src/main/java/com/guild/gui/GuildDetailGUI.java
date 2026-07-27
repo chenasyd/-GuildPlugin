@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.geyser.BedrockFormSender;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.geysermc.cumulus.form.SimpleForm;
 
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
@@ -484,6 +486,171 @@ public class GuildDetailGUI implements GUI {
         return head;
     }
     
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockGuildDetail(player, 0);
+        return true;
+    }
+
+    private void sendBedrockGuildDetail(Player player, int page) {
+        plugin.getGuildService().getGuildMembersAsync(guild.getId()).thenAccept(membersList -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (!player.isOnline()) return;
+
+                List<GuildMember> allMembers = membersList != null ? membersList : new ArrayList<>();
+
+                // 排除会长的成员列表
+                List<GuildMember> nonLeaderMembers = new ArrayList<>();
+                GuildMember leader = null;
+                for (GuildMember m : allMembers) {
+                    if (m.getPlayerUuid().equals(guild.getLeaderUuid())) {
+                        leader = m;
+                    } else {
+                        nonLeaderMembers.add(m);
+                    }
+                }
+
+                String guildTag = guild.getTag() != null ? guild.getTag() : "无";
+                String statusText = guild.isFrozen() ? "§c已冻结" : "§a正常";
+                String leaderName = leader != null ? leader.getPlayerName() : guild.getLeaderName();
+
+                StringBuilder content = new StringBuilder();
+                content.append("§6").append(guild.getName()).append(" §f[").append(guildTag).append("]\n");
+                content.append("§f等级: §e").append(guild.getLevel());
+                content.append(" §f资金: §a").append(plugin.getEconomyManager().format(guild.getBalance())).append("\n");
+                content.append("§f会长: §c").append(leaderName);
+                content.append(" §f成员: §e").append(allMembers.size()).append("/").append(guild.getMaxMembers()).append("\n");
+                content.append("§f状态: ").append(statusText);
+                if (guild.getDescription() != null && !guild.getDescription().isEmpty()) {
+                    content.append("\n§f描述: §7").append(guild.getDescription());
+                }
+                if (transferMode) {
+                    content.append("\n\n§e>>> 转移模式: 点击成员转移会长 <<<");
+                }
+
+                int itemsPerPage = 10;
+                int totalPages = Math.max(1, (int) Math.ceil((double) nonLeaderMembers.size() / itemsPerPage));
+                final int safePage = Math.max(0, Math.min(page, totalPages - 1));
+                int startIndex = safePage * itemsPerPage;
+                int endIndex = Math.min(startIndex + itemsPerPage, nonLeaderMembers.size());
+
+                SimpleForm.Builder builder = SimpleForm.builder()
+                    .title("§6工会详情 - " + guild.getName())
+                    .content(content.toString());
+
+                List<GuildMember> pageMembers = new ArrayList<>();
+                for (int i = startIndex; i < endIndex; i++) {
+                    GuildMember m = nonLeaderMembers.get(i);
+                    pageMembers.add(m);
+                    String roleColor = m.getRole() == GuildMember.Role.OFFICER ? "§e" : "§f";
+                    String online = isPlayerOnline(m.getPlayerUuid()) ? "§a●" : "§7●";
+                    builder.button(roleColor + m.getPlayerName() + " " + online);
+                }
+
+                // 操作按钮
+                builder.button(guild.isFrozen() ? "§a解冻工会" : "§c冻结工会");
+                builder.button("§4删除工会");
+                builder.button(transferMode ? "§e取消转移模式" : "§c转移会长");
+                if (safePage > 0) builder.button("§e上一页");
+                if (safePage < totalPages - 1) builder.button("§e下一页");
+                builder.button("§c返回");
+
+                final int memberCount = pageMembers.size();
+                final int freezeIdx = memberCount;
+                final int deleteIdx = memberCount + 1;
+                final int transferIdx = memberCount + 2;
+                int nextIdx = memberCount + 3;
+                final int prevIdx = safePage > 0 ? nextIdx++ : -1;
+                final int nextIdxFinal = safePage < totalPages - 1 ? nextIdx++ : -1;
+                final int backIdx = nextIdx;
+
+                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    int id = response.clickedButtonId();
+                    if (id < memberCount) {
+                        GuildMember target = pageMembers.get(id);
+                        if (transferMode) {
+                            bedrockTransferLeader(player, target);
+                        }
+                        // 非转移模式下点击成员暂无额外操作
+                        return;
+                    }
+                    if (id == freezeIdx) {
+                        bedrockToggleFreeze(player);
+                        return;
+                    }
+                    if (id == deleteIdx) {
+                        deleteGuild(player);
+                        return;
+                    }
+                    if (id == transferIdx) {
+                        transferMode = !transferMode;
+                        String msg = transferMode ? "&e请点击一个成员来转移会长职位" : "&7已取消会长转移";
+                        player.sendMessage(ColorUtils.colorize(msg));
+                        sendBedrockGuildDetail(player, safePage);
+                        return;
+                    }
+                    if (id == prevIdx && prevIdx >= 0) {
+                        sendBedrockGuildDetail(player, safePage - 1);
+                        return;
+                    }
+                    if (id == nextIdxFinal && nextIdxFinal >= 0) {
+                        sendBedrockGuildDetail(player, safePage + 1);
+                        return;
+                    }
+                    if (id == backIdx) {
+                        plugin.getGuiManager().openGUI(player, new GuildListManagementGUI(plugin, player));
+                    }
+                }));
+
+                builder.closedResultHandler(response -> {});
+
+                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            });
+        });
+    }
+
+    private void bedrockToggleFreeze(Player player) {
+        boolean newStatus = !guild.isFrozen();
+        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus).thenAccept(success -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (success) {
+                    String message = newStatus ?
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&a工会 {guild} 已被冻结！", "{guild}", guild.getName()) :
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen", "&a工会 {guild} 已被解冻！", "{guild}", guild.getName());
+                    player.sendMessage(ColorUtils.colorize(message));
+                    guild.setFrozen(newStatus);
+                } else {
+                    player.sendMessage(ColorUtils.colorize("&c操作失败！"));
+                }
+                sendBedrockGuildDetail(player, 0);
+            });
+        });
+    }
+
+    private void bedrockTransferLeader(Player player, GuildMember target) {
+        if (target.getPlayerUuid().equals(guild.getLeaderUuid())) {
+            player.sendMessage(ColorUtils.colorize("&c不能将会长转移给自己"));
+            sendBedrockGuildDetail(player, 0);
+            return;
+        }
+
+        plugin.getGuildService().transferGuildLeadershipAsync(guild.getId(), target.getPlayerUuid(), target.getPlayerName())
+            .thenAccept(success -> {
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (success) {
+                        player.sendMessage(ColorUtils.colorize("&a成功将会长转移给 &e" + target.getPlayerName()));
+                        guild.setLeaderUuid(target.getPlayerUuid());
+                        guild.setLeaderName(target.getPlayerName());
+                        transferMode = false;
+                    } else {
+                        player.sendMessage(ColorUtils.colorize("&c会长转移失败！"));
+                    }
+                    sendBedrockGuildDetail(player, 0);
+                });
+            });
+    }
+
     @Override
     public void onClose(Player player) {
         // 关闭时的处理

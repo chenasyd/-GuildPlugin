@@ -3,6 +3,8 @@ package com.guild.gui;
 import com.guild.GuildPlugin;
 import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.models.Guild;
 import com.guild.gui.SystemSettingsGUI;
 import org.bukkit.Material;
@@ -12,6 +14,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.geysermc.cumulus.form.SimpleForm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -232,6 +235,38 @@ public class AdminGuildGUI implements GUI {
         return item;
     }
     
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+
+        SimpleForm.Builder builder = SimpleForm.builder()
+            .title("§4工会管理")
+            .content("§f选择管理功能");
+
+        builder.button("§e工会列表管理");
+        builder.button("§e经济管理");
+        builder.button("§e关系管理");
+        builder.button("§e统计信息");
+        builder.button("§e系统设置");
+        builder.button("§c返回");
+
+        builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+            switch (response.clickedButtonId()) {
+                case 0: openGuildListManagement(player); break;
+                case 1: openEconomyManagement(player); break;
+                case 2: openRelationManagement(player); break;
+                case 3: openStatistics(player); break;
+                case 4: openSystemSettings(player); break;
+                case 5: plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player)); break;
+            }
+        }));
+
+        builder.closedResultHandler(response -> {});
+
+        BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+        return true;
+    }
+
     @Override
     public void onClose(Player player) {
         // 关闭时的处理

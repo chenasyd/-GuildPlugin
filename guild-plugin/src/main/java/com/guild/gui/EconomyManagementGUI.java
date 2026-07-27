@@ -6,12 +6,15 @@ import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.geyser.BedrockFormSender;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.geysermc.cumulus.form.CustomForm;
+import org.geysermc.cumulus.form.SimpleForm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -288,6 +291,128 @@ public class EconomyManagementGUI implements GUI {
         return item;
     }
     
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockEconomyList(player, 0);
+        return true;
+    }
+
+    private void sendBedrockEconomyList(Player player, int page) {
+        plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (!player.isOnline()) return;
+
+                int itemsPerPage = 10;
+                int totalPages = Math.max(1, (int) Math.ceil((double) guilds.size() / itemsPerPage));
+                final int safePage = Math.max(0, Math.min(page, totalPages - 1));
+                int startIndex = safePage * itemsPerPage;
+                int endIndex = Math.min(startIndex + itemsPerPage, guilds.size());
+
+                SimpleForm.Builder builder = SimpleForm.builder()
+                    .title("§e经济管理")
+                    .content("§f第 " + (safePage + 1) + "/" + totalPages + " 页 | 共 " + guilds.size() + " 个工会");
+
+                List<Guild> pageGuilds = new ArrayList<>();
+                for (int i = startIndex; i < endIndex; i++) {
+                    Guild g = guilds.get(i);
+                    pageGuilds.add(g);
+                    builder.button("§6" + g.getName() + " §f- " + plugin.getEconomyManager().format(g.getBalance()));
+                }
+
+                builder.button("§a刷新列表");
+                if (safePage > 0) builder.button("§e上一页");
+                if (safePage < totalPages - 1) builder.button("§e下一页");
+                builder.button("§c返回");
+
+                final int navOffset = pageGuilds.size();
+
+                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    int id = response.clickedButtonId();
+                    if (id < navOffset) {
+                        sendBedrockEconomyActions(player, pageGuilds.get(id), safePage);
+                    } else if (id == navOffset) {
+                        sendBedrockEconomyList(player, safePage);
+                    } else if (id == navOffset + 1 && safePage > 0) {
+                        sendBedrockEconomyList(player, safePage - 1);
+                    } else if ((id == navOffset + 1 && safePage == 0) || (id == navOffset + 2 && safePage > 0)) {
+                        sendBedrockEconomyList(player, safePage + 1);
+                    } else {
+                        plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
+                    }
+                }));
+
+                builder.closedResultHandler(response -> {});
+
+                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            });
+        });
+    }
+
+    private void sendBedrockEconomyActions(Player player, Guild guild, int page) {
+        SimpleForm.Builder builder = SimpleForm.builder()
+            .title("§e经济管理 - " + guild.getName())
+            .content("§f当前资金: §a" + plugin.getEconomyManager().format(guild.getBalance())
+                + "\n§f会长: §e" + guild.getLeaderName()
+                + "\n§f等级: §e" + guild.getLevel());
+
+        builder.button("§e设置资金");
+        builder.button("§a增加资金");
+        builder.button("§c清空资金");
+        builder.button("§c返回列表");
+
+        builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+            switch (response.clickedButtonId()) {
+                case 0:
+                    sendBedrockAmountInput(player, guild, "set", page);
+                    break;
+                case 1:
+                    sendBedrockAmountInput(player, guild, "add", page);
+                    break;
+                case 2:
+                    plugin.getGuiManager().openGUI(player,
+                        new ConfirmChangeFundsGUI(plugin, guild, player, "remove", guild.getBalance()));
+                    break;
+                case 3:
+                    sendBedrockEconomyList(player, page);
+                    break;
+            }
+        }));
+
+        builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+            sendBedrockEconomyList(player, page)));
+
+        BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+    }
+
+    private void sendBedrockAmountInput(Player player, Guild guild, String operationType, int page) {
+        String title = operationType.equals("set") ? "§e设置资金" : "§a增加资金";
+        CustomForm form = CustomForm.builder()
+            .title(title + " - " + guild.getName())
+            .input("§f请输入金额", "0", "")
+            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                String input = response.getInput(0);
+                try {
+                    double amount = Double.parseDouble(input.trim());
+                    if (amount <= 0) {
+                        player.sendMessage(ColorUtils.colorize("&c金额必须大于0！"));
+                        sendBedrockEconomyActions(player, guild, page);
+                        return;
+                    }
+                    plugin.getGuiManager().openGUI(player,
+                        new ConfirmChangeFundsGUI(plugin, guild, player, operationType, amount));
+                } catch (NumberFormatException e) {
+                    player.sendMessage(ColorUtils.colorize("&c无效的数字！"));
+                    sendBedrockEconomyActions(player, guild, page);
+                }
+            }))
+            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                sendBedrockEconomyActions(player, guild, page)))
+            .build();
+
+        BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
     @Override
     public void onClose(Player player) {
         // 关闭时的处理

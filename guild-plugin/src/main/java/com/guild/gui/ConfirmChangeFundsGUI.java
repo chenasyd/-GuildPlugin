@@ -5,6 +5,7 @@ import com.guild.core.gui.GUI;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.models.Guild;
 import com.guild.models.GuildContribution;
 import com.guild.models.GuildLog;
@@ -14,6 +15,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.geysermc.cumulus.form.SimpleForm;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -240,6 +242,40 @@ public class ConfirmChangeFundsGUI implements GUI {
                         returnToEconomyManagement(player);
                     });
                 });
+    }
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+
+        double currentBalance = guild.getBalance();
+        double newBalance = calculateNewBalance(currentBalance);
+        String operationName = ColorUtils.colorize(getOperationName());
+
+        String content = "§f工会: §e" + guild.getName() + "\n"
+            + "§f操作: " + operationName + "\n"
+            + "§f当前资金: §6" + plugin.getEconomyManager().format(currentBalance) + "\n"
+            + "§f金额: §f" + plugin.getEconomyManager().format(amount) + "\n"
+            + "§f新资金: §a" + plugin.getEconomyManager().format(newBalance);
+
+        SimpleForm form = SimpleForm.builder()
+            .title("§6确认资金变更")
+            .content(content)
+            .button("§a确认变更")
+            .button("§c取消")
+            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                if (response.clickedButtonId() == 0) {
+                    executeChange(player);
+                } else {
+                    returnToEconomyManagement(player);
+                }
+            }))
+            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                returnToEconomyManagement(player)))
+            .build();
+
+        BedrockFormSender.sendForm(player.getUniqueId(), form);
+        return true;
     }
 
     private void returnToEconomyManagement(Player player) {

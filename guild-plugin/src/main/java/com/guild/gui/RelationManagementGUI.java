@@ -7,12 +7,14 @@ import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 import com.guild.models.GuildRelation;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.geyser.BedrockFormSender;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.geysermc.cumulus.form.SimpleForm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -448,6 +450,160 @@ public class RelationManagementGUI implements GUI {
         return item;
     }
     
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize("&c您没有管理员权限！"));
+            return false;
+        }
+        sendBedrockRelationMgmtList(player, 0);
+        return true;
+    }
+
+    private void sendBedrockRelationMgmtList(Player player, int page) {
+        plugin.getGuildService().getAllGuildsAsync().thenCompose(guilds -> {
+            List<CompletableFuture<List<GuildRelation>>> futures = new ArrayList<>();
+            for (Guild g : guilds) {
+                futures.add(plugin.getGuildService().getGuildRelationsAsync(g.getId()));
+            }
+            return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenApply(v -> {
+                    List<GuildRelation> list = new ArrayList<>();
+                    for (CompletableFuture<List<GuildRelation>> f : futures) {
+                        try { list.addAll(f.get()); } catch (Exception ignored) {}
+                    }
+                    return list;
+                });
+        }).thenAccept(relations -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (!player.isOnline()) return;
+
+                if (relations.isEmpty()) {
+                    SimpleForm form = SimpleForm.builder()
+                        .title("§4关系管理")
+                        .content("§c暂无关系数据")
+                        .button("§c返回")
+                        .validResultHandler(r -> CompatibleScheduler.runTask(plugin, player, () ->
+                            plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player))))
+                        .closedResultHandler(r -> {})
+                        .build();
+                    BedrockFormSender.sendForm(player.getUniqueId(), form);
+                    return;
+                }
+
+                int itemsPerPage = 10;
+                int totalPages = Math.max(1, (int) Math.ceil((double) relations.size() / itemsPerPage));
+                final int safePage = Math.max(0, Math.min(page, totalPages - 1));
+                int startIndex = safePage * itemsPerPage;
+                int endIndex = Math.min(startIndex + itemsPerPage, relations.size());
+
+                SimpleForm.Builder builder = SimpleForm.builder()
+                    .title("§4关系管理")
+                    .content("§f第 " + (safePage + 1) + "/" + totalPages + " 页 | 共 " + relations.size() + " 个关系");
+
+                List<GuildRelation> pageRelations = new ArrayList<>();
+                String lang = languageManager.getPlayerLanguage(player);
+                for (int i = startIndex; i < endIndex; i++) {
+                    GuildRelation rel = relations.get(i);
+                    pageRelations.add(rel);
+                    builder.button("§6" + rel.getGuild1Name() + " ↔ " + rel.getGuild2Name()
+                        + " §f[" + rel.getType().getDisplayName(lang) + "]");
+                }
+
+                builder.button("§a刷新列表");
+                if (safePage > 0) builder.button("§e上一页");
+                if (safePage < totalPages - 1) builder.button("§e下一页");
+                builder.button("§c返回");
+
+                final int navOffset = pageRelations.size();
+
+                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    int id = response.clickedButtonId();
+                    if (id < navOffset) {
+                        sendBedrockRelationMgmtActions(player, pageRelations.get(id), safePage);
+                    } else if (id == navOffset) {
+                        sendBedrockRelationMgmtList(player, safePage);
+                    } else if (id == navOffset + 1 && safePage > 0) {
+                        sendBedrockRelationMgmtList(player, safePage - 1);
+                    } else if ((id == navOffset + 1 && safePage == 0) || (id == navOffset + 2 && safePage > 0)) {
+                        sendBedrockRelationMgmtList(player, safePage + 1);
+                    } else {
+                        plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
+                    }
+                }));
+
+                builder.closedResultHandler(response -> {});
+
+                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            });
+        });
+    }
+
+    private void sendBedrockRelationMgmtActions(Player player, GuildRelation relation, int page) {
+        String lang = languageManager.getPlayerLanguage(player);
+        SimpleForm.Builder builder = SimpleForm.builder()
+            .title("§6关系操作")
+            .content("§f" + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name()
+                + "\n§f类型: " + ColorUtils.colorize(relation.getType().getDisplayName(lang))
+                + "\n§f状态: " + ColorUtils.colorize(relation.getStatus().getDisplayName(lang))
+                + "\n§f发起人: " + relation.getInitiatorName());
+
+        builder.button("§c删除关系");
+        builder.button("§e查看详情");
+        builder.button("§c返回列表");
+
+        builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+            switch (response.clickedButtonId()) {
+                case 0:
+                    sendBedrockConfirmDeleteRelation(player, relation, page);
+                    break;
+                case 1:
+                    showRelationDetails(player, relation);
+                    sendBedrockRelationMgmtActions(player, relation, page);
+                    break;
+                case 2:
+                    sendBedrockRelationMgmtList(player, page);
+                    break;
+            }
+        }));
+
+        builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+            sendBedrockRelationMgmtList(player, page)));
+
+        BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+    }
+
+    private void sendBedrockConfirmDeleteRelation(Player player, GuildRelation relation, int page) {
+        SimpleForm form = SimpleForm.builder()
+            .title("§c确认删除")
+            .content("§f确定要删除关系:\n§e" + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name() + "§f?")
+            .button("§c确认删除")
+            .button("§f取消")
+            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                if (response.clickedButtonId() == 0) {
+                    plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
+                        CompatibleScheduler.runTask(plugin, player, () -> {
+                            if (success) {
+                                player.sendMessage(ColorUtils.colorize("&a已删除关系: "
+                                    + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name()));
+                            } else {
+                                player.sendMessage(ColorUtils.colorize("&c删除关系失败！"));
+                            }
+                            sendBedrockRelationMgmtList(player, page);
+                        });
+                    });
+                } else {
+                    sendBedrockRelationMgmtActions(player, relation, page);
+                }
+            }))
+            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
+                sendBedrockRelationMgmtActions(player, relation, page)))
+            .build();
+
+        BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
     @Override
     public void onClose(Player player) {
         // 清理资源

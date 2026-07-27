@@ -5,12 +5,15 @@ import com.guild.core.gui.GUI;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.geyser.BedrockFormSender;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.geysermc.cumulus.form.SimpleForm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -502,6 +505,68 @@ public class SystemSettingsGUI implements GUI {
         return item;
     }
     
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) return false;
+        sendBedrockSettings(player);
+        return true;
+    }
+
+    private void sendBedrockSettings(Player player) {
+        boolean debug = plugin.getConfigManager().getMainConfig().getBoolean("debug.enabled", false);
+        boolean autoSave = plugin.getConfigManager().getMainConfig().getBoolean("auto-save.enabled", true);
+        boolean economy = plugin.getConfigManager().getMainConfig().getBoolean("economy.enabled", true);
+        boolean relations = plugin.getConfigManager().getMainConfig().getBoolean("relations.enabled", true);
+        boolean level = plugin.getConfigManager().getMainConfig().getBoolean("level-system.enabled", true);
+        boolean applications = plugin.getConfigManager().getMainConfig().getBoolean("applications.enabled", true);
+        boolean invites = plugin.getConfigManager().getMainConfig().getBoolean("invites.enabled", true);
+        boolean home = plugin.getConfigManager().getMainConfig().getBoolean("guild-home.enabled", true);
+
+        SimpleForm.Builder builder = SimpleForm.builder()
+            .title("§4系统设置")
+            .content("§f点击切换开关状态");
+
+        builder.button("§e调试信息: " + (debug ? "§a开" : "§c关"));
+        builder.button("§e自动保存: " + (autoSave ? "§a开" : "§c关"));
+        builder.button("§e经济系统: " + (economy ? "§a开" : "§c关"));
+        builder.button("§e关系系统: " + (relations ? "§a开" : "§c关"));
+        builder.button("§e等级系统: " + (level ? "§a开" : "§c关"));
+        builder.button("§e申请系统: " + (applications ? "§a开" : "§c关"));
+        builder.button("§e邀请系统: " + (invites ? "§a开" : "§c关"));
+        builder.button("§e工会家: " + (home ? "§a开" : "§c关"));
+        builder.button("§a重载配置");
+        builder.button("§b数据库维护");
+        builder.button("§6备份数据");
+        builder.button("§a保存设置");
+        builder.button("§c返回");
+
+        builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+            switch (response.clickedButtonId()) {
+                case 0: toggleDebugMode(player); break;
+                case 1: toggleAutoSave(player); break;
+                case 2: toggleEconomy(player); break;
+                case 3: toggleRelations(player); break;
+                case 4: toggleLevelSystem(player); break;
+                case 5: toggleApplications(player); break;
+                case 6: toggleInvites(player); break;
+                case 7: toggleGuildHome(player); break;
+                case 8: reloadConfigs(player); break;
+                case 9: maintainDatabase(player); break;
+                case 10: backupData(player); break;
+                case 11: saveSettings(player); break;
+                case 12:
+                    plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
+                    return;
+            }
+            // 切换/操作后重新发送表单
+            sendBedrockSettings(player);
+        }));
+
+        builder.closedResultHandler(response -> {});
+
+        BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+    }
+
     @Override
     public void onClose(Player player) {
         // 关闭时的处理
