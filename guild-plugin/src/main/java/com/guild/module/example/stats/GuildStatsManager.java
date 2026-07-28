@@ -55,17 +55,17 @@ public class GuildStatsManager {
             try (FileReader reader = new FileReader(file)) {
                 GuildStatistics stats = gson.fromJson(reader, GuildStatistics.class);
                 if (stats == null) {
-                    logger.warning("[Stats] 跳过空文件: " + file.getName());
+                    logger.warning("[Stats] Skipping empty file: " + file.getName());
                     continue;
                 }
                 if (stats.getGuildId() <= 0) {
-                    logger.warning("[Stats] 跳过无效数据( guildId<=0 ): " + file.getName());
+                    logger.warning("[Stats] Skipping invalid data (guildId<=0): " + file.getName());
                     continue;
                 }
                 statsCache.put(stats.getGuildId(), stats);
-                logger.info("[Stats] 加载统计: " + file.getName());
+                logger.info("[Stats] Loaded statistics: " + file.getName());
             } catch (Exception e) {
-                logger.warning("[Stats] 无法加载 " + file.getName() + ": " + e.getMessage());
+                logger.warning("[Stats] Failed to load " + file.getName() + ": " + e.getMessage());
             }
         }
     }
@@ -81,7 +81,7 @@ public class GuildStatsManager {
         try (FileWriter writer = new FileWriter(file)) {
             gson.toJson(stats, writer);
         } catch (IOException e) {
-            logger.severe("[Stats] 保存失败: " + e.getMessage());
+            logger.severe("[Stats] Save failed: " + e.getMessage());
         }
     }
 

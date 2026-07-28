@@ -61,8 +61,10 @@ public class GuildDescriptionInputGUI implements GUI {
                 .getInt("guild.max-description-length", 100);
 
         CustomForm form = CustomForm.builder()
-                .title("§6修改工会描述")
-                .input("§f输入新的工会描述", "最多" + maxLength + "字符", currentDescription)
+                .title(languageManager.getGuiColoredMessage(player, "gui.guild-description-input.bedrock-title", "&6修改工会描述"))
+                .input(languageManager.getGuiColoredMessage(player, "gui.guild-description-input.bedrock-input-label", "&f输入新的工会描述"),
+                        languageManager.getGuiColoredMessage(player, "gui.guild-description-input.bedrock-input-placeholder", "最多{max}字符", "{max}", String.valueOf(maxLength)),
+                        currentDescription)
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     String input = response.getInput(0);
                     if (input == null) input = "";

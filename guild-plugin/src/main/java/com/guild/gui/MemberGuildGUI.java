@@ -72,20 +72,19 @@ public class MemberGuildGUI implements GUI {
     public boolean openBedrockForm(Player player) {
         if (!BedrockFormSender.isAvailable()) return false;
 
-        String name = guild.getName() != null ? guild.getName() : "未知工会";
-        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" : "无标签";
-        String homeStatus = guild.hasHome() ? "§a已设置" : "§c未设置";
+        String name = guild.getName() != null ? guild.getName() : languageManager.getGuiColoredMessage(player, "gui.common.no-name", "无名称");
+        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" : languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.no-tag", "无标签");
+        String homeStatus = guild.hasHome() ? languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.home-set", "&a已设置") : languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.home-not-set", "&c未设置");
 
-        String content = "§6工会信息\n"
-                + "§f名称: §e" + name + "\n"
-                + "§f标签: §e" + tag + "\n"
-                + "§f工会家: " + homeStatus;
+        String content = languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.bedrock-content",
+                "&6工会信息\n&f名称: &e{guild_name}\n&f标签: &e{guild_tag}\n&f工会家: {home_status}",
+                "{guild_name}", name, "{guild_tag}", tag, "{home_status}", homeStatus);
 
         SimpleForm form = SimpleForm.builder()
-                .title("§6我的工会 - " + name)
+                .title(languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.bedrock-title", "&6我的工会 - {guild_name}", "{guild_name}", name))
                 .content(content)
-                .button("§d工会家传送")
-                .button("§c离开工会")
+                .button(languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.home-teleport", "&d工会家传送"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.leave", "&c离开工会"))
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     switch (response.clickedButtonId()) {
                         case 0 -> handleHomeTeleport(player);

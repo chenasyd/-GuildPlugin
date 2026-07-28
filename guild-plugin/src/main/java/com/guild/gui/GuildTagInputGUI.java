@@ -61,8 +61,10 @@ public class GuildTagInputGUI implements GUI {
                 .getInt("guild.max-tag-length", 6);
 
         CustomForm form = CustomForm.builder()
-                .title("§6修改工会标签")
-                .input("§f输入新的工会标签", "最多" + maxLength + "字符", currentTag)
+                .title(languageManager.getGuiColoredMessage(player, "gui.guild-tag-input.bedrock-title", "&6修改工会标签"))
+                .input(languageManager.getGuiColoredMessage(player, "gui.guild-tag-input.bedrock-input-label", "&f输入新的工会标签"),
+                        languageManager.getGuiColoredMessage(player, "gui.guild-tag-input.bedrock-input-placeholder", "最多{max}字符", "{max}", String.valueOf(maxLength)),
+                        currentTag)
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     String input = response.getInput(0);
                     if (input == null) input = "";

@@ -252,17 +252,22 @@ public class ConfirmChangeFundsGUI implements GUI {
         double newBalance = calculateNewBalance(currentBalance);
         String operationName = ColorUtils.colorize(getOperationName());
 
-        String content = "§f工会: §e" + guild.getName() + "\n"
-            + "§f操作: " + operationName + "\n"
-            + "§f当前资金: §6" + plugin.getEconomyManager().format(currentBalance) + "\n"
-            + "§f金额: §f" + plugin.getEconomyManager().format(amount) + "\n"
-            + "§f新资金: §a" + plugin.getEconomyManager().format(newBalance);
+        String content = languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-guild", "&f工会: &e{guild_name}",
+                "{guild_name}", guild.getName()) + "\n"
+            + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-operation", "&f操作: {operation}",
+                "{operation}", operationName) + "\n"
+            + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-current-balance", "&f当前资金: &6{balance}",
+                "{balance}", plugin.getEconomyManager().format(currentBalance)) + "\n"
+            + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-amount", "&f金额: &f{amount}",
+                "{amount}", plugin.getEconomyManager().format(amount)) + "\n"
+            + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-new-balance", "&f新资金: &a{balance}",
+                "{balance}", plugin.getEconomyManager().format(newBalance));
 
         SimpleForm form = SimpleForm.builder()
-            .title("§6确认资金变更")
+            .title(languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-title", "&6确认资金变更"))
             .content(content)
-            .button("§a确认变更")
-            .button("§c取消")
+            .button(languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-confirm", "&a确认变更"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-cancel", "&c取消"))
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 if (response.clickedButtonId() == 0) {
                     executeChange(player);

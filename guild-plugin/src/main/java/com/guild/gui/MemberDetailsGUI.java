@@ -532,26 +532,29 @@ public class MemberDetailsGUI implements GUI {
         if (!BedrockFormSender.isAvailable()) return false;
 
         String roleText = switch (member.getRole()) {
-            case LEADER -> "§c会长";
-            case OFFICER -> "§6官员";
-            default -> "§f成员";
+            case LEADER -> languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-role-leader", "&c会长");
+            case OFFICER -> languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-role-officer", "&6官员");
+            default -> languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-role-member", "&f成员");
         };
 
         StringBuilder content = new StringBuilder();
-        content.append("§f玩家: ").append(member.getPlayerName()).append("\n");
-        content.append("§f角色: ").append(roleText).append("\n");
+        content.append(languageManager.getGuiColoredMessage(player, "gui.member-management.member-details.bedrock-player", "&f玩家: {name}", "{name}", member.getPlayerName())).append("\n");
+        content.append(languageManager.getGuiColoredMessage(player, "gui.member-management.member-details.bedrock-role", "&f角色: {role}", "{role}", roleText)).append("\n");
         if (member.getJoinedAt() != null) {
-            content.append("§f加入时间: ").append(member.getJoinedAt().format(com.guild.core.time.TimeProvider.FULL_FORMATTER)).append("\n");
+            content.append(languageManager.getGuiColoredMessage(player, "gui.member-management.member-details.bedrock-join-time", "&f加入时间: {time}", "{time}", member.getJoinedAt().format(com.guild.core.time.TimeProvider.FULL_FORMATTER))).append("\n");
         }
-        content.append("§f在线: ").append(isPlayerOnline(member.getPlayerUuid()) ? "§a是" : "§c否");
+        String onlineStatus = isPlayerOnline(member.getPlayerUuid())
+            ? languageManager.getGuiColoredMessage(player, "gui.member-management.member-details.bedrock-online-yes", "&a是")
+            : languageManager.getGuiColoredMessage(player, "gui.member-management.member-details.bedrock-online-no", "&c否");
+        content.append(languageManager.getGuiColoredMessage(player, "gui.member-management.member-details.bedrock-online", "&f在线: {status}", "{status}", onlineStatus));
 
         SimpleForm form = SimpleForm.builder()
-            .title("§6成员详情 - " + member.getPlayerName())
+            .title(languageManager.getGuiColoredMessage(player, "gui.member-management.member-details.bedrock-title", "&6成员详情 - {member}", "{member}", member.getPlayerName()))
             .content(content.toString())
-            .button("§c踢出成员")
-            .button("§6提升/降级")
-            .button("§e发送消息")
-            .button("§c返回")
+            .button(languageManager.getGuiColoredMessage(player, "gui.member-management.member-details.bedrock-kick", "&c踢出成员"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.member-management.member-details.bedrock-promote-demote", "&6提升/降级"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.member-management.member-details.bedrock-send-message", "&e发送消息"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.member-management.member-details.bedrock-back", "&c返回"))
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, viewer, () -> {
                 switch (response.clickedButtonId()) {
                     case 0 -> handleKickMember(viewer);

@@ -66,15 +66,15 @@ public class MainGuildGUI implements GUI {
         if (!BedrockFormSender.isAvailable()) return false;
 
         SimpleForm form = SimpleForm.builder()
-                .title("§6工会系统")
-                .content("§f选择一个功能：")
-                .button("§a创建工会")
-                .button("§e工会信息")
-                .button("§e成员管理")
-                .button("§e申请管理")
-                .button("§e工会设置")
-                .button("§e工会列表")
-                .button("§e工会关系")
+                .title(languageManager.getGuiColoredMessage(player, "gui.main-menu.title", "&6工会系统"))
+                .content(languageManager.getGuiColoredMessage(player, "gui.main-menu.bedrock-content", "&f选择一个功能："))
+                .button(languageManager.getGuiColoredMessage(player, "gui.main-menu.create-guild.name", "&a创建工会"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.main-menu.guild-info.name", "&e工会信息"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.main-menu.member-management.name", "&e成员管理"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.main-menu.application-management.name", "&e申请管理"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.main-menu.guild-settings.name", "&e工会设置"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.main-menu.guild-list.name", "&e工会列表"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.main-menu.guild-relations.name", "&e工会关系"))
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     switch (response.clickedButtonId()) {
                         case 0 -> openCreateGuildGUI(player);

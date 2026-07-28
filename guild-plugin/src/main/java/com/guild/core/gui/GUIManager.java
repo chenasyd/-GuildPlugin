@@ -48,6 +48,8 @@ public class GUIManager implements Listener {
     private ImagoCoreHook imagoHook;
     private ImagoGuiConfig imagoConfig;
     private GuiImageLayoutConfig imageLayoutConfig;
+    /** True only when ImagoCore plugin is detected AND enabled — skips all per-open checks. */
+    private boolean imagoAvailable;
     
     public GUIManager(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -61,6 +63,7 @@ public class GUIManager implements Listener {
     public void initializeImagoHook() {
         // 始终先清除旧 hook，防止 enabled:false 时残留
         this.imagoHook = null;
+        this.imagoAvailable = false;
 
         this.imagoConfig = new ImagoGuiConfig(plugin.getDataFolder(), logger);
         this.imagoConfig.load();
@@ -85,6 +88,9 @@ public class GUIManager implements Listener {
             if ("false".equalsIgnoreCase(entry.getValue())) continue;
             imagoHook.bind(entry.getKey(), entry.getValue());
         }
+
+        this.imagoAvailable = true;
+        logger.info("[ImagoCore] Integration active — image titles and layouts enabled.");
     }
 
     /**
@@ -104,9 +110,7 @@ public class GUIManager implements Listener {
      * @return true 表示该 GUI 应使用图像布局（透明载体 + 多槽位）
      */
     public boolean isImageLayoutActive(String guiType) {
-        return imagoHook != null
-                && imagoConfig != null
-                && imagoConfig.isEnabled()
+        return imagoAvailable
                 && imagoConfig.hasConfig(guiType)
                 && imageLayoutConfig != null
                 && imageLayoutConfig.hasLayout(guiType);
@@ -140,9 +144,7 @@ public class GUIManager implements Listener {
      * 用于不需要多槽位布局、只需透明化物品的 GUI。
      */
     public boolean isImageGuiActive(String guiType) {
-        return imagoHook != null
-                && imagoConfig != null
-                && imagoConfig.isEnabled()
+        return imagoAvailable
                 && imagoConfig.hasConfig(guiType);
     }
 
@@ -181,6 +183,8 @@ public class GUIManager implements Listener {
      * @param guiType   GUI 类型名
      */
     public void applyImageModeIfNeeded(Player player, Inventory inventory, String guiType) {
+        // ImagoCore 未安装时直接跳过所有图像处理
+        if (!imagoAvailable) return;
         // 基岩版玩家始终使用纯净 GUI，不应用自定义图像配置
         if (player != null && PlayerConnectionService.isBedrockPlayer(player)) return;
         if (!isImageGuiActive(guiType)) return;
@@ -298,7 +302,7 @@ public class GUIManager implements Listener {
                 openGuis.put(player.getUniqueId(), gui);
                 if (plugin.getFileLogger() != null) {
                     plugin.getFileLogger().logGui(player.getName(),
-                            "打开 " + gui.getGuiType() + " (Bedrock Form)");
+                            "Opened " + gui.getGuiType() + " (Bedrock Form)");
                 }
                 if (isDebugEnabled()) {
                     logger.info("Player " + player.getName() + " opened Bedrock form: "
@@ -322,7 +326,7 @@ public class GUIManager implements Listener {
             // 文件日志：记录 GUI 打开操作
             if (plugin.getFileLogger() != null) {
                 plugin.getFileLogger().logGui(player.getName(),
-                        "打开 " + gui.getGuiType());
+                        "Opened " + gui.getGuiType());
             }
             
             if (isDebugEnabled()) {
@@ -342,50 +346,49 @@ public class GUIManager implements Listener {
      * 基岩版玩家始终使用原始字符串标题，不启用 ImagoCore 图像标题。
      */
     private Inventory createInventoryForGui(Player player, GUI gui) {
-        // 基岩版玩家跳过 ImagoCore，使用纯净字符串标题
+        // ImagoCore 未安装或基岩版玩家：直接创建标准字符串标题 Inventory，跳过所有图像逻辑
         boolean bedrockPlayer = player != null && PlayerConnectionService.isBedrockPlayer(player);
-        if (!bedrockPlayer && imagoHook != null && imagoConfig != null && imagoConfig.isEnabled()) {
-            String guiType = gui.getGuiType();
-            if (imagoConfig.hasConfig(guiType)) {
-                // 构建叠加层（如果有配置）
-                List<ImagoGuiConfig.OverlayConfig> overlayConfigs = imagoConfig.getOverlays(guiType);
-                if (!overlayConfigs.isEmpty()) {
-                    List<GuiTitleRenderer.OverlaySpec> specs = new ArrayList<>();
-                    for (ImagoGuiConfig.OverlayConfig oc : overlayConfigs) {
-                        GuiTitleRenderer.OverlaySpec spec = imagoHook.buildOverlay(
-                                oc.getCharName(), oc.getX(), oc.getAscent());
-                        if (spec != null) {
-                            specs.add(spec);
-                        }
-                    }
-                    if (!specs.isEmpty()) {
-                        Inventory inv = imagoHook.createTitledInventory(gui.getSize(), guiType, specs);
-                        if (inv != null) {
-                            if (isDebugEnabled()) {
-                                logger.info("[ImagoCore] " + guiType + ": 使用图片标题 + "
-                                        + specs.size() + " 个叠加层");
-                            }
-                            return inv;
-                        }
-                    }
-                }
+        if (!imagoAvailable || bedrockPlayer) {
+            return Bukkit.createInventory(null, gui.getSize(), gui.getTitle());
+        }
 
-                // 纯背景（无叠加层）
-                Inventory inv = imagoHook.createTitledInventory(gui.getSize(), guiType);
-                if (inv != null) {
-                    if (isDebugEnabled()) {
-                        logger.info("[ImagoCore] " + guiType + ": 使用纯背景图片标题");
+        // ImagoCore 可用：尝试使用图片标题
+        String guiType = gui.getGuiType();
+        if (imagoConfig.hasConfig(guiType)) {
+            // 构建叠加层（如果有配置）
+            List<ImagoGuiConfig.OverlayConfig> overlayConfigs = imagoConfig.getOverlays(guiType);
+            if (!overlayConfigs.isEmpty()) {
+                List<GuiTitleRenderer.OverlaySpec> specs = new ArrayList<>();
+                for (ImagoGuiConfig.OverlayConfig oc : overlayConfigs) {
+                    GuiTitleRenderer.OverlaySpec spec = imagoHook.buildOverlay(
+                            oc.getCharName(), oc.getX(), oc.getAscent());
+                    if (spec != null) {
+                        specs.add(spec);
                     }
-                    return inv;
                 }
+                if (!specs.isEmpty()) {
+                    Inventory inv = imagoHook.createTitledInventory(gui.getSize(), guiType, specs);
+                    if (inv != null) {
+                        if (isDebugEnabled()) {
+                            logger.info("[ImagoCore] " + guiType + ": image title + "
+                                    + specs.size() + " overlay(s)");
+                        }
+                        return inv;
+                    }
+                }
+            }
+
+            // 纯背景（无叠加层）
+            Inventory inv = imagoHook.createTitledInventory(gui.getSize(), guiType);
+            if (inv != null) {
+                if (isDebugEnabled()) {
+                    logger.info("[ImagoCore] " + guiType + ": image title (background only)");
+                }
+                return inv;
             }
         }
 
-        // 回退：标准字符串标题（无 ImagoCore 或无绑定时）
-        if (isDebugEnabled()) {
-            logger.info("[ImagoCore] " + gui.getGuiType() + ": 回退到字符串标题 \""
-                    + gui.getTitle() + "\"");
-        }
+        // 该 GUI 类型无绑定时回退到字符串标题
         return Bukkit.createInventory(null, gui.getSize(), gui.getTitle());
     }
     
@@ -411,7 +414,7 @@ public class GUIManager implements Listener {
                 }
                 
                 if (isDebugEnabled()) {
-                    logger.info("玩家 " + player.getName() + " 关闭了GUI: " + gui.getClass().getSimpleName());
+                    logger.info("Player " + player.getName() + " closed GUI: " + gui.getClass().getSimpleName());
                 }
             }
         } catch (Exception e) {
@@ -473,7 +476,7 @@ public class GUIManager implements Listener {
             // 文件日志：记录 GUI 点击操作
             if (plugin.getFileLogger() != null) {
                 plugin.getFileLogger().logGui(player.getName(),
-                        "点击 " + gui.getGuiType() + " slot=" + slot);
+                        "Clicked " + gui.getGuiType() + " slot=" + slot);
             }
             
             // 处理所有点击，包括空物品的点击

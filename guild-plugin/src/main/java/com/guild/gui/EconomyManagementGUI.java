@@ -311,8 +311,8 @@ public class EconomyManagementGUI implements GUI {
                 int endIndex = Math.min(startIndex + itemsPerPage, guilds.size());
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title("§e经济管理")
-                    .content("§f第 " + (safePage + 1) + "/" + totalPages + " 页 | 共 " + guilds.size() + " 个工会");
+                    .title(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-title", "&e经济管理"))
+                    .content(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-page-info", "&f第 {current}/{total} 页 | 共 {count} 个工会", "{current}", String.valueOf(safePage + 1), "{total}", String.valueOf(totalPages), "{count}", String.valueOf(guilds.size())));
 
                 List<Guild> pageGuilds = new ArrayList<>();
                 for (int i = startIndex; i < endIndex; i++) {
@@ -321,10 +321,10 @@ public class EconomyManagementGUI implements GUI {
                     builder.button("§6" + g.getName() + " §f- " + plugin.getEconomyManager().format(g.getBalance()));
                 }
 
-                builder.button("§a刷新列表");
-                builder.button("§e上一页");
-                builder.button("§e下一页");
-                builder.button("§c返回");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-refresh", "&a刷新列表"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-prev-page", "&e上一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-next-page", "&e下一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-back", "&c返回"));
 
                 final int navOffset = pageGuilds.size();
 
@@ -354,15 +354,13 @@ public class EconomyManagementGUI implements GUI {
 
     private void sendBedrockEconomyActions(Player player, Guild guild, int page) {
         SimpleForm.Builder builder = SimpleForm.builder()
-            .title("§e经济管理 - " + guild.getName())
-            .content("§f当前资金: §a" + plugin.getEconomyManager().format(guild.getBalance())
-                + "\n§f会长: §e" + guild.getLeaderName()
-                + "\n§f等级: §e" + guild.getLevel());
+            .title(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-actions-title", "&e经济管理 - {guild}", "{guild}", guild.getName()))
+            .content(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-actions-content", "&f当前资金: &a{balance}\n&f会长: &e{leader}\n&f等级: &e{level}", "{balance}", plugin.getEconomyManager().format(guild.getBalance()), "{leader}", guild.getLeaderName(), "{level}", String.valueOf(guild.getLevel())));
 
-        builder.button("§e设置资金");
-        builder.button("§a增加资金");
-        builder.button("§c清空资金");
-        builder.button("§c返回列表");
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-set-funds", "&e设置资金"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-add-funds", "&a增加资金"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-clear-funds", "&c清空资金"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-back-to-list", "&c返回列表"));
 
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             switch (response.clickedButtonId()) {
@@ -389,23 +387,25 @@ public class EconomyManagementGUI implements GUI {
     }
 
     private void sendBedrockAmountInput(Player player, Guild guild, String operationType, int page) {
-        String title = operationType.equals("set") ? "§e设置资金" : "§a增加资金";
+        String title = operationType.equals("set")
+            ? languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-set-title", "&e设置资金")
+            : languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-add-title", "&a增加资金");
         CustomForm form = CustomForm.builder()
             .title(title + " - " + guild.getName())
-            .input("§f请输入金额", "0", "")
+            .input(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-input-label", "&f请输入金额"), "0", "")
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 String input = response.getInput(0);
                 try {
                     double amount = Double.parseDouble(input.trim());
                     if (amount <= 0) {
-                        player.sendMessage(ColorUtils.colorize("&c金额必须大于0！"));
+                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-invalid-amount", "&c金额必须大于0！"));
                         sendBedrockEconomyActions(player, guild, page);
                         return;
                     }
                     plugin.getGuiManager().openGUI(player,
                         new ConfirmChangeFundsGUI(plugin, guild, player, operationType, amount));
                 } catch (NumberFormatException e) {
-                    player.sendMessage(ColorUtils.colorize("&c无效的数字！"));
+                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-invalid-number", "&c无效的数字！"));
                     sendBedrockEconomyActions(player, guild, page);
                 }
             }))

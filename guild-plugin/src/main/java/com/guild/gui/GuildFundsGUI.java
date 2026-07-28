@@ -98,9 +98,9 @@ public class GuildFundsGUI implements GUI {
 
                 if (!success || totals == null || totals.isEmpty()) {
                     SimpleForm emptyForm = SimpleForm.builder()
-                            .title("§6工会资金 - " + guildName)
-                            .content("§c暂无存款记录")
-                            .button("§c返回")
+                            .title(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-title", "&6工会资金 - {guild}", "{guild}", guildName))
+                            .content(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-no-data", "&c暂无存款记录"))
+                            .button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-back", "&c返回"))
                             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                                     navigateBack(player)))
                             .build();
@@ -113,11 +113,14 @@ public class GuildFundsGUI implements GUI {
                 int startIndex = safePage * itemsPerPage;
                 int endIndex = Math.min(startIndex + itemsPerPage, totals.size());
 
-                String content = "§f第 " + (safePage + 1) + "/" + totalPages + " 页\n"
-                        + "§f总人数: " + totalPlayers;
+                String content = languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-page-info",
+                        "&f第 {page}/{total} 页\n&f总人数: {count}",
+                        "{page}", String.valueOf(safePage + 1),
+                        "{total}", String.valueOf(totalPages),
+                        "{count}", String.valueOf(totalPlayers));
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                        .title("§6工会资金 - " + guildName)
+                        .title(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-title", "&6工会资金 - {guild}", "{guild}", guildName))
                         .content(content);
 
                 List<GuildContribution> pageEntries = new ArrayList<>();
@@ -125,15 +128,17 @@ public class GuildFundsGUI implements GUI {
                     GuildContribution entry = totals.get(i);
                     pageEntries.add(entry);
                     boolean isOnline = Bukkit.getPlayer(entry.getPlayerUuid()) != null;
-                    String status = isOnline ? "§a在线" : "§f离线";
+                    String status = isOnline
+                            ? languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-online", "&a在线")
+                            : languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-offline", "&f离线");
                     builder.button("§e" + entry.getPlayerName()
                             + " §f- " + formatAmount(entry.getAmount()) + " " + status);
                 }
 
-                builder.button("§a上一页");
-                builder.button("§a下一页");
-                builder.button("§a刷新");
-                builder.button("§c返回");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-prev-page", "&a上一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-next-page", "&a下一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-refresh", "&a刷新"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-back", "&c返回"));
 
                 final int entryCount = pageEntries.size();
                 final int curPage = safePage;

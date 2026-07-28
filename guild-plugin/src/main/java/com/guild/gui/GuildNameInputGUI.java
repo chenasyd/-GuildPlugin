@@ -59,8 +59,10 @@ public class GuildNameInputGUI implements GUI {
         if (!BedrockFormSender.isAvailable()) return false;
 
         CustomForm form = CustomForm.builder()
-                .title("§6修改工会名称")
-                .input("§f输入新的工会名称", "2-16个字符，支持颜色字符", currentName)
+                .title(languageManager.getGuiColoredMessage(player, "gui.guild-name-input.bedrock-title", "&6修改工会名称"))
+                .input(languageManager.getGuiColoredMessage(player, "gui.guild-name-input.bedrock-input-label", "&f输入新的工会名称"),
+                        languageManager.getGuiColoredMessage(player, "gui.guild-name-input.bedrock-input-placeholder", "2-16个字符，支持颜色字符"),
+                        currentName)
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     String input = response.getInput(0);
                     handleInputComplete(player, input);

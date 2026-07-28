@@ -78,7 +78,7 @@ public final class BedrockFormSender {
         try {
             Plugin geyserPlugin = Bukkit.getPluginManager().getPlugin("Geyser-Spigot");
             if (geyserPlugin == null) {
-                logger.info("[BedrockForm] 本地 Geyser 未安装 — 使用代理转发模式。");
+                logger.info("[BedrockForm] Local Geyser not installed - using proxy forwarding mode.");
                 return;
             }
 
@@ -96,12 +96,12 @@ public final class BedrockFormSender {
 
             localGeyserClassLoader = geyserLoader;
             localGeyserReady = true;
-            logger.info("[BedrockForm] 本地 Geyser 检测到 — 直发模式已启用。");
+            logger.info("[BedrockForm] Local Geyser detected - direct send mode enabled.");
         } catch (ClassNotFoundException e) {
-            logger.info("[BedrockForm] Geyser API 类不可用 — 使用代理转发模式。");
+            logger.info("[BedrockForm] Geyser API class unavailable - using proxy forwarding mode.");
         } catch (Exception e) {
-            logger.info("[BedrockForm] 本地 Geyser 初始化失败 ("
-                    + e.getClass().getSimpleName() + ") — 使用代理转发模式。");
+            logger.info("[BedrockForm] Local Geyser initialization failed ("
+                    + e.getClass().getSimpleName() + ") - using proxy forwarding mode.");
         }
     }
 
@@ -127,7 +127,7 @@ public final class BedrockFormSender {
     public static boolean sendForm(UUID uuid, Object formObj) {
         if (!(formObj instanceof Form)) {
             if (logger != null) {
-                logger.warning("[BedrockForm] sendForm: 非法表单对象: "
+                logger.warning("[BedrockForm] sendForm: invalid form object: "
                         + (formObj != null ? formObj.getClass().getName() : "null"));
             }
             return false;
@@ -150,13 +150,13 @@ public final class BedrockFormSender {
                 typeOrdinal = FormType.CUSTOM_FORM.ordinal();
             } else {
                 if (logger != null) {
-                    logger.warning("[BedrockForm] 未知表单类型: " + form.getClass().getName());
+                    logger.warning("[BedrockForm] Unknown form type: " + form.getClass().getName());
                 }
                 return false;
             }
         } catch (Exception e) {
             if (logger != null) {
-                logger.warning("[BedrockForm] 表单序列化失败: " + e.getMessage());
+                logger.warning("[BedrockForm] Form serialization failed: " + e.getMessage());
             }
             return false;
         }
@@ -181,7 +181,7 @@ public final class BedrockFormSender {
         // 所有传输方式均失败
         pendingForms.remove(formId);
         if (logger != null) {
-            logger.warning("[BedrockForm] 无可用传输方式 (localGeyser="
+            logger.warning("[BedrockForm] No available transport (localGeyser="
                     + localGeyserReady + ", proxy=" + BungeeClientAPI.isInitialized() + ")");
         }
         return false;
@@ -200,7 +200,7 @@ public final class BedrockFormSender {
         Form form = pendingForms.remove(formId);
         if (form == null) {
             if (logger != null) {
-                logger.warning("[BedrockForm] 无匹配的待响应表单: " + formId);
+                logger.warning("[BedrockForm] No matching pending form: " + formId);
             }
             return;
         }
@@ -210,7 +210,7 @@ public final class BedrockFormSender {
             FormDefinitions.instance().definitionFor(form).handleFormResponse(form, data);
         } catch (Exception e) {
             if (logger != null) {
-                logger.warning("[BedrockForm] 响应处理失败: " + e.getMessage());
+                logger.warning("[BedrockForm] Response handling failed: " + e.getMessage());
             }
         }
     }
@@ -268,7 +268,7 @@ public final class BedrockFormSender {
             return true;
         } catch (Exception e) {
             if (logger != null) {
-                logger.warning("[BedrockForm] 本地 Geyser 发送失败: " + e.getMessage());
+                logger.warning("[BedrockForm] Local Geyser send failed: " + e.getMessage());
             }
             return false;
         }
@@ -293,7 +293,7 @@ public final class BedrockFormSender {
             return true;
         } catch (Exception e) {
             if (logger != null) {
-                logger.warning("[BedrockForm] 代理转发失败: " + e.getMessage());
+                logger.warning("[BedrockForm] Proxy forwarding failed: " + e.getMessage());
             }
             return false;
         }

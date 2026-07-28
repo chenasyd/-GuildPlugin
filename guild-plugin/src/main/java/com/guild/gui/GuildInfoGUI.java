@@ -20,6 +20,7 @@ import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PlaceholderUtils;
+import com.guild.core.language.LanguageManager;
 
 import org.geysermc.cumulus.form.SimpleForm;
 import com.guild.models.Guild;
@@ -119,33 +120,35 @@ public class GuildInfoGUI implements GUI {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (!player.isOnline()) return;
 
+                LanguageManager lang = plugin.getLanguageManager();
+
                 String createdTime = guild.getCreatedAt() != null
                         ? guild.getCreatedAt().format(com.guild.core.time.TimeProvider.FULL_FORMATTER)
-                        : "未知";
-                String tagText = guild.getTag() != null ? "[" + guild.getTag() + "]" : "无";
-                String statusText = guild.isFrozen() ? "§c已冻结" : "§a正常";
+                        : lang.getGuiColoredMessage(player, "gui.common.unknown", "未知");
+                String tagText = guild.getTag() != null ? "[" + guild.getTag() + "]" : lang.getGuiColoredMessage(player, "gui.guild-info.no-tag", "无");
+                String statusText = guild.isFrozen() ? "§c" + lang.getGuiColoredMessage(player, "gui.guild-info.status-frozen", "已冻结") : "§a" + lang.getGuiColoredMessage(player, "gui.guild-info.status-normal", "正常");
 
                 StringBuilder sb = new StringBuilder();
                 sb.append("§6").append(guild.getName()).append("\n");
-                sb.append("§f标签: §e").append(tagText).append("\n");
+                sb.append("§f").append(lang.getGuiColoredMessage(player, "gui.guild-info.tag", "标签")).append(": §e").append(tagText).append("\n");
                 if (guild.getDescription() != null && !guild.getDescription().isEmpty()) {
-                    sb.append("§f描述: ").append(guild.getDescription()).append("\n");
+                    sb.append("§f").append(lang.getGuiColoredMessage(player, "gui.guild-info.description", "描述")).append(": ").append(guild.getDescription()).append("\n");
                 }
-                sb.append("§f会长: §e").append(guild.getLeaderName()).append("\n");
-                sb.append("§f创建时间: ").append(createdTime).append("\n");
-                sb.append("§f等级: §e").append(guild.getLevel()).append("\n");
-                sb.append("§f成员: §e").append(memberCount).append("/")
+                sb.append("§f").append(lang.getGuiColoredMessage(player, "gui.guild-info.leader", "会长")).append(": §e").append(guild.getLeaderName()).append("\n");
+                sb.append("§f").append(lang.getGuiColoredMessage(player, "gui.guild-info.created-time", "创建时间")).append(": ").append(createdTime).append("\n");
+                sb.append("§f").append(lang.getGuiColoredMessage(player, "gui.guild-info.level", "等级")).append(": §e").append(guild.getLevel()).append("\n");
+                sb.append("§f").append(lang.getGuiColoredMessage(player, "gui.guild-info.members", "成员")).append(": §e").append(memberCount).append("/")
                         .append(guild.getMaxMembers()).append("\n");
-                sb.append("§f资金: §a")
+                sb.append("§f").append(lang.getGuiColoredMessage(player, "gui.guild-info.balance", "资金")).append(": §a")
                         .append(plugin.getEconomyManager().format(guild.getBalance())).append("\n");
-                sb.append("§f下级所需: ").append(getNextLevelRequirement(guild.getLevel())).append("\n");
-                sb.append("§f状态: ").append(statusText);
+                sb.append("§f").append(lang.getGuiColoredMessage(player, "gui.guild-info.next-level-requirement", "下级所需")).append(": ").append(getNextLevelRequirement(guild.getLevel())).append("\n");
+                sb.append("§f").append(lang.getGuiColoredMessage(player, "gui.guild-info.bedrock-status-label", "状态")).append(": ").append(statusText);
 
                 SimpleForm form = SimpleForm.builder()
-                        .title("§6工会信息")
+                        .title(lang.getGuiColoredMessage(player, "gui.guild-info.bedrock-title", "&6工会信息"))
                         .content(sb.toString())
-                        .button("§a工会资金")
-                        .button("§c返回主菜单")
+                        .button(lang.getGuiColoredMessage(player, "gui.guild-info.bedrock-guild-funds", "&a工会资金"))
+                        .button(lang.getGuiColoredMessage(player, "gui.guild-info.bedrock-back-to-main", "&c返回主菜单"))
                         .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                             switch (response.clickedButtonId()) {
                                 case 0 -> plugin.getGuiManager().openGUI(player,

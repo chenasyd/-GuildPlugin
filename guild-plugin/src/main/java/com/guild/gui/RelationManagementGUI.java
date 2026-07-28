@@ -454,7 +454,7 @@ public class RelationManagementGUI implements GUI {
     public boolean openBedrockForm(Player player) {
         if (!BedrockFormSender.isAvailable()) return false;
         if (!player.hasPermission("guild.admin")) {
-            player.sendMessage(ColorUtils.colorize("&c您没有管理员权限！"));
+            player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-no-permission", "&c您没有管理员权限！"));
             return false;
         }
         sendBedrockRelationMgmtList(player, 0);
@@ -481,9 +481,9 @@ public class RelationManagementGUI implements GUI {
 
                 if (relations.isEmpty()) {
                     SimpleForm form = SimpleForm.builder()
-                        .title("§4关系管理")
-                        .content("§c暂无关系数据")
-                        .button("§c返回")
+                        .title(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-title", "&4关系管理"))
+                        .content(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-empty", "&c暂无关系数据"))
+                        .button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-back", "&c返回"))
                         .validResultHandler(r -> CompatibleScheduler.runTask(plugin, player, () ->
                             plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player))))
                         .closedResultHandler(r -> {})
@@ -499,8 +499,8 @@ public class RelationManagementGUI implements GUI {
                 int endIndex = Math.min(startIndex + itemsPerPage, relations.size());
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title("§4关系管理")
-                    .content("§f第 " + (safePage + 1) + "/" + totalPages + " 页 | 共 " + relations.size() + " 个关系");
+                    .title(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-title", "&4关系管理"))
+                    .content(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-page-info", "&f第 {current}/{total} 页 | 共 {count} 个关系", "{current}", String.valueOf(safePage + 1), "{total}", String.valueOf(totalPages), "{count}", String.valueOf(relations.size())));
 
                 List<GuildRelation> pageRelations = new ArrayList<>();
                 String lang = languageManager.getPlayerLanguage(player);
@@ -511,10 +511,10 @@ public class RelationManagementGUI implements GUI {
                         + " §f[" + rel.getType().getDisplayName(lang) + "]");
                 }
 
-                builder.button("§a刷新列表");
-                builder.button("§e上一页");
-                builder.button("§e下一页");
-                builder.button("§c返回");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-refresh", "&a刷新列表"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-prev-page", "&e上一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-next-page", "&e下一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-back", "&c返回"));
 
                 final int navOffset = pageRelations.size();
 
@@ -545,15 +545,12 @@ public class RelationManagementGUI implements GUI {
     private void sendBedrockRelationMgmtActions(Player player, GuildRelation relation, int page) {
         String lang = languageManager.getPlayerLanguage(player);
         SimpleForm.Builder builder = SimpleForm.builder()
-            .title("§6关系操作")
-            .content("§f" + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name()
-                + "\n§f类型: " + ColorUtils.colorize(relation.getType().getDisplayName(lang))
-                + "\n§f状态: " + ColorUtils.colorize(relation.getStatus().getDisplayName(lang))
-                + "\n§f发起人: " + relation.getInitiatorName());
+            .title(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-actions-title", "&6关系操作"))
+            .content(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-actions-content", "&f{guild1} ↔ {guild2}\n&f类型: {type}\n&f状态: {status}\n&f发起人: {initiator}", "{guild1}", relation.getGuild1Name(), "{guild2}", relation.getGuild2Name(), "{type}", ColorUtils.colorize(relation.getType().getDisplayName(lang)), "{status}", ColorUtils.colorize(relation.getStatus().getDisplayName(lang)), "{initiator}", relation.getInitiatorName()));
 
-        builder.button("§c删除关系");
-        builder.button("§e查看详情");
-        builder.button("§c返回列表");
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-delete-relation", "&c删除关系"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-view-details", "&e查看详情"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-back-to-list", "&c返回列表"));
 
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             switch (response.clickedButtonId()) {
@@ -578,19 +575,18 @@ public class RelationManagementGUI implements GUI {
 
     private void sendBedrockConfirmDeleteRelation(Player player, GuildRelation relation, int page) {
         SimpleForm form = SimpleForm.builder()
-            .title("§c确认删除")
-            .content("§f确定要删除关系:\n§e" + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name() + "§f?")
-            .button("§c确认删除")
-            .button("§f取消")
+            .title(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-confirm-title", "&c确认删除"))
+            .content(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-confirm-content", "&f确定要删除关系:\n&e{guild1} ↔ {guild2}&f?", "{guild1}", relation.getGuild1Name(), "{guild2}", relation.getGuild2Name()))
+            .button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-confirm-delete", "&c确认删除"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-cancel", "&f取消"))
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 if (response.clickedButtonId() == 0) {
                     plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
                         CompatibleScheduler.runTask(plugin, player, () -> {
                             if (success) {
-                                player.sendMessage(ColorUtils.colorize("&a已删除关系: "
-                                    + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name()));
+                                player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-delete-success", "&a已删除关系: {guild1} ↔ {guild2}", "{guild1}", relation.getGuild1Name(), "{guild2}", relation.getGuild2Name()));
                             } else {
-                                player.sendMessage(ColorUtils.colorize("&c删除关系失败！"));
+                                player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-delete-failed", "&c删除关系失败！"));
                             }
                             sendBedrockRelationMgmtList(player, page);
                         });

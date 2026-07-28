@@ -38,10 +38,10 @@ public class WebReporter {
 
         api.httpPost(endpoint, jsonPayload, headers)
             .thenAccept(response -> {
-                logger.info("[Stats-Web] 上报成功: " + response.length() + " bytes");
+                logger.info("[Stats-Web] Report submitted successfully: " + response.length() + " bytes");
             })
             .exceptionally(ex -> {
-                logger.warning("[Stats-Web] 上报失败: " + ex.getMessage());
+                logger.warning("[Stats-Web] Report submission failed: " + ex.getMessage());
                 return null;
             });
     }
@@ -57,9 +57,9 @@ public class WebReporter {
             "Authorization", "Bearer " + (token != null ? token : "")
         );
         api.httpGet(healthEndpoint, headers)
-            .thenAccept(response -> logger.info("[Stats-Web] 健康检查通过"))
+            .thenAccept(response -> logger.info("[Stats-Web] Health check passed"))
             .exceptionally(ex -> {
-                logger.warning("[Stats-Web] 健康检查失败: " + ex.getMessage());
+                logger.warning("[Stats-Web] Health check failed: " + ex.getMessage());
                 return null;
             });
     }
@@ -70,7 +70,7 @@ public class WebReporter {
         }
         return api.httpGet(url)
             .exceptionally(ex -> {
-                logger.warning("[Stats-Web] 远程配置拉取失败: " + ex.getMessage());
+                logger.warning("[Stats-Web] Failed to fetch remote config: " + ex.getMessage());
                 return "";
             });
     }

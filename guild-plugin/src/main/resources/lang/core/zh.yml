@@ -685,6 +685,69 @@ cloud.download-renamed: "&a已重命名为 &e{0} &a（因 &e{1} &a正在使用�
 cloud.download-tip: "&6提示: &7先卸载旧模块再替换文件: &e/guildmodule unload <id> &7-> 替换jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&c下载失败: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&c此指令仅限基岩版玩家使用。你是 Java 版玩家。"
+bedrock-test.geyser-unavailable: "&cGeyser API 不可用，无法发送表单。"
+bedrock-test.simple-clicked: "&a[SimpleForm] &7你点击了: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] 表单已关闭"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7提交成功:"
+bedrock-test.custom-name: "&7  名称: &f{value}"
+bedrock-test.custom-desc: "&7  描述: &f{value}"
+bedrock-test.custom-free-join: "&7  自由加入: &f{value}"
+bedrock-test.custom-allow-invite: "&7  允许邀请: &f{value}"
+bedrock-test.custom-allow-kick: "&7  允许踢人: &f{value}"
+bedrock-test.custom-language: "&7  语言: &f{value}"
+bedrock-test.custom-max-members: "&7  最大成员: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] 表单已关闭，未保存"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7你选择了: &c确认退出"
+bedrock-test.modal-cancel: "&a[ModalForm] &7你选择了: &a取消"
+bedrock-test.modal-closed: "&7[ModalForm] 对话框已关闭"
+
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6工会插件 &r- &e基岩版表单测试"
+bedrock-test.main-content: "&7选择一个表单类型进行预览："
+bedrock-test.main-btn-simple: "&aSimpleForm &f- 按钮菜单"
+bedrock-test.main-btn-custom: "&bCustomForm &f- 输入/设置表单"
+bedrock-test.main-btn-modal: "&cModalForm &f- 确认对话框"
+
+# SimpleForm
+bedrock-test.simple-title: "&6工会主菜单 &r- &7SimpleForm 示例"
+bedrock-test.simple-content: "&7欢迎, &e{player}&7!\n&7这是 SimpleForm 按钮菜单示例。"
+bedrock-test.simple-btn-info: "&a工会信息 &f- 查看工会详情"
+bedrock-test.simple-btn-members: "&b成员管理 &f- 管理工会成员"
+bedrock-test.simple-btn-settings: "&e工会设置 &f- 修改工会配置"
+bedrock-test.simple-btn-list: "&6工会列表 &f- 浏览所有工会"
+bedrock-test.simple-btn-quit: "&c退出工会 &f- 离开当前工会"
+bedrock-test.simple-name-info: "工会信息"
+bedrock-test.simple-name-members: "成员管理"
+bedrock-test.simple-name-settings: "工会设置"
+bedrock-test.simple-name-list: "工会列表"
+bedrock-test.simple-name-quit: "退出工会"
+
+# CustomForm
+bedrock-test.custom-title: "&6工会设置 &r- &fCustomForm 示例"
+bedrock-test.custom-label-basic: "&7── 基本设置 ──"
+bedrock-test.custom-input-name-label: "&f工会名称"
+bedrock-test.custom-input-name-placeholder: "输入新名称..."
+bedrock-test.custom-input-name-default: "我的工会"
+bedrock-test.custom-input-desc-label: "&f工会描述"
+bedrock-test.custom-input-desc-placeholder: "输入描述..."
+bedrock-test.custom-input-desc-default: "一个友好的工会"
+bedrock-test.custom-label-perms: "&7── 权限开关 ──"
+bedrock-test.custom-toggle-free-join: "&f允许自由加入"
+bedrock-test.custom-toggle-allow-invite: "&f允许成员邀请"
+bedrock-test.custom-toggle-allow-kick: "&f允许成员踢人"
+bedrock-test.custom-label-other: "&7── 其他 ──"
+bedrock-test.custom-dropdown-lang: "&f工会语言"
+bedrock-test.custom-slider-max-members: "&f最大成员数"
+
+# ModalForm
+bedrock-test.modal-title: "&c确认操作 &r- &fModalForm 示例"
+bedrock-test.modal-content: "&7你确定要退出工会 &e测试工会 &7吗？\n\n&c此操作不可撤销！\n&7退出后需要重新申请加入。"
+bedrock-test.modal-btn-confirm: "&a确认退出"
+bedrock-test.modal-btn-cancel: "&c取消"
+
 
 
 

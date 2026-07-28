@@ -73,10 +73,10 @@ public class CreateGuildGUI implements GUI {
         if (!BedrockFormSender.isAvailable()) return false;
 
         CustomForm form = CustomForm.builder()
-                .title("§6创建工会")
-                .input("§f工会名称 (3-20字符)", "输入工会名称", guildName)
-                .input("§f工会标签 (最多6字符, 可选)", "输入工会标签", guildTag)
-                .input("§f工会描述 (最多100字符, 可选)", "输入工会描述", guildDescription)
+                .title(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-title", "&6创建工会"))
+                .input(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-name-label", "&f工会名称 (3-20字符)"), languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-name-placeholder", "输入工会名称"), guildName)
+                .input(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-tag-label", "&f工会标签 (最多6字符, 可选)"), languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-tag-placeholder", "输入工会标签"), guildTag)
+                .input(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-desc-label", "&f工会描述 (最多100字符, 可选)"), languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-desc-placeholder", "输入工会描述"), guildDescription)
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     String name = response.getInput(0);
                     String tag = response.getInput(1);

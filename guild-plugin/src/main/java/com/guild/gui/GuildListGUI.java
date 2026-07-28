@@ -88,12 +88,12 @@ public class GuildListGUI implements GUI {
 
                 if (filtered.isEmpty()) {
                     SimpleForm emptyForm = SimpleForm.builder()
-                            .title("§6工会列表")
+                            .title(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-title", "&6工会列表"))
                             .content(searchQuery.isEmpty()
-                                    ? "§c服务器中还没有工会"
-                                    : "§c没有找到匹配的工会")
-                            .button("§e搜索工会")
-                            .button("§c返回主菜单")
+                                    ? languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-no-guilds", "&c服务器中还没有工会")
+                                    : languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-no-results", "&c没有找到匹配的工会"))
+                            .button(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-search", "&e搜索工会"))
+                            .button(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-back-main", "&c返回主菜单"))
                             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                                 if (response.clickedButtonId() == 0) {
                                     sendBedrockSearchForm(player);
@@ -114,14 +114,15 @@ public class GuildListGUI implements GUI {
                 int endIndex = Math.min(startIndex + GUILDS_PER_PAGE, filtered.size());
 
                 StringBuilder content = new StringBuilder();
-                content.append("§f第 ").append(safePage + 1).append("/")
-                        .append(totalPagesLocal + 1).append(" 页");
+                content.append(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-page-info", "&f第 {page}/{total} 页",
+                        "{page}", String.valueOf(safePage + 1), "{total}", String.valueOf(totalPagesLocal + 1)));
                 if (!searchQuery.isEmpty()) {
-                    content.append("\n§f搜索: §e").append(searchQuery);
+                    content.append("\n").append(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-search-info", "&f搜索: &e{query}",
+                            "{query}", searchQuery));
                 }
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                        .title("§6工会列表")
+                        .title(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-title", "&6工会列表"))
                         .content(content.toString());
 
                 // 工会按钮
@@ -134,10 +135,10 @@ public class GuildListGUI implements GUI {
                 }
 
                 // 导航按钮（固定顺序：上一页/下一页/搜索/返回）
-                builder.button("§a上一页");
-                builder.button("§a下一页");
-                builder.button("§e搜索工会");
-                builder.button("§c返回主菜单");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-prev-page", "&a上一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-next-page", "&a下一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-search", "&e搜索工会"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-back-main", "&c返回主菜单"));
 
                 final int guildCount = pageGuilds.size();
                 final int curPage = safePage;
@@ -170,8 +171,9 @@ public class GuildListGUI implements GUI {
      */
     private void sendBedrockSearchForm(Player player) {
         CustomForm form = CustomForm.builder()
-                .title("§6搜索工会")
-                .input("§f输入搜索关键词", "留空显示全部", searchQuery)
+                .title(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-search-title", "&6搜索工会"))
+                .input(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-search-input", "&f输入搜索关键词"),
+                        languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-search-placeholder", "留空显示全部"), searchQuery)
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     String query = response.getInput(0);
                     this.searchQuery = query != null ? query.trim() : "";
@@ -191,10 +193,10 @@ public class GuildListGUI implements GUI {
         String tagStr = targetGuild.getTag() != null ? " [" + targetGuild.getTag() + "]" : "";
         SimpleForm form = SimpleForm.builder()
                 .title("§6" + targetGuild.getName() + tagStr)
-                .content("§f选择操作：")
-                .button("§e查看详情")
-                .button("§a申请加入")
-                .button("§c返回列表")
+                .content(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-select-action", "&f选择操作："))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-view-detail", "&e查看详情"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-apply-join", "&a申请加入"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-back-list", "&c返回列表"))
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     switch (response.clickedButtonId()) {
                         case 0 -> plugin.getGuiManager().openGUI(player,

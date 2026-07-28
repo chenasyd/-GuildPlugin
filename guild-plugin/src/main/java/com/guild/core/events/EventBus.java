@@ -19,7 +19,7 @@ public class EventBus {
     @SuppressWarnings("unchecked")
     public <T> void subscribe(Class<T> eventType, Consumer<T> listener) {
         listeners.computeIfAbsent(eventType, k -> new CopyOnWriteArrayList<>()).add(listener);
-        logger.info("注册事件监听器: " + eventType.getSimpleName());
+        logger.info("Registered event listener: " + eventType.getSimpleName());
     }
     
     /**
@@ -30,7 +30,7 @@ public class EventBus {
         CopyOnWriteArrayList<Consumer<?>> eventListeners = listeners.get(eventType);
         if (eventListeners != null) {
             eventListeners.remove(listener);
-            logger.info("取消注册事件监听器: " + eventType.getSimpleName());
+            logger.info("Unregistered event listener: " + eventType.getSimpleName());
         }
     }
     
@@ -45,7 +45,7 @@ public class EventBus {
                 try {
                     ((Consumer<T>) listener).accept(event);
                 } catch (Exception e) {
-                    logger.severe("事件监听器执行失败: " + e.getMessage());
+                    logger.severe("Event listener execution failed: " + e.getMessage());
                 }
             }
         }
@@ -63,7 +63,7 @@ public class EventBus {
      */
     public void clear() {
         listeners.clear();
-        logger.info("清除所有事件监听器");
+        logger.info("Cleared all event listeners");
     }
     
     /**

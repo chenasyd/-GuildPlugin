@@ -499,10 +499,10 @@ public class GuildRelationsGUI implements GUI {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (relationsList == null || relationsList.isEmpty()) {
                     SimpleForm form = SimpleForm.builder()
-                        .title("§6工会关系")
-                        .content("§f当前没有任何工会关系")
-                        .button("§a创建关系")
-                        .button("§c返回")
+                        .title(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-title", "&6工会关系"))
+                        .content(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-empty", "&f当前没有任何工会关系"))
+                        .button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-create-relation", "&a创建关系"))
+                        .button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-back", "&c返回"))
                         .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                             if (response.clickedButtonId() == 0) {
                                 plugin.getGuiManager().openGUI(player, new CreateRelationGUI(plugin, guild, player));
@@ -525,8 +525,8 @@ public class GuildRelationsGUI implements GUI {
                 final int relCount = endIndex - startIndex;
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title("§6工会关系 - 第" + (safePage + 1) + "页")
-                    .content("§f共" + relationsList.size() + "个关系");
+                    .title(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-title-page", "&6工会关系 - 第{page}页", "{page}", String.valueOf(safePage + 1)))
+                    .content(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-total", "&f共{count}个关系", "{count}", String.valueOf(relationsList.size())));
 
                 for (int i = startIndex; i < endIndex; i++) {
                     GuildRelation rel = relationsList.get(i);
@@ -535,10 +535,10 @@ public class GuildRelationsGUI implements GUI {
                     builder.button(ColorUtils.colorize(color + otherName + " - " + rel.getType().getDisplayName()).replace("§7", "§f"));
                 }
 
-                builder.button("§a创建关系");
-                builder.button("§e上一页");
-                builder.button("§e下一页");
-                builder.button("§c返回");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-create-relation", "&a创建关系"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-prev-page", "&e上一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-next-page", "&e下一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-back", "&c返回"));
 
                 builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     int clicked = response.clickedButtonId();
@@ -570,44 +570,44 @@ public class GuildRelationsGUI implements GUI {
         GuildRelation.RelationType type = relation.getType();
 
         SimpleForm.Builder builder = SimpleForm.builder()
-            .title("§6关系操作 - " + otherName)
-            .content(ColorUtils.colorize("§f类型: " + type.getDisplayName() + "\n§f状态: " + status.getDisplayName()));
+            .title(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-actions-title", "&6关系操作 - {guild}", "{guild}", otherName))
+            .content(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-actions-content", "&f类型: {type}\n&f状态: {status}", "{type}", type.getDisplayName(), "{status}", status.getDisplayName()));
 
         List<String> actionTypes = new ArrayList<>();
 
         if (status == GuildRelation.RelationStatus.PENDING) {
             if (relation.getInitiatorUuid().equals(player.getUniqueId())) {
-                builder.button("§c取消关系");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-cancel-relation", "&c取消关系"));
                 actionTypes.add("cancel");
             } else {
-                builder.button("§a接受关系");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-accept-relation", "&a接受关系"));
                 actionTypes.add("accept");
-                builder.button("§c拒绝关系");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-reject-relation", "&c拒绝关系"));
                 actionTypes.add("reject");
             }
         } else if (status == GuildRelation.RelationStatus.ACTIVE) {
             if (type == GuildRelation.RelationType.TRUCE) {
-                builder.button("§e结束停战");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-end-truce", "&e结束停战"));
                 actionTypes.add("end_truce");
             } else if (type == GuildRelation.RelationType.WAR) {
-                builder.button("§e提议停战");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-propose-truce", "&e提议停战"));
                 actionTypes.add("propose_truce");
             } else {
-                builder.button("§c删除关系");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-delete-relation", "&c删除关系"));
                 actionTypes.add("delete");
             }
         }
 
-        builder.button("§e返回列表");
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-back-to-list", "&e返回列表"));
 
         final int actionCount = actionTypes.size();
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             int clicked = response.clickedButtonId();
             if (clicked < actionCount) {
                 switch (actionTypes.get(clicked)) {
-                    case "accept" -> bedrockUpdateRelation(player, relation, GuildRelation.RelationStatus.ACTIVE, "&a已接受与 " + otherName + " 的关系！");
-                    case "reject" -> bedrockUpdateRelation(player, relation, GuildRelation.RelationStatus.CANCELLED, "&c已拒绝与 " + otherName + " 的关系！");
-                    case "cancel" -> bedrockUpdateRelation(player, relation, GuildRelation.RelationStatus.CANCELLED, "&c已取消与 " + otherName + " 的关系！");
+                    case "accept" -> bedrockUpdateRelation(player, relation, GuildRelation.RelationStatus.ACTIVE, languageManager.getGuiColoredMessage(player, "gui.guild-relations.relations.accept-success", "&a已接受与 {guild} 的关系！", "{guild}", otherName));
+                    case "reject" -> bedrockUpdateRelation(player, relation, GuildRelation.RelationStatus.CANCELLED, languageManager.getGuiColoredMessage(player, "gui.guild-relations.relations.reject-success", "&c已拒绝与 {guild} 的关系！", "{guild}", otherName));
+                    case "cancel" -> bedrockUpdateRelation(player, relation, GuildRelation.RelationStatus.CANCELLED, languageManager.getGuiColoredMessage(player, "gui.guild-relations.relations.cancel-success", "&c已取消与 {guild} 的关系！", "{guild}", otherName));
                     case "end_truce" -> bedrockEndTruce(player, relation);
                     case "propose_truce" -> bedrockProposeTruce(player, relation);
                     case "delete" -> bedrockDeleteRelation(player, relation);
@@ -627,10 +627,10 @@ public class GuildRelationsGUI implements GUI {
         plugin.getGuildService().updateGuildRelationStatusAsync(relation.getId(), newStatus).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
-                    player.sendMessage(ColorUtils.colorize(successMsg));
+                    player.sendMessage(successMsg);
                     sendBedrockRelationList(player, 0);
                 } else {
-                    player.sendMessage(ColorUtils.colorize("&c操作失败！"));
+                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.common.operation-failed", "&c操作失败！"));
                 }
             });
         });
@@ -650,10 +650,10 @@ public class GuildRelationsGUI implements GUI {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     plugin.getGuildService().deleteGuildRelationAsync(relation.getId());
-                    player.sendMessage(ColorUtils.colorize("&a与 " + relation.getOtherGuildName(guild.getId()) + " 的停战已结束！"));
+                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-relations.bedrock-truce-ended", "&a与 {guild} 的停战已结束！", "{guild}", relation.getOtherGuildName(guild.getId())));
                     sendBedrockRelationList(player, 0);
                 } else {
-                    player.sendMessage(ColorUtils.colorize("&c结束停战失败！"));
+                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-relations.relations.truce-end-failed", "&c结束停战失败！"));
                 }
             });
         });
@@ -672,10 +672,10 @@ public class GuildRelationsGUI implements GUI {
         ).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
-                    player.sendMessage(ColorUtils.colorize("&e已向 " + relation.getOtherGuildName(guild.getId()) + " 提议停战！"));
+                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-relations.relations.truce-proposed", "&e已向 {guild} 提议停战！", "{guild}", relation.getOtherGuildName(guild.getId())));
                     sendBedrockRelationList(player, 0);
                 } else {
-                    player.sendMessage(ColorUtils.colorize("&c提议停战失败！"));
+                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-relations.relations.truce-propose-failed", "&c提议停战失败！"));
                 }
             });
         });
@@ -685,10 +685,10 @@ public class GuildRelationsGUI implements GUI {
         plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
-                    player.sendMessage(ColorUtils.colorize("&a已删除与 " + relation.getOtherGuildName(guild.getId()) + " 的关系！"));
+                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-relations.relations.delete-success", "&a已删除与 {guild} 的关系！", "{guild}", relation.getOtherGuildName(guild.getId())));
                     sendBedrockRelationList(player, 0);
                 } else {
-                    player.sendMessage(ColorUtils.colorize("&c删除关系失败！"));
+                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-relations.relations.delete-failed", "&c删除关系失败！"));
                 }
             });
         });

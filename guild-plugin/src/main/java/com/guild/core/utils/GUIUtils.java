@@ -102,7 +102,7 @@ public class GUIUtils {
                     try {
                         processedLore.add(future.get());
                     } catch (Exception e) {
-                        plugin.getLogger().warning("处理GUI描述时发生错误: " + e.getMessage());
+                        plugin.getLogger().warning("Error processing GUI lore: " + e.getMessage());
                         processedLore.add("&c错误");
                     }
                 }

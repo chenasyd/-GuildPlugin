@@ -74,7 +74,7 @@ public class PluginFileLogger {
 
         // 创建 logs 目录
         if (!logsDir.exists() && !logsDir.mkdirs()) {
-            julLogger.warning("[FileLogger] 无法创建日志目录: " + logsDir.getAbsolutePath());
+            julLogger.warning("[FileLogger] Unable to create logs directory: " + logsDir.getAbsolutePath());
         }
 
         this.currentDate = LocalDate.now();
@@ -191,7 +191,7 @@ public class PluginFileLogger {
                 currentWriter.flush();
             }
         } catch (Exception e) {
-            julLogger.warning("[FileLogger] 写入日志失败: " + e.getMessage());
+            julLogger.warning("[FileLogger] Failed to write log: " + e.getMessage());
         }
     }
 
@@ -201,7 +201,7 @@ public class PluginFileLogger {
             currentWriter = new PrintWriter(
                     new BufferedWriter(new FileWriter(logFile, true)), false);
         } catch (IOException e) {
-            julLogger.warning("[FileLogger] 无法打开日志文件: " + e.getMessage());
+            julLogger.warning("[FileLogger] Unable to open log file: " + e.getMessage());
             currentWriter = null;
         }
     }

@@ -240,15 +240,15 @@ public class AdminGuildGUI implements GUI {
         if (!BedrockFormSender.isAvailable()) return false;
 
         SimpleForm.Builder builder = SimpleForm.builder()
-            .title("§4工会管理")
-            .content("§f选择管理功能");
+            .title(plugin.getLanguageManager().getGuiColoredMessage(player, "gui.admin-gui.bedrock-title", "&4工会管理"))
+            .content(plugin.getLanguageManager().getGuiColoredMessage(player, "gui.admin-gui.bedrock-content", "&f选择管理功能"));
 
-        builder.button("§e工会列表管理");
-        builder.button("§e经济管理");
-        builder.button("§e关系管理");
-        builder.button("§e统计信息");
-        builder.button("§e系统设置");
-        builder.button("§c返回");
+        builder.button(plugin.getLanguageManager().getGuiColoredMessage(player, "gui.admin-gui.bedrock-guild-list", "&e工会列表管理"));
+        builder.button(plugin.getLanguageManager().getGuiColoredMessage(player, "gui.admin-gui.bedrock-economy", "&e经济管理"));
+        builder.button(plugin.getLanguageManager().getGuiColoredMessage(player, "gui.admin-gui.bedrock-relations", "&e关系管理"));
+        builder.button(plugin.getLanguageManager().getGuiColoredMessage(player, "gui.admin-gui.bedrock-statistics", "&e统计信息"));
+        builder.button(plugin.getLanguageManager().getGuiColoredMessage(player, "gui.admin-gui.bedrock-settings", "&e系统设置"));
+        builder.button(plugin.getLanguageManager().getGuiColoredMessage(player, "gui.admin-gui.bedrock-back", "&c返回"));
 
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             switch (response.clickedButtonId()) {

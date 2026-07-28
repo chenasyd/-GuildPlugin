@@ -70,9 +70,9 @@ public final class PlayerConnectionService {
         if (plugin != null && plugin.isEnabled()) {
             boolean ok = BungeeClientAPI.ensureInitialized(plugin);
             if (ok && logger != null) {
-                logger.info("[PlayerConnection] BungeeClientAPI 懒初始化成功（onEnable 阶段曾失败）");
+                logger.info("[PlayerConnection] BungeeClientAPI lazy initialization succeeded (failed during onEnable)");
             } else if (logger != null) {
-                logger.warning("[PlayerConnection] BungeeClientAPI 懒初始化仍失败: "
+                logger.warning("[PlayerConnection] BungeeClientAPI lazy initialization still failed: "
                         + BungeeClientAPI.getInitializationError());
             }
         }
@@ -168,53 +168,53 @@ public final class PlayerConnectionService {
         // 懒初始化重试（onEnable 阶段可能因隔离 try-catch 跳过）
         ensureBungeeReady();
 
-        logger.info("[PlayerConnection] === 检测开始: " + name + " (" + uuid + ") ===");
+        logger.info("[PlayerConnection] === Detection started: " + name + " (" + uuid + ") ===");
 
         // ── Step 1: BungeeClientAPI 缓存 ──
         if (BungeeClientAPI.isInitialized()) {
             BungeeClientAPI.PlayerConnectionInfo bungeeInfo = BungeeClientAPI.getConnectionInfo(uuid);
             if (bungeeInfo != null) {
-                logger.info("[PlayerConnection] [1/2] BungeeClientAPI: 命中缓存"
-                        + " → type=" + bungeeInfo.getConnectionType()
+                logger.info("[PlayerConnection] [1/2] BungeeClientAPI: cache hit"
+                        + " -> type=" + bungeeInfo.getConnectionType()
                         + ", platform=" + bungeeInfo.getPlatform()
                         + ", inputMode=" + bungeeInfo.getInputMode());
                 ConnectionInfo result = new ConnectionInfo(uuid, name,
                         bungeeInfo.isBedrock(), bungeeInfo.getPlatform(),
                         bungeeInfo.getInputMode(), Source.BUNGEE);
-                logger.info("[PlayerConnection] [结果] " + name + " → "
+                logger.info("[PlayerConnection] [Result] " + name + " -> "
                         + (result.isBedrock() ? "BEDROCK" : "JAVA")
-                        + " (来源: BungeeCord 代理推送)");
+                        + " (source: BungeeCord proxy push)");
                 return result;
             } else {
-                logger.info("[PlayerConnection] [1/2] BungeeClientAPI: 已初始化但无该玩家缓存"
-                        + "（代理尚未推送连接信息）");
+                logger.info("[PlayerConnection] [1/2] BungeeClientAPI: initialized but no cache for this player"
+                        + " (proxy has not pushed connection info yet)");
             }
         } else {
             String err = BungeeClientAPI.getInitializationError();
-            logger.info("[PlayerConnection] [1/2] BungeeClientAPI: 未初始化（跳过代理检测）"
-                    + (err != null ? " 原因: " + err : ""));
+            logger.info("[PlayerConnection] [1/2] BungeeClientAPI: not initialized (skipping proxy detection)"
+                    + (err != null ? " reason: " + err : ""));
         }
 
         // ── Step 2: GeyserAPI 反射检测 ──
         if (GeyserAPI.isAvailable()) {
             boolean bedrock = GeyserAPI.isBedrockPlayer(uuid);
             logger.info("[PlayerConnection] [2/2] GeyserAPI: "
-                    + (bedrock ? "检测到基岩版连接 ✓" : "未检测到基岩版连接"));
+                    + (bedrock ? "Bedrock connection detected" : "No Bedrock connection detected"));
             if (bedrock) {
                 ConnectionInfo result = new ConnectionInfo(uuid, name,
                         true, null, null, Source.GEYSER_LOCAL);
-                logger.info("[PlayerConnection] [结果] " + name + " → BEDROCK"
-                        + " (来源: 本服 Geyser 反射检测)");
+                logger.info("[PlayerConnection] [Result] " + name + " -> BEDROCK"
+                        + " (source: local Geyser reflection detection)");
                 return result;
             }
         } else {
-            logger.info("[PlayerConnection] [2/2] GeyserAPI: 不可用（跳过本地检测）");
+            logger.info("[PlayerConnection] [2/2] GeyserAPI: unavailable (skipping local detection)");
         }
 
         // ── Step 3: 默认 Java ──
         ConnectionInfo result = new ConnectionInfo(uuid, name,
                 false, null, null, Source.NONE);
-        logger.info("[PlayerConnection] [结果] " + name + " → JAVA (无检测源命中，默认 Java 版)");
+        logger.info("[PlayerConnection] [Result] " + name + " -> JAVA (no detection source matched, defaulting to Java)");
         return result;
     }
 

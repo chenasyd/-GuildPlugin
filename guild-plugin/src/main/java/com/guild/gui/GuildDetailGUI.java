@@ -511,22 +511,30 @@ public class GuildDetailGUI implements GUI {
                     }
                 }
 
-                String guildTag = guild.getTag() != null ? guild.getTag() : "无";
-                String statusText = guild.isFrozen() ? "§c已冻结" : "§a正常";
+                String guildTag = guild.getTag() != null ? guild.getTag() : languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-no-tag", "无");
+                String statusText = guild.isFrozen()
+                        ? languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-status-frozen", "&c已冻结")
+                        : languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-status-normal", "&a正常");
                 String leaderName = leader != null ? leader.getPlayerName() : guild.getLeaderName();
 
                 StringBuilder content = new StringBuilder();
                 content.append("§6").append(guild.getName()).append(" §f[").append(guildTag).append("]\n");
-                content.append("§f等级: §e").append(guild.getLevel());
-                content.append(" §f资金: §a").append(plugin.getEconomyManager().format(guild.getBalance())).append("\n");
-                content.append("§f会长: §c").append(leaderName);
-                content.append(" §f成员: §e").append(allMembers.size()).append("/").append(guild.getMaxMembers()).append("\n");
-                content.append("§f状态: ").append(statusText);
+                content.append(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-level", "&f等级: &e{level}",
+                        "{level}", String.valueOf(guild.getLevel())));
+                content.append(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-balance", " &f资金: &a{balance}",
+                        "{balance}", plugin.getEconomyManager().format(guild.getBalance()))).append("\n");
+                content.append(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-leader", "&f会长: &c{leader}",
+                        "{leader}", leaderName));
+                content.append(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-members", " &f成员: &e{current}/{max}",
+                        "{current}", String.valueOf(allMembers.size()), "{max}", String.valueOf(guild.getMaxMembers()))).append("\n");
+                content.append(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-status", "&f状态: {status}",
+                        "{status}", statusText));
                 if (guild.getDescription() != null && !guild.getDescription().isEmpty()) {
-                    content.append("\n§f描述: §7").append(guild.getDescription());
+                    content.append("\n").append(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-description", "&f描述: &7{description}",
+                            "{description}", guild.getDescription()));
                 }
                 if (transferMode) {
-                    content.append("\n\n§e>>> 转移模式: 点击成员转移会长 <<<");
+                    content.append("\n\n").append(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-transfer-hint", "&e>>> 转移模式: 点击成员转移会长 <<<"));
                 }
 
                 int itemsPerPage = 10;
@@ -536,7 +544,8 @@ public class GuildDetailGUI implements GUI {
                 int endIndex = Math.min(startIndex + itemsPerPage, nonLeaderMembers.size());
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title("§6工会详情 - " + guild.getName())
+                    .title(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-title", "&6工会详情 - {guild_name}",
+                            "{guild_name}", guild.getName()))
                     .content(content.toString());
 
                 List<GuildMember> pageMembers = new ArrayList<>();
@@ -549,12 +558,16 @@ public class GuildDetailGUI implements GUI {
                 }
 
                 // 操作按钮
-                builder.button(guild.isFrozen() ? "§a解冻工会" : "§c冻结工会");
-                builder.button("§4删除工会");
-                builder.button(transferMode ? "§e取消转移模式" : "§c转移会长");
-                if (safePage > 0) builder.button("§e上一页");
-                if (safePage < totalPages - 1) builder.button("§e下一页");
-                builder.button("§c返回");
+                builder.button(guild.isFrozen()
+                        ? languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-unfreeze", "&a解冻工会")
+                        : languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-freeze", "&c冻结工会"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-delete", "&4删除工会"));
+                builder.button(transferMode
+                        ? languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-cancel-transfer", "&e取消转移模式")
+                        : languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-transfer", "&c转移会长"));
+                if (safePage > 0) builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-prev-page", "&e上一页"));
+                if (safePage < totalPages - 1) builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-next-page", "&e下一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-back", "&c返回"));
 
                 final int memberCount = pageMembers.size();
                 final int freezeIdx = memberCount;
@@ -585,8 +598,10 @@ public class GuildDetailGUI implements GUI {
                     }
                     if (id == transferIdx) {
                         transferMode = !transferMode;
-                        String msg = transferMode ? "&e请点击一个成员来转移会长职位" : "&7已取消会长转移";
-                        player.sendMessage(ColorUtils.colorize(msg));
+                        String msg = transferMode
+                                ? languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-transfer-mode-active", "&e请点击一个成员来转移会长职位")
+                                : languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-transfer-mode-cancelled", "&7已取消会长转移");
+                        player.sendMessage(msg);
                         sendBedrockGuildDetail(player, safePage);
                         return;
                     }
@@ -621,7 +636,7 @@ public class GuildDetailGUI implements GUI {
                     player.sendMessage(ColorUtils.colorize(message));
                     guild.setFrozen(newStatus);
                 } else {
-                    player.sendMessage(ColorUtils.colorize("&c操作失败！"));
+                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-operation-failed", "&c操作失败！"));
                 }
                 sendBedrockGuildDetail(player, 0);
             });
@@ -630,7 +645,7 @@ public class GuildDetailGUI implements GUI {
 
     private void bedrockTransferLeader(Player player, GuildMember target) {
         if (target.getPlayerUuid().equals(guild.getLeaderUuid())) {
-            player.sendMessage(ColorUtils.colorize("&c不能将会长转移给自己"));
+            player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-transfer-self", "&c不能将会长转移给自己"));
             sendBedrockGuildDetail(player, 0);
             return;
         }
@@ -639,12 +654,13 @@ public class GuildDetailGUI implements GUI {
             .thenAccept(success -> {
                 CompatibleScheduler.runTask(plugin, player, () -> {
                     if (success) {
-                        player.sendMessage(ColorUtils.colorize("&a成功将会长转移给 &e" + target.getPlayerName()));
+                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-transfer-success", "&a成功将会长转移给 &e{name}",
+                                "{name}", target.getPlayerName()));
                         guild.setLeaderUuid(target.getPlayerUuid());
                         guild.setLeaderName(target.getPlayerName());
                         transferMode = false;
                     } else {
-                        player.sendMessage(ColorUtils.colorize("&c会长转移失败！"));
+                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-transfer-failed", "&c会长转移失败！"));
                     }
                     sendBedrockGuildDetail(player, 0);
                 });

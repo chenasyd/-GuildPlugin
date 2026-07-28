@@ -121,33 +121,31 @@ public class GuildSettingsGUI implements GUI {
     public boolean openBedrockForm(Player player) {
         if (!BedrockFormSender.isAvailable()) return false;
 
-        String name = guild.getName() != null ? guild.getName() : "无名称";
-        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" : "无标签";
-        String desc = guild.getDescription() != null ? guild.getDescription() : "无描述";
-        String homeStatus = guild.hasHome() ? "§a已设置" : "§c未设置";
+        String name = guild.getName() != null ? guild.getName() : languageManager.getGuiColoredMessage(player, "gui.guild-settings.overview-no-name", "无名称");
+        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" : languageManager.getGuiColoredMessage(player, "gui.guild-settings.overview-no-tag", "无标签");
+        String desc = guild.getDescription() != null ? guild.getDescription() : languageManager.getGuiColoredMessage(player, "gui.guild-settings.overview-no-desc", "无描述");
+        String homeStatus = guild.hasHome() ? languageManager.getGuiColoredMessage(player, "gui.guild-settings.overview-home-set", "&a已设置") : languageManager.getGuiColoredMessage(player, "gui.guild-settings.overview-home-not-set", "&c未设置");
 
-        String content = "§6工会概览\n"
-                + "§f名称: §e" + name + "\n"
-                + "§f标签: §e" + tag + "\n"
-                + "§f描述: " + desc + "\n"
-                + "§f工会家: " + homeStatus;
+        String content = languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-content",
+                "&6工会概览\n&f名称: &e{guild_name}\n&f标签: &e{guild_tag}\n&f描述: {guild_desc}\n&f工会家: {home_status}",
+                "{guild_name}", name, "{guild_tag}", tag, "{guild_desc}", desc, "{home_status}", homeStatus);
 
         SimpleForm form = SimpleForm.builder()
-                .title("§6工会设置 - " + name)
+                .title(languageManager.getGuiColoredMessage(player, "gui.guild-settings.guild-settings-title", "&6工会设置 - {guild_name}", "{guild_name}", name))
                 .content(content)
-                .button("§e修改名称")
-                .button("§e修改描述")
-                .button("§e修改标签")
-                .button("§b设置工会家")
-                .button("§a成员管理")
-                .button("§c踢出成员")
-                .button("§e提升/降级")
-                .button("§a工会资金")
-                .button("§6工会日志")
-                .button("§d工会家传送")
-                .button("§c离开工会")
-                .button("§4删除工会")
-                .button("§f返回主菜单")
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-change-name", "&e修改名称"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-change-description", "&e修改描述"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-change-tag", "&e修改标签"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.set-home", "&b设置工会家"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.member-mgmt", "&a成员管理"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-kick-member", "&c踢出成员"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-promote-demote", "&e提升/降级"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.guild-funds", "&a工会资金"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.logs", "&6工会日志"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.home-teleport", "&d工会家传送"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.leave", "&c离开工会"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.delete", "&4删除工会"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-back-to-main", "&f返回主菜单"))
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     switch (response.clickedButtonId()) {
                         case 0 -> handleChangeName(player);

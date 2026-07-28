@@ -523,23 +523,26 @@ public class SystemSettingsGUI implements GUI {
         boolean invites = plugin.getConfigManager().getMainConfig().getBoolean("invites.enabled", true);
         boolean home = plugin.getConfigManager().getMainConfig().getBoolean("guild-home.enabled", true);
 
-        SimpleForm.Builder builder = SimpleForm.builder()
-            .title("§4系统设置")
-            .content("§f点击切换开关状态");
+        String on = languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-on", "&a开");
+        String off = languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-off", "&c关");
 
-        builder.button("§e调试信息: " + (debug ? "§a开" : "§c关"));
-        builder.button("§e自动保存: " + (autoSave ? "§a开" : "§c关"));
-        builder.button("§e经济系统: " + (economy ? "§a开" : "§c关"));
-        builder.button("§e关系系统: " + (relations ? "§a开" : "§c关"));
-        builder.button("§e等级系统: " + (level ? "§a开" : "§c关"));
-        builder.button("§e申请系统: " + (applications ? "§a开" : "§c关"));
-        builder.button("§e邀请系统: " + (invites ? "§a开" : "§c关"));
-        builder.button("§e工会家: " + (home ? "§a开" : "§c关"));
-        builder.button("§a重载配置");
-        builder.button("§b数据库维护");
-        builder.button("§6备份数据");
-        builder.button("§a保存设置");
-        builder.button("§c返回");
+        SimpleForm.Builder builder = SimpleForm.builder()
+            .title(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-title", "&4系统设置"))
+            .content(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-content", "&f点击切换开关状态"));
+
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-debug", "&e调试信息: {status}", "{status}", debug ? on : off));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-auto-save", "&e自动保存: {status}", "{status}", autoSave ? on : off));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-economy", "&e经济系统: {status}", "{status}", economy ? on : off));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-relations", "&e关系系统: {status}", "{status}", relations ? on : off));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-level", "&e等级系统: {status}", "{status}", level ? on : off));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-applications", "&e申请系统: {status}", "{status}", applications ? on : off));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-invites", "&e邀请系统: {status}", "{status}", invites ? on : off));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-guild-home", "&e工会家: {status}", "{status}", home ? on : off));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-reload", "&a重载配置"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-database", "&b数据库维护"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-backup", "&6备份数据"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-save", "&a保存设置"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.system-settings.bedrock-back", "&c返回"));
 
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             switch (response.clickedButtonId()) {

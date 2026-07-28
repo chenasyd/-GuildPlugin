@@ -540,10 +540,10 @@ public class MemberManagementGUI implements GUI {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (members == null || members.isEmpty()) {
                     SimpleForm form = SimpleForm.builder()
-                        .title("§6成员管理")
-                        .content("§f工会中还没有成员")
-                        .button("§a邀请成员")
-                        .button("§c返回")
+                        .title(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-title", "&6成员管理"))
+                        .content(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-no-members", "&f工会中还没有成员"))
+                        .button(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-invite", "&a邀请成员"))
+                        .button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"))
                         .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                             if (response.clickedButtonId() == 0) {
                                 plugin.getGuiManager().openGUI(player, new InviteMemberGUI(plugin, guild, player));
@@ -566,8 +566,8 @@ public class MemberManagementGUI implements GUI {
                 final int memberCount = endIndex - startIndex;
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title("§6成员管理 - 第" + (safePage + 1) + "页")
-                    .content("§f成员列表 (共" + members.size() + "人)");
+                    .title(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-title-page", "&6成员管理 - 第{page}页", "{page}", String.valueOf(safePage + 1)))
+                    .content(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-member-list", "&f成员列表 (共{count}人)", "{count}", String.valueOf(members.size())));
 
                 for (int i = startIndex; i < endIndex; i++) {
                     GuildMember m = members.get(i);
@@ -579,10 +579,10 @@ public class MemberManagementGUI implements GUI {
                     builder.button(roleColor + m.getPlayerName());
                 }
 
-                builder.button("§a邀请成员");
-                builder.button("§e上一页");
-                builder.button("§e下一页");
-                builder.button("§c返回");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-invite", "&a邀请成员"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-prev-page", "&e上一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-next-page", "&e下一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"));
 
                 builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     int clicked = response.clickedButtonId();
@@ -610,18 +610,18 @@ public class MemberManagementGUI implements GUI {
 
     private void sendBedrockMemberActions(Player player, GuildMember member) {
         String roleText = switch (member.getRole()) {
-            case LEADER -> "§c会长";
-            case OFFICER -> "§6官员";
-            default -> "§f成员";
+            case LEADER -> languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-role-leader", "&c会长");
+            case OFFICER -> languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-role-officer", "&6官员");
+            default -> languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-role-member", "&f成员");
         };
 
         SimpleForm form = SimpleForm.builder()
-            .title("§6成员操作 - " + member.getPlayerName())
-            .content("§f角色: " + roleText)
-            .button("§e查看详情")
-            .button("§c踢出成员")
-            .button("§6提升/降级")
-            .button("§c返回列表")
+            .title(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-actions-title", "&6成员操作 - {member}", "{member}", member.getPlayerName()))
+            .content(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-role-label", "&f角色: {role}", "{role}", roleText))
+            .button(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-view-details", "&e查看详情"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-kick", "&c踢出成员"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-promote-demote", "&6提升/降级"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.member-management.bedrock-back-to-list", "&c返回列表"))
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 switch (response.clickedButtonId()) {
                     case 0 -> plugin.getGuiManager().openGUI(player, new MemberDetailsGUI(plugin, guild, member, player));

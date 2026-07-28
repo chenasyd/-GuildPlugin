@@ -166,18 +166,15 @@ public class GuildPermissionsGUI implements GUI {
     public boolean openBedrockForm(Player player) {
         if (!BedrockFormSender.isAvailable()) return false;
 
-        String content = "§6=== 会长权限 ===\n"
-            + "§f• 所有权限\n§f• 管理成员\n§f• 修改设置\n§f• 删除工会\n\n"
-            + "§e=== 官员权限 ===\n"
-            + "§f• 邀请成员\n§f• 踢出成员\n§f• 处理申请\n§f• 设置工会家\n\n"
-            + "§7=== 成员权限 ===\n"
-            + "§f• 查看工会信息\n§f• 传送到工会家\n§f• 申请加入其他工会\n\n"
-            + "§a当前状态: §f工会 " + guild.getName() + " | 权限系统正常运行";
+        String guildName = ColorUtils.stripColor(guild.getName());
+        String content = languageManager.getGuiColoredMessage(player, "gui.guild-permissions.bedrock-content",
+                "&6=== 会长权限 ===\n&f• 所有权限\n&f• 管理成员\n&f• 修改设置\n&f• 删除工会\n\n&e=== 官员权限 ===\n&f• 邀请成员\n&f• 踢出成员\n&f• 处理申请\n&f• 设置工会家\n\n&7=== 成员权限 ===\n&f• 查看工会信息\n&f• 传送到工会家\n&f• 申请加入其他工会\n\n&a当前状态: &f工会 {guild} | 权限系统正常运行",
+                "{guild}", guildName);
 
         SimpleForm form = SimpleForm.builder()
-            .title("§6工会权限设置")
+            .title(languageManager.getGuiColoredMessage(player, "gui.guild-permissions.bedrock-title", "&6工会权限设置"))
             .content(content)
-            .button("§c返回")
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-permissions.bedrock-back", "&c返回"))
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                 plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player))))
             .closedResultHandler(response -> {})

@@ -271,9 +271,9 @@ public class InviteMemberGUI implements GUI {
     private void sendBedrockInviteList(Player player, int page) {
         if (onlinePlayers.isEmpty()) {
             SimpleForm form = SimpleForm.builder()
-                .title("§6邀请成员")
-                .content("§f当前没有可邀请的在线玩家")
-                .button("§c返回")
+                .title(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-title", "&6邀请成员"))
+                .content(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-no-players", "&f当前没有可邀请的在线玩家"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"))
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                     plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))))
                 .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
@@ -291,16 +291,16 @@ public class InviteMemberGUI implements GUI {
         final int playerCount = endIndex - startIndex;
 
         SimpleForm.Builder builder = SimpleForm.builder()
-            .title("§6邀请成员 - 第" + (safePage + 1) + "页")
-            .content("§f在线玩家 (共" + onlinePlayers.size() + "人)");
+            .title(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-title-page", "&6邀请成员 - 第{page}页", "{page}", String.valueOf(safePage + 1)))
+            .content(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-player-list", "&f在线玩家 (共{count}人)", "{count}", String.valueOf(onlinePlayers.size())));
 
         for (int i = startIndex; i < endIndex; i++) {
             builder.button("§a" + onlinePlayers.get(i).getName());
         }
 
-        builder.button("§e上一页");
-        builder.button("§e下一页");
-        builder.button("§c返回");
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-prev-page", "&e上一页"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-next-page", "&e下一页"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"));
 
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             int clicked = response.clickedButtonId();

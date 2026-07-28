@@ -568,9 +568,9 @@ public class GuildFilterGUI implements GUI {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (guilds == null || guilds.isEmpty()) {
                     SimpleForm form = SimpleForm.builder()
-                        .title("§6工会筛选")
-                        .content("§f服务器中还没有工会")
-                        .button("§c返回")
+                        .title(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-title", "&6工会筛选"))
+                        .content(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-no-guilds", "&f服务器中还没有工会"))
+                        .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-back", "&c返回"))
                         .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                             plugin.getGuiManager().openGUI(player, new GuildListGUI(plugin, player, returnSearchQuery))))
                         .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
@@ -599,15 +599,17 @@ public class GuildFilterGUI implements GUI {
 
     private void sendBedrockNoResults(Player player) {
         String sortText = switch (sortMode) {
-            case "ASC" -> "人数升序";
-            case "FULL_ONLY" -> "仅满员";
-            default -> "人数降序";
+            case "ASC" -> languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-sort-asc", "人数升序");
+            case "FULL_ONLY" -> languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-sort-full", "仅满员");
+            default -> languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-sort-desc", "人数降序");
         };
         SimpleForm form = SimpleForm.builder()
-            .title("§6工会筛选")
-            .content("§f没有符合条件的工会\n§f等级: " + minLevel + "-" + maxLevel + " | 排序: " + sortText)
-            .button("§e调整筛选")
-            .button("§c返回")
+            .title(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-title", "&6工会筛选"))
+            .content(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-no-results", "&f没有符合条件的工会")
+                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-filter-info", "&f等级: {min}-{max} | 排序: {sort}",
+                    "{min}", String.valueOf(minLevel), "{max}", String.valueOf(maxLevel), "{sort}", sortText))
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-adjust-filter", "&e调整筛选"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-back", "&c返回"))
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 if (response.clickedButtonId() == 0) {
                     sendBedrockFilterSettings(player);
@@ -662,24 +664,28 @@ public class GuildFilterGUI implements GUI {
                 final int guildCount = endIndex - startIndex;
 
                 String sortText = switch (sortMode) {
-                    case "ASC" -> "人数升序";
-                    case "FULL_ONLY" -> "仅满员";
-                    default -> "人数降序";
+                    case "ASC" -> languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-sort-asc", "人数升序");
+                    case "FULL_ONLY" -> languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-sort-full", "仅满员");
+                    default -> languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-sort-desc", "人数降序");
                 };
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title("§6工会筛选 - 第" + (safePage + 1) + "页")
-                    .content("§f等级: " + minLevel + "-" + maxLevel + " | 排序: " + sortText + "\n§f共" + itemDataList.size() + "个结果");
+                    .title(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-title-page", "&6工会筛选 - 第{page}页",
+                            "{page}", String.valueOf(safePage + 1)))
+                    .content(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-filter-info", "&f等级: {min}-{max} | 排序: {sort}",
+                            "{min}", String.valueOf(minLevel), "{max}", String.valueOf(maxLevel), "{sort}", sortText)
+                        + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-total-results", "&f共{count}个结果",
+                            "{count}", String.valueOf(itemDataList.size())));
 
                 for (int i = startIndex; i < endIndex; i++) {
                     GuildItemData data = itemDataList.get(i);
                     builder.button("§e" + data.getGuild().getName() + " §f(" + data.getMemberCount() + "人)");
                 }
 
-                builder.button("§e调整筛选");
-                builder.button("§e上一页");
-                builder.button("§e下一页");
-                builder.button("§c返回");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-adjust-filter", "&e调整筛选"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-prev-page", "&e上一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-next-page", "&e下一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-back", "&c返回"));
 
                 builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     int clicked = response.clickedButtonId();
@@ -707,20 +713,25 @@ public class GuildFilterGUI implements GUI {
 
     private void sendBedrockFilterSettings(Player player) {
         String sortText = switch (sortMode) {
-            case "ASC" -> "人数升序";
-            case "FULL_ONLY" -> "仅满员";
-            default -> "人数降序";
+            case "ASC" -> languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-sort-asc", "人数升序");
+            case "FULL_ONLY" -> languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-sort-full", "仅满员");
+            default -> languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-sort-desc", "人数降序");
         };
 
         SimpleForm form = SimpleForm.builder()
-            .title("§6筛选设置")
-            .content("§f最低等级: " + minLevel + "\n§f最高等级: " + maxLevel + "\n§f排序: " + sortText)
-            .button("§a最低等级 +1")
-            .button("§c最低等级 -1")
-            .button("§a最高等级 +1")
-            .button("§c最高等级 -1")
-            .button("§e切换排序模式")
-            .button("§e返回筛选结果")
+            .title(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-settings-title", "&6筛选设置"))
+            .content(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-min-level", "&f最低等级: {level}",
+                    "{level}", String.valueOf(minLevel))
+                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-max-level", "&f最高等级: {level}",
+                    "{level}", String.valueOf(maxLevel))
+                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-sort", "&f排序: {sort}",
+                    "{sort}", sortText))
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-min-level-up", "&a最低等级 +1"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-min-level-down", "&c最低等级 -1"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-max-level-up", "&a最高等级 +1"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-max-level-down", "&c最高等级 -1"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-switch-sort", "&e切换排序模式"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-back-results", "&e返回筛选结果"))
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 switch (response.clickedButtonId()) {
                     case 0 -> { if (minLevel < maxLevel) minLevel++; }
@@ -740,11 +751,15 @@ public class GuildFilterGUI implements GUI {
 
     private void sendBedrockGuildActions(Player player, Guild targetGuild) {
         SimpleForm form = SimpleForm.builder()
-            .title("§6工会操作 - " + targetGuild.getName())
-            .content("§f等级: " + targetGuild.getLevel() + "\n§f会长: " + targetGuild.getLeaderName())
-            .button("§e查看详情")
-            .button("§a申请加入")
-            .button("§e返回筛选")
+            .title(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-actions-title", "&6工会操作 - {guild_name}",
+                    "{guild_name}", targetGuild.getName()))
+            .content(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-level", "&f等级: {level}",
+                    "{level}", String.valueOf(targetGuild.getLevel()))
+                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-leader", "&f会长: {leader}",
+                    "{leader}", targetGuild.getLeaderName()))
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-view-detail", "&e查看详情"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-apply-join", "&a申请加入"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.guild-filter.bedrock-back-filter", "&e返回筛选"))
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 switch (response.clickedButtonId()) {
                     case 0 -> plugin.getGuiManager().openGUI(player, new GuildInfoGUI(plugin, player, targetGuild));

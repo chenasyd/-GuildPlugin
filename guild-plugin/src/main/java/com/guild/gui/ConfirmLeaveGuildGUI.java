@@ -67,15 +67,15 @@ public class ConfirmLeaveGuildGUI implements GUI {
         if (!BedrockFormSender.isAvailable()) return false;
 
         String guildName = ColorUtils.stripColor(guild.getName());
-        String content = "§f工会: §e" + guildName + "\n"
-                + "§f你确定要离开这个工会吗？\n"
-                + "§c此操作不可撤销！";
+        String content = languageManager.getGuiColoredMessage(player, "gui.confirm-leave-guild.bedrock-content",
+                "&f工会: &e{guild}\n&f你确定要离开这个工会吗？\n&c此操作不可撤销！",
+                "{guild}", guildName);
 
         SimpleForm form = SimpleForm.builder()
-                .title("§c确认离开工会")
+                .title(languageManager.getGuiColoredMessage(player, "gui.confirm-leave-guild.bedrock-title", "&c确认离开工会"))
                 .content(content)
-                .button("§c确认离开")
-                .button("§a取消")
+                .button(languageManager.getGuiColoredMessage(player, "gui.confirm-leave-guild.bedrock-confirm", "&c确认离开"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.confirm-leave-guild.bedrock-cancel", "&a取消"))
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     if (response.clickedButtonId() == 0) {
                         handleConfirmLeave(player);

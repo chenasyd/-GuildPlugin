@@ -64,17 +64,15 @@ public class ConfirmDeleteGuildGUI implements GUI {
         if (!BedrockFormSender.isAvailable()) return false;
 
         String guildName = ColorUtils.stripColor(guild.getName());
-        String content = "§f工会: §e" + guildName + "\n"
-                + "§f你确定要删除这个工会吗？\n"
-                + "§c此操作将永久删除工会！\n"
-                + "§c所有成员将被移除！\n"
-                + "§c此操作不可撤销！";
+        String content = languageManager.getGuiColoredMessage(player, "gui.confirm-delete-guild.bedrock-content",
+                "&f工会: &e{guild}\n&f你确定要删除这个工会吗？\n&c此操作将永久删除工会！\n&c所有成员将被移除！\n&c此操作不可撤销！",
+                "{guild}", guildName);
 
         SimpleForm form = SimpleForm.builder()
-                .title("§4确认删除工会")
+                .title(languageManager.getGuiColoredMessage(player, "gui.confirm-delete-guild.bedrock-title", "&4确认删除工会"))
                 .content(content)
-                .button("§4确认删除")
-                .button("§a取消")
+                .button(languageManager.getGuiColoredMessage(player, "gui.confirm-delete-guild.bedrock-confirm", "&4确认删除"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.confirm-delete-guild.bedrock-cancel", "&a取消"))
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     if (response.clickedButtonId() == 0) {
                         handleConfirmDelete(player);

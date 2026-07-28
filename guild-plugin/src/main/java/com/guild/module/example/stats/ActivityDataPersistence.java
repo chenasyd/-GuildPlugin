@@ -57,7 +57,7 @@ public class ActivityDataPersistence {
 
     public void load() {
         if (!dataFile.exists()) {
-            logger.info("[Stats-持久化] 数据文件不存在，将创建新文件");
+            logger.info("[Stats-Persistence] Data file does not exist, will create a new one");
             return;
         }
 
@@ -71,7 +71,7 @@ public class ActivityDataPersistence {
                         UUID uuid = UUID.fromString(entry.getKey());
                         playerDataMap.put(uuid, entry.getValue());
                     } catch (IllegalArgumentException e) {
-                        logger.warning("[Stats-持久化] 无效的UUID: " + entry.getKey());
+                        logger.warning("[Stats-Persistence] Invalid UUID: " + entry.getKey());
                     }
                 }
 
@@ -82,11 +82,11 @@ public class ActivityDataPersistence {
                 determineCurrentDate(loadedData);
 
                 logger.info(String.format(
-                    "[Stats-持久化] 已加载 %d 个玩家的活跃度数据 (当前日期: %s)",
+                    "[Stats-Persistence] Loaded activity data for %d players (current date: %s)",
                     playerDataMap.size(), currentDate));
             }
         } catch (IOException e) {
-            logger.severe("[Stats-持久化] 读取数据失败: " + e.getMessage());
+            logger.severe("[Stats-Persistence] Failed to read data: " + e.getMessage());
         }
     }
 
@@ -101,7 +101,7 @@ public class ActivityDataPersistence {
         try (FileWriter writer = new FileWriter(dataFile)) {
             gson.toJson(saveData, writer);
         } catch (IOException e) {
-            logger.severe("[Stats-持久化] 保存数据失败: " + e.getMessage());
+            logger.severe("[Stats-Persistence] Failed to save data: " + e.getMessage());
         }
     }
 
@@ -143,7 +143,7 @@ public class ActivityDataPersistence {
         currentDate = today;
 
         logger.info(String.format(
-            "[Stats-持久化] 日期切换: %s -> %s",
+            "[Stats-Persistence] Date switched: %s -> %s",
             oldDate, currentDate));
 
         // 重置所有玩家的本周活跃计数（新的一周开始时）
@@ -160,7 +160,7 @@ public class ActivityDataPersistence {
                 }
                 data.setActiveToday(false); // 重置"今日已活跃"，让新的一天重新检测
             }
-            logger.info("[Stats-持久化] 已更新同周内跨天活跃天数");
+            logger.info("[Stats-Persistence] Updated intra-week cross-day active day counts");
         }
 
         // 保存数据（包含旧日期的最后统计）
@@ -206,7 +206,7 @@ public class ActivityDataPersistence {
             data.setActiveDaysThisWeek(0);
             data.setActiveToday(false);
         }
-        logger.info("[Stats-持久化] 已重置所有玩家的周活跃计数");
+        logger.info("[Stats-Persistence] Reset weekly active counts for all players");
     }
 
     private void cleanupOldData() {

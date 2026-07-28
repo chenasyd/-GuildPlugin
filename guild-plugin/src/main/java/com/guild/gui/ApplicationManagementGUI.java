@@ -495,12 +495,16 @@ public class ApplicationManagementGUI implements GUI {
             : plugin.getGuildService().getPendingApplicationsAsync(guild.getId());
         future.thenAccept(applications -> CompatibleScheduler.runTask(plugin, player, () -> {
             if (applications == null || applications.isEmpty()) {
-                String emptyMsg = history ? "§f没有申请历史记录" : "§f没有待处理的申请";
+                String emptyMsg = history
+                    ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-empty-history", "&f没有申请历史记录")
+                    : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-empty-pending", "&f没有待处理的申请");
                 SimpleForm form = SimpleForm.builder()
-                    .title("§6申请管理")
+                    .title(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-title", "&6申请管理"))
                     .content(emptyMsg)
-                    .button(history ? "§e待处理申请" : "§e申请历史")
-                    .button("§c返回")
+                    .button(history
+                        ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-pending-btn", "&e待处理申请")
+                        : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-history-btn", "&e申请历史"))
+                    .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-back", "&c返回"))
                     .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                         if (response.clickedButtonId() == 0) {
                             sendBedrockApplicationList(player, 0, !history);
@@ -523,10 +527,12 @@ public class ApplicationManagementGUI implements GUI {
             final int appCount = endIndex - startIndex;
             final boolean isHistory = history;
 
-            String modeText = history ? "申请历史" : "待处理申请";
+            String modeText = history
+                ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-mode-history", "申请历史")
+                : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-mode-pending", "待处理申请");
             SimpleForm.Builder builder = SimpleForm.builder()
-                .title("§6申请管理 - " + modeText + " 第" + (safePage + 1) + "页")
-                .content("§f共" + applications.size() + "条记录");
+                .title(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-title-page", "&6申请管理 - {mode} 第{page}页", "{mode}", modeText, "{page}", String.valueOf(safePage + 1)))
+                .content(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-total", "&f共{count}条记录", "{count}", String.valueOf(applications.size())));
 
             for (int i = startIndex; i < endIndex; i++) {
                 GuildApplication app = applications.get(i);
@@ -539,20 +545,22 @@ public class ApplicationManagementGUI implements GUI {
                 builder.button(statusColor + app.getPlayerName());
             }
 
-            builder.button(history ? "§e待处理申请" : "§e申请历史");
-            builder.button("§e上一页");
-            builder.button("§e下一页");
-            builder.button("§c返回");
+            builder.button(history
+                ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-pending-btn", "&e待处理申请")
+                : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-history-btn", "&e申请历史"));
+            builder.button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-prev-page", "&e上一页"));
+            builder.button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-next-page", "&e下一页"));
+            builder.button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-back", "&c返回"));
 
             builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 int clicked = response.clickedButtonId();
                 if (clicked < appCount) {
                     GuildApplication app = applications.get(startIndex + clicked);
                     if (isHistory) {
-                        player.sendMessage(ColorUtils.colorize("§f申请人: " + app.getPlayerName()));
-                        player.sendMessage(ColorUtils.colorize("§f状态: " + app.getStatus().name()));
+                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-applicant", "&f申请人: {name}", "{name}", app.getPlayerName()));
+                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-status", "&f状态: {status}", "{status}", app.getStatus().name()));
                         if (app.getMessage() != null && !app.getMessage().isEmpty()) {
-                            player.sendMessage(ColorUtils.colorize("§f留言: " + app.getMessage()));
+                            player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-message", "&f留言: {msg}", "{msg}", app.getMessage()));
                         }
                         sendBedrockApplicationList(player, safePage, true);
                     } else {
@@ -578,13 +586,13 @@ public class ApplicationManagementGUI implements GUI {
 
     private void sendBedrockApplicationActions(Player player, GuildApplication application) {
         String msg = application.getMessage() != null && !application.getMessage().isEmpty()
-            ? application.getMessage() : "无";
+            ? application.getMessage() : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-no-message", "无");
         SimpleForm form = SimpleForm.builder()
-            .title("§6申请处理 - " + application.getPlayerName())
-            .content("§f申请人: " + application.getPlayerName() + "\n§f留言: " + msg)
-            .button("§a接受申请")
-            .button("§c拒绝申请")
-            .button("§e返回列表")
+            .title(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-actions-title", "&6申请处理 - {name}", "{name}", application.getPlayerName()))
+            .content(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-actions-content", "&f申请人: {name}\n&f留言: {msg}", "{name}", application.getPlayerName(), "{msg}", msg))
+            .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-accept", "&a接受申请"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-reject", "&c拒绝申请"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-back-to-list", "&e返回列表"))
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 switch (response.clickedButtonId()) {
                     case 0 -> bedrockProcessApplication(player, application, GuildApplication.ApplicationStatus.APPROVED);

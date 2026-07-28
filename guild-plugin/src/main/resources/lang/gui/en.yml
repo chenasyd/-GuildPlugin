@@ -84,6 +84,9 @@ gui:
     member-role.leader: "Leader"
     member-role.member: "Member"
     member-role.officer: "Officer"
+    bedrock-prev-page: "&ePrevious Page"
+    bedrock-next-page: "&eNext Page"
+    bedrock-back: "&cBack"
 
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
@@ -111,6 +114,14 @@ gui:
     admin-gui-statistics-total-balance: "&eTotal Balance: &f{balance}"
     admin-gui-statistics-total-guilds: "&eTotal Guilds: &f{count}"
     admin-gui-statistics-total-members: "&eTotal Members: &f{count}"
+    bedrock-title: "&4Guild Admin"
+    bedrock-content: "&fSelect management function"
+    bedrock-guild-list: "&eGuild List Management"
+    bedrock-economy: "&eEconomy Management"
+    bedrock-relations: "&eRelations Management"
+    bedrock-statistics: "&eStatistics"
+    bedrock-settings: "&eSystem Settings"
+    bedrock-back: "&cBack"
 
   # ================================================
   # ApplicationManagementGUI (29 keys)
@@ -145,6 +156,27 @@ gui:
     apply.already-applied: "&cYou have already applied to this guild!"
     apply.failed: "&cApplication submission failed!"
     apply.success: "&aApplication submitted!"
+    bedrock-title: "&6Application Management"
+    bedrock-empty-history: "&fNo application history"
+    bedrock-empty-pending: "&fNo pending applications"
+    bedrock-pending-btn: "&ePending Applications"
+    bedrock-history-btn: "&eApplication History"
+    bedrock-back: "&cBack"
+    bedrock-mode-history: "Application History"
+    bedrock-mode-pending: "Pending Applications"
+    bedrock-title-page: "&6Application Management - {mode} Page {page}"
+    bedrock-total: "&fTotal {count} records"
+    bedrock-prev-page: "&ePrevious Page"
+    bedrock-next-page: "&eNext Page"
+    bedrock-applicant: "&fApplicant: {name}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-message: "&fMessage: {msg}"
+    bedrock-no-message: "None"
+    bedrock-actions-title: "&6Application Processing - {name}"
+    bedrock-actions-content: "&fApplicant: {name}\n&fMessage: {msg}"
+    bedrock-accept: "&aAccept Application"
+    bedrock-reject: "&cReject Application"
+    bedrock-back-to-list: "&eBack to List"
 
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
@@ -172,6 +204,7 @@ gui:
     member-management.lore.2: "&7Invite, kick, permission management"
     member-management.name: "&eMember Management"
     title: "&6Guild System"
+    bedrock-content: "&fChoose a function:"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
@@ -288,6 +321,23 @@ gui:
     system-settings-save-lore-1: "&7Save all current settings"
     system-settings-save-lore-2: "&7Apply to configuration files"
     system-settings-title: "&4System Settings"
+    bedrock-title: "&4System Settings"
+    bedrock-content: "&fClick to toggle switch status"
+    bedrock-debug: "&eDebug Info: {status}"
+    bedrock-auto-save: "&eAuto Save: {status}"
+    bedrock-economy: "&eEconomy System: {status}"
+    bedrock-relations: "&eRelations System: {status}"
+    bedrock-level: "&eLevel System: {status}"
+    bedrock-applications: "&eApplication System: {status}"
+    bedrock-invites: "&eInvite System: {status}"
+    bedrock-guild-home: "&eGuild Home: {status}"
+    bedrock-on: "&aON"
+    bedrock-off: "&cOFF"
+    bedrock-reload: "&aReload Config"
+    bedrock-database: "&bDatabase Maintenance"
+    bedrock-backup: "&6Backup Data"
+    bedrock-save: "&aSave Settings"
+    bedrock-back: "&cBack"
 
   # ================================================
   # CreateGuildGUI (36 keys)
@@ -329,6 +379,13 @@ gui:
     create-guild-tag-input-lore-2: "&7Length: Max 6 characters"
     create-guild-tag-input-lore-3: "&7Optional"
     create-guild-tag-input-name: "&eGuild Tag"
+    bedrock-title: "&6Create Guild"
+    bedrock-name-label: "&fGuild Name (3-20 characters)"
+    bedrock-name-placeholder: "Enter guild name"
+    bedrock-tag-label: "&fGuild Tag (max 6 characters, optional)"
+    bedrock-tag-placeholder: "Enter guild tag"
+    bedrock-desc-label: "&fGuild Description (max 100 characters, optional)"
+    bedrock-desc-placeholder: "Enter guild description"
 
   # ================================================
   # GuildDetailGUI (38 keys)
@@ -372,6 +429,31 @@ gui:
     transfer-self: "&cCannot transfer leadership to yourself"
     transfer-success: "&aSuccessfully transferred to &e{name}"
     unfreeze-guild: "Unfreeze Guild"
+    bedrock-title: "&6Guild Details - {guild_name}"
+    bedrock-level: "&fLevel: &e{level}"
+    bedrock-balance: " &fBalance: &a{balance}"
+    bedrock-leader: "&fLeader: &c{leader}"
+    bedrock-members: " &fMembers: &e{current}/{max}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-status-frozen: "&cFrozen"
+    bedrock-status-normal: "&aNormal"
+    bedrock-description: "&fDescription: &7{description}"
+    bedrock-transfer-hint: "&e>>> Transfer Mode: Click member to transfer <<<"
+    bedrock-no-tag: "None"
+    bedrock-unfreeze: "&aUnfreeze Guild"
+    bedrock-freeze: "&cFreeze Guild"
+    bedrock-delete: "&4Delete Guild"
+    bedrock-cancel-transfer: "&eCancel Transfer Mode"
+    bedrock-transfer: "&cTransfer Leader"
+    bedrock-prev-page: "&ePrevious Page"
+    bedrock-next-page: "&eNext Page"
+    bedrock-back: "&cBack"
+    bedrock-transfer-self: "&cCannot transfer leadership to yourself"
+    bedrock-transfer-success: "&aSuccessfully transferred to &e{name}"
+    bedrock-transfer-failed: "&cLeadership transfer failed!"
+    bedrock-operation-failed: "&cOperation failed!"
+    bedrock-transfer-mode-active: "&eClick a member to transfer leadership"
+    bedrock-transfer-mode-cancelled: "&7Transfer cancelled"
 
   # ================================================
   # GuildInfoGUI (21 keys)
@@ -398,6 +480,10 @@ gui:
     status-normal: "Normal"
     tag: "Tag"
     title: "&6Guild Info"
+    bedrock-title: "&6Guild Info"
+    bedrock-guild-funds: "&aGuild Funds"
+    bedrock-back-to-main: "&cBack to Main Menu"
+    bedrock-status-label: "Status"
 
   # ================================================
   # GuildListManagementGUI (2 keys)
@@ -405,6 +491,24 @@ gui:
   guild-list-management:
     guild-list-management-title: "&4Guild List Management"
     gui-refresh: "&aRefresh List"
+    bedrock-title: "&4Guild List Management"
+    bedrock-page-info: "&fPage {page}/{total} | Total {count} guilds"
+    bedrock-refresh: "&aRefresh List"
+    bedrock-prev-page: "&ePrevious Page"
+    bedrock-next-page: "&eNext Page"
+    bedrock-back: "&cBack"
+    bedrock-status-frozen: "&cFrozen"
+    bedrock-status-normal: "&aNormal"
+    bedrock-actions-title: "&6Guild Actions - {guild_name}"
+    bedrock-leader: "&fLeader: &e{leader}"
+    bedrock-level: "&fLevel: &e{level}"
+    bedrock-balance: "&fBalance: &a{balance}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-view-detail: "&eView Details"
+    bedrock-delete: "&cDelete Guild"
+    bedrock-unfreeze: "&aUnfreeze Guild"
+    bedrock-freeze: "&cFreeze Guild"
+    bedrock-back-list: "&cBack to List"
 
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
@@ -449,6 +553,22 @@ gui:
     guild-list-search-lore-2: "&7Right click: Clear search"
     guild-list-search-name: "&eSearch Guilds"
     guild-list-title: "&6Guild List"
+    bedrock-title: "&6Guild List"
+    bedrock-no-guilds: "&cNo guilds on the server yet"
+    bedrock-no-results: "&cNo matching guilds found"
+    bedrock-search: "&eSearch Guilds"
+    bedrock-back-main: "&cBack to Main Menu"
+    bedrock-page-info: "&fPage {page}/{total}"
+    bedrock-search-info: "&fSearch: &e{query}"
+    bedrock-prev-page: "&aPrevious Page"
+    bedrock-next-page: "&aNext Page"
+    bedrock-search-title: "&6Search Guilds"
+    bedrock-search-input: "&fEnter search keyword"
+    bedrock-search-placeholder: "Leave empty to show all"
+    bedrock-select-action: "&fSelect action:"
+    bedrock-view-detail: "&eView Details"
+    bedrock-apply-join: "&aApply to Join"
+    bedrock-back-list: "&cBack to List"
 
   # ================================================
   # GuildFilterGUI (19 keys)
@@ -473,6 +593,35 @@ gui:
     sort.lore-full: "Full only"
     sort.name: "&eSort by Members"
     title: "&6Guild Filter"
+    bedrock-title: "&6Guild Filter"
+    bedrock-no-guilds: "&fNo guilds on the server yet"
+    bedrock-back: "&cBack"
+    bedrock-no-results: "&fNo guilds match the filter"
+    bedrock-filter-info: "&fLevel: {min}-{max} | Sort: {sort}"
+    bedrock-adjust-filter: "&eAdjust Filter"
+    bedrock-sort-desc: "Members Desc"
+    bedrock-sort-asc: "Members Asc"
+    bedrock-sort-full: "Full Only"
+    bedrock-title-page: "&6Guild Filter - Page {page}"
+    bedrock-total-results: "&fTotal {count} results"
+    bedrock-prev-page: "&ePrevious Page"
+    bedrock-next-page: "&eNext Page"
+    bedrock-settings-title: "&6Filter Settings"
+    bedrock-min-level: "&fMin Level: {level}"
+    bedrock-max-level: "&fMax Level: {level}"
+    bedrock-sort: "&fSort: {sort}"
+    bedrock-min-level-up: "&aMin Level +1"
+    bedrock-min-level-down: "&cMin Level -1"
+    bedrock-max-level-up: "&aMax Level +1"
+    bedrock-max-level-down: "&cMax Level -1"
+    bedrock-switch-sort: "&eSwitch Sort Mode"
+    bedrock-back-results: "&eBack to Results"
+    bedrock-actions-title: "&6Guild Actions - {guild_name}"
+    bedrock-level: "&fLevel: {level}"
+    bedrock-leader: "&fLeader: {leader}"
+    bedrock-view-detail: "&eView Details"
+    bedrock-apply-join: "&aApply to Join"
+    bedrock-back-filter: "&eBack to Filter"
 
   # ================================================
   # GuildSettingsGUI (42 keys)
@@ -520,6 +669,13 @@ gui:
     home.success: "&aTeleported to guild home!"
     sethome.failed: "&cFailed to set guild home!"
     sethome.success: "&aGuild home set successfully!"
+    bedrock-content: "&6Guild Overview\n&fName: &e{guild_name}\n&fTag: &e{guild_tag}\n&fDescription: {guild_desc}\n&fGuild Home: {home_status}"
+    bedrock-change-name: "&eChange Name"
+    bedrock-change-description: "&eChange Description"
+    bedrock-change-tag: "&eChange Tag"
+    bedrock-kick-member: "&cKick Member"
+    bedrock-promote-demote: "&ePromote/Demote"
+    bedrock-back-to-main: "&fBack to Main Menu"
 
   # ================================================
   # GuildFundsGUI (23 keys)
@@ -548,6 +704,15 @@ gui:
     total-deposit: "Total Deposit"
     total-pages: "&7Total Pages: {total}"
     total-players: "&7Players: {count}"
+    bedrock-title: "&6Guild Funds - {guild}"
+    bedrock-no-data: "&cNo deposit records"
+    bedrock-back: "&cBack"
+    bedrock-page-info: "&fPage {page}/{total}\n&fTotal players: {count}"
+    bedrock-online: "&aOnline"
+    bedrock-offline: "&fOffline"
+    bedrock-prev-page: "&aPrevious Page"
+    bedrock-next-page: "&aNext Page"
+    bedrock-refresh: "&aRefresh"
 
   # ================================================
   # EconomyManagementGUI (23 keys)
@@ -576,6 +741,23 @@ gui:
     set-balance-dev: "&eSet balance feature under development..."
     set-prompt: "&eEnter the new balance amount (type in chat, type cancel to abort):"
     economy-management-title: "&eEconomy Management"
+    bedrock-title: "&eEconomy Management"
+    bedrock-page-info: "&fPage {current}/{total} | Total {count} guilds"
+    bedrock-refresh: "&aRefresh List"
+    bedrock-prev-page: "&ePrevious Page"
+    bedrock-next-page: "&eNext Page"
+    bedrock-back: "&cBack"
+    bedrock-actions-title: "&eEconomy Management - {guild}"
+    bedrock-actions-content: "&fCurrent Balance: &a{balance}\n&fLeader: &e{leader}\n&fLevel: &e{level}"
+    bedrock-set-funds: "&eSet Funds"
+    bedrock-add-funds: "&aAdd Funds"
+    bedrock-clear-funds: "&cClear Funds"
+    bedrock-back-to-list: "&cBack to List"
+    bedrock-set-title: "&eSet Funds"
+    bedrock-add-title: "&aAdd Funds"
+    bedrock-input-label: "&fEnter amount"
+    bedrock-invalid-amount: "&cAmount must be greater than 0!"
+    bedrock-invalid-number: "&cInvalid number!"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -606,6 +788,14 @@ gui:
     funds.change.set-contrib-increase: "{player} set funds to {new}(+{diff})"
     funds.change.set-log-decrease: "{player} set {guild} funds to {new}"
     funds.change.set-log-increase: "{player} set {guild} funds to {new}"
+    bedrock-title: "&6Confirm Fund Change"
+    bedrock-guild: "&fGuild: &e{guild_name}"
+    bedrock-operation: "&fOperation: {operation}"
+    bedrock-current-balance: "&fCurrent Balance: &6{balance}"
+    bedrock-amount: "&fAmount: &f{amount}"
+    bedrock-new-balance: "&fNew Balance: &a{balance}"
+    bedrock-confirm: "&aConfirm Change"
+    bedrock-cancel: "&cCancel"
 
   # ================================================
   # GuildRelationsGUI (49 keys)
@@ -660,6 +850,24 @@ gui:
     relations.type-selected: "&aSelected relation type: {type}"
     relations.type-truce.description: "Truce agreement, temporary peace"
     relations.type-war.description: "War state, full-scale war"
+    bedrock-title: "&6Guild Relations"
+    bedrock-title-page: "&6Guild Relations - Page {page}"
+    bedrock-empty: "&fNo guild relations currently"
+    bedrock-total: "&fTotal {count} relations"
+    bedrock-create-relation: "&aCreate Relation"
+    bedrock-prev-page: "&ePrevious Page"
+    bedrock-next-page: "&eNext Page"
+    bedrock-back: "&cBack"
+    bedrock-actions-title: "&6Relation Actions - {guild}"
+    bedrock-actions-content: "&fType: {type}\n&fStatus: {status}"
+    bedrock-cancel-relation: "&cCancel Relation"
+    bedrock-accept-relation: "&aAccept Relation"
+    bedrock-reject-relation: "&cReject Relation"
+    bedrock-end-truce: "&eEnd Truce"
+    bedrock-propose-truce: "&ePropose Truce"
+    bedrock-delete-relation: "&cDelete Relation"
+    bedrock-back-to-list: "&eBack to List"
+    bedrock-truce-ended: "&aTruce with {guild} has ended!"
 
   # ================================================
   # CreateRelationGUI (6 keys)
@@ -671,6 +879,22 @@ gui:
     confirm-lore-2: "&7Need to select relation type and target guild first"
     current-selection: "&eCurrent Selection"
     title: "&6Create Guild Relation"
+    bedrock-type-title: "&6Create Relation - Select Type"
+    bedrock-type-content: "&fPlease select a relation type:"
+    bedrock-back: "&cBack"
+    bedrock-target-title: "&6Create Relation - Select Target"
+    bedrock-target-empty: "&fNo available target guilds"
+    bedrock-target-title-page: "&6Create Relation - Select Target Page {page}"
+    bedrock-target-content: "&fType: {type}\n&fSelect target guild:"
+    bedrock-prev-page: "&ePrevious Page"
+    bedrock-next-page: "&eNext Page"
+    bedrock-confirm-title: "&6Confirm Create Relation"
+    bedrock-confirm-content: "&fType: {type}\n&fTarget: {target}"
+    bedrock-confirm-create: "&aConfirm Create"
+    bedrock-cancel: "&cCancel"
+    bedrock-already-exists: "&cRelation with {guild} already exists!"
+    bedrock-create-success: "&aSent {type} relation request to {guild}!"
+    bedrock-create-failed: "&cFailed to create relation!"
 
   # ================================================
   # RelationManagementGUI (40 keys)
@@ -716,6 +940,25 @@ gui:
     relation-management-back-desc: "Back to admin menu"
     relation-management-refresh-desc: "Reload relation data"
     relation-management-title: "&4Relation Management - Admin"
+    bedrock-title: "&4Relation Management"
+    bedrock-empty: "&cNo relation data"
+    bedrock-back: "&cBack"
+    bedrock-page-info: "&fPage {current}/{total} | Total {count} relations"
+    bedrock-refresh: "&aRefresh List"
+    bedrock-prev-page: "&ePrevious Page"
+    bedrock-next-page: "&eNext Page"
+    bedrock-actions-title: "&6Relation Actions"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fType: {type}\n&fStatus: {status}\n&fInitiator: {initiator}"
+    bedrock-delete-relation: "&cDelete Relation"
+    bedrock-view-details: "&eView Details"
+    bedrock-back-to-list: "&cBack to List"
+    bedrock-confirm-title: "&cConfirm Delete"
+    bedrock-confirm-content: "&fAre you sure you want to delete relation:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cConfirm Delete"
+    bedrock-cancel: "&fCancel"
+    bedrock-delete-success: "&aDeleted relation: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cFailed to delete relation!"
+    bedrock-no-permission: "&cYou do not have admin permission!"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -743,6 +986,13 @@ gui:
     total-records: "Total records: {count}"
     type: "Type"
     wait-for-logs: "Please wait for guild activities to generate logs"
+    bedrock-title: "&6Guild Logs - {guild}"
+    bedrock-no-data: "&cNo log records"
+    bedrock-back: "&cBack"
+    bedrock-page-info: "&fPage {page}/{total}\n&fTotal records: {count}"
+    bedrock-prev-page: "&aPrevious Page"
+    bedrock-next-page: "&aNext Page"
+    bedrock-refresh: "&aRefresh"
 
   # ================================================
   # MemberManagementGUI (81 keys)
@@ -829,6 +1079,31 @@ gui:
     member-mgmt.role.leader-perms: "All Permissions"
     member-mgmt.role.member-perms: "Basic Permissions"
     member-mgmt.role.officer-perms: "Invite, Kick"
+    bedrock-title: "&6Member Management"
+    bedrock-title-page: "&6Member Management - Page {page}"
+    bedrock-no-members: "&fThere are no members in the guild yet"
+    bedrock-member-list: "&fMember List (Total {count})"
+    bedrock-invite: "&aInvite Member"
+    bedrock-actions-title: "&6Member Actions - {member}"
+    bedrock-role-label: "&fRole: {role}"
+    bedrock-role-leader: "&cLeader"
+    bedrock-role-officer: "&6Officer"
+    bedrock-role-member: "&fMember"
+    bedrock-view-details: "&eView Details"
+    bedrock-kick: "&cKick Member"
+    bedrock-promote-demote: "&6Promote/Demote"
+    bedrock-back-to-list: "&cBack to List"
+    member-details.bedrock-title: "&6Member Details - {member}"
+    member-details.bedrock-player: "&fPlayer: {name}"
+    member-details.bedrock-role: "&fRole: {role}"
+    member-details.bedrock-join-time: "&fJoin Time: {time}"
+    member-details.bedrock-online: "&fOnline: {status}"
+    member-details.bedrock-online-yes: "&aYes"
+    member-details.bedrock-online-no: "&cNo"
+    member-details.bedrock-kick: "&cKick Member"
+    member-details.bedrock-promote-demote: "&6Promote/Demote"
+    member-details.bedrock-send-message: "&eSend Message"
+    member-details.bedrock-back: "&cBack"
 
   # ================================================
   # MemberGuildGUI (13 keys)
@@ -847,6 +1122,8 @@ gui:
     no-name: "No Name"
     no-tag: "No Tag"
     title: "&6My Guild"
+    bedrock-title: "&6My Guild - {guild_name}"
+    bedrock-content: "&6Guild Info\n&fName: &e{guild_name}\n&fTag: &e{guild_tag}\n&fGuild Home: {home_status}"
 
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
@@ -866,6 +1143,10 @@ gui:
     confirm-delete-guild-title: "&4Confirm Delete Guild"
     delete.failed: "&cFailed to delete the guild!"
     delete.success: "&aGuild {guild} has been deleted!"
+    bedrock-title: "&4Confirm Delete Guild"
+    bedrock-content: "&fGuild: &e{guild}\n&fAre you sure you want to delete this guild?\n&cThis action will permanently delete the guild!\n&cAll members will be removed!\n&cThis action cannot be undone!"
+    bedrock-confirm: "&4Confirm Delete"
+    bedrock-cancel: "&aCancel"
 
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
@@ -883,6 +1164,10 @@ gui:
     leave.failed: "&cFailed to leave the guild!"
     leave.leader-cannot-leave: "&cGuild leader cannot leave the guild!"
     leave.success: "&aYou have successfully left the guild: {guild}"
+    bedrock-title: "&cConfirm Leave Guild"
+    bedrock-content: "&fGuild: &e{guild}\n&fAre you sure you want to leave this guild?\n&cThis action cannot be undone!"
+    bedrock-confirm: "&cConfirm Leave"
+    bedrock-cancel: "&aCancel"
 
   # ================================================
   # GuildNameInputGUI (21 keys)
@@ -909,6 +1194,9 @@ gui:
     success: "&aGuild name changed successfully!"
     success-new-name: "&7New name: &f{new_name}"
     title: "&6Modify Guild Name"
+    bedrock-title: "&6Modify Guild Name"
+    bedrock-input-label: "&fEnter new guild name"
+    bedrock-input-placeholder: "2-16 characters, color codes supported"
 
   # ================================================
   # GuildTagInputGUI (6 keys)
@@ -920,6 +1208,9 @@ gui:
     confirm-lore: "&7Confirm guild tag edit"
     current-tag: "&eCurrent Tag"
     title: "&6Modify Guild Tag"
+    bedrock-title: "&6Modify Guild Tag"
+    bedrock-input-label: "&fEnter new guild tag"
+    bedrock-input-placeholder: "Max {max} characters"
 
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
@@ -931,12 +1222,18 @@ gui:
     confirm-lore: "&7Confirm guild description edit"
     current-description: "&eCurrent Description"
     title: "&6Modify Guild Description"
+    bedrock-title: "&6Modify Guild Description"
+    bedrock-input-label: "&fEnter new guild description"
+    bedrock-input-placeholder: "Max {max} characters"
 
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
   guild-permissions:
     title: "&6Guild Permissions"
+    bedrock-title: "&6Guild Permissions"
+    bedrock-content: "&6=== Leader Permissions ===\n&f• All permissions\n&f• Manage members\n&f• Modify settings\n&f• Delete guild\n\n&e=== Officer Permissions ===\n&f• Invite members\n&f• Kick members\n&f• Handle applications\n&f• Set guild home\n\n&7=== Member Permissions ===\n&f• View guild info\n&f• Teleport to guild home\n&f• Apply to join other guilds\n\n&aCurrent status: &fGuild {guild} | Permission system running normally"
+    bedrock-back: "&cBack"
 
   # ================================================
   # InviteMemberGUI (4 keys)
@@ -946,6 +1243,10 @@ gui:
     click-invite: "Click to invite this player"
     join-guild: "Join guild"
     title: "&6Invite Members - {guild} - Page {page}"
+    bedrock-title: "&6Invite Members"
+    bedrock-title-page: "&6Invite Members - Page {page}"
+    bedrock-no-players: "&fNo online players available to invite"
+    bedrock-player-list: "&fOnline Players (Total {count})"
 
   # ================================================
   # KickMemberGUI (5 keys)
@@ -956,6 +1257,10 @@ gui:
     kick.success: "&aSuccessfully kicked &e{player} &a!"
     click-kick: "Click to kick this member"
     title: "&6Kick Member - Page {page}"
+    bedrock-title: "&6Kick Member"
+    bedrock-title-page: "&6Kick Member - Page {page}"
+    bedrock-no-members: "&fNo members available to kick"
+    bedrock-content: "&fSelect a member to kick"
 
   # ================================================
   # PromoteMemberGUI (5 keys)
@@ -966,6 +1271,10 @@ gui:
     promote.success: "&aPromoted &e{player} &a to officer!"
     click-promote: "Click to promote to officer"
     title: "&6Promote Member - Page {page}"
+    bedrock-title: "&6Promote Member"
+    bedrock-title-page: "&6Promote Member - Page {page}"
+    bedrock-no-members: "&fNo members available to promote"
+    bedrock-content: "&fSelect a member to promote to officer"
 
   # ================================================
   # DemoteMemberGUI (5 keys)
@@ -976,3 +1285,7 @@ gui:
     demote.success: "&aDemoted &e{player} &a to regular member!"
     click-demote: "Click to demote to member"
     title: "&6Demote Member - Page {page}"
+    bedrock-title: "&6Demote Member"
+    bedrock-title-page: "&6Demote Member - Page {page}"
+    bedrock-no-members: "&fNo officers available to demote"
+    bedrock-content: "&fSelect an officer to demote to member"

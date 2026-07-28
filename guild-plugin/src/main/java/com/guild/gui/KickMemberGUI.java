@@ -282,9 +282,9 @@ public class KickMemberGUI implements GUI {
 
                 if (kickable.isEmpty()) {
                     SimpleForm form = SimpleForm.builder()
-                        .title("§6踢出成员")
-                        .content("§f没有可踢出的成员")
-                        .button("§c返回")
+                        .title(languageManager.getGuiColoredMessage(player, "gui.kick-member.bedrock-title", "&6踢出成员"))
+                        .content(languageManager.getGuiColoredMessage(player, "gui.kick-member.bedrock-no-members", "&f没有可踢出的成员"))
+                        .button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"))
                         .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                             plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))))
                         .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
@@ -302,16 +302,16 @@ public class KickMemberGUI implements GUI {
                 final int memberCount = endIndex - startIndex;
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title("§6踢出成员 - 第" + (safePage + 1) + "页")
-                    .content("§f选择要踢出的成员");
+                    .title(languageManager.getGuiColoredMessage(player, "gui.kick-member.bedrock-title-page", "&6踢出成员 - 第{page}页", "{page}", String.valueOf(safePage + 1)))
+                    .content(languageManager.getGuiColoredMessage(player, "gui.kick-member.bedrock-content", "&f选择要踢出的成员"));
 
                 for (int i = startIndex; i < endIndex; i++) {
                     builder.button("§c" + kickable.get(i).getPlayerName());
                 }
 
-                builder.button("§e上一页");
-                builder.button("§e下一页");
-                builder.button("§c返回");
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-prev-page", "&e上一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-next-page", "&e下一页"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"));
 
                 builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     int clicked = response.clickedButtonId();

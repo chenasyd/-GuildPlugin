@@ -93,8 +93,8 @@ public class GuildPlugin extends JavaPlugin {
 
             // 初始化文件日志管理器（创建 logs/ 目录，按日分割日志文件）
             fileLogger = new PluginFileLogger(getDataFolder(), getLogger());
-            fileLogger.logSystem("插件启动中... 服务器类型: " + ServerUtils.getServerType()
-                    + ", 版本: " + ServerUtils.getServerVersion());
+            fileLogger.logSystem("Plugin starting... Server type: " + ServerUtils.getServerType()
+                    + ", Version: " + ServerUtils.getServerVersion());
             
             // 初始化数据库管理器
             databaseManager = new DatabaseManager(this);
@@ -130,13 +130,13 @@ public class GuildPlugin extends JavaPlugin {
                 // 初始化 CommAPI 桥接器（生命周期由 GuildPlugin 自身管理）
                 CommAPI.initialize(logger);
             } catch (Throwable e) {
-                logger.warning("[Init] CommAPI 初始化失败（跨服桥接不可用）: " + e.getMessage());
+                logger.warning("[Init] CommAPI initialization failed (cross-server bridge unavailable): " + e.getMessage());
             }
             try {
                 // 初始化 BungeeCord 客户端 API（跨服通信子服端，注册 Plugin Messaging 通道）
                 BungeeClientAPI.initialize(this);
             } catch (Throwable e) {
-                logger.warning("[Init] BungeeClientAPI 初始化失败（BungeeCord 代理检测不可用）: " + e.getMessage());
+                logger.warning("[Init] BungeeClientAPI initialization failed (BungeeCord proxy detection unavailable): " + e.getMessage());
             }
             // 注册代理连接信息回调：代理推送到达后，若玩家已打开 GUI 则刷新为基岩版模式
             // 解决时序竞争：PlayerJoinEvent 时代理消息可能尚未到达，GUI 按 Java 模式打开
@@ -150,8 +150,8 @@ public class GuildPlugin extends JavaPlugin {
                 CompatibleScheduler.runTask(this, player, () -> {
                     if (player.isOnline() && guiManager.hasOpenGUI(player)) {
                         guiManager.refreshGUI(player);
-                        logger.info("[PlayerConnection] 代理推送到达，刷新 "
-                                + player.getName() + " 的 GUI → Bedrock 模式");
+                        logger.info("[PlayerConnection] Proxy push received, refreshing "
+                                + player.getName() + "'s GUI to Bedrock mode");
                     }
                 });
             });
@@ -159,19 +159,19 @@ public class GuildPlugin extends JavaPlugin {
                 // 初始化 GeyserAPI（基岩版玩家检测，Geyser 未安装时静默降级）
                 GeyserAPI.initialize(logger);
             } catch (Throwable e) {
-                logger.warning("[Init] GeyserAPI 初始化失败（本地 Geyser 检测不可用）: " + e.getMessage());
+                logger.warning("[Init] GeyserAPI initialization failed (local Geyser detection unavailable): " + e.getMessage());
             }
             try {
                 // 初始化统一连接服务（整合 GeyserAPI + BungeeClientAPI）
                 PlayerConnectionService.initialize(logger);
             } catch (Throwable e) {
-                logger.warning("[Init] PlayerConnectionService 初始化失败: " + e.getMessage());
+                logger.warning("[Init] PlayerConnectionService initialization failed: " + e.getMessage());
             }
             try {
                 // 初始化基岩版表单发送器（通过 Geyser API 反射）
                 BedrockFormSender.initialize(logger);
             } catch (Throwable e) {
-                logger.warning("[Init] BedrockFormSender 初始化失败（基岩版表单不可用）: " + e.getMessage());
+                logger.warning("[Init] BedrockFormSender initialization failed (Bedrock forms unavailable): " + e.getMessage());
             }
             // 注册代理表单响应回调：代理转发的基岩版表单响应 → BedrockFormSender 触发原始 handler
             BungeeClientAPI.setFormResponseCallback((formId, responseData) ->
@@ -229,7 +229,7 @@ public class GuildPlugin extends JavaPlugin {
             logger.info("Guild Plugin started successfully!");
             logger.info("Compatibility mode: " + (ServerUtils.isFolia() ? "Folia" : "Spigot"));
             if (fileLogger != null) {
-                fileLogger.logSystem("插件启动完成 (兼容模式: "
+                fileLogger.logSystem("Plugin started successfully (compatibility mode: "
                         + (ServerUtils.isFolia() ? "Folia" : "Spigot") + ")");
             }
             
@@ -273,7 +273,7 @@ public class GuildPlugin extends JavaPlugin {
 
             // 关闭文件日志管理器
             if (fileLogger != null) {
-                fileLogger.logSystem("插件关闭中...");
+                fileLogger.logSystem("Plugin shutting down...");
                 fileLogger.shutdown();
             }
 

@@ -83,14 +83,14 @@ public final class FormForwardHandler {
             // 确认玩家在线
             ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uuid);
             if (player == null || !player.isConnected()) {
-                logger.fine("[FormForward] 玩家不在线，丢弃表单: " + uuidStr);
+                logger.fine("[FormForward] Player not online, discarding form: " + uuidStr);
                 sendFormResponse(sourceServer, uuidStr, formId, null, true);
                 return;
             }
 
             // 确保 Geyser 可用
             if (!ensureGeyserReady()) {
-                logger.warning("[FormForward] Geyser 不可用，无法转发表单");
+                logger.warning("[FormForward] Geyser unavailable, cannot forward form");
                 sendFormResponse(sourceServer, uuidStr, formId, null, true);
                 return;
             }
@@ -99,16 +99,16 @@ public final class FormForwardHandler {
             boolean sent = deserializeAndSend(uuid, formType, formJson, formId, sourceServer);
 
             if (sent) {
-                logger.info("[FormForward] 转发表单 " + formId
+                logger.info("[FormForward] Forwarded form " + formId
                         + " → " + player.getName() + " (type=" + formType + ")");
             } else {
-                logger.warning("[FormForward] 表单转发失败: " + formId);
+                logger.warning("[FormForward] Form forwarding failed: " + formId);
                 sendFormResponse(sourceServer, uuidStr, formId, null, true);
             }
 
         } catch (Exception e) {
             logger.log(Level.WARNING,
-                    "[FormForward] 处理 guild.form.send 失败: " + e.getMessage(), e);
+                    "[FormForward] Failed to handle guild.form.send: " + e.getMessage(), e);
         }
     }
 
@@ -129,7 +129,7 @@ public final class FormForwardHandler {
                 net.md_5.bungee.api.plugin.Plugin geyserPlugin =
                         ProxyServer.getInstance().getPluginManager().getPlugin(GEYSER_PLUGIN_NAME);
                 if (geyserPlugin == null) {
-                    logger.warning("[FormForward] " + GEYSER_PLUGIN_NAME + " 未找到");
+                    logger.warning("[FormForward] " + GEYSER_PLUGIN_NAME + " not found");
                     checked = true;
                     return false;
                 }
@@ -140,7 +140,7 @@ public final class FormForwardHandler {
                 Class<?> geyserClass = Class.forName("org.geysermc.api.Geyser", true, loader);
                 boolean registered = (boolean) geyserClass.getMethod("isRegistered").invoke(null);
                 if (!registered) {
-                    logger.warning("[FormForward] Geyser API 未注册");
+                    logger.warning("[FormForward] Geyser API not registered");
                     checked = true;
                     return false;
                 }
@@ -156,12 +156,12 @@ public final class FormForwardHandler {
                 geyserClassLoader = loader;
                 checked = true;
 
-                logger.info("[FormForward] Geyser API 就绪 — 表单转发已启用。");
+                logger.info("[FormForward] Geyser API ready — form forwarding enabled.");
                 return true;
 
             } catch (Exception e) {
                 logger.log(Level.WARNING,
-                        "[FormForward] Geyser 初始化失败: " + e.getMessage(), e);
+                        "[FormForward] Geyser initialization failed: " + e.getMessage(), e);
                 checked = true;
                 return false;
             }
@@ -204,7 +204,7 @@ public final class FormForwardHandler {
 
         } catch (Exception e) {
             logger.log(Level.WARNING,
-                    "[FormForward] 反序列化/发送失败: " + e.getMessage(), e);
+                    "[FormForward] Deserialization/send failed: " + e.getMessage(), e);
             return false;
         }
     }
@@ -238,12 +238,12 @@ public final class FormForwardHandler {
 
             bridge.forwardToServerPublic(targetServer, responseMsg);
 
-            logger.fine("[FormForward] 响应回传: formId=" + formId
+            logger.fine("[FormForward] Response forwarded: formId=" + formId
                     + " → " + targetServer.getName()
                     + " (closed=" + closed + ")");
         } catch (Exception e) {
             logger.log(Level.WARNING,
-                    "[FormForward] 响应回传失败: " + e.getMessage(), e);
+                    "[FormForward] Response forwarding failed: " + e.getMessage(), e);
         }
     }
 }

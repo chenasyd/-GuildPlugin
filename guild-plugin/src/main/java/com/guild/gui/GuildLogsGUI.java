@@ -84,9 +84,9 @@ public class GuildLogsGUI implements GUI {
 
                     if (pageLogs == null || pageLogs.isEmpty()) {
                         SimpleForm emptyForm = SimpleForm.builder()
-                                .title("§6工会日志 - " + guildName)
-                                .content("§c暂无日志记录")
-                                .button("§c返回")
+                                .title(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-title", "&6工会日志 - {guild}", "{guild}", guildName))
+                                .content(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-no-data", "&c暂无日志记录"))
+                                .button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-back", "&c返回"))
                                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                                         plugin.getGuiManager().openGUI(player,
                                                 new GuildSettingsGUI(plugin, guild, player))))
@@ -99,11 +99,14 @@ public class GuildLogsGUI implements GUI {
                     int totalPages = (totalLogsLocal - 1) / itemsPerPage + 1;
                     final int safePage = Math.max(0, Math.min(pageNum, totalPages - 1));
 
-                    String content = "§f第 " + (safePage + 1) + "/" + totalPages + " 页\n"
-                            + "§f总记录: " + totalLogsLocal;
+                    String content = languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-page-info",
+                            "&f第 {page}/{total} 页\n&f总记录: {count}",
+                            "{page}", String.valueOf(safePage + 1),
+                            "{total}", String.valueOf(totalPages),
+                            "{count}", String.valueOf(totalLogsLocal));
 
                     SimpleForm.Builder builder = SimpleForm.builder()
-                            .title("§6工会日志 - " + guildName)
+                            .title(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-title", "&6工会日志 - {guild}", "{guild}", guildName))
                             .content(content);
 
                     for (GuildLog log : pageLogs) {
@@ -113,10 +116,10 @@ public class GuildLogsGUI implements GUI {
                                 + " §f" + time);
                     }
 
-                    builder.button("§a上一页");
-                    builder.button("§a下一页");
-                    builder.button("§a刷新");
-                    builder.button("§c返回");
+                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-prev-page", "&a上一页"));
+                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-next-page", "&a下一页"));
+                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-refresh", "&a刷新"));
+                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-back", "&c返回"));
 
                     final int logCount = pageLogs.size();
                     final int curPage = safePage;

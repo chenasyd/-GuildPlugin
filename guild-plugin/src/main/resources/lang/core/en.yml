@@ -685,6 +685,69 @@ cloud.download-renamed: "&aDownloaded as &e{0} &a(saved with new name because &e
 cloud.download-tip: "&6Tip: &7Unload old module first, replace jar: &e/guildmodule unload <id> &7-> replace jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&cDownload failed: {0}"
 
+# ============ Bedrock Form Test Command ============
+bedrock-test.bedrock-only: "&cThis command is only for Bedrock players. You are a Java player."
+bedrock-test.geyser-unavailable: "&cGeyser API unavailable, cannot send forms."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7You clicked: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Form closed"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Submitted successfully:"
+bedrock-test.custom-name: "&7  Name: &f{value}"
+bedrock-test.custom-desc: "&7  Description: &f{value}"
+bedrock-test.custom-free-join: "&7  Free join: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Allow invite: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Allow kick: &f{value}"
+bedrock-test.custom-language: "&7  Language: &f{value}"
+bedrock-test.custom-max-members: "&7  Max members: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Form closed, not saved"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7You chose: &cConfirm quit"
+bedrock-test.modal-cancel: "&a[ModalForm] &7You chose: &aCancel"
+bedrock-test.modal-closed: "&7[ModalForm] Dialog closed"
+
+# --- Form builder strings ---
+# Main menu
+bedrock-test.main-title: "&6Guild Plugin &r- &eBedrock Form Test"
+bedrock-test.main-content: "&7Select a form type to preview:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Button Menu"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Input/Settings Form"
+bedrock-test.main-btn-modal: "&cModalForm &f- Confirm Dialog"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Guild Main Menu &r- &7SimpleForm Example"
+bedrock-test.simple-content: "&7Welcome, &e{player}&7!\n&7This is a SimpleForm button menu example."
+bedrock-test.simple-btn-info: "&aGuild Info &f- View guild details"
+bedrock-test.simple-btn-members: "&bMember Management &f- Manage guild members"
+bedrock-test.simple-btn-settings: "&eGuild Settings &f- Modify guild config"
+bedrock-test.simple-btn-list: "&6Guild List &f- Browse all guilds"
+bedrock-test.simple-btn-quit: "&cQuit Guild &f- Leave current guild"
+bedrock-test.simple-name-info: "Guild Info"
+bedrock-test.simple-name-members: "Member Management"
+bedrock-test.simple-name-settings: "Guild Settings"
+bedrock-test.simple-name-list: "Guild List"
+bedrock-test.simple-name-quit: "Quit Guild"
+
+# CustomForm
+bedrock-test.custom-title: "&6Guild Settings &r- &fCustomForm Example"
+bedrock-test.custom-label-basic: "&7── Basic Settings ──"
+bedrock-test.custom-input-name-label: "&fGuild Name"
+bedrock-test.custom-input-name-placeholder: "Enter new name..."
+bedrock-test.custom-input-name-default: "My Guild"
+bedrock-test.custom-input-desc-label: "&fGuild Description"
+bedrock-test.custom-input-desc-placeholder: "Enter description..."
+bedrock-test.custom-input-desc-default: "A friendly guild"
+bedrock-test.custom-label-perms: "&7── Permission Toggles ──"
+bedrock-test.custom-toggle-free-join: "&fAllow Free Join"
+bedrock-test.custom-toggle-allow-invite: "&fAllow Member Invite"
+bedrock-test.custom-toggle-allow-kick: "&fAllow Member Kick"
+bedrock-test.custom-label-other: "&7── Other ──"
+bedrock-test.custom-dropdown-lang: "&fGuild Language"
+bedrock-test.custom-slider-max-members: "&fMax Members"
+
+# ModalForm
+bedrock-test.modal-title: "&cConfirm Action &r- &fModalForm Example"
+bedrock-test.modal-content: "&7Are you sure you want to quit guild &eTest Guild&7?\n\n&cThis action cannot be undone!\n&7You will need to reapply to join."
+bedrock-test.modal-btn-confirm: "&aConfirm Quit"
+bedrock-test.modal-btn-cancel: "&cCancel"
+
 
 
 
