@@ -84,6 +84,9 @@ gui:
     member-role.leader: "Lider"
     member-role.member: "Członek"
     member-role.officer: "Oficer"
+    bedrock-prev-page: "&ePoprzednia Strona"
+    bedrock-next-page: "&eNastępna Strona"
+    bedrock-back: "&cWróć"
 
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
@@ -111,6 +114,14 @@ gui:
     admin-gui-statistics-total-balance: "&eŁączne Saldo: &f{balance}"
     admin-gui-statistics-total-guilds: "&eŁączna Liczba Gildii: &f{count}"
     admin-gui-statistics-total-members: "&eŁączna Liczba Członków: &f{count}"
+    bedrock-title: "&4Admin Gildii"
+    bedrock-content: "&fWybierz funkcję zarządzania"
+    bedrock-guild-list: "&eLista Gildii"
+    bedrock-economy: "&eZarządzanie Ekonomią"
+    bedrock-relations: "&eZarządzanie Relacjami"
+    bedrock-statistics: "&eStatystyki"
+    bedrock-settings: "&eUstawienia Systemowe"
+    bedrock-back: "&cWróć"
 
   # ================================================
   # ApplicationManagementGUI (29 keys)
@@ -140,11 +151,31 @@ gui:
     application-management-pending-applications-lore-1: "&7Przeglądaj oczekujące podania"
     application-management-pending-applications-name: "&eOczekujące Podania"
     application-management-title: "&6Zarządzanie Podaniami"
-    no-history: "&aBrak Historii Podania"
     no-history.desc: "&7Brak historii podania"
     apply.already-applied: "&cJuż złożyłeś podanie do tej gildii!"
     apply.failed: "&cNie udało się wysłać podania!"
     apply.success: "&aPodanie wysłane!"
+    bedrock-title: "&6Zarządzanie Podaniami"
+    bedrock-empty-history: "&fBrak historii podań"
+    bedrock-empty-pending: "&fBrak oczekujących podań"
+    bedrock-pending-btn: "&eOczekujące Podania"
+    bedrock-history-btn: "&eHistoria Podania"
+    bedrock-back: "&cWróć"
+    bedrock-mode-history: "Historia Podania"
+    bedrock-mode-pending: "Oczekujące Podania"
+    bedrock-title-page: "&6Zarządzanie Podaniami - {mode} Strona {page}"
+    bedrock-total: "&fŁącznie {count} rekordów"
+    bedrock-prev-page: "&ePoprzednia Strona"
+    bedrock-next-page: "&eNastępna Strona"
+    bedrock-applicant: "&fAplikant: {name}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-message: "&fWiadomość: {msg}"
+    bedrock-no-message: "Brak"
+    bedrock-actions-title: "&6Przetwarzanie Podania - {name}"
+    bedrock-actions-content: "&fAplikant: {name}\n&fWiadomość: {msg}"
+    bedrock-accept: "&aZaakceptuj Podanie"
+    bedrock-reject: "&cOdrzuć Podanie"
+    bedrock-back-to-list: "&eWróć do Listy"
 
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
@@ -172,6 +203,7 @@ gui:
     member-management.lore.2: "&7Zapraszanie, wyrzucanie, zarządzanie uprawnieniami"
     member-management.name: "&eZarządzanie Członkami"
     title: "&6System Gildii"
+    bedrock-content: "&fWybierz funkcję:"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
@@ -288,6 +320,23 @@ gui:
     system-settings-save-lore-1: "&7Zapisz wszystkie bieżące ustawienia"
     system-settings-save-lore-2: "&7Zastosuj do plików konfiguracyjnych"
     system-settings-title: "&4Ustawienia Systemowe"
+    bedrock-title: "&4Ustawienia Systemowe"
+    bedrock-content: "&fKliknij, aby przełączyć status"
+    bedrock-debug: "&eInformacje Debugowania: {status}"
+    bedrock-auto-save: "&eAutomatyczne Zapisywanie: {status}"
+    bedrock-economy: "&eSystem Ekonomiczny: {status}"
+    bedrock-relations: "&eSystem Relacji: {status}"
+    bedrock-level: "&eSystem Poziomów: {status}"
+    bedrock-applications: "&eSystem Podania: {status}"
+    bedrock-invites: "&eSystem Zaproszeń: {status}"
+    bedrock-guild-home: "&eDom Gildii: {status}"
+    bedrock-on: "&aWŁĄCZONY"
+    bedrock-off: "&cWYŁĄCZONY"
+    bedrock-reload: "&aPrzeładuj Konfigurację"
+    bedrock-database: "&bKonserwacja Bazy Danych"
+    bedrock-backup: "&6Kopia Zapasowa"
+    bedrock-save: "&aZapisz Ustawienia"
+    bedrock-back: "&cWróć"
 
   # ================================================
   # CreateGuildGUI (36 keys)
@@ -329,6 +378,13 @@ gui:
     create-guild-tag-input-lore-2: "&7Długość: Maksymalnie 6 znaków"
     create-guild-tag-input-lore-3: "&7Opcjonalnie"
     create-guild-tag-input-name: "&eTag Gildii"
+    bedrock-title: "&6Utwórz Gildię"
+    bedrock-name-label: "&fNazwa Gildii (3-20 znaków)"
+    bedrock-name-placeholder: "Wprowadź nazwę gildii"
+    bedrock-tag-label: "&fTag Gildii (maksymalnie 6 znaków, opcjonalnie)"
+    bedrock-tag-placeholder: "Wprowadź tag gildii"
+    bedrock-desc-label: "&fOpis Gildii (maksymalnie 100 znaków, opcjonalnie)"
+    bedrock-desc-placeholder: "Wprowadź opis gildii"
 
   # ================================================
   # GuildDetailGUI (38 keys)
@@ -372,6 +428,31 @@ gui:
     transfer-self: "&cNie można przekazać przywództwa sobie samemu"
     transfer-success: "&aPomyślnie przekazano do &e{name}"
     unfreeze-guild: "Odmroź Gildię"
+    bedrock-title: "&6Szczegóły Gildii - {guild_name}"
+    bedrock-level: "&fPoziom: &e{level}"
+    bedrock-balance: " &fSaldo: &a{balance}"
+    bedrock-leader: "&fLider: &c{leader}"
+    bedrock-members: " &fCzłonkowie: &e{current}/{max}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-status-frozen: "&cZamrożona"
+    bedrock-status-normal: "&aNormalna"
+    bedrock-description: "&fOpis: &7{description}"
+    bedrock-transfer-hint: "&e>>> Tryb Transferu: Kliknij członka, aby przekazać <<<"
+    bedrock-no-tag: "Brak"
+    bedrock-unfreeze: "&aOdmroź Gildię"
+    bedrock-freeze: "&cZamroź Gildię"
+    bedrock-delete: "&4Usuń Gildię"
+    bedrock-cancel-transfer: "&eAnuluj Tryb Transferu"
+    bedrock-transfer: "&cTransfer Lidera"
+    bedrock-prev-page: "&ePoprzednia Strona"
+    bedrock-next-page: "&eNastępna Strona"
+    bedrock-back: "&cWróć"
+    bedrock-transfer-self: "&cNie można przekazać przywództwa sobie samemu"
+    bedrock-transfer-success: "&aPomyślnie przekazano do &e{name}"
+    bedrock-transfer-failed: "&cTransfer przywództwa nie powiódł się!"
+    bedrock-operation-failed: "&cOperacja nie powiodła się!"
+    bedrock-transfer-mode-active: "&eKliknij na członka, aby przekazać przywództwo"
+    bedrock-transfer-mode-cancelled: "&7Transfer anulowany"
 
   # ================================================
   # GuildInfoGUI (21 keys)
@@ -398,6 +479,10 @@ gui:
     status-normal: "Normalna"
     tag: "Tag"
     title: "&6Informacje o Gildii"
+    bedrock-title: "&6Informacje o Gildii"
+    bedrock-guild-funds: "&aFundusze Gildii"
+    bedrock-back-to-main: "&cWróć do Głównego Menu"
+    bedrock-status-label: "Status"
 
   # ================================================
   # GuildListManagementGUI (2 keys)
@@ -405,6 +490,24 @@ gui:
   guild-list-management:
     guild-list-management-title: "&4Zarządzanie Listą Gildii"
     gui-refresh: "&aOdśwież Listę"
+    bedrock-title: "&4Zarządzanie Listą Gildii"
+    bedrock-page-info: "&fStrona {page}/{total} | Łącznie {count} gildii"
+    bedrock-refresh: "&aOdśwież Listę"
+    bedrock-prev-page: "&ePoprzednia Strona"
+    bedrock-next-page: "&eNastępna Strona"
+    bedrock-back: "&cWróć"
+    bedrock-status-frozen: "&cZamrożona"
+    bedrock-status-normal: "&aNormalna"
+    bedrock-actions-title: "&6Akcje Gildii - {guild_name}"
+    bedrock-leader: "&fLider: &e{leader}"
+    bedrock-level: "&fPoziom: &e{level}"
+    bedrock-balance: "&fSaldo: &a{balance}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-view-detail: "&eZobacz Szczegóły"
+    bedrock-delete: "&cUsuń Gildię"
+    bedrock-unfreeze: "&aOdmroź Gildię"
+    bedrock-freeze: "&cZamroź Gildię"
+    bedrock-back-list: "&cWróć do Listy"
 
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
@@ -449,6 +552,22 @@ gui:
     guild-list-search-lore-2: "&7Kliknij prawym: Wyczyść wyszukiwanie"
     guild-list-search-name: "&eSzukaj Gildii"
     guild-list-title: "&6Lista Gildii"
+    bedrock-title: "&6Lista Gildii"
+    bedrock-no-guilds: "&cNa serwerze nie ma jeszcze żadnych gildii"
+    bedrock-no-results: "&cNie znaleziono pasujących gildii"
+    bedrock-search: "&eSzukaj Gildii"
+    bedrock-back-main: "&cWróć do Głównego Menu"
+    bedrock-page-info: "&fStrona {page}/{total}"
+    bedrock-search-info: "&fWyszukiwanie: &e{query}"
+    bedrock-prev-page: "&aPoprzednia Strona"
+    bedrock-next-page: "&aNastępna Strona"
+    bedrock-search-title: "&6Szukaj Gildii"
+    bedrock-search-input: "&fWprowadź słowo kluczowe"
+    bedrock-search-placeholder: "Pozostaw puste, aby pokazać wszystkie"
+    bedrock-select-action: "&fWybierz akcję:"
+    bedrock-view-detail: "&eZobacz Szczegóły"
+    bedrock-apply-join: "&aZłóż Podanie o Dołączenie"
+    bedrock-back-list: "&cWróć do Listy"
 
   # ================================================
   # GuildFilterGUI (19 keys)
@@ -473,6 +592,35 @@ gui:
     sort.lore-full: "Tylko pełne gildie"
     sort.name: "&eSortuj według Członków"
     title: "&6Filtr Gildii"
+    bedrock-title: "&6Filtr Gildii"
+    bedrock-no-guilds: "&fNa serwerze nie ma jeszcze żadnych gildii"
+    bedrock-back: "&cWróć"
+    bedrock-no-results: "&fŻadne gildie nie pasują do filtra"
+    bedrock-filter-info: "&fPoziom: {min}-{max} | Sortuj: {sort}"
+    bedrock-adjust-filter: "&eDostosuj Filtr"
+    bedrock-sort-desc: "Członkowie Malejąco"
+    bedrock-sort-asc: "Członkowie Rosnąco"
+    bedrock-sort-full: "Tylko Pełne"
+    bedrock-title-page: "&6Filtr Gildii - Strona {page}"
+    bedrock-total-results: "&fŁącznie {count} wyników"
+    bedrock-prev-page: "&ePoprzednia Strona"
+    bedrock-next-page: "&eNastępna Strona"
+    bedrock-settings-title: "&6Ustawienia Filtra"
+    bedrock-min-level: "&fMinimalny Poziom: {level}"
+    bedrock-max-level: "&fMaksymalny Poziom: {level}"
+    bedrock-sort: "&fSortuj: {sort}"
+    bedrock-min-level-up: "&aMinimalny Poziom +1"
+    bedrock-min-level-down: "&cMinimalny Poziom -1"
+    bedrock-max-level-up: "&aMaksymalny Poziom +1"
+    bedrock-max-level-down: "&cMaksymalny Poziom -1"
+    bedrock-switch-sort: "&eZmień Tryb Sortowania"
+    bedrock-back-results: "&eWróć do Wyników"
+    bedrock-actions-title: "&6Akcje Gildii - {guild_name}"
+    bedrock-level: "&fPoziom: {level}"
+    bedrock-leader: "&fLider: {leader}"
+    bedrock-view-detail: "&eZobacz Szczegóły"
+    bedrock-apply-join: "&aZłóż Podanie o Dołączenie"
+    bedrock-back-filter: "&eWróć do Filtra"
 
   # ================================================
   # GuildSettingsGUI (42 keys)
@@ -520,6 +668,13 @@ gui:
     home.success: "&aTeleportowano do domu gildii!"
     sethome.failed: "&cNie udało się ustawić domu gildii!"
     sethome.success: "&aDom gildii ustawiony pomyślnie!"
+    bedrock-content: "&6Przegląd Gildii\n&fNazwa: &e{guild_name}\n&fTag: &e{guild_tag}\n&fOpis: {guild_desc}\n&fDom Gildii: {home_status}"
+    bedrock-change-name: "&eZmień Nazwę"
+    bedrock-change-description: "&eZmień Opis"
+    bedrock-change-tag: "&eZmień Tag"
+    bedrock-kick-member: "&cWyrzuć Członka"
+    bedrock-promote-demote: "&eAwansuj/Zdegraduj"
+    bedrock-back-to-main: "&fWróć do Głównego Menu"
 
   # ================================================
   # GuildFundsGUI (23 keys)
@@ -548,6 +703,15 @@ gui:
     total-deposit: "Łączny Depozyt"
     total-pages: "&7Łączna Liczba Stron: {total}"
     total-players: "&7Gracze: {count}"
+    bedrock-title: "&6Fundusze Gildii - {guild}"
+    bedrock-no-data: "&cBrak rekordów depozytów"
+    bedrock-back: "&cWróć"
+    bedrock-page-info: "&fStrona {page}/{total}\n&fŁączna liczba graczy: {count}"
+    bedrock-online: "&aOnline"
+    bedrock-offline: "&fOffline"
+    bedrock-prev-page: "&aPoprzednia Strona"
+    bedrock-next-page: "&aNastępna Strona"
+    bedrock-refresh: "&aOdśwież"
 
   # ================================================
   # EconomyManagementGUI (23 keys)
@@ -576,6 +740,23 @@ gui:
     set-balance-dev: "&eFunkcja ustawiania salda w trakcie rozwoju..."
     set-prompt: "&eWprowadź nową kwotę salda (wpisz na czacie, wpisz cancel aby anulować):"
     economy-management-title: "&eZarządzanie Ekonomią"
+    bedrock-title: "&eZarządzanie Ekonomią"
+    bedrock-page-info: "&fStrona {current}/{total} | Łącznie {count} gildii"
+    bedrock-refresh: "&aOdśwież Listę"
+    bedrock-prev-page: "&ePoprzednia Strona"
+    bedrock-next-page: "&eNastępna Strona"
+    bedrock-back: "&cWróć"
+    bedrock-actions-title: "&eZarządzanie Ekonomią - {guild}"
+    bedrock-actions-content: "&fBieżące Saldo: &a{balance}\n&fLider: &e{leader}\n&fPoziom: &e{level}"
+    bedrock-set-funds: "&eUstaw Fundusze"
+    bedrock-add-funds: "&aDodaj Fundusze"
+    bedrock-clear-funds: "&cWyczyść Fundusze"
+    bedrock-back-to-list: "&cWróć do Listy"
+    bedrock-set-title: "&eUstaw Fundusze"
+    bedrock-add-title: "&aDodaj Fundusze"
+    bedrock-input-label: "&fWprowadź kwotę"
+    bedrock-invalid-amount: "&cKwota musi być większa od 0!"
+    bedrock-invalid-number: "&cNieprawidłowa liczba!"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -606,6 +787,14 @@ gui:
     funds.change.set-contrib-increase: "{player} ustawił fundusze na {new}(+{diff})"
     funds.change.set-log-decrease: "{player} ustawił fundusze {guild} na {new}"
     funds.change.set-log-increase: "{player} ustawił fundusze {guild} na {new}"
+    bedrock-title: "&6Potwierdź Zmianę Funduszy"
+    bedrock-guild: "&fGildia: &e{guild_name}"
+    bedrock-operation: "&fOperacja: {operation}"
+    bedrock-current-balance: "&fBieżące Saldo: &6{balance}"
+    bedrock-amount: "&fKwota: &f{amount}"
+    bedrock-new-balance: "&fNowe Saldo: &a{balance}"
+    bedrock-confirm: "&aPotwierdź Zmianę"
+    bedrock-cancel: "&cAnuluj"
 
   # ================================================
   # GuildRelationsGUI (49 keys)
@@ -660,6 +849,24 @@ gui:
     relations.type-selected: "&aWybrany typ relacji: {type}"
     relations.type-truce.description: "Porozumienie o rozejmie, tymczasowy pokój"
     relations.type-war.description: "Stan wojny, totalna wojna"
+    bedrock-title: "&6Relacje Gildii"
+    bedrock-title-page: "&6Relacje Gildii - Strona {page}"
+    bedrock-empty: "&fBrak relacji między gildiami"
+    bedrock-total: "&fŁącznie {count} relacji"
+    bedrock-create-relation: "&aUtwórz Relację"
+    bedrock-prev-page: "&ePoprzednia Strona"
+    bedrock-next-page: "&eNastępna Strona"
+    bedrock-back: "&cWróć"
+    bedrock-actions-title: "&6Akcje Relacji - {guild}"
+    bedrock-actions-content: "&fTyp: {type}\n&fStatus: {status}"
+    bedrock-cancel-relation: "&cAnuluj Relację"
+    bedrock-accept-relation: "&aZaakceptuj Relację"
+    bedrock-reject-relation: "&cOdrzuć Relację"
+    bedrock-end-truce: "&eZakończ Rozejm"
+    bedrock-propose-truce: "&eZaproponuj Rozejm"
+    bedrock-delete-relation: "&cUsuń Relację"
+    bedrock-back-to-list: "&eWróć do Listy"
+    bedrock-truce-ended: "&aRozejm z {guild} został zakończony!"
 
   # ================================================
   # CreateRelationGUI (6 keys)
@@ -671,6 +878,22 @@ gui:
     confirm-lore-2: "&7Najpierw wybierz typ relacji i gildię docelową"
     current-selection: "&eBieżący Wybór"
     title: "&6Utwórz Relację Między Gildiami"
+    bedrock-type-title: "&6Utwórz Relację - Wybierz Typ"
+    bedrock-type-content: "&fWybierz typ relacji:"
+    bedrock-back: "&cWróć"
+    bedrock-target-title: "&6Utwórz Relację - Wybierz Cel"
+    bedrock-target-empty: "&fBrak dostępnych gildii docelowych"
+    bedrock-target-title-page: "&6Utwórz Relację - Wybierz Cel Strona {page}"
+    bedrock-target-content: "&fTyp: {type}\n&fWybierz gildię docelową:"
+    bedrock-prev-page: "&ePoprzednia Strona"
+    bedrock-next-page: "&eNastępna Strona"
+    bedrock-confirm-title: "&6Potwierdź Utworzenie Relacji"
+    bedrock-confirm-content: "&fTyp: {type}\n&fCel: {target}"
+    bedrock-confirm-create: "&aPotwierdź Utworzenie"
+    bedrock-cancel: "&cAnuluj"
+    bedrock-already-exists: "&cRelacja z {guild} już istnieje!"
+    bedrock-create-success: "&aWysłano prośbę o relację {type} do {guild}!"
+    bedrock-create-failed: "&cNie udało się utworzyć relacji!"
 
   # ================================================
   # RelationManagementGUI (40 keys)
@@ -716,6 +939,25 @@ gui:
     relation-management-back-desc: "Wróć do menu administratora"
     relation-management-refresh-desc: "Przeładuj dane relacji"
     relation-management-title: "&4Zarządzanie Relacjami - Admin"
+    bedrock-title: "&4Zarządzanie Relacjami"
+    bedrock-empty: "&cBrak danych relacji"
+    bedrock-back: "&cWróć"
+    bedrock-page-info: "&fStrona {current}/{total} | Łącznie {count} relacji"
+    bedrock-refresh: "&aOdśwież Listę"
+    bedrock-prev-page: "&ePoprzednia Strona"
+    bedrock-next-page: "&eNastępna Strona"
+    bedrock-actions-title: "&6Akcje Relacji"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fTyp: {type}\n&fStatus: {status}\n&fInicjator: {initiator}"
+    bedrock-delete-relation: "&cUsuń Relację"
+    bedrock-view-details: "&eZobacz Szczegóły"
+    bedrock-back-to-list: "&cWróć do Listy"
+    bedrock-confirm-title: "&cPotwierdź Usunięcie"
+    bedrock-confirm-content: "&fCzy na pewno chcesz usunąć relację:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cPotwierdź Usunięcie"
+    bedrock-cancel: "&fAnuluj"
+    bedrock-delete-success: "&aUsunięto relację: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cNie udało się usunąć relacji!"
+    bedrock-no-permission: "&cNie masz uprawnień administratora!"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -743,6 +985,13 @@ gui:
     total-records: "Łączna liczba rekordów: {count}"
     type: "Typ"
     wait-for-logs: "Poczekaj na aktywność gildii, aby wygenerować logi"
+    bedrock-title: "&6Logi Gildii - {guild}"
+    bedrock-no-data: "&cBrak rekordów logów"
+    bedrock-back: "&cWróć"
+    bedrock-page-info: "&fStrona {page}/{total}\n&fŁączna liczba rekordów: {count}"
+    bedrock-prev-page: "&aPoprzednia Strona"
+    bedrock-next-page: "&aNastępna Strona"
+    bedrock-refresh: "&aOdśwież"
 
   # ================================================
   # MemberManagementGUI (81 keys)
@@ -829,6 +1078,31 @@ gui:
     member-mgmt.role.leader-perms: "Wszystkie uprawnienia"
     member-mgmt.role.member-perms: "Podstawowe uprawnienia"
     member-mgmt.role.officer-perms: "Zaproś, Wyrzuć"
+    bedrock-title: "&6Zarządzanie Członkami"
+    bedrock-title-page: "&6Zarządzanie Członkami - Strona {page}"
+    bedrock-no-members: "&fW gildii nie ma jeszcze żadnych członków"
+    bedrock-member-list: "&fLista Członków (Łącznie {count})"
+    bedrock-invite: "&aZaproś Członka"
+    bedrock-actions-title: "&6Akcje Członka - {member}"
+    bedrock-role-label: "&fRola: {role}"
+    bedrock-role-leader: "&cLider"
+    bedrock-role-officer: "&6Oficer"
+    bedrock-role-member: "&fCzłonek"
+    bedrock-view-details: "&eZobacz Szczegóły"
+    bedrock-kick: "&cWyrzuć Członka"
+    bedrock-promote-demote: "&6Awansuj/Zdegraduj"
+    bedrock-back-to-list: "&cWróć do Listy"
+    member-details.bedrock-title: "&6Szczegóły Członka - {member}"
+    member-details.bedrock-player: "&fGracz: {name}"
+    member-details.bedrock-role: "&fRola: {role}"
+    member-details.bedrock-join-time: "&fData Dołączenia: {time}"
+    member-details.bedrock-online: "&fOnline: {status}"
+    member-details.bedrock-online-yes: "&aTak"
+    member-details.bedrock-online-no: "&cNie"
+    member-details.bedrock-kick: "&cWyrzuć Członka"
+    member-details.bedrock-promote-demote: "&6Awansuj/Zdegraduj"
+    member-details.bedrock-send-message: "&eWyślij Wiadomość"
+    member-details.bedrock-back: "&cWróć"
 
   # ================================================
   # MemberGuildGUI (13 keys)
@@ -847,6 +1121,8 @@ gui:
     no-name: "Brak Nazwy"
     no-tag: "Brak Tagu"
     title: "&6Moja Gildia"
+    bedrock-title: "&6Moja Gildia - {guild_name}"
+    bedrock-content: "&6Informacje o Gildii\n&fNazwa: &e{guild_name}\n&fTag: &e{guild_tag}\n&fDom Gildii: {home_status}"
 
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
@@ -866,6 +1142,10 @@ gui:
     confirm-delete-guild-title: "&4Potwierdź Usunięcie Gildii"
     delete.failed: "&cNie udało się usunąć gildii!"
     delete.success: "&aGildia {guild} została usunięta!"
+    bedrock-title: "&4Potwierdź Usunięcie Gildii"
+    bedrock-content: "&fGildia: &e{guild}\n&fCzy na pewno chcesz usunąć tę gildię?\n&cTa czynność trwale usunie gildię!\n&cWszyscy członkowie zostaną usunięci!\n&cTej czynności nie można cofnąć!"
+    bedrock-confirm: "&4Potwierdź Usunięcie"
+    bedrock-cancel: "&aAnuluj"
 
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
@@ -883,6 +1163,10 @@ gui:
     leave.failed: "&cNie udało się opuścić gildii!"
     leave.leader-cannot-leave: "&cLider gildii nie może opuścić gildii!"
     leave.success: "&aPomyślnie opuściłeś gildię: {guild}"
+    bedrock-title: "&cPotwierdź Opuszczenie Gildii"
+    bedrock-content: "&fGildia: &e{guild}\n&fCzy na pewno chcesz opuścić tę gildię?\n&cTej czynności nie można cofnąć!"
+    bedrock-confirm: "&cPotwierdź Opuszczenie"
+    bedrock-cancel: "&aAnuluj"
 
   # ================================================
   # GuildNameInputGUI (21 keys)
@@ -909,6 +1193,9 @@ gui:
     success: "&aNazwa gildii zmieniona pomyślnie!"
     success-new-name: "&7Nowa nazwa: &f{new_name}"
     title: "&6Zmodyfikuj Nazwę Gildii"
+    bedrock-title: "&6Zmodyfikuj Nazwę Gildii"
+    bedrock-input-label: "&fWprowadź nową nazwę gildii"
+    bedrock-input-placeholder: "2-16 znaków, kody kolorów obsługiwane"
 
   # ================================================
   # GuildTagInputGUI (6 keys)
@@ -920,6 +1207,9 @@ gui:
     confirm-lore: "&7Potwierdź edycję tagu gildii"
     current-tag: "&eBieżący Tag"
     title: "&6Zmodyfikuj Tag Gildii"
+    bedrock-title: "&6Zmodyfikuj Tag Gildii"
+    bedrock-input-label: "&fWprowadź nowy tag gildii"
+    bedrock-input-placeholder: "Maksymalnie {max} znaków"
 
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
@@ -931,12 +1221,18 @@ gui:
     confirm-lore: "&7Potwierdź edycję opisu gildii"
     current-description: "&eBieżący Opis"
     title: "&6Zmodyfikuj Opis Gildii"
+    bedrock-title: "&6Zmodyfikuj Opis Gildii"
+    bedrock-input-label: "&fWprowadź nowy opis gildii"
+    bedrock-input-placeholder: "Maksymalnie {max} znaków"
 
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
   guild-permissions:
     title: "&6Uprawnienia Gildii"
+    bedrock-title: "&6Uprawnienia Gildii"
+    bedrock-content: "&6=== Uprawnienia Lidera ===\n&f• Wszystkie uprawnienia\n&f• Zarządzanie członkami\n&f• Modyfikacja ustawień\n&f• Usunięcie gildii\n\n&e=== Uprawnienia Oficera ===\n&f• Zapraszanie członków\n&f• Wyrzucanie członków\n&f• Obsługa podań\n&f• Ustawianie domu gildii\n\n&7=== Uprawnienia Członka ===\n&f• Przeglądanie informacji o gildii\n&f• Teleportacja do domu gildii\n&f• Składanie podań do innych gildii\n\n&aAktualny status: &fGildia {guild} | System uprawnień działa poprawnie"
+    bedrock-back: "&cWróć"
 
   # ================================================
   # InviteMemberGUI (4 keys)
@@ -946,6 +1242,10 @@ gui:
     click-invite: "Kliknij, aby zaprosić tego gracza"
     join-guild: "Dołącz do gildii"
     title: "&6Zaproś Członków - {guild} - Strona {page}"
+    bedrock-title: "&6Zaproś Członków"
+    bedrock-title-page: "&6Zaproś Członków - Strona {page}"
+    bedrock-no-players: "&fBrak dostępnych graczy online do zaproszenia"
+    bedrock-player-list: "&fGracze Online (Łącznie {count})"
 
   # ================================================
   # KickMemberGUI (5 keys)
@@ -956,6 +1256,10 @@ gui:
     kick.success: "&aPomyślnie wyrzucono &e{player} &a!"
     click-kick: "Kliknij, aby wyrzucić tego członka"
     title: "&6Wyrzuć Członka - Strona {page}"
+    bedrock-title: "&6Wyrzuć Członka"
+    bedrock-title-page: "&6Wyrzuć Członka - Strona {page}"
+    bedrock-no-members: "&fBrak członków do wyrzucenia"
+    bedrock-content: "&fWybierz członka do wyrzucenia"
 
   # ================================================
   # PromoteMemberGUI (5 keys)
@@ -966,6 +1270,10 @@ gui:
     promote.success: "&aAwansowano &e{player} &ana oficera!"
     click-promote: "Kliknij, aby awansować na oficera"
     title: "&6Awansuj Członka - Strona {page}"
+    bedrock-title: "&6Awansuj Członka"
+    bedrock-title-page: "&6Awansuj Członka - Strona {page}"
+    bedrock-no-members: "&fBrak członków do awansowania"
+    bedrock-content: "&fWybierz członka do awansowania na oficera"
 
   # ================================================
   # DemoteMemberGUI (5 keys)
@@ -976,3 +1284,7 @@ gui:
     demote.success: "&aZdegradowano &e{player} &ado zwykłego członka!"
     click-demote: "Kliknij, aby zdegradować do członka"
     title: "&6Zdegraduj Członka - Strona {page}"
+    bedrock-title: "&6Zdegraduj Członka"
+    bedrock-title-page: "&6Zdegraduj Członka - Strona {page}"
+    bedrock-no-members: "&fBrak oficerów do zdegradowania"
+    bedrock-content: "&fWybierz oficera do zdegradowania do członka"

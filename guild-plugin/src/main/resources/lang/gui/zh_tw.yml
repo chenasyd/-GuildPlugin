@@ -84,6 +84,9 @@ gui:
     member-role.leader: "會長"
     member-role.member: "成員"
     member-role.officer: "官員"
+    bedrock-prev-page: "&e上一頁"
+    bedrock-next-page: "&e下一頁"
+    bedrock-back: "&c返回"
 
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
@@ -111,6 +114,14 @@ gui:
     admin-gui-statistics-total-balance: "&e總資金: &f{balance}"
     admin-gui-statistics-total-guilds: "&e總公會數量: &f{count}"
     admin-gui-statistics-total-members: "&e總成員數量: &f{count}"
+    bedrock-title: "&4公會管理"
+    bedrock-content: "&f選擇管理功能"
+    bedrock-guild-list: "&e公會列表管理"
+    bedrock-economy: "&e經濟管理"
+    bedrock-relations: "&e關係管理"
+    bedrock-statistics: "&e統計資訊"
+    bedrock-settings: "&e系統設定"
+    bedrock-back: "&c返回"
 
   # ================================================
   # ApplicationManagementGUI (29 keys)
@@ -140,11 +151,31 @@ gui:
     application-management-pending-applications-lore-1: "&7查看待處理的申請"
     application-management-pending-applications-name: "&e待處理申請"
     application-management-title: "&6申請管理"
-    no-history: "&a沒有申請歷史"
     no-history.desc: "&7當前沒有申請歷史記錄"
     apply.already-applied: "&c您已經申請過這個公會了！"
     apply.failed: "&c申請提交失敗！"
     apply.success: "&a申請已提交！"
+    bedrock-title: "&6申請管理"
+    bedrock-empty-history: "&f沒有申請歷史"
+    bedrock-empty-pending: "&f沒有待處理的申請"
+    bedrock-pending-btn: "&e待處理申請"
+    bedrock-history-btn: "&e申請歷史"
+    bedrock-back: "&c返回"
+    bedrock-mode-history: "申請歷史"
+    bedrock-mode-pending: "待處理申請"
+    bedrock-title-page: "&6申請管理 - {mode} 第{page}頁"
+    bedrock-total: "&f共 {count} 條記錄"
+    bedrock-prev-page: "&e上一頁"
+    bedrock-next-page: "&e下一頁"
+    bedrock-applicant: "&f申請者: {name}"
+    bedrock-status: "&f狀態: {status}"
+    bedrock-message: "&f訊息: {msg}"
+    bedrock-no-message: "無"
+    bedrock-actions-title: "&6申請處理 - {name}"
+    bedrock-actions-content: "&f申請者: {name}\n&f訊息: {msg}"
+    bedrock-accept: "&a接受申請"
+    bedrock-reject: "&c拒絕申請"
+    bedrock-back-to-list: "&e返回列表"
 
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
@@ -172,6 +203,7 @@ gui:
     member-management.lore.2: "&7邀請、踢出、權限管理"
     member-management.name: "&e成員管理"
     title: "&6公會系統"
+    bedrock-content: "&f選擇功能："
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
@@ -288,6 +320,23 @@ gui:
     system-settings-save-lore-1: "&7儲存目前所有設定"
     system-settings-save-lore-2: "&7應用到設定檔"
     system-settings-title: "&4系統設定"
+    bedrock-title: "&4系統設定"
+    bedrock-content: "&f點擊切換開關狀態"
+    bedrock-debug: "&e除錯資訊: {status}"
+    bedrock-auto-save: "&e自動儲存: {status}"
+    bedrock-economy: "&e經濟系統: {status}"
+    bedrock-relations: "&e關係系統: {status}"
+    bedrock-level: "&e等級系統: {status}"
+    bedrock-applications: "&e申請系統: {status}"
+    bedrock-invites: "&e邀請系統: {status}"
+    bedrock-guild-home: "&e公會家: {status}"
+    bedrock-on: "&a已啟用"
+    bedrock-off: "&c已禁用"
+    bedrock-reload: "&a重載配置"
+    bedrock-database: "&b資料庫維護"
+    bedrock-backup: "&6備份資料"
+    bedrock-save: "&a儲存設定"
+    bedrock-back: "&c返回"
 
   # ================================================
   # CreateGuildGUI (36 keys)
@@ -329,6 +378,13 @@ gui:
     create-guild-tag-input-lore-2: "&7長度: 最多6字元"
     create-guild-tag-input-lore-3: "&7可選"
     create-guild-tag-input-name: "&e公會標籤"
+    bedrock-title: "&6建立公會"
+    bedrock-name-label: "&f公會名稱（3-20字元）"
+    bedrock-name-placeholder: "輸入公會名稱"
+    bedrock-tag-label: "&f公會標籤（最多6字元，可選）"
+    bedrock-tag-placeholder: "輸入公會標籤"
+    bedrock-desc-label: "&f公會描述（最多100字元，可選）"
+    bedrock-desc-placeholder: "輸入公會描述"
 
   # ================================================
   # GuildDetailGUI (38 keys)
@@ -372,6 +428,31 @@ gui:
     transfer-self: "&c不能將會長轉移給自己"
     transfer-success: "&a成功將會長轉移給 &e{name}"
     unfreeze-guild: "解凍公會"
+    bedrock-title: "&6公會詳情 - {guild_name}"
+    bedrock-level: "&f等級: &e{level}"
+    bedrock-balance: " &f資金: &a{balance}"
+    bedrock-leader: "&f會長: &c{leader}"
+    bedrock-members: " &f成員: &e{current}/{max}"
+    bedrock-status: "&f狀態: {status}"
+    bedrock-status-frozen: "&c已凍結"
+    bedrock-status-normal: "&a正常"
+    bedrock-description: "&f描述: &7{description}"
+    bedrock-transfer-hint: "&e>>> 轉移模式: 點擊成員來轉移 <<<"
+    bedrock-no-tag: "無"
+    bedrock-unfreeze: "&a解凍公會"
+    bedrock-freeze: "&c凍結公會"
+    bedrock-delete: "&4刪除公會"
+    bedrock-cancel-transfer: "&e取消轉移模式"
+    bedrock-transfer: "&c轉移會長"
+    bedrock-prev-page: "&e上一頁"
+    bedrock-next-page: "&e下一頁"
+    bedrock-back: "&c返回"
+    bedrock-transfer-self: "&c不能將會長轉移給自己"
+    bedrock-transfer-success: "&a成功將會長轉移給 &e{name}"
+    bedrock-transfer-failed: "&c會長轉移失敗！"
+    bedrock-operation-failed: "&c操作失敗！"
+    bedrock-transfer-mode-active: "&e點擊成員來轉移會長職位"
+    bedrock-transfer-mode-cancelled: "&7已取消會長轉移"
 
   # ================================================
   # GuildInfoGUI (21 keys)
@@ -398,6 +479,10 @@ gui:
     status-normal: "正常"
     tag: "標籤"
     title: "&6公會資訊"
+    bedrock-title: "&6公會資訊"
+    bedrock-guild-funds: "&a公會資金"
+    bedrock-back-to-main: "&c返回主選單"
+    bedrock-status-label: "狀態"
 
   # ================================================
   # GuildListManagementGUI (2 keys)
@@ -405,6 +490,24 @@ gui:
   guild-list-management:
     guild-list-management-title: "&4公會列表管理"
     gui-refresh: "&a重新整理列表"
+    bedrock-title: "&4公會列表管理"
+    bedrock-page-info: "&f第{page}/{total}頁 | 共 {count} 個公會"
+    bedrock-refresh: "&a重新整理列表"
+    bedrock-prev-page: "&e上一頁"
+    bedrock-next-page: "&e下一頁"
+    bedrock-back: "&c返回"
+    bedrock-status-frozen: "&c已凍結"
+    bedrock-status-normal: "&a正常"
+    bedrock-actions-title: "&6公會操作 - {guild_name}"
+    bedrock-leader: "&f會長: &e{leader}"
+    bedrock-level: "&f等級: &e{level}"
+    bedrock-balance: "&f資金: &a{balance}"
+    bedrock-status: "&f狀態: {status}"
+    bedrock-view-detail: "&e查看詳情"
+    bedrock-delete: "&c刪除公會"
+    bedrock-unfreeze: "&a解凍公會"
+    bedrock-freeze: "&c凍結公會"
+    bedrock-back-list: "&c返回列表"
 
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
@@ -449,6 +552,22 @@ gui:
     guild-list-search-lore-2: "&7右鍵: 清除搜尋"
     guild-list-search-name: "&e搜尋公會"
     guild-list-title: "&6公會列表"
+    bedrock-title: "&6公會列表"
+    bedrock-no-guilds: "&c伺服器中還沒有公會"
+    bedrock-no-results: "&c沒有找到符合的公會"
+    bedrock-search: "&e搜尋公會"
+    bedrock-back-main: "&c返回主選單"
+    bedrock-page-info: "&f第{page}/{total}頁"
+    bedrock-search-info: "&f搜尋: &e{query}"
+    bedrock-prev-page: "&a上一頁"
+    bedrock-next-page: "&a下一頁"
+    bedrock-search-title: "&6搜尋公會"
+    bedrock-search-input: "&f輸入搜尋關鍵字"
+    bedrock-search-placeholder: "留空顯示全部"
+    bedrock-select-action: "&f選擇操作："
+    bedrock-view-detail: "&e查看詳情"
+    bedrock-apply-join: "&a申請加入"
+    bedrock-back-list: "&c返回列表"
 
   # ================================================
   # GuildFilterGUI (19 keys)
@@ -473,6 +592,35 @@ gui:
     sort.lore-full: "僅滿員"
     sort.name: "&e人數排序"
     title: "&6公會篩選"
+    bedrock-title: "&6公會篩選"
+    bedrock-no-guilds: "&f伺服器中還沒有公會"
+    bedrock-back: "&c返回"
+    bedrock-no-results: "&f沒有符合篩選條件的公會"
+    bedrock-filter-info: "&f等級: {min}-{max} | 排序: {sort}"
+    bedrock-adjust-filter: "&e調整篩選"
+    bedrock-sort-desc: "人數降序"
+    bedrock-sort-asc: "人數升序"
+    bedrock-sort-full: "僅滿員"
+    bedrock-title-page: "&6公會篩選 - 第{page}頁"
+    bedrock-total-results: "&f共 {count} 條結果"
+    bedrock-prev-page: "&e上一頁"
+    bedrock-next-page: "&e下一頁"
+    bedrock-settings-title: "&6篩選設定"
+    bedrock-min-level: "&f最低等級: {level}"
+    bedrock-max-level: "&f最高等級: {level}"
+    bedrock-sort: "&f排序: {sort}"
+    bedrock-min-level-up: "&a最低等級 +1"
+    bedrock-min-level-down: "&c最低等級 -1"
+    bedrock-max-level-up: "&a最高等級 +1"
+    bedrock-max-level-down: "&c最高等級 -1"
+    bedrock-switch-sort: "&e切換排序模式"
+    bedrock-back-results: "&e返回結果"
+    bedrock-actions-title: "&6公會操作 - {guild_name}"
+    bedrock-level: "&f等級: {level}"
+    bedrock-leader: "&f會長: {leader}"
+    bedrock-view-detail: "&e查看詳情"
+    bedrock-apply-join: "&a申請加入"
+    bedrock-back-filter: "&e返回篩選"
 
   # ================================================
   # GuildSettingsGUI (42 keys)
@@ -520,6 +668,13 @@ gui:
     home.success: "&a已傳送到公會家！"
     sethome.failed: "&c設定公會家失敗！"
     sethome.success: "&a公會家設定成功！"
+    bedrock-content: "&6公會概覽\n&f名稱: &e{guild_name}\n&f標籤: &e{guild_tag}\n&f描述: {guild_desc}\n&f公會家: {home_status}"
+    bedrock-change-name: "&e修改名稱"
+    bedrock-change-description: "&e修改描述"
+    bedrock-change-tag: "&e修改標籤"
+    bedrock-kick-member: "&c踢出成員"
+    bedrock-promote-demote: "&e提升/降級"
+    bedrock-back-to-main: "&f返回主選單"
 
   # ================================================
   # GuildFundsGUI (23 keys)
@@ -548,6 +703,15 @@ gui:
     total-deposit: "總存款"
     total-pages: "&8總頁數: {total}"
     total-players: "&8人數: {count}"
+    bedrock-title: "&6公會資金 - {guild}"
+    bedrock-no-data: "&c暫無存款記錄"
+    bedrock-back: "&c返回"
+    bedrock-page-info: "&f第{page}/{total}頁\n&f人數: {count}"
+    bedrock-online: "&a線上"
+    bedrock-offline: "&f離線"
+    bedrock-prev-page: "&a上一頁"
+    bedrock-next-page: "&a下一頁"
+    bedrock-refresh: "&a重新整理"
 
   # ================================================
   # EconomyManagementGUI (23 keys)
@@ -576,6 +740,23 @@ gui:
     set-balance-dev: "&e設定資金功能開發中..."
     set-prompt: "&e請輸入要設定的資金數額（在聊天框輸入數字，輸入 cancel 取消）:"
     economy-management-title: "&e經濟管理"
+    bedrock-title: "&e經濟管理"
+    bedrock-page-info: "&f第{current}/{total}頁 | 共 {count} 個公會"
+    bedrock-refresh: "&a重新整理列表"
+    bedrock-prev-page: "&e上一頁"
+    bedrock-next-page: "&e下一頁"
+    bedrock-back: "&c返回"
+    bedrock-actions-title: "&e經濟管理 - {guild}"
+    bedrock-actions-content: "&f目前資金: &a{balance}\n&f會長: &e{leader}\n&f等級: &e{level}"
+    bedrock-set-funds: "&e設定資金"
+    bedrock-add-funds: "&a增加資金"
+    bedrock-clear-funds: "&c清空資金"
+    bedrock-back-to-list: "&c返回列表"
+    bedrock-set-title: "&e設定資金"
+    bedrock-add-title: "&a增加資金"
+    bedrock-input-label: "&f輸入金額"
+    bedrock-invalid-amount: "&c金額必須大於0！"
+    bedrock-invalid-number: "&c無效的數字！"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -606,6 +787,14 @@ gui:
     funds.change.set-contrib-increase: "{player}設定資金為{new}(+{diff})"
     funds.change.set-log-decrease: "{player}將{guild}資金設定為{new}"
     funds.change.set-log-increase: "{player}將{guild}資金設定為{new}"
+    bedrock-title: "&6確認資金變更"
+    bedrock-guild: "&f公會: &e{guild_name}"
+    bedrock-operation: "&f操作: {operation}"
+    bedrock-current-balance: "&f目前資金: &6{balance}"
+    bedrock-amount: "&f金額: &f{amount}"
+    bedrock-new-balance: "&f新資金: &a{balance}"
+    bedrock-confirm: "&a確認變更"
+    bedrock-cancel: "&c取消"
 
   # ================================================
   # GuildRelationsGUI (49 keys)
@@ -660,6 +849,24 @@ gui:
     relations.type-selected: "&a已選擇關係類型: {type}"
     relations.type-truce.description: "停戰協議，暫時和平"
     relations.type-war.description: "開戰狀態，全面戰爭"
+    bedrock-title: "&6公會關係"
+    bedrock-title-page: "&6公會關係 - 第{page}頁"
+    bedrock-empty: "&f目前沒有公會關係"
+    bedrock-total: "&f共 {count} 個關係"
+    bedrock-create-relation: "&a建立關係"
+    bedrock-prev-page: "&e上一頁"
+    bedrock-next-page: "&e下一頁"
+    bedrock-back: "&c返回"
+    bedrock-actions-title: "&6關係操作 - {guild}"
+    bedrock-actions-content: "&f類型: {type}\n&f狀態: {status}"
+    bedrock-cancel-relation: "&c取消關係"
+    bedrock-accept-relation: "&a接受關係"
+    bedrock-reject-relation: "&c拒絕關係"
+    bedrock-end-truce: "&e結束停戰"
+    bedrock-propose-truce: "&e提議停戰"
+    bedrock-delete-relation: "&c刪除關係"
+    bedrock-back-to-list: "&e返回列表"
+    bedrock-truce-ended: "&a與 {guild} 的停戰已結束！"
 
   # ================================================
   # CreateRelationGUI (6 keys)
@@ -671,6 +878,22 @@ gui:
     confirm-lore-2: "&8需要先選擇關係類型和目標公會"
     current-selection: "&e目前選擇"
     title: "&6建立公會關係"
+    bedrock-type-title: "&6建立關係 - 選擇類型"
+    bedrock-type-content: "&f請選擇關係類型："
+    bedrock-back: "&c返回"
+    bedrock-target-title: "&6建立關係 - 選擇目標"
+    bedrock-target-empty: "&f沒有可用的目標公會"
+    bedrock-target-title-page: "&6建立關係 - 選擇目標 第{page}頁"
+    bedrock-target-content: "&f類型: {type}\n&f選擇目標公會："
+    bedrock-prev-page: "&e上一頁"
+    bedrock-next-page: "&e下一頁"
+    bedrock-confirm-title: "&6確認建立關係"
+    bedrock-confirm-content: "&f類型: {type}\n&f目標: {target}"
+    bedrock-confirm-create: "&a確認建立"
+    bedrock-cancel: "&c取消"
+    bedrock-already-exists: "&c與 {guild} 的關係已存在！"
+    bedrock-create-success: "&a已向 {guild} 發送{type}關係請求！"
+    bedrock-create-failed: "&c關係建立失敗！"
 
   # ================================================
   # RelationManagementGUI (40 keys)
@@ -716,6 +939,25 @@ gui:
     relation-management-back-desc: "返回管理員選單"
     relation-management-refresh-desc: "重新載入關係資料"
     relation-management-title: "&4關係管理 - 管理員"
+    bedrock-title: "&4關係管理"
+    bedrock-empty: "&c暫無關係資料"
+    bedrock-back: "&c返回"
+    bedrock-page-info: "&f第{current}/{total}頁 | 共 {count} 個關係"
+    bedrock-refresh: "&a重新整理列表"
+    bedrock-prev-page: "&e上一頁"
+    bedrock-next-page: "&e下一頁"
+    bedrock-actions-title: "&6關係操作"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&f類型: {type}\n&f狀態: {status}\n&f發起人: {initiator}"
+    bedrock-delete-relation: "&c刪除關係"
+    bedrock-view-details: "&e查看詳情"
+    bedrock-back-to-list: "&c返回列表"
+    bedrock-confirm-title: "&c確認刪除"
+    bedrock-confirm-content: "&f確定要刪除關係嗎：\n&e{guild1} ↔ {guild2}&f？"
+    bedrock-confirm-delete: "&c確認刪除"
+    bedrock-cancel: "&f取消"
+    bedrock-delete-success: "&a已刪除關係: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&c刪除關係失敗！"
+    bedrock-no-permission: "&c您沒有管理員權限！"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -743,6 +985,13 @@ gui:
     total-records: "總記錄: {count}"
     type: "類型"
     wait-for-logs: "請等待公會活動產生日誌"
+    bedrock-title: "&6公會日誌 - {guild}"
+    bedrock-no-data: "&c暫無日誌記錄"
+    bedrock-back: "&c返回"
+    bedrock-page-info: "&f第{page}/{total}頁\n&f總記錄: {count}"
+    bedrock-prev-page: "&a上一頁"
+    bedrock-next-page: "&a下一頁"
+    bedrock-refresh: "&a重新整理"
 
   # ================================================
   # MemberManagementGUI (81 keys)
@@ -829,6 +1078,31 @@ gui:
     member-mgmt.role.leader-perms: "所有權限"
     member-mgmt.role.member-perms: "基礎權限"
     member-mgmt.role.officer-perms: "邀請、踢出"
+    bedrock-title: "&6成員管理"
+    bedrock-title-page: "&6成員管理 - 第{page}頁"
+    bedrock-no-members: "&f公會中還沒有成員"
+    bedrock-member-list: "&f成員列表（共 {count} 人）"
+    bedrock-invite: "&a邀請成員"
+    bedrock-actions-title: "&6成員操作 - {member}"
+    bedrock-role-label: "&f角色: {role}"
+    bedrock-role-leader: "&c會長"
+    bedrock-role-officer: "&6官員"
+    bedrock-role-member: "&f成員"
+    bedrock-view-details: "&e查看詳情"
+    bedrock-kick: "&c踢出成員"
+    bedrock-promote-demote: "&6提升/降級"
+    bedrock-back-to-list: "&c返回列表"
+    member-details.bedrock-title: "&6成員詳情 - {member}"
+    member-details.bedrock-player: "&f玩家: {name}"
+    member-details.bedrock-role: "&f角色: {role}"
+    member-details.bedrock-join-time: "&f加入時間: {time}"
+    member-details.bedrock-online: "&f線上: {status}"
+    member-details.bedrock-online-yes: "&a是"
+    member-details.bedrock-online-no: "&c否"
+    member-details.bedrock-kick: "&c踢出成員"
+    member-details.bedrock-promote-demote: "&6提升/降級"
+    member-details.bedrock-send-message: "&e發送訊息"
+    member-details.bedrock-back: "&c返回"
 
   # ================================================
   # MemberGuildGUI (13 keys)
@@ -847,6 +1121,8 @@ gui:
     no-name: "無名稱"
     no-tag: "無標籤"
     title: "&6我的公會"
+    bedrock-title: "&6我的公會 - {guild_name}"
+    bedrock-content: "&6公會資訊\n&f名稱: &e{guild_name}\n&f標籤: &e{guild_tag}\n&f公會家: {home_status}"
 
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
@@ -866,6 +1142,10 @@ gui:
     confirm-delete-guild-title: "&4確認刪除公會"
     delete.failed: "&c刪除公會失敗！"
     delete.success: "&a公會 {guild} 已被刪除！"
+    bedrock-title: "&4確認刪除公會"
+    bedrock-content: "&f公會: &e{guild}\n&f你確定要刪除這個公會嗎？\n&c此操作將永久刪除公會！\n&c所有成員將被移除！\n&c此操作不可撤銷！"
+    bedrock-confirm: "&4確認刪除"
+    bedrock-cancel: "&a取消"
 
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
@@ -883,6 +1163,10 @@ gui:
     leave.failed: "&c離開公會失敗！"
     leave.leader-cannot-leave: "&c公會會長不能離開公會！"
     leave.success: "&a您已成功離開公會: {guild}"
+    bedrock-title: "&c確認離開公會"
+    bedrock-content: "&f公會: &e{guild}\n&f你確定要離開這個公會嗎？\n&c此操作不可撤銷！"
+    bedrock-confirm: "&c確認離開"
+    bedrock-cancel: "&a取消"
 
   # ================================================
   # GuildNameInputGUI (21 keys)
@@ -909,6 +1193,9 @@ gui:
     success: "&a公會名稱修改成功！"
     success-new-name: "&8新名稱: &f{new_name}"
     title: "&6修改公會名稱"
+    bedrock-title: "&6修改公會名稱"
+    bedrock-input-label: "&f輸入新的公會名稱"
+    bedrock-input-placeholder: "2-16字元，支援顏色字元"
 
   # ================================================
   # GuildTagInputGUI (6 keys)
@@ -920,6 +1207,9 @@ gui:
     confirm-lore: "&8確認修改公會標籤"
     current-tag: "&e目前標籤"
     title: "&6修改公會標籤"
+    bedrock-title: "&6修改公會標籤"
+    bedrock-input-label: "&f輸入新的公會標籤"
+    bedrock-input-placeholder: "最多 {max} 字元"
 
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
@@ -931,12 +1221,18 @@ gui:
     confirm-lore: "&8確認修改公會描述"
     current-description: "&e目前描述"
     title: "&6修改公會描述"
+    bedrock-title: "&6修改公會描述"
+    bedrock-input-label: "&f輸入新的公會描述"
+    bedrock-input-placeholder: "最多 {max} 字元"
 
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
   guild-permissions:
     title: "&6公會權限設定"
+    bedrock-title: "&6公會權限設定"
+    bedrock-content: "&6=== 會長權限 ===\n&f• 所有權限\n&f• 成員管理\n&f• 修改設定\n&f• 刪除公會\n\n&e=== 官員權限 ===\n&f• 邀請成員\n&f• 踢出成員\n&f• 處理申請\n&f• 設定公會家\n\n&7=== 成員權限 ===\n&f• 查看公會資訊\n&f• 傳送到公會家\n&f• 申請加入其他公會\n\n&a目前狀態: &f公會 {guild} | 權限系統正常運作中"
+    bedrock-back: "&c返回"
 
   # ================================================
   # InviteMemberGUI (4 keys)
@@ -946,6 +1242,10 @@ gui:
     click-invite: "點擊邀請該玩家"
     join-guild: "加入公會"
     title: "&6邀請成員 - {guild} - 第{page}頁"
+    bedrock-title: "&6邀請成員"
+    bedrock-title-page: "&6邀請成員 - 第{page}頁"
+    bedrock-no-players: "&f沒有可邀請的線上玩家"
+    bedrock-player-list: "&f線上玩家（共 {count} 人）"
 
   # ================================================
   # KickMemberGUI (5 keys)
@@ -956,6 +1256,10 @@ gui:
     kick.success: "&a已踢出成員 &e{player} &a！"
     click-kick: "點擊踢出該成員"
     title: "&6踢出成員 - 第{page}頁"
+    bedrock-title: "&6踢出成員"
+    bedrock-title-page: "&6踢出成員 - 第{page}頁"
+    bedrock-no-members: "&f沒有可踢出的成員"
+    bedrock-content: "&f選擇要踢出的成員"
 
   # ================================================
   # PromoteMemberGUI (5 keys)
@@ -966,6 +1270,10 @@ gui:
     promote.success: "&a已提升 &e{player} &a為官員！"
     click-promote: "點擊提升為官員"
     title: "&6提升成員 - 第{page}頁"
+    bedrock-title: "&6提升成員"
+    bedrock-title-page: "&6提升成員 - 第{page}頁"
+    bedrock-no-members: "&f沒有可提升的成員"
+    bedrock-content: "&f選擇要提升為官員的成員"
 
   # ================================================
   # DemoteMemberGUI (5 keys)
@@ -976,3 +1284,7 @@ gui:
     demote.success: "&a已降級 &e{player} &a為普通成員！"
     click-demote: "點擊降級為成員"
     title: "&6降級成員 - 第{page}頁"
+    bedrock-title: "&6降級成員"
+    bedrock-title-page: "&6降級成員 - 第{page}頁"
+    bedrock-no-members: "&f沒有可降級的官員"
+    bedrock-content: "&f選擇要降級為成員的官員"

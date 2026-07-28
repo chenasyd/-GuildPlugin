@@ -84,6 +84,9 @@ gui:
     member-role.leader: "قائد"
     member-role.member: "عضو"
     member-role.officer: "ضابط"
+    bedrock-prev-page: "&eالصفحة السابقة"
+    bedrock-next-page: "&eالصفحة التالية"
+    bedrock-back: "&cرجوع"
 
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
@@ -111,6 +114,14 @@ gui:
     admin-gui-statistics-total-balance: "&eإجمالي الأموال: &f{balance}"
     admin-gui-statistics-total-guilds: "&eإجمالي عدد النقابات: &f{count}"
     admin-gui-statistics-total-members: "&eإجمالي عدد الأعضاء: &f{count}"
+    bedrock-title: "&4إدارة النقابات"
+    bedrock-content: "&fاختر وظيفة الإدارة"
+    bedrock-guild-list: "&eإدارة قائمة النقابات"
+    bedrock-economy: "&eالإدارة الاقتصادية"
+    bedrock-relations: "&eإدارة العلاقات"
+    bedrock-statistics: "&eالمعلومات الإحصائية"
+    bedrock-settings: "&eإعدادات النظام"
+    bedrock-back: "&cرجوع"
 
   # ================================================
   # ApplicationManagementGUI (29 keys)
@@ -140,11 +151,31 @@ gui:
     application-management-pending-applications-lore-1: "&7عرض الطلبات المعلقة"
     application-management-pending-applications-name: "&eالطلبات المعلقة"
     application-management-title: "&6إدارة الطلبات"
-    no-history: "&aلا يوجد سجل طلبات"
     no-history.desc: "&7لا يوجد سجل طلبات حالياً"
     apply.already-applied: "&cلقد تقدمت بطلب لهذه النقابة بالفعل!"
     apply.failed: "&cفشل تقديم الطلب!"
     apply.success: "&aتم تقديم الطلب!"
+    bedrock-title: "&6إدارة الطلبات"
+    bedrock-empty-history: "&fلا يوجد سجل طلبات"
+    bedrock-empty-pending: "&fلا توجد طلبات معلقة"
+    bedrock-pending-btn: "&eالطلبات المعلقة"
+    bedrock-history-btn: "&eسجل الطلبات"
+    bedrock-back: "&cرجوع"
+    bedrock-mode-history: "سجل الطلبات"
+    bedrock-mode-pending: "الطلبات المعلقة"
+    bedrock-title-page: "&6إدارة الطلبات - {mode} الصفحة {page}"
+    bedrock-total: "&fإجمالي {count} سجل"
+    bedrock-prev-page: "&eالصفحة السابقة"
+    bedrock-next-page: "&eالصفحة التالية"
+    bedrock-applicant: "&fمقدم الطلب: {name}"
+    bedrock-status: "&fالحالة: {status}"
+    bedrock-message: "&fالرسالة: {msg}"
+    bedrock-no-message: "لا يوجد"
+    bedrock-actions-title: "&6معالجة الطلب - {name}"
+    bedrock-actions-content: "&fمقدم الطلب: {name}\n&fالرسالة: {msg}"
+    bedrock-accept: "&aقبول الطلب"
+    bedrock-reject: "&cرفض الطلب"
+    bedrock-back-to-list: "&eرجوع إلى القائمة"
 
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
@@ -172,6 +203,7 @@ gui:
     member-management.lore.2: "&7دعوة، طرد، إدارة الصلاحيات"
     member-management.name: "&eإدارة الأعضاء"
     title: "&6نظام النقابات"
+    bedrock-content: "&fاختر وظيفة:"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
@@ -288,6 +320,23 @@ gui:
     system-settings-save-lore-1: "&7حفظ جميع الإعدادات الحالية"
     system-settings-save-lore-2: "&7تطبيقها على ملفات التكوين"
     system-settings-title: "&4إعدادات النظام"
+    bedrock-title: "&4إعدادات النظام"
+    bedrock-content: "&fانقر لتبديل حالة المفتاح"
+    bedrock-debug: "&eمعلومات التصحيح: {status}"
+    bedrock-auto-save: "&eالحفظ التلقائي: {status}"
+    bedrock-economy: "&eالنظام الاقتصادي: {status}"
+    bedrock-relations: "&eنظام العلاقات: {status}"
+    bedrock-level: "&eنظام المستوى: {status}"
+    bedrock-applications: "&eنظام التقديم: {status}"
+    bedrock-invites: "&eنظام الدعوات: {status}"
+    bedrock-guild-home: "&eمنزل النقابة: {status}"
+    bedrock-on: "&aمفعل"
+    bedrock-off: "&cمعطل"
+    bedrock-reload: "&aإعادة تحميل التكوين"
+    bedrock-database: "&bصيانة قاعدة البيانات"
+    bedrock-backup: "&6نسخ احتياطي للبيانات"
+    bedrock-save: "&aحفظ الإعدادات"
+    bedrock-back: "&cرجوع"
 
   # ================================================
   # CreateGuildGUI (36 keys)
@@ -329,6 +378,13 @@ gui:
     create-guild-tag-input-lore-2: "&7الطول: حد أقصى 6 حروف"
     create-guild-tag-input-lore-3: "&7اختياري"
     create-guild-tag-input-name: "&eوسم النقابة"
+    bedrock-title: "&6إنشاء نقابة"
+    bedrock-name-label: "&fاسم النقابة (3-20 حرف)"
+    bedrock-name-placeholder: "أدخل اسم النقابة"
+    bedrock-tag-label: "&fوسم النقابة (حد أقصى 6 حروف، اختياري)"
+    bedrock-tag-placeholder: "أدخل وسم النقابة"
+    bedrock-desc-label: "&fوصف النقابة (حد أقصى 100 حرف، اختياري)"
+    bedrock-desc-placeholder: "أدخل وصف النقابة"
 
   # ================================================
   # GuildDetailGUI (38 keys)
@@ -372,6 +428,31 @@ gui:
     transfer-self: "&cلا يمكن نقل القيادة إلى نفسك"
     transfer-success: "&aتم نقل القيادة بنجاح إلى &e{name}"
     unfreeze-guild: "إلغاء تجميد النقابة"
+    bedrock-title: "&6تفاصيل النقابة - {guild_name}"
+    bedrock-level: "&fالمستوى: &e{level}"
+    bedrock-balance: " &fالأموال: &a{balance}"
+    bedrock-leader: "&fالقائد: &c{leader}"
+    bedrock-members: " &fالأعضاء: &e{current}/{max}"
+    bedrock-status: "&fالحالة: {status}"
+    bedrock-status-frozen: "&cمجمد"
+    bedrock-status-normal: "&aعادي"
+    bedrock-description: "&fالوصف: &7{description}"
+    bedrock-transfer-hint: "&e>>> وضع النقل: انقر على العضو لنقل القيادة <<<"
+    bedrock-no-tag: "لا يوجد"
+    bedrock-unfreeze: "&aإلغاء تجميد النقابة"
+    bedrock-freeze: "&cتجميد النقابة"
+    bedrock-delete: "&4حذف النقابة"
+    bedrock-cancel-transfer: "&eإلغاء وضع النقل"
+    bedrock-transfer: "&cنقل القيادة"
+    bedrock-prev-page: "&eالصفحة السابقة"
+    bedrock-next-page: "&eالصفحة التالية"
+    bedrock-back: "&cرجوع"
+    bedrock-transfer-self: "&cلا يمكن نقل القيادة إلى نفسك"
+    bedrock-transfer-success: "&aتم نقل القيادة بنجاح إلى &e{name}"
+    bedrock-transfer-failed: "&cفشل نقل القيادة!"
+    bedrock-operation-failed: "&cفشل الإجراء!"
+    bedrock-transfer-mode-active: "&eانقر على العضو لنقل القيادة"
+    bedrock-transfer-mode-cancelled: "&7تم إلغاء نقل القيادة"
 
   # ================================================
   # GuildInfoGUI (21 keys)
@@ -398,6 +479,10 @@ gui:
     status-normal: "عادي"
     tag: "الوسم"
     title: "&6معلومات النقابة"
+    bedrock-title: "&6معلومات النقابة"
+    bedrock-guild-funds: "&aأموال النقابة"
+    bedrock-back-to-main: "&cرجوع إلى القائمة الرئيسية"
+    bedrock-status-label: "الحالة"
 
   # ================================================
   # GuildListManagementGUI (2 keys)
@@ -405,6 +490,24 @@ gui:
   guild-list-management:
     guild-list-management-title: "&4إدارة قائمة النقابات"
     gui-refresh: "&aتحديث القائمة"
+    bedrock-title: "&4إدارة قائمة النقابات"
+    bedrock-page-info: "&fالصفحة {page}/{total} | إجمالي {count} نقابة"
+    bedrock-refresh: "&aتحديث القائمة"
+    bedrock-prev-page: "&eالصفحة السابقة"
+    bedrock-next-page: "&eالصفحة التالية"
+    bedrock-back: "&cرجوع"
+    bedrock-status-frozen: "&cمجمد"
+    bedrock-status-normal: "&aعادي"
+    bedrock-actions-title: "&6إجراءات النقابة - {guild_name}"
+    bedrock-leader: "&fالقائد: &e{leader}"
+    bedrock-level: "&fالمستوى: &e{level}"
+    bedrock-balance: "&fالأموال: &a{balance}"
+    bedrock-status: "&fالحالة: {status}"
+    bedrock-view-detail: "&eعرض التفاصيل"
+    bedrock-delete: "&cحذف النقابة"
+    bedrock-unfreeze: "&aإلغاء تجميد النقابة"
+    bedrock-freeze: "&cتجميد النقابة"
+    bedrock-back-list: "&cرجوع إلى القائمة"
 
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
@@ -449,6 +552,22 @@ gui:
     guild-list-search-lore-2: "&7زر أيمن: مسح البحث"
     guild-list-search-name: "&eالبحث عن نقابة"
     guild-list-title: "&6قائمة النقابات"
+    bedrock-title: "&6قائمة النقابات"
+    bedrock-no-guilds: "&cلا توجد نقابات في الخادم بعد"
+    bedrock-no-results: "&cلم يتم العثور على نقابات مطابقة"
+    bedrock-search: "&eالبحث عن نقابة"
+    bedrock-back-main: "&cرجوع إلى القائمة الرئيسية"
+    bedrock-page-info: "&fالصفحة {page}/{total}"
+    bedrock-search-info: "&fالبحث: &e{query}"
+    bedrock-prev-page: "&aالصفحة السابقة"
+    bedrock-next-page: "&aالصفحة التالية"
+    bedrock-search-title: "&6البحث عن نقابة"
+    bedrock-search-input: "&fأدخل كلمة البحث"
+    bedrock-search-placeholder: "اتركه فارغاً لعرض الكل"
+    bedrock-select-action: "&fاختر إجراء:"
+    bedrock-view-detail: "&eعرض التفاصيل"
+    bedrock-apply-join: "&aتقديم طلب انضمام"
+    bedrock-back-list: "&cرجوع إلى القائمة"
 
   # ================================================
   # GuildFilterGUI (19 keys)
@@ -473,6 +592,35 @@ gui:
     sort.lore-full: "ممتلئ فقط"
     sort.name: "&eترتيب حسب العدد"
     title: "&6تصفية النقابات"
+    bedrock-title: "&6تصفية النقابات"
+    bedrock-no-guilds: "&fلا توجد نقابات في الخادم بعد"
+    bedrock-back: "&cرجوع"
+    bedrock-no-results: "&fلا توجد نقابات تطابق التصفية"
+    bedrock-filter-info: "&fالمستوى: {min}-{max} | الترتيب: {sort}"
+    bedrock-adjust-filter: "&eضبط التصفية"
+    bedrock-sort-desc: "الأعضاء تنازلي"
+    bedrock-sort-asc: "الأعضاء تصاعدي"
+    bedrock-sort-full: "ممتلئ فقط"
+    bedrock-title-page: "&6تصفية النقابات - الصفحة {page}"
+    bedrock-total-results: "&fإجمالي {count} نتيجة"
+    bedrock-prev-page: "&eالصفحة السابقة"
+    bedrock-next-page: "&eالصفحة التالية"
+    bedrock-settings-title: "&6إعدادات التصفية"
+    bedrock-min-level: "&fأدنى مستوى: {level}"
+    bedrock-max-level: "&fأعلى مستوى: {level}"
+    bedrock-sort: "&fالترتيب: {sort}"
+    bedrock-min-level-up: "&aأدنى مستوى +1"
+    bedrock-min-level-down: "&cأدنى مستوى -1"
+    bedrock-max-level-up: "&aأعلى مستوى +1"
+    bedrock-max-level-down: "&cأعلى مستوى -1"
+    bedrock-switch-sort: "&eتبديل وضع الترتيب"
+    bedrock-back-results: "&eرجوع إلى النتائج"
+    bedrock-actions-title: "&6إجراءات النقابة - {guild_name}"
+    bedrock-level: "&fالمستوى: {level}"
+    bedrock-leader: "&fالقائد: {leader}"
+    bedrock-view-detail: "&eعرض التفاصيل"
+    bedrock-apply-join: "&aتقديم طلب انضمام"
+    bedrock-back-filter: "&eرجوع إلى التصفية"
 
   # ================================================
   # GuildSettingsGUI (42 keys)
@@ -520,6 +668,13 @@ gui:
     home.success: "&aتم الانتقال إلى منزل النقابة!"
     sethome.failed: "&cفشل تعيين منزل النقابة!"
     sethome.success: "&aتم تعيين منزل النقابة بنجاح!"
+    bedrock-content: "&6نظرة عامة على النقابة\n&fالاسم: &e{guild_name}\n&fالوسم: &e{guild_tag}\n&fالوصف: {guild_desc}\n&fمنزل النقابة: {home_status}"
+    bedrock-change-name: "&eتغيير الاسم"
+    bedrock-change-description: "&eتغيير الوصف"
+    bedrock-change-tag: "&eتغيير الوسم"
+    bedrock-kick-member: "&cطرد عضو"
+    bedrock-promote-demote: "&eترقية/خفض الرتبة"
+    bedrock-back-to-main: "&fرجوع إلى القائمة الرئيسية"
 
   # ================================================
   # GuildFundsGUI (23 keys)
@@ -548,6 +703,15 @@ gui:
     total-deposit: "إجمالي الإيداعات"
     total-pages: "&7إجمالي الصفحات: {total}"
     total-players: "&7عدد الأشخاص: {count}"
+    bedrock-title: "&6أموال النقابة - {guild}"
+    bedrock-no-data: "&cلا توجد سجلات إيداع"
+    bedrock-back: "&cرجوع"
+    bedrock-page-info: "&fالصفحة {page}/{total}\n&fإجمالي اللاعبين: {count}"
+    bedrock-online: "&aمتصل"
+    bedrock-offline: "&fغير متصل"
+    bedrock-prev-page: "&aالصفحة السابقة"
+    bedrock-next-page: "&aالصفحة التالية"
+    bedrock-refresh: "&aتحديث"
 
   # ================================================
   # EconomyManagementGUI (23 keys)
@@ -576,6 +740,23 @@ gui:
     set-balance-dev: "&eوظيفة تعيين الأموال قيد التطوير..."
     set-prompt: "&eالرجاء إدخال المبلغ المراد تعيينه (أدخل رقماً في الدردشة، أدخل cancel للإلغاء):"
     economy-management-title: "&eالإدارة الاقتصادية"
+    bedrock-title: "&eالإدارة الاقتصادية"
+    bedrock-page-info: "&fالصفحة {current}/{total} | إجمالي {count} نقابة"
+    bedrock-refresh: "&aتحديث القائمة"
+    bedrock-prev-page: "&eالصفحة السابقة"
+    bedrock-next-page: "&eالصفحة التالية"
+    bedrock-back: "&cرجوع"
+    bedrock-actions-title: "&eالإدارة الاقتصادية - {guild}"
+    bedrock-actions-content: "&fالأموال الحالية: &a{balance}\n&fالقائد: &e{leader}\n&fالمستوى: &e{level}"
+    bedrock-set-funds: "&eتعيين الأموال"
+    bedrock-add-funds: "&aزيادة الأموال"
+    bedrock-clear-funds: "&cمسح الأموال"
+    bedrock-back-to-list: "&cرجوع إلى القائمة"
+    bedrock-set-title: "&eتعيين الأموال"
+    bedrock-add-title: "&aزيادة الأموال"
+    bedrock-input-label: "&fأدخل المبلغ"
+    bedrock-invalid-amount: "&cالمبلغ يجب أن يكون أكبر من 0!"
+    bedrock-invalid-number: "&cرقم غير صالح!"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -606,6 +787,14 @@ gui:
     funds.change.set-contrib-increase: "{player} عين الأموال إلى {new} (+{diff})"
     funds.change.set-log-decrease: "{player} عين أموال {guild} إلى {new}"
     funds.change.set-log-increase: "{player} عين أموال {guild} إلى {new}"
+    bedrock-title: "&6تأكيد تغيير الأموال"
+    bedrock-guild: "&fالنقابة: &e{guild_name}"
+    bedrock-operation: "&fالعملية: {operation}"
+    bedrock-current-balance: "&fالأموال الحالية: &6{balance}"
+    bedrock-amount: "&fالمبلغ: &f{amount}"
+    bedrock-new-balance: "&fالأموال الجديدة: &a{balance}"
+    bedrock-confirm: "&aتأكيد التغيير"
+    bedrock-cancel: "&cإلغاء"
 
   # ================================================
   # GuildRelationsGUI (49 keys)
@@ -660,6 +849,24 @@ gui:
     relations.type-selected: "&aتم اختيار نوع العلاقة: {type}"
     relations.type-truce.description: "اتفاق هدنة، سلام مؤقت"
     relations.type-war.description: "حالة حرب، حرب شاملة"
+    bedrock-title: "&6علاقات النقابة"
+    bedrock-title-page: "&6علاقات النقابة - الصفحة {page}"
+    bedrock-empty: "&fلا توجد علاقات نقابة حالياً"
+    bedrock-total: "&fإجمالي {count} علاقات"
+    bedrock-create-relation: "&aإنشاء علاقة"
+    bedrock-prev-page: "&eالصفحة السابقة"
+    bedrock-next-page: "&eالصفحة التالية"
+    bedrock-back: "&cرجوع"
+    bedrock-actions-title: "&6إجراءات العلاقة - {guild}"
+    bedrock-actions-content: "&fالنوع: {type}\n&fالحالة: {status}"
+    bedrock-cancel-relation: "&cإلغاء العلاقة"
+    bedrock-accept-relation: "&aقبول العلاقة"
+    bedrock-reject-relation: "&cرفض العلاقة"
+    bedrock-end-truce: "&eإنهاء الهدنة"
+    bedrock-propose-truce: "&eاقتراح هدنة"
+    bedrock-delete-relation: "&cحذف العلاقة"
+    bedrock-back-to-list: "&eرجوع إلى القائمة"
+    bedrock-truce-ended: "&aانتهت الهدنة مع {guild}!"
 
   # ================================================
   # CreateRelationGUI (6 keys)
@@ -671,6 +878,22 @@ gui:
     confirm-lore-2: "&7يلزم اختيار نوع العلاقة والنقابة المستهدفة أولاً"
     current-selection: "&eالاختيار الحالي"
     title: "&6إنشاء علاقة نقابة"
+    bedrock-type-title: "&6إنشاء علاقة - اختيار النوع"
+    bedrock-type-content: "&fالرجاء اختيار نوع العلاقة:"
+    bedrock-back: "&cرجوع"
+    bedrock-target-title: "&6إنشاء علاقة - اختيار الهدف"
+    bedrock-target-empty: "&fلا توجد نقابات مستهدفة متاحة"
+    bedrock-target-title-page: "&6إنشاء علاقة - اختيار الهدف الصفحة {page}"
+    bedrock-target-content: "&fالنوع: {type}\n&fاختر النقابة المستهدفة:"
+    bedrock-prev-page: "&eالصفحة السابقة"
+    bedrock-next-page: "&eالصفحة التالية"
+    bedrock-confirm-title: "&6تأكيد إنشاء العلاقة"
+    bedrock-confirm-content: "&fالنوع: {type}\n&fالهدف: {target}"
+    bedrock-confirm-create: "&aتأكيد الإنشاء"
+    bedrock-cancel: "&cإلغاء"
+    bedrock-already-exists: "&cالعلاقة مع {guild} موجودة بالفعل!"
+    bedrock-create-success: "&aتم إرسال طلب علاقة {type} إلى {guild}!"
+    bedrock-create-failed: "&cفشل إنشاء العلاقة!"
 
   # ================================================
   # RelationManagementGUI (40 keys)
@@ -716,6 +939,25 @@ gui:
     relation-management-back-desc: "رجوع إلى قائمة المشرف"
     relation-management-refresh-desc: "إعادة تحميل بيانات العلاقة"
     relation-management-title: "&4إدارة العلاقات - المشرف"
+    bedrock-title: "&4إدارة العلاقات"
+    bedrock-empty: "&cلا توجد بيانات علاقة"
+    bedrock-back: "&cرجوع"
+    bedrock-page-info: "&fالصفحة {current}/{total} | إجمالي {count} علاقات"
+    bedrock-refresh: "&aتحديث القائمة"
+    bedrock-prev-page: "&eالصفحة السابقة"
+    bedrock-next-page: "&eالصفحة التالية"
+    bedrock-actions-title: "&6إجراءات العلاقة"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fالنوع: {type}\n&fالحالة: {status}\n&fالمبادر: {initiator}"
+    bedrock-delete-relation: "&cحذف العلاقة"
+    bedrock-view-details: "&eعرض التفاصيل"
+    bedrock-back-to-list: "&cرجوع إلى القائمة"
+    bedrock-confirm-title: "&cتأكيد الحذف"
+    bedrock-confirm-content: "&fهل أنت متأكد من حذف العلاقة:\n&e{guild1} ↔ {guild2}&f؟"
+    bedrock-confirm-delete: "&cتأكيد الحذف"
+    bedrock-cancel: "&fإلغاء"
+    bedrock-delete-success: "&aتم حذف العلاقة: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cفشل حذف العلاقة!"
+    bedrock-no-permission: "&cليس لديك صلاحية المشرف!"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -743,6 +985,13 @@ gui:
     total-records: "إجمالي السجلات: {count}"
     type: "النوع"
     wait-for-logs: "يرجى انتظار نشاط النقابة لإنشاء السجلات"
+    bedrock-title: "&6سجل النقابة - {guild}"
+    bedrock-no-data: "&cلا توجد سجلات"
+    bedrock-back: "&cرجوع"
+    bedrock-page-info: "&fالصفحة {page}/{total}\n&fإجمالي السجلات: {count}"
+    bedrock-prev-page: "&aالصفحة السابقة"
+    bedrock-next-page: "&aالصفحة التالية"
+    bedrock-refresh: "&aتحديث"
 
   # ================================================
   # MemberManagementGUI (81 keys)
@@ -829,6 +1078,31 @@ gui:
     member-mgmt.role.leader-perms: "جميع الصلاحيات"
     member-mgmt.role.member-perms: "الصلاحيات الأساسية"
     member-mgmt.role.officer-perms: "دعوة، طرد"
+    bedrock-title: "&6إدارة الأعضاء"
+    bedrock-title-page: "&6إدارة الأعضاء - الصفحة {page}"
+    bedrock-no-members: "&fلا يوجد أعضاء في النقابة بعد"
+    bedrock-member-list: "&fقائمة الأعضاء (إجمالي {count})"
+    bedrock-invite: "&aدعوة عضو"
+    bedrock-actions-title: "&6إجراءات العضو - {member}"
+    bedrock-role-label: "&fالدور: {role}"
+    bedrock-role-leader: "&cقائد"
+    bedrock-role-officer: "&6ضابط"
+    bedrock-role-member: "&fعضو"
+    bedrock-view-details: "&eعرض التفاصيل"
+    bedrock-kick: "&cطرد عضو"
+    bedrock-promote-demote: "&6ترقية/خفض الرتبة"
+    bedrock-back-to-list: "&cرجوع إلى القائمة"
+    member-details.bedrock-title: "&6تفاصيل العضو - {member}"
+    member-details.bedrock-player: "&fاللاعب: {name}"
+    member-details.bedrock-role: "&fالدور: {role}"
+    member-details.bedrock-join-time: "&fوقت الانضمام: {time}"
+    member-details.bedrock-online: "&fمتصل: {status}"
+    member-details.bedrock-online-yes: "&aنعم"
+    member-details.bedrock-online-no: "&cلا"
+    member-details.bedrock-kick: "&cطرد عضو"
+    member-details.bedrock-promote-demote: "&6ترقية/خفض الرتبة"
+    member-details.bedrock-send-message: "&eإرسال رسالة"
+    member-details.bedrock-back: "&cرجوع"
 
   # ================================================
   # MemberGuildGUI (13 keys)
@@ -847,6 +1121,8 @@ gui:
     no-name: "لا يوجد اسم"
     no-tag: "لا يوجد وسم"
     title: "&6نقابتي"
+    bedrock-title: "&6نقابتي - {guild_name}"
+    bedrock-content: "&6معلومات النقابة\n&fالاسم: &e{guild_name}\n&fالوسم: &e{guild_tag}\n&fمنزل النقابة: {home_status}"
 
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
@@ -866,6 +1142,10 @@ gui:
     confirm-delete-guild-title: "&4تأكيد حذف النقابة"
     delete.failed: "&cفشل حذف النقابة!"
     delete.success: "&aتم حذف النقابة {guild}!"
+    bedrock-title: "&4تأكيد حذف النقابة"
+    bedrock-content: "&fالنقابة: &e{guild}\n&fهل أنت متأكد من حذف هذه النقابة؟\n&cهذا الإجراء سيحذف النقابة بشكل دائم!\n&cسيتم إزالة جميع الأعضاء!\n&cهذا الإجراء لا يمكن التراجع عنه!"
+    bedrock-confirm: "&4تأكيد الحذف"
+    bedrock-cancel: "&aإلغاء"
 
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
@@ -883,6 +1163,10 @@ gui:
     leave.failed: "&cفشلت مغادرة النقابة!"
     leave.leader-cannot-leave: "&cلا يمكن لقائد النقابة مغادرة النقابة!"
     leave.success: "&aلقد غادرت النقابة بنجاح: {guild}"
+    bedrock-title: "&cتأكيد مغادرة النقابة"
+    bedrock-content: "&fالنقابة: &e{guild}\n&fهل أنت متأكد من مغادرة هذه النقابة؟\n&cهذا الإجراء لا يمكن التراجع عنه!"
+    bedrock-confirm: "&cتأكيد المغادرة"
+    bedrock-cancel: "&aإلغاء"
 
   # ================================================
   # GuildNameInputGUI (21 keys)
@@ -909,6 +1193,9 @@ gui:
     success: "&aتم تعديل اسم النقابة بنجاح!"
     success-new-name: "&7الاسم الجديد: &f{new_name}"
     title: "&6تعديل اسم النقابة"
+    bedrock-title: "&6تعديل اسم النقابة"
+    bedrock-input-label: "&fأدخل اسم النقابة الجديد"
+    bedrock-input-placeholder: "2-16 حرف، يدعم أحرف الألوان"
 
   # ================================================
   # GuildTagInputGUI (6 keys)
@@ -920,6 +1207,9 @@ gui:
     confirm-lore: "&7تأكيد تعديل وسم النقابة"
     current-tag: "&eالوسم الحالي"
     title: "&6تعديل وسم النقابة"
+    bedrock-title: "&6تعديل وسم النقابة"
+    bedrock-input-label: "&fأدخل وسم النقابة الجديد"
+    bedrock-input-placeholder: "حد أقصى {max} حرف"
 
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
@@ -931,12 +1221,18 @@ gui:
     confirm-lore: "&7تأكيد تعديل وصف النقابة"
     current-description: "&eالوصف الحالي"
     title: "&6تعديل وصف النقابة"
+    bedrock-title: "&6تعديل وصف النقابة"
+    bedrock-input-label: "&fأدخل وصف النقابة الجديد"
+    bedrock-input-placeholder: "حد أقصى {max} حرف"
 
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
   guild-permissions:
     title: "&6إعدادات صلاحيات النقابة"
+    bedrock-title: "&6إعدادات صلاحيات النقابة"
+    bedrock-content: "&6=== صلاحيات القائد ===\n&f• جميع الصلاحيات\n&f• إدارة الأعضاء\n&f• تعديل الإعدادات\n&f• حذف النقابة\n\n&e=== صلاحيات الضابط ===\n&f• دعوة الأعضاء\n&f• طرد الأعضاء\n&f• معالجة الطلبات\n&f• تعيين منزل النقابة\n\n&7=== صلاحيات العضو ===\n&f• عرض معلومات النقابة\n&f• الانتقال إلى منزل النقابة\n&f• التقديم للانضمام إلى نقابات أخرى\n\n&aالحالة الحالية: &fالنقابة {guild} | نظام الصلاحيات يعمل بشكل طبيعي"
+    bedrock-back: "&cرجوع"
 
   # ================================================
   # InviteMemberGUI (4 keys)
@@ -946,6 +1242,10 @@ gui:
     click-invite: "انقر لدعوة هذا اللاعب"
     join-guild: "انضم إلى النقابة"
     title: "&6دعوة أعضاء - {guild} - الصفحة {page}"
+    bedrock-title: "&6دعوة أعضاء"
+    bedrock-title-page: "&6دعوة أعضاء - الصفحة {page}"
+    bedrock-no-players: "&fلا يوجد لاعبين متصلين متاحين للدعوة"
+    bedrock-player-list: "&fاللاعبون المتصلون (إجمالي {count})"
 
   # ================================================
   # KickMemberGUI (5 keys)
@@ -956,6 +1256,10 @@ gui:
     kick.success: "&aتم طرد العضو &e{player} &a!"
     click-kick: "انقر لطرد هذا العضو"
     title: "&6طرد عضو - الصفحة {page}"
+    bedrock-title: "&6طرد عضو"
+    bedrock-title-page: "&6طرد عضو - الصفحة {page}"
+    bedrock-no-members: "&fلا يوجد أعضاء متاحين للطرد"
+    bedrock-content: "&fاختر عضواً لطرده"
 
   # ================================================
   # PromoteMemberGUI (5 keys)
@@ -966,6 +1270,10 @@ gui:
     promote.success: "&aتمت ترقية &e{player} &aإلى ضابط!"
     click-promote: "انقر للترقية إلى ضابط"
     title: "&6ترقية عضو - الصفحة {page}"
+    bedrock-title: "&6ترقية عضو"
+    bedrock-title-page: "&6ترقية عضو - الصفحة {page}"
+    bedrock-no-members: "&fلا يوجد أعضاء متاحين للترقية"
+    bedrock-content: "&fاختر عضواً لترقيته إلى ضابط"
 
   # ================================================
   # DemoteMemberGUI (5 keys)
@@ -976,3 +1284,7 @@ gui:
     demote.success: "&aتم خفض رتبة &e{player} &aإلى عضو عادي!"
     click-demote: "انقر لخفض الرتبة إلى عضو"
     title: "&6خفض رتبة عضو - الصفحة {page}"
+    bedrock-title: "&6خفض رتبة عضو"
+    bedrock-title-page: "&6خفض رتبة عضو - الصفحة {page}"
+    bedrock-no-members: "&fلا يوجد ضباط متاحين لخفض الرتبة"
+    bedrock-content: "&fاختر ضابطاً لخفض رتبته إلى عضو"

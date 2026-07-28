@@ -282,9 +282,6 @@ economy.transfer-success: "&aギルド &e{target} &aに &e{amount} &aを送金�
 economy.transfer-failed: "&c送金に失敗しました！"
 economy.target-guild-not-found: "&c対象ギルドが存在しません！"
 economy.cannot-transfer-to-self: "&c自分のギルドに送金することはできません！"
-guild.deposit.insufficient-funds: "&c残高が不足しています！"
-guild.withdraw.insufficient-funds: "&cギルドアカウントの残高が不足しています！"
-guild.transfer.insufficient-funds: "&cギルドアカウントの残高が不足しています！"
 
 # ============ Relations ============
 guild.relation.usage: "&c使用方法: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&a&e{0} &aに名前を変更しました（&e{1} &aが�
 cloud.download-tip: "&6ヒント: &8まず旧モジュールをアンロードしてからファイルを置き換えてください: &e/guildmodule unload <id> &8-> jarを置き換え -> &e/guildmodule load {0}"
 cloud.download-failed: "&cダウンロードに失敗しました: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cこのコマンドはBedrock版プレイヤーのみ使用可能です。あなたはJava版プレイヤーです。"
+bedrock-test.geyser-unavailable: "&cGeyser APIが利用不可のため、フォームを送信できません。"
+bedrock-test.simple-clicked: "&a[SimpleForm] &7クリックしました: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] フォームが閉じられました"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7送信成功:"
+bedrock-test.custom-name: "&7  名前: &f{value}"
+bedrock-test.custom-desc: "&7  説明: &f{value}"
+bedrock-test.custom-free-join: "&7  自由参加: &f{value}"
+bedrock-test.custom-allow-invite: "&7  招待を許可: &f{value}"
+bedrock-test.custom-allow-kick: "&7  キックを許可: &f{value}"
+bedrock-test.custom-language: "&7  言語: &f{value}"
+bedrock-test.custom-max-members: "&7  最大メンバー数: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] フォームが閉じられました、保存されていません"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7選択しました: &c退出を確認"
+bedrock-test.modal-cancel: "&a[ModalForm] &7選択しました: &aキャンセル"
+bedrock-test.modal-closed: "&7[ModalForm] ダイアログが閉じられました"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6ギルドプラグイン &r- &eBedrock版フォームテスト"
+bedrock-test.main-content: "&7プレビューするフォームタイプを選択してください:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- ボタンメニュー"
+bedrock-test.main-btn-custom: "&bCustomForm &f- 入力/設定フォーム"
+bedrock-test.main-btn-modal: "&cModalForm &f- 確認ダイアログ"
+
+# SimpleForm
+bedrock-test.simple-title: "&6ギルドメインメニュー &r- &7SimpleForm サンプル"
+bedrock-test.simple-content: "&7ようこそ, &e{player}&7!\n&7これはSimpleFormボタンメニューのサンプルです。"
+bedrock-test.simple-btn-info: "&aギルド情報 &f- ギルド詳細を表示"
+bedrock-test.simple-btn-members: "&bメンバー管理 &f- ギルドメンバーを管理"
+bedrock-test.simple-btn-settings: "&eギルド設定 &f- ギルド設定を変更"
+bedrock-test.simple-btn-list: "&6ギルド一覧 &f- 全てのギルドを閲覧"
+bedrock-test.simple-btn-quit: "&cギルドを退出 &f- 現在のギルドを離脱"
+bedrock-test.simple-name-info: "ギルド情報"
+bedrock-test.simple-name-members: "メンバー管理"
+bedrock-test.simple-name-settings: "ギルド設定"
+bedrock-test.simple-name-list: "ギルド一覧"
+bedrock-test.simple-name-quit: "ギルドを退出"
+
+# CustomForm
+bedrock-test.custom-title: "&6ギルド設定 &r- &fCustomForm サンプル"
+bedrock-test.custom-label-basic: "&7── 基本設定 ──"
+bedrock-test.custom-input-name-label: "&fギルド名"
+bedrock-test.custom-input-name-placeholder: "新しい名前を入力..."
+bedrock-test.custom-input-name-default: "マイギルド"
+bedrock-test.custom-input-desc-label: "&fギルド説明"
+bedrock-test.custom-input-desc-placeholder: "説明を入力..."
+bedrock-test.custom-input-desc-default: "フレンドリーなギルド"
+bedrock-test.custom-label-perms: "&7── 権限スイッチ ──"
+bedrock-test.custom-toggle-free-join: "&f自由参加を許可"
+bedrock-test.custom-toggle-allow-invite: "&fメンバーによる招待を許可"
+bedrock-test.custom-toggle-allow-kick: "&fメンバーによるキックを許可"
+bedrock-test.custom-label-other: "&7── その他 ──"
+bedrock-test.custom-dropdown-lang: "&fギルド言語"
+bedrock-test.custom-slider-max-members: "&f最大メンバー数"
+
+# ModalForm
+bedrock-test.modal-title: "&c操作の確認 &r- &fModalForm サンプル"
+bedrock-test.modal-content: "&7ギルド &eテストギルド &7を退出してもよろしいですか？\n\n&cこの操作は取り消せません！\n&7退出後は再び加入申請を行う必要があります。"
+bedrock-test.modal-btn-confirm: "&a退出を確認"
+bedrock-test.modal-btn-cancel: "&cキャンセル"
 
 
 

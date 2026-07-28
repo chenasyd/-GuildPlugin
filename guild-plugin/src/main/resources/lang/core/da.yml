@@ -282,9 +282,6 @@ economy.transfer-success: "\u0026aSuccessfully transferred \u0026e{amount}\u0026
 economy.transfer-failed: "\u0026cTransfer failed!"
 economy.target-guild-not-found: "\u0026cTarget guild does not exist!"
 economy.cannot-transfer-to-self: "\u0026cCannot transfer to your own guild!"
-guild.deposit.insufficient-funds: "\u0026cYour balance is insufficient!"
-guild.withdraw.insufficient-funds: "\u0026cGuild account balance is insufficient!"
-guild.transfer.insufficient-funds: "\u0026cGuild account balance is insufficient!"
 
 # ============ Relation ============
 guild.relation.usage: "\u0026cUsage: /guild relation <list|create|delete|accept|reject>"
@@ -680,3 +677,66 @@ cloud.download-complete: "\u0026aDownloaded {0}. Use \u0026e/guildmodule load {0
 cloud.download-renamed: "\u0026aRenamed to \u0026e{0}\u0026a (because \u0026e{1}\u0026a is in use)."
 cloud.download-tip: "\u00266Tip: \u00267Unload the old module before replacing the file: \u0026e/guildmodule unload <id> \u00267-> Replace jar -> \u0026e/guildmodule load {0}"
 cloud.download-failed: "\u0026cDownload failed: {0}"
+
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cDenne kommando er kun til Bedrock-spillere. Du er en Java-spiller."
+bedrock-test.geyser-unavailable: "&cGeyser API er ikke tilg\u00e6ngelig, kan ikke sende formularen."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Du klikkede p\u00e5: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Formular lukket"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Sendt med succes:"
+bedrock-test.custom-name: "&7  Navn: &f{value}"
+bedrock-test.custom-desc: "&7  Beskrivelse: &f{value}"
+bedrock-test.custom-free-join: "&7  Fri tilmelding: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Tillad invitationer: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Tillad at sparke: &f{value}"
+bedrock-test.custom-language: "&7  Sprog: &f{value}"
+bedrock-test.custom-max-members: "&7  Maksimalt antal medlemmer: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Formular lukket, ikke gemt"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Du valgte: &cBekr\u00e6ft afslutning"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Du valgte: &aAnnuller"
+bedrock-test.modal-closed: "&7[ModalForm] Dialog lukket"
+
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Guild-plugin &r- &eBedrock Formular Test"
+bedrock-test.main-content: "&7V\u00e6lg en formulartype til forh\u00e5ndsvisning:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Knapmenu"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Input/indstillingsformular"
+bedrock-test.main-btn-modal: "&cModalForm &f- Bekr\u00e6ftelsesdialog"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Guild hovedmenu &r- &7SimpleForm eksempel"
+bedrock-test.simple-content: "&7Velkommen, &e{player}&7!\n&7Dette er et eksempel p\u00e5 SimpleForm knapmenu."
+bedrock-test.simple-btn-info: "&aGuild information &f- Se guild-detaljer"
+bedrock-test.simple-btn-members: "&bMedlemsadministration &f- Administrer guild-medlemmer"
+bedrock-test.simple-btn-settings: "&eGuild indstillinger &f- \u00c6ndre guild-konfiguration"
+bedrock-test.simple-btn-list: "&6Guild liste &f- Gennemse alle guilds"
+bedrock-test.simple-btn-quit: "&cForlad guild &f- Forlad nuv\u00e6rende guild"
+bedrock-test.simple-name-info: "Guild information"
+bedrock-test.simple-name-members: "Medlemsadministration"
+bedrock-test.simple-name-settings: "Guild indstillinger"
+bedrock-test.simple-name-list: "Guild liste"
+bedrock-test.simple-name-quit: "Forlad guild"
+
+# CustomForm
+bedrock-test.custom-title: "&6Guild indstillinger &r- &fCustomForm eksempel"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Grundl\u00e6ggende indstillinger \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fGuild navn"
+bedrock-test.custom-input-name-placeholder: "Indtast nyt navn..."
+bedrock-test.custom-input-name-default: "Min guild"
+bedrock-test.custom-input-desc-label: "&fGuild beskrivelse"
+bedrock-test.custom-input-desc-placeholder: "Indtast beskrivelse..."
+bedrock-test.custom-input-desc-default: "En venlig guild"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 Tilladelses-kontakter \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fTillad fri tilmelding"
+bedrock-test.custom-toggle-allow-invite: "&fTillad medlemmer at invitere"
+bedrock-test.custom-toggle-allow-kick: "&fTillad medlemmer at sparke"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Andet \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fGuild sprog"
+bedrock-test.custom-slider-max-members: "&fMaksimalt antal medlemmer"
+
+# ModalForm
+bedrock-test.modal-title: "&cBekr\u00e6ft handling &r- &fModalForm eksempel"
+bedrock-test.modal-content: "&7Er du sikker p\u00e5, at du vil forlade guilden &eTest Guild &7?\n\n&cDenne handling kan ikke fortrydes!\n&7Efter afslutning skal du ans\u00f8ge om at blive medlem igen."
+bedrock-test.modal-btn-confirm: "&aBekr\u00e6ft afslutning"
+bedrock-test.modal-btn-cancel: "&cAnnuller"

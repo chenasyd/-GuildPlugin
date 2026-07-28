@@ -88,6 +88,9 @@ gui:
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
   # ================================================
+    bedrock-prev-page: "&eVorige pagina"
+    bedrock-next-page: "&eVolgende pagina"
+    bedrock-back: "&cTerug"
   admin-gui:
     title: "&4Gildebeheer"
     admin-gui-economy-lore-1: "&7Beheer het economische systeem van de gilde"
@@ -115,6 +118,14 @@ gui:
   # ================================================
   # ApplicationManagementGUI (29 keys)
   # ================================================
+    bedrock-title: "&4Gildebeheer"
+    bedrock-content: "&fSelecteer beheerfunctie"
+    bedrock-guild-list: "&eBeheer gildelijst"
+    bedrock-economy: "&eEconomisch beheer"
+    bedrock-relations: "&eRelatiebeheer"
+    bedrock-statistics: "&eStatistieken"
+    bedrock-settings: "&eSysteeminstellingen"
+    bedrock-back: "&cTerug"
   application-mgmt:
     application.accepted: "&aJe aanvraag is geaccepteerd door {guild}!"
     applications-count: " aanvra(a)g(en)"
@@ -140,7 +151,6 @@ gui:
     application-management-pending-applications-lore-1: "&7Bekijk aanvragen in afwachting"
     application-management-pending-applications-name: "&eAanvragen in afwachting"
     application-management-title: "&6Aanvraagbeheer"
-    no-history: "&aGeen aanvraaggeschiedenis"
     no-history.desc: "&7Er is geen aanvraaggeschiedenis"
     apply.already-applied: "&cJe hebt al een aanvraag ingediend voor deze gilde!"
     apply.failed: "&cVerzenden van aanvraag mislukt!"
@@ -149,6 +159,27 @@ gui:
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
   # ================================================
+    bedrock-title: "&6Aanvraagbeheer"
+    bedrock-empty-history: "&fGeen aanvraaggeschiedenis"
+    bedrock-empty-pending: "&fGeen aanvragen in afwachting"
+    bedrock-pending-btn: "&eAanvragen in afwachting"
+    bedrock-history-btn: "&eAanvraaggeschiedenis"
+    bedrock-back: "&cTerug"
+    bedrock-mode-history: "Aanvraaggeschiedenis"
+    bedrock-mode-pending: "Aanvragen in afwachting"
+    bedrock-title-page: "&6Aanvraagbeheer - {mode} Pagina {page}"
+    bedrock-total: "&fTotaal {count} records"
+    bedrock-prev-page: "&eVorige pagina"
+    bedrock-next-page: "&eVolgende pagina"
+    bedrock-applicant: "&fAanvrager: {name}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-message: "&fBericht: {msg}"
+    bedrock-no-message: "Geen"
+    bedrock-actions-title: "&6Aanvraag verwerken - {name}"
+    bedrock-actions-content: "&fAanvrager: {name}\n&fBericht: {msg}"
+    bedrock-accept: "&aAanvraag accepteren"
+    bedrock-reject: "&cAanvraag afwijzen"
+    bedrock-back-to-list: "&eTerug naar lijst"
   main-menu:
     application-management.lore.1: "&7Behandel toetredingsaanvragen"
     application-management.lore.2: "&7Bekijk aanvraaggeschiedenis"
@@ -176,6 +207,7 @@ gui:
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
+    bedrock-content: "&fKies een functie:"
   system-settings:
     applications: "&eAanvraagsysteem"
     applications-disabled: "&cAanvraagsysteem uitgeschakeld!"
@@ -292,6 +324,23 @@ gui:
   # ================================================
   # CreateGuildGUI (36 keys)
   # ================================================
+    bedrock-title: "&4Systeeminstellingen"
+    bedrock-content: "&fKlik om de schakelstatus te wijzigen"
+    bedrock-debug: "&eDebug-informatie: {status}"
+    bedrock-auto-save: "&eAutomatisch opslaan: {status}"
+    bedrock-economy: "&eEconomisch systeem: {status}"
+    bedrock-relations: "&eRelatiesysteem: {status}"
+    bedrock-level: "&eNiveausysteem: {status}"
+    bedrock-applications: "&eAanvraagsysteem: {status}"
+    bedrock-invites: "&eUitnodigingssysteem: {status}"
+    bedrock-guild-home: "&eGildehuis: {status}"
+    bedrock-on: "&aAAN"
+    bedrock-off: "&cUIT"
+    bedrock-reload: "&aHerlaad configuratie"
+    bedrock-database: "&bDatabaseonderhoud"
+    bedrock-backup: "&6Back-up gegevens"
+    bedrock-save: "&aSla instellingen op"
+    bedrock-back: "&cTerug"
   create-guild:
     create.already-in-guild: "&cJe bent al lid van een gilde!"
     create.description-too-long: "&cGildebeschrijving mag niet meer dan 100 tekens bevatten!"
@@ -333,6 +382,13 @@ gui:
   # ================================================
   # GuildDetailGUI (38 keys)
   # ================================================
+    bedrock-title: "&6Gilde aanmaken"
+    bedrock-name-label: "&fGildenaam (3-20 tekens)"
+    bedrock-name-placeholder: "Voer gildenaam in"
+    bedrock-tag-label: "&fGildetag (maximaal 6 tekens, optioneel)"
+    bedrock-tag-placeholder: "Voer gildetag in"
+    bedrock-desc-label: "&fGildebeschrijving (maximaal 100 tekens, optioneel)"
+    bedrock-desc-placeholder: "Voer gildebeschrijving in"
   guild-detail:
     click-delete: "Klik om gilde te verwijderen"
     created-time: "Aanmaaktijd"
@@ -376,6 +432,31 @@ gui:
   # ================================================
   # GuildInfoGUI (21 keys)
   # ================================================
+    bedrock-title: "&6Gildedetails - {guild_name}"
+    bedrock-level: "&fNiveau: &e{level}"
+    bedrock-balance: " &fSaldo: &a{balance}"
+    bedrock-leader: "&fMeester: &c{leader}"
+    bedrock-members: " &fLeden: &e{current}/{max}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-status-frozen: "&cBevroren"
+    bedrock-status-normal: "&aNormaal"
+    bedrock-description: "&fBeschrijving: &7{description}"
+    bedrock-transfer-hint: "&e>>> Overdrachtsmodus: Klik op lid om over te dragen <<<"
+    bedrock-no-tag: "Geen"
+    bedrock-unfreeze: "&aOntdooi gilde"
+    bedrock-freeze: "&cBevries gilde"
+    bedrock-delete: "&4Verwijder gilde"
+    bedrock-cancel-transfer: "&eAnnuleer overdrachtsmodus"
+    bedrock-transfer: "&cDraag meester over"
+    bedrock-prev-page: "&eVorige pagina"
+    bedrock-next-page: "&eVolgende pagina"
+    bedrock-back: "&cTerug"
+    bedrock-transfer-self: "&cJe kunt de meester niet aan jezelf overdragen"
+    bedrock-transfer-success: "&aSuccesvol overgedragen aan &e{name}"
+    bedrock-transfer-failed: "&cOverdracht van meester mislukt!"
+    bedrock-operation-failed: "&cActie mislukt!"
+    bedrock-transfer-mode-active: "&eKlik op een lid om de meesterpositie over te dragen"
+    bedrock-transfer-mode-cancelled: "&7Overdracht geannuleerd"
   guild-info:
     back: "Terug"
     back-hint: "Klik om terug te gaan naar hoofdmenu"
@@ -402,6 +483,10 @@ gui:
   # ================================================
   # GuildListManagementGUI (2 keys)
   # ================================================
+    bedrock-title: "&6Gilde-informatie"
+    bedrock-guild-funds: "&aGilde fondsen"
+    bedrock-back-to-main: "&cTerug naar hoofdmenu"
+    bedrock-status-label: "Status"
   guild-list-management:
     guild-list-management-title: "&4Beheer gildelijst"
     gui-refresh: "&aVervers lijst"
@@ -409,6 +494,24 @@ gui:
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
   # ================================================
+    bedrock-title: "&4Beheer gildelijst"
+    bedrock-page-info: "&fPagina {page}/{total} | Totaal {count} gildes"
+    bedrock-refresh: "&aVervers lijst"
+    bedrock-prev-page: "&eVorige pagina"
+    bedrock-next-page: "&eVolgende pagina"
+    bedrock-back: "&cTerug"
+    bedrock-status-frozen: "&cBevroren"
+    bedrock-status-normal: "&aNormaal"
+    bedrock-actions-title: "&6Gildeacties - {guild_name}"
+    bedrock-leader: "&fMeester: &e{leader}"
+    bedrock-level: "&fNiveau: &e{level}"
+    bedrock-balance: "&fSaldo: &a{balance}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-view-detail: "&eBekijk details"
+    bedrock-delete: "&cVerwijder gilde"
+    bedrock-unfreeze: "&aOntdooi gilde"
+    bedrock-freeze: "&cBevries gilde"
+    bedrock-back-list: "&cTerug naar lijst"
   guild-list:
     balance: "Saldo"
     created-time: "Aanmaaktijd"
@@ -453,6 +556,22 @@ gui:
   # ================================================
   # GuildFilterGUI (19 keys)
   # ================================================
+    bedrock-title: "&6Gildelijst"
+    bedrock-no-guilds: "&cNog geen gildes op de server"
+    bedrock-no-results: "&cGeen overeenkomende gildes gevonden"
+    bedrock-search: "&eZoek gildes"
+    bedrock-back-main: "&cTerug naar hoofdmenu"
+    bedrock-page-info: "&fPagina {page}/{total}"
+    bedrock-search-info: "&fZoekopdracht: &e{query}"
+    bedrock-prev-page: "&aVorige pagina"
+    bedrock-next-page: "&aVolgende pagina"
+    bedrock-search-title: "&6Zoek gildes"
+    bedrock-search-input: "&fVoer zoekterm in"
+    bedrock-search-placeholder: "Laat leeg om alles te tonen"
+    bedrock-select-action: "&fSelecteer actie:"
+    bedrock-view-detail: "&eBekijk details"
+    bedrock-apply-join: "&aAanvraag indienen"
+    bedrock-back-list: "&cTerug naar lijst"
   guild-filter:
     back.lore-1: "&8Terug naar gildelijst"
     back.name: "&cTerug"
@@ -477,6 +596,35 @@ gui:
   # ================================================
   # GuildSettingsGUI (42 keys)
   # ================================================
+    bedrock-title: "&6Gildefilter"
+    bedrock-no-guilds: "&fNog geen gildes op de server"
+    bedrock-back: "&cTerug"
+    bedrock-no-results: "&fGeen gildes komen overeen met het filter"
+    bedrock-filter-info: "&fNiveau: {min}-{max} | Sorteren: {sort}"
+    bedrock-adjust-filter: "&ePas filter aan"
+    bedrock-sort-desc: "Leden aflopend"
+    bedrock-sort-asc: "Leden oplopend"
+    bedrock-sort-full: "Alleen volle"
+    bedrock-title-page: "&6Gildefilter - Pagina {page}"
+    bedrock-total-results: "&fTotaal {count} resultaten"
+    bedrock-prev-page: "&eVorige pagina"
+    bedrock-next-page: "&eVolgende pagina"
+    bedrock-settings-title: "&6Filterinstellingen"
+    bedrock-min-level: "&fMin. niveau: {level}"
+    bedrock-max-level: "&fMax. niveau: {level}"
+    bedrock-sort: "&fSorteren: {sort}"
+    bedrock-min-level-up: "&aMin. niveau +1"
+    bedrock-min-level-down: "&cMin. niveau -1"
+    bedrock-max-level-up: "&aMax. niveau +1"
+    bedrock-max-level-down: "&cMax. niveau -1"
+    bedrock-switch-sort: "&eWissel sorteermode"
+    bedrock-back-results: "&eTerug naar resultaten"
+    bedrock-actions-title: "&6Gildeacties - {guild_name}"
+    bedrock-level: "&fNiveau: {level}"
+    bedrock-leader: "&fMeester: {leader}"
+    bedrock-view-detail: "&eBekijk details"
+    bedrock-apply-join: "&aAanvraag indienen"
+    bedrock-back-filter: "&eTerug naar filter"
   guild-settings:
     back: "&8Terug"
     back-desc: "&8Klik &fom terug te gaan naar hoofdmenu"
@@ -524,6 +672,13 @@ gui:
   # ================================================
   # GuildFundsGUI (23 keys)
   # ================================================
+    bedrock-content: "&6Gildeoverzicht\n&fNaam: &e{guild_name}\n&fTag: &e{guild_tag}\n&fBeschrijving: {guild_desc}\n&fGildehuis: {home_status}"
+    bedrock-change-name: "&eWijzig naam"
+    bedrock-change-description: "&eWijzig beschrijving"
+    bedrock-change-tag: "&eWijzig tag"
+    bedrock-kick-member: "&cSchop lid"
+    bedrock-promote-demote: "&ePromoveren/Degraderen"
+    bedrock-back-to-main: "&fTerug naar hoofdmenu"
   guild-funds:
     back-to-info: "&8Terug naar gilde-informatie"
     back-to-settings: "&8Terug naar gilde-instellingen"
@@ -552,6 +707,15 @@ gui:
   # ================================================
   # EconomyManagementGUI (23 keys)
   # ================================================
+    bedrock-title: "&6Gildefondsen - {guild}"
+    bedrock-no-data: "&cGeen stortingsrecords"
+    bedrock-back: "&cTerug"
+    bedrock-page-info: "&fPagina {page}/{total}\n&fTotaal spelers: {count}"
+    bedrock-online: "&aOnline"
+    bedrock-offline: "&fOffline"
+    bedrock-prev-page: "&aVorige pagina"
+    bedrock-next-page: "&aVolgende pagina"
+    bedrock-refresh: "&aVervers"
   economy-management:
     add-prompt: "&eVoer het bedrag in dat je wilt toevoegen (typ in de chat, typ cancel om te annuleren):"
     back: "&cTerug"
@@ -566,10 +730,8 @@ gui:
     middle-click-remove: "&cMiddelklik: Verminder fondsen"
     next-page: "&aVolgende pagina"
     next-page-desc: "&8Pagina {page}"
-    next-page-desc: "&8Pagina {page}"
     page-info: "&ePagina {current} van {total}"
     previous-page: "&aVorige pagina"
-    previous-page-desc: "&8Pagina {page}"
     previous-page-desc: "&8Pagina {page}"
     refresh: "&aVervers lijst"
     right-click-add: "&aRechterklik: Voeg fondsen toe"
@@ -580,6 +742,23 @@ gui:
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
   # ================================================
+    bedrock-title: "&eEconomisch beheer"
+    bedrock-page-info: "&fPagina {current}/{total} | Totaal {count} gildes"
+    bedrock-refresh: "&aVervers lijst"
+    bedrock-prev-page: "&eVorige pagina"
+    bedrock-next-page: "&eVolgende pagina"
+    bedrock-back: "&cTerug"
+    bedrock-actions-title: "&eEconomisch beheer - {guild}"
+    bedrock-actions-content: "&fHuidig saldo: &a{balance}\n&fMeester: &e{leader}\n&fNiveau: &e{level}"
+    bedrock-set-funds: "&eStel fondsen in"
+    bedrock-add-funds: "&aVoeg fondsen toe"
+    bedrock-clear-funds: "&cWis fondsen"
+    bedrock-back-to-list: "&cTerug naar lijst"
+    bedrock-set-title: "&eStel fondsen in"
+    bedrock-add-title: "&aVoeg fondsen toe"
+    bedrock-input-label: "&fVoer bedrag in"
+    bedrock-invalid-amount: "&cHet bedrag moet groter zijn dan 0!"
+    bedrock-invalid-number: "&cOngeldig nummer!"
   confirm-funds:
     amount: "Bedrag"
     cancel: "&cAnnuleer"
@@ -610,6 +789,14 @@ gui:
   # ================================================
   # GuildRelationsGUI (49 keys)
   # ================================================
+    bedrock-title: "&6Bevestig fondswijziging"
+    bedrock-guild: "&fGilde: &e{guild_name}"
+    bedrock-operation: "&fActie: {operation}"
+    bedrock-current-balance: "&fHuidig saldo: &6{balance}"
+    bedrock-amount: "&fBedrag: &f{amount}"
+    bedrock-new-balance: "&fNieuw saldo: &a{balance}"
+    bedrock-confirm: "&aBevestig wijziging"
+    bedrock-cancel: "&cAnnuleer"
   guild-relations:
     back-to-menu: "Terug naar hoofdmenu"
     created-time: "Aanmaaktijd"
@@ -664,6 +851,24 @@ gui:
   # ================================================
   # CreateRelationGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Gilderelaties"
+    bedrock-title-page: "&6Gilderelaties - Pagina {page}"
+    bedrock-empty: "&fMomenteel geen gilderelaties"
+    bedrock-total: "&fTotaal {count} relaties"
+    bedrock-create-relation: "&aCreëer relatie"
+    bedrock-prev-page: "&eVorige pagina"
+    bedrock-next-page: "&eVolgende pagina"
+    bedrock-back: "&cTerug"
+    bedrock-actions-title: "&6Relatieacties - {guild}"
+    bedrock-actions-content: "&fType: {type}\n&fStatus: {status}"
+    bedrock-cancel-relation: "&cAnnuleer relatie"
+    bedrock-accept-relation: "&aAccepteer relatie"
+    bedrock-reject-relation: "&cWijs relatie af"
+    bedrock-end-truce: "&eBeëindig wapenstilstand"
+    bedrock-propose-truce: "&eStel wapenstilstand voor"
+    bedrock-delete-relation: "&cVerwijder relatie"
+    bedrock-back-to-list: "&eTerug naar lijst"
+    bedrock-truce-ended: "&aWapenstilstand met {guild} beëindigd!"
   create-relation:
     back-lore: "&8Terug naar relatiebeheer"
     confirm-button: "&aBevestig aanmaak"
@@ -675,6 +880,22 @@ gui:
   # ================================================
   # RelationManagementGUI (40 keys)
   # ================================================
+    bedrock-type-title: "&6Relatie aanmaken - Selecteer type"
+    bedrock-type-content: "&fSelecteer een relatietype:"
+    bedrock-back: "&cTerug"
+    bedrock-target-title: "&6Relatie aanmaken - Selecteer doel"
+    bedrock-target-empty: "&fGeen beschikbare doelgildes"
+    bedrock-target-title-page: "&6Relatie aanmaken - Selecteer doel Pagina {page}"
+    bedrock-target-content: "&fType: {type}\n&fSelecteer doelgilde:"
+    bedrock-prev-page: "&eVorige pagina"
+    bedrock-next-page: "&eVolgende pagina"
+    bedrock-confirm-title: "&6Bevestig aanmaken relatie"
+    bedrock-confirm-content: "&fType: {type}\n&fDoel: {target}"
+    bedrock-confirm-create: "&aBevestig aanmaak"
+    bedrock-cancel: "&cAnnuleer"
+    bedrock-already-exists: "&cRelatie met {guild} bestaat al!"
+    bedrock-create-success: "&a{type} relatieverzoek verzonden naar {guild}!"
+    bedrock-create-failed: "&cAanmaken van relatie mislukt!"
   relation-management:
     auto-cancel: "&eAutomatisch annuleren na 10 seconden"
     back: "&cTerug"
@@ -708,7 +929,6 @@ gui:
     pending-delete: "Wacht op bevestiging van verwijdering"
     previous-page: "&aVorige pagina"
     previous-page-desc: "&8Pagina {0}"
-    previous-page-desc: "&8Pagina {0}"
     refresh: "&aVervers lijst"
     refresh-desc: "&8Herlaad relatiegegevens"
     refreshing: "Verversen van relatielijst..."
@@ -720,6 +940,25 @@ gui:
   # ================================================
   # GuildLogsGUI (21 keys)
   # ================================================
+    bedrock-title: "&4Relatiebeheer"
+    bedrock-empty: "&cGeen relatiegegevens"
+    bedrock-back: "&cTerug"
+    bedrock-page-info: "&fPagina {current}/{total} | Totaal {count} relaties"
+    bedrock-refresh: "&aVervers lijst"
+    bedrock-prev-page: "&eVorige pagina"
+    bedrock-next-page: "&eVolgende pagina"
+    bedrock-actions-title: "&6Relatieacties"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fType: {type}\n&fStatus: {status}\n&fInitiatiefnemer: {initiator}"
+    bedrock-delete-relation: "&cVerwijder relatie"
+    bedrock-view-details: "&eBekijk details"
+    bedrock-back-to-list: "&cTerug naar lijst"
+    bedrock-confirm-title: "&cBevestig verwijderen"
+    bedrock-confirm-content: "&fWeet je zeker dat je de relatie wilt verwijderen:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cBevestig verwijderen"
+    bedrock-cancel: "&fAnnuleer"
+    bedrock-delete-success: "&aRelatie verwijderd: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cVerwijderen van relatie mislukt!"
+    bedrock-no-permission: "&cJe hebt geen beheerdersrechten!"
   guild-logs:
     back-to-guild: "Terug naar gilde-informatie"
     back-to-settings: "Terug naar gilde-instellingen"
@@ -747,6 +986,13 @@ gui:
   # ================================================
   # MemberManagementGUI (81 keys)
   # ================================================
+    bedrock-title: "&6Gildelogboeken - {guild}"
+    bedrock-no-data: "&cGeen logboekrecords"
+    bedrock-back: "&cTerug"
+    bedrock-page-info: "&fPagina {page}/{total}\n&fTotaal records: {count}"
+    bedrock-prev-page: "&aVorige pagina"
+    bedrock-next-page: "&aVolgende pagina"
+    bedrock-refresh: "&aVervers"
   member-management:
     member-details.activity: "Activiteit"
     member-details.all-actions: "Alle acties"
@@ -833,6 +1079,31 @@ gui:
   # ================================================
   # MemberGuildGUI (13 keys)
   # ================================================
+    bedrock-title: "&6Ledenbeheer"
+    bedrock-title-page: "&6Ledenbeheer - Pagina {page}"
+    bedrock-no-members: "&fEr zijn nog geen leden in dit gilde"
+    bedrock-member-list: "&fLedenlijst (Totaal {count})"
+    bedrock-invite: "&aNodig lid uit"
+    bedrock-actions-title: "&6Lidacties - {member}"
+    bedrock-role-label: "&fRol: {role}"
+    bedrock-role-leader: "&cMeester"
+    bedrock-role-officer: "&6Officier"
+    bedrock-role-member: "&fLid"
+    bedrock-view-details: "&eBekijk details"
+    bedrock-kick: "&cSchop lid"
+    bedrock-promote-demote: "&6Promoveren/Degraderen"
+    bedrock-back-to-list: "&cTerug naar lijst"
+    member-details.bedrock-title: "&6Liddetails - {member}"
+    member-details.bedrock-player: "&fSpeler: {name}"
+    member-details.bedrock-role: "&fRol: {role}"
+    member-details.bedrock-join-time: "&fToetredingstijd: {time}"
+    member-details.bedrock-online: "&fOnline: {status}"
+    member-details.bedrock-online-yes: "&aJa"
+    member-details.bedrock-online-no: "&cNee"
+    member-details.bedrock-kick: "&cSchop lid"
+    member-details.bedrock-promote-demote: "&6Promoveren/Degraderen"
+    member-details.bedrock-send-message: "&eVerstuur bericht"
+    member-details.bedrock-back: "&cTerug"
   member-guild-gui:
     home-not-set: "&cNiet ingesteld"
     home-set: "&aIngesteld"
@@ -851,6 +1122,8 @@ gui:
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
   # ================================================
+    bedrock-title: "&6Mijn gilde - {guild_name}"
+    bedrock-content: "&6Gilde-informatie\n&fNaam: &e{guild_name}\n&fTag: &e{guild_tag}\n&fGildehuis: {home_status}"
   confirm-delete-guild:
     cancel-button: "&aAnnuleer"
     cancel-lore: "&8Annuleer het verwijderen van de gilde"
@@ -870,6 +1143,10 @@ gui:
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
   # ================================================
+    bedrock-title: "&4Bevestig verwijderen gilde"
+    bedrock-content: "&fGilde: &e{guild}\n&fWeet je zeker dat je dit gilde wilt verwijderen?\n&cDeze actie verwijdert het gilde permanent!\n&cAlle leden worden verwijderd!\n&cDeze actie kan niet ongedaan worden gemaakt!"
+    bedrock-confirm: "&4Bevestig verwijderen"
+    bedrock-cancel: "&aAnnuleer"
   confirm-leave-guild:
     cancel-button: "&aAnnuleer"
     cancel-lore: "&8Annuleer het verlaten van de gilde"
@@ -887,6 +1164,10 @@ gui:
   # ================================================
   # GuildNameInputGUI (21 keys)
   # ================================================
+    bedrock-title: "&cBevestig verlaten gilde"
+    bedrock-content: "&fGilde: &e{guild}\n&fWeet je zeker dat je dit gilde wilt verlaten?\n&cDeze actie kan niet ongedaan worden gemaakt!"
+    bedrock-confirm: "&cBevestig verlaten"
+    bedrock-cancel: "&aAnnuleer"
   guild-name-input:
     cancel-button: "&cAnnuleer"
     cancel-lore: "&8Terug naar vorig menu"
@@ -913,6 +1194,9 @@ gui:
   # ================================================
   # GuildTagInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Wijzig gildenaam"
+    bedrock-input-label: "&fVoer nieuwe gildenaam in"
+    bedrock-input-placeholder: "2-16 tekens, kleurcodes ondersteund"
   guild-tag-input:
     cancel-button: "&cAnnuleer"
     cancel-lore: "&8Annuleer wijziging"
@@ -924,6 +1208,9 @@ gui:
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Wijzig gildetag"
+    bedrock-input-label: "&fVoer nieuwe gildetag in"
+    bedrock-input-placeholder: "Maximaal {max} tekens"
   guild-description-input:
     cancel-button: "&cAnnuleer"
     cancel-lore: "&8Annuleer wijziging"
@@ -935,12 +1222,18 @@ gui:
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
+    bedrock-title: "&6Wijzig gildebeschrijving"
+    bedrock-input-label: "&fVoer nieuwe gildebeschrijving in"
+    bedrock-input-placeholder: "Maximaal {max} tekens"
   guild-permissions:
     title: "&6Gilde rechtensinstellingen"
 
   # ================================================
   # InviteMemberGUI (4 keys)
   # ================================================
+    bedrock-title: "&6Gilde rechteninstellingen"
+    bedrock-content: "&6=== Meesterrechten ===\n&f• Alle rechten\n&f• Leden beheren\n&f• Instellingen wijzigen\n&f• Gilde verwijderen\n\n&e=== Officiersrechten ===\n&f• Leden uitnodigen\n&f• Leden schoppen\n&f• Aanvragen afhandelen\n&f• Gildehuis instellen\n\n&7=== Ledenrechten ===\n&f• Gilde-informatie bekijken\n&f• Teleporteren naar gildehuis\n&f• Aanvragen om lid te worden van andere gildes\n\n&aHuidige status: &fGilde {guild} | Rechtensysteem werkt normaal"
+    bedrock-back: "&cTerug"
   invite-member:
     back-to-settings: "Terug naar gilde-instellingen"
     click-invite: "Klik om deze speler uit te nodigen"
@@ -950,6 +1243,10 @@ gui:
   # ================================================
   # KickMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Leden uitnodigen"
+    bedrock-title-page: "&6Leden uitnodigen - Pagina {page}"
+    bedrock-no-players: "&fGeen online spelers beschikbaar om uit te nodigen"
+    bedrock-player-list: "&fOnline spelers (Totaal {count})"
   kick-member:
     kick.failed: "&cSchoppen van lid mislukt!"
     kick.kicked: "&cJe bent uit de gilde &e{guild}&c geschopt!"
@@ -960,6 +1257,10 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Lid schoppen"
+    bedrock-title-page: "&6Lid schoppen - Pagina {page}"
+    bedrock-no-members: "&fGeen leden beschikbaar om te schoppen"
+    bedrock-content: "&fSelecteer een lid om te schoppen"
   promote-member:
     promote.failed: "&cPromoveren van lid mislukt!"
     promote.promoted: "&aJe bent gepromoveerd tot officier van de gilde &e{guild}&a!"
@@ -970,9 +1271,17 @@ gui:
   # ================================================
   # DemoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Lid promoveren"
+    bedrock-title-page: "&6Lid promoveren - Pagina {page}"
+    bedrock-no-members: "&fGeen leden beschikbaar om te promoveren"
+    bedrock-content: "&fSelecteer een lid om te promoveren tot officier"
   demote-member:
     demote.demoted: "&aJe bent gedegradeerd tot gewoon lid van de gilde &e{guild}&a!"
     demote.failed: "&cDegraderen van lid mislukt!"
     demote.success: "&aLid &e{player} &a gedegradeerd tot gewoon lid!"
     click-demote: "Klik om te degraderen tot lid"
     title: "&6Degradeer lid - Pagina {page}"
+    bedrock-title: "&6Lid degraderen"
+    bedrock-title-page: "&6Lid degraderen - Pagina {page}"
+    bedrock-no-members: "&fGeen officieren beschikbaar om te degraderen"
+    bedrock-content: "&fSelecteer een officier om te degraderen tot lid"

@@ -282,9 +282,6 @@ economy.transfer-success: "&a&e{target} &aguild'ine &e{amount} &abaşarıyla tra
 economy.transfer-failed: "&cTransfer başarısız!"
 economy.target-guild-not-found: "&cHedef guild mevcut değil!"
 economy.cannot-transfer-to-self: "&cKendi guild'inize transfer yapamazsınız!"
-guild.deposit.insufficient-funds: "&cYeterli bakiyeniz yok!"
-guild.withdraw.insufficient-funds: "&cGuild hesabında yetersiz bakiye!"
-guild.transfer.insufficient-funds: "&cGuild hesabında yetersiz bakiye!"
 
 # ============ Relations ============
 guild.relation.usage: "&cKullanım: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&a&e{0} &aolarak yeniden adlandırıldı (&e{1} &akulla
 cloud.download-tip: "&6İpucu: &8\u00d6nce eski mod\u00fcl\u00fc boşaltın, ardından dosyayı değiştirin: &e/guildmodule unload <id> &8-> jar'ı değiştir -> &e/guildmodule load {0}"
 cloud.download-failed: "&cİndirme başarısız: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cBu komut yaln\u0131zca Bedrock oyuncular\u0131 i\u00e7indir. Sen bir Java oyuncususun."
+bedrock-test.geyser-unavailable: "&cGeyser API kullan\u0131lam\u0131yor, form g\u00f6nderilemiyor."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7\u015euna t\u0131klad\u0131n: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Form kapat\u0131ld\u0131"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Ba\u015far\u0131yla g\u00f6nderildi:"
+bedrock-test.custom-name: "&7  \u0130sim: &f{value}"
+bedrock-test.custom-desc: "&7  A\u00e7\u0131klama: &f{value}"
+bedrock-test.custom-free-join: "&7  Serbest kat\u0131l\u0131m: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Davetlere izin ver: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Atmaya izin ver: &f{value}"
+bedrock-test.custom-language: "&7  Dil: &f{value}"
+bedrock-test.custom-max-members: "&7  Maksimum \u00fcye say\u0131s\u0131: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Form kapat\u0131ld\u0131, kaydedilmedi"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7\u015eu se\u00e7ene\u011fi se\u00e7tin: &c\u00c7\u0131k\u0131\u015f\u0131 onayla"
+bedrock-test.modal-cancel: "&a[ModalForm] &7\u015eu se\u00e7ene\u011fi se\u00e7tin: &a\u0130ptal"
+bedrock-test.modal-closed: "&7[ModalForm] \u0130leti\u015fim kutusu kapat\u0131ld\u0131"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Lonca Eklentisi &r- &eBedrock Form Testi"
+bedrock-test.main-content: "&7\u00d6nizleme i\u00e7in bir form t\u00fcr\u00fc se\u00e7in:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- D\u00fc\u011fme men\u00fcs\u00fc"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Giri\u015f/ayar formu"
+bedrock-test.main-btn-modal: "&cModalForm &f- Onay ileti\u015fim kutusu"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Lonca ana men\u00fc &r- &7SimpleForm \u00f6rne\u011fi"
+bedrock-test.simple-content: "&7Ho\u015f geldin, &e{player}&7!\n&7Bu bir SimpleForm d\u00fc\u011fme men\u00fcs\u00fc \u00f6rne\u011fidir."
+bedrock-test.simple-btn-info: "&aLonca bilgileri &f- Lonca ayr\u0131nt\u0131lar\u0131n\u0131 g\u00f6r"
+bedrock-test.simple-btn-members: "&b\u00dcye y\u00f6netimi &f- Lonca \u00fcyelerini y\u00f6net"
+bedrock-test.simple-btn-settings: "&eLonca ayarlar\u0131 &f- Lonca yap\u0131land\u0131rmas\u0131n\u0131 de\u011fi\u015ftir"
+bedrock-test.simple-btn-list: "&6Lonca listesi &f- T\u00fcm loncalara g\u00f6z at"
+bedrock-test.simple-btn-quit: "&cLoncadan ayr\u0131l &f- Mevcut loncadan ayr\u0131l"
+bedrock-test.simple-name-info: "Lonca bilgileri"
+bedrock-test.simple-name-members: "\u00dcye y\u00f6netimi"
+bedrock-test.simple-name-settings: "Lonca ayarlar\u0131"
+bedrock-test.simple-name-list: "Lonca listesi"
+bedrock-test.simple-name-quit: "Loncadan ayr\u0131l"
+
+# CustomForm
+bedrock-test.custom-title: "&6Lonca ayarlar\u0131 &r- &fCustomForm \u00f6rne\u011fi"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Temel ayarlar \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fLonca ad\u0131"
+bedrock-test.custom-input-name-placeholder: "Yeni ad girin..."
+bedrock-test.custom-input-name-default: "Benim loncam"
+bedrock-test.custom-input-desc-label: "&fLonca a\u00e7\u0131klamas\u0131"
+bedrock-test.custom-input-desc-placeholder: "Bir a\u00e7\u0131klama girin..."
+bedrock-test.custom-input-desc-default: "Dost canl\u0131s\u0131 bir lonca"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 \u0130zin anahtarlar\u0131 \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fSerbest kat\u0131l\u0131ma izin ver"
+bedrock-test.custom-toggle-allow-invite: "&f\u00dcyelerin davet etmesine izin ver"
+bedrock-test.custom-toggle-allow-kick: "&f\u00dcyelerin atmas\u0131na izin ver"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Di\u011fer \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fLonca dili"
+bedrock-test.custom-slider-max-members: "&fMaksimum \u00fcye say\u0131s\u0131"
+
+# ModalForm
+bedrock-test.modal-title: "&c\u0130\u015flemi onayla &r- &fModalForm \u00f6rne\u011fi"
+bedrock-test.modal-content: "&7Loncadan &eTest Loncas\u0131 &7ayr\u0131lmak istedi\u011finden emin misin?\n\n&cBu i\u015flem geri al\u0131namaz!\n&7Ayr\u0131ld\u0131ktan sonra tekrar kat\u0131l\u0131m ba\u015fvurusu yapman gerekir."
+bedrock-test.modal-btn-confirm: "&a\u00c7\u0131k\u0131\u015f\u0131 onayla"
+bedrock-test.modal-btn-cancel: "&c\u0130ptal"
 
 
 

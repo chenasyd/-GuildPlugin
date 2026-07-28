@@ -282,9 +282,6 @@ economy.transfer-success: "&aBerjaya memindahkan &e{amount} &ake guild &e{target
 economy.transfer-failed: "&cPemindahan gagal!"
 economy.target-guild-not-found: "&cGuild sasaran tidak wujud!"
 economy.cannot-transfer-to-self: "&cTidak boleh memindahkan dana ke guild sendiri!"
-guild.deposit.insufficient-funds: "&cBaki anda tidak mencukupi!"
-guild.withdraw.insufficient-funds: "&cBaki akaun guild tidak mencukupi!"
-guild.transfer.insufficient-funds: "&cBaki akaun guild tidak mencukupi!"
 
 # ============ Relations ============
 guild.relation.usage: "&cPenggunaan: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&aDinamakan semula kepada &e{0} &a(kerana &e{1} &asedan
 cloud.download-tip: "&6Tip: &8Bongkar modul lama dahulu kemudian gantikan fail: &e/guildmodule unload <id> &8-> ganti jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&cMuat turun gagal: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cPerintah ini hanya untuk pemain Bedrock. Anda adalah pemain Java."
+bedrock-test.geyser-unavailable: "&cAPI Geyser tidak tersedia, tidak dapat menghantar borang."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Anda klik pada: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Borang ditutup"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Dihantar dengan jayanya:"
+bedrock-test.custom-name: "&7  Nama: &f{value}"
+bedrock-test.custom-desc: "&7  Penerangan: &f{value}"
+bedrock-test.custom-free-join: "&7  Sertai bebas: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Benarkan jemputan: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Benarkan tendangan: &f{value}"
+bedrock-test.custom-language: "&7  Bahasa: &f{value}"
+bedrock-test.custom-max-members: "&7  Ahli maksimum: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Borang ditutup, tidak disimpan"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Anda pilih: &cSahkan keluar"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Anda pilih: &aBatal"
+bedrock-test.modal-closed: "&7[ModalForm] Dialog ditutup"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Plugin Gild &r- &eUjian Borang Bedrock"
+bedrock-test.main-content: "&7Pilih jenis borang untuk pratonton:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Menu butang"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Borang input/tetapan"
+bedrock-test.main-btn-modal: "&cModalForm &f- Dialog pengesahan"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Menu utama gild &r- &7Contoh SimpleForm"
+bedrock-test.simple-content: "&7Selamat datang, &e{player}&7!\n&7Ini adalah contoh menu butang SimpleForm."
+bedrock-test.simple-btn-info: "&aMaklumat gild &f- Lihat butiran gild"
+bedrock-test.simple-btn-members: "&bPengurusan ahli &f- Urus ahli gild"
+bedrock-test.simple-btn-settings: "&eTetapan gild &f- Ubah konfigurasi gild"
+bedrock-test.simple-btn-list: "&6Senarai gild &f- Layari semua gild"
+bedrock-test.simple-btn-quit: "&cKeluar gild &f- Tinggalkan gild semasa"
+bedrock-test.simple-name-info: "Maklumat gild"
+bedrock-test.simple-name-members: "Pengurusan ahli"
+bedrock-test.simple-name-settings: "Tetapan gild"
+bedrock-test.simple-name-list: "Senarai gild"
+bedrock-test.simple-name-quit: "Keluar gild"
+
+# CustomForm
+bedrock-test.custom-title: "&6Tetapan gild &r- &fContoh CustomForm"
+bedrock-test.custom-label-basic: "&7── Tetapan asas ──"
+bedrock-test.custom-input-name-label: "&fNama gild"
+bedrock-test.custom-input-name-placeholder: "Masukkan nama baru..."
+bedrock-test.custom-input-name-default: "Gild saya"
+bedrock-test.custom-input-desc-label: "&fPenerangan gild"
+bedrock-test.custom-input-desc-placeholder: "Masukkan penerangan..."
+bedrock-test.custom-input-desc-default: "Gild yang mesra"
+bedrock-test.custom-label-perms: "&7── Suis kebenaran ──"
+bedrock-test.custom-toggle-free-join: "&fBenarkan sertai bebas"
+bedrock-test.custom-toggle-allow-invite: "&fBenarkan ahli menjemput"
+bedrock-test.custom-toggle-allow-kick: "&fBenarkan ahli menendang"
+bedrock-test.custom-label-other: "&7── Lain-lain ──"
+bedrock-test.custom-dropdown-lang: "&fBahasa gild"
+bedrock-test.custom-slider-max-members: "&fAhli maksimum"
+
+# ModalForm
+bedrock-test.modal-title: "&cSahkan operasi &r- &fContoh ModalForm"
+bedrock-test.modal-content: "&7Adakah anda pasti mahu keluar dari gild &eGild Ujian &7?\n\n&cOperasi ini tidak boleh dibatalkan!\n&7Selepas keluar, anda perlu memohon untuk sertai semula."
+bedrock-test.modal-btn-confirm: "&aSahkan keluar"
+bedrock-test.modal-btn-cancel: "&cBatal"
 
 
 

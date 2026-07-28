@@ -88,6 +88,9 @@ gui:
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
   # ================================================
+    bedrock-prev-page: "&ePagina anterioară"
+    bedrock-next-page: "&ePagina următoare"
+    bedrock-back: "&cÎnapoi"
   admin-gui:
     title: "&4Administrare Bresle"
     admin-gui-economy-lore-1: "&7Gestiona\u021bi sistemul economic al breslei"
@@ -115,6 +118,14 @@ gui:
   # ================================================
   # ApplicationManagementGUI (29 keys)
   # ================================================
+    bedrock-title: "&4Administrare breaslă"
+    bedrock-content: "&fSelectați funcția de gestionare"
+    bedrock-guild-list: "&eGestionarea listei de bresle"
+    bedrock-economy: "&eGestionare economie"
+    bedrock-relations: "&eGestionarea relațiilor"
+    bedrock-statistics: "&eStatistici"
+    bedrock-settings: "&eSetări de sistem"
+    bedrock-back: "&cÎnapoi"
   application-mgmt:
     application.accepted: "&aCererea dumneavoastr\u0103 a fost acceptat\u0103 de {guild}!"
     applications-count: " cerere(cereri)"
@@ -140,7 +151,6 @@ gui:
     application-management-pending-applications-lore-1: "&7Vizualiza\u021bi cererile \u00een a\u0219teptare"
     application-management-pending-applications-name: "&eCereri \u00een a\u0219teptare"
     application-management-title: "&6Gestionare Cereri"
-    no-history: "&aNu exist\u0103 istoric al cererilor"
     no-history.desc: "&7Momentan nu exist\u0103 istoric al cererilor"
     apply.already-applied: "&cA\u021bi aplicat deja pentru aceast\u0103 breasl\u0103!"
     apply.failed: "&cTrimiterea cererii a e\u0219uat!"
@@ -149,6 +159,27 @@ gui:
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
   # ================================================
+    bedrock-title: "&6Gestionare cereri"
+    bedrock-empty-history: "&fNu există istoric de cereri"
+    bedrock-empty-pending: "&fNu există cereri în așteptare"
+    bedrock-pending-btn: "&eCereri în așteptare"
+    bedrock-history-btn: "&eIstoric cereri"
+    bedrock-back: "&cÎnapoi"
+    bedrock-mode-history: "Istoric cereri"
+    bedrock-mode-pending: "Cereri în așteptare"
+    bedrock-title-page: "&6Gestionare cereri - {mode} Pagina {page}"
+    bedrock-total: "&fTotal {count} înregistrări"
+    bedrock-prev-page: "&ePagina anterioară"
+    bedrock-next-page: "&ePagina următoare"
+    bedrock-applicant: "&fSolicitant: {name}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-message: "&fMesaj: {msg}"
+    bedrock-no-message: "Niciunul"
+    bedrock-actions-title: "&6Procesare cerere - {name}"
+    bedrock-actions-content: "&fSolicitant: {name}\n&fMesaj: {msg}"
+    bedrock-accept: "&aAcceptă cererea"
+    bedrock-reject: "&cRespinge cererea"
+    bedrock-back-to-list: "&eÎnapoi la listă"
   main-menu:
     application-management.lore.1: "&7Proceseaz\u0103 cererile de aderare"
     application-management.lore.2: "&7Vizualizeaz\u0103 istoricul cererilor"
@@ -176,6 +207,7 @@ gui:
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
+    bedrock-content: "&fAlegeți o funcție:"
   system-settings:
     applications: "&eSistem de aplicare"
     applications-disabled: "&cSistemul de aplicare a fost dezactivat!"
@@ -292,6 +324,23 @@ gui:
   # ================================================
   # CreateGuildGUI (36 keys)
   # ================================================
+    bedrock-title: "&4Setări de sistem"
+    bedrock-content: "&fFaceți clic pentru a comuta starea"
+    bedrock-debug: "&eInformații depanare: {status}"
+    bedrock-auto-save: "&eSalvare automată: {status}"
+    bedrock-economy: "&eSistem economic: {status}"
+    bedrock-relations: "&eSistem de relații: {status}"
+    bedrock-level: "&eSistem de nivel: {status}"
+    bedrock-applications: "&eSistem de cereri: {status}"
+    bedrock-invites: "&eSistem de invitații: {status}"
+    bedrock-guild-home: "&eCasă breaslă: {status}"
+    bedrock-on: "&aACTIVAT"
+    bedrock-off: "&cDEZACTIVAT"
+    bedrock-reload: "&aReîncarcă configurația"
+    bedrock-database: "&bMentenanță bază de date"
+    bedrock-backup: "&6Copie de rezervă date"
+    bedrock-save: "&aSalvează setările"
+    bedrock-back: "&cÎnapoi"
   create-guild:
     create.already-in-guild: "&cSunte\u021bi deja \u00eentr-o breasl\u0103!"
     create.description-too-long: "&cDescrierea breslei nu poate dep\u0103\u0219i 100 de caractere!"
@@ -333,6 +382,13 @@ gui:
   # ================================================
   # GuildDetailGUI (38 keys)
   # ================================================
+    bedrock-title: "&6Creează breaslă"
+    bedrock-name-label: "&fNume breaslă (3-20 caractere)"
+    bedrock-name-placeholder: "Introduceți numele breslei"
+    bedrock-tag-label: "&fEtichetă breaslă (maxim 6 caractere, opțional)"
+    bedrock-tag-placeholder: "Introduceți eticheta breslei"
+    bedrock-desc-label: "&fDescriere breaslă (maxim 100 caractere, opțional)"
+    bedrock-desc-placeholder: "Introduceți descrierea breslei"
   guild-detail:
     click-delete: "Face\u021bi clic pentru a \u0219terge breasla"
     created-time: "Data cre\u0103rii"
@@ -376,6 +432,31 @@ gui:
   # ================================================
   # GuildInfoGUI (21 keys)
   # ================================================
+    bedrock-title: "&6Detalii breaslă - {guild_name}"
+    bedrock-level: "&fNivel: &e{level}"
+    bedrock-balance: " &fSold: &a{balance}"
+    bedrock-leader: "&fLider: &c{leader}"
+    bedrock-members: " &fMembri: &e{current}/{max}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-status-frozen: "&cBlocat"
+    bedrock-status-normal: "&aNormal"
+    bedrock-description: "&fDescriere: &7{description}"
+    bedrock-transfer-hint: "&e>>> Mod transfer: Faceți clic pe membru pentru a transfera <<<"
+    bedrock-no-tag: "Niciunul"
+    bedrock-unfreeze: "&aDeblochează breasla"
+    bedrock-freeze: "&cBlochează breasla"
+    bedrock-delete: "&4Șterge breasla"
+    bedrock-cancel-transfer: "&eAnulează modul transfer"
+    bedrock-transfer: "&cTransferă liderul"
+    bedrock-prev-page: "&ePagina anterioară"
+    bedrock-next-page: "&ePagina următoare"
+    bedrock-back: "&cÎnapoi"
+    bedrock-transfer-self: "&cNu poți transfera conducerea către tine însuți"
+    bedrock-transfer-success: "&aTransferat cu succes către &e{name}"
+    bedrock-transfer-failed: "&cTransferul conducerii a eșuat!"
+    bedrock-operation-failed: "&cOperațiunea a eșuat!"
+    bedrock-transfer-mode-active: "&eFaceți clic pe un membru pentru a transfera conducerea"
+    bedrock-transfer-mode-cancelled: "&7Transfer anulat"
   guild-info:
     back: "\u00cenapoi"
     back-hint: "Face\u021bi clic pentru a reveni la meniul principal"
@@ -402,6 +483,10 @@ gui:
   # ================================================
   # GuildListManagementGUI (2 keys)
   # ================================================
+    bedrock-title: "&6Informații breaslă"
+    bedrock-guild-funds: "&aFonduri breaslă"
+    bedrock-back-to-main: "&cÎnapoi la meniul principal"
+    bedrock-status-label: "Status"
   guild-list-management:
     guild-list-management-title: "&4Gestionare list\u0103 bresle"
     gui-refresh: "&aRe\u00eencarc\u0103 lista"
@@ -409,6 +494,24 @@ gui:
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
   # ================================================
+    bedrock-title: "&4Gestionarea listei de bresle"
+    bedrock-page-info: "&fPagina {page}/{total} | Total {count} bresle"
+    bedrock-refresh: "&aReîmprospătează lista"
+    bedrock-prev-page: "&ePagina anterioară"
+    bedrock-next-page: "&ePagina următoare"
+    bedrock-back: "&cÎnapoi"
+    bedrock-status-frozen: "&cBlocat"
+    bedrock-status-normal: "&aNormal"
+    bedrock-actions-title: "&6Acțiuni breaslă - {guild_name}"
+    bedrock-leader: "&fLider: &e{leader}"
+    bedrock-level: "&fNivel: &e{level}"
+    bedrock-balance: "&fSold: &a{balance}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-view-detail: "&eVezi detalii"
+    bedrock-delete: "&cȘterge breasla"
+    bedrock-unfreeze: "&aDeblochează breasla"
+    bedrock-freeze: "&cBlochează breasla"
+    bedrock-back-list: "&cÎnapoi la listă"
   guild-list:
     balance: "Fonduri"
     created-time: "Data cre\u0103rii"
@@ -453,6 +556,22 @@ gui:
   # ================================================
   # GuildFilterGUI (19 keys)
   # ================================================
+    bedrock-title: "&6Listă bresle"
+    bedrock-no-guilds: "&cNu există încă bresle pe server"
+    bedrock-no-results: "&cNu s-au găsit bresle potrivite"
+    bedrock-search: "&eCaută bresle"
+    bedrock-back-main: "&cÎnapoi la meniul principal"
+    bedrock-page-info: "&fPagina {page}/{total}"
+    bedrock-search-info: "&fCăutare: &e{query}"
+    bedrock-prev-page: "&aPagina anterioară"
+    bedrock-next-page: "&aPagina următoare"
+    bedrock-search-title: "&6Caută bresle"
+    bedrock-search-input: "&fIntroduceți cuvântul cheie"
+    bedrock-search-placeholder: "Lăsați gol pentru a le afișa pe toate"
+    bedrock-select-action: "&fSelectați acțiunea:"
+    bedrock-view-detail: "&eVezi detalii"
+    bedrock-apply-join: "&aAplică pentru a te alătura"
+    bedrock-back-list: "&cÎnapoi la listă"
   guild-filter:
     back.lore-1: "&7\u00cenapoi la lista breslelor"
     back.name: "&c\u00cenapoi"
@@ -477,6 +596,35 @@ gui:
   # ================================================
   # GuildSettingsGUI (42 keys)
   # ================================================
+    bedrock-title: "&6Filtru breaslă"
+    bedrock-no-guilds: "&fNu există încă bresle pe server"
+    bedrock-back: "&cÎnapoi"
+    bedrock-no-results: "&fNicio breaslă nu se potrivește filtrului"
+    bedrock-filter-info: "&fNivel: {min}-{max} | Sortare: {sort}"
+    bedrock-adjust-filter: "&eAjustează filtrul"
+    bedrock-sort-desc: "Membri descrescător"
+    bedrock-sort-asc: "Membri crescător"
+    bedrock-sort-full: "Doar pline"
+    bedrock-title-page: "&6Filtru breaslă - Pagina {page}"
+    bedrock-total-results: "&fTotal {count} rezultate"
+    bedrock-prev-page: "&ePagina anterioară"
+    bedrock-next-page: "&ePagina următoare"
+    bedrock-settings-title: "&6Setări filtru"
+    bedrock-min-level: "&fNivel minim: {level}"
+    bedrock-max-level: "&fNivel maxim: {level}"
+    bedrock-sort: "&fSortare: {sort}"
+    bedrock-min-level-up: "&aNivel minim +1"
+    bedrock-min-level-down: "&cNivel minim -1"
+    bedrock-max-level-up: "&aNivel maxim +1"
+    bedrock-max-level-down: "&cNivel maxim -1"
+    bedrock-switch-sort: "&eSchimbă modul de sortare"
+    bedrock-back-results: "&eÎnapoi la rezultate"
+    bedrock-actions-title: "&6Acțiuni breaslă - {guild_name}"
+    bedrock-level: "&fNivel: {level}"
+    bedrock-leader: "&fLider: {leader}"
+    bedrock-view-detail: "&eVezi detalii"
+    bedrock-apply-join: "&aAplică pentru a te alătura"
+    bedrock-back-filter: "&eÎnapoi la filtru"
   guild-settings:
     back: "&7\u00cenapoi"
     back-desc: "&7Face\u021bi clic &fpentru a reveni la meniul principal"
@@ -524,6 +672,13 @@ gui:
   # ================================================
   # GuildFundsGUI (23 keys)
   # ================================================
+    bedrock-content: "&6Prezentare breaslă\n&fNume: &e{guild_name}\n&fEtichetă: &e{guild_tag}\n&fDescriere: {guild_desc}\n&fCasă breaslă: {home_status}"
+    bedrock-change-name: "&eModifică numele"
+    bedrock-change-description: "&eModifică descrierea"
+    bedrock-change-tag: "&eModifică eticheta"
+    bedrock-kick-member: "&cExclude membru"
+    bedrock-promote-demote: "&ePromovează/Retrogradează"
+    bedrock-back-to-main: "&fÎnapoi la meniul principal"
   guild-funds:
     back-to-info: "&7\u00cenapoi la informa\u021biile breslei"
     back-to-settings: "&7\u00cenapoi la set\u0103rile breslei"
@@ -552,6 +707,15 @@ gui:
   # ================================================
   # EconomyManagementGUI (23 keys)
   # ================================================
+    bedrock-title: "&6Fonduri breaslă - {guild}"
+    bedrock-no-data: "&cNu există înregistrări de depuneri"
+    bedrock-back: "&cÎnapoi"
+    bedrock-page-info: "&fPagina {page}/{total}\n&fTotal jucători: {count}"
+    bedrock-online: "&aOnline"
+    bedrock-offline: "&fOffline"
+    bedrock-prev-page: "&aPagina anterioară"
+    bedrock-next-page: "&aPagina următoare"
+    bedrock-refresh: "&aReîmprospătează"
   economy-management:
     add-prompt: "&eIntroduce\u021bi suma de ad\u0103ugat (introduce\u021bi num\u0103rul \u00een chat, introduce\u021bi cancel pentru anulare):"
     back: "&c\u00cenapoi"
@@ -580,6 +744,23 @@ gui:
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
   # ================================================
+    bedrock-title: "&eGestionare economie"
+    bedrock-page-info: "&fPagina {current}/{total} | Total {count} bresle"
+    bedrock-refresh: "&aReîmprospătează lista"
+    bedrock-prev-page: "&ePagina anterioară"
+    bedrock-next-page: "&ePagina următoare"
+    bedrock-back: "&cÎnapoi"
+    bedrock-actions-title: "&eGestionare economie - {guild}"
+    bedrock-actions-content: "&fSold curent: &a{balance}\n&fLider: &e{leader}\n&fNivel: &e{level}"
+    bedrock-set-funds: "&eSetează fondurile"
+    bedrock-add-funds: "&aAdaugă fonduri"
+    bedrock-clear-funds: "&cGolește fondurile"
+    bedrock-back-to-list: "&cÎnapoi la listă"
+    bedrock-set-title: "&eSetează fondurile"
+    bedrock-add-title: "&aAdaugă fonduri"
+    bedrock-input-label: "&fIntroduceți suma"
+    bedrock-invalid-amount: "&cSuma trebuie să fie mai mare de 0!"
+    bedrock-invalid-number: "&cNumăr invalid!"
   confirm-funds:
     amount: "Sum\u0103"
     cancel: "&cAnuleaz\u0103"
@@ -610,6 +791,14 @@ gui:
   # ================================================
   # GuildRelationsGUI (49 keys)
   # ================================================
+    bedrock-title: "&6Confirmă modificarea fondurilor"
+    bedrock-guild: "&fBreaslă: &e{guild_name}"
+    bedrock-operation: "&fOperațiune: {operation}"
+    bedrock-current-balance: "&fSold curent: &6{balance}"
+    bedrock-amount: "&fSumă: &f{amount}"
+    bedrock-new-balance: "&fSold nou: &a{balance}"
+    bedrock-confirm: "&aConfirmă modificarea"
+    bedrock-cancel: "&cAnulează"
   guild-relations:
     back-to-menu: "\u00cenapoi la meniul principal"
     created-time: "Data cre\u0103rii"
@@ -664,6 +853,24 @@ gui:
   # ================================================
   # CreateRelationGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Relații breaslă"
+    bedrock-title-page: "&6Relații breaslă - Pagina {page}"
+    bedrock-empty: "&fNu există relații de breaslă momentan"
+    bedrock-total: "&fTotal {count} relații"
+    bedrock-create-relation: "&aCreează relație"
+    bedrock-prev-page: "&ePagina anterioară"
+    bedrock-next-page: "&ePagina următoare"
+    bedrock-back: "&cÎnapoi"
+    bedrock-actions-title: "&6Acțiuni relație - {guild}"
+    bedrock-actions-content: "&fTip: {type}\n&fStatus: {status}"
+    bedrock-cancel-relation: "&cAnulează relația"
+    bedrock-accept-relation: "&aAcceptă relația"
+    bedrock-reject-relation: "&cRespinge relația"
+    bedrock-end-truce: "&eÎncheie armistițiul"
+    bedrock-propose-truce: "&ePropune armistițiu"
+    bedrock-delete-relation: "&cȘterge relația"
+    bedrock-back-to-list: "&eÎnapoi la listă"
+    bedrock-truce-ended: "&aArmistițiul cu {guild} s-a încheiat!"
   create-relation:
     back-lore: "&7\u00cenapoi la gestionarea rela\u021biilor"
     confirm-button: "&aConfirm\u0103 crearea"
@@ -675,6 +882,22 @@ gui:
   # ================================================
   # RelationManagementGUI (40 keys)
   # ================================================
+    bedrock-type-title: "&6Creează relație - Selectează tipul"
+    bedrock-type-content: "&fSelectați un tip de relație:"
+    bedrock-back: "&cÎnapoi"
+    bedrock-target-title: "&6Creează relație - Selectează ținta"
+    bedrock-target-empty: "&fNu există bresle țintă disponibile"
+    bedrock-target-title-page: "&6Creează relație - Selectează ținta Pagina {page}"
+    bedrock-target-content: "&fTip: {type}\n&fSelectați breasla țintă:"
+    bedrock-prev-page: "&ePagina anterioară"
+    bedrock-next-page: "&ePagina următoare"
+    bedrock-confirm-title: "&6Confirmă crearea relației"
+    bedrock-confirm-content: "&fTip: {type}\n&fȚintă: {target}"
+    bedrock-confirm-create: "&aConfirmă crearea"
+    bedrock-cancel: "&cAnulează"
+    bedrock-already-exists: "&cRelația cu {guild} există deja!"
+    bedrock-create-success: "&aTrimis cerere de relație {type} către {guild}!"
+    bedrock-create-failed: "&cCrearea relației a eșuat!"
   relation-management:
     auto-cancel: "&eAnulare automat\u0103 dup\u0103 10 secunde"
     back: "&c\u00cenapoi"
@@ -720,6 +943,25 @@ gui:
   # ================================================
   # GuildLogsGUI (21 keys)
   # ================================================
+    bedrock-title: "&4Gestionarea relațiilor"
+    bedrock-empty: "&cNu există date despre relații"
+    bedrock-back: "&cÎnapoi"
+    bedrock-page-info: "&fPagina {current}/{total} | Total {count} relații"
+    bedrock-refresh: "&aReîmprospătează lista"
+    bedrock-prev-page: "&ePagina anterioară"
+    bedrock-next-page: "&ePagina următoare"
+    bedrock-actions-title: "&6Acțiuni relație"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fTip: {type}\n&fStatus: {status}\n&fInițiator: {initiator}"
+    bedrock-delete-relation: "&cȘterge relația"
+    bedrock-view-details: "&eVezi detalii"
+    bedrock-back-to-list: "&cÎnapoi la listă"
+    bedrock-confirm-title: "&cConfirmă ștergerea"
+    bedrock-confirm-content: "&fSigur doriți să ștergeți relația:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cConfirmă ștergerea"
+    bedrock-cancel: "&fAnulează"
+    bedrock-delete-success: "&aRelație ștearsă: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cȘtergerea relației a eșuat!"
+    bedrock-no-permission: "&cNu aveți permisiune de administrator!"
   guild-logs:
     back-to-guild: "\u00cenapoi la informa\u021biile breslei"
     back-to-settings: "\u00cenapoi la set\u0103rile breslei"
@@ -747,6 +989,13 @@ gui:
   # ================================================
   # MemberManagementGUI (81 keys)
   # ================================================
+    bedrock-title: "&6Jurnale breaslă - {guild}"
+    bedrock-no-data: "&cNu există înregistrări în jurnal"
+    bedrock-back: "&cÎnapoi"
+    bedrock-page-info: "&fPagina {page}/{total}\n&fTotal înregistrări: {count}"
+    bedrock-prev-page: "&aPagina anterioară"
+    bedrock-next-page: "&aPagina următoare"
+    bedrock-refresh: "&aReîmprospătează"
   member-management:
     member-details.activity: "Activitate"
     member-details.all-actions: "Toate opera\u021biunile"
@@ -833,6 +1082,31 @@ gui:
   # ================================================
   # MemberGuildGUI (13 keys)
   # ================================================
+    bedrock-title: "&6Gestionare membri"
+    bedrock-title-page: "&6Gestionare membri - Pagina {page}"
+    bedrock-no-members: "&fNu există încă membri în breaslă"
+    bedrock-member-list: "&fListă membri (Total {count})"
+    bedrock-invite: "&aInvită membru"
+    bedrock-actions-title: "&6Acțiuni membru - {member}"
+    bedrock-role-label: "&fRol: {role}"
+    bedrock-role-leader: "&cLider"
+    bedrock-role-officer: "&6Ofițer"
+    bedrock-role-member: "&fMembru"
+    bedrock-view-details: "&eVezi detalii"
+    bedrock-kick: "&cExclude membru"
+    bedrock-promote-demote: "&6Promovează/Retrogradează"
+    bedrock-back-to-list: "&cÎnapoi la listă"
+    member-details.bedrock-title: "&6Detalii membru - {member}"
+    member-details.bedrock-player: "&fJucător: {name}"
+    member-details.bedrock-role: "&fRol: {role}"
+    member-details.bedrock-join-time: "&fData alăturării: {time}"
+    member-details.bedrock-online: "&fOnline: {status}"
+    member-details.bedrock-online-yes: "&aDa"
+    member-details.bedrock-online-no: "&cNu"
+    member-details.bedrock-kick: "&cExclude membru"
+    member-details.bedrock-promote-demote: "&6Promovează/Retrogradează"
+    member-details.bedrock-send-message: "&eTrimite mesaj"
+    member-details.bedrock-back: "&cÎnapoi"
   member-guild-gui:
     home-not-set: "&cNesetat\u0103"
     home-set: "&aSetat\u0103"
@@ -851,6 +1125,8 @@ gui:
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
   # ================================================
+    bedrock-title: "&6Breasla mea - {guild_name}"
+    bedrock-content: "&6Informații breaslă\n&fNume: &e{guild_name}\n&fEtichetă: &e{guild_tag}\n&fCasă breaslă: {home_status}"
   confirm-delete-guild:
     cancel-button: "&aAnuleaz\u0103"
     cancel-lore: "&7Anuleaz\u0103 \u0219tergerea breslei"
@@ -870,6 +1146,10 @@ gui:
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
   # ================================================
+    bedrock-title: "&4Confirmă ștergerea breslei"
+    bedrock-content: "&fBreaslă: &e{guild}\n&fSigur doriți să ștergeți această breaslă?\n&cAceastă acțiune va șterge definitiv breasla!\n&cToți membrii vor fi eliminați!\n&cAceastă acțiune nu poate fi anulată!"
+    bedrock-confirm: "&4Confirmă ștergerea"
+    bedrock-cancel: "&aAnulează"
   confirm-leave-guild:
     cancel-button: "&aAnuleaz\u0103"
     cancel-lore: "&7Anuleaz\u0103 p\u0103r\u0103sirea breslei"
@@ -887,6 +1167,10 @@ gui:
   # ================================================
   # GuildNameInputGUI (21 keys)
   # ================================================
+    bedrock-title: "&cConfirmă părăsirea breslei"
+    bedrock-content: "&fBreaslă: &e{guild}\n&fSigur doriți să părăsiți această breaslă?\n&cAceastă acțiune nu poate fi anulată!"
+    bedrock-confirm: "&cConfirmă părăsirea"
+    bedrock-cancel: "&aAnulează"
   guild-name-input:
     cancel-button: "&cAnuleaz\u0103"
     cancel-lore: "&7\u00cenapoi la meniul anterior"
@@ -913,6 +1197,9 @@ gui:
   # ================================================
   # GuildTagInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Modifică numele breslei"
+    bedrock-input-label: "&fIntroduceți noul nume al breslei"
+    bedrock-input-placeholder: "2-16 caractere, coduri de culoare acceptate"
   guild-tag-input:
     cancel-button: "&cAnuleaz\u0103"
     cancel-lore: "&7Anuleaz\u0103 modificarea"
@@ -924,6 +1211,9 @@ gui:
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Modifică eticheta breslei"
+    bedrock-input-label: "&fIntroduceți noua etichetă a breslei"
+    bedrock-input-placeholder: "Maxim {max} caractere"
   guild-description-input:
     cancel-button: "&cAnuleaz\u0103"
     cancel-lore: "&7Anuleaz\u0103 modificarea"
@@ -935,12 +1225,18 @@ gui:
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
+    bedrock-title: "&6Modifică descrierea breslei"
+    bedrock-input-label: "&fIntroduceți noua descriere a breslei"
+    bedrock-input-placeholder: "Maxim {max} caractere"
   guild-permissions:
     title: "&6Set\u0103ri permisiuni breasl\u0103"
 
   # ================================================
   # InviteMemberGUI (4 keys)
   # ================================================
+    bedrock-title: "&6Permisiuni breaslă"
+    bedrock-content: "&6=== Permisiuni lider ===\n&f• Toate permisiunile\n&f• Gestionare membri\n&f• Modificare setări\n&f• Ștergere breaslă\n\n&e=== Permisiuni ofițer ===\n&f• Invitare membri\n&f• Excludere membri\n&f• Procesare cereri\n&f• Setare casă breaslă\n\n&7=== Permisiuni membru ===\n&f• Vizualizare informații breaslă\n&f• Teleportare la casa breslei\n&f• Aplicare pentru alte bresle\n\n&aStare curentă: &fBreasla {guild} | Sistemul de permisiuni funcționează normal"
+    bedrock-back: "&cÎnapoi"
   invite-member:
     back-to-settings: "\u00cenapoi la set\u0103rile breslei"
     click-invite: "Face\u021bi clic pentru a invita acest juc\u0103tor"
@@ -950,6 +1246,10 @@ gui:
   # ================================================
   # KickMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Invită membri"
+    bedrock-title-page: "&6Invită membri - Pagina {page}"
+    bedrock-no-players: "&fNu există jucători online disponibili pentru invitare"
+    bedrock-player-list: "&fJucători online (Total {count})"
   kick-member:
     kick.failed: "&cDarea afar\u0103 a membrului a e\u0219uat!"
     kick.kicked: "&cA\u021bi fost dat afar\u0103 din breasla &e{guild} &c!"
@@ -960,6 +1260,10 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Exclude membru"
+    bedrock-title-page: "&6Exclude membru - Pagina {page}"
+    bedrock-no-members: "&fNu există membri disponibili pentru excludere"
+    bedrock-content: "&fSelectați un membru pentru excludere"
   promote-member:
     promote.failed: "&cPromovarea membrului a e\u0219uat!"
     promote.promoted: "&aA\u021bi fost promovat la ofi\u021ber al breslei &e{guild} &a!"
@@ -970,9 +1274,17 @@ gui:
   # ================================================
   # DemoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Promovează membru"
+    bedrock-title-page: "&6Promovează membru - Pagina {page}"
+    bedrock-no-members: "&fNu există membri disponibili pentru promovare"
+    bedrock-content: "&fSelectați un membru pentru promovare la ofițer"
   demote-member:
     demote.demoted: "&aA\u021bi fost retrogradat la membru obi\u0219nuit al breslei &e{guild} &a!"
     demote.failed: "&cRetrogradarea membrului a e\u0219uat!"
     demote.success: "&aMembrul &e{player} &a fost retrogradat la membru obi\u0219nuit!"
     click-demote: "Face\u021bi clic pentru a retrograda la membru"
     title: "&6Retrogradeaz\u0103 membru - Pagina {page}"
+    bedrock-title: "&6Retrogradează membru"
+    bedrock-title-page: "&6Retrogradează membru - Pagina {page}"
+    bedrock-no-members: "&fNu există ofițeri disponibili pentru retrogradare"
+    bedrock-content: "&fSelectați un ofițer pentru retrogradare la membru"

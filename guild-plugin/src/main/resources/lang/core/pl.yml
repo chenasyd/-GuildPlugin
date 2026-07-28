@@ -282,9 +282,6 @@ economy.transfer-success: "&aPomyślnie przetransferowałeś &e{amount} &ado gil
 economy.transfer-failed: "&cTransfer nie powiódł się!"
 economy.target-guild-not-found: "&cDocelowa gildia nie istnieje!"
 economy.cannot-transfer-to-self: "&cNie można transferować do własnej gildii!"
-guild.deposit.insufficient-funds: "&cNie masz wystarczających środków!"
-guild.withdraw.insufficient-funds: "&cNiewystarczające środki na koncie gildii!"
-guild.transfer.insufficient-funds: "&cNiewystarczające środki na koncie gildii!"
 
 # ============ Relations ============
 guild.relation.usage: "&cUżycie: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&aPobrano jako &e{0} &a(zapisano pod nową nazwą, poni
 cloud.download-tip: "&6Wskazówka: &7Najpierw rozładuj stary moduł, zastąp plik: &e/guildmodule unload <id> &7-> zastąp jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&cPobieranie nie powiodło się: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cTo polecenie jest dost\u0119pne tylko dla graczy Bedrock. Jeste\u015b graczem Java."
+bedrock-test.geyser-unavailable: "&cInterfejs Geyser API jest niedost\u0119pny, nie mo\u017cna wys\u0142a\u0107 formularza."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Klikn\u0105\u0142e\u015b: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Formularz zamkni\u0119ty"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Wys\u0142ano pomy\u015blnie:"
+bedrock-test.custom-name: "&7  Nazwa: &f{value}"
+bedrock-test.custom-desc: "&7  Opis: &f{value}"
+bedrock-test.custom-free-join: "&7  Swobodne do\u0142\u0105czanie: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Zezwalaj na zaproszenia: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Zezwalaj na wyrzucanie: &f{value}"
+bedrock-test.custom-language: "&7  J\u0119zyk: &f{value}"
+bedrock-test.custom-max-members: "&7  Maksymalna liczba cz\u0142onk\u00f3w: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Formularz zamkni\u0119ty, nie zapisano"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Wybrano: &cPotwierd\u017a wyj\u015bcie"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Wybrano: &aAnuluj"
+bedrock-test.modal-closed: "&7[ModalForm] Okno dialogowe zamkni\u0119te"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Plugin Gildii &r- &eTest Formularzy Bedrock"
+bedrock-test.main-content: "&7Wybierz typ formularza do podgl\u0105du:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Menu przycisk\u00f3w"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Formularz wej\u015bcia/ustawie\u0144"
+bedrock-test.main-btn-modal: "&cModalForm &f- Okno dialogowe potwierdzenia"
+
+# SimpleForm
+bedrock-test.simple-title: "&6G\u0142\u00f3wne menu gildii &r- &7Przyk\u0142ad SimpleForm"
+bedrock-test.simple-content: "&7Witaj, &e{player}&7!\n&7To jest przyk\u0142ad menu przycisk\u00f3w SimpleForm."
+bedrock-test.simple-btn-info: "&aInformacje o gildii &f- Zobacz szczeg\u00f3\u0142y gildii"
+bedrock-test.simple-btn-members: "&bZarz\u0105dzanie cz\u0142onkami &f- Zarz\u0105dzaj cz\u0142onkami gildii"
+bedrock-test.simple-btn-settings: "&eUstawienia gildii &f- Zmie\u0144 konfiguracj\u0119 gildii"
+bedrock-test.simple-btn-list: "&6Lista gildii &f- Przegl\u0105daj wszystkie gildie"
+bedrock-test.simple-btn-quit: "&cOpu\u015b\u0107 gildi\u0119 &f- Opu\u015b\u0107 obecn\u0105 gildi\u0119"
+bedrock-test.simple-name-info: "Informacje o gildii"
+bedrock-test.simple-name-members: "Zarz\u0105dzanie cz\u0142onkami"
+bedrock-test.simple-name-settings: "Ustawienia gildii"
+bedrock-test.simple-name-list: "Lista gildii"
+bedrock-test.simple-name-quit: "Opu\u015b\u0107 gildi\u0119"
+
+# CustomForm
+bedrock-test.custom-title: "&6Ustawienia gildii &r- &fPrzyk\u0142ad CustomForm"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Ustawienia podstawowe \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fNazwa gildii"
+bedrock-test.custom-input-name-placeholder: "Wprowad\u017a now\u0105 nazw\u0119..."
+bedrock-test.custom-input-name-default: "Moja gildia"
+bedrock-test.custom-input-desc-label: "&fOpis gildii"
+bedrock-test.custom-input-desc-placeholder: "Wprowad\u017a opis..."
+bedrock-test.custom-input-desc-default: "Przyjazna gildia"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 Prze\u0142\u0105czniki uprawnie\u0144 \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fZezwalaj na swobodne do\u0142\u0105czanie"
+bedrock-test.custom-toggle-allow-invite: "&fZezwalaj cz\u0142onkom na zapraszanie"
+bedrock-test.custom-toggle-allow-kick: "&fZezwalaj cz\u0142onkom na wyrzucanie"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Inne \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fJ\u0119zyk gildii"
+bedrock-test.custom-slider-max-members: "&fMaksymalna liczba cz\u0142onk\u00f3w"
+
+# ModalForm
+bedrock-test.modal-title: "&cPotwierd\u017a operacj\u0119 &r- &fPrzyk\u0142ad ModalForm"
+bedrock-test.modal-content: "&7Czy na pewno chcesz opu\u015bci\u0107 gildi\u0119 &eTestowa gildia &7?\n\n&cTej operacji nie mo\u017cna cofn\u0105\u0107!\n&7Po opuszczeniu b\u0119dziesz musia\u0142 ponownie z\u0142o\u017cy\u0107 podanie o do\u0142\u0105czenie."
+bedrock-test.modal-btn-confirm: "&aPotwierd\u017a wyj\u015bcie"
+bedrock-test.modal-btn-cancel: "&cAnuluj"
 
 
 

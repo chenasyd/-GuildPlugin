@@ -282,11 +282,6 @@ economy.transfer-success: "&a成功向工会 &e{target} &a转账 &e{amount}！"
 economy.transfer-failed: "&c转账失败！"
 economy.target-guild-not-found: "&c目标工会不存在！"
 economy.cannot-transfer-to-self: "&c不能转账给自己的工会！"
-economy.disband-compensation: "&a工会解散成功，您收到了 {amount} 金币补偿！"
-economy.level-up: "&a工会升级成功！当前等级: {level}"
-guild.deposit.insufficient-funds: "&c您的余额不足！"
-guild.withdraw.insufficient-funds: "&c公会账户余额不足！"
-guild.transfer.insufficient-funds: "&c公会账户余额不足！"
 
 # ============ 公会聊天 ============
 guild.chat.enabled: "&a公会聊天 &a已开启&a。您的消息将发送给公会成员。"

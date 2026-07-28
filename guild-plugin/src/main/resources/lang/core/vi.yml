@@ -282,9 +282,6 @@ economy.transfer-success: "&a\u0110\xE3 chuy\u1EC3n th\xE0nh c\xF4ng &e{amount} 
 economy.transfer-failed: "&cChuy\u1EC3n kho\u1EA3n th\u1EA5t b\u1EA1i!"
 economy.target-guild-not-found: "&cC\xF4ng h\u1ED9i m\u1EE5c ti\xEAu kh\xF4ng t\u1ED3n t\u1EA1i!"
 economy.cannot-transfer-to-self: "&cKh\xF4ng th\u1EC3 chuy\u1EC3n ti\u1EC1n cho c\xF4ng h\u1ED9i c\u1EE7a ch\xEDnh m\xECnh!"
-guild.deposit.insufficient-funds: "&cS\u1ED1 d\u01B0 c\u1EE7a b\u1EA1n kh\xF4ng \u0111\u1EE7!"
-guild.withdraw.insufficient-funds: "&cS\u1ED1 d\u01B0 t\xE0i kho\u1EA3n c\xF4ng h\u1ED9i kh\xF4ng \u0111\u1EE7!"
-guild.transfer.insufficient-funds: "&cS\u1ED1 d\u01B0 t\xE0i kho\u1EA3n c\xF4ng h\u1ED9i kh\xF4ng \u0111\u1EE7!"
 
 # ============ Relations ============
 guild.relation.usage: "&cC\xE1ch d\xF9ng: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&a\u0110\xE3 \u0111\u1ED5i t\xEAn th\xE0nh &e{0} &a(v\x
 cloud.download-tip: "&6G\u1EE3i \xFD: &7D\u1EE1 t\u1EA3i m\xF4-\u0111un c\u0169 tr\u01B0\u1EDBc khi thay th\u1EBF t\u1EC7p: &e/guildmodule unload <id> &7-> thay th\u1EBF jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&cT\u1EA3i xu\u1ED1ng th\u1EA5t b\u1EA1i: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cL\u1ec7nh n\u00e0y ch\u1ec9 d\u00e0nh cho ng\u01b0\u1eddi ch\u01a1i Bedrock. B\u1ea1n l\u00e0 ng\u01b0\u1eddi ch\u01a1i Java."
+bedrock-test.geyser-unavailable: "&cAPI Geyser kh\u00f4ng kh\u1ea3 d\u1ee5ng, kh\u00f4ng th\u1ec3 g\u1eedi bi\u1ec3u m\u1eabu."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7B\u1ea1n \u0111\u00e3 nh\u1ea5p v\u00e0o: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Bi\u1ec3u m\u1eabu \u0111\u00e3 \u0111\u00f3ng"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7G\u1eedi th\u00e0nh c\u00f4ng:"
+bedrock-test.custom-name: "&7  T\u00ean: &f{value}"
+bedrock-test.custom-desc: "&7  M\u00f4 t\u1ea3: &f{value}"
+bedrock-test.custom-free-join: "&7  Tham gia t\u1ef1 do: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Cho ph\u00e9p l\u1eddi m\u1eddi: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Cho ph\u00e9p \u0111u\u1ed5i: &f{value}"
+bedrock-test.custom-language: "&7  Ng\u00f4n ng\u1eef: &f{value}"
+bedrock-test.custom-max-members: "&7  S\u1ed1 th\u00e0nh vi\u00ean t\u1ed1i \u0111a: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Bi\u1ec3u m\u1eabu \u0111\u00e3 \u0111\u00f3ng, ch\u01b0a l\u01b0u"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7B\u1ea1n \u0111\u00e3 ch\u1ecdn: &cX\u00e1c nh\u1eadn r\u1eddi"
+bedrock-test.modal-cancel: "&a[ModalForm] &7B\u1ea1n \u0111\u00e3 ch\u1ecdn: &aH\u1ee7y"
+bedrock-test.modal-closed: "&7[ModalForm] H\u1ed9p tho\u1ea1i \u0111\u00e3 \u0111\u00f3ng"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Plugin Guild &r- &eKi\u1ec3m tra Bi\u1ec3u m\u1eabu Bedrock"
+bedrock-test.main-content: "&7Ch\u1ecdn lo\u1ea1i bi\u1ec3u m\u1eabu \u0111\u1ec3 xem tr\u01b0\u1edbc:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Tr\u00ecnh \u0111\u01a1n n\u00fat"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Bi\u1ec3u m\u1eabu nh\u1eadp/c\u00e0i \u0111\u1eb7t"
+bedrock-test.main-btn-modal: "&cModalForm &f- H\u1ed9p tho\u1ea1i x\u00e1c nh\u1eadn"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Tr\u00ecnh \u0111\u01a1n ch\u00ednh guild &r- &7V\u00ed d\u1ee5 SimpleForm"
+bedrock-test.simple-content: "&7Ch\u00e0o m\u1eebng, &e{player}&7!\n&7\u0110\u00e2y l\u00e0 v\u00ed d\u1ee5 v\u1ec1 tr\u00ecnh \u0111\u01a1n n\u00fat SimpleForm."
+bedrock-test.simple-btn-info: "&aTh\u00f4ng tin guild &f- Xem chi ti\u1ebft guild"
+bedrock-test.simple-btn-members: "&bQu\u1ea3n l\u00fd th\u00e0nh vi\u00ean &f- Qu\u1ea3n l\u00fd th\u00e0nh vi\u00ean guild"
+bedrock-test.simple-btn-settings: "&eC\u00e0i \u0111\u1eb7t guild &f- S\u1eeda \u0111\u1ed5i c\u1ea5u h\u00ecnh guild"
+bedrock-test.simple-btn-list: "&6Danh s\u00e1ch guild &f- Duy\u1ec7t t\u1ea5t c\u1ea3 guild"
+bedrock-test.simple-btn-quit: "&cR\u1eddi guild &f- R\u1eddi guild hi\u1ec7n t\u1ea1i"
+bedrock-test.simple-name-info: "Th\u00f4ng tin guild"
+bedrock-test.simple-name-members: "Qu\u1ea3n l\u00fd th\u00e0nh vi\u00ean"
+bedrock-test.simple-name-settings: "C\u00e0i \u0111\u1eb7t guild"
+bedrock-test.simple-name-list: "Danh s\u00e1ch guild"
+bedrock-test.simple-name-quit: "R\u1eddi guild"
+
+# CustomForm
+bedrock-test.custom-title: "&6C\u00e0i \u0111\u1eb7t guild &r- &fV\u00ed d\u1ee5 CustomForm"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 C\u00e0i \u0111\u1eb7t c\u01a1 b\u1ea3n \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fT\u00ean guild"
+bedrock-test.custom-input-name-placeholder: "Nh\u1eadp t\u00ean m\u1edbi..."
+bedrock-test.custom-input-name-default: "Guild c\u1ee7a t\u00f4i"
+bedrock-test.custom-input-desc-label: "&fM\u00f4 t\u1ea3 guild"
+bedrock-test.custom-input-desc-placeholder: "Nh\u1eadp m\u00f4 t\u1ea3..."
+bedrock-test.custom-input-desc-default: "M\u1ed9t guild th\u00e2n thi\u1ec7n"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 C\u00f4ng t\u1eafc quy\u1ec1n h\u1ea1n \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fCho ph\u00e9p tham gia t\u1ef1 do"
+bedrock-test.custom-toggle-allow-invite: "&fCho ph\u00e9p th\u00e0nh vi\u00ean m\u1eddi"
+bedrock-test.custom-toggle-allow-kick: "&fCho ph\u00e9p th\u00e0nh vi\u00ean \u0111u\u1ed5i"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Kh\u00e1c \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fNg\u00f4n ng\u1eef guild"
+bedrock-test.custom-slider-max-members: "&fS\u1ed1 th\u00e0nh vi\u00ean t\u1ed1i \u0111a"
+
+# ModalForm
+bedrock-test.modal-title: "&cX\u00e1c nh\u1eadn thao t\u00e1c &r- &fV\u00ed d\u1ee5 ModalForm"
+bedrock-test.modal-content: "&7B\u1ea1n c\u00f3 ch\u1eafc ch\u1eafn mu\u1ed1n r\u1eddi guild &eGuild Ki\u1ec3m Tra &7?\n\n&cThao t\u00e1c n\u00e0y kh\u00f4ng th\u1ec3 ho\u00e0n t\u00e1c!\n&7Sau khi r\u1eddi, b\u1ea1n s\u1ebd c\u1ea7n \u0111\u0103ng k\u00fd tham gia l\u1ea1i."
+bedrock-test.modal-btn-confirm: "&aX\u00e1c nh\u1eadn r\u1eddi"
+bedrock-test.modal-btn-cancel: "&cH\u1ee7y"
 
 
 

@@ -282,9 +282,6 @@ economy.transfer-success: "&a{amount} sikeresen \u00e1tutalva a(z) &e{target} &a
 economy.transfer-failed: "&cAz \u00e1tutal\u00e1s sikertelen!"
 economy.target-guild-not-found: "&cA c\u00e9l c\u00e9h nem l\u00e9tezik!"
 economy.cannot-transfer-to-self: "&cNem utalhatsz \u00e1t a saj\u00e1t c\u00e9hednek!"
-guild.deposit.insufficient-funds: "&cAz egyenleged nem elegend\u0151!"
-guild.withdraw.insufficient-funds: "&cA c\u00e9h sz\u00e1ml\u00e1j\u00e1n nem elegend\u0151 az egyenleg!"
-guild.transfer.insufficient-funds: "&cA c\u00e9h sz\u00e1ml\u00e1j\u00e1n nem elegend\u0151 az egyenleg!"
 
 # ============ Relations ============
 guild.relation.usage: "&cHaszn\u00e1lat: /guild relation <list|create|delete|accept|reject>"
@@ -680,3 +677,66 @@ cloud.download-complete: "&a{0} let\u00f6ltve. Haszn\u00e1ld a &e/guildmodule lo
 cloud.download-renamed: "&a\u00c1tnevezve erre: &e{0} &a(mivel &e{1} &ahaszn\u00e1latban van)."
 cloud.download-tip: "&6Tipp: &7El\u0151sz\u00f6r t\u00e1vol\u00edtsd el a r\u00e9gi modult, majd cser\u00e9ld ki a f\u00e1jlt: &e/guildmodule unload <id> &7-> jar csere -> &e/guildmodule load {0}"
 cloud.download-failed: "&cLet\u00f6lt\u00e9s sikertelen: {0}"
+
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cEz a parancs csak Bedrock-j\u00e1t\u00e9kosok sz\u00e1m\u00e1ra \u00e9rhet\u0151 el. Te Java-j\u00e1t\u00e9kos vagy."
+bedrock-test.geyser-unavailable: "&cA Geyser API nem \u00e9rhet\u0151 el, nem lehet elk\u00fcldeni az \u0171rlapot."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7R\u00e1kattintott\u00e1l: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] \u0171rlap bez\u00e1rva"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Sikeresen elk\u00fcldve:"
+bedrock-test.custom-name: "&7  N\u00e9v: &f{value}"
+bedrock-test.custom-desc: "&7  Le\u00edr\u00e1s: &f{value}"
+bedrock-test.custom-free-join: "&7  Szabad csatlakoz\u00e1s: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Megh\u00edv\u00e1sok enged\u00e9lyez\u00e9se: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Kir\u00fag\u00e1s enged\u00e9lyez\u00e9se: &f{value}"
+bedrock-test.custom-language: "&7  Nyelv: &f{value}"
+bedrock-test.custom-max-members: "&7  Tagok maxim\u00e1lis sz\u00e1ma: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] \u0171rlap bez\u00e1rva, nincs mentve"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7V\u00e1lasztott\u00e1l: &cKil\u00e9p\u00e9s meger\u0151s\u00edt\u00e9se"
+bedrock-test.modal-cancel: "&a[ModalForm] &7V\u00e1lasztott\u00e1l: &aM\u00e9gse"
+bedrock-test.modal-closed: "&7[ModalForm] P\u00e1rbesz\u00e9dablak bez\u00e1rva"
+
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Kl\u00e1n b\u0151v\u00edtm\u00e9ny &r- &eBedrock \u0171rlap teszt"
+bedrock-test.main-content: "&7V\u00e1lassz egy \u0171rlapt\u00edpust az el\u0151n\u00e9zethez:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Gombmen\u00fc"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Bevitelei/\u00e1ll\u00edt\u00f3 \u0171rlap"
+bedrock-test.main-btn-modal: "&cModalForm &f- Meger\u0151s\u00edt\u00e9si p\u00e1rbesz\u00e9d"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Kl\u00e1n f\u0151men\u00fc &r- &7SimpleForm p\u00e9lda"
+bedrock-test.simple-content: "&7\u00dcdv\u00f6z\u00f6l, &e{player}&7!\n&7Ez egy SimpleForm gombmen\u00fc p\u00e9lda."
+bedrock-test.simple-btn-info: "&aKl\u00e1n inform\u00e1ci\u00f3 &f- Kl\u00e1n r\u00e9szleteinek megtekint\u00e9se"
+bedrock-test.simple-btn-members: "&bTagkezel\u00e9s &f- Kl\u00e1n tagok kezel\u00e9se"
+bedrock-test.simple-btn-settings: "&eKl\u00e1n be\u00e1ll\u00edt\u00e1sok &f- Kl\u00e1n konfigur\u00e1ci\u00f3j\u00e1nak m\u00f3dos\u00edt\u00e1sa"
+bedrock-test.simple-btn-list: "&6Kl\u00e1n lista &f- \u00d6sszes kl\u00e1n b\u00f6ng\u00e9sz\u00e9se"
+bedrock-test.simple-btn-quit: "&cKl\u00e1n elhagy\u00e1sa &f- Jelenlegi kl\u00e1n elhagy\u00e1sa"
+bedrock-test.simple-name-info: "Kl\u00e1n inform\u00e1ci\u00f3"
+bedrock-test.simple-name-members: "Tagkezel\u00e9s"
+bedrock-test.simple-name-settings: "Kl\u00e1n be\u00e1ll\u00edt\u00e1sok"
+bedrock-test.simple-name-list: "Kl\u00e1n lista"
+bedrock-test.simple-name-quit: "Kl\u00e1n elhagy\u00e1sa"
+
+# CustomForm
+bedrock-test.custom-title: "&6Kl\u00e1n be\u00e1ll\u00edt\u00e1sok &r- &fCustomForm p\u00e9lda"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Alap be\u00e1ll\u00edt\u00e1sok \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fKl\u00e1n n\u00e9v"
+bedrock-test.custom-input-name-placeholder: "\u00cdrj be \u00faj nevet..."
+bedrock-test.custom-input-name-default: "Az \u00e9n kl\u00e1nom"
+bedrock-test.custom-input-desc-label: "&fKl\u00e1n le\u00edr\u00e1s"
+bedrock-test.custom-input-desc-placeholder: "\u00cdrj be le\u00edr\u00e1st..."
+bedrock-test.custom-input-desc-default: "Egy bar\u00e1ts\u00e1gos kl\u00e1n"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 Jogosults\u00e1gi kapcsol\u00f3k \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fSzabad csatlakoz\u00e1s enged\u00e9lyez\u00e9se"
+bedrock-test.custom-toggle-allow-invite: "&fTagok megh\u00edv\u00e1s\u00e1nak enged\u00e9lyez\u00e9se"
+bedrock-test.custom-toggle-allow-kick: "&fTagok kir\u00fag\u00e1s\u00e1nak enged\u00e9lyez\u00e9se"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Egy\u00e9b \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fKl\u00e1n nyelve"
+bedrock-test.custom-slider-max-members: "&fTagok maxim\u00e1lis sz\u00e1ma"
+
+# ModalForm
+bedrock-test.modal-title: "&cM\u0171velet meger\u0151s\u00edt\u00e9se &r- &fModalForm p\u00e9lda"
+bedrock-test.modal-content: "&7Biztosan el akarod hagyni a kl\u00e1nt &eTeszt Kl\u00e1n &7?\n\n&cEz a m\u0171velet nem visszaford\u00edthat\u00f3!\n&7Kil\u00e9p\u00e9s \u00fat\u00e1n \u00fajra k\u00e9relmezned kell a csatlakoz\u00e1st."
+bedrock-test.modal-btn-confirm: "&aKil\u00e9p\u00e9s meger\u0151s\u00edt\u00e9se"
+bedrock-test.modal-btn-cancel: "&cM\u00e9gse"

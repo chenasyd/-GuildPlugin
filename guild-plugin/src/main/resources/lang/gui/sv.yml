@@ -88,6 +88,9 @@ gui:
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
   # ================================================
+    bedrock-prev-page: "&eFöregående sida"
+    bedrock-next-page: "&eNästa sida"
+    bedrock-back: "&cTillbaka"
   admin-gui:
     title: "&4Gilleadministration"
     admin-gui-economy-lore-1: "&7Hantera gillets ekonomisystem"
@@ -115,6 +118,14 @@ gui:
   # ================================================
   # ApplicationManagementGUI (29 keys)
   # ================================================
+    bedrock-title: "&4Gillesadministration"
+    bedrock-content: "&fVälj hanteringsfunktion"
+    bedrock-guild-list: "&eHantering av gilleslista"
+    bedrock-economy: "&eEkonomihantering"
+    bedrock-relations: "&eRelationshantering"
+    bedrock-statistics: "&eStatistik"
+    bedrock-settings: "&eSysteminställningar"
+    bedrock-back: "&cTillbaka"
   application-mgmt:
     application.accepted: "&aDin ans\u00f6kan har accepterats av {guild}!"
     applications-count: " ans\u00f6kan(ar)"
@@ -140,7 +151,6 @@ gui:
     application-management-pending-applications-lore-1: "&7Visa v\u00e4ntande ans\u00f6kningar"
     application-management-pending-applications-name: "&eV\u00e4ntande ans\u00f6kningar"
     application-management-title: "&6Ans\u00f6kningshantering"
-    no-history: "&aIngen ans\u00f6kningshistorik"
     no-history.desc: "&7Det finns ingen ans\u00f6kningshistorik"
     apply.already-applied: "&cDu har redan ans\u00f6kt om detta gille!"
     apply.failed: "&cInskickning av ans\u00f6kan misslyckades!"
@@ -149,6 +159,27 @@ gui:
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
   # ================================================
+    bedrock-title: "&6Ansökningshantering"
+    bedrock-empty-history: "&fIngen ansökningshistorik"
+    bedrock-empty-pending: "&fInga väntande ansökningar"
+    bedrock-pending-btn: "&eVäntande ansökningar"
+    bedrock-history-btn: "&eAnsökningshistorik"
+    bedrock-back: "&cTillbaka"
+    bedrock-mode-history: "Ansökningshistorik"
+    bedrock-mode-pending: "Väntande ansökningar"
+    bedrock-title-page: "&6Ansökningshantering - {mode} Sida {page}"
+    bedrock-total: "&fTotalt {count} poster"
+    bedrock-prev-page: "&eFöregående sida"
+    bedrock-next-page: "&eNästa sida"
+    bedrock-applicant: "&fSökande: {name}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-message: "&fMeddelande: {msg}"
+    bedrock-no-message: "Ingen"
+    bedrock-actions-title: "&6Ansökningsbehandling - {name}"
+    bedrock-actions-content: "&fSökande: {name}\n&fMeddelande: {msg}"
+    bedrock-accept: "&aAcceptera ansökan"
+    bedrock-reject: "&cAvslå ansökan"
+    bedrock-back-to-list: "&eTillbaka till listan"
   main-menu:
     application-management.lore.1: "&7Hantera medlemsans\u00f6kningar"
     application-management.lore.2: "&7Visa ans\u00f6kningshistorik"
@@ -176,6 +207,7 @@ gui:
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
+    bedrock-content: "&fVälj en funktion:"
   system-settings:
     applications: "&eAns\u00f6kningssystem"
     applications-disabled: "&cAns\u00f6kningssystem inaktiverat!"
@@ -292,6 +324,23 @@ gui:
   # ================================================
   # CreateGuildGUI (36 keys)
   # ================================================
+    bedrock-title: "&4Systeminställningar"
+    bedrock-content: "&fKlicka för att växla status"
+    bedrock-debug: "&eFelsökningsinfo: {status}"
+    bedrock-auto-save: "&eAutomatisk sparning: {status}"
+    bedrock-economy: "&eEkonomisystem: {status}"
+    bedrock-relations: "&eRelationssystem: {status}"
+    bedrock-level: "&eNivåsystem: {status}"
+    bedrock-applications: "&eAnsökningssystem: {status}"
+    bedrock-invites: "&eInbjudningssystem: {status}"
+    bedrock-guild-home: "&eGilleshem: {status}"
+    bedrock-on: "&aPÅ"
+    bedrock-off: "&cAV"
+    bedrock-reload: "&aLadda om konfiguration"
+    bedrock-database: "&bDatabasunderhåll"
+    bedrock-backup: "&6Säkerhetskopiera data"
+    bedrock-save: "&aSpara inställningar"
+    bedrock-back: "&cTillbaka"
   create-guild:
     create.already-in-guild: "&cDu \u00e4r redan i ett gille!"
     create.description-too-long: "&cGillebeskrivningen f\u00e5r inte \u00f6verstiga 100 tecken!"
@@ -333,6 +382,13 @@ gui:
   # ================================================
   # GuildDetailGUI (38 keys)
   # ================================================
+    bedrock-title: "&6Skapa gille"
+    bedrock-name-label: "&fGillesnamn (3-20 tecken)"
+    bedrock-name-placeholder: "Ange gillesnamn"
+    bedrock-tag-label: "&fGillestagg (max 6 tecken, valfritt)"
+    bedrock-tag-placeholder: "Ange gillestagg"
+    bedrock-desc-label: "&fGillesbeskrivning (max 100 tecken, valfritt)"
+    bedrock-desc-placeholder: "Ange gillesbeskrivning"
   guild-detail:
     click-delete: "Klicka f\u00f6r att radera gille"
     created-time: "Skapelsetid"
@@ -376,6 +432,31 @@ gui:
   # ================================================
   # GuildInfoGUI (21 keys)
   # ================================================
+    bedrock-title: "&6Gillesdetaljer - {guild_name}"
+    bedrock-level: "&fNivå: &e{level}"
+    bedrock-balance: " &fSaldo: &a{balance}"
+    bedrock-leader: "&fLedare: &c{leader}"
+    bedrock-members: " &fMedlemmar: &e{current}/{max}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-status-frozen: "&cFryst"
+    bedrock-status-normal: "&aNormal"
+    bedrock-description: "&fBeskrivning: &7{description}"
+    bedrock-transfer-hint: "&e>>> Överföringsläge: Klicka på medlem för att överföra <<<"
+    bedrock-no-tag: "Ingen"
+    bedrock-unfreeze: "&aAvfrys gille"
+    bedrock-freeze: "&cFrys gille"
+    bedrock-delete: "&4Radera gille"
+    bedrock-cancel-transfer: "&eAvbryt överföringsläge"
+    bedrock-transfer: "&cÖverför ledare"
+    bedrock-prev-page: "&eFöregående sida"
+    bedrock-next-page: "&eNästa sida"
+    bedrock-back: "&cTillbaka"
+    bedrock-transfer-self: "&cDu kan inte överföra ledarskapet till dig själv"
+    bedrock-transfer-success: "&aÖverfördes framgångsrikt till &e{name}"
+    bedrock-transfer-failed: "&cÖverföring av ledarskap misslyckades!"
+    bedrock-operation-failed: "&cÅtgärden misslyckades!"
+    bedrock-transfer-mode-active: "&eKlicka på en medlem för att överföra ledarskapet"
+    bedrock-transfer-mode-cancelled: "&7Överföring avbruten"
   guild-info:
     back: "Tillbaka"
     back-hint: "Klicka f\u00f6r att g\u00e5 tillbaka till huvudmenyn"
@@ -402,6 +483,10 @@ gui:
   # ================================================
   # GuildListManagementGUI (2 keys)
   # ================================================
+    bedrock-title: "&6Gillesinfo"
+    bedrock-guild-funds: "&aGillesfonder"
+    bedrock-back-to-main: "&cTillbaka till huvudmenyn"
+    bedrock-status-label: "Status"
   guild-list-management:
     guild-list-management-title: "&4Gillelistahantering"
     gui-refresh: "&aUppdatera lista"
@@ -409,6 +494,24 @@ gui:
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
   # ================================================
+    bedrock-title: "&4Hantering av gilleslista"
+    bedrock-page-info: "&fSida {page}/{total} | Totalt {count} gillen"
+    bedrock-refresh: "&aUppdatera lista"
+    bedrock-prev-page: "&eFöregående sida"
+    bedrock-next-page: "&eNästa sida"
+    bedrock-back: "&cTillbaka"
+    bedrock-status-frozen: "&cFryst"
+    bedrock-status-normal: "&aNormal"
+    bedrock-actions-title: "&6Gillesåtgärder - {guild_name}"
+    bedrock-leader: "&fLedare: &e{leader}"
+    bedrock-level: "&fNivå: &e{level}"
+    bedrock-balance: "&fSaldo: &a{balance}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-view-detail: "&eVisa detaljer"
+    bedrock-delete: "&cRadera gille"
+    bedrock-unfreeze: "&aAvfrys gille"
+    bedrock-freeze: "&cFrys gille"
+    bedrock-back-list: "&cTillbaka till listan"
   guild-list:
     balance: "Medel"
     created-time: "Skapelsetid"
@@ -453,6 +556,22 @@ gui:
   # ================================================
   # GuildFilterGUI (19 keys)
   # ================================================
+    bedrock-title: "&6Gilleslista"
+    bedrock-no-guilds: "&cInga gillen på servern ännu"
+    bedrock-no-results: "&cInga matchande gillen hittades"
+    bedrock-search: "&eSök gillen"
+    bedrock-back-main: "&cTillbaka till huvudmenyn"
+    bedrock-page-info: "&fSida {page}/{total}"
+    bedrock-search-info: "&fSökning: &e{query}"
+    bedrock-prev-page: "&aFöregående sida"
+    bedrock-next-page: "&aNästa sida"
+    bedrock-search-title: "&6Sök gillen"
+    bedrock-search-input: "&fAnge sökord"
+    bedrock-search-placeholder: "Lämna tomt för att visa alla"
+    bedrock-select-action: "&fVälj åtgärd:"
+    bedrock-view-detail: "&eVisa detaljer"
+    bedrock-apply-join: "&aAnsök om att gå med"
+    bedrock-back-list: "&cTillbaka till listan"
   guild-filter:
     back.lore-1: "&8Tillbaka till gillelistan"
     back.name: "&cTillbaka"
@@ -477,6 +596,35 @@ gui:
   # ================================================
   # GuildSettingsGUI (42 keys)
   # ================================================
+    bedrock-title: "&6Gillesfilter"
+    bedrock-no-guilds: "&fInga gillen på servern ännu"
+    bedrock-back: "&cTillbaka"
+    bedrock-no-results: "&fInga gillen matchar filtret"
+    bedrock-filter-info: "&fNivå: {min}-{max} | Sortering: {sort}"
+    bedrock-adjust-filter: "&eJustera filter"
+    bedrock-sort-desc: "Medlemmar fallande"
+    bedrock-sort-asc: "Medlemmar stigande"
+    bedrock-sort-full: "Endast fulla"
+    bedrock-title-page: "&6Gillesfilter - Sida {page}"
+    bedrock-total-results: "&fTotalt {count} resultat"
+    bedrock-prev-page: "&eFöregående sida"
+    bedrock-next-page: "&eNästa sida"
+    bedrock-settings-title: "&6Filterinställningar"
+    bedrock-min-level: "&fMiniminivå: {level}"
+    bedrock-max-level: "&fMaxnivå: {level}"
+    bedrock-sort: "&fSortering: {sort}"
+    bedrock-min-level-up: "&aMiniminivå +1"
+    bedrock-min-level-down: "&cMiniminivå -1"
+    bedrock-max-level-up: "&aMaxnivå +1"
+    bedrock-max-level-down: "&cMaxnivå -1"
+    bedrock-switch-sort: "&eByt sorteringsläge"
+    bedrock-back-results: "&eTillbaka till resultat"
+    bedrock-actions-title: "&6Gillesåtgärder - {guild_name}"
+    bedrock-level: "&fNivå: {level}"
+    bedrock-leader: "&fLedare: {leader}"
+    bedrock-view-detail: "&eVisa detaljer"
+    bedrock-apply-join: "&aAnsök om att gå med"
+    bedrock-back-filter: "&eTillbaka till filter"
   guild-settings:
     back: "&8Tillbaka"
     back-desc: "&8Klicka &ff\u00f6r att g\u00e5 tillbaka till huvudmenyn"
@@ -524,6 +672,13 @@ gui:
   # ================================================
   # GuildFundsGUI (23 keys)
   # ================================================
+    bedrock-content: "&6Gillesöversikt\n&fNamn: &e{guild_name}\n&fTagg: &e{guild_tag}\n&fBeskrivning: {guild_desc}\n&fGilleshem: {home_status}"
+    bedrock-change-name: "&eÄndra namn"
+    bedrock-change-description: "&eÄndra beskrivning"
+    bedrock-change-tag: "&eÄndra tagg"
+    bedrock-kick-member: "&cSparka medlem"
+    bedrock-promote-demote: "&eBefordra/Degradera"
+    bedrock-back-to-main: "&fTillbaka till huvudmenyn"
   guild-funds:
     back-to-info: "&8Tillbaka till gilleinformation"
     back-to-settings: "&8Tillbaka till gilleinst\u00e4llningar"
@@ -552,6 +707,15 @@ gui:
   # ================================================
   # EconomyManagementGUI (23 keys)
   # ================================================
+    bedrock-title: "&6Gillesfonder - {guild}"
+    bedrock-no-data: "&cInga insättningsposter"
+    bedrock-back: "&cTillbaka"
+    bedrock-page-info: "&fSida {page}/{total}\n&fTotalt spelare: {count}"
+    bedrock-online: "&aOnline"
+    bedrock-offline: "&fOffline"
+    bedrock-prev-page: "&aFöregående sida"
+    bedrock-next-page: "&aNästa sida"
+    bedrock-refresh: "&aUppdatera"
   economy-management:
     add-prompt: "&eAnge beloppet att l\u00e4gga till (skriv i chatten, skriv cancel f\u00f6r att avbryta):"
     back: "&cTillbaka"
@@ -566,10 +730,8 @@ gui:
     middle-click-remove: "&cMittenklick: Minska medel"
     next-page: "&aN\u00e4sta sida"
     next-page-desc: "&8Sida {page}"
-    next-page-desc: "&8Sida {page}"
     page-info: "&eSida {current} av {total}"
     previous-page: "&aF\u00f6reg\u00e5ende sida"
-    previous-page-desc: "&8Sida {page}"
     previous-page-desc: "&8Sida {page}"
     refresh: "&aUppdatera lista"
     right-click-add: "&aH\u00f6gerklick: L\u00e4gg till medel"
@@ -580,6 +742,23 @@ gui:
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
   # ================================================
+    bedrock-title: "&eEkonomihantering"
+    bedrock-page-info: "&fSida {current}/{total} | Totalt {count} gillen"
+    bedrock-refresh: "&aUppdatera lista"
+    bedrock-prev-page: "&eFöregående sida"
+    bedrock-next-page: "&eNästa sida"
+    bedrock-back: "&cTillbaka"
+    bedrock-actions-title: "&eEkonomihantering - {guild}"
+    bedrock-actions-content: "&fNuvarande saldo: &a{balance}\n&fLedare: &e{leader}\n&fNivå: &e{level}"
+    bedrock-set-funds: "&eStäll in fonder"
+    bedrock-add-funds: "&aLägg till fonder"
+    bedrock-clear-funds: "&cRensa fonder"
+    bedrock-back-to-list: "&cTillbaka till listan"
+    bedrock-set-title: "&eStäll in fonder"
+    bedrock-add-title: "&aLägg till fonder"
+    bedrock-input-label: "&fAnge belopp"
+    bedrock-invalid-amount: "&cBeloppet måste vara större än 0!"
+    bedrock-invalid-number: "&cOgiltigt nummer!"
   confirm-funds:
     amount: "Belopp"
     cancel: "&cAvbryt"
@@ -610,6 +789,14 @@ gui:
   # ================================================
   # GuildRelationsGUI (49 keys)
   # ================================================
+    bedrock-title: "&6Bekräfta fondändring"
+    bedrock-guild: "&fGille: &e{guild_name}"
+    bedrock-operation: "&fÅtgärd: {operation}"
+    bedrock-current-balance: "&fNuvarande saldo: &6{balance}"
+    bedrock-amount: "&fBelopp: &f{amount}"
+    bedrock-new-balance: "&fNytt saldo: &a{balance}"
+    bedrock-confirm: "&aBekräfta ändring"
+    bedrock-cancel: "&cAvbryt"
   guild-relations:
     back-to-menu: "Tillbaka till huvudmenyn"
     created-time: "Skapelsetid"
@@ -664,6 +851,24 @@ gui:
   # ================================================
   # CreateRelationGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Gillesrelationer"
+    bedrock-title-page: "&6Gillesrelationer - Sida {page}"
+    bedrock-empty: "&fInga gillesrelationer för närvarande"
+    bedrock-total: "&fTotalt {count} relationer"
+    bedrock-create-relation: "&aSkapa relation"
+    bedrock-prev-page: "&eFöregående sida"
+    bedrock-next-page: "&eNästa sida"
+    bedrock-back: "&cTillbaka"
+    bedrock-actions-title: "&6Relationsåtgärder - {guild}"
+    bedrock-actions-content: "&fTyp: {type}\n&fStatus: {status}"
+    bedrock-cancel-relation: "&cAvbryt relation"
+    bedrock-accept-relation: "&aAcceptera relation"
+    bedrock-reject-relation: "&cAvvisa relation"
+    bedrock-end-truce: "&eAvsluta vapenvila"
+    bedrock-propose-truce: "&eFöreslå vapenvila"
+    bedrock-delete-relation: "&cRadera relation"
+    bedrock-back-to-list: "&eTillbaka till listan"
+    bedrock-truce-ended: "&aVapenvila med {guild} har avslutats!"
   create-relation:
     back-lore: "&8Tillbaka till relationshantering"
     confirm-button: "&aBekr\u00e4fta skapande"
@@ -675,6 +880,22 @@ gui:
   # ================================================
   # RelationManagementGUI (40 keys)
   # ================================================
+    bedrock-type-title: "&6Skapa relation - Välj typ"
+    bedrock-type-content: "&fVälj en relationstyp:"
+    bedrock-back: "&cTillbaka"
+    bedrock-target-title: "&6Skapa relation - Välj mål"
+    bedrock-target-empty: "&fInga tillgängliga målgillen"
+    bedrock-target-title-page: "&6Skapa relation - Välj mål Sida {page}"
+    bedrock-target-content: "&fTyp: {type}\n&fVälj målgille:"
+    bedrock-prev-page: "&eFöregående sida"
+    bedrock-next-page: "&eNästa sida"
+    bedrock-confirm-title: "&6Bekräfta skapa relation"
+    bedrock-confirm-content: "&fTyp: {type}\n&fMål: {target}"
+    bedrock-confirm-create: "&aBekräfta skapa"
+    bedrock-cancel: "&cAvbryt"
+    bedrock-already-exists: "&cRelation med {guild} finns redan!"
+    bedrock-create-success: "&aSkickade {type} relationsförfrågan till {guild}!"
+    bedrock-create-failed: "&cKunde inte skapa relation!"
   relation-management:
     auto-cancel: "&eAuto-avbryt efter 10 sekunder"
     back: "&cTillbaka"
@@ -708,7 +929,6 @@ gui:
     pending-delete: "V\u00e4ntar p\u00e5 bekr\u00e4ftelse av borttagning"
     previous-page: "&aF\u00f6reg\u00e5ende sida"
     previous-page-desc: "&8Sida {0}"
-    previous-page-desc: "&8Sida {0}"
     refresh: "&aUppdatera lista"
     refresh-desc: "&8Ladda om relationsdata"
     refreshing: "Uppdaterar relationslistan..."
@@ -720,6 +940,25 @@ gui:
   # ================================================
   # GuildLogsGUI (21 keys)
   # ================================================
+    bedrock-title: "&4Relationshantering"
+    bedrock-empty: "&cInga relationsdata"
+    bedrock-back: "&cTillbaka"
+    bedrock-page-info: "&fSida {current}/{total} | Totalt {count} relationer"
+    bedrock-refresh: "&aUppdatera lista"
+    bedrock-prev-page: "&eFöregående sida"
+    bedrock-next-page: "&eNästa sida"
+    bedrock-actions-title: "&6Relationsåtgärder"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fTyp: {type}\n&fStatus: {status}\n&fInitiativtagare: {initiator}"
+    bedrock-delete-relation: "&cRadera relation"
+    bedrock-view-details: "&eVisa detaljer"
+    bedrock-back-to-list: "&cTillbaka till listan"
+    bedrock-confirm-title: "&cBekräfta radering"
+    bedrock-confirm-content: "&fÄr du säker på att du vill radera relationen:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cBekräfta radering"
+    bedrock-cancel: "&fAvbryt"
+    bedrock-delete-success: "&aRaderade relation: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cKunde inte radera relation!"
+    bedrock-no-permission: "&cDu har inte administratörsbehörighet!"
   guild-logs:
     back-to-guild: "Tillbaka till gilleinformation"
     back-to-settings: "Tillbaka till gilleinst\u00e4llningar"
@@ -747,6 +986,13 @@ gui:
   # ================================================
   # MemberManagementGUI (81 keys)
   # ================================================
+    bedrock-title: "&6Gillesloggar - {guild}"
+    bedrock-no-data: "&cInga loggposter"
+    bedrock-back: "&cTillbaka"
+    bedrock-page-info: "&fSida {page}/{total}\n&fTotalt poster: {count}"
+    bedrock-prev-page: "&aFöregående sida"
+    bedrock-next-page: "&aNästa sida"
+    bedrock-refresh: "&aUppdatera"
   member-management:
     member-details.activity: "Aktivitet"
     member-details.all-actions: "Alla \u00e5tg\u00e4rder"
@@ -833,6 +1079,31 @@ gui:
   # ================================================
   # MemberGuildGUI (13 keys)
   # ================================================
+    bedrock-title: "&6Medlemshantering"
+    bedrock-title-page: "&6Medlemshantering - Sida {page}"
+    bedrock-no-members: "&fDet finns inga medlemmar i gillet ännu"
+    bedrock-member-list: "&fMedlemslista (Totalt {count})"
+    bedrock-invite: "&aBjud in medlem"
+    bedrock-actions-title: "&6Medlemsåtgärder - {member}"
+    bedrock-role-label: "&fRoll: {role}"
+    bedrock-role-leader: "&cLedare"
+    bedrock-role-officer: "&6Officer"
+    bedrock-role-member: "&fMedlem"
+    bedrock-view-details: "&eVisa detaljer"
+    bedrock-kick: "&cSparka medlem"
+    bedrock-promote-demote: "&6Befordra/Degradera"
+    bedrock-back-to-list: "&cTillbaka till listan"
+    member-details.bedrock-title: "&6Medlemsdetaljer - {member}"
+    member-details.bedrock-player: "&fSpelare: {name}"
+    member-details.bedrock-role: "&fRoll: {role}"
+    member-details.bedrock-join-time: "&fGick med: {time}"
+    member-details.bedrock-online: "&fOnline: {status}"
+    member-details.bedrock-online-yes: "&aJa"
+    member-details.bedrock-online-no: "&cNej"
+    member-details.bedrock-kick: "&cSparka medlem"
+    member-details.bedrock-promote-demote: "&6Befordra/Degradera"
+    member-details.bedrock-send-message: "&eSkicka meddelande"
+    member-details.bedrock-back: "&cTillbaka"
   member-guild-gui:
     home-not-set: "&cInte inst\u00e4lld"
     home-set: "&aInst\u00e4lld"
@@ -851,6 +1122,8 @@ gui:
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
   # ================================================
+    bedrock-title: "&6Mitt gille - {guild_name}"
+    bedrock-content: "&6Gillesinfo\n&fNamn: &e{guild_name}\n&fTagg: &e{guild_tag}\n&fGilleshem: {home_status}"
   confirm-delete-guild:
     cancel-button: "&aAvbryt"
     cancel-lore: "&8Avbryt borttagning av gille"
@@ -870,6 +1143,10 @@ gui:
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
   # ================================================
+    bedrock-title: "&4Bekräfta radering av gille"
+    bedrock-content: "&fGille: &e{guild}\n&fÄr du säker på att du vill radera detta gille?\n&cDenna åtgärd raderar gillet permanent!\n&cAlla medlemmar kommer att tas bort!\n&cDenna åtgärd kan inte ångras!"
+    bedrock-confirm: "&4Bekräfta radering"
+    bedrock-cancel: "&aAvbryt"
   confirm-leave-guild:
     cancel-button: "&aAvbryt"
     cancel-lore: "&8Avbryt att l\u00e4mna gille"
@@ -887,6 +1164,10 @@ gui:
   # ================================================
   # GuildNameInputGUI (21 keys)
   # ================================================
+    bedrock-title: "&cBekräfta lämna gille"
+    bedrock-content: "&fGille: &e{guild}\n&fÄr du säker på att du vill lämna detta gille?\n&cDenna åtgärd kan inte ångras!"
+    bedrock-confirm: "&cBekräfta lämna"
+    bedrock-cancel: "&aAvbryt"
   guild-name-input:
     cancel-button: "&cAvbryt"
     cancel-lore: "&8Tillbaka till f\u00f6reg\u00e5ende meny"
@@ -913,6 +1194,9 @@ gui:
   # ================================================
   # GuildTagInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Ändra gillesnamn"
+    bedrock-input-label: "&fAnge nytt gillesnamn"
+    bedrock-input-placeholder: "2-16 tecken, färgkoder stöds"
   guild-tag-input:
     cancel-button: "&cAvbryt"
     cancel-lore: "&8Avbryt \u00e4ndring"
@@ -924,6 +1208,9 @@ gui:
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Ändra gillestagg"
+    bedrock-input-label: "&fAnge ny gillestagg"
+    bedrock-input-placeholder: "Max {max} tecken"
   guild-description-input:
     cancel-button: "&cAvbryt"
     cancel-lore: "&8Avbryt \u00e4ndring"
@@ -935,12 +1222,18 @@ gui:
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
+    bedrock-title: "&6Ändra gillesbeskrivning"
+    bedrock-input-label: "&fAnge ny gillesbeskrivning"
+    bedrock-input-placeholder: "Max {max} tecken"
   guild-permissions:
     title: "&6Gille beh\u00f6righetsinst\u00e4llningar"
 
   # ================================================
   # InviteMemberGUI (4 keys)
   # ================================================
+    bedrock-title: "&6Gillesbehörigheter"
+    bedrock-content: "&6=== Ledarbehörigheter ===\n&f• Alla behörigheter\n&f• Hantera medlemmar\n&f• Ändra inställningar\n&f• Radera gille\n\n&e=== Officersbehörigheter ===\n&f• Bjuda in medlemmar\n&f• Sparka medlemmar\n&f• Hantera ansökningar\n&f• Ställa in gilleshem\n\n&7=== Medlemsbehörigheter ===\n&f• Visa gillesinfo\n&f• Teleportera till gilleshem\n&f• Ansöka om att gå med i andra gillen\n\n&aNuvarande status: &fGille {guild} | Behörighetssystemet fungerar normalt"
+    bedrock-back: "&cTillbaka"
   invite-member:
     back-to-settings: "Tillbaka till gilleinst\u00e4llningar"
     click-invite: "Klicka f\u00f6r att bjuda in denna spelare"
@@ -950,6 +1243,10 @@ gui:
   # ================================================
   # KickMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Bjud in medlemmar"
+    bedrock-title-page: "&6Bjud in medlemmar - Sida {page}"
+    bedrock-no-players: "&fInga onlinespelare tillgängliga att bjuda in"
+    bedrock-player-list: "&fOnlinespelare (Totalt {count})"
   kick-member:
     kick.failed: "&cMisslyckades med att sparka medlem!"
     kick.kicked: "&cDu har blivit sparkad fr\u00e5n gillet &e{guild}&c!"
@@ -960,6 +1257,10 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Sparka medlem"
+    bedrock-title-page: "&6Sparka medlem - Sida {page}"
+    bedrock-no-members: "&fInga medlemmar tillgängliga att sparka"
+    bedrock-content: "&fVälj en medlem att sparka"
   promote-member:
     promote.failed: "&cMisslyckades med att befordra medlem!"
     promote.promoted: "&aDu har blivit befordrad till officer i gillet &e{guild}&a!"
@@ -970,9 +1271,17 @@ gui:
   # ================================================
   # DemoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Befordra medlem"
+    bedrock-title-page: "&6Befordra medlem - Sida {page}"
+    bedrock-no-members: "&fInga medlemmar tillgängliga att befordra"
+    bedrock-content: "&fVälj en medlem att befordra till officer"
   demote-member:
     demote.demoted: "&aDu har blivit degraderad till vanlig medlem i gillet &e{guild}&a!"
     demote.failed: "&cMisslyckades med att degradera medlem!"
     demote.success: "&aMedlem &e{player} &a degraderad till vanlig medlem!"
     click-demote: "Klicka f\u00f6r att degradera till medlem"
     title: "&6Degradera medlem - Sida {page}"
+    bedrock-title: "&6Degradera medlem"
+    bedrock-title-page: "&6Degradera medlem - Sida {page}"
+    bedrock-no-members: "&fInga officerare tillgängliga att degradera"
+    bedrock-content: "&fVälj en officer att degradera till medlem"

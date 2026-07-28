@@ -84,6 +84,9 @@ gui:
     member-role.leader: "Ch\u1ee7"
     member-role.member: "Th\u00e0nh vi\u00ean"
     member-role.officer: "S\u0129 quan"
+    bedrock-prev-page: "&eTrang trước"
+    bedrock-next-page: "&eTrang tiếp"
+    bedrock-back: "&cQuay lại"
 
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
@@ -111,6 +114,14 @@ gui:
     admin-gui-statistics-total-balance: "&eT\u1ed5ng qu\u1ef9: &f{balance}"
     admin-gui-statistics-total-guilds: "&eT\u1ed5ng s\u1ed1 guild: &f{count}"
     admin-gui-statistics-total-members: "&eT\u1ed5ng s\u1ed1 th\u00e0nh vi\u00ean: &f{count}"
+    bedrock-title: "&4Quản lý Guild"
+    bedrock-content: "&fChọn một chức năng quản lý"
+    bedrock-guild-list: "&eQuản lý Danh sách Guild"
+    bedrock-economy: "&eQuản lý Kinh tế"
+    bedrock-relations: "&eQuản lý Quan hệ"
+    bedrock-statistics: "&eThông tin Thống kê"
+    bedrock-settings: "&eCài đặt Hệ thống"
+    bedrock-back: "&cQuay lại"
 
   # ================================================
   # ApplicationManagementGUI (29 keys)
@@ -140,11 +151,31 @@ gui:
     application-management-pending-applications-lore-1: "&7Xem \u0111\u01a1n \u0111ang ch\u1edd"
     application-management-pending-applications-name: "&e\u0110\u01a1n \u0111ang ch\u1edd"
     application-management-title: "&6Qu\u1ea3n l\u00fd \u0111\u01a1n"
-    no-history: "&aKh\u00f4ng c\u00f3 l\u1ecbch s\u1eed \u0111\u01a1n"
     no-history.desc: "&7Kh\u00f4ng c\u00f3 l\u1ecbch s\u1eed \u0111\u01a1n"
     apply.already-applied: "&cB\u1ea1n \u0111\u00e3 \u0111\u0103ng k\u00fd cho guild n\u00e0y r\u1ed3i!"
     apply.failed: "&cG\u1eedi \u0111\u01a1n th\u1ea5t b\u1ea1i!"
     apply.success: "&a\u0110\u01a1n \u0111\u00e3 \u0111\u01b0\u1ee3c g\u1eedi!"
+    bedrock-title: "&6Quản lý Đơn"
+    bedrock-empty-history: "&fKhông có lịch sử đơn"
+    bedrock-empty-pending: "&fKhông có đơn đang chờ"
+    bedrock-pending-btn: "&eĐơn Đang chờ"
+    bedrock-history-btn: "&eLịch sử Đơn"
+    bedrock-back: "&cQuay lại"
+    bedrock-mode-history: "Lịch sử Đơn"
+    bedrock-mode-pending: "Đơn Đang chờ"
+    bedrock-title-page: "&6Quản lý Đơn - {mode} Trang {page}"
+    bedrock-total: "&fTổng {count} bản ghi"
+    bedrock-prev-page: "&eTrang trước"
+    bedrock-next-page: "&eTrang tiếp"
+    bedrock-applicant: "&fNgười nộp: {name}"
+    bedrock-status: "&fTrạng thái: {status}"
+    bedrock-message: "&fTin nhắn: {msg}"
+    bedrock-no-message: "Không có"
+    bedrock-actions-title: "&6Xử lý Đơn - {name}"
+    bedrock-actions-content: "&fNgười nộp: {name}\n&fTin nhắn: {msg}"
+    bedrock-accept: "&aChấp nhận Đơn"
+    bedrock-reject: "&cTừ chối Đơn"
+    bedrock-back-to-list: "&eQuay lại Danh sách"
 
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
@@ -172,6 +203,7 @@ gui:
     member-management.lore.2: "&7M\u1eddi, \u0111u\u1ed5i, qu\u1ea3n l\u00fd quy\u1ec1n"
     member-management.name: "&eQu\u1ea3n l\u00fd Th\u00e0nh vi\u00ean"
     title: "&6H\u1ec7 th\u1ed1ng Guild"
+    bedrock-content: "&fChọn một chức năng:"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
@@ -288,6 +320,23 @@ gui:
     system-settings-save-lore-1: "&7L\u01b0u t\u1ea5t c\u1ea3 c\u00e0i \u0111\u1eb7t hi\u1ec7n t\u1ea1i"
     system-settings-save-lore-2: "&7\u00c1p d\u1ee5ng v\u00e0o c\u00e1c t\u1ec7p c\u1ea5u h\u00ecnh"
     system-settings-title: "&4C\u00e0i \u0111\u1eb7t H\u1ec7 th\u1ed1ng"
+    bedrock-title: "&4Cài đặt Hệ thống"
+    bedrock-content: "&fNhấp để chuyển trạng thái công tắc"
+    bedrock-debug: "&eThông tin Gỡ lỗi: {status}"
+    bedrock-auto-save: "&eTự động Lưu: {status}"
+    bedrock-economy: "&eHệ thống Kinh tế: {status}"
+    bedrock-relations: "&eHệ thống Quan hệ: {status}"
+    bedrock-level: "&eHệ thống Cấp độ: {status}"
+    bedrock-applications: "&eHệ thống Đơn: {status}"
+    bedrock-invites: "&eHệ thống Mời: {status}"
+    bedrock-guild-home: "&eNhà Guild: {status}"
+    bedrock-on: "&aBật"
+    bedrock-off: "&cTắt"
+    bedrock-reload: "&aTải lại Cấu hình"
+    bedrock-database: "&bBảo trì Cơ sở dữ liệu"
+    bedrock-backup: "&6Sao lưu Dữ liệu"
+    bedrock-save: "&aLưu Cài đặt"
+    bedrock-back: "&cQuay lại"
 
   # ================================================
   # CreateGuildGUI (36 keys)
@@ -329,6 +378,13 @@ gui:
     create-guild-tag-input-lore-2: "&7\u0110\u1ED9 d\xE0i: T\u1ED1i \u0111a 6 k\xFD t\u1EF1"
     create-guild-tag-input-lore-3: "&7Kh\xF4ng b\u1EAFt bu\u1ED9c"
     create-guild-tag-input-name: "&eTh\u1EBB c\xF4ng h\u1ED9i"
+    bedrock-title: "&6Tạo Guild"
+    bedrock-name-label: "&fTên Guild (3-20 ký tự)"
+    bedrock-name-placeholder: "Nhập tên guild"
+    bedrock-tag-label: "&fThẻ Guild (tối đa 6 ký tự, tùy chọn)"
+    bedrock-tag-placeholder: "Nhập thẻ guild"
+    bedrock-desc-label: "&fMô tả Guild (tối đa 100 ký tự, tùy chọn)"
+    bedrock-desc-placeholder: "Nhập mô tả guild"
 
   # ================================================
   # GuildDetailGUI (38 keys)
@@ -372,6 +428,31 @@ gui:
     transfer-self: "&cKh\xF4ng th\u1EC3 chuy\u1EC3n giao ch\u1EE7 t\u1ECBch cho ch\xEDnh m\xECnh"
     transfer-success: "&a\u0110\xE3 chuy\u1EC3n giao ch\u1EE7 t\u1ECBch th\xE0nh c\xF4ng cho &e{name}"
     unfreeze-guild: "Gi\u1EA3i \u0111\xF4ng c\xF4ng h\u1ED9i"
+    bedrock-title: "&6Chi tiết Guild - {guild_name}"
+    bedrock-level: "&fCấp độ: &e{level}"
+    bedrock-balance: " &fQuỹ: &a{balance}"
+    bedrock-leader: "&fChủ: &c{leader}"
+    bedrock-members: " &fThành viên: &e{current}/{max}"
+    bedrock-status: "&fTrạng thái: {status}"
+    bedrock-status-frozen: "&cBị đóng băng"
+    bedrock-status-normal: "&aBình thường"
+    bedrock-description: "&fMô tả: &7{description}"
+    bedrock-transfer-hint: "&e>>> Chế độ Chuyển: Nhấp vào thành viên để chuyển quyền lãnh đạo <<<"
+    bedrock-no-tag: "Không có"
+    bedrock-unfreeze: "&aBỏ đóng băng Guild"
+    bedrock-freeze: "&cĐóng băng Guild"
+    bedrock-delete: "&4Xóa Guild"
+    bedrock-cancel-transfer: "&eHủy Chế độ Chuyển"
+    bedrock-transfer: "&cChuyển Quyền lãnh đạo"
+    bedrock-prev-page: "&eTrang trước"
+    bedrock-next-page: "&eTrang tiếp"
+    bedrock-back: "&cQuay lại"
+    bedrock-transfer-self: "&cKhông thể chuyển quyền lãnh đạo cho chính mình"
+    bedrock-transfer-success: "&aĐã chuyển quyền lãnh đạo thành công cho &e{name}"
+    bedrock-transfer-failed: "&cChuyển quyền lãnh đạo thất bại!"
+    bedrock-operation-failed: "&cThao tác thất bại!"
+    bedrock-transfer-mode-active: "&eNhấp vào thành viên để chuyển quyền lãnh đạo"
+    bedrock-transfer-mode-cancelled: "&7Đã hủy chuyển quyền lãnh đạo"
 
   # ================================================
   # GuildInfoGUI (21 keys)
@@ -398,6 +479,10 @@ gui:
     status-normal: "B\xECnh th\u01B0\u1EDDng"
     tag: "Th\u1EBB"
     title: "&6Th\xF4ng tin c\xF4ng h\u1ED9i"
+    bedrock-title: "&6Thông tin Guild"
+    bedrock-guild-funds: "&aQuỹ Guild"
+    bedrock-back-to-main: "&cQuay lại Menu chính"
+    bedrock-status-label: "Trạng thái"
 
   # ================================================
   # GuildListManagementGUI (2 keys)
@@ -405,6 +490,24 @@ gui:
   guild-list-management:
     guild-list-management-title: "&4Qu\u1EA3n l\xFD danh s\xE1ch c\xF4ng h\u1ED9i"
     gui-refresh: "&aL\xE0m m\u1EDBi danh s\xE1ch"
+    bedrock-title: "&4Quản lý Danh sách Guild"
+    bedrock-page-info: "&fTrang {page}/{total} | Tổng {count} guild"
+    bedrock-refresh: "&aLàm mới Danh sách"
+    bedrock-prev-page: "&eTrang trước"
+    bedrock-next-page: "&eTrang tiếp"
+    bedrock-back: "&cQuay lại"
+    bedrock-status-frozen: "&cBị đóng băng"
+    bedrock-status-normal: "&aBình thường"
+    bedrock-actions-title: "&6Thao tác Guild - {guild_name}"
+    bedrock-leader: "&fChủ: &e{leader}"
+    bedrock-level: "&fCấp độ: &e{level}"
+    bedrock-balance: "&fQuỹ: &a{balance}"
+    bedrock-status: "&fTrạng thái: {status}"
+    bedrock-view-detail: "&eXem Chi tiết"
+    bedrock-delete: "&cXóa Guild"
+    bedrock-unfreeze: "&aBỏ đóng băng Guild"
+    bedrock-freeze: "&cĐóng băng Guild"
+    bedrock-back-list: "&cQuay lại Danh sách"
 
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
@@ -449,6 +552,22 @@ gui:
     guild-list-search-lore-2: "&7Chu\u1ED9t ph\u1EA3i: X\xF3a t\xECm ki\u1EBFm"
     guild-list-search-name: "&eT\xECm c\xF4ng h\u1ED9i"
     guild-list-title: "&6Danh s\xE1ch c\xF4ng h\u1ED9i"
+    bedrock-title: "&6Danh sách Guild"
+    bedrock-no-guilds: "&cChưa có guild nào trên máy chủ"
+    bedrock-no-results: "&cKhông tìm thấy guild phù hợp"
+    bedrock-search: "&eTìm kiếm Guild"
+    bedrock-back-main: "&cQuay lại Menu chính"
+    bedrock-page-info: "&fTrang {page}/{total}"
+    bedrock-search-info: "&fTìm kiếm: &e{query}"
+    bedrock-prev-page: "&aTrang trước"
+    bedrock-next-page: "&aTrang tiếp"
+    bedrock-search-title: "&6Tìm kiếm Guild"
+    bedrock-search-input: "&fNhập từ khóa tìm kiếm"
+    bedrock-search-placeholder: "Để trống để xem tất cả"
+    bedrock-select-action: "&fChọn một thao tác:"
+    bedrock-view-detail: "&eXem Chi tiết"
+    bedrock-apply-join: "&aNộp đơn Tham gia"
+    bedrock-back-list: "&cQuay lại Danh sách"
 
   # ================================================
   # GuildFilterGUI (19 keys)
@@ -473,6 +592,35 @@ gui:
     sort.lore-full: "Ch\u1EC9 \u0111\u1EA7y"
     sort.name: "&eS\u1EAFp x\u1EBFp theo s\u1ED1 ng\u01B0\u1EDDi"
     title: "&6B\u1ED9 l\u1ECDc c\xF4ng h\u1ED9i"
+    bedrock-title: "&6Lọc Guild"
+    bedrock-no-guilds: "&fChưa có guild nào trên máy chủ"
+    bedrock-back: "&cQuay lại"
+    bedrock-no-results: "&fKhông có guild phù hợp với bộ lọc"
+    bedrock-filter-info: "&fCấp độ: {min}-{max} | Sắp xếp: {sort}"
+    bedrock-adjust-filter: "&eĐiều chỉnh Bộ lọc"
+    bedrock-sort-desc: "Thành viên giảm dần"
+    bedrock-sort-asc: "Thành viên tăng dần"
+    bedrock-sort-full: "Chỉ đầy"
+    bedrock-title-page: "&6Lọc Guild - Trang {page}"
+    bedrock-total-results: "&fTổng {count} kết quả"
+    bedrock-prev-page: "&eTrang trước"
+    bedrock-next-page: "&eTrang tiếp"
+    bedrock-settings-title: "&6Cài đặt Bộ lọc"
+    bedrock-min-level: "&fCấp độ Tối thiểu: {level}"
+    bedrock-max-level: "&fCấp độ Tối đa: {level}"
+    bedrock-sort: "&fSắp xếp: {sort}"
+    bedrock-min-level-up: "&aCấp độ Tối thiểu +1"
+    bedrock-min-level-down: "&cCấp độ Tối thiểu -1"
+    bedrock-max-level-up: "&aCấp độ Tối đa +1"
+    bedrock-max-level-down: "&cCấp độ Tối đa -1"
+    bedrock-switch-sort: "&eChuyển Chế độ Sắp xếp"
+    bedrock-back-results: "&eQuay lại Kết quả"
+    bedrock-actions-title: "&6Thao tác Guild - {guild_name}"
+    bedrock-level: "&fCấp độ: {level}"
+    bedrock-leader: "&fChủ: {leader}"
+    bedrock-view-detail: "&eXem Chi tiết"
+    bedrock-apply-join: "&aNộp đơn Tham gia"
+    bedrock-back-filter: "&eQuay lại Bộ lọc"
 
   # ================================================
   # GuildSettingsGUI (42 keys)
@@ -520,6 +668,13 @@ gui:
     home.success: "&a\u0110\xE3 d\u1ECBch chuy\u1EC3n v\u1EC1 nh\xE0 c\xF4ng h\u1ED9i!"
     sethome.failed: "&cThi\u1EBFt l\u1EADp nh\xE0 c\xF4ng h\u1ED9i th\u1EA5t b\u1EA1i!"
     sethome.success: "&aThi\u1EBFt l\u1EADp nh\xE0 c\xF4ng h\u1ED9i th\xE0nh c\xF4ng!"
+    bedrock-content: "&6Tổng quan Guild\n&fTên: &e{guild_name}\n&fThẻ: &e{guild_tag}\n&fMô tả: {guild_desc}\n&fNhà Guild: {home_status}"
+    bedrock-change-name: "&eĐổi Tên"
+    bedrock-change-description: "&eĐổi Mô tả"
+    bedrock-change-tag: "&eĐổi Thẻ"
+    bedrock-kick-member: "&cĐuổi Thành viên"
+    bedrock-promote-demote: "&eThăng/Giáng cấp"
+    bedrock-back-to-main: "&fQuay lại Menu chính"
 
   # ================================================
   # GuildFundsGUI (23 keys)
@@ -548,6 +703,15 @@ gui:
     total-deposit: "T\u1ED5ng ti\u1EC1n g\u1EEDi"
     total-pages: "&7T\u1ED5ng s\u1ED1 trang: {total}"
     total-players: "&7S\u1ED1 ng\u01B0\u1EDDi: {count}"
+    bedrock-title: "&6Quỹ Guild - {guild}"
+    bedrock-no-data: "&cKhông có bản ghi đóng góp"
+    bedrock-back: "&cQuay lại"
+    bedrock-page-info: "&fTrang {page}/{total}\n&fTổng Người chơi: {count}"
+    bedrock-online: "&aTrực tuyến"
+    bedrock-offline: "&fNgoại tuyến"
+    bedrock-prev-page: "&aTrang trước"
+    bedrock-next-page: "&aTrang tiếp"
+    bedrock-refresh: "&aLàm mới"
 
   # ================================================
   # EconomyManagementGUI (23 keys)
@@ -576,6 +740,23 @@ gui:
     set-balance-dev: "&eT\xEDnh n\u0103ng thi\u1EBFt l\u1EADp qu\u1EF9 \u0111ang \u0111\u01B0\u1EE3c ph\xE1t tri\u1EC3n..."
     set-prompt: "&eVui l\xF2ng nh\u1EADp s\u1ED1 ti\u1EC1n c\u1EA7n thi\u1EBFt l\u1EADp (nh\u1EADp s\u1ED1 trong khung chat, nh\u1EADp cancel \u0111\u1EC3 h\u1EE7y):"
     economy-management-title: "&eQu\u1EA3n l\xFD kinh t\u1EBF"
+    bedrock-title: "&eQuản lý Kinh tế"
+    bedrock-page-info: "&fTrang {current}/{total} | Tổng {count} guild"
+    bedrock-refresh: "&aLàm mới Danh sách"
+    bedrock-prev-page: "&eTrang trước"
+    bedrock-next-page: "&eTrang tiếp"
+    bedrock-back: "&cQuay lại"
+    bedrock-actions-title: "&eQuản lý Kinh tế - {guild}"
+    bedrock-actions-content: "&fQuỹ Hiện tại: &a{balance}\n&fChủ: &e{leader}\n&fCấp độ: &e{level}"
+    bedrock-set-funds: "&eĐặt Quỹ"
+    bedrock-add-funds: "&aThêm Quỹ"
+    bedrock-clear-funds: "&cXóa Quỹ"
+    bedrock-back-to-list: "&cQuay lại Danh sách"
+    bedrock-set-title: "&eĐặt Quỹ"
+    bedrock-add-title: "&aThêm Quỹ"
+    bedrock-input-label: "&fNhập số lượng"
+    bedrock-invalid-amount: "&cSố lượng phải lớn hơn 0!"
+    bedrock-invalid-number: "&cSố không hợp lệ!"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -606,6 +787,14 @@ gui:
     funds.change.set-contrib-increase: "{player} \u0111\xE3 thi\u1EBFt l\u1EADp qu\u1EF9 th\xE0nh {new} (+{diff})"
     funds.change.set-log-decrease: "{player} \u0111\xE3 thi\u1EBFt l\u1EADp qu\u1EF9 c\u1EE7a {guild} th\xE0nh {new}"
     funds.change.set-log-increase: "{player} \u0111\xE3 thi\u1EBFt l\u1EADp qu\u1EF9 c\u1EE7a {guild} th\xE0nh {new}"
+    bedrock-title: "&6Xác nhận Thay đổi Quỹ"
+    bedrock-guild: "&fGuild: &e{guild_name}"
+    bedrock-operation: "&fThao tác: {operation}"
+    bedrock-current-balance: "&fQuỹ Hiện tại: &6{balance}"
+    bedrock-amount: "&fSố lượng: &f{amount}"
+    bedrock-new-balance: "&fQuỹ Mới: &a{balance}"
+    bedrock-confirm: "&aXác nhận Thay đổi"
+    bedrock-cancel: "&cHủy"
 
   # ================================================
   # GuildRelationsGUI (49 keys)
@@ -660,6 +849,24 @@ gui:
     relations.type-selected: "&a\u0110\xE3 ch\u1ECDn lo\u1EA1i quan h\u1EC7: {type}"
     relations.type-truce.description: "Th\u1ECFa thu\u1EADn ng\u1EEBng chi\u1EBFn, t\u1EA1m th\u1EDDi h\xF2a b\xECnh"
     relations.type-war.description: "Tr\u1EA1ng th\xE1i chi\u1EBFn tranh, to\xE0n di\u1EC7n chi\u1EBFn"
+    bedrock-title: "&6Quan hệ Guild"
+    bedrock-title-page: "&6Quan hệ Guild - Trang {page}"
+    bedrock-empty: "&fHiện không có quan hệ guild"
+    bedrock-total: "&fTổng {count} quan hệ"
+    bedrock-create-relation: "&aTạo Quan hệ"
+    bedrock-prev-page: "&eTrang trước"
+    bedrock-next-page: "&eTrang tiếp"
+    bedrock-back: "&cQuay lại"
+    bedrock-actions-title: "&6Thao tác Quan hệ - {guild}"
+    bedrock-actions-content: "&fLoại: {type}\n&fTrạng thái: {status}"
+    bedrock-cancel-relation: "&cHủy Quan hệ"
+    bedrock-accept-relation: "&aChấp nhận Quan hệ"
+    bedrock-reject-relation: "&cTừ chối Quan hệ"
+    bedrock-end-truce: "&eKết thúc Đình chiến"
+    bedrock-propose-truce: "&eĐề xuất Đình chiến"
+    bedrock-delete-relation: "&cXóa Quan hệ"
+    bedrock-back-to-list: "&eQuay lại Danh sách"
+    bedrock-truce-ended: "&aĐình chiến với {guild} đã kết thúc!"
 
   # ================================================
   # CreateRelationGUI (6 keys)
@@ -671,6 +878,22 @@ gui:
     confirm-lore-2: "&7C\u1EA7n ch\u1ECDn lo\u1EA1i quan h\u1EC7 v\xE0 c\xF4ng h\u1ED9i m\u1EE5c ti\xEAu tr\u01B0\u1EDBc"
     current-selection: "&eL\u1EF1a ch\u1ECDn hi\u1EC7n t\u1EA1i"
     title: "&6T\u1EA1o quan h\u1EC7 c\xF4ng h\u1ED9i"
+    bedrock-type-title: "&6Tạo Quan hệ - Chọn Loại"
+    bedrock-type-content: "&fVui lòng chọn loại quan hệ:"
+    bedrock-back: "&cQuay lại"
+    bedrock-target-title: "&6Tạo Quan hệ - Chọn Mục tiêu"
+    bedrock-target-empty: "&fKhông có guild mục tiêu khả dụng"
+    bedrock-target-title-page: "&6Tạo Quan hệ - Chọn Mục tiêu Trang {page}"
+    bedrock-target-content: "&fLoại: {type}\n&fChọn guild mục tiêu:"
+    bedrock-prev-page: "&eTrang trước"
+    bedrock-next-page: "&eTrang tiếp"
+    bedrock-confirm-title: "&6Xác nhận Tạo Quan hệ"
+    bedrock-confirm-content: "&fLoại: {type}\n&fMục tiêu: {target}"
+    bedrock-confirm-create: "&aXác nhận Tạo"
+    bedrock-cancel: "&cHủy"
+    bedrock-already-exists: "&cQuan hệ với {guild} đã tồn tại!"
+    bedrock-create-success: "&aĐã gửi yêu cầu quan hệ {type} đến {guild}!"
+    bedrock-create-failed: "&cTạo quan hệ thất bại!"
 
   # ================================================
   # RelationManagementGUI (40 keys)
@@ -716,6 +939,25 @@ gui:
     relation-management-back-desc: "Quay l\u1EA1i menu qu\u1EA3n tr\u1ECB"
     relation-management-refresh-desc: "T\u1EA3i l\u1EA1i d\u1EEF li\u1EC7u quan h\u1EC7"
     relation-management-title: "&4Qu\u1EA3n l\xFD quan h\u1EC7 - Qu\u1EA3n tr\u1ECB vi\xEAn"
+    bedrock-title: "&4Quản lý Quan hệ"
+    bedrock-empty: "&cKhông có dữ liệu quan hệ"
+    bedrock-back: "&cQuay lại"
+    bedrock-page-info: "&fTrang {current}/{total} | Tổng {count} quan hệ"
+    bedrock-refresh: "&aLàm mới Danh sách"
+    bedrock-prev-page: "&eTrang trước"
+    bedrock-next-page: "&eTrang tiếp"
+    bedrock-actions-title: "&6Thao tác Quan hệ"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fLoại: {type}\n&fTrạng thái: {status}\n&fNgười khởi xướng: {initiator}"
+    bedrock-delete-relation: "&cXóa Quan hệ"
+    bedrock-view-details: "&eXem Chi tiết"
+    bedrock-back-to-list: "&cQuay lại Danh sách"
+    bedrock-confirm-title: "&cXác nhận Xóa"
+    bedrock-confirm-content: "&fBạn có chắc muốn xóa quan hệ:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cXác nhận Xóa"
+    bedrock-cancel: "&fHủy"
+    bedrock-delete-success: "&aĐã xóa quan hệ: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cXóa quan hệ thất bại!"
+    bedrock-no-permission: "&cBạn không có quyền quản trị!"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -743,6 +985,13 @@ gui:
     total-records: "T\u1ED5ng s\u1ED1 b\u1EA3n ghi: {count}"
     type: "Lo\u1EA1i"
     wait-for-logs: "Vui l\xF2ng ch\u1EDD c\xE1c ho\u1EA1t \u0111\u1ED9ng c\xF4ng h\u1ED9i \u0111\u1EC3 t\u1EA1o nh\u1EADt k\xFD"
+    bedrock-title: "&6Nhật ký Guild - {guild}"
+    bedrock-no-data: "&cKhông có nhật ký"
+    bedrock-back: "&cQuay lại"
+    bedrock-page-info: "&fTrang {page}/{total}\n&fTổng Nhật ký: {count}"
+    bedrock-prev-page: "&aTrang trước"
+    bedrock-next-page: "&aTrang tiếp"
+    bedrock-refresh: "&aLàm mới"
 
   # ================================================
   # MemberManagementGUI (81 keys)
@@ -829,6 +1078,31 @@ gui:
     member-mgmt.role.leader-perms: "T\u1EA5t c\u1EA3 quy\u1EC1n"
     member-mgmt.role.member-perms: "Quy\u1EC1n c\u01A1 b\u1EA3n"
     member-mgmt.role.officer-perms: "M\u1EDDi, \u0111u\u1ED5i"
+    bedrock-title: "&6Quản lý Thành viên"
+    bedrock-title-page: "&6Quản lý Thành viên - Trang {page}"
+    bedrock-no-members: "&fChưa có thành viên trong guild"
+    bedrock-member-list: "&fDanh sách Thành viên (Tổng {count})"
+    bedrock-invite: "&aMời Thành viên"
+    bedrock-actions-title: "&6Thao tác Thành viên - {member}"
+    bedrock-role-label: "&fVai trò: {role}"
+    bedrock-role-leader: "&cChủ"
+    bedrock-role-officer: "&6Sĩ quan"
+    bedrock-role-member: "&fThành viên"
+    bedrock-view-details: "&eXem Chi tiết"
+    bedrock-kick: "&cĐuổi Thành viên"
+    bedrock-promote-demote: "&6Thăng/Giáng cấp"
+    bedrock-back-to-list: "&cQuay lại Danh sách"
+    member-details.bedrock-title: "&6Chi tiết Thành viên - {member}"
+    member-details.bedrock-player: "&fNgười chơi: {name}"
+    member-details.bedrock-role: "&fVai trò: {role}"
+    member-details.bedrock-join-time: "&fThời gian tham gia: {time}"
+    member-details.bedrock-online: "&fTrực tuyến: {status}"
+    member-details.bedrock-online-yes: "&aCó"
+    member-details.bedrock-online-no: "&cKhông"
+    member-details.bedrock-kick: "&cĐuổi Thành viên"
+    member-details.bedrock-promote-demote: "&6Thăng/Giáng cấp"
+    member-details.bedrock-send-message: "&eGửi Tin nhắn"
+    member-details.bedrock-back: "&cQuay lại"
 
   # ================================================
   # MemberGuildGUI (13 keys)
@@ -847,6 +1121,8 @@ gui:
     no-name: "Kh\xF4ng c\xF3 t\xEAn"
     no-tag: "Kh\xF4ng c\xF3 th\u1EBB"
     title: "&6C\xF4ng h\u1ED9i c\u1EE7a t\xF4i"
+    bedrock-title: "&6Guild của tôi - {guild_name}"
+    bedrock-content: "&6Thông tin Guild\n&fTên: &e{guild_name}\n&fThẻ: &e{guild_tag}\n&fNhà Guild: {home_status}"
 
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
@@ -866,6 +1142,10 @@ gui:
     confirm-delete-guild-title: "&4X\xE1c nh\u1EADn x\xF3a c\xF4ng h\u1ED9i"
     delete.failed: "&cX\xF3a c\xF4ng h\u1ED9i th\u1EA5t b\u1EA1i!"
     delete.success: "&aC\xF4ng h\u1ED9i {guild} \u0111\xE3 b\u1ECB x\xF3a!"
+    bedrock-title: "&4Xác nhận Xóa Guild"
+    bedrock-content: "&fGuild: &e{guild}\n&fBạn có chắc muốn xóa guild này?\n&cHành động này sẽ xóa guild vĩnh viễn!\n&cTất cả thành viên sẽ bị xóa!\n&cHành động này không thể hoàn tác!"
+    bedrock-confirm: "&4Xác nhận Xóa"
+    bedrock-cancel: "&aHủy"
 
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
@@ -883,6 +1163,10 @@ gui:
     leave.failed: "&cR\u1EDDi c\xF4ng h\u1ED9i th\u1EA5t b\u1EA1i!"
     leave.leader-cannot-leave: "&cCh\u1EE7 t\u1ECBch c\xF4ng h\u1ED9i kh\xF4ng th\u1EC3 r\u1EDDi c\xF4ng h\u1ED9i!"
     leave.success: "&aB\u1EA1n \u0111\xE3 r\u1EDDi c\xF4ng h\u1ED9i th\xE0nh c\xF4ng: {guild}"
+    bedrock-title: "&cXác nhận Rời khỏi Guild"
+    bedrock-content: "&fGuild: &e{guild}\n&fBạn có chắc muốn rời khỏi guild này?\n&cHành động này không thể hoàn tác!"
+    bedrock-confirm: "&cXác nhận Rời"
+    bedrock-cancel: "&aHủy"
 
   # ================================================
   # GuildNameInputGUI (21 keys)
@@ -909,6 +1193,9 @@ gui:
     success: "&aS\u1EEDa t\xEAn c\xF4ng h\u1ED9i th\xE0nh c\xF4ng!"
     success-new-name: "&7T\xEAn m\u1EDBi: &f{new_name}"
     title: "&6S\u1EEDa t\xEAn c\xF4ng h\u1ED9i"
+    bedrock-title: "&6Chỉnh sửa Tên Guild"
+    bedrock-input-label: "&fNhập tên guild mới"
+    bedrock-input-placeholder: "2-16 ký tự, hỗ trợ mã màu"
 
   # ================================================
   # GuildTagInputGUI (6 keys)
@@ -920,6 +1207,9 @@ gui:
     confirm-lore: "&7X\xE1c nh\u1EADn s\u1EEDa th\u1EBB c\xF4ng h\u1ED9i"
     current-tag: "&eTh\u1EBB hi\u1EC7n t\u1EA1i"
     title: "&6S\u1EEDa th\u1EBB c\xF4ng h\u1ED9i"
+    bedrock-title: "&6Chỉnh sửa Thẻ Guild"
+    bedrock-input-label: "&fNhập thẻ guild mới"
+    bedrock-input-placeholder: "Tối đa {max} ký tự"
 
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
@@ -931,12 +1221,18 @@ gui:
     confirm-lore: "&7X\xE1c nh\u1EADn s\u1EEDa m\xF4 t\u1EA3 c\xF4ng h\u1ED9i"
     current-description: "&eM\xF4 t\u1EA3 hi\u1EC7n t\u1EA1i"
     title: "&6S\u1EEDa m\xF4 t\u1EA3 c\xF4ng h\u1ED9i"
+    bedrock-title: "&6Chỉnh sửa Mô tả Guild"
+    bedrock-input-label: "&fNhập mô tả guild mới"
+    bedrock-input-placeholder: "Tối đa {max} ký tự"
 
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
   guild-permissions:
     title: "&6C\xE0i \u0111\u1EB7t quy\u1EC1n c\xF4ng h\u1ED9i"
+    bedrock-title: "&6Cài đặt Quyền Guild"
+    bedrock-content: "&6=== Quyền Chủ ===\n&f• Tất cả Quyền\n&f• Quản lý Thành viên\n&f• Chỉnh sửa Cài đặt\n&f• Xóa Guild\n\n&e=== Quyền Sĩ quan ===\n&f• Mời Thành viên\n&f• Đuổi Thành viên\n&f• Xử lý Đơn\n&f• Đặt Nhà Guild\n\n&7=== Quyền Thành viên ===\n&f• Xem Thông tin Guild\n&f• Dịch chuyển đến Nhà Guild\n&f• Đăng ký Tham gia Guild khác\n\n&aTrạng thái Hiện tại: &fGuild {guild} | Hệ thống quyền hoạt động bình thường"
+    bedrock-back: "&cQuay lại"
 
   # ================================================
   # InviteMemberGUI (4 keys)
@@ -946,6 +1242,10 @@ gui:
     click-invite: "Nh\u1EA5p \u0111\u1EC3 m\u1EDDi ng\u01B0\u1EDDi ch\u01A1i n\xE0y"
     join-guild: "Tham gia c\xF4ng h\u1ED9i"
     title: "&6M\u1EDDi th\xE0nh vi\xEAn - {guild} - Trang {page}"
+    bedrock-title: "&6Mời Thành viên"
+    bedrock-title-page: "&6Mời Thành viên - Trang {page}"
+    bedrock-no-players: "&fKhông có người chơi trực tuyến để mời"
+    bedrock-player-list: "&fNgười chơi Trực tuyến (Tổng {count})"
 
   # ================================================
   # KickMemberGUI (5 keys)
@@ -956,6 +1256,10 @@ gui:
     kick.success: "&a\u0110\xE3 \u0111u\u1ED5i th\xE0nh vi\xEAn &e{player} &a!"
     click-kick: "Nh\u1EA5p \u0111\u1EC3 \u0111u\u1ED5i th\xE0nh vi\xEAn n\xE0y"
     title: "&6\u0110u\u1ED5i th\xE0nh vi\xEAn - Trang {page}"
+    bedrock-title: "&6Đuổi Thành viên"
+    bedrock-title-page: "&6Đuổi Thành viên - Trang {page}"
+    bedrock-no-members: "&fKhông có thành viên để đuổi"
+    bedrock-content: "&fChọn một thành viên để đuổi"
 
   # ================================================
   # PromoteMemberGUI (5 keys)
@@ -966,6 +1270,10 @@ gui:
     promote.success: "&a\u0110\xE3 th\u0103ng c\u1EA5p &e{player} &ath\xE0nh quan ch\u1EE9c!"
     click-promote: "Nh\u1EA5p \u0111\u1EC3 th\u0103ng c\u1EA5p th\xE0nh quan ch\u1EE9c"
     title: "&6Th\u0103ng c\u1EA5p th\xE0nh vi\xEAn - Trang {page}"
+    bedrock-title: "&6Thăng cấp Thành viên"
+    bedrock-title-page: "&6Thăng cấp Thành viên - Trang {page}"
+    bedrock-no-members: "&fKhông có thành viên để thăng cấp"
+    bedrock-content: "&fChọn một thành viên để thăng cấp thành sĩ quan"
 
   # ================================================
   # DemoteMemberGUI (5 keys)
@@ -976,3 +1284,7 @@ gui:
     demote.success: "&a\u0110\xE3 h\u1EA1 c\u1EA5p &e{player} &axu\u1ED1ng th\xE0nh vi\xEAn th\u01B0\u1EDDng!"
     click-demote: "Nh\u1EA5p \u0111\u1EC3 h\u1EA1 c\u1EA5p xu\u1ED1ng th\xE0nh vi\xEAn"
     title: "&6H\u1EA1 c\u1EA5p th\xE0nh vi\xEAn - Trang {page}"
+    bedrock-title: "&6Giáng cấp Thành viên"
+    bedrock-title-page: "&6Giáng cấp Thành viên - Trang {page}"
+    bedrock-no-members: "&fKhông có sĩ quan để giáng cấp"
+    bedrock-content: "&fChọn một sĩ quan để giáng cấp thành thành viên"

@@ -282,9 +282,6 @@ economy.transfer-success: "&a\u00a1Se han transferido &e{amount} &aa la guild &e
 economy.transfer-failed: "&c\u00a1Error al transferir!"
 economy.target-guild-not-found: "&c\u00a1La guild objetivo no existe!"
 economy.cannot-transfer-to-self: "&c\u00a1No puedes transferir a tu propia guild!"
-guild.deposit.insufficient-funds: "&c\u00a1No tienes suficiente dinero!"
-guild.withdraw.insufficient-funds: "&c\u00a1Saldo insuficiente en la cuenta de la guild!"
-guild.transfer.insufficient-funds: "&c\u00a1Saldo insuficiente en la cuenta de la guild!"
 
 # ============ Relations ============
 guild.relation.usage: "&cUso: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&aRenombrado a &e{0} &a(porque &e{1} &aest\u00e1 en uso
 cloud.download-tip: "&6Consejo: &8Descarga primero el m\u00f3dulo antiguo y luego reemplaza el archivo: &e/guildmodule unload <id> &8-> reemplazar jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&cError al descargar: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cEste comando es solo para jugadores de Bedrock. Eres un jugador de Java."
+bedrock-test.geyser-unavailable: "&cLa API de Geyser no est\u00e1 disponible, no se puede enviar el formulario."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Hiciste clic en: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Formulario cerrado"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Enviado con \u00e9xito:"
+bedrock-test.custom-name: "&7  Nombre: &f{value}"
+bedrock-test.custom-desc: "&7  Descripci\u00f3n: &f{value}"
+bedrock-test.custom-free-join: "&7  Uni\u00f3n libre: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Permitir invitaciones: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Permitir expulsiones: &f{value}"
+bedrock-test.custom-language: "&7  Idioma: &f{value}"
+bedrock-test.custom-max-members: "&7  M\u00e1ximo de miembros: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Formulario cerrado, no guardado"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Elegiste: &cConfirmar salida"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Elegiste: &aCancelar"
+bedrock-test.modal-closed: "&7[ModalForm] Di\u00e1logo cerrado"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Plugin de Gremios &r- &ePrueba de Formularios Bedrock"
+bedrock-test.main-content: "&7Selecciona un tipo de formulario para previsualizar:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Men\u00fa de botones"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Formulario de entrada/configuraci\u00f3n"
+bedrock-test.main-btn-modal: "&cModalForm &f- Di\u00e1logo de confirmaci\u00f3n"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Men\u00fa principal del gremio &r- &7Ejemplo de SimpleForm"
+bedrock-test.simple-content: "&7Bienvenido, &e{player}&7!\n&7Este es un ejemplo de men\u00fa de botones SimpleForm."
+bedrock-test.simple-btn-info: "&aInformaci\u00f3n del gremio &f- Ver detalles del gremio"
+bedrock-test.simple-btn-members: "&bGesti\u00f3n de miembros &f- Gestionar miembros del gremio"
+bedrock-test.simple-btn-settings: "&eConfiguraci\u00f3n del gremio &f- Modificar configuraci\u00f3n del gremio"
+bedrock-test.simple-btn-list: "&6Lista de gremios &f- Explorar todos los gremios"
+bedrock-test.simple-btn-quit: "&cSalir del gremio &f- Abandonar el gremio actual"
+bedrock-test.simple-name-info: "Informaci\u00f3n del gremio"
+bedrock-test.simple-name-members: "Gesti\u00f3n de miembros"
+bedrock-test.simple-name-settings: "Configuraci\u00f3n del gremio"
+bedrock-test.simple-name-list: "Lista de gremios"
+bedrock-test.simple-name-quit: "Salir del gremio"
+
+# CustomForm
+bedrock-test.custom-title: "&6Configuraci\u00f3n del gremio &r- &fEjemplo de CustomForm"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Configuraci\u00f3n b\u00e1sica \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fNombre del gremio"
+bedrock-test.custom-input-name-placeholder: "Ingresa un nuevo nombre..."
+bedrock-test.custom-input-name-default: "Mi gremio"
+bedrock-test.custom-input-desc-label: "&fDescripci\u00f3n del gremio"
+bedrock-test.custom-input-desc-placeholder: "Ingresa una descripci\u00f3n..."
+bedrock-test.custom-input-desc-default: "Un gremio amigable"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 Interruptores de permisos \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fPermitir uni\u00f3n libre"
+bedrock-test.custom-toggle-allow-invite: "&fPermitir a los miembros invitar"
+bedrock-test.custom-toggle-allow-kick: "&fPermitir a los miembros expulsar"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Otros \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fIdioma del gremio"
+bedrock-test.custom-slider-max-members: "&fM\u00e1ximo de miembros"
+
+# ModalForm
+bedrock-test.modal-title: "&cConfirmar operaci\u00f3n &r- &fEjemplo de ModalForm"
+bedrock-test.modal-content: "&7\u00bfEst\u00e1s seguro de que quieres salir del gremio &eGremio de Prueba &7?\n\n&c\u00a1Esta operaci\u00f3n es irreversible!\n&7Despu\u00e9s de salir, deber\u00e1s solicitar la entrada nuevamente."
+bedrock-test.modal-btn-confirm: "&aConfirmar salida"
+bedrock-test.modal-btn-cancel: "&cCancelar"
 
 
 

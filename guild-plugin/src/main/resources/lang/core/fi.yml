@@ -282,9 +282,6 @@ economy.transfer-success: "\u0026aSiirrettiin onnistuneesti \u0026e{amount}\u002
 economy.transfer-failed: "\u0026cSiirto ep\u00e4onnistui!"
 economy.target-guild-not-found: "\u0026cKohdekiltaa ei ole olemassa!"
 economy.cannot-transfer-to-self: "\u0026cRahaa ei voi siirt\u00e4\u00e4 omalle killalleen!"
-guild.deposit.insufficient-funds: "\u0026cSaldosi on riitt\u00e4m\u00e4t\u00f6n!"
-guild.withdraw.insufficient-funds: "\u0026cKillan tilin saldo on riitt\u00e4m\u00e4t\u00f6n!"
-guild.transfer.insufficient-funds: "\u0026cKillan tilin saldo on riitt\u00e4m\u00e4t\u00f6n!"
 
 # ============ Suhteet ============
 guild.relation.usage: "\u0026cK\u00e4ytt\u00f6: /guild relation <list|create|delete|accept|reject>"
@@ -680,3 +677,66 @@ cloud.download-complete: "\u0026a{0} ladattu. K\u00e4yt\u00e4 \u0026e/guildmodul
 cloud.download-renamed: "\u0026aNimettiin uudelleen muotoon \u0026e{0}\u0026a (koska \u0026e{1}\u0026a on k\u00e4yt\u00f6ss\u00e4)."
 cloud.download-tip: "\u00266Vihje: \u00267Pura vanha moduuli ennen tiedoston korvaamista: \u0026e/guildmodule unload <id> \u00267-> Korvaa jar -> \u0026e/guildmodule load {0}"
 cloud.download-failed: "\u0026cLataus ep\u00e4onnistui: {0}"
+
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cT\u00e4m\u00e4 komento on vain Bedrock-pelaajille. Olet Java-pelaaja."
+bedrock-test.geyser-unavailable: "&cGeyser API ei ole k\u00e4ytett\u00e4viss\u00e4, lomaketta ei voida l\u00e4hett\u00e4\u00e4."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Napsautit: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Lomake suljettu"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7L\u00e4hetetty onnistuneesti:"
+bedrock-test.custom-name: "&7  Nimi: &f{value}"
+bedrock-test.custom-desc: "&7  Kuvaus: &f{value}"
+bedrock-test.custom-free-join: "&7  Vapaa liittyminen: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Salli kutsut: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Salli potkiminen: &f{value}"
+bedrock-test.custom-language: "&7  Kieli: &f{value}"
+bedrock-test.custom-max-members: "&7  J\u00e4senm\u00e4\u00e4r\u00e4n enimm\u00e4ism\u00e4\u00e4r\u00e4: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Lomake suljettu, ei tallennettu"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Valitsit: &cVahvista poistuminen"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Valitsit: &aPeruuta"
+bedrock-test.modal-closed: "&7[ModalForm] Valintaikkuna suljettu"
+
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Killan laajennus &r- &eBedrock-lomaketesti"
+bedrock-test.main-content: "&7Valitse lomaketyyppi esikatselua varten:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Painikevalikko"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Sy\u00f6tt\u00f6-/asetuslomake"
+bedrock-test.main-btn-modal: "&cModalForm &f- Vahvistusvalintaikkuna"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Killan p\u00e4\u00e4valikko &r- &7SimpleForm-esimerkki"
+bedrock-test.simple-content: "&7Tervetuloa, &e{player}&7!\n&7T\u00e4m\u00e4 on esimerkki SimpleForm-painikevalikosta."
+bedrock-test.simple-btn-info: "&aKillan tiedot &f- Katso killan tiedot"
+bedrock-test.simple-btn-members: "&bJ\u00e4senhallinta &f- Hallitse killan j\u00e4seni\u00e4"
+bedrock-test.simple-btn-settings: "&eKillan asetukset &f- Muuta killan asetuksia"
+bedrock-test.simple-btn-list: "&6Kilta lista &f- Selaa kaikkia kiltoja"
+bedrock-test.simple-btn-quit: "&cPoistu killasta &f- Poistu nykyisest\u00e4 killasta"
+bedrock-test.simple-name-info: "Killan tiedot"
+bedrock-test.simple-name-members: "J\u00e4senhallinta"
+bedrock-test.simple-name-settings: "Killan asetukset"
+bedrock-test.simple-name-list: "Kilta lista"
+bedrock-test.simple-name-quit: "Poistu killasta"
+
+# CustomForm
+bedrock-test.custom-title: "&6Killan asetukset &r- &fCustomForm-esimerkki"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Perusasetukset \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fKillan nimi"
+bedrock-test.custom-input-name-placeholder: "Sy\u00f6t\u00e4 uusi nimi..."
+bedrock-test.custom-input-name-default: "Minun kilta"
+bedrock-test.custom-input-desc-label: "&fKillan kuvaus"
+bedrock-test.custom-input-desc-placeholder: "Sy\u00f6t\u00e4 kuvaus..."
+bedrock-test.custom-input-desc-default: "Yst\u00e4v\u00e4llinen kilta"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 Oikeuskytkimet \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fSalli vapaa liittyminen"
+bedrock-test.custom-toggle-allow-invite: "&fSalli j\u00e4senten kutsua"
+bedrock-test.custom-toggle-allow-kick: "&fSalli j\u00e4senten potkia"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Muut \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fKillan kieli"
+bedrock-test.custom-slider-max-members: "&fJ\u00e4senm\u00e4\u00e4r\u00e4n enimm\u00e4ism\u00e4\u00e4r\u00e4"
+
+# ModalForm
+bedrock-test.modal-title: "&cVahvista toimenpide &r- &fModalForm-esimerkki"
+bedrock-test.modal-content: "&7Oletko varma, ett\u00e4 haluat poistua killasta &eTestikilta &7?\n\n&cT\u00e4t\u00e4 toimenpidett\u00e4 ei voi peruuttaa!\n&7Poistumisen j\u00e4lkeen sinun t\u00e4ytyy hakea liittymist\u00e4 uudelleen."
+bedrock-test.modal-btn-confirm: "&aVahvista poistuminen"
+bedrock-test.modal-btn-cancel: "&cPeruuta"

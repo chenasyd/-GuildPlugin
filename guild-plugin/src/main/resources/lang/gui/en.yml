@@ -151,7 +151,6 @@ gui:
     application-management-pending-applications-lore-1: "&7View pending applications"
     application-management-pending-applications-name: "&ePending Applications"
     application-management-title: "&6Application Management"
-    no-history: "&aNo Application History"
     no-history.desc: "&7There is no application history"
     apply.already-applied: "&cYou have already applied to this guild!"
     apply.failed: "&cApplication submission failed!"

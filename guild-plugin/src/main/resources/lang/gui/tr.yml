@@ -84,6 +84,9 @@ gui:
     member-role.leader: "Lider"
     member-role.member: "\u00dcye"
     member-role.officer: "Memur"
+    bedrock-prev-page: "&eÖnceki Sayfa"
+    bedrock-next-page: "&eSonraki Sayfa"
+    bedrock-back: "&cGeri"
 
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
@@ -111,6 +114,14 @@ gui:
     admin-gui-statistics-total-balance: "&eToplam Fon: &f{balance}"
     admin-gui-statistics-total-guilds: "&eToplam Guild Say\u0131s\u0131: &f{count}"
     admin-gui-statistics-total-members: "&eToplam \u00dcye Say\u0131s\u0131: &f{count}"
+    bedrock-title: "&4Guild Yönetimi"
+    bedrock-content: "&fBir yönetim işlevi seçin"
+    bedrock-guild-list: "&eGuild Listesi Yönetimi"
+    bedrock-economy: "&eEkonomi Yönetimi"
+    bedrock-relations: "&eİlişki Yönetimi"
+    bedrock-statistics: "&eİstatistik Bilgileri"
+    bedrock-settings: "&eSistem Ayarları"
+    bedrock-back: "&cGeri"
 
   # ================================================
   # ApplicationManagementGUI (29 keys)
@@ -140,11 +151,31 @@ gui:
     application-management-pending-applications-lore-1: "&7Bekleyen ba\u015fvurular\u0131 g\u00f6r"
     application-management-pending-applications-name: "&eBekleyen Ba\u015fvurular"
     application-management-title: "&6Ba\u015fvuru Y\u00f6netimi"
-    no-history: "&aBa\u015fvuru ge\u00e7mi\u015fi yok"
     no-history.desc: "&7Ba\u015fvuru ge\u00e7mi\u015fi yok"
     apply.already-applied: "&cBu guild'e zaten ba\u015fvurdunuz!"
     apply.failed: "&cBa\u015fvuru g\u00f6nderilemedi!"
     apply.success: "&aBa\u015fvuru g\u00f6nderildi!"
+    bedrock-title: "&6Başvuru Yönetimi"
+    bedrock-empty-history: "&fBaşvuru geçmişi yok"
+    bedrock-empty-pending: "&fBekleyen başvuru yok"
+    bedrock-pending-btn: "&eBekleyen Başvurular"
+    bedrock-history-btn: "&eBaşvuru Geçmişi"
+    bedrock-back: "&cGeri"
+    bedrock-mode-history: "Başvuru Geçmişi"
+    bedrock-mode-pending: "Bekleyen Başvurular"
+    bedrock-title-page: "&6Başvuru Yönetimi - {mode} Sayfa {page}"
+    bedrock-total: "&fToplam {count} kayıt"
+    bedrock-prev-page: "&eÖnceki Sayfa"
+    bedrock-next-page: "&eSonraki Sayfa"
+    bedrock-applicant: "&fBaşvuran: {name}"
+    bedrock-status: "&fDurum: {status}"
+    bedrock-message: "&fMesaj: {msg}"
+    bedrock-no-message: "Yok"
+    bedrock-actions-title: "&6Başvuru İşle - {name}"
+    bedrock-actions-content: "&fBaşvuran: {name}\n&fMesaj: {msg}"
+    bedrock-accept: "&aBaşvuruyu Kabul Et"
+    bedrock-reject: "&cBaşvuruyu Reddet"
+    bedrock-back-to-list: "&eListeye Dön"
 
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
@@ -172,6 +203,7 @@ gui:
     member-management.lore.2: "&7Davet et, at, izin y\u00f6netimi"
     member-management.name: "&e\u00dcye Y\u00f6netimi"
     title: "&6Guild Sistemi"
+    bedrock-content: "&fBir işlev seçin:"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
@@ -288,6 +320,23 @@ gui:
     system-settings-save-lore-1: "&7T\u00fcm ge\u00e7erli ayarlar\u0131 kaydet"
     system-settings-save-lore-2: "&7Yap\u0131land\u0131rma dosyalar\u0131na uygula"
     system-settings-title: "&4Sistem Ayarlar\u0131"
+    bedrock-title: "&4Sistem Ayarları"
+    bedrock-content: "&fAnahtar durumunu değiştirmek için tıklayın"
+    bedrock-debug: "&eHata Ayıklama Bilgisi: {status}"
+    bedrock-auto-save: "&eOtomatik Kaydetme: {status}"
+    bedrock-economy: "&eEkonomi Sistemi: {status}"
+    bedrock-relations: "&eİlişki Sistemi: {status}"
+    bedrock-level: "&eSeviye Sistemi: {status}"
+    bedrock-applications: "&eBaşvuru Sistemi: {status}"
+    bedrock-invites: "&eDavet Sistemi: {status}"
+    bedrock-guild-home: "&eGuild Evi: {status}"
+    bedrock-on: "&aAktif"
+    bedrock-off: "&cPasif"
+    bedrock-reload: "&aYapılandırmayı Yeniden Yükle"
+    bedrock-database: "&bVeritabanı Bakımı"
+    bedrock-backup: "&6Veri Yedekleme"
+    bedrock-save: "&aAyarları Kaydet"
+    bedrock-back: "&cGeri"
 
   # ================================================
   # CreateGuildGUI (36 keys)
@@ -329,6 +378,13 @@ gui:
     create-guild-tag-input-lore-2: "&7Uzunluk: Maksimum 6 karakter"
     create-guild-tag-input-lore-3: "&7\u0130ste\u011fe ba\u011fl\u0131"
     create-guild-tag-input-name: "&eGuild Etiketi"
+    bedrock-title: "&6Guild Oluştur"
+    bedrock-name-label: "&fGuild Adı (3-20 karakter)"
+    bedrock-name-placeholder: "Guild adını girin"
+    bedrock-tag-label: "&fGuild Etiketi (maksimum 6 karakter, isteğe bağlı)"
+    bedrock-tag-placeholder: "Guild etiketini girin"
+    bedrock-desc-label: "&fGuild Açıklaması (maksimum 100 karakter, isteğe bağlı)"
+    bedrock-desc-placeholder: "Guild açıklamasını girin"
 
   # ================================================
   # GuildDetailGUI (38 keys)
@@ -372,6 +428,31 @@ gui:
     transfer-self: "&cLiderli\u011fi kendinize transfer edemezsiniz"
     transfer-success: "&aLiderlik ba\u015far\u0131yla &e{name} \u00fcyesine transfer edildi"
     unfreeze-guild: "Guild'i \u00c7\u00f6z"
+    bedrock-title: "&6Guild Detayları - {guild_name}"
+    bedrock-level: "&fSeviye: &e{level}"
+    bedrock-balance: " &fFonlar: &a{balance}"
+    bedrock-leader: "&fLider: &c{leader}"
+    bedrock-members: " &fÜyeler: &e{current}/{max}"
+    bedrock-status: "&fDurum: {status}"
+    bedrock-status-frozen: "&cDondurulmuş"
+    bedrock-status-normal: "&aNormal"
+    bedrock-description: "&fAçıklama: &7{description}"
+    bedrock-transfer-hint: "&e>>> Transfer Modu: Liderliği devretmek için üyeye tıklayın <<<"
+    bedrock-no-tag: "Yok"
+    bedrock-unfreeze: "&aGuild Dondurmasını Kaldır"
+    bedrock-freeze: "&cGuild Dondur"
+    bedrock-delete: "&4Guild Sil"
+    bedrock-cancel-transfer: "&eTransfer Modunu İptal Et"
+    bedrock-transfer: "&cLiderliği Devret"
+    bedrock-prev-page: "&eÖnceki Sayfa"
+    bedrock-next-page: "&eSonraki Sayfa"
+    bedrock-back: "&cGeri"
+    bedrock-transfer-self: "&cLiderliği kendinize devredemezsiniz"
+    bedrock-transfer-success: "&aLiderlik başarıyla &e{name} &aadlı üyeye devredildi"
+    bedrock-transfer-failed: "&cLiderlik devri başarısız!"
+    bedrock-operation-failed: "&cİşlem başarısız!"
+    bedrock-transfer-mode-active: "&eLiderliği devretmek için üyeye tıklayın"
+    bedrock-transfer-mode-cancelled: "&7Liderlik devri iptal edildi"
 
   # ================================================
   # GuildInfoGUI (21 keys)
@@ -398,6 +479,10 @@ gui:
     status-normal: "Normal"
     tag: "Etiket"
     title: "&6Guild Bilgileri"
+    bedrock-title: "&6Guild Bilgisi"
+    bedrock-guild-funds: "&aGuild Fonları"
+    bedrock-back-to-main: "&cAna Menüye Dön"
+    bedrock-status-label: "Durum"
 
   # ================================================
   # GuildListManagementGUI (2 keys)
@@ -405,6 +490,24 @@ gui:
   guild-list-management:
     guild-list-management-title: "&4Guild Listesi Y\u00f6netimi"
     gui-refresh: "&aListeyi yenile"
+    bedrock-title: "&4Guild Listesi Yönetimi"
+    bedrock-page-info: "&fSayfa {page}/{total} | Toplam {count} guild"
+    bedrock-refresh: "&aListeyi Yenile"
+    bedrock-prev-page: "&eÖnceki Sayfa"
+    bedrock-next-page: "&eSonraki Sayfa"
+    bedrock-back: "&cGeri"
+    bedrock-status-frozen: "&cDondurulmuş"
+    bedrock-status-normal: "&aNormal"
+    bedrock-actions-title: "&6Guild İşlemleri - {guild_name}"
+    bedrock-leader: "&fLider: &e{leader}"
+    bedrock-level: "&fSeviye: &e{level}"
+    bedrock-balance: "&fFonlar: &a{balance}"
+    bedrock-status: "&fDurum: {status}"
+    bedrock-view-detail: "&eDetayları Gör"
+    bedrock-delete: "&cGuild Sil"
+    bedrock-unfreeze: "&aGuild Dondurmasını Kaldır"
+    bedrock-freeze: "&cGuild Dondur"
+    bedrock-back-list: "&cListeye Dön"
 
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
@@ -449,6 +552,22 @@ gui:
     guild-list-search-lore-2: "&8Sa\u011f t\u0131k: Aramay\u0131 temizle"
     guild-list-search-name: "&eGuild Ara"
     guild-list-title: "&6Guild Listesi"
+    bedrock-title: "&6Guild Listesi"
+    bedrock-no-guilds: "&cSunucuda henüz guild yok"
+    bedrock-no-results: "&cEşleşen guild bulunamadı"
+    bedrock-search: "&eGuild Ara"
+    bedrock-back-main: "&cAna Menüye Dön"
+    bedrock-page-info: "&fSayfa {page}/{total}"
+    bedrock-search-info: "&fArama: &e{query}"
+    bedrock-prev-page: "&aÖnceki Sayfa"
+    bedrock-next-page: "&aSonraki Sayfa"
+    bedrock-search-title: "&6Guild Ara"
+    bedrock-search-input: "&fArama terimini girin"
+    bedrock-search-placeholder: "Tümünü görmek için boş bırakın"
+    bedrock-select-action: "&fBir işlem seçin:"
+    bedrock-view-detail: "&eDetayları Gör"
+    bedrock-apply-join: "&aKatılma Başvurusu Yap"
+    bedrock-back-list: "&cListeye Dön"
 
   # ================================================
   # GuildFilterGUI (19 keys)
@@ -473,6 +592,35 @@ gui:
     sort.lore-full: "Sadece dolu guildler"
     sort.name: "&e\u00dcye say\u0131s\u0131na g\u00f6re s\u0131rala"
     title: "&6Guild Filtresi"
+    bedrock-title: "&6Guild Filtrele"
+    bedrock-no-guilds: "&fSunucuda henüz guild yok"
+    bedrock-back: "&cGeri"
+    bedrock-no-results: "&fFiltreye uyan guild yok"
+    bedrock-filter-info: "&fSeviye: {min}-{max} | Sıralama: {sort}"
+    bedrock-adjust-filter: "&eFiltreyi Ayarla"
+    bedrock-sort-desc: "Üye sayısı azalan"
+    bedrock-sort-asc: "Üye sayısı artan"
+    bedrock-sort-full: "Sadece dolu"
+    bedrock-title-page: "&6Guild Filtrele - Sayfa {page}"
+    bedrock-total-results: "&fToplam {count} sonuç"
+    bedrock-prev-page: "&eÖnceki Sayfa"
+    bedrock-next-page: "&eSonraki Sayfa"
+    bedrock-settings-title: "&6Filtre Ayarları"
+    bedrock-min-level: "&fMinimum Seviye: {level}"
+    bedrock-max-level: "&fMaksimum Seviye: {level}"
+    bedrock-sort: "&fSıralama: {sort}"
+    bedrock-min-level-up: "&aMinimum Seviye +1"
+    bedrock-min-level-down: "&cMinimum Seviye -1"
+    bedrock-max-level-up: "&aMaksimum Seviye +1"
+    bedrock-max-level-down: "&cMaksimum Seviye -1"
+    bedrock-switch-sort: "&eSıralama Modunu Değiştir"
+    bedrock-back-results: "&eSonuçlara Dön"
+    bedrock-actions-title: "&6Guild İşlemleri - {guild_name}"
+    bedrock-level: "&fSeviye: {level}"
+    bedrock-leader: "&fLider: {leader}"
+    bedrock-view-detail: "&eDetayları Gör"
+    bedrock-apply-join: "&aKatılma Başvurusu Yap"
+    bedrock-back-filter: "&eFiltreye Dön"
 
   # ================================================
   # GuildSettingsGUI (42 keys)
@@ -520,6 +668,13 @@ gui:
     home.success: "&aGuild evine \u0131\u015f\u0131nland\u0131!"
     sethome.failed: "&cGuild evi ayarlanamad\u0131!"
     sethome.success: "&aGuild evi ba\u015far\u0131yla ayarland\u0131!"
+    bedrock-content: "&6Guild Genel Bakış\n&fAd: &e{guild_name}\n&fEtiket: &e{guild_tag}\n&fAçıklama: {guild_desc}\n&fGuild Evi: {home_status}"
+    bedrock-change-name: "&eAd Değiştir"
+    bedrock-change-description: "&eAçıklama Değiştir"
+    bedrock-change-tag: "&eEtiket Değiştir"
+    bedrock-kick-member: "&cÜye At"
+    bedrock-promote-demote: "&eTerfi/Rütbe Düşür"
+    bedrock-back-to-main: "&fAna Menüye Dön"
 
   # ================================================
   # GuildFundsGUI (23 keys)
@@ -548,6 +703,15 @@ gui:
     total-deposit: "Toplam Yat\u0131r\u0131m"
     total-pages: "&8Toplam Sayfa Say\u0131s\u0131: {total}"
     total-players: "&8Oyuncular: {count}"
+    bedrock-title: "&6Guild Fonları - {guild}"
+    bedrock-no-data: "&cBağış kaydı yok"
+    bedrock-back: "&cGeri"
+    bedrock-page-info: "&fSayfa {page}/{total}\n&fToplam Oyuncu: {count}"
+    bedrock-online: "&aÇevrimiçi"
+    bedrock-offline: "&fÇevrimdışı"
+    bedrock-prev-page: "&aÖnceki Sayfa"
+    bedrock-next-page: "&aSonraki Sayfa"
+    bedrock-refresh: "&aYenile"
 
   # ================================================
   # EconomyManagementGUI (23 keys)
@@ -566,16 +730,31 @@ gui:
     middle-click-remove: "&cOrta t\u0131k: Fonlar\u0131 azalt"
     next-page: "&aSonraki Sayfa"
     next-page-desc: "&8Sayfa {page}"
-    next-page-desc: "&8Sayfa {page}"
     page-info: "&eSayfa {current} / {total}"
     previous-page: "&a\u00d6nceki Sayfa"
-    previous-page-desc: "&8Sayfa {page}"
     previous-page-desc: "&8Sayfa {page}"
     refresh: "&aListeyi yenile"
     right-click-add: "&aSa\u011f t\u0131k: Fon ekle"
     set-balance-dev: "&eFon ayarlama \u00f6zelli\u011fi geli\u015ftirilme a\u015famas\u0131nda..."
     set-prompt: "&eYeni fon miktar\u0131n\u0131 girin (sohbete yaz\u0131n, iptal i\u00e7in cancel yaz\u0131n):"
     economy-management-title: "&eEkonomi Y\u00f6netimi"
+    bedrock-title: "&eEkonomi Yönetimi"
+    bedrock-page-info: "&fSayfa {current}/{total} | Toplam {count} guild"
+    bedrock-refresh: "&aListeyi Yenile"
+    bedrock-prev-page: "&eÖnceki Sayfa"
+    bedrock-next-page: "&eSonraki Sayfa"
+    bedrock-back: "&cGeri"
+    bedrock-actions-title: "&eEkonomi Yönetimi - {guild}"
+    bedrock-actions-content: "&fMevcut Fonlar: &a{balance}\n&fLider: &e{leader}\n&fSeviye: &e{level}"
+    bedrock-set-funds: "&eFonları Ayarla"
+    bedrock-add-funds: "&aFon Ekle"
+    bedrock-clear-funds: "&cFonları Sıfırla"
+    bedrock-back-to-list: "&cListeye Dön"
+    bedrock-set-title: "&eFonları Ayarla"
+    bedrock-add-title: "&aFon Ekle"
+    bedrock-input-label: "&fMiktarı girin"
+    bedrock-invalid-amount: "&cMiktar 0'dan büyük olmalıdır!"
+    bedrock-invalid-number: "&cGeçersiz sayı!"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -606,6 +785,14 @@ gui:
     funds.change.set-contrib-increase: "{player} fonlar\u0131 {new}(+{diff}) olarak ayarlad\u0131"
     funds.change.set-log-decrease: "{player}, {guild} fonlar\u0131n\u0131 {new} olarak ayarlad\u0131"
     funds.change.set-log-increase: "{player}, {guild} fonlar\u0131n\u0131 {new} olarak ayarlad\u0131"
+    bedrock-title: "&6Fon Değişikliğini Onayla"
+    bedrock-guild: "&fGuild: &e{guild_name}"
+    bedrock-operation: "&fİşlem: {operation}"
+    bedrock-current-balance: "&fMevcut Fonlar: &6{balance}"
+    bedrock-amount: "&fMiktar: &f{amount}"
+    bedrock-new-balance: "&fYeni Fonlar: &a{balance}"
+    bedrock-confirm: "&aDeğişikliği Onayla"
+    bedrock-cancel: "&cİptal"
 
   # ================================================
   # GuildRelationsGUI (49 keys)
@@ -660,6 +847,24 @@ gui:
     relations.type-selected: "&aSe\u00e7ilen ili\u015fki t\u00fcr\u00fc: {type}"
     relations.type-truce.description: "Ate\u015fkes anla\u015fmas\u0131, ge\u00e7ici bar\u0131\u015f"
     relations.type-war.description: "Sava\u015f durumu, topyek\u00fbn sava\u015f"
+    bedrock-title: "&6Guild İlişkileri"
+    bedrock-title-page: "&6Guild İlişkileri - Sayfa {page}"
+    bedrock-empty: "&fŞu anda guild ilişkisi yok"
+    bedrock-total: "&fToplam {count} ilişki"
+    bedrock-create-relation: "&aİlişki Oluştur"
+    bedrock-prev-page: "&eÖnceki Sayfa"
+    bedrock-next-page: "&eSonraki Sayfa"
+    bedrock-back: "&cGeri"
+    bedrock-actions-title: "&6İlişki İşlemleri - {guild}"
+    bedrock-actions-content: "&fTür: {type}\n&fDurum: {status}"
+    bedrock-cancel-relation: "&cİlişkiyi İptal Et"
+    bedrock-accept-relation: "&aİlişkiyi Kabul Et"
+    bedrock-reject-relation: "&cİlişkiyi Reddet"
+    bedrock-end-truce: "&eAteşkesi Sonlandır"
+    bedrock-propose-truce: "&eAteşkes Öner"
+    bedrock-delete-relation: "&cİlişkiyi Sil"
+    bedrock-back-to-list: "&eListeye Dön"
+    bedrock-truce-ended: "&a{guild} ile ateşkes sona erdi!"
 
   # ================================================
   # CreateRelationGUI (6 keys)
@@ -671,6 +876,22 @@ gui:
     confirm-lore-2: "&8\u00d6nce ili\u015fki t\u00fcr\u00fcn\u00fc ve hedef guild'i se\u00e7melisiniz"
     current-selection: "&eGe\u00e7erli Se\u00e7im"
     title: "&6Guild \u0130li\u015fkisi Olu\u015ftur"
+    bedrock-type-title: "&6İlişki Oluştur - Tür Seç"
+    bedrock-type-content: "&fLütfen ilişki türünü seçin:"
+    bedrock-back: "&cGeri"
+    bedrock-target-title: "&6İlişki Oluştur - Hedef Seç"
+    bedrock-target-empty: "&fUygun hedef guild yok"
+    bedrock-target-title-page: "&6İlişki Oluştur - Hedef Seç Sayfa {page}"
+    bedrock-target-content: "&fTür: {type}\n&fHedef guild seçin:"
+    bedrock-prev-page: "&eÖnceki Sayfa"
+    bedrock-next-page: "&eSonraki Sayfa"
+    bedrock-confirm-title: "&6İlişki Oluşturmayı Onayla"
+    bedrock-confirm-content: "&fTür: {type}\n&fHedef: {target}"
+    bedrock-confirm-create: "&aOluşturmayı Onayla"
+    bedrock-cancel: "&cİptal"
+    bedrock-already-exists: "&c{guild} ile ilişki zaten mevcut!"
+    bedrock-create-success: "&a{type} ilişki talebi {guild} adlı guild'e gönderildi!"
+    bedrock-create-failed: "&cİlişki oluşturma başarısız!"
 
   # ================================================
   # RelationManagementGUI (40 keys)
@@ -708,7 +929,6 @@ gui:
     pending-delete: "Silme onay\u0131 bekleniyor"
     previous-page: "&a\u00d6nceki Sayfa"
     previous-page-desc: "&8Sayfa {0}"
-    previous-page-desc: "&8Sayfa {0}"
     refresh: "&aListeyi yenile"
     refresh-desc: "&8\u0130li\u015fki verilerini yeniden y\u00fckle"
     refreshing: "\u0130li\u015fki listesi yenileniyor..."
@@ -716,6 +936,25 @@ gui:
     relation-management-back-desc: "Y\u00f6netim men\u00fcs\u00fcne d\u00f6n"
     relation-management-refresh-desc: "\u0130li\u015fki verilerini yeniden y\u00fckle"
     relation-management-title: "&4\u0130li\u015fki Y\u00f6netimi - Y\u00f6netici"
+    bedrock-title: "&4İlişki Yönetimi"
+    bedrock-empty: "&cİlişki verisi yok"
+    bedrock-back: "&cGeri"
+    bedrock-page-info: "&fSayfa {current}/{total} | Toplam {count} ilişki"
+    bedrock-refresh: "&aListeyi Yenile"
+    bedrock-prev-page: "&eÖnceki Sayfa"
+    bedrock-next-page: "&eSonraki Sayfa"
+    bedrock-actions-title: "&6İlişki İşlemleri"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fTür: {type}\n&fDurum: {status}\n&fBaşlatan: {initiator}"
+    bedrock-delete-relation: "&cİlişkiyi Sil"
+    bedrock-view-details: "&eDetayları Gör"
+    bedrock-back-to-list: "&cListeye Dön"
+    bedrock-confirm-title: "&cSilmeyi Onayla"
+    bedrock-confirm-content: "&fİlişkiyi silmek istediğinize emin misiniz:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cSilmeyi Onayla"
+    bedrock-cancel: "&fİptal"
+    bedrock-delete-success: "&aİlişki silindi: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cİlişki silme başarısız!"
+    bedrock-no-permission: "&cYönetici izniniz yok!"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -743,6 +982,13 @@ gui:
     total-records: "Toplam kay\u0131t say\u0131s\u0131: {count}"
     type: "T\u00fcr"
     wait-for-logs: "G\u00fcnl\u00fck olu\u015fturmak i\u00e7in guild aktivitelerini bekleyin"
+    bedrock-title: "&6Guild Kayıtları - {guild}"
+    bedrock-no-data: "&cKayıt yok"
+    bedrock-back: "&cGeri"
+    bedrock-page-info: "&fSayfa {page}/{total}\n&fToplam Kayıt: {count}"
+    bedrock-prev-page: "&aÖnceki Sayfa"
+    bedrock-next-page: "&aSonraki Sayfa"
+    bedrock-refresh: "&aYenile"
 
   # ================================================
   # MemberManagementGUI (81 keys)
@@ -829,6 +1075,31 @@ gui:
     member-mgmt.role.leader-perms: "T\u00fcm izinler"
     member-mgmt.role.member-perms: "Temel izinler"
     member-mgmt.role.officer-perms: "Davet et, At"
+    bedrock-title: "&6Üye Yönetimi"
+    bedrock-title-page: "&6Üye Yönetimi - Sayfa {page}"
+    bedrock-no-members: "&fGuild'de henüz üye yok"
+    bedrock-member-list: "&fÜye Listesi (Toplam {count})"
+    bedrock-invite: "&aÜye Davet Et"
+    bedrock-actions-title: "&6Üye İşlemleri - {member}"
+    bedrock-role-label: "&fRol: {role}"
+    bedrock-role-leader: "&cLider"
+    bedrock-role-officer: "&6Memur"
+    bedrock-role-member: "&fÜye"
+    bedrock-view-details: "&eDetayları Gör"
+    bedrock-kick: "&cÜye At"
+    bedrock-promote-demote: "&6Terfi/Rütbe Düşür"
+    bedrock-back-to-list: "&cListeye Dön"
+    member-details.bedrock-title: "&6Üye Detayları - {member}"
+    member-details.bedrock-player: "&fOyuncu: {name}"
+    member-details.bedrock-role: "&fRol: {role}"
+    member-details.bedrock-join-time: "&fKatılma Zamanı: {time}"
+    member-details.bedrock-online: "&fÇevrimiçi: {status}"
+    member-details.bedrock-online-yes: "&aEvet"
+    member-details.bedrock-online-no: "&cHayır"
+    member-details.bedrock-kick: "&cÜye At"
+    member-details.bedrock-promote-demote: "&6Terfi/Rütbe Düşür"
+    member-details.bedrock-send-message: "&eMesaj Gönder"
+    member-details.bedrock-back: "&cGeri"
 
   # ================================================
   # MemberGuildGUI (13 keys)
@@ -847,6 +1118,8 @@ gui:
     no-name: "\u0130sim yok"
     no-tag: "Etiket yok"
     title: "&6Benim Guild'im"
+    bedrock-title: "&6Guildim - {guild_name}"
+    bedrock-content: "&6Guild Bilgisi\n&fAd: &e{guild_name}\n&fEtiket: &e{guild_tag}\n&fGuild Evi: {home_status}"
 
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
@@ -866,6 +1139,10 @@ gui:
     confirm-delete-guild-title: "&4Guild Silmeyi Onayla"
     delete.failed: "&cGuild silinemedi!"
     delete.success: "&aGuild {guild} silindi!"
+    bedrock-title: "&4Guild Silmeyi Onayla"
+    bedrock-content: "&fGuild: &e{guild}\n&fBu guild'i silmek istediğinize emin misiniz?\n&cBu işlem guild'i kalıcı olarak silecektir!\n&cTüm üyeler kaldırılacaktır!\n&cBu işlem geri alınamaz!"
+    bedrock-confirm: "&4Silmeyi Onayla"
+    bedrock-cancel: "&aİptal"
 
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
@@ -883,6 +1160,10 @@ gui:
     leave.failed: "&cGuild'den ayr\u0131l\u0131namad\u0131!"
     leave.leader-cannot-leave: "&cGuild lideri guild'den ayr\u0131lamaz!"
     leave.success: "&aGuild'den ba\u015far\u0131yla ayr\u0131ld\u0131n\u0131z: {guild}"
+    bedrock-title: "&cGuild'den Ayrılmayı Onayla"
+    bedrock-content: "&fGuild: &e{guild}\n&fBu guild'den ayrılmak istediğinize emin misiniz?\n&cBu işlem geri alınamaz!"
+    bedrock-confirm: "&cAyrılmayı Onayla"
+    bedrock-cancel: "&aİptal"
 
   # ================================================
   # GuildNameInputGUI (21 keys)
@@ -909,6 +1190,9 @@ gui:
     success: "&aGuild ad\u0131 ba\u015far\u0131yla de\u011fi\u015ftirildi!"
     success-new-name: "&8Yeni ad: &f{new_name}"
     title: "&6Guild Ad\u0131n\u0131 De\u011fi\u015ftir"
+    bedrock-title: "&6Guild Adını Düzenle"
+    bedrock-input-label: "&fYeni guild adını girin"
+    bedrock-input-placeholder: "2-16 karakter, renk kodları desteklenir"
 
   # ================================================
   # GuildTagInputGUI (6 keys)
@@ -920,6 +1204,9 @@ gui:
     confirm-lore: "&8Guild etiketi de\u011fi\u015fikli\u011fini onayla"
     current-tag: "&eGe\u00e7erli Etiket"
     title: "&6Guild Etiketini De\u011fi\u015ftir"
+    bedrock-title: "&6Guild Etiketini Düzenle"
+    bedrock-input-label: "&fYeni guild etiketini girin"
+    bedrock-input-placeholder: "Maksimum {max} karakter"
 
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
@@ -931,12 +1218,18 @@ gui:
     confirm-lore: "&8Guild a\u00e7\u0131klamas\u0131 de\u011fi\u015fikli\u011fini onayla"
     current-description: "&eGe\u00e7erli A\u00e7\u0131klama"
     title: "&6Guild A\u00e7\u0131klamas\u0131n\u0131 De\u011fi\u015ftir"
+    bedrock-title: "&6Guild Açıklamasını Düzenle"
+    bedrock-input-label: "&fYeni guild açıklamasını girin"
+    bedrock-input-placeholder: "Maksimum {max} karakter"
 
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
   guild-permissions:
     title: "&6Guild \u0130zin Ayarlar\u0131"
+    bedrock-title: "&6Guild İzin Ayarları"
+    bedrock-content: "&6=== Lider İzinleri ===\n&f• Tüm İzinler\n&f• Üye Yönetimi\n&f• Ayarları Düzenleme\n&f• Guild Silme\n\n&e=== Memur İzinleri ===\n&f• Üye Davet Etme\n&f• Üye Atma\n&f• Başvuru İşleme\n&f• Guild Evi Ayarlama\n\n&7=== Üye İzinleri ===\n&f• Guild Bilgisi Görüntüleme\n&f• Guild Evi'ne Işınlanma\n&f• Diğer Guildlere Katılma Başvurusu\n\n&aMevcut Durum: &fGuild {guild} | İzin sistemi normal çalışıyor"
+    bedrock-back: "&cGeri"
 
   # ================================================
   # InviteMemberGUI (4 keys)
@@ -946,6 +1239,10 @@ gui:
     click-invite: "Bu oyuncuyu davet etmek i\u00e7in t\u0131kla"
     join-guild: "Guild'e kat\u0131l"
     title: "&6\u00dcye Davet Et - {guild} - Sayfa {page}"
+    bedrock-title: "&6Üye Davet Et"
+    bedrock-title-page: "&6Üye Davet Et - Sayfa {page}"
+    bedrock-no-players: "&fDavet edilebilecek çevrimiçi oyuncu yok"
+    bedrock-player-list: "&fÇevrimiçi Oyuncular (Toplam {count})"
 
   # ================================================
   # KickMemberGUI (5 keys)
@@ -956,6 +1253,10 @@ gui:
     kick.success: "&a\u00dcye &e{player} &aba\u015far\u0131yla at\u0131ld\u0131!"
     click-kick: "Bu \u00fcyeyi atmak i\u00e7in t\u0131kla"
     title: "&6\u00dcye At - Sayfa {page}"
+    bedrock-title: "&6Üye At"
+    bedrock-title-page: "&6Üye At - Sayfa {page}"
+    bedrock-no-members: "&fAtılabilecek üye yok"
+    bedrock-content: "&fAtmak için bir üye seçin"
 
   # ================================================
   # PromoteMemberGUI (5 keys)
@@ -966,6 +1267,10 @@ gui:
     promote.success: "&a\u00dcye &e{player} &amemur olarak terfi ettirildi!"
     click-promote: "Memur olarak terfi ettirmek i\u00e7in t\u0131kla"
     title: "&6\u00dcye Terfi Ettir - Sayfa {page}"
+    bedrock-title: "&6Üye Terfi Ettir"
+    bedrock-title-page: "&6Üye Terfi Ettir - Sayfa {page}"
+    bedrock-no-members: "&fTerfi ettirilebilecek üye yok"
+    bedrock-content: "&fMemurluğa terfi ettirmek için bir üye seçin"
 
   # ================================================
   # DemoteMemberGUI (5 keys)
@@ -976,3 +1281,7 @@ gui:
     demote.success: "&a\u00dcye &e{player} &anormal \u00fcye olarak r\u00fctbesi d\u00fc\u015f\u00fcr\u00fcld\u00fc!"
     click-demote: "Normal \u00fcye olarak r\u00fctbe d\u00fc\u015f\u00fcrmek i\u00e7in t\u0131kla"
     title: "&6\u00dcye R\u00fctbesini D\u00fc\u015f\u00fcr - Sayfa {page}"
+    bedrock-title: "&6Üye Rütbesini Düşür"
+    bedrock-title-page: "&6Üye Rütbesini Düşür - Sayfa {page}"
+    bedrock-no-members: "&fRütbesi düşürülebilecek memur yok"
+    bedrock-content: "&fÜyeliğe rütbesini düşürmek için bir memur seçin"

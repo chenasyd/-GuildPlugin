@@ -84,6 +84,9 @@ gui:
     member-role.leader: "マスター"
     member-role.member: "メンバー"
     member-role.officer: "オフィサー"
+    bedrock-prev-page: "&e前のページ"
+    bedrock-next-page: "&e次のページ"
+    bedrock-back: "&c戻る"
 
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
@@ -111,6 +114,14 @@ gui:
     admin-gui-statistics-total-balance: "&e総資金: &f{balance}"
     admin-gui-statistics-total-guilds: "&e総ギルド数: &f{count}"
     admin-gui-statistics-total-members: "&e総メンバー数: &f{count}"
+    bedrock-title: "&4ギルド管理"
+    bedrock-content: "&f管理機能を選択"
+    bedrock-guild-list: "&eギルドリスト管理"
+    bedrock-economy: "&e経済管理"
+    bedrock-relations: "&e関係管理"
+    bedrock-statistics: "&e統計情報"
+    bedrock-settings: "&eシステム設定"
+    bedrock-back: "&c戻る"
 
   # ================================================
   # ApplicationManagementGUI (29 keys)
@@ -140,11 +151,31 @@ gui:
     application-management-pending-applications-lore-1: "&7保留中の申請を表示"
     application-management-pending-applications-name: "&e保留中の申請"
     application-management-title: "&6申請管理"
-    no-history: "&a申請履歴はありません"
     no-history.desc: "&7現在、申請履歴はありません"
     apply.already-applied: "&cあなたは既にこのギルドに申請しています！"
     apply.failed: "&c申請の送信に失敗しました！"
     apply.success: "&a申請が送信されました！"
+    bedrock-title: "&6申請管理"
+    bedrock-empty-history: "&f申請履歴はありません"
+    bedrock-empty-pending: "&f保留中の申請はありません"
+    bedrock-pending-btn: "&e保留中の申請"
+    bedrock-history-btn: "&e申請履歴"
+    bedrock-back: "&c戻る"
+    bedrock-mode-history: "申請履歴"
+    bedrock-mode-pending: "保留中の申請"
+    bedrock-title-page: "&6申請管理 - {mode} ページ {page}"
+    bedrock-total: "&f合計 {count} 件"
+    bedrock-prev-page: "&e前のページ"
+    bedrock-next-page: "&e次のページ"
+    bedrock-applicant: "&f申請者: {name}"
+    bedrock-status: "&fステータス: {status}"
+    bedrock-message: "&fメッセージ: {msg}"
+    bedrock-no-message: "なし"
+    bedrock-actions-title: "&6申請処理 - {name}"
+    bedrock-actions-content: "&f申請者: {name}\n&fメッセージ: {msg}"
+    bedrock-accept: "&a申請を承認"
+    bedrock-reject: "&c申請を拒否"
+    bedrock-back-to-list: "&eリストに戻る"
 
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
@@ -172,6 +203,7 @@ gui:
     member-management.lore.2: "&7招待、キック、権限管理"
     member-management.name: "&eメンバー管理"
     title: "&6ギルドシステム"
+    bedrock-content: "&f機能を選択："
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
@@ -288,6 +320,23 @@ gui:
     system-settings-save-lore-1: "&7すべての設定を保存"
     system-settings-save-lore-2: "&7設定ファイルに適用"
     system-settings-title: "&4システム設定"
+    bedrock-title: "&4システム設定"
+    bedrock-content: "&fクリックでスイッチを切り替え"
+    bedrock-debug: "&eデバッグ情報: {status}"
+    bedrock-auto-save: "&e自動保存: {status}"
+    bedrock-economy: "&e経済システム: {status}"
+    bedrock-relations: "&e関係システム: {status}"
+    bedrock-level: "&eレベルシステム: {status}"
+    bedrock-applications: "&e申請システム: {status}"
+    bedrock-invites: "&e招待システム: {status}"
+    bedrock-guild-home: "&eギルドホーム: {status}"
+    bedrock-on: "&aオン"
+    bedrock-off: "&cオフ"
+    bedrock-reload: "&a設定を再読み込み"
+    bedrock-database: "&bデータベースメンテナンス"
+    bedrock-backup: "&6データバックアップ"
+    bedrock-save: "&a設定を保存"
+    bedrock-back: "&c戻る"
 
   # ================================================
   # CreateGuildGUI (36 keys)
@@ -329,6 +378,13 @@ gui:
     create-guild-tag-input-lore-2: "&7長さ: 最大6文字"
     create-guild-tag-input-lore-3: "&7任意"
     create-guild-tag-input-name: "&eギルドタグ"
+    bedrock-title: "&6ギルドを作成"
+    bedrock-name-label: "&fギルド名（3-20文字）"
+    bedrock-name-placeholder: "ギルド名を入力"
+    bedrock-tag-label: "&fギルドタグ（最大6文字、任意）"
+    bedrock-tag-placeholder: "ギルドタグを入力"
+    bedrock-desc-label: "&fギルド説明（最大100文字、任意）"
+    bedrock-desc-placeholder: "ギルド説明を入力"
 
   # ================================================
   # GuildDetailGUI (38 keys)
@@ -372,6 +428,31 @@ gui:
     transfer-self: "&c自分自身にマスターを譲渡することはできません"
     transfer-success: "&aマスターを &e{name} &aに譲渡しました"
     unfreeze-guild: "ギルドの凍結を解除"
+    bedrock-title: "&6ギルド詳細 - {guild_name}"
+    bedrock-level: "&fレベル: &e{level}"
+    bedrock-balance: " &f資金: &a{balance}"
+    bedrock-leader: "&fマスター: &c{leader}"
+    bedrock-members: " &fメンバー: &e{current}/{max}"
+    bedrock-status: "&fステータス: {status}"
+    bedrock-status-frozen: "&c凍結済み"
+    bedrock-status-normal: "&a通常"
+    bedrock-description: "&f説明: &7{description}"
+    bedrock-transfer-hint: "&e>>> 譲渡モード: メンバーをクリックして譲渡 <<<"
+    bedrock-no-tag: "なし"
+    bedrock-unfreeze: "&aギルドの凍結を解除"
+    bedrock-freeze: "&cギルドを凍結"
+    bedrock-delete: "&4ギルドを削除"
+    bedrock-cancel-transfer: "&e譲渡モードをキャンセル"
+    bedrock-transfer: "&cマスターを譲渡"
+    bedrock-prev-page: "&e前のページ"
+    bedrock-next-page: "&e次のページ"
+    bedrock-back: "&c戻る"
+    bedrock-transfer-self: "&c自分自身にマスターを譲渡することはできません"
+    bedrock-transfer-success: "&aマスターを &e{name} &aに譲渡しました"
+    bedrock-transfer-failed: "&cマスターの譲渡に失敗しました！"
+    bedrock-operation-failed: "&c操作に失敗しました！"
+    bedrock-transfer-mode-active: "&eメンバーをクリックしてマスターを譲渡"
+    bedrock-transfer-mode-cancelled: "&7譲渡がキャンセルされました"
 
   # ================================================
   # GuildInfoGUI (21 keys)
@@ -398,6 +479,10 @@ gui:
     status-normal: "通常"
     tag: "タグ"
     title: "&6ギルド情報"
+    bedrock-title: "&6ギルド情報"
+    bedrock-guild-funds: "&aギルド資金"
+    bedrock-back-to-main: "&cメインメニューに戻る"
+    bedrock-status-label: "ステータス"
 
   # ================================================
   # GuildListManagementGUI (2 keys)
@@ -405,6 +490,24 @@ gui:
   guild-list-management:
     guild-list-management-title: "&4ギルドリスト管理"
     gui-refresh: "&aリストを更新"
+    bedrock-title: "&4ギルドリスト管理"
+    bedrock-page-info: "&fページ {page}/{total} | 合計 {count} ギルド"
+    bedrock-refresh: "&aリストを更新"
+    bedrock-prev-page: "&e前のページ"
+    bedrock-next-page: "&e次のページ"
+    bedrock-back: "&c戻る"
+    bedrock-status-frozen: "&c凍結済み"
+    bedrock-status-normal: "&a通常"
+    bedrock-actions-title: "&6ギルド操作 - {guild_name}"
+    bedrock-leader: "&fマスター: &e{leader}"
+    bedrock-level: "&fレベル: &e{level}"
+    bedrock-balance: "&f資金: &a{balance}"
+    bedrock-status: "&fステータス: {status}"
+    bedrock-view-detail: "&e詳細を見る"
+    bedrock-delete: "&cギルドを削除"
+    bedrock-unfreeze: "&aギルドの凍結を解除"
+    bedrock-freeze: "&cギルドを凍結"
+    bedrock-back-list: "&cリストに戻る"
 
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
@@ -449,6 +552,22 @@ gui:
     guild-list-search-lore-2: "&8右クリック: 検索をクリア"
     guild-list-search-name: "&eギルドを検索"
     guild-list-title: "&6ギルドリスト"
+    bedrock-title: "&6ギルドリスト"
+    bedrock-no-guilds: "&cサーバーにはまだギルドがありません"
+    bedrock-no-results: "&c一致するギルドが見つかりません"
+    bedrock-search: "&eギルドを検索"
+    bedrock-back-main: "&cメインメニューに戻る"
+    bedrock-page-info: "&fページ {page}/{total}"
+    bedrock-search-info: "&f検索: &e{query}"
+    bedrock-prev-page: "&a前のページ"
+    bedrock-next-page: "&a次のページ"
+    bedrock-search-title: "&6ギルドを検索"
+    bedrock-search-input: "&f検索キーワードを入力"
+    bedrock-search-placeholder: "空欄で全表示"
+    bedrock-select-action: "&f操作を選択："
+    bedrock-view-detail: "&e詳細を見る"
+    bedrock-apply-join: "&a加入申請"
+    bedrock-back-list: "&cリストに戻る"
 
   # ================================================
   # GuildFilterGUI (19 keys)
@@ -473,6 +592,35 @@ gui:
     sort.lore-full: "満員のギルドのみ"
     sort.name: "&eメンバー数でソート"
     title: "&6ギルドフィルター"
+    bedrock-title: "&6ギルドフィルター"
+    bedrock-no-guilds: "&fサーバーにはまだギルドがありません"
+    bedrock-back: "&c戻る"
+    bedrock-no-results: "&fフィルターに一致するギルドがありません"
+    bedrock-filter-info: "&fレベル: {min}-{max} | ソート: {sort}"
+    bedrock-adjust-filter: "&eフィルターを調整"
+    bedrock-sort-desc: "メンバー数降順"
+    bedrock-sort-asc: "メンバー数昇順"
+    bedrock-sort-full: "満員のみ"
+    bedrock-title-page: "&6ギルドフィルター - ページ {page}"
+    bedrock-total-results: "&f合計 {count} 件"
+    bedrock-prev-page: "&e前のページ"
+    bedrock-next-page: "&e次のページ"
+    bedrock-settings-title: "&6フィルター設定"
+    bedrock-min-level: "&f最低レベル: {level}"
+    bedrock-max-level: "&f最高レベル: {level}"
+    bedrock-sort: "&fソート: {sort}"
+    bedrock-min-level-up: "&a最低レベル +1"
+    bedrock-min-level-down: "&c最低レベル -1"
+    bedrock-max-level-up: "&a最高レベル +1"
+    bedrock-max-level-down: "&c最高レベル -1"
+    bedrock-switch-sort: "&eソートモードを切り替え"
+    bedrock-back-results: "&e結果に戻る"
+    bedrock-actions-title: "&6ギルド操作 - {guild_name}"
+    bedrock-level: "&fレベル: {level}"
+    bedrock-leader: "&fマスター: {leader}"
+    bedrock-view-detail: "&e詳細を見る"
+    bedrock-apply-join: "&a加入申請"
+    bedrock-back-filter: "&eフィルターに戻る"
 
   # ================================================
   # GuildSettingsGUI (42 keys)
@@ -520,6 +668,13 @@ gui:
     home.success: "&aギルドホームへテレポートしました！"
     sethome.failed: "&cギルドホームの設定に失敗しました！"
     sethome.success: "&aギルドホームを設定しました！"
+    bedrock-content: "&6ギルド概要\n&f名前: &e{guild_name}\n&fタグ: &e{guild_tag}\n&f説明: {guild_desc}\n&fギルドホーム: {home_status}"
+    bedrock-change-name: "&e名前を変更"
+    bedrock-change-description: "&e説明を変更"
+    bedrock-change-tag: "&eタグを変更"
+    bedrock-kick-member: "&cメンバーをキック"
+    bedrock-promote-demote: "&e昇格/降格"
+    bedrock-back-to-main: "&fメインメニューに戻る"
 
   # ================================================
   # GuildFundsGUI (23 keys)
@@ -548,6 +703,15 @@ gui:
     total-deposit: "総入金"
     total-pages: "&8総ページ数: {total}"
     total-players: "&8プレイヤー数: {count}"
+    bedrock-title: "&6ギルド資金 - {guild}"
+    bedrock-no-data: "&c入金記録がありません"
+    bedrock-back: "&c戻る"
+    bedrock-page-info: "&fページ {page}/{total}\n&fプレイヤー数: {count}"
+    bedrock-online: "&aオンライン"
+    bedrock-offline: "&fオフライン"
+    bedrock-prev-page: "&a前のページ"
+    bedrock-next-page: "&a次のページ"
+    bedrock-refresh: "&a更新"
 
   # ================================================
   # EconomyManagementGUI (23 keys)
@@ -566,16 +730,31 @@ gui:
     middle-click-remove: "&c中クリック: 資金を減らす"
     next-page: "&a次のページ"
     next-page-desc: "&8ページ {page}"
-    next-page-desc: "&8ページ {page}"
     page-info: "&eページ {current} / {total}"
     previous-page: "&a前のページ"
-    previous-page-desc: "&8ページ {page}"
     previous-page-desc: "&8ページ {page}"
     refresh: "&aリストを更新"
     right-click-add: "&a右クリック: 資金を追加"
     set-balance-dev: "&e資金設定機能は開発中です..."
     set-prompt: "&e新しい資金額を入力してください（チャットで入力、cancelでキャンセル）:"
     economy-management-title: "&e経済管理"
+    bedrock-title: "&e経済管理"
+    bedrock-page-info: "&fページ {current}/{total} | 合計 {count} ギルド"
+    bedrock-refresh: "&aリストを更新"
+    bedrock-prev-page: "&e前のページ"
+    bedrock-next-page: "&e次のページ"
+    bedrock-back: "&c戻る"
+    bedrock-actions-title: "&e経済管理 - {guild}"
+    bedrock-actions-content: "&f現在の資金: &a{balance}\n&fマスター: &e{leader}\n&fレベル: &e{level}"
+    bedrock-set-funds: "&e資金を設定"
+    bedrock-add-funds: "&a資金を追加"
+    bedrock-clear-funds: "&c資金をクリア"
+    bedrock-back-to-list: "&cリストに戻る"
+    bedrock-set-title: "&e資金を設定"
+    bedrock-add-title: "&a資金を追加"
+    bedrock-input-label: "&f金額を入力"
+    bedrock-invalid-amount: "&c金額は0より大きくなければなりません！"
+    bedrock-invalid-number: "&c無効な数字です！"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -606,6 +785,14 @@ gui:
     funds.change.set-contrib-increase: "{player} が資金を {new} に設定 (+{diff})"
     funds.change.set-log-decrease: "{player} が {guild} の資金を {new} に設定"
     funds.change.set-log-increase: "{player} が {guild} の資金を {new} に設定"
+    bedrock-title: "&6資金変更の確認"
+    bedrock-guild: "&fギルド: &e{guild_name}"
+    bedrock-operation: "&f操作: {operation}"
+    bedrock-current-balance: "&f現在の資金: &6{balance}"
+    bedrock-amount: "&f金額: &f{amount}"
+    bedrock-new-balance: "&f新しい資金: &a{balance}"
+    bedrock-confirm: "&a変更を確認"
+    bedrock-cancel: "&cキャンセル"
 
   # ================================================
   # GuildRelationsGUI (49 keys)
@@ -660,6 +847,24 @@ gui:
     relations.type-selected: "&a選択した関係タイプ: {type}"
     relations.type-truce.description: "休戦協定、一時的な平和"
     relations.type-war.description: "宣戦状態、全面戦争"
+    bedrock-title: "&6ギルド関係"
+    bedrock-title-page: "&6ギルド関係 - ページ {page}"
+    bedrock-empty: "&f現在ギルド関係はありません"
+    bedrock-total: "&f合計 {count} 件の関係"
+    bedrock-create-relation: "&a関係を作成"
+    bedrock-prev-page: "&e前のページ"
+    bedrock-next-page: "&e次のページ"
+    bedrock-back: "&c戻る"
+    bedrock-actions-title: "&6関係操作 - {guild}"
+    bedrock-actions-content: "&fタイプ: {type}\n&fステータス: {status}"
+    bedrock-cancel-relation: "&c関係をキャンセル"
+    bedrock-accept-relation: "&a関係を受け入れる"
+    bedrock-reject-relation: "&c関係を拒否"
+    bedrock-end-truce: "&e休戦を終了"
+    bedrock-propose-truce: "&e休戦を提案"
+    bedrock-delete-relation: "&c関係を削除"
+    bedrock-back-to-list: "&eリストに戻る"
+    bedrock-truce-ended: "&a{guild} との休戦が終了しました！"
 
   # ================================================
   # CreateRelationGUI (6 keys)
@@ -671,6 +876,22 @@ gui:
     confirm-lore-2: "&8先に関係タイプと対象ギルドを選択する必要があります"
     current-selection: "&e現在の選択"
     title: "&6ギルド関係を作成"
+    bedrock-type-title: "&6関係を作成 - タイプを選択"
+    bedrock-type-content: "&f関係タイプを選択してください："
+    bedrock-back: "&c戻る"
+    bedrock-target-title: "&6関係を作成 - 対象を選択"
+    bedrock-target-empty: "&f利用可能な対象ギルドがありません"
+    bedrock-target-title-page: "&6関係を作成 - 対象を選択 ページ {page}"
+    bedrock-target-content: "&fタイプ: {type}\n&f対象ギルドを選択："
+    bedrock-prev-page: "&e前のページ"
+    bedrock-next-page: "&e次のページ"
+    bedrock-confirm-title: "&6関係作成の確認"
+    bedrock-confirm-content: "&fタイプ: {type}\n&f対象: {target}"
+    bedrock-confirm-create: "&a作成を確認"
+    bedrock-cancel: "&cキャンセル"
+    bedrock-already-exists: "&c{guild} との関係は既に存在します！"
+    bedrock-create-success: "&a{guild} に{type}関係のリクエストを送信しました！"
+    bedrock-create-failed: "&c関係の作成に失敗しました！"
 
   # ================================================
   # RelationManagementGUI (40 keys)
@@ -708,7 +929,6 @@ gui:
     pending-delete: "削除確認待ち"
     previous-page: "&a前のページ"
     previous-page-desc: "&8ページ {0}"
-    previous-page-desc: "&8ページ {0}"
     refresh: "&aリストを更新"
     refresh-desc: "&8関係データを再読み込み"
     refreshing: "関係リストを更新中..."
@@ -716,6 +936,25 @@ gui:
     relation-management-back-desc: "管理者メニューに戻る"
     relation-management-refresh-desc: "関係データを再読み込み"
     relation-management-title: "&4関係管理 - 管理者"
+    bedrock-title: "&4関係管理"
+    bedrock-empty: "&c関係データがありません"
+    bedrock-back: "&c戻る"
+    bedrock-page-info: "&fページ {current}/{total} | 合計 {count} 件の関係"
+    bedrock-refresh: "&aリストを更新"
+    bedrock-prev-page: "&e前のページ"
+    bedrock-next-page: "&e次のページ"
+    bedrock-actions-title: "&6関係操作"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fタイプ: {type}\n&fステータス: {status}\n&f発起人: {initiator}"
+    bedrock-delete-relation: "&c関係を削除"
+    bedrock-view-details: "&e詳細を見る"
+    bedrock-back-to-list: "&cリストに戻る"
+    bedrock-confirm-title: "&c削除の確認"
+    bedrock-confirm-content: "&f関係を削除してもよろしいですか：\n&e{guild1} ↔ {guild2}&f？"
+    bedrock-confirm-delete: "&c削除を確認"
+    bedrock-cancel: "&fキャンセル"
+    bedrock-delete-success: "&a関係を削除しました: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&c関係の削除に失敗しました！"
+    bedrock-no-permission: "&c管理者権限がありません！"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -743,6 +982,13 @@ gui:
     total-records: "総記録数: {count}"
     type: "タイプ"
     wait-for-logs: "ギルドの活動によってログが生成されるのをお待ちください"
+    bedrock-title: "&6ギルドログ - {guild}"
+    bedrock-no-data: "&cログ記録がありません"
+    bedrock-back: "&c戻る"
+    bedrock-page-info: "&fページ {page}/{total}\n&f総記録数: {count}"
+    bedrock-prev-page: "&a前のページ"
+    bedrock-next-page: "&a次のページ"
+    bedrock-refresh: "&a更新"
 
   # ================================================
   # MemberManagementGUI (81 keys)
@@ -829,6 +1075,31 @@ gui:
     member-mgmt.role.leader-perms: "すべての権限"
     member-mgmt.role.member-perms: "基本権限"
     member-mgmt.role.officer-perms: "招待、キック"
+    bedrock-title: "&6メンバー管理"
+    bedrock-title-page: "&6メンバー管理 - ページ {page}"
+    bedrock-no-members: "&fこのギルドにはまだメンバーがいません"
+    bedrock-member-list: "&fメンバーリスト（合計 {count} 名）"
+    bedrock-invite: "&aメンバーを招待"
+    bedrock-actions-title: "&6メンバー操作 - {member}"
+    bedrock-role-label: "&f役割: {role}"
+    bedrock-role-leader: "&cマスター"
+    bedrock-role-officer: "&6オフィサー"
+    bedrock-role-member: "&fメンバー"
+    bedrock-view-details: "&e詳細を見る"
+    bedrock-kick: "&cメンバーをキック"
+    bedrock-promote-demote: "&6昇格/降格"
+    bedrock-back-to-list: "&cリストに戻る"
+    member-details.bedrock-title: "&6メンバー詳細 - {member}"
+    member-details.bedrock-player: "&fプレイヤー: {name}"
+    member-details.bedrock-role: "&f役割: {role}"
+    member-details.bedrock-join-time: "&f参加日時: {time}"
+    member-details.bedrock-online: "&fオンライン: {status}"
+    member-details.bedrock-online-yes: "&aはい"
+    member-details.bedrock-online-no: "&cいいえ"
+    member-details.bedrock-kick: "&cメンバーをキック"
+    member-details.bedrock-promote-demote: "&6昇格/降格"
+    member-details.bedrock-send-message: "&eメッセージを送信"
+    member-details.bedrock-back: "&c戻る"
 
   # ================================================
   # MemberGuildGUI (13 keys)
@@ -847,6 +1118,8 @@ gui:
     no-name: "名前なし"
     no-tag: "タグなし"
     title: "&6マイギルド"
+    bedrock-title: "&6マイギルド - {guild_name}"
+    bedrock-content: "&6ギルド情報\n&f名前: &e{guild_name}\n&fタグ: &e{guild_tag}\n&fギルドホーム: {home_status}"
 
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
@@ -866,6 +1139,10 @@ gui:
     confirm-delete-guild-title: "&4ギルド削除の確認"
     delete.failed: "&cギルドの削除に失敗しました！"
     delete.success: "&aギルド {guild} が削除されました！"
+    bedrock-title: "&4ギルド削除の確認"
+    bedrock-content: "&fギルド: &e{guild}\n&fこのギルドを削除してもよろしいですか？\n&cこの操作はギルドを完全に削除します！\n&cすべてのメンバーが削除されます！\n&cこの操作は取り消せません！"
+    bedrock-confirm: "&4削除を確認"
+    bedrock-cancel: "&aキャンセル"
 
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
@@ -883,6 +1160,10 @@ gui:
     leave.failed: "&cギルドの脱退に失敗しました！"
     leave.leader-cannot-leave: "&cギルドマスターはギルドを脱退できません！"
     leave.success: "&aギルド {guild} を脱退しました！"
+    bedrock-title: "&cギルド脱退の確認"
+    bedrock-content: "&fギルド: &e{guild}\n&fこのギルドを脱退してもよろしいですか？\n&cこの操作は取り消せません！"
+    bedrock-confirm: "&c脱退を確認"
+    bedrock-cancel: "&aキャンセル"
 
   # ================================================
   # GuildNameInputGUI (21 keys)
@@ -909,6 +1190,9 @@ gui:
     success: "&aギルド名を変更しました！"
     success-new-name: "&8新しい名前: &f{new_name}"
     title: "&6ギルド名を変更"
+    bedrock-title: "&6ギルド名を変更"
+    bedrock-input-label: "&f新しいギルド名を入力"
+    bedrock-input-placeholder: "2-16文字、カラーコード使用可能"
 
   # ================================================
   # GuildTagInputGUI (6 keys)
@@ -920,6 +1204,9 @@ gui:
     confirm-lore: "&8ギルドタグの変更を確認"
     current-tag: "&e現在のタグ"
     title: "&6ギルドタグを変更"
+    bedrock-title: "&6ギルドタグを変更"
+    bedrock-input-label: "&f新しいギルドタグを入力"
+    bedrock-input-placeholder: "最大 {max} 文字"
 
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
@@ -931,12 +1218,18 @@ gui:
     confirm-lore: "&8ギルド説明の変更を確認"
     current-description: "&e現在の説明"
     title: "&6ギルド説明を変更"
+    bedrock-title: "&6ギルド説明を変更"
+    bedrock-input-label: "&f新しいギルド説明を入力"
+    bedrock-input-placeholder: "最大 {max} 文字"
 
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
   guild-permissions:
     title: "&6ギルド権限設定"
+    bedrock-title: "&6ギルド権限設定"
+    bedrock-content: "&6=== マスター権限 ===\n&f• すべての権限\n&f• メンバー管理\n&f• 設定変更\n&f• ギルド削除\n\n&e=== オフィサー権限 ===\n&f• メンバーを招待\n&f• メンバーをキック\n&f• 申請処理\n&f• ギルドホーム設定\n\n&7=== メンバー権限 ===\n&f• ギルド情報の閲覧\n&f• ギルドホームへテレポート\n&f• 他のギルドに加入申請\n\n&a現在の状態: &fギルド {guild} | 権限システム正常稼働中"
+    bedrock-back: "&c戻る"
 
   # ================================================
   # InviteMemberGUI (4 keys)
@@ -946,6 +1239,10 @@ gui:
     click-invite: "クリックでこのプレイヤーを招待"
     join-guild: "ギルドに参加"
     title: "&6メンバーを招待 - {guild} - ページ {page}"
+    bedrock-title: "&6メンバーを招待"
+    bedrock-title-page: "&6メンバーを招待 - ページ {page}"
+    bedrock-no-players: "&f招待可能なオンラインプレイヤーがいません"
+    bedrock-player-list: "&fオンラインプレイヤー（合計 {count} 名）"
 
   # ================================================
   # KickMemberGUI (5 keys)
@@ -956,6 +1253,10 @@ gui:
     kick.success: "&aメンバー &e{player} &aをキックしました！"
     click-kick: "クリックでこのメンバーをキック"
     title: "&6メンバーをキック - ページ {page}"
+    bedrock-title: "&6メンバーをキック"
+    bedrock-title-page: "&6メンバーをキック - ページ {page}"
+    bedrock-no-members: "&fキック可能なメンバーがいません"
+    bedrock-content: "&fキックするメンバーを選択"
 
   # ================================================
   # PromoteMemberGUI (5 keys)
@@ -966,6 +1267,10 @@ gui:
     promote.success: "&aメンバー &e{player} &aをオフィサーに昇格しました！"
     click-promote: "クリックでオフィサーに昇格"
     title: "&6メンバーを昇格 - ページ {page}"
+    bedrock-title: "&6メンバーを昇格"
+    bedrock-title-page: "&6メンバーを昇格 - ページ {page}"
+    bedrock-no-members: "&f昇格可能なメンバーがいません"
+    bedrock-content: "&fオフィサーに昇格するメンバーを選択"
 
   # ================================================
   # DemoteMemberGUI (5 keys)
@@ -976,3 +1281,7 @@ gui:
     demote.success: "&aメンバー &e{player} &aを一般メンバーに降格しました！"
     click-demote: "クリックでメンバーに降格"
     title: "&6メンバーを降格 - ページ {page}"
+    bedrock-title: "&6メンバーを降格"
+    bedrock-title-page: "&6メンバーを降格 - ページ {page}"
+    bedrock-no-members: "&f降格可能なオフィサーがいません"
+    bedrock-content: "&fメンバーに降格するオフィサーを選択"

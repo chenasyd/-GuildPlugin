@@ -282,9 +282,6 @@ economy.transfer-success: "&a\u010c\u00e1stka &e{amount} &abyla \u00fasp\u011b\u
 economy.transfer-failed: "&cP\u0159evod selhal!"
 economy.target-guild-not-found: "&cC\u00edlov\u00e1 gilda neexistuje!"
 economy.cannot-transfer-to-self: "&cNelze p\u0159ev\u00e1d\u011bt pen\u00edze do vlastn\u00ed gildy!"
-guild.deposit.insufficient-funds: "&cNem\u00e1te dostatek prost\u0159edk\u016f!"
-guild.withdraw.insufficient-funds: "&cZ\u016fstatek na \u00fa\u010dtu gildy nen\u00ed dostate\u010dn\u00fd!"
-guild.transfer.insufficient-funds: "&cZ\u016fstatek na \u00fa\u010dtu gildy nen\u00ed dostate\u010dn\u00fd!"
 
 # ============ Relations ============
 guild.relation.usage: "&cPou\u017eit\u00ed: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&aP\u0159ejmenov\u00e1no na &e{0} &a(proto\u017ee &e{1}
 cloud.download-tip: "&6Tip: &7Nejprve odeberte star\u00fd modul a pot\u00e9 nahra\u010fte soubor: &e/guildmodule unload <id> &7-> nahra\u010fte jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&cSta\u017een\u00ed selhalo: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cTento p\u0159\u00edkaz je pouze pro hr\u00e1\u010de Bedrock. Jsi hr\u00e1\u010d Java."
+bedrock-test.geyser-unavailable: "&cGeyser API nen\u00ed k dispozici, nelze odeslat formul\u00e1\u0159."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Klikl jsi na: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Formul\u00e1\u0159 uzav\u0159en"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Odesl\u00e1no \u00fasp\u011b\u0161n\u011b:"
+bedrock-test.custom-name: "&7  N\u00e1zev: &f{value}"
+bedrock-test.custom-desc: "&7  Popis: &f{value}"
+bedrock-test.custom-free-join: "&7  Voln\u00e9 p\u0159ipojen\u00ed: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Povolit pozv\u00e1nky: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Povolit vykopnut\u00ed: &f{value}"
+bedrock-test.custom-language: "&7  Jazyk: &f{value}"
+bedrock-test.custom-max-members: "&7  Maxim\u00e1ln\u00ed po\u010det \u010dlen\u016f: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Formul\u00e1\u0159 uzav\u0159en, neulo\u017eeno"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Vybral jsi: &cPotvrdit odchod"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Vybral jsi: &aZru\u0161it"
+bedrock-test.modal-closed: "&7[ModalForm] Dialog uzav\u0159en"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Plugin Guild &r- &eTest Bedrock Formul\u00e1\u0159\u016f"
+bedrock-test.main-content: "&7Vyber typ formul\u00e1\u0159e pro n\u00e1hled:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Nab\u00eddka tla\u010d\u00edtek"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Formul\u00e1\u0159 vstupu/nastaven\u00ed"
+bedrock-test.main-btn-modal: "&cModalForm &f- Potvrzovac\u00ed dialog"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Hlavn\u00ed menu guildy &r- &7P\u0159\u00edklad SimpleForm"
+bedrock-test.simple-content: "&7V\u00edtej, &e{player}&7!\n&7Toto je p\u0159\u00edklad nab\u00eddky tla\u010d\u00edtek SimpleForm."
+bedrock-test.simple-btn-info: "&aInformace o guild\u011b &f- Zobrazit podrobnosti guildy"
+bedrock-test.simple-btn-members: "&bSpr\u00e1va \u010dlen\u016f &f- Spr\u00e1va \u010dlen\u016f guildy"
+bedrock-test.simple-btn-settings: "&eNastaven\u00ed guildy &f- Zm\u011bnit konfiguraci guildy"
+bedrock-test.simple-btn-list: "&6Seznam guild &f- Prohl\u00ed\u017eet v\u0161echny guildy"
+bedrock-test.simple-btn-quit: "&cOdej\u00edt z guildy &f- Opustit sou\u010dasnou guildy"
+bedrock-test.simple-name-info: "Informace o guild\u011b"
+bedrock-test.simple-name-members: "Spr\u00e1va \u010dlen\u016f"
+bedrock-test.simple-name-settings: "Nastaven\u00ed guildy"
+bedrock-test.simple-name-list: "Seznam guild"
+bedrock-test.simple-name-quit: "Odej\u00edt z guildy"
+
+# CustomForm
+bedrock-test.custom-title: "&6Nastaven\u00ed guildy &r- &fP\u0159\u00edklad CustomForm"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Z\u00e1kladn\u00ed nastaven\u00ed \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fN\u00e1zev guildy"
+bedrock-test.custom-input-name-placeholder: "Zadej nov\u00fd n\u00e1zev..."
+bedrock-test.custom-input-name-default: "Moje guildy"
+bedrock-test.custom-input-desc-label: "&fPopis guildy"
+bedrock-test.custom-input-desc-placeholder: "Zadej popis..."
+bedrock-test.custom-input-desc-default: "P\u0159\u00e1telsk\u00e1 guildy"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 P\u0159ep\u00edna\u010de opr\u00e1vn\u011bn\u00ed \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fPovolit voln\u00e9 p\u0159ipojen\u00ed"
+bedrock-test.custom-toggle-allow-invite: "&fPovolit \u010dlen\u016fm zv\u00e1t"
+bedrock-test.custom-toggle-allow-kick: "&fPovolit \u010dlen\u016fm vykop\u00e1vat"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Ostatn\u00ed \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fJazyk guildy"
+bedrock-test.custom-slider-max-members: "&fMaxim\u00e1ln\u00ed po\u010det \u010dlen\u016f"
+
+# ModalForm
+bedrock-test.modal-title: "&cPotvrdit operaci &r- &fP\u0159\u00edklad ModalForm"
+bedrock-test.modal-content: "&7Opravdu chcete opustit guildy &eTestovac\u00ed guildy &7?\n\n&cTuto operaci nelze vr\u00e1tit zp\u011bt!\n&7Po odchodu se budete muset znovu p\u0159ihl\u00e1sit o p\u0159ipojen\u00ed."
+bedrock-test.modal-btn-confirm: "&aPotvrdit odchod"
+bedrock-test.modal-btn-cancel: "&cZru\u0161it"
 
 
 

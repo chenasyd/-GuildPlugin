@@ -88,6 +88,9 @@ gui:
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
   # ================================================
+    bedrock-prev-page: "&eP\u00e1gina anterior"
+    bedrock-next-page: "&eP\u00e1gina siguiente"
+    bedrock-back: "&cVolver"
   admin-gui:
     title: "&4Administraci\u00f3n de guilds"
     admin-gui-economy-lore-1: "&7Gestionar el sistema econ\u00f3mico de la guild"
@@ -115,6 +118,14 @@ gui:
   # ================================================
   # ApplicationManagementGUI (29 keys)
   # ================================================
+    bedrock-title: "&4Administraci\u00f3n de guilds"
+    bedrock-content: "&fSelecciona una funci\u00f3n de gesti\u00f3n"
+    bedrock-guild-list: "&eGesti\u00f3n de la lista de guilds"
+    bedrock-economy: "&eGesti\u00f3n econ\u00f3mica"
+    bedrock-relations: "&eGesti\u00f3n de relaciones"
+    bedrock-statistics: "&eEstad\u00edsticas"
+    bedrock-settings: "&eAjustes del sistema"
+    bedrock-back: "&cVolver"
   application-mgmt:
     application.accepted: "&a\u00a1Tu solicitud ha sido aceptada por {guild}!"
     applications-count: " solicitud(es)"
@@ -140,7 +151,6 @@ gui:
     application-management-pending-applications-lore-1: "&7Ver solicitudes pendientes"
     application-management-pending-applications-name: "&eSolicitudes pendientes"
     application-management-title: "&6Gesti\u00f3n de solicitudes"
-    no-history: "&aNo hay historial de solicitudes"
     no-history.desc: "&7No hay historial de solicitudes"
     apply.already-applied: "&c\u00a1Ya has solicitado unirte a esta guild!"
     apply.failed: "&c\u00a1Error al enviar la solicitud!"
@@ -149,6 +159,27 @@ gui:
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
   # ================================================
+    bedrock-title: "&6Gesti\u00f3n de solicitudes"
+    bedrock-empty-history: "&fSin historial de solicitudes"
+    bedrock-empty-pending: "&fSin solicitudes pendientes"
+    bedrock-pending-btn: "&eSolicitudes pendientes"
+    bedrock-history-btn: "&eHistorial de solicitudes"
+    bedrock-back: "&cVolver"
+    bedrock-mode-history: "Historial de solicitudes"
+    bedrock-mode-pending: "Solicitudes pendientes"
+    bedrock-title-page: "&6Gesti\u00f3n de solicitudes - {mode} P\u00e1gina {page}"
+    bedrock-total: "&fTotal de {count} registros"
+    bedrock-prev-page: "&eP\u00e1gina anterior"
+    bedrock-next-page: "&eP\u00e1gina siguiente"
+    bedrock-applicant: "&fSolicitante: {name}"
+    bedrock-status: "&fEstado: {status}"
+    bedrock-message: "&fMensaje: {msg}"
+    bedrock-no-message: "Ninguno"
+    bedrock-actions-title: "&6Procesando solicitud - {name}"
+    bedrock-actions-content: "&fSolicitante: {name}\n&fMensaje: {msg}"
+    bedrock-accept: "&aAceptar solicitud"
+    bedrock-reject: "&cRechazar solicitud"
+    bedrock-back-to-list: "&eVolver a la lista"
   main-menu:
     application-management.lore.1: "&7Gestionar solicitudes de ingreso"
     application-management.lore.2: "&7Ver historial de solicitudes"
@@ -176,6 +207,7 @@ gui:
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
+    bedrock-content: "&fElige una funci\u00f3n:"
   system-settings:
     applications: "&eSistema de solicitudes"
     applications-disabled: "&c\u00a1Sistema de solicitudes desactivado!"
@@ -292,6 +324,23 @@ gui:
   # ================================================
   # CreateGuildGUI (36 keys)
   # ================================================
+    bedrock-title: "&4Ajustes del sistema"
+    bedrock-content: "&fHaz clic para cambiar el estado del interruptor"
+    bedrock-debug: "&eInfo de depuraci\u00f3n: {status}"
+    bedrock-auto-save: "&eGuardado autom\u00e1tico: {status}"
+    bedrock-economy: "&eSistema econ\u00f3mico: {status}"
+    bedrock-relations: "&eSistema de relaciones: {status}"
+    bedrock-level: "&eSistema de nivel: {status}"
+    bedrock-applications: "&eSistema de solicitudes: {status}"
+    bedrock-invites: "&eSistema de invitaciones: {status}"
+    bedrock-guild-home: "&eHogar de la guild: {status}"
+    bedrock-on: "&aACTIVADO"
+    bedrock-off: "&cDESACTIVADO"
+    bedrock-reload: "&aRecargar configuraci\u00f3n"
+    bedrock-database: "&bMantenimiento de la base de datos"
+    bedrock-backup: "&6Copia de seguridad de datos"
+    bedrock-save: "&aGuardar ajustes"
+    bedrock-back: "&cVolver"
   create-guild:
     create.already-in-guild: "&c\u00a1Ya est\u00e1s en una guild!"
     create.description-too-long: "&c\u00a1La descripci\u00f3n de la guild no puede exceder los 100 caracteres!"
@@ -333,6 +382,13 @@ gui:
   # ================================================
   # GuildDetailGUI (38 keys)
   # ================================================
+    bedrock-title: "&6Crear una guild"
+    bedrock-name-label: "&fNombre de la guild (3-20 caracteres)"
+    bedrock-name-placeholder: "Introduce el nombre de la guild"
+    bedrock-tag-label: "&fEtiqueta de la guild (m\u00e1x. 6 caracteres, opcional)"
+    bedrock-tag-placeholder: "Introduce la etiqueta de la guild"
+    bedrock-desc-label: "&fDescripci\u00f3n de la guild (m\u00e1x. 100 caracteres, opcional)"
+    bedrock-desc-placeholder: "Introduce la descripci\u00f3n de la guild"
   guild-detail:
     click-delete: "Haz clic para eliminar la guild"
     created-time: "Fecha de creaci\u00f3n"
@@ -376,6 +432,31 @@ gui:
   # ================================================
   # GuildInfoGUI (21 keys)
   # ================================================
+    bedrock-title: "&6Detalles de la guild - {guild_name}"
+    bedrock-level: "&fNivel: &e{level}"
+    bedrock-balance: " &fFondos: &a{balance}"
+    bedrock-leader: "&fL\u00edder: &c{leader}"
+    bedrock-members: " &fMiembros: &e{current}/{max}"
+    bedrock-status: "&fEstado: {status}"
+    bedrock-status-frozen: "&cCongelada"
+    bedrock-status-normal: "&aNormal"
+    bedrock-description: "&fDescripci\u00f3n: &7{description}"
+    bedrock-transfer-hint: "&e>>> Modo transferencia: Haz clic en un miembro para transferir <<<"
+    bedrock-no-tag: "Ninguna"
+    bedrock-unfreeze: "&aDescongelar la guild"
+    bedrock-freeze: "&cCongelar la guild"
+    bedrock-delete: "&4Eliminar la guild"
+    bedrock-cancel-transfer: "&eCancelar modo transferencia"
+    bedrock-transfer: "&cTransferir l\u00edder"
+    bedrock-prev-page: "&eP\u00e1gina anterior"
+    bedrock-next-page: "&eP\u00e1gina siguiente"
+    bedrock-back: "&cVolver"
+    bedrock-transfer-self: "&cNo se puede transferir el l\u00edder a uno mismo"
+    bedrock-transfer-success: "&aL\u00edder transferido con \u00e9xito a &e{name}"
+    bedrock-transfer-failed: "&c\u00a1Error al transferir el l\u00edder!"
+    bedrock-operation-failed: "&c\u00a1Operaci\u00f3n fallida!"
+    bedrock-transfer-mode-active: "&eHaz clic en un miembro para transferir el puesto de l\u00edder"
+    bedrock-transfer-mode-cancelled: "&7Transferencia cancelada"
   guild-info:
     back: "Volver"
     back-hint: "Haz clic para volver al men\u00fa principal"
@@ -402,6 +483,10 @@ gui:
   # ================================================
   # GuildListManagementGUI (2 keys)
   # ================================================
+    bedrock-title: "&6Informaci\u00f3n de la guild"
+    bedrock-guild-funds: "&aFondos de la guild"
+    bedrock-back-to-main: "&cVolver al men\u00fa principal"
+    bedrock-status-label: "Estado"
   guild-list-management:
     guild-list-management-title: "&4Gesti\u00f3n de lista de guilds"
     gui-refresh: "&aActualizar lista"
@@ -409,6 +494,24 @@ gui:
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
   # ================================================
+    bedrock-title: "&4Gesti\u00f3n de la lista de guilds"
+    bedrock-page-info: "&fP\u00e1gina {page}/{total} | Total de {count} guilds"
+    bedrock-refresh: "&aActualizar lista"
+    bedrock-prev-page: "&eP\u00e1gina anterior"
+    bedrock-next-page: "&eP\u00e1gina siguiente"
+    bedrock-back: "&cVolver"
+    bedrock-status-frozen: "&cCongelada"
+    bedrock-status-normal: "&aNormal"
+    bedrock-actions-title: "&6Acciones de guild - {guild_name}"
+    bedrock-leader: "&fL\u00edder: &e{leader}"
+    bedrock-level: "&fNivel: &e{level}"
+    bedrock-balance: "&fFondos: &a{balance}"
+    bedrock-status: "&fEstado: {status}"
+    bedrock-view-detail: "&eVer detalles"
+    bedrock-delete: "&cEliminar la guild"
+    bedrock-unfreeze: "&aDescongelar la guild"
+    bedrock-freeze: "&cCongelar la guild"
+    bedrock-back-list: "&cVolver a la lista"
   guild-list:
     balance: "Fondos"
     created-time: "Fecha de creaci\u00f3n"
@@ -453,6 +556,22 @@ gui:
   # ================================================
   # GuildFilterGUI (19 keys)
   # ================================================
+    bedrock-title: "&6Lista de guilds"
+    bedrock-no-guilds: "&cA\u00fan no hay guilds en el servidor"
+    bedrock-no-results: "&cNo se encontr\u00f3 ninguna guild coincidente"
+    bedrock-search: "&eBuscar guilds"
+    bedrock-back-main: "&cVolver al men\u00fa principal"
+    bedrock-page-info: "&fP\u00e1gina {page}/{total}"
+    bedrock-search-info: "&fB\u00fasqueda: &e{query}"
+    bedrock-prev-page: "&aP\u00e1gina anterior"
+    bedrock-next-page: "&aP\u00e1gina siguiente"
+    bedrock-search-title: "&6Buscar guilds"
+    bedrock-search-input: "&fIntroduce la palabra clave"
+    bedrock-search-placeholder: "Deja vac\u00edo para mostrar todo"
+    bedrock-select-action: "&fSelecciona una acci\u00f3n:"
+    bedrock-view-detail: "&eVer detalles"
+    bedrock-apply-join: "&aSolicitar unirse"
+    bedrock-back-list: "&cVolver a la lista"
   guild-filter:
     back.lore-1: "&8Volver a la lista de guilds"
     back.name: "&cVolver"
@@ -477,6 +596,35 @@ gui:
   # ================================================
   # GuildSettingsGUI (42 keys)
   # ================================================
+    bedrock-title: "&6Filtro de guilds"
+    bedrock-no-guilds: "&fA\u00fan no hay guilds en el servidor"
+    bedrock-back: "&cVolver"
+    bedrock-no-results: "&fNinguna guild coincide con el filtro"
+    bedrock-filter-info: "&fNivel: {min}-{max} | Orden: {sort}"
+    bedrock-adjust-filter: "&eAjustar el filtro"
+    bedrock-sort-desc: "Miembros descendente"
+    bedrock-sort-asc: "Miembros ascendente"
+    bedrock-sort-full: "Solo llenas"
+    bedrock-title-page: "&6Filtro de guilds - P\u00e1gina {page}"
+    bedrock-total-results: "&fTotal de {count} resultados"
+    bedrock-prev-page: "&eP\u00e1gina anterior"
+    bedrock-next-page: "&eP\u00e1gina siguiente"
+    bedrock-settings-title: "&6Ajustes del filtro"
+    bedrock-min-level: "&fNivel m\u00ednimo: {level}"
+    bedrock-max-level: "&fNivel m\u00e1ximo: {level}"
+    bedrock-sort: "&fOrden: {sort}"
+    bedrock-min-level-up: "&aNivel m\u00ednimo +1"
+    bedrock-min-level-down: "&cNivel m\u00ednimo -1"
+    bedrock-max-level-up: "&aNivel m\u00e1ximo +1"
+    bedrock-max-level-down: "&cNivel m\u00e1ximo -1"
+    bedrock-switch-sort: "&eCambiar modo de orden"
+    bedrock-back-results: "&eVolver a los resultados"
+    bedrock-actions-title: "&6Acciones de guild - {guild_name}"
+    bedrock-level: "&fNivel: {level}"
+    bedrock-leader: "&fL\u00edder: {leader}"
+    bedrock-view-detail: "&eVer detalles"
+    bedrock-apply-join: "&aSolicitar unirse"
+    bedrock-back-filter: "&eVolver al filtro"
   guild-settings:
     back: "&8Volver"
     back-desc: "&8Clic &fpara volver al men\u00fa principal"
@@ -524,6 +672,13 @@ gui:
   # ================================================
   # GuildFundsGUI (23 keys)
   # ================================================
+    bedrock-content: "&6Resumen de la guild\n&fNombre: &e{guild_name}\n&fEtiqueta: &e{guild_tag}\n&fDescripci\u00f3n: {guild_desc}\n&fHogar de la guild: {home_status}"
+    bedrock-change-name: "&eCambiar nombre"
+    bedrock-change-description: "&eCambiar descripci\u00f3n"
+    bedrock-change-tag: "&eCambiar etiqueta"
+    bedrock-kick-member: "&cExpulsar miembro"
+    bedrock-promote-demote: "&eAscender/Degradar"
+    bedrock-back-to-main: "&fVolver al men\u00fa principal"
   guild-funds:
     back-to-info: "&8Volver a la informaci\u00f3n de la guild"
     back-to-settings: "&8Volver a la configuraci\u00f3n de la guild"
@@ -552,6 +707,15 @@ gui:
   # ================================================
   # EconomyManagementGUI (23 keys)
   # ================================================
+    bedrock-title: "&6Fondos de la guild - {guild}"
+    bedrock-no-data: "&cSin registros de dep\u00f3sito"
+    bedrock-back: "&cVolver"
+    bedrock-page-info: "&fP\u00e1gina {page}/{total}\n&fTotal de jugadores: {count}"
+    bedrock-online: "&aEn l\u00ednea"
+    bedrock-offline: "&fDesconectado"
+    bedrock-prev-page: "&aP\u00e1gina anterior"
+    bedrock-next-page: "&aP\u00e1gina siguiente"
+    bedrock-refresh: "&aActualizar"
   economy-management:
     add-prompt: "&eIntroduce la cantidad a a\u00f1adir (escribe en el chat, escribe cancel para cancelar):"
     back: "&cVolver"
@@ -566,10 +730,8 @@ gui:
     middle-click-remove: "&cClic medio: Reducir fondos"
     next-page: "&aP\u00e1gina siguiente"
     next-page-desc: "&8P\u00e1gina {page}"
-    next-page-desc: "&8P\u00e1gina {page}"
     page-info: "&eP\u00e1gina {current} de {total}"
     previous-page: "&aP\u00e1gina anterior"
-    previous-page-desc: "&8P\u00e1gina {page}"
     previous-page-desc: "&8P\u00e1gina {page}"
     refresh: "&aActualizar lista"
     right-click-add: "&aClic derecho: A\u00f1adir fondos"
@@ -580,6 +742,23 @@ gui:
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
   # ================================================
+    bedrock-title: "&eGesti\u00f3n econ\u00f3mica"
+    bedrock-page-info: "&fP\u00e1gina {current}/{total} | Total de {count} guilds"
+    bedrock-refresh: "&aActualizar lista"
+    bedrock-prev-page: "&eP\u00e1gina anterior"
+    bedrock-next-page: "&eP\u00e1gina siguiente"
+    bedrock-back: "&cVolver"
+    bedrock-actions-title: "&eGesti\u00f3n econ\u00f3mica - {guild}"
+    bedrock-actions-content: "&fFondos actuales: &a{balance}\n&fL\u00edder: &e{leader}\n&fNivel: &e{level}"
+    bedrock-set-funds: "&eEstablecer fondos"
+    bedrock-add-funds: "&aA\u00f1adir fondos"
+    bedrock-clear-funds: "&cVaciar fondos"
+    bedrock-back-to-list: "&cVolver a la lista"
+    bedrock-set-title: "&eEstablecer fondos"
+    bedrock-add-title: "&aA\u00f1adir fondos"
+    bedrock-input-label: "&fIntroduce el monto"
+    bedrock-invalid-amount: "&c\u00a1El monto debe ser mayor que 0!"
+    bedrock-invalid-number: "&c\u00a1N\u00famero inv\u00e1lido!"
   confirm-funds:
     amount: "Cantidad"
     cancel: "&cCancelar"
@@ -610,6 +789,14 @@ gui:
   # ================================================
   # GuildRelationsGUI (49 keys)
   # ================================================
+    bedrock-title: "&6Confirmar modificaci\u00f3n de fondos"
+    bedrock-guild: "&fGuild: &e{guild_name}"
+    bedrock-operation: "&fOperaci\u00f3n: {operation}"
+    bedrock-current-balance: "&fFondos actuales: &6{balance}"
+    bedrock-amount: "&fMonto: &f{amount}"
+    bedrock-new-balance: "&fNuevos fondos: &a{balance}"
+    bedrock-confirm: "&aConfirmar modificaci\u00f3n"
+    bedrock-cancel: "&cCancelar"
   guild-relations:
     back-to-menu: "Volver al men\u00fa principal"
     created-time: "Fecha de creaci\u00f3n"
@@ -664,6 +851,24 @@ gui:
   # ================================================
   # CreateRelationGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Relaciones de guild"
+    bedrock-title-page: "&6Relaciones de guild - P\u00e1gina {page}"
+    bedrock-empty: "&fActualmente no hay relaciones de guild"
+    bedrock-total: "&fTotal de {count} relaciones"
+    bedrock-create-relation: "&aCrear relaci\u00f3n"
+    bedrock-prev-page: "&eP\u00e1gina anterior"
+    bedrock-next-page: "&eP\u00e1gina siguiente"
+    bedrock-back: "&cVolver"
+    bedrock-actions-title: "&6Acciones de relaci\u00f3n - {guild}"
+    bedrock-actions-content: "&fTipo: {type}\n&fEstado: {status}"
+    bedrock-cancel-relation: "&cCancelar relaci\u00f3n"
+    bedrock-accept-relation: "&aAceptar relaci\u00f3n"
+    bedrock-reject-relation: "&cRechazar relaci\u00f3n"
+    bedrock-end-truce: "&eFinalizar la tregua"
+    bedrock-propose-truce: "&eProponer una tregua"
+    bedrock-delete-relation: "&cEliminar relaci\u00f3n"
+    bedrock-back-to-list: "&eVolver a la lista"
+    bedrock-truce-ended: "&a\u00a1La tregua con {guild} ha terminado!"
   create-relation:
     back-lore: "&8Volver a la gesti\u00f3n de relaciones"
     confirm-button: "&aConfirmar creaci\u00f3n"
@@ -675,6 +880,22 @@ gui:
   # ================================================
   # RelationManagementGUI (40 keys)
   # ================================================
+    bedrock-type-title: "&6Crear relaci\u00f3n - Elegir tipo"
+    bedrock-type-content: "&fPor favor selecciona un tipo de relaci\u00f3n:"
+    bedrock-back: "&cVolver"
+    bedrock-target-title: "&6Crear relaci\u00f3n - Elegir objetivo"
+    bedrock-target-empty: "&fNo hay guild objetivo disponible"
+    bedrock-target-title-page: "&6Crear relaci\u00f3n - Elegir objetivo P\u00e1gina {page}"
+    bedrock-target-content: "&fTipo: {type}\n&fSelecciona la guild objetivo:"
+    bedrock-prev-page: "&eP\u00e1gina anterior"
+    bedrock-next-page: "&eP\u00e1gina siguiente"
+    bedrock-confirm-title: "&6Confirmar creaci\u00f3n de relaci\u00f3n"
+    bedrock-confirm-content: "&fTipo: {type}\n&fObjetivo: {target}"
+    bedrock-confirm-create: "&aConfirmar creaci\u00f3n"
+    bedrock-cancel: "&cCancelar"
+    bedrock-already-exists: "&c\u00a1Ya existe una relaci\u00f3n con {guild}!"
+    bedrock-create-success: "&a\u00a1Solicitud de relaci\u00f3n {type} enviada a {guild}!"
+    bedrock-create-failed: "&c\u00a1Error al crear la relaci\u00f3n!"
   relation-management:
     auto-cancel: "&eCancelaci\u00f3n autom\u00e1tica en 10 segundos"
     back: "&cVolver"
@@ -708,7 +929,6 @@ gui:
     pending-delete: "Eliminaci\u00f3n pendiente de confirmaci\u00f3n"
     previous-page: "&aP\u00e1gina anterior"
     previous-page-desc: "&8P\u00e1gina {0}"
-    previous-page-desc: "&8P\u00e1gina {0}"
     refresh: "&aActualizar lista"
     refresh-desc: "&8Recargar datos de relaciones"
     refreshing: "Actualizando lista de relaciones..."
@@ -720,6 +940,25 @@ gui:
   # ================================================
   # GuildLogsGUI (21 keys)
   # ================================================
+    bedrock-title: "&4Gesti\u00f3n de relaciones"
+    bedrock-empty: "&cSin datos de relaciones"
+    bedrock-back: "&cVolver"
+    bedrock-page-info: "&fP\u00e1gina {current}/{total} | Total de {count} relaciones"
+    bedrock-refresh: "&aActualizar lista"
+    bedrock-prev-page: "&eP\u00e1gina anterior"
+    bedrock-next-page: "&eP\u00e1gina siguiente"
+    bedrock-actions-title: "&6Acciones de relaci\u00f3n"
+    bedrock-actions-content: "&f{guild1} \u2194 {guild2}\n&fTipo: {type}\n&fEstado: {status}\n&fIniciador: {initiator}"
+    bedrock-delete-relation: "&cEliminar relaci\u00f3n"
+    bedrock-view-details: "&eVer detalles"
+    bedrock-back-to-list: "&cVolver a la lista"
+    bedrock-confirm-title: "&cConfirmar eliminaci\u00f3n"
+    bedrock-confirm-content: "&f\u00bfSeguro que quieres eliminar la relaci\u00f3n:\n&e{guild1} \u2194 {guild2}&f?"
+    bedrock-confirm-delete: "&cConfirmar eliminaci\u00f3n"
+    bedrock-cancel: "&fCancelar"
+    bedrock-delete-success: "&aRelaci\u00f3n eliminada: {guild1} \u2194 {guild2}"
+    bedrock-delete-failed: "&c\u00a1Error al eliminar la relaci\u00f3n!"
+    bedrock-no-permission: "&c\u00a1No tienes permiso de administraci\u00f3n!"
   guild-logs:
     back-to-guild: "Volver a la informaci\u00f3n de la guild"
     back-to-settings: "Volver a la configuraci\u00f3n de la guild"
@@ -747,6 +986,13 @@ gui:
   # ================================================
   # MemberManagementGUI (81 keys)
   # ================================================
+    bedrock-title: "&6Registros de la guild - {guild}"
+    bedrock-no-data: "&cSin registros"
+    bedrock-back: "&cVolver"
+    bedrock-page-info: "&fP\u00e1gina {page}/{total}\n&fTotal de registros: {count}"
+    bedrock-prev-page: "&aP\u00e1gina anterior"
+    bedrock-next-page: "&aP\u00e1gina siguiente"
+    bedrock-refresh: "&aActualizar"
   member-management:
     member-details.activity: "Actividad"
     member-details.all-actions: "Todas las acciones"
@@ -833,6 +1079,31 @@ gui:
   # ================================================
   # MemberGuildGUI (13 keys)
   # ================================================
+    bedrock-title: "&6Gesti\u00f3n de miembros"
+    bedrock-title-page: "&6Gesti\u00f3n de miembros - P\u00e1gina {page}"
+    bedrock-no-members: "&fA\u00fan no hay miembros en esta guild"
+    bedrock-member-list: "&fLista de miembros (Total {count})"
+    bedrock-invite: "&aInvitar miembro"
+    bedrock-actions-title: "&6Acciones de miembro - {member}"
+    bedrock-role-label: "&fRol: {role}"
+    bedrock-role-leader: "&cL\u00edder"
+    bedrock-role-officer: "&6Oficial"
+    bedrock-role-member: "&fMiembro"
+    bedrock-view-details: "&eVer detalles"
+    bedrock-kick: "&cExpulsar miembro"
+    bedrock-promote-demote: "&6Ascender/Degradar"
+    bedrock-back-to-list: "&cVolver a la lista"
+    member-details.bedrock-title: "&6Detalles del miembro - {member}"
+    member-details.bedrock-player: "&fJugador: {name}"
+    member-details.bedrock-role: "&fRol: {role}"
+    member-details.bedrock-join-time: "&fFecha de ingreso: {time}"
+    member-details.bedrock-online: "&fEn l\u00ednea: {status}"
+    member-details.bedrock-online-yes: "&aS\u00ed"
+    member-details.bedrock-online-no: "&cNo"
+    member-details.bedrock-kick: "&cExpulsar miembro"
+    member-details.bedrock-promote-demote: "&6Ascender/Degradar"
+    member-details.bedrock-send-message: "&eEnviar mensaje"
+    member-details.bedrock-back: "&cVolver"
   member-guild-gui:
     home-not-set: "&cNo establecido"
     home-set: "&aEstablecido"
@@ -851,6 +1122,8 @@ gui:
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
   # ================================================
+    bedrock-title: "&6Mi guild - {guild_name}"
+    bedrock-content: "&6Informaci\u00f3n de la guild\n&fNombre: &e{guild_name}\n&fEtiqueta: &e{guild_tag}\n&fHogar de la guild: {home_status}"
   confirm-delete-guild:
     cancel-button: "&aCancelar"
     cancel-lore: "&8Cancelar eliminaci\u00f3n de guild"
@@ -870,6 +1143,10 @@ gui:
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
   # ================================================
+    bedrock-title: "&4Confirmar eliminaci\u00f3n de la guild"
+    bedrock-content: "&fGuild: &e{guild}\n&f\u00bfSeguro que quieres eliminar esta guild?\n&c\u00a1Esta acci\u00f3n eliminar\u00e1 la guild permanentemente!\n&c\u00a1Todos los miembros ser\u00e1n retirados!\n&c\u00a1Esta acci\u00f3n es irreversible!"
+    bedrock-confirm: "&4Confirmar eliminaci\u00f3n"
+    bedrock-cancel: "&aCancelar"
   confirm-leave-guild:
     cancel-button: "&aCancelar"
     cancel-lore: "&8Cancelar abandono de guild"
@@ -887,6 +1164,10 @@ gui:
   # ================================================
   # GuildNameInputGUI (21 keys)
   # ================================================
+    bedrock-title: "&cConfirmar salida de la guild"
+    bedrock-content: "&fGuild: &e{guild}\n&f\u00bfSeguro que quieres salir de esta guild?\n&c\u00a1Esta acci\u00f3n es irreversible!"
+    bedrock-confirm: "&cConfirmar salida"
+    bedrock-cancel: "&aCancelar"
   guild-name-input:
     cancel-button: "&cCancelar"
     cancel-lore: "&8Volver al men\u00fa anterior"
@@ -913,6 +1194,9 @@ gui:
   # ================================================
   # GuildTagInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Cambiar nombre de la guild"
+    bedrock-input-label: "&fIntroduce el nuevo nombre de la guild"
+    bedrock-input-placeholder: "2-16 caracteres, c\u00f3digos de color compatibles"
   guild-tag-input:
     cancel-button: "&cCancelar"
     cancel-lore: "&8Cancelar cambio"
@@ -924,6 +1208,9 @@ gui:
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Cambiar etiqueta de la guild"
+    bedrock-input-label: "&fIntroduce la nueva etiqueta de la guild"
+    bedrock-input-placeholder: "{max} caracteres m\u00e1ximo"
   guild-description-input:
     cancel-button: "&cCancelar"
     cancel-lore: "&8Cancelar cambio"
@@ -935,12 +1222,18 @@ gui:
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
+    bedrock-title: "&6Cambiar descripci\u00f3n de la guild"
+    bedrock-input-label: "&fIntroduce la nueva descripci\u00f3n de la guild"
+    bedrock-input-placeholder: "{max} caracteres m\u00e1ximo"
   guild-permissions:
     title: "&6Configuraci\u00f3n de permisos de la guild"
 
   # ================================================
   # InviteMemberGUI (4 keys)
   # ================================================
+    bedrock-title: "&6Permisos de la guild"
+    bedrock-content: "&6=== Permisos del l\u00edder ===\n&f\u2022 Todos los permisos\n&f\u2022 Gestionar miembros\n&f\u2022 Modificar ajustes\n&f\u2022 Eliminar la guild\n\n&e=== Permisos del oficial ===\n&f\u2022 Invitar miembros\n&f\u2022 Expulsar miembros\n&f\u2022 Procesar solicitudes\n&f\u2022 Establecer hogar de la guild\n\n&7=== Permisos del miembro ===\n&f\u2022 Ver info de la guild\n&f\u2022 Teletransportarse al hogar de la guild\n&f\u2022 Solicitar unirse a otras guilds\n\n&aEstado actual: &fGuild {guild} | Sistema de permisos funcional"
+    bedrock-back: "&cVolver"
   invite-member:
     back-to-settings: "Volver a la configuraci\u00f3n de la guild"
     click-invite: "Haz clic para invitar a este jugador"
@@ -950,6 +1243,10 @@ gui:
   # ================================================
   # KickMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Invitar miembros"
+    bedrock-title-page: "&6Invitar miembros - P\u00e1gina {page}"
+    bedrock-no-players: "&fNo hay jugadores en l\u00ednea disponibles para invitar"
+    bedrock-player-list: "&fJugadores en l\u00ednea (Total {count})"
   kick-member:
     kick.failed: "&c\u00a1Error al expulsar al miembro!"
     kick.kicked: "&c\u00a1Has sido expulsado de la guild &e{guild}&c!"
@@ -960,6 +1257,10 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Expulsar un miembro"
+    bedrock-title-page: "&6Expulsar un miembro - P\u00e1gina {page}"
+    bedrock-no-members: "&fNo hay miembros disponibles para expulsar"
+    bedrock-content: "&fSelecciona un miembro para expulsar"
   promote-member:
     promote.failed: "&c\u00a1Error al ascender al miembro!"
     promote.promoted: "&a\u00a1Has sido ascendido a oficial de la guild &e{guild}&a!"
@@ -970,9 +1271,17 @@ gui:
   # ================================================
   # DemoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Ascender un miembro"
+    bedrock-title-page: "&6Ascender un miembro - P\u00e1gina {page}"
+    bedrock-no-members: "&fNo hay miembros disponibles para ascender"
+    bedrock-content: "&fSelecciona un miembro para ascender a oficial"
   demote-member:
     demote.demoted: "&a\u00a1Has sido degradado a miembro regular de la guild &e{guild}&a!"
     demote.failed: "&c\u00a1Error al degradar al miembro!"
     demote.success: "&a\u00a1Miembro &e{player} &adegradado a miembro regular!"
     click-demote: "Haz clic para degradar a miembro"
     title: "&6Degradar miembro - P\u00e1gina {page}"
+    bedrock-title: "&6Degradar un miembro"
+    bedrock-title-page: "&6Degradar un miembro - P\u00e1gina {page}"
+    bedrock-no-members: "&fNo hay oficiales disponibles para degradar"
+    bedrock-content: "&fSelecciona un oficial para degradar a miembro"

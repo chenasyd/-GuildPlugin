@@ -88,6 +88,9 @@ gui:
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
   # ================================================
+    bedrock-prev-page: "&eForrige side"
+    bedrock-next-page: "&eNæste side"
+    bedrock-back: "&cTilbage"
   admin-gui:
     title: "&4Guildadministration"
     admin-gui-economy-lore-1: "&7Administrer guildens \u00f8konomiske system"
@@ -115,6 +118,14 @@ gui:
   # ================================================
   # ApplicationManagementGUI (29 keys)
   # ================================================
+    bedrock-title: "&4Guildadministration"
+    bedrock-content: "&fVælg administrationsfunktion"
+    bedrock-guild-list: "&eAdministration af guildliste"
+    bedrock-economy: "&eØkonomiadministration"
+    bedrock-relations: "&eRelationsadministration"
+    bedrock-statistics: "&eStatistik"
+    bedrock-settings: "&eSystemindstillinger"
+    bedrock-back: "&cTilbage"
   application-mgmt:
     application.accepted: "&aDin ans\u00f8gning er blevet accepteret af {guild}!"
     applications-count: " ans\u00f8gning(er)"
@@ -140,7 +151,6 @@ gui:
     application-management-pending-applications-lore-1: "&7Se ventende ans\u00f8gninger"
     application-management-pending-applications-name: "&eVentende ans\u00f8gninger"
     application-management-title: "&6Ans\u00f8gningsadministration"
-    no-history: "&aIngen ans\u00f8gningshistorik"
     no-history.desc: "&7Der er i \u00f8jeblikket ingen ans\u00f8gningshistorik"
     apply.already-applied: "&cDu har allerede ans\u00f8gt om denne guild!"
     apply.failed: "&cIndsendelse af ans\u00f8gning mislykkedes!"
@@ -149,6 +159,27 @@ gui:
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
   # ================================================
+    bedrock-title: "&6Ansøgningsadministration"
+    bedrock-empty-history: "&fIngen ansøgningshistorik"
+    bedrock-empty-pending: "&fIngen afventende ansøgninger"
+    bedrock-pending-btn: "&eAfventende ansøgninger"
+    bedrock-history-btn: "&eAnsøgningshistorik"
+    bedrock-back: "&cTilbage"
+    bedrock-mode-history: "Ansøgningshistorik"
+    bedrock-mode-pending: "Afventende ansøgninger"
+    bedrock-title-page: "&6Ansøgningsadministration - {mode} Side {page}"
+    bedrock-total: "&fI alt {count} poster"
+    bedrock-prev-page: "&eForrige side"
+    bedrock-next-page: "&eNæste side"
+    bedrock-applicant: "&fAnsøger: {name}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-message: "&fBesked: {msg}"
+    bedrock-no-message: "Ingen"
+    bedrock-actions-title: "&6Ansøgningsbehandling - {name}"
+    bedrock-actions-content: "&fAnsøger: {name}\n&fBesked: {msg}"
+    bedrock-accept: "&aAcceptér ansøgning"
+    bedrock-reject: "&cAfvis ansøgning"
+    bedrock-back-to-list: "&eTilbage til listen"
   main-menu:
     application-management.lore.1: "&7Behandl tilmeldingsans\u00f8gninger"
     application-management.lore.2: "&7Se ans\u00f8gningshistorik"
@@ -176,6 +207,7 @@ gui:
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
+    bedrock-content: "&fVælg en funktion:"
   system-settings:
     applications: "&eAns\u00f8gningssystem"
     applications-disabled: "&cAns\u00f8gningssystemet er deaktiveret!"
@@ -292,6 +324,23 @@ gui:
   # ================================================
   # CreateGuildGUI (36 keys)
   # ================================================
+    bedrock-title: "&4Systemindstillinger"
+    bedrock-content: "&fKlik for at skifte status"
+    bedrock-debug: "&eFejlfindingsinfo: {status}"
+    bedrock-auto-save: "&eAutomatisk lagring: {status}"
+    bedrock-economy: "&eØkonomisystem: {status}"
+    bedrock-relations: "&eRelationssystem: {status}"
+    bedrock-level: "&eNiveausystem: {status}"
+    bedrock-applications: "&eAnsøgningssystem: {status}"
+    bedrock-invites: "&eInvitationssystem: {status}"
+    bedrock-guild-home: "&eGuildhjem: {status}"
+    bedrock-on: "&aTIL"
+    bedrock-off: "&cFRA"
+    bedrock-reload: "&aGenindlæs konfiguration"
+    bedrock-database: "&bDatabasevedligeholdelse"
+    bedrock-backup: "&6Sikkerhedskopiér data"
+    bedrock-save: "&aGem indstillinger"
+    bedrock-back: "&cTilbage"
   create-guild:
     create.already-in-guild: "&cDu er allerede i en guild!"
     create.description-too-long: "&cGuildbeskrivelse m\u00e5 ikke overstige 100 tegn!"
@@ -333,6 +382,13 @@ gui:
   # ================================================
   # GuildDetailGUI (38 keys)
   # ================================================
+    bedrock-title: "&6Opret guild"
+    bedrock-name-label: "&fGuildnavn (3-20 tegn)"
+    bedrock-name-placeholder: "Indtast guildnavn"
+    bedrock-tag-label: "&fGuildtag (maks. 6 tegn, valgfrit)"
+    bedrock-tag-placeholder: "Indtast guildtag"
+    bedrock-desc-label: "&fGuildbeskrivelse (maks. 100 tegn, valgfrit)"
+    bedrock-desc-placeholder: "Indtast guildbeskrivelse"
   guild-detail:
     click-delete: "Klik for at slette guilden"
     created-time: "Oprettelsestidspunkt"
@@ -376,6 +432,31 @@ gui:
   # ================================================
   # GuildInfoGUI (21 keys)
   # ================================================
+    bedrock-title: "&6Guilddetaljer - {guild_name}"
+    bedrock-level: "&fNiveau: &e{level}"
+    bedrock-balance: " &fSaldo: &a{balance}"
+    bedrock-leader: "&fLeder: &c{leader}"
+    bedrock-members: " &fMedlemmer: &e{current}/{max}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-status-frozen: "&cFrosset"
+    bedrock-status-normal: "&aNormal"
+    bedrock-description: "&fBeskrivelse: &7{description}"
+    bedrock-transfer-hint: "&e>>> Overførselstilstand: Klik på medlem for at overføre <<<"
+    bedrock-no-tag: "Ingen"
+    bedrock-unfreeze: "&aOptø guild"
+    bedrock-freeze: "&cFrys guild"
+    bedrock-delete: "&4Slet guild"
+    bedrock-cancel-transfer: "&eAnnuller overførselstilstand"
+    bedrock-transfer: "&cOverfør leder"
+    bedrock-prev-page: "&eForrige side"
+    bedrock-next-page: "&eNæste side"
+    bedrock-back: "&cTilbage"
+    bedrock-transfer-self: "&cDu kan ikke overføre lederskabet til dig selv"
+    bedrock-transfer-success: "&aOverført til &e{name}"
+    bedrock-transfer-failed: "&cOverførsel af lederskab mislykkedes!"
+    bedrock-operation-failed: "&cHandlingen mislykkedes!"
+    bedrock-transfer-mode-active: "&eKlik på et medlem for at overføre lederskabet"
+    bedrock-transfer-mode-cancelled: "&7Overførsel annulleret"
   guild-info:
     back: "Tilbage"
     back-hint: "Klik for at vende tilbage til hovedmenuen"
@@ -402,6 +483,10 @@ gui:
   # ================================================
   # GuildListManagementGUI (2 keys)
   # ================================================
+    bedrock-title: "&6Guildinfo"
+    bedrock-guild-funds: "&aGuildfonde"
+    bedrock-back-to-main: "&cTilbage til hovedmenuen"
+    bedrock-status-label: "Status"
   guild-list-management:
     guild-list-management-title: "&4Guildlisteadministration"
     gui-refresh: "&aOpdater liste"
@@ -409,6 +494,24 @@ gui:
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
   # ================================================
+    bedrock-title: "&4Administration af guildliste"
+    bedrock-page-info: "&fSide {page}/{total} | I alt {count} guilds"
+    bedrock-refresh: "&aOpdater liste"
+    bedrock-prev-page: "&eForrige side"
+    bedrock-next-page: "&eNæste side"
+    bedrock-back: "&cTilbage"
+    bedrock-status-frozen: "&cFrosset"
+    bedrock-status-normal: "&aNormal"
+    bedrock-actions-title: "&6Guildhandlinger - {guild_name}"
+    bedrock-leader: "&fLeder: &e{leader}"
+    bedrock-level: "&fNiveau: &e{level}"
+    bedrock-balance: "&fSaldo: &a{balance}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-view-detail: "&eVis detaljer"
+    bedrock-delete: "&cSlet guild"
+    bedrock-unfreeze: "&aOptø guild"
+    bedrock-freeze: "&cFrys guild"
+    bedrock-back-list: "&cTilbage til listen"
   guild-list:
     balance: "Midler"
     created-time: "Oprettelsestidspunkt"
@@ -453,6 +556,22 @@ gui:
   # ================================================
   # GuildFilterGUI (19 keys)
   # ================================================
+    bedrock-title: "&6Guildliste"
+    bedrock-no-guilds: "&cIngen guilds på serveren endnu"
+    bedrock-no-results: "&cIngen matchende guilds fundet"
+    bedrock-search: "&eSøg guilds"
+    bedrock-back-main: "&cTilbage til hovedmenuen"
+    bedrock-page-info: "&fSide {page}/{total}"
+    bedrock-search-info: "&fSøgning: &e{query}"
+    bedrock-prev-page: "&aForrige side"
+    bedrock-next-page: "&aNæste side"
+    bedrock-search-title: "&6Søg guilds"
+    bedrock-search-input: "&fIndtast søgeord"
+    bedrock-search-placeholder: "Lad stå tomt for at vise alle"
+    bedrock-select-action: "&fVælg handling:"
+    bedrock-view-detail: "&eVis detaljer"
+    bedrock-apply-join: "&aAnsøg om at blive medlem"
+    bedrock-back-list: "&cTilbage til listen"
   guild-filter:
     back.lore-1: "&7Tilbage til guildlisten"
     back.name: "&cTilbage"
@@ -477,6 +596,35 @@ gui:
   # ================================================
   # GuildSettingsGUI (42 keys)
   # ================================================
+    bedrock-title: "&6Guildfilter"
+    bedrock-no-guilds: "&fIngen guilds på serveren endnu"
+    bedrock-back: "&cTilbage"
+    bedrock-no-results: "&fIngen guilds matcher filteret"
+    bedrock-filter-info: "&fNiveau: {min}-{max} | Sortering: {sort}"
+    bedrock-adjust-filter: "&eJustér filter"
+    bedrock-sort-desc: "Medlemmer faldende"
+    bedrock-sort-asc: "Medlemmer stigende"
+    bedrock-sort-full: "Kun fulde"
+    bedrock-title-page: "&6Guildfilter - Side {page}"
+    bedrock-total-results: "&fI alt {count} resultater"
+    bedrock-prev-page: "&eForrige side"
+    bedrock-next-page: "&eNæste side"
+    bedrock-settings-title: "&6Filterindstillinger"
+    bedrock-min-level: "&fMin. niveau: {level}"
+    bedrock-max-level: "&fMaks. niveau: {level}"
+    bedrock-sort: "&fSortering: {sort}"
+    bedrock-min-level-up: "&aMin. niveau +1"
+    bedrock-min-level-down: "&cMin. niveau -1"
+    bedrock-max-level-up: "&aMaks. niveau +1"
+    bedrock-max-level-down: "&cMaks. niveau -1"
+    bedrock-switch-sort: "&eSkift sorteringstilstand"
+    bedrock-back-results: "&eTilbage til resultater"
+    bedrock-actions-title: "&6Guildhandlinger - {guild_name}"
+    bedrock-level: "&fNiveau: {level}"
+    bedrock-leader: "&fLeder: {leader}"
+    bedrock-view-detail: "&eVis detaljer"
+    bedrock-apply-join: "&aAnsøg om at blive medlem"
+    bedrock-back-filter: "&eTilbage til filter"
   guild-settings:
     back: "&7Tilbage"
     back-desc: "&7Klik &ffor at vende tilbage til hovedmenuen"
@@ -524,6 +672,13 @@ gui:
   # ================================================
   # GuildFundsGUI (23 keys)
   # ================================================
+    bedrock-content: "&6Guildoversigt\n&fNavn: &e{guild_name}\n&fTag: &e{guild_tag}\n&fBeskrivelse: {guild_desc}\n&fGuildhjem: {home_status}"
+    bedrock-change-name: "&eÆndr navn"
+    bedrock-change-description: "&eÆndr beskrivelse"
+    bedrock-change-tag: "&eÆndr tag"
+    bedrock-kick-member: "&cSpark medlem"
+    bedrock-promote-demote: "&eForfrem/Degrader"
+    bedrock-back-to-main: "&fTilbage til hovedmenuen"
   guild-funds:
     back-to-info: "&7Tilbage til guildoplysninger"
     back-to-settings: "&7Tilbage til guildindstillinger"
@@ -552,6 +707,15 @@ gui:
   # ================================================
   # EconomyManagementGUI (23 keys)
   # ================================================
+    bedrock-title: "&6Guildfonde - {guild}"
+    bedrock-no-data: "&cIngen indbetalingsposter"
+    bedrock-back: "&cTilbage"
+    bedrock-page-info: "&fSide {page}/{total}\n&fI alt spillere: {count}"
+    bedrock-online: "&aOnline"
+    bedrock-offline: "&fOffline"
+    bedrock-prev-page: "&aForrige side"
+    bedrock-next-page: "&aNæste side"
+    bedrock-refresh: "&aOpdater"
   economy-management:
     add-prompt: "&eIndtast det bel\u00f8b, der skal tilf\u00f8jes (indtast tal i chatten, indtast cancel for at annullere):"
     back: "&cTilbage"
@@ -580,6 +744,23 @@ gui:
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
   # ================================================
+    bedrock-title: "&eØkonomiadministration"
+    bedrock-page-info: "&fSide {current}/{total} | I alt {count} guilds"
+    bedrock-refresh: "&aOpdater liste"
+    bedrock-prev-page: "&eForrige side"
+    bedrock-next-page: "&eNæste side"
+    bedrock-back: "&cTilbage"
+    bedrock-actions-title: "&eØkonomiadministration - {guild}"
+    bedrock-actions-content: "&fNuværende saldo: &a{balance}\n&fLeder: &e{leader}\n&fNiveau: &e{level}"
+    bedrock-set-funds: "&eSæt fonde"
+    bedrock-add-funds: "&aTilføj fonde"
+    bedrock-clear-funds: "&cRyd fonde"
+    bedrock-back-to-list: "&cTilbage til listen"
+    bedrock-set-title: "&eSæt fonde"
+    bedrock-add-title: "&aTilføj fonde"
+    bedrock-input-label: "&fIndtast beløb"
+    bedrock-invalid-amount: "&cBeløbet skal være større end 0!"
+    bedrock-invalid-number: "&cUgyldigt nummer!"
   confirm-funds:
     amount: "Bel\u00f8b"
     cancel: "&cAnnuller"
@@ -610,6 +791,14 @@ gui:
   # ================================================
   # GuildRelationsGUI (49 keys)
   # ================================================
+    bedrock-title: "&6Bekræft fondændring"
+    bedrock-guild: "&fGuild: &e{guild_name}"
+    bedrock-operation: "&fHandling: {operation}"
+    bedrock-current-balance: "&fNuværende saldo: &6{balance}"
+    bedrock-amount: "&fBeløb: &f{amount}"
+    bedrock-new-balance: "&fNy saldo: &a{balance}"
+    bedrock-confirm: "&aBekræft ændring"
+    bedrock-cancel: "&cAnnuller"
   guild-relations:
     back-to-menu: "Tilbage til hovedmenuen"
     created-time: "Oprettelsestidspunkt"
@@ -664,6 +853,24 @@ gui:
   # ================================================
   # CreateRelationGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Guildrelationer"
+    bedrock-title-page: "&6Guildrelationer - Side {page}"
+    bedrock-empty: "&fIngen guildrelationer i øjeblikket"
+    bedrock-total: "&fI alt {count} relationer"
+    bedrock-create-relation: "&aOpret relation"
+    bedrock-prev-page: "&eForrige side"
+    bedrock-next-page: "&eNæste side"
+    bedrock-back: "&cTilbage"
+    bedrock-actions-title: "&6Relationshandlinger - {guild}"
+    bedrock-actions-content: "&fType: {type}\n&fStatus: {status}"
+    bedrock-cancel-relation: "&cAnnuller relation"
+    bedrock-accept-relation: "&aAcceptér relation"
+    bedrock-reject-relation: "&cAfvis relation"
+    bedrock-end-truce: "&eAfslut våbenhvile"
+    bedrock-propose-truce: "&eForeslå våbenhvile"
+    bedrock-delete-relation: "&cSlet relation"
+    bedrock-back-to-list: "&eTilbage til listen"
+    bedrock-truce-ended: "&aVåbenhvile med {guild} er afsluttet!"
   create-relation:
     back-lore: "&7Tilbage til relationsadministration"
     confirm-button: "&aBekr\u00e6ft oprettelse"
@@ -675,6 +882,22 @@ gui:
   # ================================================
   # RelationManagementGUI (40 keys)
   # ================================================
+    bedrock-type-title: "&6Opret relation - Vælg type"
+    bedrock-type-content: "&fVælg en relationstype:"
+    bedrock-back: "&cTilbage"
+    bedrock-target-title: "&6Opret relation - Vælg mål"
+    bedrock-target-empty: "&fIngen tilgængelige målguilds"
+    bedrock-target-title-page: "&6Opret relation - Vælg mål Side {page}"
+    bedrock-target-content: "&fType: {type}\n&fVælg målguild:"
+    bedrock-prev-page: "&eForrige side"
+    bedrock-next-page: "&eNæste side"
+    bedrock-confirm-title: "&6Bekræft opret relation"
+    bedrock-confirm-content: "&fType: {type}\n&fMål: {target}"
+    bedrock-confirm-create: "&aBekræft opret"
+    bedrock-cancel: "&cAnnuller"
+    bedrock-already-exists: "&cRelation med {guild} findes allerede!"
+    bedrock-create-success: "&aSendte {type} relationsanmodning til {guild}!"
+    bedrock-create-failed: "&cKunne ikke oprette relation!"
   relation-management:
     auto-cancel: "&eAnnullerer automatisk efter 10 sekunder"
     back: "&cTilbage"
@@ -720,6 +943,25 @@ gui:
   # ================================================
   # GuildLogsGUI (21 keys)
   # ================================================
+    bedrock-title: "&4Relationsadministration"
+    bedrock-empty: "&cIngen relationsdata"
+    bedrock-back: "&cTilbage"
+    bedrock-page-info: "&fSide {current}/{total} | I alt {count} relationer"
+    bedrock-refresh: "&aOpdater liste"
+    bedrock-prev-page: "&eForrige side"
+    bedrock-next-page: "&eNæste side"
+    bedrock-actions-title: "&6Relationshandlinger"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fType: {type}\n&fStatus: {status}\n&fInitiativtager: {initiator}"
+    bedrock-delete-relation: "&cSlet relation"
+    bedrock-view-details: "&eVis detaljer"
+    bedrock-back-to-list: "&cTilbage til listen"
+    bedrock-confirm-title: "&cBekræft sletning"
+    bedrock-confirm-content: "&fEr du sikker på, at du vil slette relationen:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cBekræft sletning"
+    bedrock-cancel: "&fAnnuller"
+    bedrock-delete-success: "&aSlettede relation: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cKunne ikke slette relation!"
+    bedrock-no-permission: "&cDu har ikke administratortilladelse!"
   guild-logs:
     back-to-guild: "Tilbage til guildoplysninger"
     back-to-settings: "Tilbage til guildindstillinger"
@@ -747,6 +989,13 @@ gui:
   # ================================================
   # MemberManagementGUI (81 keys)
   # ================================================
+    bedrock-title: "&6Guildlogfiler - {guild}"
+    bedrock-no-data: "&cIngen logposter"
+    bedrock-back: "&cTilbage"
+    bedrock-page-info: "&fSide {page}/{total}\n&fI alt poster: {count}"
+    bedrock-prev-page: "&aForrige side"
+    bedrock-next-page: "&aNæste side"
+    bedrock-refresh: "&aOpdater"
   member-management:
     member-details.activity: "Aktivitet"
     member-details.all-actions: "Alle handlinger"
@@ -833,6 +1082,31 @@ gui:
   # ================================================
   # MemberGuildGUI (13 keys)
   # ================================================
+    bedrock-title: "&6Medlemsadministration"
+    bedrock-title-page: "&6Medlemsadministration - Side {page}"
+    bedrock-no-members: "&fDer er ingen medlemmer i guildet endnu"
+    bedrock-member-list: "&fMedlemsliste (I alt {count})"
+    bedrock-invite: "&aInviter medlem"
+    bedrock-actions-title: "&6Medlemshandlinger - {member}"
+    bedrock-role-label: "&fRolle: {role}"
+    bedrock-role-leader: "&cLeder"
+    bedrock-role-officer: "&6Officer"
+    bedrock-role-member: "&fMedlem"
+    bedrock-view-details: "&eVis detaljer"
+    bedrock-kick: "&cSpark medlem"
+    bedrock-promote-demote: "&6Forfrem/Degrader"
+    bedrock-back-to-list: "&cTilbage til listen"
+    member-details.bedrock-title: "&6Medlemsdetaljer - {member}"
+    member-details.bedrock-player: "&fSpiller: {name}"
+    member-details.bedrock-role: "&fRolle: {role}"
+    member-details.bedrock-join-time: "&fBlev medlem: {time}"
+    member-details.bedrock-online: "&fOnline: {status}"
+    member-details.bedrock-online-yes: "&aJa"
+    member-details.bedrock-online-no: "&cNej"
+    member-details.bedrock-kick: "&cSpark medlem"
+    member-details.bedrock-promote-demote: "&6Forfrem/Degrader"
+    member-details.bedrock-send-message: "&eSend besked"
+    member-details.bedrock-back: "&cTilbage"
   member-guild-gui:
     home-not-set: "&cIkke sat"
     home-set: "&aSat"
@@ -851,6 +1125,8 @@ gui:
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
   # ================================================
+    bedrock-title: "&6Mit guild - {guild_name}"
+    bedrock-content: "&6Guildinfo\n&fNavn: &e{guild_name}\n&fTag: &e{guild_tag}\n&fGuildhjem: {home_status}"
   confirm-delete-guild:
     cancel-button: "&aAnnuller"
     cancel-lore: "&7Annuller sletning af guild"
@@ -870,6 +1146,10 @@ gui:
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
   # ================================================
+    bedrock-title: "&4Bekræft sletning af guild"
+    bedrock-content: "&fGuild: &e{guild}\n&fEr du sikker på, at du vil slette dette guild?\n&cDenne handling sletter guildet permanent!\n&cAlle medlemmer vil blive fjernet!\n&cDenne handling kan ikke fortrydes!"
+    bedrock-confirm: "&4Bekræft sletning"
+    bedrock-cancel: "&aAnnuller"
   confirm-leave-guild:
     cancel-button: "&aAnnuller"
     cancel-lore: "&7Annuller forladelse af guild"
@@ -887,6 +1167,10 @@ gui:
   # ================================================
   # GuildNameInputGUI (21 keys)
   # ================================================
+    bedrock-title: "&cBekræft forlad guild"
+    bedrock-content: "&fGuild: &e{guild}\n&fEr du sikker på, at du vil forlade dette guild?\n&cDenne handling kan ikke fortrydes!"
+    bedrock-confirm: "&cBekræft forlad"
+    bedrock-cancel: "&aAnnuller"
   guild-name-input:
     cancel-button: "&cAnnuller"
     cancel-lore: "&7Tilbage til forrige menu"
@@ -913,6 +1197,9 @@ gui:
   # ================================================
   # GuildTagInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Ændr guildnavn"
+    bedrock-input-label: "&fIndtast nyt guildnavn"
+    bedrock-input-placeholder: "2-16 tegn, farvekoder understøttes"
   guild-tag-input:
     cancel-button: "&cAnnuller"
     cancel-lore: "&7Annuller \u00e6ndring"
@@ -924,6 +1211,9 @@ gui:
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Ændr guildtag"
+    bedrock-input-label: "&fIndtast nyt guildtag"
+    bedrock-input-placeholder: "Maks. {max} tegn"
   guild-description-input:
     cancel-button: "&cAnnuller"
     cancel-lore: "&7Annuller \u00e6ndring"
@@ -935,12 +1225,18 @@ gui:
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
+    bedrock-title: "&6Ændr guildbeskrivelse"
+    bedrock-input-label: "&fIndtast ny guildbeskrivelse"
+    bedrock-input-placeholder: "Maks. {max} tegn"
   guild-permissions:
     title: "&6Indstillinger for guildrettigheder"
 
   # ================================================
   # InviteMemberGUI (4 keys)
   # ================================================
+    bedrock-title: "&6Guildtilladelser"
+    bedrock-content: "&6=== Ledertilladelser ===\n&f• Alle tilladelser\n&f• Administrere medlemmer\n&f• Ændre indstillinger\n&f• Slette guild\n\n&e=== Officertilladelser ===\n&f• Invitere medlemmer\n&f• Sparke medlemmer\n&f• Behandle ansøgninger\n&f• Sætte guildhjem\n\n&7=== Medlemstilladelser ===\n&f• Vise guildinfo\n&f• Teleportere til guildhjem\n&f• Ansøge om at blive medlem af andre guilds\n\n&aNuværende status: &fGuild {guild} | Tilladelsessystemet fungerer normalt"
+    bedrock-back: "&cTilbage"
   invite-member:
     back-to-settings: "Tilbage til guildindstillinger"
     click-invite: "Klik for at invitere denne spiller"
@@ -950,6 +1246,10 @@ gui:
   # ================================================
   # KickMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Inviter medlemmer"
+    bedrock-title-page: "&6Inviter medlemmer - Side {page}"
+    bedrock-no-players: "&fIngen onlinespillere tilgængelige at invitere"
+    bedrock-player-list: "&fOnlinespillere (I alt {count})"
   kick-member:
     kick.failed: "&cKunne ikke sparke medlemmet!"
     kick.kicked: "&cDu er blevet sparket ud af guilden &e{guild} &c!"
@@ -960,6 +1260,10 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Spark medlem"
+    bedrock-title-page: "&6Spark medlem - Side {page}"
+    bedrock-no-members: "&fIngen medlemmer tilgængelige at sparke"
+    bedrock-content: "&fVælg et medlem at sparke"
   promote-member:
     promote.failed: "&cKunne ikke forfremme medlemmet!"
     promote.promoted: "&aDu er blevet forfremmet til officer i guilden &e{guild} &a!"
@@ -970,9 +1274,17 @@ gui:
   # ================================================
   # DemoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Forfrem medlem"
+    bedrock-title-page: "&6Forfrem medlem - Side {page}"
+    bedrock-no-members: "&fIngen medlemmer tilgængelige at forfremme"
+    bedrock-content: "&fVælg et medlem at forfremme til officer"
   demote-member:
     demote.demoted: "&aDu er blevet degraderet til almindeligt medlem i guilden &e{guild} &a!"
     demote.failed: "&cKunne ikke degradere medlemmet!"
     demote.success: "&aMedlem &e{player} &aer blevet degraderet til almindeligt medlem!"
     click-demote: "Klik for at degradere til medlem"
     title: "&6Degrader medlem - Side {page}"
+    bedrock-title: "&6Degrader medlem"
+    bedrock-title-page: "&6Degrader medlem - Side {page}"
+    bedrock-no-members: "&fIngen officerer tilgængelige at degradere"
+    bedrock-content: "&fVælg en officer at degradere til medlem"

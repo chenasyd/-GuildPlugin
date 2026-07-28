@@ -84,6 +84,9 @@ gui:
     member-role.leader: "Ketua"
     member-role.member: "Ahli"
     member-role.officer: "Pegawai"
+    bedrock-prev-page: "&eHalaman Sebelumnya"
+    bedrock-next-page: "&eHalaman Seterusnya"
+    bedrock-back: "&cKembali"
 
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
@@ -111,6 +114,14 @@ gui:
     admin-gui-statistics-total-balance: "&eJumlah Dana: &f{balance}"
     admin-gui-statistics-total-guilds: "&eJumlah Guild: &f{count}"
     admin-gui-statistics-total-members: "&eJumlah Ahli: &f{count}"
+    bedrock-title: "&4Pengurusan Guild"
+    bedrock-content: "&fPilih fungsi pengurusan"
+    bedrock-guild-list: "&ePengurusan Senarai Guild"
+    bedrock-economy: "&ePengurusan Ekonomi"
+    bedrock-relations: "&ePengurusan Hubungan"
+    bedrock-statistics: "&eMaklumat Statistik"
+    bedrock-settings: "&eTetapan Sistem"
+    bedrock-back: "&cKembali"
 
   # ================================================
   # ApplicationManagementGUI (29 keys)
@@ -140,11 +151,31 @@ gui:
     application-management-pending-applications-lore-1: "&7Lihat permohonan yang menunggu"
     application-management-pending-applications-name: "&ePermohonan Menunggu"
     application-management-title: "&6Pengurusan Permohonan"
-    no-history: "&aTiada sejarah permohonan"
     no-history.desc: "&7Tiada sejarah permohonan"
     apply.already-applied: "&cAnda telah memohon untuk guild ini!"
     apply.failed: "&cPenghantaran permohonan gagal!"
     apply.success: "&aPermohonan telah dihantar!"
+    bedrock-title: "&6Pengurusan Permohonan"
+    bedrock-empty-history: "&fTiada sejarah permohonan"
+    bedrock-empty-pending: "&fTiada permohonan yang menunggu"
+    bedrock-pending-btn: "&ePermohonan Menunggu"
+    bedrock-history-btn: "&eSejarah Permohonan"
+    bedrock-back: "&cKembali"
+    bedrock-mode-history: "Sejarah Permohonan"
+    bedrock-mode-pending: "Permohonan Menunggu"
+    bedrock-title-page: "&6Pengurusan Permohonan - {mode} Halaman {page}"
+    bedrock-total: "&fJumlah {count} rekod"
+    bedrock-prev-page: "&eHalaman Sebelumnya"
+    bedrock-next-page: "&eHalaman Seterusnya"
+    bedrock-applicant: "&fPemohon: {name}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-message: "&fMesej: {msg}"
+    bedrock-no-message: "Tiada"
+    bedrock-actions-title: "&6Proses Permohonan - {name}"
+    bedrock-actions-content: "&fPemohon: {name}\n&fMesej: {msg}"
+    bedrock-accept: "&aTerima Permohonan"
+    bedrock-reject: "&cTolak Permohonan"
+    bedrock-back-to-list: "&eKembali ke Senarai"
 
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
@@ -172,6 +203,7 @@ gui:
     member-management.lore.2: "&7Jemput, tendang, pengurusan kebenaran"
     member-management.name: "&ePengurusan Ahli"
     title: "&6Sistem Guild"
+    bedrock-content: "&fPilih fungsi:"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
@@ -288,6 +320,23 @@ gui:
     system-settings-save-lore-1: "&7Simpan semua tetapan semasa"
     system-settings-save-lore-2: "&7Guna pada fail konfigurasi"
     system-settings-title: "&4Tetapan Sistem"
+    bedrock-title: "&4Tetapan Sistem"
+    bedrock-content: "&fKlik untuk tukar status suis"
+    bedrock-debug: "&eMaklumat Nyahpepijat: {status}"
+    bedrock-auto-save: "&eSimpan Automatik: {status}"
+    bedrock-economy: "&eSistem Ekonomi: {status}"
+    bedrock-relations: "&eSistem Hubungan: {status}"
+    bedrock-level: "&eSistem Tahap: {status}"
+    bedrock-applications: "&eSistem Permohonan: {status}"
+    bedrock-invites: "&eSistem Jemputan: {status}"
+    bedrock-guild-home: "&eRumah Guild: {status}"
+    bedrock-on: "&aAktif"
+    bedrock-off: "&cNyahaktif"
+    bedrock-reload: "&aMuat Semula Konfigurasi"
+    bedrock-database: "&bPenyelenggaraan Pangkalan Data"
+    bedrock-backup: "&6Sandaran Data"
+    bedrock-save: "&aSimpan Tetapan"
+    bedrock-back: "&cKembali"
 
   # ================================================
   # CreateGuildGUI (36 keys)
@@ -329,6 +378,13 @@ gui:
     create-guild-tag-input-lore-2: "&7Panjang: Maksimum 6 aksara"
     create-guild-tag-input-lore-3: "&7Pilihan"
     create-guild-tag-input-name: "&eTag Guild"
+    bedrock-title: "&6Cipta Guild"
+    bedrock-name-label: "&fNama Guild (3-20 aksara)"
+    bedrock-name-placeholder: "Masukkan nama guild"
+    bedrock-tag-label: "&fTag Guild (maksimum 6 aksara, pilihan)"
+    bedrock-tag-placeholder: "Masukkan tag guild"
+    bedrock-desc-label: "&fPerihalan Guild (maksimum 100 aksara, pilihan)"
+    bedrock-desc-placeholder: "Masukkan perihalan guild"
 
   # ================================================
   # GuildDetailGUI (38 keys)
@@ -372,6 +428,31 @@ gui:
     transfer-self: "&cTidak boleh pindahkan ketua kepada diri sendiri"
     transfer-success: "&aBerjaya memindahkan ketua kepada &e{name}"
     unfreeze-guild: "Nyahbekukan Guild"
+    bedrock-title: "&6Butiran Guild - {guild_name}"
+    bedrock-level: "&fTahap: &e{level}"
+    bedrock-balance: " &fDana: &a{balance}"
+    bedrock-leader: "&fKetua: &c{leader}"
+    bedrock-members: " &fAhli: &e{current}/{max}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-status-frozen: "&cDibekukan"
+    bedrock-status-normal: "&aBiasa"
+    bedrock-description: "&fPerihalan: &7{description}"
+    bedrock-transfer-hint: "&e>>> Mod Pindah: Klik ahli untuk pindah kepimpinan <<<"
+    bedrock-no-tag: "Tiada"
+    bedrock-unfreeze: "&aNyahbeku Guild"
+    bedrock-freeze: "&cBekukan Guild"
+    bedrock-delete: "&4Padam Guild"
+    bedrock-cancel-transfer: "&eBatal Mod Pindah"
+    bedrock-transfer: "&cPindah Kepimpinan"
+    bedrock-prev-page: "&eHalaman Sebelumnya"
+    bedrock-next-page: "&eHalaman Seterusnya"
+    bedrock-back: "&cKembali"
+    bedrock-transfer-self: "&cTidak boleh pindah kepimpinan kepada diri sendiri"
+    bedrock-transfer-success: "&aBerjaya pindah kepimpinan kepada &e{name}"
+    bedrock-transfer-failed: "&cGagal pindah kepimpinan!"
+    bedrock-operation-failed: "&cOperasi gagal!"
+    bedrock-transfer-mode-active: "&eKlik ahli untuk pindah kepimpinan"
+    bedrock-transfer-mode-cancelled: "&7Pindah kepimpinan telah dibatalkan"
 
   # ================================================
   # GuildInfoGUI (21 keys)
@@ -398,6 +479,10 @@ gui:
     status-normal: "Normal"
     tag: "Tag"
     title: "&6Maklumat Guild"
+    bedrock-title: "&6Maklumat Guild"
+    bedrock-guild-funds: "&aDana Guild"
+    bedrock-back-to-main: "&cKembali ke Menu Utama"
+    bedrock-status-label: "Status"
 
   # ================================================
   # GuildListManagementGUI (2 keys)
@@ -405,6 +490,24 @@ gui:
   guild-list-management:
     guild-list-management-title: "&4Pengurusan Senarai Guild"
     gui-refresh: "&aSegar Semula Senarai"
+    bedrock-title: "&4Pengurusan Senarai Guild"
+    bedrock-page-info: "&fHalaman {page}/{total} | Jumlah {count} guild"
+    bedrock-refresh: "&aSegar Semula Senarai"
+    bedrock-prev-page: "&eHalaman Sebelumnya"
+    bedrock-next-page: "&eHalaman Seterusnya"
+    bedrock-back: "&cKembali"
+    bedrock-status-frozen: "&cDibekukan"
+    bedrock-status-normal: "&aBiasa"
+    bedrock-actions-title: "&6Tindakan Guild - {guild_name}"
+    bedrock-leader: "&fKetua: &e{leader}"
+    bedrock-level: "&fTahap: &e{level}"
+    bedrock-balance: "&fDana: &a{balance}"
+    bedrock-status: "&fStatus: {status}"
+    bedrock-view-detail: "&eLihat Butiran"
+    bedrock-delete: "&cPadam Guild"
+    bedrock-unfreeze: "&aNyahbeku Guild"
+    bedrock-freeze: "&cBekukan Guild"
+    bedrock-back-list: "&cKembali ke Senarai"
 
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
@@ -449,6 +552,22 @@ gui:
     guild-list-search-lore-2: "&8Klik Kanan: Bersihkan carian"
     guild-list-search-name: "&eCari Guild"
     guild-list-title: "&6Senarai Guild"
+    bedrock-title: "&6Senarai Guild"
+    bedrock-no-guilds: "&cTiada guild di pelayan lagi"
+    bedrock-no-results: "&cTiada guild yang sepadan ditemui"
+    bedrock-search: "&eCari Guild"
+    bedrock-back-main: "&cKembali ke Menu Utama"
+    bedrock-page-info: "&fHalaman {page}/{total}"
+    bedrock-search-info: "&fCarian: &e{query}"
+    bedrock-prev-page: "&aHalaman Sebelumnya"
+    bedrock-next-page: "&aHalaman Seterusnya"
+    bedrock-search-title: "&6Cari Guild"
+    bedrock-search-input: "&fMasukkan kata kunci carian"
+    bedrock-search-placeholder: "Biarkan kosong untuk lihat semua"
+    bedrock-select-action: "&fPilih tindakan:"
+    bedrock-view-detail: "&eLihat Butiran"
+    bedrock-apply-join: "&aMohon Sertai"
+    bedrock-back-list: "&cKembali ke Senarai"
 
   # ================================================
   # GuildFilterGUI (19 keys)
@@ -473,6 +592,35 @@ gui:
     sort.lore-full: "Hanya guild penuh"
     sort.name: "&eIsih mengikut Ahli"
     title: "&6Penapis Guild"
+    bedrock-title: "&6Tapis Guild"
+    bedrock-no-guilds: "&fTiada guild di pelayan lagi"
+    bedrock-back: "&cKembali"
+    bedrock-no-results: "&fTiada guild yang sepadan dengan penapis"
+    bedrock-filter-info: "&fTahap: {min}-{max} | Susunan: {sort}"
+    bedrock-adjust-filter: "&eLaraskan Penapis"
+    bedrock-sort-desc: "Ahli menurun"
+    bedrock-sort-asc: "Ahli menaik"
+    bedrock-sort-full: "Penuh sahaja"
+    bedrock-title-page: "&6Tapis Guild - Halaman {page}"
+    bedrock-total-results: "&fJumlah {count} hasil"
+    bedrock-prev-page: "&eHalaman Sebelumnya"
+    bedrock-next-page: "&eHalaman Seterusnya"
+    bedrock-settings-title: "&6Tetapan Penapis"
+    bedrock-min-level: "&fTahap Minimum: {level}"
+    bedrock-max-level: "&fTahap Maksimum: {level}"
+    bedrock-sort: "&fSusunan: {sort}"
+    bedrock-min-level-up: "&aTahap Minimum +1"
+    bedrock-min-level-down: "&cTahap Minimum -1"
+    bedrock-max-level-up: "&aTahap Maksimum +1"
+    bedrock-max-level-down: "&cTahap Maksimum -1"
+    bedrock-switch-sort: "&eTukar Mod Susunan"
+    bedrock-back-results: "&eKembali ke Hasil"
+    bedrock-actions-title: "&6Tindakan Guild - {guild_name}"
+    bedrock-level: "&fTahap: {level}"
+    bedrock-leader: "&fKetua: {leader}"
+    bedrock-view-detail: "&eLihat Butiran"
+    bedrock-apply-join: "&aMohon Sertai"
+    bedrock-back-filter: "&eKembali ke Penapis"
 
   # ================================================
   # GuildSettingsGUI (42 keys)
@@ -520,6 +668,13 @@ gui:
     home.success: "&aTeleport ke rumah guild!"
     sethome.failed: "&cGagal menetapkan rumah guild!"
     sethome.success: "&aRumah guild berjaya ditetapkan!"
+    bedrock-content: "&6Gambaran Keseluruhan Guild\n&fNama: &e{guild_name}\n&fTag: &e{guild_tag}\n&fPerihalan: {guild_desc}\n&fRumah Guild: {home_status}"
+    bedrock-change-name: "&eTukar Nama"
+    bedrock-change-description: "&eTukar Perihalan"
+    bedrock-change-tag: "&eTukar Tag"
+    bedrock-kick-member: "&cTendang Ahli"
+    bedrock-promote-demote: "&eNaik/Turun Pangkat"
+    bedrock-back-to-main: "&fKembali ke Menu Utama"
 
   # ================================================
   # GuildFundsGUI (23 keys)
@@ -548,6 +703,15 @@ gui:
     total-deposit: "Jumlah Deposit"
     total-pages: "&8Jumlah Halaman: {total}"
     total-players: "&8Pemain: {count}"
+    bedrock-title: "&6Dana Guild - {guild}"
+    bedrock-no-data: "&cTiada rekod sumbangan"
+    bedrock-back: "&cKembali"
+    bedrock-page-info: "&fHalaman {page}/{total}\n&fJumlah Pemain: {count}"
+    bedrock-online: "&aDalam Talian"
+    bedrock-offline: "&fLuar Talian"
+    bedrock-prev-page: "&aHalaman Sebelumnya"
+    bedrock-next-page: "&aHalaman Seterusnya"
+    bedrock-refresh: "&aSegar Semula"
 
   # ================================================
   # EconomyManagementGUI (23 keys)
@@ -566,16 +730,31 @@ gui:
     middle-click-remove: "&cKlik Tengah: Kurangkan dana"
     next-page: "&aHalaman Seterusnya"
     next-page-desc: "&8Halaman {page}"
-    next-page-desc: "&8Halaman {page}"
     page-info: "&eHalaman {current} daripada {total}"
     previous-page: "&aHalaman Sebelumnya"
-    previous-page-desc: "&8Halaman {page}"
     previous-page-desc: "&8Halaman {page}"
     refresh: "&aSegar Semula Senarai"
     right-click-add: "&aKlik Kanan: Tambah dana"
     set-balance-dev: "&eCiri tetapan dana sedang dalam pembangunan..."
     set-prompt: "&eSila masukkan jumlah dana baharu (taip dalam chat, taip cancel untuk batal):"
     economy-management-title: "&ePengurusan Ekonomi"
+    bedrock-title: "&ePengurusan Ekonomi"
+    bedrock-page-info: "&fHalaman {current}/{total} | Jumlah {count} guild"
+    bedrock-refresh: "&aSegar Semula Senarai"
+    bedrock-prev-page: "&eHalaman Sebelumnya"
+    bedrock-next-page: "&eHalaman Seterusnya"
+    bedrock-back: "&cKembali"
+    bedrock-actions-title: "&ePengurusan Ekonomi - {guild}"
+    bedrock-actions-content: "&fDana Semasa: &a{balance}\n&fKetua: &e{leader}\n&fTahap: &e{level}"
+    bedrock-set-funds: "&eTetapkan Dana"
+    bedrock-add-funds: "&aTambah Dana"
+    bedrock-clear-funds: "&cKosongkan Dana"
+    bedrock-back-to-list: "&cKembali ke Senarai"
+    bedrock-set-title: "&eTetapkan Dana"
+    bedrock-add-title: "&aTambah Dana"
+    bedrock-input-label: "&fMasukkan jumlah"
+    bedrock-invalid-amount: "&cJumlah mesti lebih besar daripada 0!"
+    bedrock-invalid-number: "&cNombor tidak sah!"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -606,6 +785,14 @@ gui:
     funds.change.set-contrib-increase: "{player} menetapkan dana kepada {new}(+{diff})"
     funds.change.set-log-decrease: "{player} menetapkan dana {guild} kepada {new}"
     funds.change.set-log-increase: "{player} menetapkan dana {guild} kepada {new}"
+    bedrock-title: "&6Sahkan Perubahan Dana"
+    bedrock-guild: "&fGuild: &e{guild_name}"
+    bedrock-operation: "&fOperasi: {operation}"
+    bedrock-current-balance: "&fDana Semasa: &6{balance}"
+    bedrock-amount: "&fJumlah: &f{amount}"
+    bedrock-new-balance: "&fDana Baru: &a{balance}"
+    bedrock-confirm: "&aSahkan Perubahan"
+    bedrock-cancel: "&cBatal"
 
   # ================================================
   # GuildRelationsGUI (49 keys)
@@ -660,6 +847,24 @@ gui:
     relations.type-selected: "&aJenis hubungan dipilih: {type}"
     relations.type-truce.description: "Perjanjian gencatan senjata, keamanan sementara"
     relations.type-war.description: "Keadaan perang, perang total"
+    bedrock-title: "&6Hubungan Guild"
+    bedrock-title-page: "&6Hubungan Guild - Halaman {page}"
+    bedrock-empty: "&fBuat masa ini tiada hubungan guild"
+    bedrock-total: "&fJumlah {count} hubungan"
+    bedrock-create-relation: "&aCipta Hubungan"
+    bedrock-prev-page: "&eHalaman Sebelumnya"
+    bedrock-next-page: "&eHalaman Seterusnya"
+    bedrock-back: "&cKembali"
+    bedrock-actions-title: "&6Tindakan Hubungan - {guild}"
+    bedrock-actions-content: "&fJenis: {type}\n&fStatus: {status}"
+    bedrock-cancel-relation: "&cBatal Hubungan"
+    bedrock-accept-relation: "&aTerima Hubungan"
+    bedrock-reject-relation: "&cTolak Hubungan"
+    bedrock-end-truce: "&eTamatkan Gencatan Senjata"
+    bedrock-propose-truce: "&eCadangkan Gencatan Senjata"
+    bedrock-delete-relation: "&cPadam Hubungan"
+    bedrock-back-to-list: "&eKembali ke Senarai"
+    bedrock-truce-ended: "&aGencatan senjata dengan {guild} telah tamat!"
 
   # ================================================
   # CreateRelationGUI (6 keys)
@@ -671,6 +876,22 @@ gui:
     confirm-lore-2: "&8Perlu pilih jenis hubungan dan guild sasaran terlebih dahulu"
     current-selection: "&ePilihan Semasa"
     title: "&6Cipta Hubungan Guild"
+    bedrock-type-title: "&6Cipta Hubungan - Pilih Jenis"
+    bedrock-type-content: "&fSila pilih jenis hubungan:"
+    bedrock-back: "&cKembali"
+    bedrock-target-title: "&6Cipta Hubungan - Pilih Sasaran"
+    bedrock-target-empty: "&fTiada guild sasaran yang tersedia"
+    bedrock-target-title-page: "&6Cipta Hubungan - Pilih Sasaran Halaman {page}"
+    bedrock-target-content: "&fJenis: {type}\n&fPilih guild sasaran:"
+    bedrock-prev-page: "&eHalaman Sebelumnya"
+    bedrock-next-page: "&eHalaman Seterusnya"
+    bedrock-confirm-title: "&6Sahkan Cipta Hubungan"
+    bedrock-confirm-content: "&fJenis: {type}\n&fSasaran: {target}"
+    bedrock-confirm-create: "&aSahkan Cipta"
+    bedrock-cancel: "&cBatal"
+    bedrock-already-exists: "&cHubungan dengan {guild} sudah wujud!"
+    bedrock-create-success: "&aPermintaan hubungan {type} telah dihantar ke {guild}!"
+    bedrock-create-failed: "&cGagal mencipta hubungan!"
 
   # ================================================
   # RelationManagementGUI (40 keys)
@@ -708,7 +929,6 @@ gui:
     pending-delete: "Menunggu pengesahan pemadaman"
     previous-page: "&aHalaman Sebelumnya"
     previous-page-desc: "&8Halaman {0}"
-    previous-page-desc: "&8Halaman {0}"
     refresh: "&aSegar Semula Senarai"
     refresh-desc: "&8Muat semula data hubungan"
     refreshing: "Menyegar semula senarai hubungan..."
@@ -716,6 +936,25 @@ gui:
     relation-management-back-desc: "Kembali ke menu pentadbir"
     relation-management-refresh-desc: "Muat semula data hubungan"
     relation-management-title: "&4Pengurusan Hubungan - Pentadbir"
+    bedrock-title: "&4Pengurusan Hubungan"
+    bedrock-empty: "&cTiada data hubungan"
+    bedrock-back: "&cKembali"
+    bedrock-page-info: "&fHalaman {current}/{total} | Jumlah {count} hubungan"
+    bedrock-refresh: "&aSegar Semula Senarai"
+    bedrock-prev-page: "&eHalaman Sebelumnya"
+    bedrock-next-page: "&eHalaman Seterusnya"
+    bedrock-actions-title: "&6Tindakan Hubungan"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fJenis: {type}\n&fStatus: {status}\n&fPemula: {initiator}"
+    bedrock-delete-relation: "&cPadam Hubungan"
+    bedrock-view-details: "&eLihat Butiran"
+    bedrock-back-to-list: "&cKembali ke Senarai"
+    bedrock-confirm-title: "&cSahkan Padam"
+    bedrock-confirm-content: "&fAdakah anda pasti mahu padam hubungan:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cSahkan Padam"
+    bedrock-cancel: "&fBatal"
+    bedrock-delete-success: "&aHubungan telah dipadam: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cGagal padam hubungan!"
+    bedrock-no-permission: "&cAnda tidak mempunyai kebenaran pentadbir!"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -743,6 +982,13 @@ gui:
     total-records: "Jumlah rekod: {count}"
     type: "Jenis"
     wait-for-logs: "Sila tunggu aktiviti guild untuk menjana log"
+    bedrock-title: "&6Log Guild - {guild}"
+    bedrock-no-data: "&cTiada log"
+    bedrock-back: "&cKembali"
+    bedrock-page-info: "&fHalaman {page}/{total}\n&fJumlah Log: {count}"
+    bedrock-prev-page: "&aHalaman Sebelumnya"
+    bedrock-next-page: "&aHalaman Seterusnya"
+    bedrock-refresh: "&aSegar Semula"
 
   # ================================================
   # MemberManagementGUI (81 keys)
@@ -829,6 +1075,31 @@ gui:
     member-mgmt.role.leader-perms: "Semua Kebenaran"
     member-mgmt.role.member-perms: "Kebenaran Asas"
     member-mgmt.role.officer-perms: "Jemput, Tendang"
+    bedrock-title: "&6Pengurusan Ahli"
+    bedrock-title-page: "&6Pengurusan Ahli - Halaman {page}"
+    bedrock-no-members: "&fTiada ahli dalam guild lagi"
+    bedrock-member-list: "&fSenarai Ahli (Jumlah {count})"
+    bedrock-invite: "&aJemput Ahli"
+    bedrock-actions-title: "&6Tindakan Ahli - {member}"
+    bedrock-role-label: "&fPeranan: {role}"
+    bedrock-role-leader: "&cKetua"
+    bedrock-role-officer: "&6Pegawai"
+    bedrock-role-member: "&fAhli"
+    bedrock-view-details: "&eLihat Butiran"
+    bedrock-kick: "&cTendang Ahli"
+    bedrock-promote-demote: "&6Naik/Turun Pangkat"
+    bedrock-back-to-list: "&cKembali ke Senarai"
+    member-details.bedrock-title: "&6Butiran Ahli - {member}"
+    member-details.bedrock-player: "&fPemain: {name}"
+    member-details.bedrock-role: "&fPeranan: {role}"
+    member-details.bedrock-join-time: "&fMasa Penyertaan: {time}"
+    member-details.bedrock-online: "&fDalam Talian: {status}"
+    member-details.bedrock-online-yes: "&aYa"
+    member-details.bedrock-online-no: "&cTidak"
+    member-details.bedrock-kick: "&cTendang Ahli"
+    member-details.bedrock-promote-demote: "&6Naik/Turun Pangkat"
+    member-details.bedrock-send-message: "&eHantar Mesej"
+    member-details.bedrock-back: "&cKembali"
 
   # ================================================
   # MemberGuildGUI (13 keys)
@@ -847,6 +1118,8 @@ gui:
     no-name: "Tiada Nama"
     no-tag: "Tiada Tag"
     title: "&6Guild Saya"
+    bedrock-title: "&6Guild Saya - {guild_name}"
+    bedrock-content: "&6Maklumat Guild\n&fNama: &e{guild_name}\n&fTag: &e{guild_tag}\n&fRumah Guild: {home_status}"
 
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
@@ -866,6 +1139,10 @@ gui:
     confirm-delete-guild-title: "&4Sahkan Padam Guild"
     delete.failed: "&cGagal memadam guild!"
     delete.success: "&aGuild {guild} telah dipadam!"
+    bedrock-title: "&4Sahkan Padam Guild"
+    bedrock-content: "&fGuild: &e{guild}\n&fAdakah anda pasti mahu padam guild ini?\n&cTindakan ini akan memadam guild secara kekal!\n&cSemua ahli akan dibuang!\n&cTindakan ini tidak boleh dibatalkan!"
+    bedrock-confirm: "&4Sahkan Padam"
+    bedrock-cancel: "&aBatal"
 
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
@@ -883,6 +1160,10 @@ gui:
     leave.failed: "&cGagal meninggalkan guild!"
     leave.leader-cannot-leave: "&cKetua guild tidak boleh meninggalkan guild!"
     leave.success: "&aAnda telah berjaya meninggalkan guild: {guild}"
+    bedrock-title: "&cSahkan Keluar Guild"
+    bedrock-content: "&fGuild: &e{guild}\n&fAdakah anda pasti mahu keluar dari guild ini?\n&cTindakan ini tidak boleh dibatalkan!"
+    bedrock-confirm: "&cSahkan Keluar"
+    bedrock-cancel: "&aBatal"
 
   # ================================================
   # GuildNameInputGUI (21 keys)
@@ -909,6 +1190,9 @@ gui:
     success: "&aNama guild berjaya ditukar!"
     success-new-name: "&8Nama baharu: &f{new_name}"
     title: "&6Ubah Nama Guild"
+    bedrock-title: "&6Edit Nama Guild"
+    bedrock-input-label: "&fMasukkan nama guild baru"
+    bedrock-input-placeholder: "2-16 aksara, menyokong kod warna"
 
   # ================================================
   # GuildTagInputGUI (6 keys)
@@ -920,6 +1204,9 @@ gui:
     confirm-lore: "&8Sahkan suntingan tag guild"
     current-tag: "&eTag Semasa"
     title: "&6Ubah Tag Guild"
+    bedrock-title: "&6Edit Tag Guild"
+    bedrock-input-label: "&fMasukkan tag guild baru"
+    bedrock-input-placeholder: "Maksimum {max} aksara"
 
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
@@ -931,12 +1218,18 @@ gui:
     confirm-lore: "&8Sahkan suntingan perihalan guild"
     current-description: "&ePerihalan Semasa"
     title: "&6Ubah Perihalan Guild"
+    bedrock-title: "&6Edit Perihalan Guild"
+    bedrock-input-label: "&fMasukkan perihalan guild baru"
+    bedrock-input-placeholder: "Maksimum {max} aksara"
 
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
   guild-permissions:
     title: "&6Tetapan Kebenaran Guild"
+    bedrock-title: "&6Tetapan Kebenaran Guild"
+    bedrock-content: "&6=== Kebenaran Ketua ===\n&f• Semua Kebenaran\n&f• Pengurusan Ahli\n&f• Edit Tetapan\n&f• Padam Guild\n\n&e=== Kebenaran Pegawai ===\n&f• Jemput Ahli\n&f• Tendang Ahli\n&f• Proses Permohonan\n&f• Tetapkan Rumah Guild\n\n&7=== Kebenaran Ahli ===\n&f• Lihat Maklumat Guild\n&f• Teleport ke Rumah Guild\n&f• Mohon Sertai Guild Lain\n\n&aStatus Semasa: &fGuild {guild} | Sistem kebenaran berfungsi normal"
+    bedrock-back: "&cKembali"
 
   # ================================================
   # InviteMemberGUI (4 keys)
@@ -946,6 +1239,10 @@ gui:
     click-invite: "Klik untuk jemput pemain ini"
     join-guild: "Sertai guild"
     title: "&6Jemput Ahli - {guild} - Halaman {page}"
+    bedrock-title: "&6Jemput Ahli"
+    bedrock-title-page: "&6Jemput Ahli - Halaman {page}"
+    bedrock-no-players: "&fTiada pemain dalam talian untuk dijemput"
+    bedrock-player-list: "&fPemain Dalam Talian (Jumlah {count})"
 
   # ================================================
   # KickMemberGUI (5 keys)
@@ -956,6 +1253,10 @@ gui:
     kick.success: "&aAhli &e{player} &aberjaya ditendang!"
     click-kick: "Klik untuk tendang ahli ini"
     title: "&6Tendang Ahli - Halaman {page}"
+    bedrock-title: "&6Tendang Ahli"
+    bedrock-title-page: "&6Tendang Ahli - Halaman {page}"
+    bedrock-no-members: "&fTiada ahli untuk ditendang"
+    bedrock-content: "&fPilih ahli untuk ditendang"
 
   # ================================================
   # PromoteMemberGUI (5 keys)
@@ -966,6 +1267,10 @@ gui:
     promote.success: "&aAhli &e{player} &adinaikkan pangkat kepada pegawai!"
     click-promote: "Klik untuk naikkan pangkat kepada pegawai"
     title: "&6Naik Pangkat Ahli - Halaman {page}"
+    bedrock-title: "&6Naikkan Pangkat Ahli"
+    bedrock-title-page: "&6Naikkan Pangkat Ahli - Halaman {page}"
+    bedrock-no-members: "&fTiada ahli untuk dinaikkan pangkat"
+    bedrock-content: "&fPilih ahli untuk dinaikkan pangkat kepada pegawai"
 
   # ================================================
   # DemoteMemberGUI (5 keys)
@@ -976,3 +1281,7 @@ gui:
     demote.success: "&aAhli &e{player} &aditurunkan pangkat kepada ahli biasa!"
     click-demote: "Klik untuk turunkan pangkat kepada ahli"
     title: "&6Turun Pangkat Ahli - Halaman {page}"
+    bedrock-title: "&6Turunkan Pangkat Ahli"
+    bedrock-title-page: "&6Turunkan Pangkat Ahli - Halaman {page}"
+    bedrock-no-members: "&fTiada pegawai untuk diturunkan pangkat"
+    bedrock-content: "&fPilih pegawai untuk diturunkan pangkat kepada ahli"

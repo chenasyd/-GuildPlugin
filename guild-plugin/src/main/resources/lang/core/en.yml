@@ -282,11 +282,6 @@ economy.transfer-success: "&aSuccessfully transferred &e{amount} &ato guild &e{t
 economy.transfer-failed: "&cTransfer failed!"
 economy.target-guild-not-found: "&cTarget guild does not exist!"
 economy.cannot-transfer-to-self: "&cCannot transfer to your own guild!"
-economy.disband-compensation: "&aGuild disbanded, you received {amount} coins compensation!"
-economy.level-up: "&aGuild level up successful! Current level: {level}"
-guild.deposit.insufficient-funds: "&cYou don't have enough money!"
-guild.withdraw.insufficient-funds: "&cInsufficient guild account balance!"
-guild.transfer.insufficient-funds: "&cInsufficient guild account balance!"
 
 # ============ Guild Chat ============
 guild.chat.enabled: "&aGuild chat &aenabled&a. Your messages will be sent to guild members."

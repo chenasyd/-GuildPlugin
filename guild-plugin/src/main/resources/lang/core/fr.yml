@@ -282,9 +282,6 @@ economy.transfer-success: "&aTransfert de &e{amount} &avers la guilde &e{target}
 economy.transfer-failed: "&c\u00c9chec du transfert\u00a0!"
 economy.target-guild-not-found: "&cGuilde cible inexistante\u00a0!"
 economy.cannot-transfer-to-self: "&cImpossible de transf\u00e9rer vers votre propre guilde\u00a0!"
-guild.deposit.insufficient-funds: "&cVous n'avez pas assez d'argent\u00a0!"
-guild.withdraw.insufficient-funds: "&cSolde insuffisant sur le compte de guilde\u00a0!"
-guild.transfer.insufficient-funds: "&cSolde insuffisant sur le compte de guilde\u00a0!"
 
 # ============ Relations ============
 guild.relation.usage: "&cUtilisation: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&aRenomm\u00e9 en &e{0} &a(car &e{1} &aest utilis\u00e9
 cloud.download-tip: "&6Astuce: &8D\u00e9chargez d'abord l'ancien module puis remplacez le fichier: &e/guildmodule unload <id> &8-> remplacer jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&c\u00c9chec du t\u00e9l\u00e9chargement: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cCette commande est r\u00e9serv\u00e9e aux joueurs Bedrock. Vous \u00eates un joueur Java."
+bedrock-test.geyser-unavailable: "&cL'API Geyser n'est pas disponible, impossible d'envoyer le formulaire."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Vous avez cliqu\u00e9 sur : &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Formulaire ferm\u00e9"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Envoy\u00e9 avec succ\u00e8s :"
+bedrock-test.custom-name: "&7  Nom : &f{value}"
+bedrock-test.custom-desc: "&7  Description : &f{value}"
+bedrock-test.custom-free-join: "&7  Adh\u00e9sion libre : &f{value}"
+bedrock-test.custom-allow-invite: "&7  Autoriser les invitations : &f{value}"
+bedrock-test.custom-allow-kick: "&7  Autoriser les expulsions : &f{value}"
+bedrock-test.custom-language: "&7  Langue : &f{value}"
+bedrock-test.custom-max-members: "&7  Nombre maximum de membres : &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Formulaire ferm\u00e9, non enregistr\u00e9"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Vous avez choisi : &cConfirmer la sortie"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Vous avez choisi : &aAnnuler"
+bedrock-test.modal-closed: "&7[ModalForm] Dialogue ferm\u00e9"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Plugin de Guilde &r- &eTest de Formulaire Bedrock"
+bedrock-test.main-content: "&7S\u00e9lectionnez un type de formulaire \u00e0 visualiser :"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Menu de boutons"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Formulaire de saisie/r\u00e9glages"
+bedrock-test.main-btn-modal: "&cModalForm &f- Dialogue de confirmation"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Menu principal de la guilde &r- &7Exemple SimpleForm"
+bedrock-test.simple-content: "&7Bienvenue, &e{player}&7!\n&7Ceci est un exemple de menu de boutons SimpleForm."
+bedrock-test.simple-btn-info: "&aInformations de la guilde &f- Voir les d\u00e9tails de la guilde"
+bedrock-test.simple-btn-members: "&bGestion des membres &f- G\u00e9rer les membres de la guilde"
+bedrock-test.simple-btn-settings: "&eParam\u00e8tres de la guilde &f- Modifier la configuration de la guilde"
+bedrock-test.simple-btn-list: "&6Liste des guildes &f- Parcourir toutes les guildes"
+bedrock-test.simple-btn-quit: "&cQuitter la guilde &f- Quitter la guilde actuelle"
+bedrock-test.simple-name-info: "Informations de la guilde"
+bedrock-test.simple-name-members: "Gestion des membres"
+bedrock-test.simple-name-settings: "Param\u00e8tres de la guilde"
+bedrock-test.simple-name-list: "Liste des guildes"
+bedrock-test.simple-name-quit: "Quitter la guilde"
+
+# CustomForm
+bedrock-test.custom-title: "&6Param\u00e8tres de la guilde &r- &fExemple CustomForm"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Param\u00e8tres de base \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fNom de la guilde"
+bedrock-test.custom-input-name-placeholder: "Entrez un nouveau nom..."
+bedrock-test.custom-input-name-default: "Ma guilde"
+bedrock-test.custom-input-desc-label: "&fDescription de la guilde"
+bedrock-test.custom-input-desc-placeholder: "Entrez une description..."
+bedrock-test.custom-input-desc-default: "Une guilde amicale"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 Interrupteurs de permissions \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fAutoriser l'adh\u00e9sion libre"
+bedrock-test.custom-toggle-allow-invite: "&fAutoriser les membres \u00e0 inviter"
+bedrock-test.custom-toggle-allow-kick: "&fAutoriser les membres \u00e0 expulser"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Autres \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fLangue de la guilde"
+bedrock-test.custom-slider-max-members: "&fNombre maximum de membres"
+
+# ModalForm
+bedrock-test.modal-title: "&cConfirmer l'op\u00e9ration &r- &fExemple ModalForm"
+bedrock-test.modal-content: "&7\u00cates-vous s\u00fbr de vouloir quitter la guilde &eGuilde de Test &7?\n\n&cCette op\u00e9ration est irr\u00e9versible !\n&7Apr\u00e8s avoir quitt\u00e9, vous devrez refaire une demande d'adh\u00e9sion."
+bedrock-test.modal-btn-confirm: "&aConfirmer la sortie"
+bedrock-test.modal-btn-cancel: "&cAnnuler"
 
 
 

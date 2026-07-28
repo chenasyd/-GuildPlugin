@@ -282,9 +282,6 @@ economy.transfer-success: "&a成功向公會 &e{target} &a轉帳 &e{amount}！"
 economy.transfer-failed: "&c轉帳失敗！"
 economy.target-guild-not-found: "&c目標公會不存在！"
 economy.cannot-transfer-to-self: "&c不能轉帳給自己的公會！"
-guild.deposit.insufficient-funds: "&c您的餘額不足！"
-guild.withdraw.insufficient-funds: "&c公會帳戶餘額不足！"
-guild.transfer.insufficient-funds: "&c公會帳戶餘額不足！"
 
 # ============ 關係 ============
 guild.relation.usage: "&c用法: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&a已重新命名為 &e{0} &a（因 &e{1} &a正在使�
 cloud.download-tip: "&6提示: &8先卸載舊模組再替換檔案: &e/guildmodule unload <id> &8-> 替換jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&c下載失敗: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&c此指令僅限基岩版玩家使用。你是 Java 版玩家。"
+bedrock-test.geyser-unavailable: "&cGeyser API 不可用，無法傳送表單。"
+bedrock-test.simple-clicked: "&a[SimpleForm] &7你點選了：&f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] 表單已關閉"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7提交成功："
+bedrock-test.custom-name: "&7  名稱：&f{value}"
+bedrock-test.custom-desc: "&7  描述：&f{value}"
+bedrock-test.custom-free-join: "&7  自由加入：&f{value}"
+bedrock-test.custom-allow-invite: "&7  允許邀請：&f{value}"
+bedrock-test.custom-allow-kick: "&7  允許踢人：&f{value}"
+bedrock-test.custom-language: "&7  語言：&f{value}"
+bedrock-test.custom-max-members: "&7  最大成員數：&f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] 表單已關閉，未儲存"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7你選擇了：&c確認退出"
+bedrock-test.modal-cancel: "&a[ModalForm] &7你選擇了：&a取消"
+bedrock-test.modal-closed: "&7[ModalForm] 對話框已關閉"
 
+# --- 表單建構字串 ---
+# 主選單
+bedrock-test.main-title: "&6公會插件 &r- &e基岩版表單測試"
+bedrock-test.main-content: "&7選擇一個表單類型進行預覽："
+bedrock-test.main-btn-simple: "&aSimpleForm &f- 按鈕選單"
+bedrock-test.main-btn-custom: "&bCustomForm &f- 輸入/設定表單"
+bedrock-test.main-btn-modal: "&cModalForm &f- 確認對話框"
+
+# SimpleForm
+bedrock-test.simple-title: "&6公會主選單 &r- &7SimpleForm 範例"
+bedrock-test.simple-content: "&7歡迎, &e{player}&7!\n&7這是 SimpleForm 按鈕選單範例。"
+bedrock-test.simple-btn-info: "&a公會資訊 &f- 查看公會詳情"
+bedrock-test.simple-btn-members: "&b成員管理 &f- 管理公會成員"
+bedrock-test.simple-btn-settings: "&e公會設定 &f- 修改公會配置"
+bedrock-test.simple-btn-list: "&6公會清單 &f- 瀏覽所有公會"
+bedrock-test.simple-btn-quit: "&c退出公會 &f- 離開目前公會"
+bedrock-test.simple-name-info: "公會資訊"
+bedrock-test.simple-name-members: "成員管理"
+bedrock-test.simple-name-settings: "公會設定"
+bedrock-test.simple-name-list: "公會清單"
+bedrock-test.simple-name-quit: "退出公會"
+
+# CustomForm
+bedrock-test.custom-title: "&6公會設定 &r- &fCustomForm 範例"
+bedrock-test.custom-label-basic: "&7── 基本設定 ──"
+bedrock-test.custom-input-name-label: "&f公會名稱"
+bedrock-test.custom-input-name-placeholder: "輸入新名稱..."
+bedrock-test.custom-input-name-default: "我的公會"
+bedrock-test.custom-input-desc-label: "&f公會描述"
+bedrock-test.custom-input-desc-placeholder: "輸入描述..."
+bedrock-test.custom-input-desc-default: "一個友善的公會"
+bedrock-test.custom-label-perms: "&7── 權限開關 ──"
+bedrock-test.custom-toggle-free-join: "&f允許自由加入"
+bedrock-test.custom-toggle-allow-invite: "&f允許成員邀請"
+bedrock-test.custom-toggle-allow-kick: "&f允許成員踢人"
+bedrock-test.custom-label-other: "&7── 其他 ──"
+bedrock-test.custom-dropdown-lang: "&f公會語言"
+bedrock-test.custom-slider-max-members: "&f最大成員數"
+
+# ModalForm
+bedrock-test.modal-title: "&c確認操作 &r- &fModalForm 範例"
+bedrock-test.modal-content: "&7你確定要退出公會 &e測試公會 &7嗎？\n\n&c此操作不可撤銷！\n&7退出後需要重新申請加入。"
+bedrock-test.modal-btn-confirm: "&a確認退出"
+bedrock-test.modal-btn-cancel: "&c取消"
 
 
 

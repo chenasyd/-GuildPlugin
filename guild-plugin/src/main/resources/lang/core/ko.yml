@@ -282,9 +282,6 @@ economy.transfer-success: "&a길드 &e{target}&a에 &e{amount}&a을 송금했습
 economy.transfer-failed: "&c송금에 실패했습니다!"
 economy.target-guild-not-found: "&c대상 길드가 존재하지 않습니다!"
 economy.cannot-transfer-to-self: "&c자신의 길드로 송금할 수 없습니다!"
-guild.deposit.insufficient-funds: "&c잔액이 부족합니다!"
-guild.withdraw.insufficient-funds: "&c길드 계좌 잔액이 부족합니다!"
-guild.transfer.insufficient-funds: "&c길드 계좌 잔액이 부족합니다!"
 
 # ============ Relations ============
 guild.relation.usage: "&c사용법: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&a&e{0}&a(으)로 이름이 변경되었습니다 (&e{1
 cloud.download-tip: "&6힌트: &8먼저 구 모듈을 언로드한 후 파일을 교체하세요: &e/guildmodule unload <id> &8-> jar 교체 -> &e/guildmodule load {0}"
 cloud.download-failed: "&c다운로드 실패: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&c이 명령어는 Bedrock 플레이어만 사용할 수 있습니다. 당신은 Java 플레이어입니다."
+bedrock-test.geyser-unavailable: "&cGeyser API를 사용할 수 없어 폼을 전송할 수 없습니다."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7클릭했습니다: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] 폼이 닫혔습니다"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7제출 성공:"
+bedrock-test.custom-name: "&7  이름: &f{value}"
+bedrock-test.custom-desc: "&7  설명: &f{value}"
+bedrock-test.custom-free-join: "&7  자유 가입: &f{value}"
+bedrock-test.custom-allow-invite: "&7  초대 허용: &f{value}"
+bedrock-test.custom-allow-kick: "&7  추방 허용: &f{value}"
+bedrock-test.custom-language: "&7  언어: &f{value}"
+bedrock-test.custom-max-members: "&7  최대 멤버 수: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] 폼이 닫혔습니다, 저장되지 않음"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7선택했습니다: &c탈퇴 확인"
+bedrock-test.modal-cancel: "&a[ModalForm] &7선택했습니다: &a취소"
+bedrock-test.modal-closed: "&7[ModalForm] 대화상자가 닫혔습니다"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6길드 플러그인 &r- &eBedrock 폼 테스트"
+bedrock-test.main-content: "&7미리 볼 폼 유형을 선택하세요:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- 버튼 메뉴"
+bedrock-test.main-btn-custom: "&bCustomForm &f- 입력/설정 폼"
+bedrock-test.main-btn-modal: "&cModalForm &f- 확인 대화상자"
+
+# SimpleForm
+bedrock-test.simple-title: "&6길드 메인 메뉴 &r- &7SimpleForm 예제"
+bedrock-test.simple-content: "&7환영합니다, &e{player}&7!\n&7이것은 SimpleForm 버튼 메뉴 예제입니다."
+bedrock-test.simple-btn-info: "&a길드 정보 &f- 길드 상세 정보 보기"
+bedrock-test.simple-btn-members: "&b멤버 관리 &f- 길드 멤버 관리"
+bedrock-test.simple-btn-settings: "&e길드 설정 &f- 길드 설정 변경"
+bedrock-test.simple-btn-list: "&6길드 목록 &f- 모든 길드 둘러보기"
+bedrock-test.simple-btn-quit: "&c길드 탈퇴 &f- 현재 길드 떠나기"
+bedrock-test.simple-name-info: "길드 정보"
+bedrock-test.simple-name-members: "멤버 관리"
+bedrock-test.simple-name-settings: "길드 설정"
+bedrock-test.simple-name-list: "길드 목록"
+bedrock-test.simple-name-quit: "길드 탈퇴"
+
+# CustomForm
+bedrock-test.custom-title: "&6길드 설정 &r- &fCustomForm 예제"
+bedrock-test.custom-label-basic: "&7── 기본 설정 ──"
+bedrock-test.custom-input-name-label: "&f길드 이름"
+bedrock-test.custom-input-name-placeholder: "새 이름 입력..."
+bedrock-test.custom-input-name-default: "내 길드"
+bedrock-test.custom-input-desc-label: "&f길드 설명"
+bedrock-test.custom-input-desc-placeholder: "설명 입력..."
+bedrock-test.custom-input-desc-default: "친근한 길드"
+bedrock-test.custom-label-perms: "&7── 권한 스위치 ──"
+bedrock-test.custom-toggle-free-join: "&f자유 가입 허용"
+bedrock-test.custom-toggle-allow-invite: "&f멤버 초대 허용"
+bedrock-test.custom-toggle-allow-kick: "&f멤버 추방 허용"
+bedrock-test.custom-label-other: "&7── 기타 ──"
+bedrock-test.custom-dropdown-lang: "&f길드 언어"
+bedrock-test.custom-slider-max-members: "&f최대 멤버 수"
+
+# ModalForm
+bedrock-test.modal-title: "&c작업 확인 &r- &fModalForm 예제"
+bedrock-test.modal-content: "&7길드 &e테스트 길드 &7에서 탈퇴하시겠습니까?\n\n&c이 작업은 되돌릴 수 없습니다!\n&7탈퇴 후 다시 가입 신청을 해야 합니다."
+bedrock-test.modal-btn-confirm: "&a탈퇴 확인"
+bedrock-test.modal-btn-cancel: "&c취소"
 
 
 

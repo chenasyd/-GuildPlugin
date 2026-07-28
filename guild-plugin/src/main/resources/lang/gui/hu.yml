@@ -88,6 +88,9 @@ gui:
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
   # ================================================
+    bedrock-prev-page: "&eElőző oldal"
+    bedrock-next-page: "&eKövetkező oldal"
+    bedrock-back: "&cVissza"
   admin-gui:
     title: "&4C\u00e9h kezel\u00e9s"
     admin-gui-economy-lore-1: "&7C\u00e9h gazdas\u00e1gi rendszer\u00e9nek kezel\u00e9se"
@@ -115,6 +118,14 @@ gui:
   # ================================================
   # ApplicationManagementGUI (29 keys)
   # ================================================
+    bedrock-title: "&4Céh adminisztráció"
+    bedrock-content: "&fVálassz kezelési funkciót"
+    bedrock-guild-list: "&eCéhlista kezelése"
+    bedrock-economy: "&eGazdaságkezelés"
+    bedrock-relations: "&eKapcsolatkezelés"
+    bedrock-statistics: "&eStatisztikák"
+    bedrock-settings: "&eRendszerbeállítások"
+    bedrock-back: "&cVissza"
   application-mgmt:
     application.accepted: "&aJelentkez\u00e9sedet elfogadta a(z) {guild} c\u00e9h!"
     applications-count: " jelentkez\u00e9s"
@@ -140,7 +151,6 @@ gui:
     application-management-pending-applications-lore-1: "&7F\u00fcgg\u0151ben l\u00e9v\u0151 jelentkez\u00e9sek megtekint\u00e9se"
     application-management-pending-applications-name: "&eF\u00fcgg\u0151ben l\u00e9v\u0151 jelentkez\u00e9sek"
     application-management-title: "&6Jelentkez\u00e9s kezel\u00e9s"
-    no-history: "&aNincs jelentkez\u00e9si el\u0151zm\u00e9ny"
     no-history.desc: "&7Jelenleg nincs jelentkez\u00e9si el\u0151zm\u00e9ny"
     apply.already-applied: "&cM\u00e1r jelentkezt\u00e9l ebbe a c\u00e9hbe!"
     apply.failed: "&cJelentkez\u00e9s elk\u00fcld\u00e9se sikertelen!"
@@ -149,6 +159,27 @@ gui:
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
   # ================================================
+    bedrock-title: "&6Jelentkezéskezelés"
+    bedrock-empty-history: "&fNincs jelentkezés előzmény"
+    bedrock-empty-pending: "&fNincs függő jelentkezés"
+    bedrock-pending-btn: "&eFüggő jelentkezések"
+    bedrock-history-btn: "&eJelentkezés előzmények"
+    bedrock-back: "&cVissza"
+    bedrock-mode-history: "Jelentkezés előzmények"
+    bedrock-mode-pending: "Függő jelentkezések"
+    bedrock-title-page: "&6Jelentkezéskezelés - {mode} Oldal {page}"
+    bedrock-total: "&fÖsszesen {count} rekord"
+    bedrock-prev-page: "&eElőző oldal"
+    bedrock-next-page: "&eKövetkező oldal"
+    bedrock-applicant: "&fJelentkező: {name}"
+    bedrock-status: "&fÁllapot: {status}"
+    bedrock-message: "&fÜzenet: {msg}"
+    bedrock-no-message: "Nincs"
+    bedrock-actions-title: "&6Jelentkezés feldolgozása - {name}"
+    bedrock-actions-content: "&fJelentkező: {name}\n&fÜzenet: {msg}"
+    bedrock-accept: "&aJelentkezés elfogadása"
+    bedrock-reject: "&cJelentkezés elutasítása"
+    bedrock-back-to-list: "&eVissza a listához"
   main-menu:
     application-management.lore.1: "&7Csatlakoz\u00e1si jelentkez\u00e9sek kezel\u00e9se"
     application-management.lore.2: "&7Jelentkez\u00e9si el\u0151zm\u00e9nyek megtekint\u00e9se"
@@ -176,6 +207,7 @@ gui:
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
+    bedrock-content: "&fVálassz funkciót:"
   system-settings:
     applications: "&eJelentkez\u00e9si rendszer"
     applications-disabled: "&cJelentkez\u00e9si rendszer letiltva!"
@@ -292,6 +324,23 @@ gui:
   # ================================================
   # CreateGuildGUI (36 keys)
   # ================================================
+    bedrock-title: "&4Rendszerbeállítások"
+    bedrock-content: "&fKattints az állapot váltásához"
+    bedrock-debug: "&eHibakeresési információ: {status}"
+    bedrock-auto-save: "&eAutomatikus mentés: {status}"
+    bedrock-economy: "&eGazdasági rendszer: {status}"
+    bedrock-relations: "&eKapcsolati rendszer: {status}"
+    bedrock-level: "&eSzintrendszer: {status}"
+    bedrock-applications: "&eJelentkezési rendszer: {status}"
+    bedrock-invites: "&eMeghívási rendszer: {status}"
+    bedrock-guild-home: "&eCéh otthon: {status}"
+    bedrock-on: "&aBE"
+    bedrock-off: "&cKI"
+    bedrock-reload: "&aKonfiguráció újratöltése"
+    bedrock-database: "&bAdatbázis karbantartás"
+    bedrock-backup: "&6Adatok biztonsági mentése"
+    bedrock-save: "&aBeállítások mentése"
+    bedrock-back: "&cVissza"
   create-guild:
     create.already-in-guild: "&cM\u00e1r egy c\u00e9hben vagy!"
     create.description-too-long: "&cA c\u00e9h le\u00edr\u00e1sa nem haladhatja meg a 100 karaktert!"
@@ -333,6 +382,13 @@ gui:
   # ================================================
   # GuildDetailGUI (38 keys)
   # ================================================
+    bedrock-title: "&6Céh létrehozása"
+    bedrock-name-label: "&fCéh név (3-20 karakter)"
+    bedrock-name-placeholder: "Add meg a céh nevet"
+    bedrock-tag-label: "&fCéh címke (max. 6 karakter, opcionális)"
+    bedrock-tag-placeholder: "Add meg a céh címkét"
+    bedrock-desc-label: "&fCéh leírás (max. 100 karakter, opcionális)"
+    bedrock-desc-placeholder: "Add meg a céh leírást"
   guild-detail:
     click-delete: "Kattints a c\u00e9h t\u00f6rl\u00e9s\u00e9hez"
     created-time: "L\u00e9trehoz\u00e1s ideje"
@@ -376,6 +432,31 @@ gui:
   # ================================================
   # GuildInfoGUI (21 keys)
   # ================================================
+    bedrock-title: "&6Céh részletek - {guild_name}"
+    bedrock-level: "&fSzint: &e{level}"
+    bedrock-balance: " &fEgyenleg: &a{balance}"
+    bedrock-leader: "&fVezető: &c{leader}"
+    bedrock-members: " &fTagok: &e{current}/{max}"
+    bedrock-status: "&fÁllapot: {status}"
+    bedrock-status-frozen: "&cBefagyasztva"
+    bedrock-status-normal: "&aNormál"
+    bedrock-description: "&fLeírás: &7{description}"
+    bedrock-transfer-hint: "&e>>> Átadási mód: Kattints egy tagra az átadáshoz <<<"
+    bedrock-no-tag: "Nincs"
+    bedrock-unfreeze: "&aCéh feloldása"
+    bedrock-freeze: "&cCéh befagyasztása"
+    bedrock-delete: "&4Céh törlése"
+    bedrock-cancel-transfer: "&eÁtadási mód megszakítása"
+    bedrock-transfer: "&cVezető átadása"
+    bedrock-prev-page: "&eElőző oldal"
+    bedrock-next-page: "&eKövetkező oldal"
+    bedrock-back: "&cVissza"
+    bedrock-transfer-self: "&cNem adhatod át a vezetőséget magadnak"
+    bedrock-transfer-success: "&aSikeresen átadva neki: &e{name}"
+    bedrock-transfer-failed: "&cA vezetőség átadása sikertelen!"
+    bedrock-operation-failed: "&cA művelet sikertelen!"
+    bedrock-transfer-mode-active: "&eKattints egy tagra a vezetőség átadásához"
+    bedrock-transfer-mode-cancelled: "&7Átadás megszakítva"
   guild-info:
     back: "Vissza"
     back-hint: "Kattints a visszal\u00e9p\u00e9shez a f\u0151men\u00fch\u00f6z"
@@ -402,6 +483,10 @@ gui:
   # ================================================
   # GuildListManagementGUI (2 keys)
   # ================================================
+    bedrock-title: "&6Céh információ"
+    bedrock-guild-funds: "&aCéh alapok"
+    bedrock-back-to-main: "&cVissza a főmenübe"
+    bedrock-status-label: "Állapot"
   guild-list-management:
     guild-list-management-title: "&4C\u00e9h lista kezel\u00e9s"
     gui-refresh: "&aLista friss\u00edt\u00e9se"
@@ -409,6 +494,24 @@ gui:
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
   # ================================================
+    bedrock-title: "&4Céhlista kezelése"
+    bedrock-page-info: "&fOldal {page}/{total} | Összesen {count} céh"
+    bedrock-refresh: "&aLista frissítése"
+    bedrock-prev-page: "&eElőző oldal"
+    bedrock-next-page: "&eKövetkező oldal"
+    bedrock-back: "&cVissza"
+    bedrock-status-frozen: "&cBefagyasztva"
+    bedrock-status-normal: "&aNormál"
+    bedrock-actions-title: "&6Céh műveletek - {guild_name}"
+    bedrock-leader: "&fVezető: &e{leader}"
+    bedrock-level: "&fSzint: &e{level}"
+    bedrock-balance: "&fEgyenleg: &a{balance}"
+    bedrock-status: "&fÁllapot: {status}"
+    bedrock-view-detail: "&eRészletek megtekintése"
+    bedrock-delete: "&cCéh törlése"
+    bedrock-unfreeze: "&aCéh feloldása"
+    bedrock-freeze: "&cCéh befagyasztása"
+    bedrock-back-list: "&cVissza a listához"
   guild-list:
     balance: "Alapok"
     created-time: "L\u00e9trehoz\u00e1s ideje"
@@ -453,6 +556,22 @@ gui:
   # ================================================
   # GuildFilterGUI (19 keys)
   # ================================================
+    bedrock-title: "&6Céhlista"
+    bedrock-no-guilds: "&cMég nincs céh a szerveren"
+    bedrock-no-results: "&cNincs egyező céh"
+    bedrock-search: "&eCéhek keresése"
+    bedrock-back-main: "&cVissza a főmenübe"
+    bedrock-page-info: "&fOldal {page}/{total}"
+    bedrock-search-info: "&fKeresés: &e{query}"
+    bedrock-prev-page: "&aElőző oldal"
+    bedrock-next-page: "&aKövetkező oldal"
+    bedrock-search-title: "&6Céhek keresése"
+    bedrock-search-input: "&fAdd meg a keresőszót"
+    bedrock-search-placeholder: "Hagyd üresen az összes megjelenítéséhez"
+    bedrock-select-action: "&fVálassz műveletet:"
+    bedrock-view-detail: "&eRészletek megtekintése"
+    bedrock-apply-join: "&aJelentkezés csatlakozásra"
+    bedrock-back-list: "&cVissza a listához"
   guild-filter:
     back.lore-1: "&7Vissza a c\u00e9h list\u00e1hoz"
     back.name: "&cVissza"
@@ -477,6 +596,35 @@ gui:
   # ================================================
   # GuildSettingsGUI (42 keys)
   # ================================================
+    bedrock-title: "&6Céhszűrő"
+    bedrock-no-guilds: "&fMég nincs céh a szerveren"
+    bedrock-back: "&cVissza"
+    bedrock-no-results: "&fEgy céh sem felel meg a szűrőnek"
+    bedrock-filter-info: "&fSzint: {min}-{max} | Rendezés: {sort}"
+    bedrock-adjust-filter: "&eSzűrő beállítása"
+    bedrock-sort-desc: "Tagok csökkenő"
+    bedrock-sort-asc: "Tagok növekvő"
+    bedrock-sort-full: "Csak teli"
+    bedrock-title-page: "&6Céhszűrő - Oldal {page}"
+    bedrock-total-results: "&fÖsszesen {count} eredmény"
+    bedrock-prev-page: "&eElőző oldal"
+    bedrock-next-page: "&eKövetkező oldal"
+    bedrock-settings-title: "&6Szűrőbeállítások"
+    bedrock-min-level: "&fMin. szint: {level}"
+    bedrock-max-level: "&fMax. szint: {level}"
+    bedrock-sort: "&fRendezés: {sort}"
+    bedrock-min-level-up: "&aMin. szint +1"
+    bedrock-min-level-down: "&cMin. szint -1"
+    bedrock-max-level-up: "&aMax. szint +1"
+    bedrock-max-level-down: "&cMax. szint -1"
+    bedrock-switch-sort: "&eRendezési mód váltása"
+    bedrock-back-results: "&eVissza az eredményekhez"
+    bedrock-actions-title: "&6Céh műveletek - {guild_name}"
+    bedrock-level: "&fSzint: {level}"
+    bedrock-leader: "&fVezető: {leader}"
+    bedrock-view-detail: "&eRészletek megtekintése"
+    bedrock-apply-join: "&aJelentkezés csatlakozásra"
+    bedrock-back-filter: "&eVissza a szűrőhöz"
   guild-settings:
     back: "&7Vissza"
     back-desc: "&7Kattints &fa visszal\u00e9p\u00e9shez a f\u0151men\u00fch\u00f6z"
@@ -524,6 +672,13 @@ gui:
   # ================================================
   # GuildFundsGUI (23 keys)
   # ================================================
+    bedrock-content: "&6Céh áttekintés\n&fNév: &e{guild_name}\n&fCímke: &e{guild_tag}\n&fLeírás: {guild_desc}\n&fCéh otthon: {home_status}"
+    bedrock-change-name: "&eNév módosítása"
+    bedrock-change-description: "&eLeírás módosítása"
+    bedrock-change-tag: "&eCímke módosítása"
+    bedrock-kick-member: "&cTag kirúgása"
+    bedrock-promote-demote: "&eElőléptetés/Lefokozás"
+    bedrock-back-to-main: "&fVissza a főmenübe"
   guild-funds:
     back-to-info: "&7Vissza a c\u00e9h inform\u00e1ci\u00f3khoz"
     back-to-settings: "&7Vissza a c\u00e9h be\u00e1ll\u00edt\u00e1sokhoz"
@@ -552,6 +707,15 @@ gui:
   # ================================================
   # EconomyManagementGUI (23 keys)
   # ================================================
+    bedrock-title: "&6Céh alapok - {guild}"
+    bedrock-no-data: "&cNincs befizetési rekord"
+    bedrock-back: "&cVissza"
+    bedrock-page-info: "&fOldal {page}/{total}\n&fÖsszes játékos: {count}"
+    bedrock-online: "&aElérhető"
+    bedrock-offline: "&fNem elérhető"
+    bedrock-prev-page: "&aElőző oldal"
+    bedrock-next-page: "&aKövetkező oldal"
+    bedrock-refresh: "&aFrissítés"
   economy-management:
     add-prompt: "&eK\u00e9rlek, add meg a hozz\u00e1adand\u00f3 alap \u00f6sszeg\u00e9t (sz\u00e1mot \u00edrj a chat-be, 'cancel' a megszak\u00edt\u00e1shoz):"
     back: "&cVissza"
@@ -580,6 +744,23 @@ gui:
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
   # ================================================
+    bedrock-title: "&eGazdaságkezelés"
+    bedrock-page-info: "&fOldal {current}/{total} | Összesen {count} céh"
+    bedrock-refresh: "&aLista frissítése"
+    bedrock-prev-page: "&eElőző oldal"
+    bedrock-next-page: "&eKövetkező oldal"
+    bedrock-back: "&cVissza"
+    bedrock-actions-title: "&eGazdaságkezelés - {guild}"
+    bedrock-actions-content: "&fJelenlegi egyenleg: &a{balance}\n&fVezető: &e{leader}\n&fSzint: &e{level}"
+    bedrock-set-funds: "&eAlapok beállítása"
+    bedrock-add-funds: "&aAlapok hozzáadása"
+    bedrock-clear-funds: "&cAlapok törlése"
+    bedrock-back-to-list: "&cVissza a listához"
+    bedrock-set-title: "&eAlapok beállítása"
+    bedrock-add-title: "&aAlapok hozzáadása"
+    bedrock-input-label: "&fAdd meg az összeget"
+    bedrock-invalid-amount: "&cAz összegnek nagyobbnak kell lennie 0-nál!"
+    bedrock-invalid-number: "&cÉrvénytelen szám!"
   confirm-funds:
     amount: "\u00d6sszeg"
     cancel: "&cM\u00e9gsem"
@@ -610,6 +791,14 @@ gui:
   # ================================================
   # GuildRelationsGUI (49 keys)
   # ================================================
+    bedrock-title: "&6Alap módosításának megerősítése"
+    bedrock-guild: "&fCéh: &e{guild_name}"
+    bedrock-operation: "&fMűvelet: {operation}"
+    bedrock-current-balance: "&fJelenlegi egyenleg: &6{balance}"
+    bedrock-amount: "&fÖsszeg: &f{amount}"
+    bedrock-new-balance: "&fÚj egyenleg: &a{balance}"
+    bedrock-confirm: "&aMódosítás megerősítése"
+    bedrock-cancel: "&cMégse"
   guild-relations:
     back-to-menu: "Vissza a f\u0151men\u00fch\u00f6z"
     created-time: "L\u00e9trehoz\u00e1s ideje"
@@ -664,6 +853,24 @@ gui:
   # ================================================
   # CreateRelationGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Céh kapcsolatok"
+    bedrock-title-page: "&6Céh kapcsolatok - Oldal {page}"
+    bedrock-empty: "&fJelenleg nincs céh kapcsolat"
+    bedrock-total: "&fÖsszesen {count} kapcsolat"
+    bedrock-create-relation: "&aKapcsolat létrehozása"
+    bedrock-prev-page: "&eElőző oldal"
+    bedrock-next-page: "&eKövetkező oldal"
+    bedrock-back: "&cVissza"
+    bedrock-actions-title: "&6Kapcsolat műveletek - {guild}"
+    bedrock-actions-content: "&fTípus: {type}\n&fÁllapot: {status}"
+    bedrock-cancel-relation: "&cKapcsolat megszakítása"
+    bedrock-accept-relation: "&aKapcsolat elfogadása"
+    bedrock-reject-relation: "&cKapcsolat elutasítása"
+    bedrock-end-truce: "&eFegyverszünet befejezése"
+    bedrock-propose-truce: "&eFegyverszünet javaslata"
+    bedrock-delete-relation: "&cKapcsolat törlése"
+    bedrock-back-to-list: "&eVissza a listához"
+    bedrock-truce-ended: "&aA fegyverszünet a(z) {guild} céhhel véget ért!"
   create-relation:
     back-lore: "&7Vissza a kapcsolatkezel\u00e9shez"
     confirm-button: "&aL\u00e9trehoz\u00e1s meger\u0151s\u00edt\u00e9se"
@@ -675,6 +882,22 @@ gui:
   # ================================================
   # RelationManagementGUI (40 keys)
   # ================================================
+    bedrock-type-title: "&6Kapcsolat létrehozása - Típus kiválasztása"
+    bedrock-type-content: "&fVálassz kapcsolat típust:"
+    bedrock-back: "&cVissza"
+    bedrock-target-title: "&6Kapcsolat létrehozása - Cél kiválasztása"
+    bedrock-target-empty: "&fNincs elérhető cél céh"
+    bedrock-target-title-page: "&6Kapcsolat létrehozása - Cél kiválasztása Oldal {page}"
+    bedrock-target-content: "&fTípus: {type}\n&fVálassz cél céhet:"
+    bedrock-prev-page: "&eElőző oldal"
+    bedrock-next-page: "&eKövetkező oldal"
+    bedrock-confirm-title: "&6Kapcsolat létrehozásának megerősítése"
+    bedrock-confirm-content: "&fTípus: {type}\n&fCél: {target}"
+    bedrock-confirm-create: "&aLétrehozás megerősítése"
+    bedrock-cancel: "&cMégse"
+    bedrock-already-exists: "&cA kapcsolat a(z) {guild} céhhel már létezik!"
+    bedrock-create-success: "&a{type} kapcsolat kérés elküldve a(z) {guild} céhnek!"
+    bedrock-create-failed: "&cNem sikerült létrehozni a kapcsolatot!"
   relation-management:
     auto-cancel: "&eAutomatikus megszak\u00edt\u00e1s 10 m\u00e1sodperc m\u00falva"
     back: "&cVissza"
@@ -720,6 +943,25 @@ gui:
   # ================================================
   # GuildLogsGUI (21 keys)
   # ================================================
+    bedrock-title: "&4Kapcsolatkezelés"
+    bedrock-empty: "&cNincs kapcsolat adat"
+    bedrock-back: "&cVissza"
+    bedrock-page-info: "&fOldal {current}/{total} | Összesen {count} kapcsolat"
+    bedrock-refresh: "&aLista frissítése"
+    bedrock-prev-page: "&eElőző oldal"
+    bedrock-next-page: "&eKövetkező oldal"
+    bedrock-actions-title: "&6Kapcsolat műveletek"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fTípus: {type}\n&fÁllapot: {status}\n&fKezdeményező: {initiator}"
+    bedrock-delete-relation: "&cKapcsolat törlése"
+    bedrock-view-details: "&eRészletek megtekintése"
+    bedrock-back-to-list: "&cVissza a listához"
+    bedrock-confirm-title: "&cTörlés megerősítése"
+    bedrock-confirm-content: "&fBiztosan törölni szeretnéd a kapcsolatot:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cTörlés megerősítése"
+    bedrock-cancel: "&fMégse"
+    bedrock-delete-success: "&aTörölt kapcsolat: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cNem sikerült törölni a kapcsolatot!"
+    bedrock-no-permission: "&cNincs admin jogosultságod!"
   guild-logs:
     back-to-guild: "Vissza a c\u00e9h inform\u00e1ci\u00f3khoz"
     back-to-settings: "Vissza a c\u00e9h be\u00e1ll\u00edt\u00e1sokhoz"
@@ -747,6 +989,13 @@ gui:
   # ================================================
   # MemberManagementGUI (81 keys)
   # ================================================
+    bedrock-title: "&6Céh naplók - {guild}"
+    bedrock-no-data: "&cNincs napló rekord"
+    bedrock-back: "&cVissza"
+    bedrock-page-info: "&fOldal {page}/{total}\n&fÖsszes rekord: {count}"
+    bedrock-prev-page: "&aElőző oldal"
+    bedrock-next-page: "&aKövetkező oldal"
+    bedrock-refresh: "&aFrissítés"
   member-management:
     member-details.activity: "Aktivit\u00e1s"
     member-details.all-actions: "\u00d6sszes m\u0171velet"
@@ -833,6 +1082,31 @@ gui:
   # ================================================
   # MemberGuildGUI (13 keys)
   # ================================================
+    bedrock-title: "&6Tagkezelés"
+    bedrock-title-page: "&6Tagkezelés - Oldal {page}"
+    bedrock-no-members: "&fMég nincs tag a céhben"
+    bedrock-member-list: "&fTaglista (Összesen {count})"
+    bedrock-invite: "&aTag meghívása"
+    bedrock-actions-title: "&6Tag műveletek - {member}"
+    bedrock-role-label: "&fSzerep: {role}"
+    bedrock-role-leader: "&cVezető"
+    bedrock-role-officer: "&6Tiszt"
+    bedrock-role-member: "&fTag"
+    bedrock-view-details: "&eRészletek megtekintése"
+    bedrock-kick: "&cTag kirúgása"
+    bedrock-promote-demote: "&6Előléptetés/Lefokozás"
+    bedrock-back-to-list: "&cVissza a listához"
+    member-details.bedrock-title: "&6Tag részletek - {member}"
+    member-details.bedrock-player: "&fJátékos: {name}"
+    member-details.bedrock-role: "&fSzerep: {role}"
+    member-details.bedrock-join-time: "&fCsatlakozás ideje: {time}"
+    member-details.bedrock-online: "&fElérhető: {status}"
+    member-details.bedrock-online-yes: "&aIgen"
+    member-details.bedrock-online-no: "&cNem"
+    member-details.bedrock-kick: "&cTag kirúgása"
+    member-details.bedrock-promote-demote: "&6Előléptetés/Lefokozás"
+    member-details.bedrock-send-message: "&eÜzenet küldése"
+    member-details.bedrock-back: "&cVissza"
   member-guild-gui:
     home-not-set: "&cNincs be\u00e1ll\u00edtva"
     home-set: "&aBe\u00e1ll\u00edtva"
@@ -851,6 +1125,8 @@ gui:
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
   # ================================================
+    bedrock-title: "&6Saját céh - {guild_name}"
+    bedrock-content: "&6Céh információ\n&fNév: &e{guild_name}\n&fCímke: &e{guild_tag}\n&fCéh otthon: {home_status}"
   confirm-delete-guild:
     cancel-button: "&aM\u00e9gsem"
     cancel-lore: "&7C\u00e9h t\u00f6rl\u00e9s\u00e9nek megszak\u00edt\u00e1sa"
@@ -870,6 +1146,10 @@ gui:
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
   # ================================================
+    bedrock-title: "&4Céh törlésének megerősítése"
+    bedrock-content: "&fCéh: &e{guild}\n&fBiztosan törölni szeretnéd ezt a céhet?\n&cEz a művelet véglegesen törli a céhet!\n&cMinden tag el lesz távolítva!\n&cEz a művelet nem vonható vissza!"
+    bedrock-confirm: "&4Törlés megerősítése"
+    bedrock-cancel: "&aMégse"
   confirm-leave-guild:
     cancel-button: "&aM\u00e9gsem"
     cancel-lore: "&7C\u00e9h elhagy\u00e1s\u00e1nak megszak\u00edt\u00e1sa"
@@ -887,6 +1167,10 @@ gui:
   # ================================================
   # GuildNameInputGUI (21 keys)
   # ================================================
+    bedrock-title: "&cCéh elhagyásának megerősítése"
+    bedrock-content: "&fCéh: &e{guild}\n&fBiztosan el szeretnéd hagyni ezt a céhet?\n&cEz a művelet nem vonható vissza!"
+    bedrock-confirm: "&cElhagyás megerősítése"
+    bedrock-cancel: "&aMégse"
   guild-name-input:
     cancel-button: "&cM\u00e9gsem"
     cancel-lore: "&7Vissza az el\u0151z\u0151 men\u00fch\u00f6z"
@@ -913,6 +1197,9 @@ gui:
   # ================================================
   # GuildTagInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Céh név módosítása"
+    bedrock-input-label: "&fAdd meg az új céh nevet"
+    bedrock-input-placeholder: "2-16 karakter, színkódok támogatottak"
   guild-tag-input:
     cancel-button: "&cM\u00e9gsem"
     cancel-lore: "&7M\u00f3dos\u00edt\u00e1s megszak\u00edt\u00e1sa"
@@ -924,6 +1211,9 @@ gui:
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Céh címke módosítása"
+    bedrock-input-label: "&fAdd meg az új céh címkét"
+    bedrock-input-placeholder: "Max. {max} karakter"
   guild-description-input:
     cancel-button: "&cM\u00e9gsem"
     cancel-lore: "&7M\u00f3dos\u00edt\u00e1s megszak\u00edt\u00e1sa"
@@ -935,12 +1225,18 @@ gui:
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
+    bedrock-title: "&6Céh leírás módosítása"
+    bedrock-input-label: "&fAdd meg az új céh leírást"
+    bedrock-input-placeholder: "Max. {max} karakter"
   guild-permissions:
     title: "&6C\u00e9h jogosults\u00e1gok be\u00e1ll\u00edt\u00e1sa"
 
   # ================================================
   # InviteMemberGUI (4 keys)
   # ================================================
+    bedrock-title: "&6Céh jogosultságok"
+    bedrock-content: "&6=== Vezetői jogosultságok ===\n&f• Minden jogosultság\n&f• Tagok kezelése\n&f• Beállítások módosítása\n&f• Céh törlése\n\n&e=== Tiszti jogosultságok ===\n&f• Tagok meghívása\n&f• Tagok kirúgása\n&f• Jelentkezések kezelése\n&f• Céh otthon beállítása\n\n&7=== Tagi jogosultságok ===\n&f• Céh információk megtekintése\n&f• Teleportálás a céh otthonába\n&f• Jelentkezés más céhekbe\n\n&aJelenlegi állapot: &fCéh {guild} | A jogosultsági rendszer normálisan működik"
+    bedrock-back: "&cVissza"
   invite-member:
     back-to-settings: "Vissza a c\u00e9h be\u00e1ll\u00edt\u00e1sokhoz"
     click-invite: "Kattints a j\u00e1t\u00e9kos megh\u00edv\u00e1s\u00e1hoz"
@@ -950,6 +1246,10 @@ gui:
   # ================================================
   # KickMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Tagok meghívása"
+    bedrock-title-page: "&6Tagok meghívása - Oldal {page}"
+    bedrock-no-players: "&fNincs meghívható elérhető játékos"
+    bedrock-player-list: "&fElérhető játékosok (Összesen {count})"
   kick-member:
     kick.failed: "&cTag kir\u00fang\u00e1sa sikertelen!"
     kick.kicked: "&cKir\u00fangtak a(z) &e{guild} &c c\u00e9hb\u0151l!"
@@ -960,6 +1260,10 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Tag kirúgása"
+    bedrock-title-page: "&6Tag kirúgása - Oldal {page}"
+    bedrock-no-members: "&fNincs kirúgható tag"
+    bedrock-content: "&fVálassz egy tagot a kirúgáshoz"
   promote-member:
     promote.failed: "&cTag el\u0151l\u00e9ptet\u00e9se sikertelen!"
     promote.promoted: "&aEl\u0151l\u00e9ptettek tisztt\u00e9 a(z) &e{guild} &a c\u00e9hben!"
@@ -970,9 +1274,17 @@ gui:
   # ================================================
   # DemoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Tag előléptetése"
+    bedrock-title-page: "&6Tag előléptetése - Oldal {page}"
+    bedrock-no-members: "&fNincs előléptethető tag"
+    bedrock-content: "&fVálassz egy tagot a tisztté léptetéshez"
   demote-member:
     demote.demoted: "&aLefokoztak rendes tagnak a(z) &e{guild} &a c\u00e9hben!"
     demote.failed: "&cTag lefokoz\u00e1sa sikertelen!"
     demote.success: "&aA(z) &e{player} &a tagot lefokoztad rendes tagnak!"
     click-demote: "Kattints a tagg\u00e1 val\u00f3 lefokoz\u00e1shoz"
     title: "&6Tag lefokoz\u00e1sa - {page}. oldal"
+    bedrock-title: "&6Tag lefokozása"
+    bedrock-title-page: "&6Tag lefokozása - Oldal {page}"
+    bedrock-no-members: "&fNincs lefokozható tiszt"
+    bedrock-content: "&fVálassz egy tisztet a taggá fokozáshoz"

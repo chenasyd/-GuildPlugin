@@ -282,9 +282,6 @@ economy.transfer-success: "\u0026aOverf\u00f8rte \u0026e{amount}\u0026a til gild
 economy.transfer-failed: "\u0026cOverf\u00f8ring mislyktes!"
 economy.target-guild-not-found: "\u0026cM\u00e5lgildet eksisterer ikke!"
 economy.cannot-transfer-to-self: "\u0026cKan ikke overf\u00f8re til ditt eget gilde!"
-guild.deposit.insufficient-funds: "\u0026cSaldoen din er utilstrekkelig!"
-guild.withdraw.insufficient-funds: "\u0026cGildekontoens saldo er utilstrekkelig!"
-guild.transfer.insufficient-funds: "\u0026cGildekontoens saldo er utilstrekkelig!"
 
 # ============ Relasjoner ============
 guild.relation.usage: "\u0026cBruk: /guild relation <list|create|delete|accept|reject>"
@@ -680,3 +677,66 @@ cloud.download-complete: "\u0026aLastet ned {0}. Bruk \u0026e/guildmodule load {
 cloud.download-renamed: "\u0026aGa nytt navn til \u0026e{0}\u0026a (fordi \u0026e{1}\u0026a er i bruk)."
 cloud.download-tip: "\u00266Tips: \u00267Last ut den gamle modulen f\u00f8r du erstatter filen: \u0026e/guildmodule unload <id> \u00267-> Erstatt jar -> \u0026e/guildmodule load {0}"
 cloud.download-failed: "\u0026cNedlasting mislyktes: {0}"
+
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cDenne kommandoen er kun for Bedrock-spillere. Du er en Java-spiller."
+bedrock-test.geyser-unavailable: "&cGeyser API er ikke tilgjengelig, kan ikke sende skjemaet."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Du klikket p\u00e5: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Skjema lukket"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Sendt med suksess:"
+bedrock-test.custom-name: "&7  Navn: &f{value}"
+bedrock-test.custom-desc: "&7  Beskrivelse: &f{value}"
+bedrock-test.custom-free-join: "&7  Gratis medlemskap: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Tillat invitasjoner: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Tillat sparking: &f{value}"
+bedrock-test.custom-language: "&7  Spr\u00e5k: &f{value}"
+bedrock-test.custom-max-members: "&7  Maksimalt antall medlemmer: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Skjema lukket, ikke lagret"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Du valgte: &cBekreft avslutning"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Du valgte: &aAvbryt"
+bedrock-test.modal-closed: "&7[ModalForm] Dialog lukket"
+
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Gilde Plugin &r- &eBedrock Skjema Test"
+bedrock-test.main-content: "&7Velg en skjematype for forh\u00e5ndsvisning:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Knappemeny"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Innskrivings-/innstillingsskjema"
+bedrock-test.main-btn-modal: "&cModalForm &f- Bekreftelsesdialog"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Gilde hovedmeny &r- &7SimpleForm eksempel"
+bedrock-test.simple-content: "&7Velkommen, &e{player}&7!\n&7Dette er et eksempel p\u00e5 SimpleForm knappemeny."
+bedrock-test.simple-btn-info: "&aGildeinformasjon &f- Se gildedetaljer"
+bedrock-test.simple-btn-members: "&bMedlemsadministrasjon &f- Administrer gildemedlemmer"
+bedrock-test.simple-btn-settings: "&eGildeinnstillinger &f- Endre gildekonfigurasjon"
+bedrock-test.simple-btn-list: "&6Gildeliste &f- Bla gjennom alle gilder"
+bedrock-test.simple-btn-quit: "&cForlat gilde &f- Forlat n\u00e5v\u00e6rende gilde"
+bedrock-test.simple-name-info: "Gildeinformasjon"
+bedrock-test.simple-name-members: "Medlemsadministrasjon"
+bedrock-test.simple-name-settings: "Gildeinnstillinger"
+bedrock-test.simple-name-list: "Gildeliste"
+bedrock-test.simple-name-quit: "Forlat gilde"
+
+# CustomForm
+bedrock-test.custom-title: "&6Gildeinnstillinger &r- &fCustomForm eksempel"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Grunninnstillinger \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fGildenavn"
+bedrock-test.custom-input-name-placeholder: "Skriv inn nytt navn..."
+bedrock-test.custom-input-name-default: "Min gilde"
+bedrock-test.custom-input-desc-label: "&fGildebeskrivelse"
+bedrock-test.custom-input-desc-placeholder: "Skriv inn beskrivelse..."
+bedrock-test.custom-input-desc-default: "En vennlig gilde"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 Tillatelsesbrytere \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fTillat gratis medlemskap"
+bedrock-test.custom-toggle-allow-invite: "&fTillat medlemmer \u00e5 invitere"
+bedrock-test.custom-toggle-allow-kick: "&fTillat medlemmer \u00e5 sparke"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Annet \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fGildespr\u00e5k"
+bedrock-test.custom-slider-max-members: "&fMaksimalt antall medlemmer"
+
+# ModalForm
+bedrock-test.modal-title: "&cBekreft handling &r- &fModalForm eksempel"
+bedrock-test.modal-content: "&7Er du sikker p\u00e5 at du vil forlate gilden &eTestgilde &7?\n\n&cDenne handlingen kan ikke angres!\n&7Etter avslutning m\u00e5 du s\u00f8ke om medlemskap p\u00e5 nytt."
+bedrock-test.modal-btn-confirm: "&aBekreft avslutning"
+bedrock-test.modal-btn-cancel: "&cAvbryt"

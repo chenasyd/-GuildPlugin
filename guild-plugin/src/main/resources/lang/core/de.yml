@@ -282,9 +282,6 @@ economy.transfer-success: "&aErfolgreich &e{amount} &aan die Gilde &e{target} &a
 economy.transfer-failed: "&cÜberweisung fehlgeschlagen!"
 economy.target-guild-not-found: "&cZielgilde existiert nicht!"
 economy.cannot-transfer-to-self: "&cSie können nicht an Ihre eigene Gilde überweisen!"
-guild.deposit.insufficient-funds: "&cSie haben nicht genug Geld!"
-guild.withdraw.insufficient-funds: "&cNicht genug Guthaben auf dem Gildenkonto!"
-guild.transfer.insufficient-funds: "&cNicht genug Guthaben auf dem Gildenkonto!"
 
 # ============ Relations ============
 guild.relation.usage: "&cVerwendung: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&aUmbenannt in &e{0} &a(da &e{1} &averwendet wird)."
 cloud.download-tip: "&6Hinweis: &8Entladen Sie zuerst das alte Modul und ersetzen Sie die Datei: &e/guildmodule unload <id> &8-> jar ersetzen -> &e/guildmodule load {0}"
 cloud.download-failed: "&cHerunterladen fehlgeschlagen: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cDieser Befehl ist nur für Bedrock-Spieler verfügbar. Du bist ein Java-Spieler."
+bedrock-test.geyser-unavailable: "&cGeyser API nicht verfügbar, Formular kann nicht gesendet werden."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Du hast geklickt auf: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Formular geschlossen"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Erfolgreich gesendet:"
+bedrock-test.custom-name: "&7  Name: &f{value}"
+bedrock-test.custom-desc: "&7  Beschreibung: &f{value}"
+bedrock-test.custom-free-join: "&7  Freier Beitritt: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Einladungen erlauben: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Kicken erlauben: &f{value}"
+bedrock-test.custom-language: "&7  Sprache: &f{value}"
+bedrock-test.custom-max-members: "&7  Maximale Mitglieder: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Formular geschlossen, nicht gespeichert"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Du hast gewählt: &cAustritt bestätigen"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Du hast gewählt: &aAbbrechen"
+bedrock-test.modal-closed: "&7[ModalForm] Dialog geschlossen"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Gilden-Plugin &r- &eBedrock-Formulartest"
+bedrock-test.main-content: "&7Wähle einen Formulartyp zur Vorschau aus:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Button-Menü"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Eingabe-/Einstellungsformular"
+bedrock-test.main-btn-modal: "&cModalForm &f- Bestätigungsdialog"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Gilden-Hauptmenü &r- &7SimpleForm Beispiel"
+bedrock-test.simple-content: "&7Willkommen, &e{player}&7!\n&7Dies ist ein Beispiel für ein SimpleForm-Button-Menü."
+bedrock-test.simple-btn-info: "&aGildeninformation &f- Gildendetails anzeigen"
+bedrock-test.simple-btn-members: "&bMitgliederverwaltung &f- Gildenmitglieder verwalten"
+bedrock-test.simple-btn-settings: "&eGildeneinstellungen &f- Gildenkonfiguration ändern"
+bedrock-test.simple-btn-list: "&6Gildenliste &f- Alle Gilden durchsuchen"
+bedrock-test.simple-btn-quit: "&cGilde verlassen &f- Aktuelle Gilde verlassen"
+bedrock-test.simple-name-info: "Gildeninformation"
+bedrock-test.simple-name-members: "Mitgliederverwaltung"
+bedrock-test.simple-name-settings: "Gildeneinstellungen"
+bedrock-test.simple-name-list: "Gildenliste"
+bedrock-test.simple-name-quit: "Gilde verlassen"
+
+# CustomForm
+bedrock-test.custom-title: "&6Gildeneinstellungen &r- &fCustomForm Beispiel"
+bedrock-test.custom-label-basic: "&7── Grundeinstellungen ──"
+bedrock-test.custom-input-name-label: "&fGildenname"
+bedrock-test.custom-input-name-placeholder: "Neuen Namen eingeben..."
+bedrock-test.custom-input-name-default: "Meine Gilde"
+bedrock-test.custom-input-desc-label: "&fGilden Beschreibung"
+bedrock-test.custom-input-desc-placeholder: "Beschreibung eingeben..."
+bedrock-test.custom-input-desc-default: "Eine freundliche Gilde"
+bedrock-test.custom-label-perms: "&7── Berechtigungs-Schalter ──"
+bedrock-test.custom-toggle-free-join: "&fFreien Beitritt erlauben"
+bedrock-test.custom-toggle-allow-invite: "&fMitgliedern Einladungen erlauben"
+bedrock-test.custom-toggle-allow-kick: "&fMitgliedern Kicken erlauben"
+bedrock-test.custom-label-other: "&7── Sonstiges ──"
+bedrock-test.custom-dropdown-lang: "&fGildensprache"
+bedrock-test.custom-slider-max-members: "&fMaximale Mitglieder"
+
+# ModalForm
+bedrock-test.modal-title: "&cAktion bestätigen &r- &fModalForm Beispiel"
+bedrock-test.modal-content: "&7Bist du sicher, dass du die Gilde &eTestgilde &7verlassen möchtest?\n\n&cDiese Aktion kann nicht rückgängig gemacht werden!\n&7Nach dem Austritt musst du erneut einen Beitrittsantrag stellen."
+bedrock-test.modal-btn-confirm: "&aAustritt bestätigen"
+bedrock-test.modal-btn-cancel: "&cAbbrechen"
 
 
 

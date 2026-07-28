@@ -88,6 +88,9 @@ gui:
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
   # ================================================
+    bedrock-prev-page: "&eEdellinen sivu"
+    bedrock-next-page: "&eSeuraava sivu"
+    bedrock-back: "&cTakaisin"
   admin-gui:
     title: "&4Guildien hallinta"
     admin-gui-economy-lore-1: "&7Hallitse guildin talousj\u00e4rjestelm\u00e4\u00e4"
@@ -115,6 +118,14 @@ gui:
   # ================================================
   # ApplicationManagementGUI (29 keys)
   # ================================================
+    bedrock-title: "&4Kiltahallinta"
+    bedrock-content: "&fValitse hallintatoiminto"
+    bedrock-guild-list: "&eKiltalistan hallinta"
+    bedrock-economy: "&eTalouden hallinta"
+    bedrock-relations: "&eSuhdehallinta"
+    bedrock-statistics: "&eTilastot"
+    bedrock-settings: "&eJärjestelmäasetukset"
+    bedrock-back: "&cTakaisin"
   application-mgmt:
     application.accepted: "&aHakemuksesi on hyv\u00e4ksytty guildissa {guild}!"
     applications-count: " hakemusta"
@@ -140,7 +151,6 @@ gui:
     application-management-pending-applications-lore-1: "&7N\u00e4yt\u00e4 odottavat hakemukset"
     application-management-pending-applications-name: "&eOdottavat hakemukset"
     application-management-title: "&6Hakemusten hallinta"
-    no-history: "&aEi hakemushistoriaa"
     no-history.desc: "&7T\u00e4ll\u00e4 hetkell\u00e4 ei ole hakemushistoriaa"
     apply.already-applied: "&cOlet jo hakenut t\u00e4h\u00e4n guildiin!"
     apply.failed: "&cHakemuksen l\u00e4hett\u00e4minen ep\u00e4onnistui!"
@@ -149,6 +159,27 @@ gui:
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
   # ================================================
+    bedrock-title: "&6Hakemusten hallinta"
+    bedrock-empty-history: "&fEi hakemushistoriaa"
+    bedrock-empty-pending: "&fEi odottavia hakemuksia"
+    bedrock-pending-btn: "&eOdottavat hakemukset"
+    bedrock-history-btn: "&eHakemushistoria"
+    bedrock-back: "&cTakaisin"
+    bedrock-mode-history: "Hakemushistoria"
+    bedrock-mode-pending: "Odottavat hakemukset"
+    bedrock-title-page: "&6Hakemusten hallinta - {mode} Sivu {page}"
+    bedrock-total: "&fYhteensä {count} merkintää"
+    bedrock-prev-page: "&eEdellinen sivu"
+    bedrock-next-page: "&eSeuraava sivu"
+    bedrock-applicant: "&fHakija: {name}"
+    bedrock-status: "&fTila: {status}"
+    bedrock-message: "&fViesti: {msg}"
+    bedrock-no-message: "Ei mitään"
+    bedrock-actions-title: "&6Hakemuksen käsittely - {name}"
+    bedrock-actions-content: "&fHakija: {name}\n&fViesti: {msg}"
+    bedrock-accept: "&aHyväksy hakemus"
+    bedrock-reject: "&cHylkää hakemus"
+    bedrock-back-to-list: "&eTakaisin listaan"
   main-menu:
     application-management.lore.1: "&7K\u00e4sittele liittymishakemuksia"
     application-management.lore.2: "&7N\u00e4yt\u00e4 hakemushistoria"
@@ -176,6 +207,7 @@ gui:
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
+    bedrock-content: "&fValitse toiminto:"
   system-settings:
     applications: "&eHakemusj\u00e4rjestelm\u00e4"
     applications-disabled: "&cHakemusj\u00e4rjestelm\u00e4 on poistettu k\u00e4yt\u00f6st\u00e4!"
@@ -292,6 +324,23 @@ gui:
   # ================================================
   # CreateGuildGUI (36 keys)
   # ================================================
+    bedrock-title: "&4Järjestelmäasetukset"
+    bedrock-content: "&fNapsauta vaihtaaksesi tilaa"
+    bedrock-debug: "&eVirheenkorjaustiedot: {status}"
+    bedrock-auto-save: "&eAutomaattinen tallennus: {status}"
+    bedrock-economy: "&eTalousjärjestelmä: {status}"
+    bedrock-relations: "&eSuhdejärjestelmä: {status}"
+    bedrock-level: "&eTasojärjestelmä: {status}"
+    bedrock-applications: "&eHakemusjärjestelmä: {status}"
+    bedrock-invites: "&eKutsujärjestelmä: {status}"
+    bedrock-guild-home: "&eKiltakoti: {status}"
+    bedrock-on: "&aPÄÄLLÄ"
+    bedrock-off: "&cPOIS"
+    bedrock-reload: "&aLataa asetukset uudelleen"
+    bedrock-database: "&bTietokannan huolto"
+    bedrock-backup: "&6Varmuuskopioi tiedot"
+    bedrock-save: "&aTallenna asetukset"
+    bedrock-back: "&cTakaisin"
   create-guild:
     create.already-in-guild: "&cOlet jo guildissa!"
     create.description-too-long: "&cGuildin kuvaus ei saa ylitt\u00e4\u00e4 100 merkki\u00e4!"
@@ -333,6 +382,13 @@ gui:
   # ================================================
   # GuildDetailGUI (38 keys)
   # ================================================
+    bedrock-title: "&6Luo kilta"
+    bedrock-name-label: "&fKillan nimi (3-20 merkkiä)"
+    bedrock-name-placeholder: "Syötä killan nimi"
+    bedrock-tag-label: "&fKillan tunniste (enintään 6 merkkiä, valinnainen)"
+    bedrock-tag-placeholder: "Syötä killan tunniste"
+    bedrock-desc-label: "&fKillan kuvaus (enintään 100 merkkiä, valinnainen)"
+    bedrock-desc-placeholder: "Syötä killan kuvaus"
   guild-detail:
     click-delete: "Napsauta poistaaksesi guildin"
     created-time: "Luomisaika"
@@ -376,6 +432,31 @@ gui:
   # ================================================
   # GuildInfoGUI (21 keys)
   # ================================================
+    bedrock-title: "&6Killan tiedot - {guild_name}"
+    bedrock-level: "&fTaso: &e{level}"
+    bedrock-balance: " &fSaldo: &a{balance}"
+    bedrock-leader: "&fJohtaja: &c{leader}"
+    bedrock-members: " &fJäsenet: &e{current}/{max}"
+    bedrock-status: "&fTila: {status}"
+    bedrock-status-frozen: "&cJäädytetty"
+    bedrock-status-normal: "&aNormaali"
+    bedrock-description: "&fKuvaus: &7{description}"
+    bedrock-transfer-hint: "&e>>> Siirtotila: Napsauta jäsentä siirtääksesi <<<"
+    bedrock-no-tag: "Ei mitään"
+    bedrock-unfreeze: "&aPoista killan jäädytys"
+    bedrock-freeze: "&cJäädytä kilta"
+    bedrock-delete: "&4Poista kilta"
+    bedrock-cancel-transfer: "&ePeruuta siirtotila"
+    bedrock-transfer: "&cSiirrä johtaja"
+    bedrock-prev-page: "&eEdellinen sivu"
+    bedrock-next-page: "&eSeuraava sivu"
+    bedrock-back: "&cTakaisin"
+    bedrock-transfer-self: "&cEt voi siirtää johtajuutta itsellesi"
+    bedrock-transfer-success: "&aSiirretty onnistuneesti pelaajalle &e{name}"
+    bedrock-transfer-failed: "&cJohtajuuden siirto epäonnistui!"
+    bedrock-operation-failed: "&cToiminto epäonnistui!"
+    bedrock-transfer-mode-active: "&eNapsauta jäsentä siirtääksesi johtajuuden"
+    bedrock-transfer-mode-cancelled: "&7Siirto peruutettu"
   guild-info:
     back: "Takaisin"
     back-hint: "Napsauta palataksesi p\u00e4\u00e4valikkoon"
@@ -402,6 +483,10 @@ gui:
   # ================================================
   # GuildListManagementGUI (2 keys)
   # ================================================
+    bedrock-title: "&6Killan tiedot"
+    bedrock-guild-funds: "&aKiltarahastot"
+    bedrock-back-to-main: "&cTakaisin päävalikkoon"
+    bedrock-status-label: "Tila"
   guild-list-management:
     guild-list-management-title: "&4Guildilistan hallinta"
     gui-refresh: "&aP\u00e4ivit\u00e4 lista"
@@ -409,6 +494,24 @@ gui:
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
   # ================================================
+    bedrock-title: "&4Kiltalistan hallinta"
+    bedrock-page-info: "&fSivu {page}/{total} | Yhteensä {count} kiltaa"
+    bedrock-refresh: "&aPäivitä lista"
+    bedrock-prev-page: "&eEdellinen sivu"
+    bedrock-next-page: "&eSeuraava sivu"
+    bedrock-back: "&cTakaisin"
+    bedrock-status-frozen: "&cJäädytetty"
+    bedrock-status-normal: "&aNormaali"
+    bedrock-actions-title: "&6Kiltatoiminnot - {guild_name}"
+    bedrock-leader: "&fJohtaja: &e{leader}"
+    bedrock-level: "&fTaso: &e{level}"
+    bedrock-balance: "&fSaldo: &a{balance}"
+    bedrock-status: "&fTila: {status}"
+    bedrock-view-detail: "&eNäytä tiedot"
+    bedrock-delete: "&cPoista kilta"
+    bedrock-unfreeze: "&aPoista killan jäädytys"
+    bedrock-freeze: "&cJäädytä kilta"
+    bedrock-back-list: "&cTakaisin listaan"
   guild-list:
     balance: "Varat"
     created-time: "Luomisaika"
@@ -453,6 +556,22 @@ gui:
   # ================================================
   # GuildFilterGUI (19 keys)
   # ================================================
+    bedrock-title: "&6Kiltalista"
+    bedrock-no-guilds: "&cPalvelimella ei ole vielä kiltoja"
+    bedrock-no-results: "&cVastaavia kiltoja ei löytynyt"
+    bedrock-search: "&eEtsi kiltoja"
+    bedrock-back-main: "&cTakaisin päävalikkoon"
+    bedrock-page-info: "&fSivu {page}/{total}"
+    bedrock-search-info: "&fHaku: &e{query}"
+    bedrock-prev-page: "&aEdellinen sivu"
+    bedrock-next-page: "&aSeuraava sivu"
+    bedrock-search-title: "&6Etsi kiltoja"
+    bedrock-search-input: "&fSyötä hakusana"
+    bedrock-search-placeholder: "Jätä tyhjäksi näyttääksesi kaikki"
+    bedrock-select-action: "&fValitse toiminto:"
+    bedrock-view-detail: "&eNäytä tiedot"
+    bedrock-apply-join: "&aHae liittymistä"
+    bedrock-back-list: "&cTakaisin listaan"
   guild-filter:
     back.lore-1: "&7Takaisin guildilistaan"
     back.name: "&cTakaisin"
@@ -477,6 +596,35 @@ gui:
   # ================================================
   # GuildSettingsGUI (42 keys)
   # ================================================
+    bedrock-title: "&6Kiltasuodatin"
+    bedrock-no-guilds: "&fPalvelimella ei ole vielä kiltoja"
+    bedrock-back: "&cTakaisin"
+    bedrock-no-results: "&fYksikään kilta ei vastaa suodatinta"
+    bedrock-filter-info: "&fTaso: {min}-{max} | Lajittelu: {sort}"
+    bedrock-adjust-filter: "&eSäädä suodatinta"
+    bedrock-sort-desc: "Jäsenet laskeva"
+    bedrock-sort-asc: "Jäsenet nouseva"
+    bedrock-sort-full: "Vain täydet"
+    bedrock-title-page: "&6Kiltasuodatin - Sivu {page}"
+    bedrock-total-results: "&fYhteensä {count} tulosta"
+    bedrock-prev-page: "&eEdellinen sivu"
+    bedrock-next-page: "&eSeuraava sivu"
+    bedrock-settings-title: "&6Suodatinasetukset"
+    bedrock-min-level: "&fVähimmäistaso: {level}"
+    bedrock-max-level: "&fEnimmäistaso: {level}"
+    bedrock-sort: "&fLajittelu: {sort}"
+    bedrock-min-level-up: "&aVähimmäistaso +1"
+    bedrock-min-level-down: "&cVähimmäistaso -1"
+    bedrock-max-level-up: "&aEnimmäistaso +1"
+    bedrock-max-level-down: "&cEnimmäistaso -1"
+    bedrock-switch-sort: "&eVaihda lajittelutilaa"
+    bedrock-back-results: "&eTakaisin tuloksiin"
+    bedrock-actions-title: "&6Kiltatoiminnot - {guild_name}"
+    bedrock-level: "&fTaso: {level}"
+    bedrock-leader: "&fJohtaja: {leader}"
+    bedrock-view-detail: "&eNäytä tiedot"
+    bedrock-apply-join: "&aHae liittymistä"
+    bedrock-back-filter: "&eTakaisin suodattimeen"
   guild-settings:
     back: "&7Takaisin"
     back-desc: "&7Napsauta &fpalaaksesi p\u00e4\u00e4valikkoon"
@@ -524,6 +672,13 @@ gui:
   # ================================================
   # GuildFundsGUI (23 keys)
   # ================================================
+    bedrock-content: "&6Killan yleiskatsaus\n&fNimi: &e{guild_name}\n&fTunniste: &e{guild_tag}\n&fKuvaus: {guild_desc}\n&fKiltakoti: {home_status}"
+    bedrock-change-name: "&eMuuta nimeä"
+    bedrock-change-description: "&eMuuta kuvausta"
+    bedrock-change-tag: "&eMuuta tunnistetta"
+    bedrock-kick-member: "&cPotki jäsen"
+    bedrock-promote-demote: "&eYlennä/Alenna"
+    bedrock-back-to-main: "&fTakaisin päävalikkoon"
   guild-funds:
     back-to-info: "&7Takaisin guildin tietoihin"
     back-to-settings: "&7Takaisin guildin asetuksiin"
@@ -552,6 +707,15 @@ gui:
   # ================================================
   # EconomyManagementGUI (23 keys)
   # ================================================
+    bedrock-title: "&6Kiltarahastot - {guild}"
+    bedrock-no-data: "&cEi talletusmerkintöjä"
+    bedrock-back: "&cTakaisin"
+    bedrock-page-info: "&fSivu {page}/{total}\n&fYhteensä pelaajia: {count}"
+    bedrock-online: "&aPaikalla"
+    bedrock-offline: "&fPoissa"
+    bedrock-prev-page: "&aEdellinen sivu"
+    bedrock-next-page: "&aSeuraava sivu"
+    bedrock-refresh: "&aPäivitä"
   economy-management:
     add-prompt: "&eSy\u00f6t\u00e4 lis\u00e4tt\u00e4v\u00e4 varojen m\u00e4\u00e4r\u00e4 (sy\u00f6t\u00e4 numero chattiin, sy\u00f6t\u00e4 cancel peruuttaaksesi):"
     back: "&cTakaisin"
@@ -580,6 +744,23 @@ gui:
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
   # ================================================
+    bedrock-title: "&eTalouden hallinta"
+    bedrock-page-info: "&fSivu {current}/{total} | Yhteensä {count} kiltaa"
+    bedrock-refresh: "&aPäivitä lista"
+    bedrock-prev-page: "&eEdellinen sivu"
+    bedrock-next-page: "&eSeuraava sivu"
+    bedrock-back: "&cTakaisin"
+    bedrock-actions-title: "&eTalouden hallinta - {guild}"
+    bedrock-actions-content: "&fNykyinen saldo: &a{balance}\n&fJohtaja: &e{leader}\n&fTaso: &e{level}"
+    bedrock-set-funds: "&eAseta rahastot"
+    bedrock-add-funds: "&aLisää varoja"
+    bedrock-clear-funds: "&cTyhjennä rahastot"
+    bedrock-back-to-list: "&cTakaisin listaan"
+    bedrock-set-title: "&eAseta rahastot"
+    bedrock-add-title: "&aLisää varoja"
+    bedrock-input-label: "&fSyötä määrä"
+    bedrock-invalid-amount: "&cMäärän on oltava suurempi kuin 0!"
+    bedrock-invalid-number: "&cVirheellinen numero!"
   confirm-funds:
     amount: "M\u00e4\u00e4r\u00e4"
     cancel: "&cPeruuta"
@@ -610,6 +791,14 @@ gui:
   # ================================================
   # GuildRelationsGUI (49 keys)
   # ================================================
+    bedrock-title: "&6Vahvista rahastomuutos"
+    bedrock-guild: "&fKilta: &e{guild_name}"
+    bedrock-operation: "&fToiminto: {operation}"
+    bedrock-current-balance: "&fNykyinen saldo: &6{balance}"
+    bedrock-amount: "&fMäärä: &f{amount}"
+    bedrock-new-balance: "&fUusi saldo: &a{balance}"
+    bedrock-confirm: "&aVahvista muutos"
+    bedrock-cancel: "&cPeruuta"
   guild-relations:
     back-to-menu: "Takaisin p\u00e4\u00e4valikkoon"
     created-time: "Luomisaika"
@@ -664,6 +853,24 @@ gui:
   # ================================================
   # CreateRelationGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Kiltasuhteet"
+    bedrock-title-page: "&6Kiltasuhteet - Sivu {page}"
+    bedrock-empty: "&fEi kiltasuhteita tällä hetkellä"
+    bedrock-total: "&fYhteensä {count} suhdetta"
+    bedrock-create-relation: "&aLuo suhde"
+    bedrock-prev-page: "&eEdellinen sivu"
+    bedrock-next-page: "&eSeuraava sivu"
+    bedrock-back: "&cTakaisin"
+    bedrock-actions-title: "&6Suhdetoiminnot - {guild}"
+    bedrock-actions-content: "&fTyyppi: {type}\n&fTila: {status}"
+    bedrock-cancel-relation: "&cPeruuta suhde"
+    bedrock-accept-relation: "&aHyväksy suhde"
+    bedrock-reject-relation: "&cHylkää suhde"
+    bedrock-end-truce: "&ePäätä aselepo"
+    bedrock-propose-truce: "&eEhdota aselepoa"
+    bedrock-delete-relation: "&cPoista suhde"
+    bedrock-back-to-list: "&eTakaisin listaan"
+    bedrock-truce-ended: "&aAselepo killan {guild} kanssa on päättynyt!"
   create-relation:
     back-lore: "&7Takaisin suhteiden hallintaan"
     confirm-button: "&aVahvista luominen"
@@ -675,6 +882,22 @@ gui:
   # ================================================
   # RelationManagementGUI (40 keys)
   # ================================================
+    bedrock-type-title: "&6Luo suhde - Valitse tyyppi"
+    bedrock-type-content: "&fValitse suhdetyyppi:"
+    bedrock-back: "&cTakaisin"
+    bedrock-target-title: "&6Luo suhde - Valitse kohde"
+    bedrock-target-empty: "&fEi saatavilla olevia kohdekiltoja"
+    bedrock-target-title-page: "&6Luo suhde - Valitse kohde Sivu {page}"
+    bedrock-target-content: "&fTyyppi: {type}\n&fValitse kohdekilta:"
+    bedrock-prev-page: "&eEdellinen sivu"
+    bedrock-next-page: "&eSeuraava sivu"
+    bedrock-confirm-title: "&6Vahvista suhteen luonti"
+    bedrock-confirm-content: "&fTyyppi: {type}\n&fKohde: {target}"
+    bedrock-confirm-create: "&aVahvista luonti"
+    bedrock-cancel: "&cPeruuta"
+    bedrock-already-exists: "&cSuhde kiltaan {guild} on jo olemassa!"
+    bedrock-create-success: "&aLähetetty {type} suhdepyyntö killalle {guild}!"
+    bedrock-create-failed: "&cSuhteen luominen epäonnistui!"
   relation-management:
     auto-cancel: "&ePeruutetaan automaattisesti 10 sekunnin kuluttua"
     back: "&cTakaisin"
@@ -720,6 +943,25 @@ gui:
   # ================================================
   # GuildLogsGUI (21 keys)
   # ================================================
+    bedrock-title: "&4Suhdehallinta"
+    bedrock-empty: "&cEi suhdetietoja"
+    bedrock-back: "&cTakaisin"
+    bedrock-page-info: "&fSivu {current}/{total} | Yhteensä {count} suhdetta"
+    bedrock-refresh: "&aPäivitä lista"
+    bedrock-prev-page: "&eEdellinen sivu"
+    bedrock-next-page: "&eSeuraava sivu"
+    bedrock-actions-title: "&6Suhdetoiminnot"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fTyyppi: {type}\n&fTila: {status}\n&fAlkuunpanija: {initiator}"
+    bedrock-delete-relation: "&cPoista suhde"
+    bedrock-view-details: "&eNäytä tiedot"
+    bedrock-back-to-list: "&cTakaisin listaan"
+    bedrock-confirm-title: "&cVahvista poisto"
+    bedrock-confirm-content: "&fHaluatko varmasti poistaa suhteen:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cVahvista poisto"
+    bedrock-cancel: "&fPeruuta"
+    bedrock-delete-success: "&aPoistettu suhde: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cSuhteen poisto epäonnistui!"
+    bedrock-no-permission: "&cSinulla ei ole ylläpito-oikeutta!"
   guild-logs:
     back-to-guild: "Takaisin guildin tietoihin"
     back-to-settings: "Takaisin guildin asetuksiin"
@@ -747,6 +989,13 @@ gui:
   # ================================================
   # MemberManagementGUI (81 keys)
   # ================================================
+    bedrock-title: "&6Kiltalokit - {guild}"
+    bedrock-no-data: "&cEi lokimerkintöjä"
+    bedrock-back: "&cTakaisin"
+    bedrock-page-info: "&fSivu {page}/{total}\n&fYhteensä merkintöjä: {count}"
+    bedrock-prev-page: "&aEdellinen sivu"
+    bedrock-next-page: "&aSeuraava sivu"
+    bedrock-refresh: "&aPäivitä"
   member-management:
     member-details.activity: "Aktiivisuus"
     member-details.all-actions: "Kaikki toiminnot"
@@ -833,6 +1082,31 @@ gui:
   # ================================================
   # MemberGuildGUI (13 keys)
   # ================================================
+    bedrock-title: "&6Jäsenten hallinta"
+    bedrock-title-page: "&6Jäsenten hallinta - Sivu {page}"
+    bedrock-no-members: "&fKillassa ei ole vielä jäseniä"
+    bedrock-member-list: "&fJäsenlista (Yhteensä {count})"
+    bedrock-invite: "&aKutsu jäsen"
+    bedrock-actions-title: "&6Jäsentoiminnot - {member}"
+    bedrock-role-label: "&fRooli: {role}"
+    bedrock-role-leader: "&cJohtaja"
+    bedrock-role-officer: "&6Upseeri"
+    bedrock-role-member: "&fJäsen"
+    bedrock-view-details: "&eNäytä tiedot"
+    bedrock-kick: "&cPotki jäsen"
+    bedrock-promote-demote: "&6Ylennä/Alenna"
+    bedrock-back-to-list: "&cTakaisin listaan"
+    member-details.bedrock-title: "&6Jäsenen tiedot - {member}"
+    member-details.bedrock-player: "&fPelaaja: {name}"
+    member-details.bedrock-role: "&fRooli: {role}"
+    member-details.bedrock-join-time: "&fLiittymisaika: {time}"
+    member-details.bedrock-online: "&fPaikalla: {status}"
+    member-details.bedrock-online-yes: "&aKyllä"
+    member-details.bedrock-online-no: "&cEi"
+    member-details.bedrock-kick: "&cPotki jäsen"
+    member-details.bedrock-promote-demote: "&6Ylennä/Alenna"
+    member-details.bedrock-send-message: "&eLähetä viesti"
+    member-details.bedrock-back: "&cTakaisin"
   member-guild-gui:
     home-not-set: "&cEi asetettu"
     home-set: "&aAsetettu"
@@ -851,6 +1125,8 @@ gui:
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
   # ================================================
+    bedrock-title: "&6Oma kilta - {guild_name}"
+    bedrock-content: "&6Killan tiedot\n&fNimi: &e{guild_name}\n&fTunniste: &e{guild_tag}\n&fKiltakoti: {home_status}"
   confirm-delete-guild:
     cancel-button: "&aPeruuta"
     cancel-lore: "&7Peruuta guildin poistaminen"
@@ -870,6 +1146,10 @@ gui:
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
   # ================================================
+    bedrock-title: "&4Vahvista killan poisto"
+    bedrock-content: "&fKilta: &e{guild}\n&fHaluatko varmasti poistaa tämän killan?\n&cTämä toiminto poistaa killan pysyvästi!\n&cKaikki jäsenet poistetaan!\n&cTätä toimintoa ei voi perua!"
+    bedrock-confirm: "&4Vahvista poisto"
+    bedrock-cancel: "&aPeruuta"
   confirm-leave-guild:
     cancel-button: "&aPeruuta"
     cancel-lore: "&7Peruuta guildista poistuminen"
@@ -887,6 +1167,10 @@ gui:
   # ================================================
   # GuildNameInputGUI (21 keys)
   # ================================================
+    bedrock-title: "&cVahvista killasta poistuminen"
+    bedrock-content: "&fKilta: &e{guild}\n&fHaluatko varmasti poistua tästä killasta?\n&cTätä toimintoa ei voi perua!"
+    bedrock-confirm: "&cVahvista poistuminen"
+    bedrock-cancel: "&aPeruuta"
   guild-name-input:
     cancel-button: "&cPeruuta"
     cancel-lore: "&7Takaisin edelliseen valikkoon"
@@ -913,6 +1197,9 @@ gui:
   # ================================================
   # GuildTagInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Muuta killan nimeä"
+    bedrock-input-label: "&fSyötä uusi killan nimi"
+    bedrock-input-placeholder: "2-16 merkkiä, värikoodit tuettu"
   guild-tag-input:
     cancel-button: "&cPeruuta"
     cancel-lore: "&7Peruuta muutos"
@@ -924,6 +1211,9 @@ gui:
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
   # ================================================
+    bedrock-title: "&6Muuta killan tunnistetta"
+    bedrock-input-label: "&fSyötä uusi killan tunniste"
+    bedrock-input-placeholder: "Enintään {max} merkkiä"
   guild-description-input:
     cancel-button: "&cPeruuta"
     cancel-lore: "&7Peruuta muutos"
@@ -935,12 +1225,18 @@ gui:
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
+    bedrock-title: "&6Muuta killan kuvausta"
+    bedrock-input-label: "&fSyötä uusi killan kuvaus"
+    bedrock-input-placeholder: "Enintään {max} merkkiä"
   guild-permissions:
     title: "&6Guildin oikeusasetukset"
 
   # ================================================
   # InviteMemberGUI (4 keys)
   # ================================================
+    bedrock-title: "&6Killan oikeudet"
+    bedrock-content: "&6=== Johtajan oikeudet ===\n&f• Kaikki oikeudet\n&f• Hallitse jäseniä\n&f• Muuta asetuksia\n&f• Poista kilta\n\n&e=== Upseerin oikeudet ===\n&f• Kutsu jäseniä\n&f• Potki jäseniä\n&f• Käsittele hakemuksia\n&f• Aseta kiltakoti\n\n&7=== Jäsenen oikeudet ===\n&f• Näytä killan tiedot\n&f• Teleporttaa kiltakotiin\n&f• Hae liittymistä muihin kiltoihin\n\n&aNykyinen tila: &fKilta {guild} | Oikeusjärjestelmä toimii normaalisti"
+    bedrock-back: "&cTakaisin"
   invite-member:
     back-to-settings: "Takaisin guildin asetuksiin"
     click-invite: "Napsauta kutsuaksesi t\u00e4m\u00e4n pelaajan"
@@ -950,6 +1246,10 @@ gui:
   # ================================================
   # KickMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Kutsu jäseniä"
+    bedrock-title-page: "&6Kutsu jäseniä - Sivu {page}"
+    bedrock-no-players: "&fEi kutsuttavissa olevia paikalla olevia pelaajia"
+    bedrock-player-list: "&fPaikalla olevat pelaajat (Yhteensä {count})"
   kick-member:
     kick.failed: "&cJ\u00e4senen potkaiseminen ep\u00e4onnistui!"
     kick.kicked: "&cSinut potkittiin ulos guildista &e{guild} &c!"
@@ -960,6 +1260,10 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Potki jäsen"
+    bedrock-title-page: "&6Potki jäsen - Sivu {page}"
+    bedrock-no-members: "&fEi potkittavissa olevia jäseniä"
+    bedrock-content: "&fValitse potkittava jäsen"
   promote-member:
     promote.failed: "&cJ\u00e4senen ylent\u00e4minen ep\u00e4onnistui!"
     promote.promoted: "&aSinut ylennettiin upseeriksi guildissa &e{guild} &a!"
@@ -970,9 +1274,17 @@ gui:
   # ================================================
   # DemoteMemberGUI (5 keys)
   # ================================================
+    bedrock-title: "&6Ylennä jäsen"
+    bedrock-title-page: "&6Ylennä jäsen - Sivu {page}"
+    bedrock-no-members: "&fEi ylennettäviä jäseniä"
+    bedrock-content: "&fValitse upseeriksi ylennettävä jäsen"
   demote-member:
     demote.demoted: "&aSinut alennettiin tavalliseksi j\u00e4seneksi guildissa &e{guild} &a!"
     demote.failed: "&cJ\u00e4senen alentaminen ep\u00e4onnistui!"
     demote.success: "&aJ\u00e4sen &e{player} &aalennettiin tavalliseksi j\u00e4seneksi!"
     click-demote: "Napsauta alentaaksesi j\u00e5seneksi"
     title: "&6Alenna j\u00e4sen - Sivu {page}"
+    bedrock-title: "&6Alenna jäsen"
+    bedrock-title-page: "&6Alenna jäsen - Sivu {page}"
+    bedrock-no-members: "&fEi alennettavia upseereita"
+    bedrock-content: "&fValitse jäseneksi alennettava upseeri"

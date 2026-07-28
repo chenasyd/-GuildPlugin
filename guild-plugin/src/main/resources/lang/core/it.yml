@@ -282,9 +282,6 @@ economy.transfer-success: "&aTrasferiti &e{amount} &aalla gilda &e{target} &acon
 economy.transfer-failed: "&cTrasferimento fallito!"
 economy.target-guild-not-found: "&cGilda bersaglio non esistente!"
 economy.cannot-transfer-to-self: "&cNon puoi trasferire alla tua stessa gilda!"
-guild.deposit.insufficient-funds: "&cNon hai abbastanza soldi!"
-guild.withdraw.insufficient-funds: "&cSaldo insufficiente sul conto della gilda!"
-guild.transfer.insufficient-funds: "&cSaldo insufficiente sul conto della gilda!"
 
 # ============ Relations ============
 guild.relation.usage: "&cUtilizzo: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&aRinominato in &e{0} &a(perch\u00e9 &e{1} &a\u00e8 in 
 cloud.download-tip: "&6Suggerimento: &8Scarica prima il vecchio modulo e poi sostituisci il file: &e/guildmodule unload <id> &8-> sostituisci jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&cDownload fallito: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cQuesto comando \u00e8 disponibile solo per i giocatori Bedrock. Sei un giocatore Java."
+bedrock-test.geyser-unavailable: "&cL'API Geyser non \u00e8 disponibile, impossibile inviare il modulo."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Hai cliccato su: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Modulo chiuso"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Inviato con successo:"
+bedrock-test.custom-name: "&7  Nome: &f{value}"
+bedrock-test.custom-desc: "&7  Descrizione: &f{value}"
+bedrock-test.custom-free-join: "&7  Iscrizione libera: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Permetti inviti: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Permetti espulsioni: &f{value}"
+bedrock-test.custom-language: "&7  Lingua: &f{value}"
+bedrock-test.custom-max-members: "&7  Numero massimo di membri: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Modulo chiuso, non salvato"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Hai scelto: &cConferma uscita"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Hai scelto: &aAnnulla"
+bedrock-test.modal-closed: "&7[ModalForm] Dialogo chiuso"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Plugin Gilda &r- &eTest Moduli Bedrock"
+bedrock-test.main-content: "&7Seleziona un tipo di modulo per l'anteprima:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Menu pulsanti"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Modulo di input/impostazioni"
+bedrock-test.main-btn-modal: "&cModalForm &f- Dialogo di conferma"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Menu principale della gilda &r- &7Esempio SimpleForm"
+bedrock-test.simple-content: "&7Benvenuto, &e{player}&7!\n&7Questo \u00e8 un esempio di menu pulsanti SimpleForm."
+bedrock-test.simple-btn-info: "&aInformazioni sulla gilda &f- Visualizza dettagli della gilda"
+bedrock-test.simple-btn-members: "&bGestione membri &f- Gestisci i membri della gilda"
+bedrock-test.simple-btn-settings: "&eImpostazioni della gilda &f- Modifica configurazione della gilda"
+bedrock-test.simple-btn-list: "&6Elenco gilde &f- Sfoglia tutte le gilde"
+bedrock-test.simple-btn-quit: "&cEsci dalla gilda &f- Abbandona la gilda attuale"
+bedrock-test.simple-name-info: "Informazioni sulla gilda"
+bedrock-test.simple-name-members: "Gestione membri"
+bedrock-test.simple-name-settings: "Impostazioni della gilda"
+bedrock-test.simple-name-list: "Elenco gilde"
+bedrock-test.simple-name-quit: "Esci dalla gilda"
+
+# CustomForm
+bedrock-test.custom-title: "&6Impostazioni della gilda &r- &fEsempio CustomForm"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Impostazioni di base \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fNome della gilda"
+bedrock-test.custom-input-name-placeholder: "Inserisci un nuovo nome..."
+bedrock-test.custom-input-name-default: "La mia gilda"
+bedrock-test.custom-input-desc-label: "&fDescrizione della gilda"
+bedrock-test.custom-input-desc-placeholder: "Inserisci una descrizione..."
+bedrock-test.custom-input-desc-default: "Una gilda amichevole"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 Interruttori permessi \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fPermetti iscrizione libera"
+bedrock-test.custom-toggle-allow-invite: "&fPermetti ai membri di invitare"
+bedrock-test.custom-toggle-allow-kick: "&fPermetti ai membri di espellere"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Altro \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fLingua della gilda"
+bedrock-test.custom-slider-max-members: "&fNumero massimo di membri"
+
+# ModalForm
+bedrock-test.modal-title: "&cConferma operazione &r- &fEsempio ModalForm"
+bedrock-test.modal-content: "&7Sei sicuro di voler uscire dalla gilda &eGilda di Test &7?\n\n&cQuesta operazione \u00e8 irreversibile!\n&7Dopo l'uscita, dovrai richiedere nuovamente l'iscrizione."
+bedrock-test.modal-btn-confirm: "&aConferma uscita"
+bedrock-test.modal-btn-cancel: "&cAnnulla"
 
 
 

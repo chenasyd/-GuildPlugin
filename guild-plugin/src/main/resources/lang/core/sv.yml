@@ -282,9 +282,6 @@ economy.transfer-success: "&a\u00d6verf\u00f6rt &e{amount} &atill gillet &e{targ
 economy.transfer-failed: "&c\u00d6verf\u00f6ring misslyckades!"
 economy.target-guild-not-found: "&cM\u00e5lgillet finns inte!"
 economy.cannot-transfer-to-self: "&cKan inte \u00f6verf\u00f6ra till ditt eget gille!"
-guild.deposit.insufficient-funds: "&cDu har inte tillr\u00e4ckligt med pengar!"
-guild.withdraw.insufficient-funds: "&cOtillr\u00e4ckligt saldo p\u00e5 gillekontot!"
-guild.transfer.insufficient-funds: "&cOtillr\u00e4ckligt saldo p\u00e5 gillekontot!"
 
 # ============ Relations ============
 guild.relation.usage: "&cAnv\u00e4ndning: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&aD\u00f6pt om till &e{0} &a(eftersom &e{1} &aanv\u00e4
 cloud.download-tip: "&6Tips: &8Avladda f\u00f6rst den gamla modulen och byt sedan ut filen: &e/guildmodule unload <id> &8-> byt ut jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&cNedladdning misslyckades: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cDetta kommando \u00e4r endast f\u00f6r Bedrock-spelare. Du \u00e4r en Java-spelare."
+bedrock-test.geyser-unavailable: "&cGeyser API \u00e4r inte tillg\u00e4nglig, kan inte skicka formul\u00e4ret."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Du klickade p\u00e5: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Formul\u00e4r st\u00e4ngt"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Skickat med framg\u00e5ng:"
+bedrock-test.custom-name: "&7  Namn: &f{value}"
+bedrock-test.custom-desc: "&7  Beskrivning: &f{value}"
+bedrock-test.custom-free-join: "&7  Gratis medlemskap: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Till\u00e5t inbjudningar: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Till\u00e5t sparkning: &f{value}"
+bedrock-test.custom-language: "&7  Spr\u00e5k: &f{value}"
+bedrock-test.custom-max-members: "&7  Maximalt antal medlemmar: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Formul\u00e4r st\u00e4ngt, inte sparat"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Du valde: &cBekr\u00e4fta uttr\u00e4de"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Du valde: &aAvbryt"
+bedrock-test.modal-closed: "&7[ModalForm] Dialog st\u00e4ngd"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Gille-pluginen &r- &eBedrock Formul\u00e4r Test"
+bedrock-test.main-content: "&7V\u00e4lj en formul\u00e4rtyp f\u00f6r f\u00f6rhandsgranskning:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Knappmeny"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Inmatnings-/inst\u00e4llningsformul\u00e4r"
+bedrock-test.main-btn-modal: "&cModalForm &f- Bekr\u00e4ftelsedialog"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Gille huvudmeny &r- &7SimpleForm exempel"
+bedrock-test.simple-content: "&7V\u00e4lkommen, &e{player}&7!\n&7Detta \u00e4r ett exempel p\u00e5 SimpleForm knappmeny."
+bedrock-test.simple-btn-info: "&aGilleinformation &f- Visa gilledetaljer"
+bedrock-test.simple-btn-members: "&bMedlemshantering &f- Hantera gillemedlemmar"
+bedrock-test.simple-btn-settings: "&eGilleinst\u00e4llningar &f- \u00c4ndra gillekonfiguration"
+bedrock-test.simple-btn-list: "&6Gillelista &f- Bl\u00e4ddra bland alla gillen"
+bedrock-test.simple-btn-quit: "&cL\u00e4mna gillet &f- L\u00e4mna nuvarande gille"
+bedrock-test.simple-name-info: "Gilleinformation"
+bedrock-test.simple-name-members: "Medlemshantering"
+bedrock-test.simple-name-settings: "Gilleinst\u00e4llningar"
+bedrock-test.simple-name-list: "Gillelista"
+bedrock-test.simple-name-quit: "L\u00e4mna gillet"
+
+# CustomForm
+bedrock-test.custom-title: "&6Gilleinst\u00e4llningar &r- &fCustomForm exempel"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Grundinst\u00e4llningar \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fGillenamn"
+bedrock-test.custom-input-name-placeholder: "Ange ett nytt namn..."
+bedrock-test.custom-input-name-default: "Mitt gille"
+bedrock-test.custom-input-desc-label: "&fGillebeskrivning"
+bedrock-test.custom-input-desc-placeholder: "Ange en beskrivning..."
+bedrock-test.custom-input-desc-default: "Ett v\u00e4nligt gille"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 Beh\u00f6righetsv\u00e4xlar \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fTill\u00e5t gratis medlemskap"
+bedrock-test.custom-toggle-allow-invite: "&fTill\u00e5t medlemmar att bjuda in"
+bedrock-test.custom-toggle-allow-kick: "&fTill\u00e5t medlemmar att sparka"
+bedrock-test.custom-label-other: "&7\u2014\u2014 \u00d6vrigt \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fGillespr\u00e5k"
+bedrock-test.custom-slider-max-members: "&fMaximalt antal medlemmar"
+
+# ModalForm
+bedrock-test.modal-title: "&cBekr\u00e4fta \u00e5tg\u00e4rd &r- &fModalForm exempel"
+bedrock-test.modal-content: "&7\u00c4r du s\u00e4ker p\u00e5 att du vill l\u00e4mna gillet &eTestgille &7?\n\n&cDenna \u00e5tg\u00e4rd kan inte \u00e5ngras!\n&7Efter uttr\u00e4de m\u00e5ste du ans\u00f6ka om medlemskap igen."
+bedrock-test.modal-btn-confirm: "&aBekr\u00e4fta uttr\u00e4de"
+bedrock-test.modal-btn-cancel: "&cAvbryt"
 
 
 

@@ -84,6 +84,9 @@ gui:
     member-role.leader: "หัวหน้ากิลด์"
     member-role.member: "สมาชิก"
     member-role.officer: "เจ้าหน้าที่"
+    bedrock-prev-page: "&eหน้าก่อนหน้า"
+    bedrock-next-page: "&eหน้าถัดไป"
+    bedrock-back: "&cกลับ"
 
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
@@ -111,6 +114,14 @@ gui:
     admin-gui-statistics-total-balance: "&eเงินทุนทั้งหมด: &f{balance}"
     admin-gui-statistics-total-guilds: "&eจำนวนกิลด์ทั้งหมด: &f{count}"
     admin-gui-statistics-total-members: "&eจำนวนสมาชิกทั้งหมด: &f{count}"
+    bedrock-title: "&4การจัดการกิลด์"
+    bedrock-content: "&fเลือกฟังก์ชันการจัดการ"
+    bedrock-guild-list: "&eจัดการรายชื่อกิลด์"
+    bedrock-economy: "&eจัดการเศรษฐกิจ"
+    bedrock-relations: "&eจัดการความสัมพันธ์"
+    bedrock-statistics: "&eข้อมูลสถิติ"
+    bedrock-settings: "&eการตั้งค่าระบบ"
+    bedrock-back: "&cกลับ"
 
   # ================================================
   # ApplicationManagementGUI (29 keys)
@@ -140,11 +151,31 @@ gui:
     application-management-pending-applications-lore-1: "&7ดูใบสมัครที่รอการดำเนินการ"
     application-management-pending-applications-name: "&eใบสมัครที่รอดำเนินการ"
     application-management-title: "&6จัดการใบสมัคร"
-    no-history: "&aไม่มีประวัติใบสมัคร"
     no-history.desc: "&7ขณะนี้ไม่มีประวัติใบสมัคร"
     apply.already-applied: "&cคุณได้ยื่นใบสมัครเข้ากิลด์นี้แล้ว!"
     apply.failed: "&cส่งใบสมัครไม่สำเร็จ!"
     apply.success: "&aส่งใบสมัครเรียบร้อยแล้ว!"
+    bedrock-title: "&6จัดการใบสมัคร"
+    bedrock-empty-history: "&fไม่มีประวัติใบสมัคร"
+    bedrock-empty-pending: "&fไม่มีใบสมัครที่รอการดำเนินการ"
+    bedrock-pending-btn: "&eใบสมัครที่รอดำเนินการ"
+    bedrock-history-btn: "&eประวัติใบสมัคร"
+    bedrock-back: "&cกลับ"
+    bedrock-mode-history: "ประวัติใบสมัคร"
+    bedrock-mode-pending: "ใบสมัครที่รอดำเนินการ"
+    bedrock-title-page: "&6จัดการใบสมัคร - {mode} หน้า {page}"
+    bedrock-total: "&fรวม {count} รายการ"
+    bedrock-prev-page: "&eหน้าก่อนหน้า"
+    bedrock-next-page: "&eหน้าถัดไป"
+    bedrock-applicant: "&fผู้สมัคร: {name}"
+    bedrock-status: "&fสถานะ: {status}"
+    bedrock-message: "&fข้อความ: {msg}"
+    bedrock-no-message: "ไม่มี"
+    bedrock-actions-title: "&6ดำเนินการใบสมัคร - {name}"
+    bedrock-actions-content: "&fผู้สมัคร: {name}\n&fข้อความ: {msg}"
+    bedrock-accept: "&aยอมรับใบสมัคร"
+    bedrock-reject: "&cปฏิเสธใบสมัคร"
+    bedrock-back-to-list: "&eกลับสู่รายชื่อ"
 
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
@@ -172,6 +203,7 @@ gui:
     member-management.lore.2: "&7เชิญ เตะ การจัดการสิทธิ์"
     member-management.name: "&eจัดการสมาชิก"
     title: "&6ระบบกิลด์"
+    bedrock-content: "&fเลือกฟังก์ชัน:"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
@@ -288,6 +320,23 @@ gui:
     system-settings-save-lore-1: "&7บันทึกการตั้งค่าทั้งหมดในปัจจุบัน"
     system-settings-save-lore-2: "&7นำไปใช้กับไฟล์การตั้งค่า"
     system-settings-title: "&4การตั้งค่าระบบ"
+    bedrock-title: "&4การตั้งค่าระบบ"
+    bedrock-content: "&fคลิกเพื่อสลับสถานะสวิตช์"
+    bedrock-debug: "&eข้อมูลดีบัก: {status}"
+    bedrock-auto-save: "&eบันทึกอัตโนมัติ: {status}"
+    bedrock-economy: "&eระบบเศรษฐกิจ: {status}"
+    bedrock-relations: "&eระบบความสัมพันธ์: {status}"
+    bedrock-level: "&eระบบระดับ: {status}"
+    bedrock-applications: "&eระบบใบสมัคร: {status}"
+    bedrock-invites: "&eระบบคำเชิญ: {status}"
+    bedrock-guild-home: "&eบ้านกิลด์: {status}"
+    bedrock-on: "&aเปิด"
+    bedrock-off: "&cปิด"
+    bedrock-reload: "&aโหลดการตั้งค่าใหม่"
+    bedrock-database: "&bการบำรุงรักษาฐานข้อมูล"
+    bedrock-backup: "&6สำรองข้อมูล"
+    bedrock-save: "&aบันทึกการตั้งค่า"
+    bedrock-back: "&cกลับ"
 
   # ================================================
   # CreateGuildGUI (36 keys)
@@ -329,6 +378,13 @@ gui:
     create-guild-tag-input-lore-2: "&7ความยาว: สูงสุด 6 ตัวอักษร"
     create-guild-tag-input-lore-3: "&7ไม่บังคับ"
     create-guild-tag-input-name: "&eแท็กกิลด์"
+    bedrock-title: "&6สร้างกิลด์"
+    bedrock-name-label: "&fชื่อกิลด์ (3-20 ตัวอักษร)"
+    bedrock-name-placeholder: "กรอกชื่อกิลด์"
+    bedrock-tag-label: "&fแท็กกิลด์ (สูงสุด 6 ตัวอักษร ไม่บังคับ)"
+    bedrock-tag-placeholder: "กรอกแท็กกิลด์"
+    bedrock-desc-label: "&fคำอธิบายกิลด์ (สูงสุด 100 ตัวอักษร ไม่บังคับ)"
+    bedrock-desc-placeholder: "กรอกคำอธิบายกิลด์"
 
   # ================================================
   # GuildDetailGUI (38 keys)
@@ -372,6 +428,31 @@ gui:
     transfer-self: "&cไม่สามารถโอนย้ายหัวหน้ากิลด์ให้ตัวเองได้"
     transfer-success: "&aโอนย้ายหัวหน้ากิลด์ให้ &e{name} สำเร็จ"
     unfreeze-guild: "ปลดแช่แข็งกิลด์"
+    bedrock-title: "&6รายละเอียดกิลด์ - {guild_name}"
+    bedrock-level: "&fระดับ: &e{level}"
+    bedrock-balance: " &fกองทุน: &a{balance}"
+    bedrock-leader: "&fหัวหน้ากิลด์: &c{leader}"
+    bedrock-members: " &fสมาชิก: &e{current}/{max}"
+    bedrock-status: "&fสถานะ: {status}"
+    bedrock-status-frozen: "&cถูกแช่แข็ง"
+    bedrock-status-normal: "&aปกติ"
+    bedrock-description: "&fคำอธิบาย: &7{description}"
+    bedrock-transfer-hint: "&e>>> โหมดโอน: คลิกสมาชิกเพื่อโอนความเป็นหัวหน้า <<<"
+    bedrock-no-tag: "ไม่มี"
+    bedrock-unfreeze: "&aยกเลิกการแช่แข็งกิลด์"
+    bedrock-freeze: "&cแช่แข็งกิลด์"
+    bedrock-delete: "&4ลบกิลด์"
+    bedrock-cancel-transfer: "&eยกเลิกโหมดโอน"
+    bedrock-transfer: "&cโอนความเป็นหัวหน้า"
+    bedrock-prev-page: "&eหน้าก่อนหน้า"
+    bedrock-next-page: "&eหน้าถัดไป"
+    bedrock-back: "&cกลับ"
+    bedrock-transfer-self: "&cไม่สามารถโอนความเป็นหัวหน้าให้ตัวเองได้"
+    bedrock-transfer-success: "&aโอนความเป็นหัวหน้าให้ &e{name} &aสำเร็จ"
+    bedrock-transfer-failed: "&cโอนความเป็นหัวหน้าไม่สำเร็จ!"
+    bedrock-operation-failed: "&cดำเนินการไม่สำเร็จ!"
+    bedrock-transfer-mode-active: "&eคลิกสมาชิกเพื่อโอนความเป็นหัวหน้า"
+    bedrock-transfer-mode-cancelled: "&7ยกเลิกการโอนความเป็นหัวหน้าแล้ว"
 
   # ================================================
   # GuildInfoGUI (21 keys)
@@ -398,6 +479,10 @@ gui:
     status-normal: "ปกติ"
     tag: "แท็ก"
     title: "&6ข้อมูลกิลด์"
+    bedrock-title: "&6ข้อมูลกิลด์"
+    bedrock-guild-funds: "&aกองทุนกิลด์"
+    bedrock-back-to-main: "&cกลับสู่เมนูหลัก"
+    bedrock-status-label: "สถานะ"
 
   # ================================================
   # GuildListManagementGUI (2 keys)
@@ -405,6 +490,24 @@ gui:
   guild-list-management:
     guild-list-management-title: "&4จัดการรายชื่อกิลด์"
     gui-refresh: "&aรีเฟรชรายชื่อ"
+    bedrock-title: "&4จัดการรายชื่อกิลด์"
+    bedrock-page-info: "&fหน้า {page}/{total} | รวม {count} กิลด์"
+    bedrock-refresh: "&aรีเฟรชรายชื่อ"
+    bedrock-prev-page: "&eหน้าก่อนหน้า"
+    bedrock-next-page: "&eหน้าถัดไป"
+    bedrock-back: "&cกลับ"
+    bedrock-status-frozen: "&cถูกแช่แข็ง"
+    bedrock-status-normal: "&aปกติ"
+    bedrock-actions-title: "&6การกระทำกิลด์ - {guild_name}"
+    bedrock-leader: "&fหัวหน้ากิลด์: &e{leader}"
+    bedrock-level: "&fระดับ: &e{level}"
+    bedrock-balance: "&fกองทุน: &a{balance}"
+    bedrock-status: "&fสถานะ: {status}"
+    bedrock-view-detail: "&eดูรายละเอียด"
+    bedrock-delete: "&cลบกิลด์"
+    bedrock-unfreeze: "&aยกเลิกการแช่แข็งกิลด์"
+    bedrock-freeze: "&cแช่แข็งกิลด์"
+    bedrock-back-list: "&cกลับสู่รายชื่อ"
 
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
@@ -449,6 +552,22 @@ gui:
     guild-list-search-lore-2: "&7คลิกขวา: ล้างการค้นหา"
     guild-list-search-name: "&eค้นหากิลด์"
     guild-list-title: "&6รายชื่อกิลด์"
+    bedrock-title: "&6รายชื่อกิลด์"
+    bedrock-no-guilds: "&cยังไม่มีกิลด์ในเซิร์เฟอร์"
+    bedrock-no-results: "&cไม่พบกิลด์ที่ตรงกัน"
+    bedrock-search: "&eค้นหากิลด์"
+    bedrock-back-main: "&cกลับสู่เมนูหลัก"
+    bedrock-page-info: "&fหน้า {page}/{total}"
+    bedrock-search-info: "&fค้นหา: &e{query}"
+    bedrock-prev-page: "&aหน้าก่อนหน้า"
+    bedrock-next-page: "&aหน้าถัดไป"
+    bedrock-search-title: "&6ค้นหากิลด์"
+    bedrock-search-input: "&fกรอกคำค้นหา"
+    bedrock-search-placeholder: "ว่างเพื่อดูทั้งหมด"
+    bedrock-select-action: "&fเลือกการกระทำ:"
+    bedrock-view-detail: "&eดูรายละเอียด"
+    bedrock-apply-join: "&aสมัครเข้าร่วม"
+    bedrock-back-list: "&cกลับสู่รายชื่อ"
 
   # ================================================
   # GuildFilterGUI (19 keys)
@@ -473,6 +592,35 @@ gui:
     sort.lore-full: "เต็มเท่านั้น"
     sort.name: "&eเรียงตามจำนวนคน"
     title: "&6ตัวกรองกิลด์"
+    bedrock-title: "&6กรองกิลด์"
+    bedrock-no-guilds: "&fยังไม่มีกิลด์ในเซิร์เฟอร์"
+    bedrock-back: "&cกลับ"
+    bedrock-no-results: "&fไม่มีกิลด์ที่ตรงกับตัวกรอง"
+    bedrock-filter-info: "&fระดับ: {min}-{max} | เรียง: {sort}"
+    bedrock-adjust-filter: "&eปรับตัวกรอง"
+    bedrock-sort-desc: "สมาชิกมากไปน้อย"
+    bedrock-sort-asc: "สมาชิกน้อยไปมาก"
+    bedrock-sort-full: "เต็มเท่านั้น"
+    bedrock-title-page: "&6กรองกิลด์ - หน้า {page}"
+    bedrock-total-results: "&fรวม {count} ผลลัพธ์"
+    bedrock-prev-page: "&eหน้าก่อนหน้า"
+    bedrock-next-page: "&eหน้าถัดไป"
+    bedrock-settings-title: "&6การตั้งค่าตัวกรอง"
+    bedrock-min-level: "&fระดับต่ำสุด: {level}"
+    bedrock-max-level: "&fระดับสูงสุด: {level}"
+    bedrock-sort: "&fเรียง: {sort}"
+    bedrock-min-level-up: "&aระดับต่ำสุด +1"
+    bedrock-min-level-down: "&cระดับต่ำสุด -1"
+    bedrock-max-level-up: "&aระดับสูงสุด +1"
+    bedrock-max-level-down: "&cระดับสูงสุด -1"
+    bedrock-switch-sort: "&eสลับโหมดเรียง"
+    bedrock-back-results: "&eกลับสู่ผลลัพธ์"
+    bedrock-actions-title: "&6การกระทำกิลด์ - {guild_name}"
+    bedrock-level: "&fระดับ: {level}"
+    bedrock-leader: "&fหัวหน้ากิลด์: {leader}"
+    bedrock-view-detail: "&eดูรายละเอียด"
+    bedrock-apply-join: "&aสมัครเข้าร่วม"
+    bedrock-back-filter: "&eกลับสู่ตัวกรอง"
 
   # ================================================
   # GuildSettingsGUI (42 keys)
@@ -520,6 +668,13 @@ gui:
     home.success: "&aเคลื่อนย้ายไปยังบ้านกิลด์แล้ว!"
     sethome.failed: "&cตั้งค่าบ้านกิลด์ไม่สำเร็จ!"
     sethome.success: "&aตั้งค่าบ้านกิลด์สำเร็จ!"
+    bedrock-content: "&6ภาพรวมกิลด์\n&fชื่อ: &e{guild_name}\n&fแท็ก: &e{guild_tag}\n&fคำอธิบาย: {guild_desc}\n&fบ้านกิลด์: {home_status}"
+    bedrock-change-name: "&eเปลี่ยนชื่อ"
+    bedrock-change-description: "&eเปลี่ยนคำอธิบาย"
+    bedrock-change-tag: "&eเปลี่ยนแท็ก"
+    bedrock-kick-member: "&cเตะสมาชิก"
+    bedrock-promote-demote: "&eเลื่อน/ลดตำแหน่ง"
+    bedrock-back-to-main: "&fกลับสู่เมนูหลัก"
 
   # ================================================
   # GuildFundsGUI (23 keys)
@@ -548,6 +703,15 @@ gui:
     total-deposit: "ยอดฝากทั้งหมด"
     total-pages: "&7จำนวนหน้าทั้งหมด: {total}"
     total-players: "&7จำนวนคน: {count}"
+    bedrock-title: "&6กองทุนกิลด์ - {guild}"
+    bedrock-no-data: "&cไม่มีบันทึกการบริจาค"
+    bedrock-back: "&cกลับ"
+    bedrock-page-info: "&fหน้า {page}/{total}\n&fรวมผู้เล่น: {count}"
+    bedrock-online: "&aออนไลน์"
+    bedrock-offline: "&fออฟไลน์"
+    bedrock-prev-page: "&aหน้าก่อนหน้า"
+    bedrock-next-page: "&aหน้าถัดไป"
+    bedrock-refresh: "&aรีเฟรช"
 
   # ================================================
   # EconomyManagementGUI (23 keys)
@@ -576,6 +740,23 @@ gui:
     set-balance-dev: "&eฟังก์ชันตั้งค่าเงินทุนกำลังอยู่ในระหว่างการพัฒนา..."
     set-prompt: "&eกรุณาป้อนจำนวนเงินที่จะตั้งค่า (ป้อนตัวเลขในช่องแชท ป้อน cancel เพื่อยกเลิก):"
     economy-management-title: "&eจัดการเศรษฐกิจ"
+    bedrock-title: "&eจัดการเศรษฐกิจ"
+    bedrock-page-info: "&fหน้า {current}/{total} | รวม {count} กิลด์"
+    bedrock-refresh: "&aรีเฟรชรายชื่อ"
+    bedrock-prev-page: "&eหน้าก่อนหน้า"
+    bedrock-next-page: "&eหน้าถัดไป"
+    bedrock-back: "&cกลับ"
+    bedrock-actions-title: "&eจัดการเศรษฐกิจ - {guild}"
+    bedrock-actions-content: "&fกองทุนปัจจุบัน: &a{balance}\n&fหัวหน้ากิลด์: &e{leader}\n&fระดับ: &e{level}"
+    bedrock-set-funds: "&eตั้งค่ากองทุน"
+    bedrock-add-funds: "&aเพิ่มกองทุน"
+    bedrock-clear-funds: "&cลบกองทุน"
+    bedrock-back-to-list: "&cกลับสู่รายชื่อ"
+    bedrock-set-title: "&eตั้งค่ากองทุน"
+    bedrock-add-title: "&aเพิ่มกองทุน"
+    bedrock-input-label: "&fกรอกจำนวน"
+    bedrock-invalid-amount: "&cจำนวนต้องมากกว่า 0!"
+    bedrock-invalid-number: "&cเลขไม่ถูกต้อง!"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -606,6 +787,14 @@ gui:
     funds.change.set-contrib-increase: "{player} ตั้งค่าเงินทุนเป็น {new} (+{diff})"
     funds.change.set-log-decrease: "{player} ตั้งค่าเงินทุนของ {guild} เป็น {new}"
     funds.change.set-log-increase: "{player} ตั้งค่าเงินทุนของ {guild} เป็น {new}"
+    bedrock-title: "&6ยืนยันการเปลี่ยนแปลงกองทุน"
+    bedrock-guild: "&fกิลด์: &e{guild_name}"
+    bedrock-operation: "&fการดำเนินการ: {operation}"
+    bedrock-current-balance: "&fกองทุนปัจจุบัน: &6{balance}"
+    bedrock-amount: "&fจำนวน: &f{amount}"
+    bedrock-new-balance: "&fกองทุนใหม่: &a{balance}"
+    bedrock-confirm: "&aยืนยันการเปลี่ยนแปลง"
+    bedrock-cancel: "&cยกเลิก"
 
   # ================================================
   # GuildRelationsGUI (49 keys)
@@ -660,6 +849,24 @@ gui:
     relations.type-selected: "&aเลือกประเภทความสัมพันธ์: {type} แล้ว"
     relations.type-truce.description: "ข้อตกลงพักรบ สันติภาพชั่วคราว"
     relations.type-war.description: "สถานะสงคราม สงครามเต็มรูปแบบ"
+    bedrock-title: "&6ความสัมพันธ์กิลด์"
+    bedrock-title-page: "&6ความสัมพันธ์กิลด์ - หน้า {page}"
+    bedrock-empty: "&fปัจจุบันไม่มีความสัมพันธ์กิลด์"
+    bedrock-total: "&fรวม {count} ความสัมพันธ์"
+    bedrock-create-relation: "&aสร้างความสัมพันธ์"
+    bedrock-prev-page: "&eหน้าก่อนหน้า"
+    bedrock-next-page: "&eหน้าถัดไป"
+    bedrock-back: "&cกลับ"
+    bedrock-actions-title: "&6การกระทำความสัมพันธ์ - {guild}"
+    bedrock-actions-content: "&fประเภท: {type}\n&fสถานะ: {status}"
+    bedrock-cancel-relation: "&cยกเลิกความสัมพันธ์"
+    bedrock-accept-relation: "&aยอมรับความสัมพันธ์"
+    bedrock-reject-relation: "&cปฏิเสธความสัมพันธ์"
+    bedrock-end-truce: "&eสิ้นสุดการยุดยิง"
+    bedrock-propose-truce: "&eเสนอการยุดยิง"
+    bedrock-delete-relation: "&cลบความสัมพันธ์"
+    bedrock-back-to-list: "&eกลับสู่รายชื่อ"
+    bedrock-truce-ended: "&aการยุดยิงกับ {guild} สิ้นสุดแล้ว!"
 
   # ================================================
   # CreateRelationGUI (6 keys)
@@ -671,6 +878,22 @@ gui:
     confirm-lore-2: "&7ต้องเลือกประเภทความสัมพันธ์และกิลด์เป้าหมายก่อน"
     current-selection: "&eการเลือกปัจจุบัน"
     title: "&6สร้างความสัมพันธ์กิลด์"
+    bedrock-type-title: "&6สร้างความสัมพันธ์ - เลือกประเภท"
+    bedrock-type-content: "&fกรุณาเลือกประเภทความสัมพันธ์:"
+    bedrock-back: "&cกลับ"
+    bedrock-target-title: "&6สร้างความสัมพันธ์ - เลือกเป้าหมาย"
+    bedrock-target-empty: "&fไม่มีกิลด์เป้าหมายที่พร้อม"
+    bedrock-target-title-page: "&6สร้างความสัมพันธ์ - เลือกเป้าหมาย หน้า {page}"
+    bedrock-target-content: "&fประเภท: {type}\n&fเลือกกิลด์เป้าหมาย:"
+    bedrock-prev-page: "&eหน้าก่อนหน้า"
+    bedrock-next-page: "&eหน้าถัดไป"
+    bedrock-confirm-title: "&6ยืนยันการสร้างความสัมพันธ์"
+    bedrock-confirm-content: "&fประเภท: {type}\n&fเป้าหมาย: {target}"
+    bedrock-confirm-create: "&aยืนยันการสร้าง"
+    bedrock-cancel: "&cยกเลิก"
+    bedrock-already-exists: "&cความสัมพันธ์กับ {guild} มีอยู่แล้ว!"
+    bedrock-create-success: "&aส่งคำขอความสัมพันธ์ {type} ไปยัง {guild} แล้ว!"
+    bedrock-create-failed: "&cสร้างความสัมพันธ์ไม่สำเร็จ!"
 
   # ================================================
   # RelationManagementGUI (40 keys)
@@ -716,6 +939,25 @@ gui:
     relation-management-back-desc: "กลับสู่เมนูผู้ดูแลระบบ"
     relation-management-refresh-desc: "โหลดข้อมูลความสัมพันธ์ใหม่"
     relation-management-title: "&4จัดการความสัมพันธ์ - ผู้ดูแลระบบ"
+    bedrock-title: "&4จัดการความสัมพันธ์"
+    bedrock-empty: "&cไม่มีข้อมูลความสัมพันธ์"
+    bedrock-back: "&cกลับ"
+    bedrock-page-info: "&fหน้า {current}/{total} | รวม {count} ความสัมพันธ์"
+    bedrock-refresh: "&aรีเฟรชรายชื่อ"
+    bedrock-prev-page: "&eหน้าก่อนหน้า"
+    bedrock-next-page: "&eหน้าถัดไป"
+    bedrock-actions-title: "&6การกระทำความสัมพันธ์"
+    bedrock-actions-content: "&f{guild1} ↔ {guild2}\n&fประเภท: {type}\n&fสถานะ: {status}\n&fผู้เริ่ม: {initiator}"
+    bedrock-delete-relation: "&cลบความสัมพันธ์"
+    bedrock-view-details: "&eดูรายละเอียด"
+    bedrock-back-to-list: "&cกลับสู่รายชื่อ"
+    bedrock-confirm-title: "&cยืนยันการลบ"
+    bedrock-confirm-content: "&fคุณแน่ใจหรือไม่ที่จะลบความสัมพันธ์:\n&e{guild1} ↔ {guild2}&f?"
+    bedrock-confirm-delete: "&cยืนยันการลบ"
+    bedrock-cancel: "&fยกเลิก"
+    bedrock-delete-success: "&aลบความสัมพันธ์แล้ว: {guild1} ↔ {guild2}"
+    bedrock-delete-failed: "&cลบความสัมพันธ์ไม่สำเร็จ!"
+    bedrock-no-permission: "&cคุณไม่มีสิทธิ์ผู้ดูแลระบบ!"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -743,6 +985,13 @@ gui:
     total-records: "จำนวนบันทึกทั้งหมด: {count}"
     type: "ประเภท"
     wait-for-logs: "กรุณารอให้มีกิจกรรมในกิลด์เพื่อสร้างบันทึก"
+    bedrock-title: "&6บันทึกกิลด์ - {guild}"
+    bedrock-no-data: "&cไม่มีบันทึก"
+    bedrock-back: "&cกลับ"
+    bedrock-page-info: "&fหน้า {page}/{total}\n&fรวมบันทึก: {count}"
+    bedrock-prev-page: "&aหน้าก่อนหน้า"
+    bedrock-next-page: "&aหน้าถัดไป"
+    bedrock-refresh: "&aรีเฟรช"
 
   # ================================================
   # MemberManagementGUI (81 keys)
@@ -829,6 +1078,31 @@ gui:
     member-mgmt.role.leader-perms: "สิทธิ์ทั้งหมด"
     member-mgmt.role.member-perms: "สิทธิ์พื้นฐาน"
     member-mgmt.role.officer-perms: "เชิญ, เตะ"
+    bedrock-title: "&6จัดการสมาชิก"
+    bedrock-title-page: "&6จัดการสมาชิก - หน้า {page}"
+    bedrock-no-members: "&fยังไม่มีสมาชิกในกิลด์"
+    bedrock-member-list: "&fรายชื่อสมาชิก (รวม {count})"
+    bedrock-invite: "&aเชิญสมาชิก"
+    bedrock-actions-title: "&6การกระทำสมาชิก - {member}"
+    bedrock-role-label: "&fบทบาท: {role}"
+    bedrock-role-leader: "&cหัวหน้ากิลด์"
+    bedrock-role-officer: "&6เจ้าหน้าที่"
+    bedrock-role-member: "&fสมาชิก"
+    bedrock-view-details: "&eดูรายละเอียด"
+    bedrock-kick: "&cเตะสมาชิก"
+    bedrock-promote-demote: "&6เลื่อน/ลดตำแหน่ง"
+    bedrock-back-to-list: "&cกลับสู่รายชื่อ"
+    member-details.bedrock-title: "&6รายละเอียดสมาชิก - {member}"
+    member-details.bedrock-player: "&fผู้เล่น: {name}"
+    member-details.bedrock-role: "&fบทบาท: {role}"
+    member-details.bedrock-join-time: "&fเวลาเข้าร่วม: {time}"
+    member-details.bedrock-online: "&fออนไลน์: {status}"
+    member-details.bedrock-online-yes: "&aใช่"
+    member-details.bedrock-online-no: "&cไม่ใช่"
+    member-details.bedrock-kick: "&cเตะสมาชิก"
+    member-details.bedrock-promote-demote: "&6เลื่อน/ลดตำแหน่ง"
+    member-details.bedrock-send-message: "&eส่งข้อความ"
+    member-details.bedrock-back: "&cกลับ"
 
   # ================================================
   # MemberGuildGUI (13 keys)
@@ -847,6 +1121,8 @@ gui:
     no-name: "ไม่มีชื่อ"
     no-tag: "ไม่มีแท็ก"
     title: "&6กิลด์ของฉัน"
+    bedrock-title: "&6กิลด์ของฉัน - {guild_name}"
+    bedrock-content: "&6ข้อมูลกิลด์\n&fชื่อ: &e{guild_name}\n&fแท็ก: &e{guild_tag}\n&fบ้านกิลด์: {home_status}"
 
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
@@ -866,6 +1142,10 @@ gui:
     confirm-delete-guild-title: "&4ยืนยันการลบกิลด์"
     delete.failed: "&cลบกิลด์ไม่สำเร็จ!"
     delete.success: "&aกิลด์ {guild} ถูกลบแล้ว!"
+    bedrock-title: "&4ยืนยันการลบกิลด์"
+    bedrock-content: "&fกิลด์: &e{guild}\n&fคุณแน่ใจหรือไม่ที่จะลบกิลด์นี้?\n&cการกระทำนี้จะลบกิลด์อย่างถาวร!\n&cสมาชิกทั้งหมดจะถูกลบ!\n&cการกระทำนี้ไม่สามารถย้อนกลับได้!"
+    bedrock-confirm: "&4ยืนยันการลบ"
+    bedrock-cancel: "&aยกเลิก"
 
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
@@ -883,6 +1163,10 @@ gui:
     leave.failed: "&cออกจากกิลด์ไม่สำเร็จ!"
     leave.leader-cannot-leave: "&cหัวหน้ากิลด์ไม่สามารถออกจากกิลด์ได้!"
     leave.success: "&aคุณออกจากกิลด์สำเร็จ: {guild}"
+    bedrock-title: "&cยืนยันการออกจากกิลด์"
+    bedrock-content: "&fกิลด์: &e{guild}\n&fคุณแน่ใจหรือไม่ที่จะออกจากกิลด์นี้?\n&cการกระทำนี้ไม่สามารถย้อนกลับได้!"
+    bedrock-confirm: "&cยืนยันการออก"
+    bedrock-cancel: "&aยกเลิก"
 
   # ================================================
   # GuildNameInputGUI (21 keys)
@@ -909,6 +1193,9 @@ gui:
     success: "&aแก้ไขชื่อกิลด์สำเร็จ!"
     success-new-name: "&7ชื่อใหม่: &f{new_name}"
     title: "&6แก้ไขชื่อกิลด์"
+    bedrock-title: "&6แก้ไขชื่อกิลด์"
+    bedrock-input-label: "&fกรอกชื่อกิลด์ใหม่"
+    bedrock-input-placeholder: "2-16 ตัวอักษร รองรับรหัสสี"
 
   # ================================================
   # GuildTagInputGUI (6 keys)
@@ -920,6 +1207,9 @@ gui:
     confirm-lore: "&7ยืนยันการแก้ไขแท็กกิลด์"
     current-tag: "&eแท็กปัจจุบัน"
     title: "&6แก้ไขแท็กกิลด์"
+    bedrock-title: "&6แก้ไขแท็กกิลด์"
+    bedrock-input-label: "&fกรอกแท็กกิลด์ใหม่"
+    bedrock-input-placeholder: "สูงสุด {max} ตัวอักษร"
 
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
@@ -931,12 +1221,18 @@ gui:
     confirm-lore: "&7ยืนยันการแก้ไขคำอธิบายกิลด์"
     current-description: "&eคำอธิบายปัจจุบัน"
     title: "&6แก้ไขคำอธิบายกิลด์"
+    bedrock-title: "&6แก้ไขคำอธิบายกิลด์"
+    bedrock-input-label: "&fกรอกคำอธิบายกิลด์ใหม่"
+    bedrock-input-placeholder: "สูงสุด {max} ตัวอักษร"
 
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
   guild-permissions:
     title: "&6การตั้งค่าสิทธิ์กิลด์"
+    bedrock-title: "&6การตั้งค่าสิทธิ์กิลด์"
+    bedrock-content: "&6=== สิทธิ์หัวหน้ากิลด์ ===\n&f• สิทธิ์ทั้งหมด\n&f• จัดการสมาชิก\n&f• แก้ไขการตั้งค่า\n&f• ลบกิลด์\n\n&e=== สิทธิ์เจ้าหน้าที่ ===\n&f• เชิญสมาชิก\n&f• เตะสมาชิก\n&f• ดำเนินการใบสมัคร\n&f• ตั้งค่าบ้านกิลด์\n\n&7=== สิทธิ์สมาชิก ===\n&f• ดูข้อมูลกิลด์\n&f• วาร์ปไปบ้านกิลด์\n&f• สมัครเข้าร่วมกิลด์อื่น\n\n&aสถานะปัจจุบัน: &fกิลด์ {guild} | ระบบสิทธิ์ทำงานปกติ"
+    bedrock-back: "&cกลับ"
 
   # ================================================
   # InviteMemberGUI (4 keys)
@@ -946,6 +1242,10 @@ gui:
     click-invite: "คลิกเพื่อเชิญผู้เล่นคนนี้"
     join-guild: "เข้าร่วมกิลด์"
     title: "&6เชิญสมาชิก - {guild} - หน้า {page}"
+    bedrock-title: "&6เชิญสมาชิก"
+    bedrock-title-page: "&6เชิญสมาชิก - หน้า {page}"
+    bedrock-no-players: "&fไม่มีผู้เล่นออนไลน์ที่สามารถเชิญได้"
+    bedrock-player-list: "&fผู้เล่นออนไลน์ (รวม {count})"
 
   # ================================================
   # KickMemberGUI (5 keys)
@@ -956,6 +1256,10 @@ gui:
     kick.success: "&aเตะสมาชิก &e{player} &aออกแล้ว!"
     click-kick: "คลิกเพื่อเตะสมาชิกคนนี้"
     title: "&6เตะสมาชิก - หน้า {page}"
+    bedrock-title: "&6เตะสมาชิก"
+    bedrock-title-page: "&6เตะสมาชิก - หน้า {page}"
+    bedrock-no-members: "&fไม่มีสมาชิกที่สามารถเตะได้"
+    bedrock-content: "&fเลือกสมาชิกที่จะเตะ"
 
   # ================================================
   # PromoteMemberGUI (5 keys)
@@ -966,6 +1270,10 @@ gui:
     promote.success: "&aเลื่อนขั้น &e{player} &aเป็นเจ้าหน้าที่แล้ว!"
     click-promote: "คลิกเพื่อเลื่อนขั้นเป็นเจ้าหน้าที่"
     title: "&6เลื่อนขั้นสมาชิก - หน้า {page}"
+    bedrock-title: "&6เลื่อนตำแหน่งสมาชิก"
+    bedrock-title-page: "&6เลื่อนตำแหน่งสมาชิก - หน้า {page}"
+    bedrock-no-members: "&fไม่มีสมาชิกที่สามารถเลื่อนตำแหน่งได้"
+    bedrock-content: "&fเลือกสมาชิกที่จะเลื่อนเป็นเจ้าหน้าที่"
 
   # ================================================
   # DemoteMemberGUI (5 keys)
@@ -976,3 +1284,7 @@ gui:
     demote.success: "&aลดขั้น &e{player} &aเป็นสมาชิกธรรมดาแล้ว!"
     click-demote: "คลิกเพื่อลดขั้นเป็นสมาชิก"
     title: "&6ลดขั้นสมาชิก - หน้า {page}"
+    bedrock-title: "&6ลดตำแหน่งสมาชิก"
+    bedrock-title-page: "&6ลดตำแหน่งสมาชิก - หน้า {page}"
+    bedrock-no-members: "&fไม่มีเจ้าหน้าที่ที่สามารถลดตำแหน่งได้"
+    bedrock-content: "&fเลือกเจ้าหน้าที่ที่จะลดตำแหน่งเป็นสมาชิก"

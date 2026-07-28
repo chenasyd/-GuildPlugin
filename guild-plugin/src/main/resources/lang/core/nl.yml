@@ -282,9 +282,6 @@ economy.transfer-success: "&aSuccesvol &e{amount} &a overgemaakt naar gilde &e{t
 economy.transfer-failed: "&cOvermaken mislukt!"
 economy.target-guild-not-found: "&cDoelgilde bestaat niet!"
 economy.cannot-transfer-to-self: "&cJe kunt niet naar je eigen gilde overmaken!"
-guild.deposit.insufficient-funds: "&cJe hebt niet genoeg geld!"
-guild.withdraw.insufficient-funds: "&cOnvoldoende saldo op de gilderekening!"
-guild.transfer.insufficient-funds: "&cOnvoldoende saldo op de gilderekening!"
 
 # ============ Relations ============
 guild.relation.usage: "&cGebruik: /guild relation <list|create|delete|accept|reject>"
@@ -681,7 +678,68 @@ cloud.download-renamed: "&aHernoemd naar &e{0} &a(omdat &e{1} &ain gebruik is)."
 cloud.download-tip: "&6Tip: &8Ontlaad eerst de oude module en vervang dan het bestand: &e/guildmodule unload <id> &8-> vervang jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&cDownload mislukt: {0}"
 
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cDit commando is alleen beschikbaar voor Bedrock-spelers. Je bent een Java-speler."
+bedrock-test.geyser-unavailable: "&cGeyser API is niet beschikbaar, kan formulier niet verzenden."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Je klikte op: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Formulier gesloten"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Succesvol verzonden:"
+bedrock-test.custom-name: "&7  Naam: &f{value}"
+bedrock-test.custom-desc: "&7  Beschrijving: &f{value}"
+bedrock-test.custom-free-join: "&7  Vrij lidmaatschap: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Uitnodigingen toestaan: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Schoppen toestaan: &f{value}"
+bedrock-test.custom-language: "&7  Taal: &f{value}"
+bedrock-test.custom-max-members: "&7  Maximale leden: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Formulier gesloten, niet opgeslagen"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Je koos: &cBevestig vertrek"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Je koos: &aAnnuleer"
+bedrock-test.modal-closed: "&7[ModalForm] Dialoog gesloten"
 
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Gilde Plugin &r- &eBedrock Formulier Test"
+bedrock-test.main-content: "&7Selecteer een formulierte type voor preview:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Knopmenu"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Invoer/instellingen formulier"
+bedrock-test.main-btn-modal: "&cModalForm &f- Bevestigingsdialoog"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Gilde hoofdmenu &r- &7SimpleForm voorbeeld"
+bedrock-test.simple-content: "&7Welkom, &e{player}&7!\n&7Dit is een voorbeeld van een SimpleForm knopmenu."
+bedrock-test.simple-btn-info: "&aGilde informatie &f- Bekijk gildedetails"
+bedrock-test.simple-btn-members: "&bLedenbeheer &f- Beheer gildeleden"
+bedrock-test.simple-btn-settings: "&eGilde instellingen &f- Wijzig gildeconfiguratie"
+bedrock-test.simple-btn-list: "&6Gilde lijst &f- Blader door alle gildes"
+bedrock-test.simple-btn-quit: "&cVerlaat gilde &f- Verlaat huidige gilde"
+bedrock-test.simple-name-info: "Gilde informatie"
+bedrock-test.simple-name-members: "Ledenbeheer"
+bedrock-test.simple-name-settings: "Gilde instellingen"
+bedrock-test.simple-name-list: "Gilde lijst"
+bedrock-test.simple-name-quit: "Verlaat gilde"
+
+# CustomForm
+bedrock-test.custom-title: "&6Gilde instellingen &r- &fCustomForm voorbeeld"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Basisinstellingen \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fGilde naam"
+bedrock-test.custom-input-name-placeholder: "Voer een nieuwe naam in..."
+bedrock-test.custom-input-name-default: "Mijn gilde"
+bedrock-test.custom-input-desc-label: "&fGilde beschrijving"
+bedrock-test.custom-input-desc-placeholder: "Voer een beschrijving in..."
+bedrock-test.custom-input-desc-default: "Een vriendelijke gilde"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 Machtigingsschakelaars \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fVrij lidmaatschap toestaan"
+bedrock-test.custom-toggle-allow-invite: "&fLeden uitnodigen toestaan"
+bedrock-test.custom-toggle-allow-kick: "&fLeden schoppen toestaan"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Overig \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fGilde taal"
+bedrock-test.custom-slider-max-members: "&fMaximale leden"
+
+# ModalForm
+bedrock-test.modal-title: "&cBevestig actie &r- &fModalForm voorbeeld"
+bedrock-test.modal-content: "&7Weet je zeker dat je de gilde &eTestgilde &7 wilt verlaten?\n\n&cDeze actie kan niet ongedaan worden gemaakt!\n&7Na vertrek moet je opnieuw een aanvraag indienen om lid te worden."
+bedrock-test.modal-btn-confirm: "&aBevestig vertrek"
+bedrock-test.modal-btn-cancel: "&cAnnuleer"
 
 
 

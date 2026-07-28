@@ -282,9 +282,6 @@ economy.transfer-success: "&a{amount} au fost transferate cu succes c\u0103tre b
 economy.transfer-failed: "&cTransferul a e\u0219uat!"
 economy.target-guild-not-found: "&cBreasla \u021bint\u0103 nu exist\u0103!"
 economy.cannot-transfer-to-self: "&cNu pute\u021bi transfera fonduri propriei bresle!"
-guild.deposit.insufficient-funds: "&cSoldul dumneavoastr\u0103 este insuficient!"
-guild.withdraw.insufficient-funds: "&cSoldul contului breslei este insuficient!"
-guild.transfer.insufficient-funds: "&cSoldul contului breslei este insuficient!"
 
 # ============ Relations ============
 guild.relation.usage: "&cUtilizare: /guild relation <list|create|delete|accept|reject>"
@@ -680,3 +677,66 @@ cloud.download-complete: "&a{0} desc\u0103rcat. Folosi\u021bi &e/guildmodule loa
 cloud.download-renamed: "&aRedenumit la &e{0} &a(pentru c\u0103 &e{1} &aeste \u00een uz)."
 cloud.download-tip: "&6Sfat: &7Desc\u0103rca\u021bi mai \u00eent\u00e2i modulul vechi, apoi \u00eenlocui\u021bi fi\u0219ierul: &e/guildmodule unload <id> &7-> \u00eenlocui\u021bi jar -> &e/guildmodule load {0}"
 cloud.download-failed: "&cDesc\u0103rcarea a e\u0219uat: {0}"
+
+# ============ 基岩版表单测试指令 ============
+bedrock-test.bedrock-only: "&cAceast\u0103 comand\u0103 este disponibil\u0103 doar pentru juc\u0103torii Bedrock. E\u0219ti un juc\u0103tor Java."
+bedrock-test.geyser-unavailable: "&cAPI-ul Geyser nu este disponibil, nu se poate trimite formularul."
+bedrock-test.simple-clicked: "&a[SimpleForm] &7Ai dat click pe: &f{name} &7(buttonId={id})"
+bedrock-test.simple-closed: "&7[SimpleForm] Formular \u00eenchis"
+bedrock-test.custom-submit-success: "&a[CustomForm] &7Trimis cu succes:"
+bedrock-test.custom-name: "&7  Nume: &f{value}"
+bedrock-test.custom-desc: "&7  Descriere: &f{value}"
+bedrock-test.custom-free-join: "&7  \u00censcriere liber\u0103: &f{value}"
+bedrock-test.custom-allow-invite: "&7  Permite invita\u021bii: &f{value}"
+bedrock-test.custom-allow-kick: "&7  Permite eliminarea: &f{value}"
+bedrock-test.custom-language: "&7  Limb\u0103: &f{value}"
+bedrock-test.custom-max-members: "&7  Num\u0103rul maxim de membri: &f{value}"
+bedrock-test.custom-closed: "&7[CustomForm] Formular \u00eenchis, nesalvat"
+bedrock-test.modal-confirm-quit: "&a[ModalForm] &7Ai ales: &cConfirm\u0103 ie\u0219irea"
+bedrock-test.modal-cancel: "&a[ModalForm] &7Ai ales: &aAnuleaz\u0103"
+bedrock-test.modal-closed: "&7[ModalForm] Dialog \u00eenchis"
+
+# --- 表单构建字符串 ---
+# 主菜单
+bedrock-test.main-title: "&6Plugin Clan &r- &eTest Formular Bedrock"
+bedrock-test.main-content: "&7Selecteaz\u0103 un tip de formular pentru previzualizare:"
+bedrock-test.main-btn-simple: "&aSimpleForm &f- Meniu butoane"
+bedrock-test.main-btn-custom: "&bCustomForm &f- Formular de intrare/ set\u0103ri"
+bedrock-test.main-btn-modal: "&cModalForm &f- Dialog de confirmare"
+
+# SimpleForm
+bedrock-test.simple-title: "&6Meniu principal clan &r- &7Exemplu SimpleForm"
+bedrock-test.simple-content: "&7Bun venit, &e{player}&7!\n&7Acesta este un exemplu de meniu cu butoane SimpleForm."
+bedrock-test.simple-btn-info: "&aInforma\u021bii clan &f- Vezi detalii clan"
+bedrock-test.simple-btn-members: "&bGestionare membri &f- Gestionare membri clan"
+bedrock-test.simple-btn-settings: "&eSet\u0103ri clan &f- Modific\u0103 configura\u021bia clanului"
+bedrock-test.simple-btn-list: "&6List\u0103 clanuri &f- Navigheaz\u0103 prin toate clanurile"
+bedrock-test.simple-btn-quit: "&cP\u0103r\u0103se\u0219te clanul &f- P\u0103r\u0103se\u0219te clanul actual"
+bedrock-test.simple-name-info: "Informa\u021bii clan"
+bedrock-test.simple-name-members: "Gestionare membri"
+bedrock-test.simple-name-settings: "Set\u0103ri clan"
+bedrock-test.simple-name-list: "List\u0103 clanuri"
+bedrock-test.simple-name-quit: "P\u0103r\u0103se\u0219te clanul"
+
+# CustomForm
+bedrock-test.custom-title: "&6Set\u0103ri clan &r- &fExemplu CustomForm"
+bedrock-test.custom-label-basic: "&7\u2014\u2014 Set\u0103ri de baz\u0103 \u2014\u2014"
+bedrock-test.custom-input-name-label: "&fNumele clanului"
+bedrock-test.custom-input-name-placeholder: "Introdu un nume nou..."
+bedrock-test.custom-input-name-default: "Clanul meu"
+bedrock-test.custom-input-desc-label: "&fDescrierea clanului"
+bedrock-test.custom-input-desc-placeholder: "Introdu o descriere..."
+bedrock-test.custom-input-desc-default: "Un clan prietenos"
+bedrock-test.custom-label-perms: "&7\u2014\u2014 Comutatoare permisiuni \u2014\u2014"
+bedrock-test.custom-toggle-free-join: "&fPermite \u00eenscrierea liber\u0103"
+bedrock-test.custom-toggle-allow-invite: "&fPermite membrilor s\u0103 invite"
+bedrock-test.custom-toggle-allow-kick: "&fPermite membrilor s\u0103 elimine"
+bedrock-test.custom-label-other: "&7\u2014\u2014 Altele \u2014\u2014"
+bedrock-test.custom-dropdown-lang: "&fLimba clanului"
+bedrock-test.custom-slider-max-members: "&fNum\u0103rul maxim de membri"
+
+# ModalForm
+bedrock-test.modal-title: "&cConfirm\u0103 opera\u021biunea &r- &fExemplu ModalForm"
+bedrock-test.modal-content: "&7Sigur dore\u0219ti s\u0103 p\u0103r\u0103se\u0219ti clanul &eClanul de Test &7?\n\n&cAceast\u0103 opera\u021biune este ireversibil\u0103!\n&7Dup\u0103 ie\u0219ire, va trebui s\u0103 depui din nou o cerere de \u00eenscriere."
+bedrock-test.modal-btn-confirm: "&aConfirm\u0103 ie\u0219irea"
+bedrock-test.modal-btn-cancel: "&cAnuleaz\u0103"

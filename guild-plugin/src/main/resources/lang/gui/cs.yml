@@ -84,6 +84,9 @@ gui:
     member-role.leader: "Vedouc\u00ed"
     member-role.member: "\u010clen"
     member-role.officer: "D\u016fstojn\u00edk"
+    bedrock-prev-page: "&eP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&eDal\u0161\u00ed strana"
+    bedrock-back: "&cZp\u011bt"
 
   # ================================================
   # AdminGuildGUI - Admin Panel (22 keys)
@@ -111,6 +114,14 @@ gui:
     admin-gui-statistics-total-balance: "&eCelkov\u00e9 finan\u010dn\u00ed prost\u0159edky: &f{balance}"
     admin-gui-statistics-total-guilds: "&eCelkov\u00fd po\u010det gild: &f{count}"
     admin-gui-statistics-total-members: "&eCelkov\u00fd po\u010det \u010dlen\u016f: &f{count}"
+    bedrock-title: "&4Spr\u00e1va gild"
+    bedrock-content: "&fVyberte funkci spr\u00e1vy"
+    bedrock-guild-list: "&eSpr\u00e1va seznamu gild"
+    bedrock-economy: "&eEkonomick\u00e1 spr\u00e1va"
+    bedrock-relations: "&eSpr\u00e1va vztah\u016f"
+    bedrock-statistics: "&eStatistick\u00e9 informace"
+    bedrock-settings: "&eNastaven\u00ed syst\u00e9mu"
+    bedrock-back: "&cZp\u011bt"
 
   # ================================================
   # ApplicationManagementGUI (29 keys)
@@ -140,11 +151,31 @@ gui:
     application-management-pending-applications-lore-1: "&7Zobrazit \u010dekaj\u00edc\u00ed \u017e\u00e1dosti"
     application-management-pending-applications-name: "&e\u010cekaj\u00edc\u00ed \u017e\u00e1dosti"
     application-management-title: "&6Spr\u00e1va \u017e\u00e1dost\u00ed"
-    no-history: "&a\u017d\u00e1dn\u00e1 historie \u017e\u00e1dost\u00ed"
     no-history.desc: "&7Moment\u00e1ln\u011b neexistuje \u017e\u00e1dn\u00e1 historie \u017e\u00e1dost\u00ed"
     apply.already-applied: "&cJi\u017e jste podali \u017e\u00e1dost do t\u00e9to gildy!"
     apply.failed: "&cOdesl\u00e1n\u00ed \u017e\u00e1dosti selhalo!"
     apply.success: "&a\u017d\u00e1dost byla odesl\u00e1na!"
+    bedrock-title: "&6Spr\u00e1va \u017e\u00e1dost\u00ed"
+    bedrock-empty-history: "&f\u017d\u00e1dn\u00e1 historie \u017e\u00e1dost\u00ed"
+    bedrock-empty-pending: "&f\u017d\u00e1dn\u00e9 \u010dekaj\u00edc\u00ed \u017e\u00e1dosti"
+    bedrock-pending-btn: "&e\u010cekaj\u00edc\u00ed \u017e\u00e1dosti"
+    bedrock-history-btn: "&eHistorie \u017e\u00e1dost\u00ed"
+    bedrock-back: "&cZp\u011bt"
+    bedrock-mode-history: "Historie \u017e\u00e1dost\u00ed"
+    bedrock-mode-pending: "\u010cekaj\u00edc\u00ed \u017e\u00e1dosti"
+    bedrock-title-page: "&6Spr\u00e1va \u017e\u00e1dost\u00ed - {mode} Strana {page}"
+    bedrock-total: "&fCelkem {count} z\u00e1znam\u016f"
+    bedrock-prev-page: "&eP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&eDal\u0161\u00ed strana"
+    bedrock-applicant: "&f\u017dadatel: {name}"
+    bedrock-status: "&fStav: {status}"
+    bedrock-message: "&fZpr\u00e1va: {msg}"
+    bedrock-no-message: "\u017d\u00e1dn\u00e1"
+    bedrock-actions-title: "&6Zpracov\u00e1n\u00ed \u017e\u00e1dosti - {name}"
+    bedrock-actions-content: "&f\u017dadatel: {name}\n&fZpr\u00e1va: {msg}"
+    bedrock-accept: "&aP\u0159ijmout \u017e\u00e1dost"
+    bedrock-reject: "&cZam\u00edtnout \u017e\u00e1dost"
+    bedrock-back-to-list: "&eZp\u011bt na seznam"
 
   # ================================================
   # MainGuildGUI - Main Menu (22 keys)
@@ -172,6 +203,7 @@ gui:
     member-management.lore.2: "&7Pozv\u00e1n\u00ed, vyhozen\u00ed, spr\u00e1va opr\u00e1vn\u011bn\u00ed"
     member-management.name: "&eSpr\u00e1va \u010dlen\u016f"
     title: "&6Syst\u00e9m gild"
+    bedrock-content: "&fVyberte funkci:"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
@@ -288,6 +320,23 @@ gui:
     system-settings-save-lore-1: "&7Ulo\u017e\u00ed v\u0161echna aktu\u00e1ln\u00ed nastaven\u00ed"
     system-settings-save-lore-2: "&7Aplikuje je do konfigura\u010dn\u00edch soubor\u016f"
     system-settings-title: "&4Nastaven\u00ed syst\u00e9mu"
+    bedrock-title: "&4Nastaven\u00ed syst\u00e9mu"
+    bedrock-content: "&fKlikn\u011bte pro p\u0159epnut\u00ed stavu"
+    bedrock-debug: "&eInformace o lad\u011bn\u00ed: {status}"
+    bedrock-auto-save: "&eAutomatick\u00e9 ukl\u00e1d\u00e1n\u00ed: {status}"
+    bedrock-economy: "&eEkonomick\u00fd syst\u00e9m: {status}"
+    bedrock-relations: "&eSyst\u00e9m vztah\u016f: {status}"
+    bedrock-level: "&eSyst\u00e9m \u00farovn\u00ed: {status}"
+    bedrock-applications: "&eSyst\u00e9m \u017e\u00e1dost\u00ed: {status}"
+    bedrock-invites: "&eSyst\u00e9m pozv\u00e1n\u00ed: {status}"
+    bedrock-guild-home: "&eDomovsk\u00e9 m\u00edsto gildy: {status}"
+    bedrock-on: "&aZAPNUTO"
+    bedrock-off: "&cVYPNUTO"
+    bedrock-reload: "&aZnovu na\u010d\u00edst konfiguraci"
+    bedrock-database: "&b\u00dadr\u017eba datab\u00e1ze"
+    bedrock-backup: "&6Z\u00e1loha dat"
+    bedrock-save: "&aUlo\u017eit nastaven\u00ed"
+    bedrock-back: "&cZp\u011bt"
 
   # ================================================
   # CreateGuildGUI (36 keys)
@@ -329,6 +378,13 @@ gui:
     create-guild-tag-input-lore-2: "&7D\u00e9lka: max. 6 znak\u016f"
     create-guild-tag-input-lore-3: "&7Nepovinn\u00e9"
     create-guild-tag-input-name: "&eZna\u010dka gildy"
+    bedrock-title: "&6Vytvo\u0159it gildu"
+    bedrock-name-label: "&fN\u00e1zev gildy (3-20 znak\u016f)"
+    bedrock-name-placeholder: "Zadejte n\u00e1zev gildy"
+    bedrock-tag-label: "&fZna\u010dka gildy (max. 6 znak\u016f, nepovinn\u00e9)"
+    bedrock-tag-placeholder: "Zadejte zna\u010dku gildy"
+    bedrock-desc-label: "&fPopis gildy (max. 100 znak\u016f, nepovinn\u00e9)"
+    bedrock-desc-placeholder: "Zadejte popis gildy"
 
   # ================================================
   # GuildDetailGUI (38 keys)
@@ -372,6 +428,31 @@ gui:
     transfer-self: "&cNem\u016f\u017eete p\u0159edat veden\u00ed sami sob\u011b"
     transfer-success: "&aVeden\u00ed bylo \u00fasp\u011b\u0161n\u011b p\u0159ed\u00e1no &e{name}"
     unfreeze-guild: "Rozmrazit gildu"
+    bedrock-title: "&6Podrobnosti o gild\u011b - {guild_name}"
+    bedrock-level: "&f\u00darove\u0148: &e{level}"
+    bedrock-balance: " &fFinan\u010dn\u00ed prost\u0159edky: &a{balance}"
+    bedrock-leader: "&fVedouc\u00ed: &c{leader}"
+    bedrock-members: " &f\u010clenov\u00e9: &e{current}/{max}"
+    bedrock-status: "&fStav: {status}"
+    bedrock-status-frozen: "&cZmrazeno"
+    bedrock-status-normal: "&aNorm\u00e1ln\u00ed"
+    bedrock-description: "&fPopis: &7{description}"
+    bedrock-transfer-hint: "&e>>> Re\u017eim p\u0159ed\u00e1n\u00ed: Klikn\u011bte na \u010dlena pro p\u0159ed\u00e1n\u00ed <<<"
+    bedrock-no-tag: "\u017d\u00e1dn\u00e1"
+    bedrock-unfreeze: "&aRozmrazit gildu"
+    bedrock-freeze: "&cZmrazit gildu"
+    bedrock-delete: "&4Smazat gildu"
+    bedrock-cancel-transfer: "&eZru\u0161it re\u017eim p\u0159ed\u00e1n\u00ed"
+    bedrock-transfer: "&cP\u0159edat veden\u00ed"
+    bedrock-prev-page: "&eP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&eDal\u0161\u00ed strana"
+    bedrock-back: "&cZp\u011bt"
+    bedrock-transfer-self: "&cNem\u016f\u017eete p\u0159edat veden\u00ed sami sob\u011b"
+    bedrock-transfer-success: "&aVeden\u00ed bylo \u00fasp\u011b\u0161n\u011b p\u0159ed\u00e1no &e{name}"
+    bedrock-transfer-failed: "&cP\u0159ed\u00e1n\u00ed veden\u00ed selhalo!"
+    bedrock-operation-failed: "&cOperace selhala!"
+    bedrock-transfer-mode-active: "&eKlikn\u011bte na \u010dlena pro p\u0159ed\u00e1n\u00ed veden\u00ed"
+    bedrock-transfer-mode-cancelled: "&7P\u0159ed\u00e1n\u00ed veden\u00ed bylo zru\u0161eno"
 
   # ================================================
   # GuildInfoGUI (21 keys)
@@ -398,6 +479,10 @@ gui:
     status-normal: "Norm\u00e1ln\u00ed"
     tag: "Zna\u010dka"
     title: "&6Informace o gild\u011b"
+    bedrock-title: "&6Informace o gild\u011b"
+    bedrock-guild-funds: "&aFinan\u010dn\u00ed prost\u0159edky gildy"
+    bedrock-back-to-main: "&cZp\u011bt do hlavn\u00ed nab\u00eddky"
+    bedrock-status-label: "Stav"
 
   # ================================================
   # GuildListManagementGUI (2 keys)
@@ -405,6 +490,24 @@ gui:
   guild-list-management:
     guild-list-management-title: "&4Spr\u00e1va seznamu gild"
     gui-refresh: "&aObnovit seznam"
+    bedrock-title: "&4Spr\u00e1va seznamu gild"
+    bedrock-page-info: "&fStrana {page}/{total} | Celkem {count} gild"
+    bedrock-refresh: "&aObnovit seznam"
+    bedrock-prev-page: "&eP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&eDal\u0161\u00ed strana"
+    bedrock-back: "&cZp\u011bt"
+    bedrock-status-frozen: "&cZmrazeno"
+    bedrock-status-normal: "&aNorm\u00e1ln\u00ed"
+    bedrock-actions-title: "&6Akce gildy - {guild_name}"
+    bedrock-leader: "&fVedouc\u00ed: &e{leader}"
+    bedrock-level: "&f\u00darove\u0148: &e{level}"
+    bedrock-balance: "&fFinan\u010dn\u00ed prost\u0159edky: &a{balance}"
+    bedrock-status: "&fStav: {status}"
+    bedrock-view-detail: "&eZobrazit podrobnosti"
+    bedrock-delete: "&cSmazat gildu"
+    bedrock-unfreeze: "&aRozmrazit gildu"
+    bedrock-freeze: "&cZmrazit gildu"
+    bedrock-back-list: "&cZp\u011bt na seznam"
 
   # ================================================
   # GuildListGUI / GuildFilterGUI (39 keys)
@@ -449,6 +552,22 @@ gui:
     guild-list-search-lore-2: "&7Prav\u00e9 tla\u010d\u00edtko: Vymazat vyhled\u00e1v\u00e1n\u00ed"
     guild-list-search-name: "&eHledat gildu"
     guild-list-title: "&6Seznam gild"
+    bedrock-title: "&6Seznam gild"
+    bedrock-no-guilds: "&cNa serveru zat\u00edm nejsou \u017e\u00e1dn\u00e9 gildy"
+    bedrock-no-results: "&cNebyly nalezeny \u017e\u00e1dn\u00e9 odpov\u00eddaj\u00edc\u00ed gildy"
+    bedrock-search: "&eHledat gildu"
+    bedrock-back-main: "&cZp\u011bt do hlavn\u00ed nab\u00eddky"
+    bedrock-page-info: "&fStrana {page}/{total}"
+    bedrock-search-info: "&fVyhled\u00e1v\u00e1n\u00ed: &e{query}"
+    bedrock-prev-page: "&aP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&aDal\u0161\u00ed strana"
+    bedrock-search-title: "&6Hledat gildu"
+    bedrock-search-input: "&fZadejte kl\u00ed\u010dov\u00e9 slovo"
+    bedrock-search-placeholder: "Ponechte pr\u00e1zdn\u00e9 pro zobrazen\u00ed v\u0161ech"
+    bedrock-select-action: "&fVyberte akci:"
+    bedrock-view-detail: "&eZobrazit podrobnosti"
+    bedrock-apply-join: "&aPodat \u017e\u00e1dost o p\u0159ipojen\u00ed"
+    bedrock-back-list: "&cZp\u011bt na seznam"
 
   # ================================================
   # GuildFilterGUI (19 keys)
@@ -473,6 +592,35 @@ gui:
     sort.lore-full: "Pouze pln\u00e9"
     sort.name: "&e\u0158azen\u00ed podle po\u010dtu"
     title: "&6Filtrov\u00e1n\u00ed gild"
+    bedrock-title: "&6Filtrov\u00e1n\u00ed gild"
+    bedrock-no-guilds: "&fNa serveru zat\u00edm nejsou \u017e\u00e1dn\u00e9 gildy"
+    bedrock-back: "&cZp\u011bt"
+    bedrock-no-results: "&f\u017d\u00e1dn\u00e9 gildy neodpov\u00eddaj\u00ed filtru"
+    bedrock-filter-info: "&f\u00darove\u0148: {min}-{max} | \u0158azen\u00ed: {sort}"
+    bedrock-adjust-filter: "&eUpravit filtr"
+    bedrock-sort-desc: "\u010clenov\u00e9 sestupn\u011b"
+    bedrock-sort-asc: "\u010clenov\u00e9 vzestupn\u011b"
+    bedrock-sort-full: "Pouze pln\u00e9"
+    bedrock-title-page: "&6Filtrov\u00e1n\u00ed gild - Strana {page}"
+    bedrock-total-results: "&fCelkem {count} v\u00fdsledk\u016f"
+    bedrock-prev-page: "&eP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&eDal\u0161\u00ed strana"
+    bedrock-settings-title: "&6Nastaven\u00ed filtru"
+    bedrock-min-level: "&fMinim\u00e1ln\u00ed \u00farove\u0148: {level}"
+    bedrock-max-level: "&fMaxim\u00e1ln\u00ed \u00farove\u0148: {level}"
+    bedrock-sort: "&f\u0158azen\u00ed: {sort}"
+    bedrock-min-level-up: "&aMinim\u00e1ln\u00ed \u00farove\u0148 +1"
+    bedrock-min-level-down: "&cMinim\u00e1ln\u00ed \u00farove\u0148 -1"
+    bedrock-max-level-up: "&aMaxim\u00e1ln\u00ed \u00farove\u0148 +1"
+    bedrock-max-level-down: "&cMaxim\u00e1ln\u00ed \u00farove\u0148 -1"
+    bedrock-switch-sort: "&eZm\u011bnit re\u017eim \u0159azen\u00ed"
+    bedrock-back-results: "&eZp\u011bt na v\u00fdsledky"
+    bedrock-actions-title: "&6Akce gildy - {guild_name}"
+    bedrock-level: "&f\u00darove\u0148: {level}"
+    bedrock-leader: "&fVedouc\u00ed: {leader}"
+    bedrock-view-detail: "&eZobrazit podrobnosti"
+    bedrock-apply-join: "&aPodat \u017e\u00e1dost o p\u0159ipojen\u00ed"
+    bedrock-back-filter: "&eZp\u011bt na filtr"
 
   # ================================================
   # GuildSettingsGUI (42 keys)
@@ -520,6 +668,13 @@ gui:
     home.success: "&aTeleportace na domovsk\u00e9 m\u00edsto gildy prob\u011bhla!"
     sethome.failed: "&cNastaven\u00ed domovsk\u00e9ho m\u00edsta gildy selhalo!"
     sethome.success: "&aDomovsk\u00e9 m\u00edsto gildy bylo \u00fasp\u011b\u0161n\u011b nastaveno!"
+    bedrock-content: "&6P\u0159ehled gildy\n&fN\u00e1zev: &e{guild_name}\n&fZna\u010dka: &e{guild_tag}\n&fPopis: {guild_desc}\n&fDomovsk\u00e9 m\u00edsto gildy: {home_status}"
+    bedrock-change-name: "&eZm\u011bnit n\u00e1zev"
+    bedrock-change-description: "&eZm\u011bnit popis"
+    bedrock-change-tag: "&eZm\u011bnit zna\u010dku"
+    bedrock-kick-member: "&cVyhodit \u010dlena"
+    bedrock-promote-demote: "&ePov\u00fd\u0161it/Sn\u00ed\u017eit"
+    bedrock-back-to-main: "&fZp\u011bt do hlavn\u00ed nab\u00eddky"
 
   # ================================================
   # GuildFundsGUI (23 keys)
@@ -548,6 +703,15 @@ gui:
     total-deposit: "Celkov\u00e9 vklady"
     total-pages: "&7Celkov\u00fd po\u010det stran: {total}"
     total-players: "&7Po\u010det osob: {count}"
+    bedrock-title: "&6Finan\u010dn\u00ed prost\u0159edky gildy - {guild}"
+    bedrock-no-data: "&c\u017d\u00e1dn\u00e9 z\u00e1znamy o vkladech"
+    bedrock-back: "&cZp\u011bt"
+    bedrock-page-info: "&fStrana {page}/{total}\n&fCelkov\u00fd po\u010det hr\u00e1\u010d\u016f: {count}"
+    bedrock-online: "&aOnline"
+    bedrock-offline: "&fOffline"
+    bedrock-prev-page: "&aP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&aDal\u0161\u00ed strana"
+    bedrock-refresh: "&aObnovit"
 
   # ================================================
   # EconomyManagementGUI (23 keys)
@@ -576,6 +740,23 @@ gui:
     set-balance-dev: "&eFunkce nastaven\u00ed finan\u010dn\u00edch prost\u0159edk\u016f je ve v\u00fdvoji..."
     set-prompt: "&eZadejte \u010d\u00e1stku, kterou chcete nastavit (zadejte \u010d\u00edslo do chatu, zadejte cancel pro zru\u0161en\u00ed):"
     economy-management-title: "&eEkonomick\u00e1 spr\u00e1va"
+    bedrock-title: "&eEkonomick\u00e1 spr\u00e1va"
+    bedrock-page-info: "&fStrana {current}/{total} | Celkem {count} gild"
+    bedrock-refresh: "&aObnovit seznam"
+    bedrock-prev-page: "&eP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&eDal\u0161\u00ed strana"
+    bedrock-back: "&cZp\u011bt"
+    bedrock-actions-title: "&eEkonomick\u00e1 spr\u00e1va - {guild}"
+    bedrock-actions-content: "&fAktu\u00e1ln\u00ed finan\u010dn\u00ed prost\u0159edky: &a{balance}\n&fVedouc\u00ed: &e{leader}\n&f\u00darove\u0148: &e{level}"
+    bedrock-set-funds: "&eNastavit finan\u010dn\u00ed prost\u0159edky"
+    bedrock-add-funds: "&aP\u0159idat finan\u010dn\u00ed prost\u0159edky"
+    bedrock-clear-funds: "&cVymazat finan\u010dn\u00ed prost\u0159edky"
+    bedrock-back-to-list: "&cZp\u011bt na seznam"
+    bedrock-set-title: "&eNastavit finan\u010dn\u00ed prost\u0159edky"
+    bedrock-add-title: "&aP\u0159idat finan\u010dn\u00ed prost\u0159edky"
+    bedrock-input-label: "&fZadejte \u010d\u00e1stku"
+    bedrock-invalid-amount: "&c\u010c\u00e1stka mus\u00ed b\u00fdt v\u011bt\u0161\u00ed ne\u017e 0!"
+    bedrock-invalid-number: "&cNeplatn\u00e9 \u010d\u00edslo!"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -606,6 +787,14 @@ gui:
     funds.change.set-contrib-increase: "{player} nastavil(a) finan\u010dn\u00ed prost\u0159edky na {new} (+{diff})"
     funds.change.set-log-decrease: "{player} nastavil(a) finan\u010dn\u00ed prost\u0159edky gildy {guild} na {new}"
     funds.change.set-log-increase: "{player} nastavil(a) finan\u010dn\u00ed prost\u0159edky gildy {guild} na {new}"
+    bedrock-title: "&6Potvrzen\u00ed zm\u011bny finan\u010dn\u00edch prost\u0159edk\u016f"
+    bedrock-guild: "&fGilda: &e{guild_name}"
+    bedrock-operation: "&fOperace: {operation}"
+    bedrock-current-balance: "&fAktu\u00e1ln\u00ed finan\u010dn\u00ed prost\u0159edky: &6{balance}"
+    bedrock-amount: "&f\u010c\u00e1stka: &f{amount}"
+    bedrock-new-balance: "&fNov\u00e9 finan\u010dn\u00ed prost\u0159edky: &a{balance}"
+    bedrock-confirm: "&aPotvrdit zm\u011bnu"
+    bedrock-cancel: "&cZru\u0161it"
 
   # ================================================
   # GuildRelationsGUI (49 keys)
@@ -660,6 +849,24 @@ gui:
     relations.type-selected: "&aTyp vztahu byl vybr\u00e1n: {type}"
     relations.type-truce.description: "Dohoda o p\u0159\u00edm\u011b\u0159\u00ed, do\u010dasn\u00fd m\u00edr"
     relations.type-war.description: "V\u00e1le\u010dn\u00fd stav, tot\u00e1ln\u00ed v\u00e1lka"
+    bedrock-title: "&6Vztahy gildy"
+    bedrock-title-page: "&6Vztahy gildy - Strana {page}"
+    bedrock-empty: "&fMoment\u00e1ln\u011b nejsou \u017e\u00e1dn\u00e9 vztahy gild"
+    bedrock-total: "&fCelkem {count} vztah\u016f"
+    bedrock-create-relation: "&aVytvo\u0159it vztah"
+    bedrock-prev-page: "&eP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&eDal\u0161\u00ed strana"
+    bedrock-back: "&cZp\u011bt"
+    bedrock-actions-title: "&6Akce vztahu - {guild}"
+    bedrock-actions-content: "&fTyp: {type}\n&fStav: {status}"
+    bedrock-cancel-relation: "&cZru\u0161it vztah"
+    bedrock-accept-relation: "&aP\u0159ijmout vztah"
+    bedrock-reject-relation: "&cOdm\u00edtnout vztah"
+    bedrock-end-truce: "&eUkon\u010dit p\u0159\u00edm\u011b\u0159\u00ed"
+    bedrock-propose-truce: "&eNavrhnout p\u0159\u00edm\u011b\u0159\u00ed"
+    bedrock-delete-relation: "&cSmazat vztah"
+    bedrock-back-to-list: "&eZp\u011bt na seznam"
+    bedrock-truce-ended: "&aP\u0159\u00edm\u011b\u0159\u00ed s gildou {guild} skon\u010dilo!"
 
   # ================================================
   # CreateRelationGUI (6 keys)
@@ -671,6 +878,22 @@ gui:
     confirm-lore-2: "&7Je t\u0159eba nejprve vybrat typ vztahu a c\u00edlovou gildu"
     current-selection: "&eAktu\u00e1ln\u00ed v\u00fdb\u011br"
     title: "&6Vytvo\u0159it vztah gildy"
+    bedrock-type-title: "&6Vytvo\u0159it vztah - Vybrat typ"
+    bedrock-type-content: "&fVyberte pros\u00edm typ vztahu:"
+    bedrock-back: "&cZp\u011bt"
+    bedrock-target-title: "&6Vytvo\u0159it vztah - Vybrat c\u00edl"
+    bedrock-target-empty: "&f\u017d\u00e1dn\u00e9 dostupn\u00e9 c\u00edlov\u00e9 gildy"
+    bedrock-target-title-page: "&6Vytvo\u0159it vztah - Vybrat c\u00edl Strana {page}"
+    bedrock-target-content: "&fTyp: {type}\n&fVyberte c\u00edlovou gildu:"
+    bedrock-prev-page: "&eP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&eDal\u0161\u00ed strana"
+    bedrock-confirm-title: "&6Potvrdit vytvo\u0159en\u00ed vztahu"
+    bedrock-confirm-content: "&fTyp: {type}\n&fC\u00edl: {target}"
+    bedrock-confirm-create: "&aPotvrdit vytvo\u0159en\u00ed"
+    bedrock-cancel: "&cZru\u0161it"
+    bedrock-already-exists: "&cVztah s gildou {guild} ji\u017e existuje!"
+    bedrock-create-success: "&aOdesl\u00e1na \u017e\u00e1dost o vztah {type} gild\u011b {guild}!"
+    bedrock-create-failed: "&cVytvo\u0159en\u00ed vztahu selhalo!"
 
   # ================================================
   # RelationManagementGUI (40 keys)
@@ -716,6 +939,25 @@ gui:
     relation-management-back-desc: "Zp\u011bt do nab\u00eddky spr\u00e1vce"
     relation-management-refresh-desc: "Znovu na\u010d\u00edst data o vztaz\u00edch"
     relation-management-title: "&4Spr\u00e1va vztah\u016f - Spr\u00e1vce"
+    bedrock-title: "&4Spr\u00e1va vztah\u016f"
+    bedrock-empty: "&c\u017d\u00e1dn\u00e1 data o vztaz\u00edch"
+    bedrock-back: "&cZp\u011bt"
+    bedrock-page-info: "&fStrana {current}/{total} | Celkem {count} vztah\u016f"
+    bedrock-refresh: "&aObnovit seznam"
+    bedrock-prev-page: "&eP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&eDal\u0161\u00ed strana"
+    bedrock-actions-title: "&6Akce vztahu"
+    bedrock-actions-content: "&f{guild1} \u2194 {guild2}\n&fTyp: {type}\n&fStav: {status}\n&fInici\u00e1tor: {initiator}"
+    bedrock-delete-relation: "&cSmazat vztah"
+    bedrock-view-details: "&eZobrazit podrobnosti"
+    bedrock-back-to-list: "&cZp\u011bt na seznam"
+    bedrock-confirm-title: "&cPotvrdit smaz\u00e1n\u00ed"
+    bedrock-confirm-content: "&fOpravdu chcete smazat vztah:\n&e{guild1} \u2194 {guild2}&f?"
+    bedrock-confirm-delete: "&cPotvrdit smaz\u00e1n\u00ed"
+    bedrock-cancel: "&fZru\u0161it"
+    bedrock-delete-success: "&aVztah byl smaz\u00e1n: {guild1} \u2194 {guild2}"
+    bedrock-delete-failed: "&cSmaz\u00e1n\u00ed vztahu selhalo!"
+    bedrock-no-permission: "&cNem\u00e1te opr\u00e1vn\u011bn\u00ed spr\u00e1vce!"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -743,6 +985,13 @@ gui:
     total-records: "Celkov\u00fd po\u010det z\u00e1znam\u016f: {count}"
     type: "Typ"
     wait-for-logs: "Po\u010dkejte na aktivitu gildy, aby se vytvo\u0159ily z\u00e1znamy"
+    bedrock-title: "&6Z\u00e1znamy gildy - {guild}"
+    bedrock-no-data: "&c\u017d\u00e1dn\u00e9 z\u00e1znamy"
+    bedrock-back: "&cZp\u011bt"
+    bedrock-page-info: "&fStrana {page}/{total}\n&fCelkov\u00fd po\u010det z\u00e1znam\u016f: {count}"
+    bedrock-prev-page: "&aP\u0159edchoz\u00ed strana"
+    bedrock-next-page: "&aDal\u0161\u00ed strana"
+    bedrock-refresh: "&aObnovit"
 
   # ================================================
   # MemberManagementGUI (81 keys)
@@ -829,6 +1078,31 @@ gui:
     member-mgmt.role.leader-perms: "V\u0161echna opr\u00e1vn\u011bn\u00ed"
     member-mgmt.role.member-perms: "Z\u00e1kladn\u00ed opr\u00e1vn\u011bn\u00ed"
     member-mgmt.role.officer-perms: "Pozv\u00e1n\u00ed, vyhozen\u00ed"
+    bedrock-title: "&6Spr\u00e1va \u010dlen\u016f"
+    bedrock-title-page: "&6Spr\u00e1va \u010dlen\u016f - Strana {page}"
+    bedrock-no-members: "&fV gild\u011b zat\u00edm nejsou \u017e\u00e1dn\u00ed \u010dlenov\u00e9"
+    bedrock-member-list: "&fSeznam \u010dlen\u016f (Celkem {count})"
+    bedrock-invite: "&aPozvat \u010dlena"
+    bedrock-actions-title: "&6Akce \u010dlena - {member}"
+    bedrock-role-label: "&fRole: {role}"
+    bedrock-role-leader: "&cVedouc\u00ed"
+    bedrock-role-officer: "&6D\u016fstojn\u00edk"
+    bedrock-role-member: "&f\u010clen"
+    bedrock-view-details: "&eZobrazit podrobnosti"
+    bedrock-kick: "&cVyhodit \u010dlena"
+    bedrock-promote-demote: "&6Pov\u00fd\u0161it/Sn\u00ed\u017eit"
+    bedrock-back-to-list: "&cZp\u011bt na seznam"
+    member-details.bedrock-title: "&6Podrobnosti o \u010dlenovi - {member}"
+    member-details.bedrock-player: "&fHr\u00e1\u010d: {name}"
+    member-details.bedrock-role: "&fRole: {role}"
+    member-details.bedrock-join-time: "&f\u010cas p\u0159ipojen\u00ed: {time}"
+    member-details.bedrock-online: "&fOnline: {status}"
+    member-details.bedrock-online-yes: "&aAno"
+    member-details.bedrock-online-no: "&cNe"
+    member-details.bedrock-kick: "&cVyhodit \u010dlena"
+    member-details.bedrock-promote-demote: "&6Pov\u00fd\u0161it/Sn\u00ed\u017eit"
+    member-details.bedrock-send-message: "&eOdeslat zpr\u00e1vu"
+    member-details.bedrock-back: "&cZp\u011bt"
 
   # ================================================
   # MemberGuildGUI (13 keys)
@@ -847,6 +1121,8 @@ gui:
     no-name: "\u017d\u00e1dn\u00fd n\u00e1zev"
     no-tag: "\u017d\u00e1dn\u00e1 zna\u010dka"
     title: "&6Moje gilda"
+    bedrock-title: "&6Moje gilda - {guild_name}"
+    bedrock-content: "&6Informace o gild\u011b\n&fN\u00e1zev: &e{guild_name}\n&fZna\u010dka: &e{guild_tag}\n&fDomovsk\u00e9 m\u00edsto gildy: {home_status}"
 
   # ================================================
   # ConfirmDeleteGuildGUI (14 keys)
@@ -866,6 +1142,10 @@ gui:
     confirm-delete-guild-title: "&4Potvrzen\u00ed smaz\u00e1n\u00ed gildy"
     delete.failed: "&cSmaz\u00e1n\u00ed gildy selhalo!"
     delete.success: "&aGilda {guild} byla smaz\u00e1na!"
+    bedrock-title: "&4Potvrzen\u00ed smaz\u00e1n\u00ed gildy"
+    bedrock-content: "&fGilda: &e{guild}\n&fOpravdu chcete smazat tuto gildu?\n&cTato akce trvale sma\u017ee gildu!\n&cV\u0161ichni \u010dlenov\u00e9 budou odstran\u011bni!\n&cTuto akci nelze vr\u00e1tit zp\u011bt!"
+    bedrock-confirm: "&4Potvrdit smaz\u00e1n\u00ed"
+    bedrock-cancel: "&aZru\u0161it"
 
   # ================================================
   # ConfirmLeaveGuildGUI (12 keys)
@@ -883,6 +1163,10 @@ gui:
     leave.failed: "&cOpu\u0161t\u011bn\u00ed gildy selhalo!"
     leave.leader-cannot-leave: "&cVedouc\u00ed gildy nem\u016f\u017ee opustit gildu!"
     leave.success: "&a\u00dasp\u011b\u0161n\u011b jste opustili gildu: {guild}"
+    bedrock-title: "&cPotvrzen\u00ed opu\u0161t\u011bn\u00ed gildy"
+    bedrock-content: "&fGilda: &e{guild}\n&fOpravdu chcete opustit tuto gildu?\n&cTuto akci nelze vr\u00e1tit zp\u011bt!"
+    bedrock-confirm: "&cPotvrdit opu\u0161t\u011bn\u00ed"
+    bedrock-cancel: "&aZru\u0161it"
 
   # ================================================
   # GuildNameInputGUI (21 keys)
@@ -909,6 +1193,9 @@ gui:
     success: "&aN\u00e1zev gildy byl \u00fasp\u011b\u0161n\u011b zm\u011bn\u011bn!"
     success-new-name: "&7Nov\u00fd n\u00e1zev: &f{new_name}"
     title: "&6Zm\u011bna n\u00e1zvu gildy"
+    bedrock-title: "&6Zm\u011bna n\u00e1zvu gildy"
+    bedrock-input-label: "&fZadejte nov\u00fd n\u00e1zev gildy"
+    bedrock-input-placeholder: "2-16 znak\u016f, barevn\u00e9 znaky podporov\u00e1ny"
 
   # ================================================
   # GuildTagInputGUI (6 keys)
@@ -920,6 +1207,9 @@ gui:
     confirm-lore: "&7Potvrdit zm\u011bnu zna\u010dky gildy"
     current-tag: "&eAktu\u00e1ln\u00ed zna\u010dka"
     title: "&6Zm\u011bna zna\u010dky gildy"
+    bedrock-title: "&6Zm\u011bna zna\u010dky gildy"
+    bedrock-input-label: "&fZadejte novou zna\u010dku gildy"
+    bedrock-input-placeholder: "Maxim\u00e1ln\u011b {max} znak\u016f"
 
   # ================================================
   # GuildDescriptionInputGUI (6 keys)
@@ -931,12 +1221,18 @@ gui:
     confirm-lore: "&7Potvrdit zm\u011bnu popisu gildy"
     current-description: "&eAktu\u00e1ln\u00ed popis"
     title: "&6Zm\u011bna popisu gildy"
+    bedrock-title: "&6Zm\u011bna popisu gildy"
+    bedrock-input-label: "&fZadejte nov\u00fd popis gildy"
+    bedrock-input-placeholder: "Maxim\u00e1ln\u011b {max} znak\u016f"
 
   # ================================================
   # GuildPermissionsGUI (1 keys)
   # ================================================
   guild-permissions:
     title: "&6Nastaven\u00ed opr\u00e1vn\u011bn\u00ed gildy"
+    bedrock-title: "&6Nastaven\u00ed opr\u00e1vn\u011bn\u00ed gildy"
+    bedrock-content: "&6=== Opr\u00e1vn\u011bn\u00ed vedouc\u00edho ===\n&f\u2022 V\u0161echna opr\u00e1vn\u011bn\u00ed\n&f\u2022 Spr\u00e1va \u010dlen\u016f\n&f\u2022 Zm\u011bna nastaven\u00ed\n&f\u2022 Smaz\u00e1n\u00ed gildy\n\n&e=== Opr\u00e1vn\u011bn\u00ed d\u016fstojn\u00edka ===\n&f\u2022 Pozv\u00e1n\u00ed \u010dlen\u016f\n&f\u2022 Vyhozen\u00ed \u010dlen\u016f\n&f\u2022 Zpracov\u00e1n\u00ed \u017e\u00e1dost\u00ed\n&f\u2022 Nastaven\u00ed domovsk\u00e9ho m\u00edsta gildy\n\n&7=== Opr\u00e1vn\u011bn\u00ed \u010dlena ===\n&f\u2022 Zobrazen\u00ed informac\u00ed o gild\u011b\n&f\u2022 Teleportace na domovsk\u00e9 m\u00edsto gildy\n&f\u2022 Pod\u00e1n\u00ed \u017e\u00e1dosti do jin\u00fdch gild\n\n&aAktu\u00e1ln\u00ed stav: &fGilda {guild} | Syst\u00e9m opr\u00e1vn\u011bn\u00ed funguje spr\u00e1vn\u011b"
+    bedrock-back: "&cZp\u011bt"
 
   # ================================================
   # InviteMemberGUI (4 keys)
@@ -946,6 +1242,10 @@ gui:
     click-invite: "Klikn\u011bte pro pozv\u00e1n\u00ed tohoto hr\u00e1\u010de"
     join-guild: "P\u0159ipojit se k gild\u011b"
     title: "&6Pozvat \u010dlena - {guild} - Strana {page}"
+    bedrock-title: "&6Pozvat \u010dlena"
+    bedrock-title-page: "&6Pozvat \u010dlena - Strana {page}"
+    bedrock-no-players: "&f\u017d\u00e1dn\u00ed online hr\u00e1\u010di k pozv\u00e1n\u00ed"
+    bedrock-player-list: "&fOnline hr\u00e1\u010di (Celkem {count})"
 
   # ================================================
   # KickMemberGUI (5 keys)
@@ -956,6 +1256,10 @@ gui:
     kick.success: "&a\u010clen &e{player} &abyl vyhozen!"
     click-kick: "Klikn\u011bte pro vyhozen\u00ed tohoto \u010dlena"
     title: "&6Vyhodit \u010dlena - Strana {page}"
+    bedrock-title: "&6Vyhodit \u010dlena"
+    bedrock-title-page: "&6Vyhodit \u010dlena - Strana {page}"
+    bedrock-no-members: "&f\u017d\u00e1dn\u00ed \u010dlenov\u00e9 k vyhozen\u00ed"
+    bedrock-content: "&fVyberte \u010dlena k vyhozen\u00ed"
 
   # ================================================
   # PromoteMemberGUI (5 keys)
@@ -966,6 +1270,10 @@ gui:
     promote.success: "&aHr\u00e1\u010d &e{player} &abyl pov\u00fd\u0161en na d\u016fstojn\u00edka!"
     click-promote: "Klikn\u011bte pro pov\u00fd\u0161en\u00ed na d\u016fstojn\u00edka"
     title: "&6Pov\u00fd\u0161it \u010dlena - Strana {page}"
+    bedrock-title: "&6Pov\u00fd\u0161it \u010dlena"
+    bedrock-title-page: "&6Pov\u00fd\u0161it \u010dlena - Strana {page}"
+    bedrock-no-members: "&f\u017d\u00e1dn\u00ed \u010dlenov\u00e9 k pov\u00fd\u0161en\u00ed"
+    bedrock-content: "&fVyberte \u010dlena k pov\u00fd\u0161en\u00ed na d\u016fstojn\u00edka"
 
   # ================================================
   # DemoteMemberGUI (5 keys)
@@ -976,3 +1284,7 @@ gui:
     demote.success: "&aHr\u00e1\u010d &e{player} &abyl sn\u00ed\u017een na \u0159adov\u00e9ho \u010dlena!"
     click-demote: "Klikn\u011bte pro sn\u00ed\u017een\u00ed na \u010dlena"
     title: "&6Sn\u00ed\u017eit \u010dlena - Strana {page}"
+    bedrock-title: "&6Sn\u00ed\u017eit \u010dlena"
+    bedrock-title-page: "&6Sn\u00ed\u017eit \u010dlena - Strana {page}"
+    bedrock-no-members: "&f\u017d\u00e1dn\u00ed d\u016fstojn\u00edci ke sn\u00ed\u017een\u00ed"
+    bedrock-content: "&fVyberte d\u016fstojn\u00edka ke sn\u00ed\u017een\u00ed na \u010dlena"
