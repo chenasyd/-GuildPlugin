@@ -75,24 +75,68 @@ public class CompatibleScheduler {
     /**
      * 延迟执行任务
      */
-    public static void runTaskLater(Plugin plugin, Runnable task, long delay) {
+    public static ScheduledTaskHandle runTaskLater(Plugin plugin, Runnable task, long delay) {
         // 检查插件是否已启用
         if (plugin != null && !plugin.isEnabled()) {
-            return;
+            return () -> {};
         }
 
         if (ServerUtils.isFolia()) {
             try {
                 // 使用反射调用Folia的全局区域调度器
                 Object globalScheduler = Bukkit.class.getMethod("getGlobalRegionScheduler").invoke(null);
-                globalScheduler.getClass().getMethod("runDelayed", Plugin.class, java.util.function.Consumer.class, long.class)
-                    .invoke(globalScheduler, plugin, (java.util.function.Consumer<Object>) scheduledTask -> task.run(), delay);
+                Object foliaTask = globalScheduler.getClass().getMethod("runDelayed", Plugin.class, java.util.function.Consumer.class, long.class)
+                    .invoke(globalScheduler, plugin, (java.util.function.Consumer<Object>) st -> task.run(), delay);
+
+                return new ScheduledTaskHandle() {
+                    private volatile boolean cancelled = false;
+
+                    @Override
+                    public void cancel() {
+                        if (cancelled) return;
+                        cancelled = true;
+                        try {
+                            foliaTask.getClass().getMethod("cancel").invoke(foliaTask);
+                        } catch (Exception ignored) {}
+                    }
+
+                    @Override
+                    public boolean isCancelled() {
+                        return cancelled;
+                    }
+                };
             } catch (Exception e) {
                 // 如果Folia API不可用，回退到传统调度器
-                Bukkit.getScheduler().runTaskLater(plugin, task, delay);
+                org.bukkit.scheduler.BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(plugin, task, delay);
+                return new ScheduledTaskHandle() {
+                    private volatile boolean cancelled = false;
+
+                    @Override
+                    public void cancel() {
+                        if (!cancelled) { cancelled = true; bukkitTask.cancel(); }
+                    }
+
+                    @Override
+                    public boolean isCancelled() {
+                        return cancelled || bukkitTask.isCancelled();
+                    }
+                };
             }
         } else {
-            Bukkit.getScheduler().runTaskLater(plugin, task, delay);
+            org.bukkit.scheduler.BukkitTask bukkitTask = Bukkit.getScheduler().runTaskLater(plugin, task, delay);
+            return new ScheduledTaskHandle() {
+                private volatile boolean cancelled = false;
+
+                @Override
+                public void cancel() {
+                    if (!cancelled) { cancelled = true; bukkitTask.cancel(); }
+                }
+
+                @Override
+                public boolean isCancelled() {
+                    return cancelled || bukkitTask.isCancelled();
+                }
+            };
         }
     }
     

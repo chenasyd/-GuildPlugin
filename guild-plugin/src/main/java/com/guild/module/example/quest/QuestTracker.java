@@ -42,8 +42,7 @@ public class QuestTracker implements Listener {
     public void start() {
         if (running) return;
         try {
-            module.getContext().getPlugin().getServer().getPluginManager()
-                .registerEvents(this, module.getContext().getPlugin());
+            module.getContext().registerEvents(this);
             running = true;
             logger.info("[Quest-Tracker] Event listeners started");
         } catch (Exception e) {

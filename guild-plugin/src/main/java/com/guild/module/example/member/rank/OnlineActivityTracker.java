@@ -58,7 +58,7 @@ public class OnlineActivityTracker implements Listener {
     }
 
     public void start() {
-        Bukkit.getPluginManager().registerEvents(this, module.getContext().getPlugin());
+        module.getContext().registerEvents(this);
         long period = checkIntervalMinutes * 60L * 20L;
         this.task = CompatibleScheduler.runTaskTimer(
                 module.getContext().getPlugin(),

@@ -33,6 +33,9 @@ import com.guild.update.UpdateChecker;
 import com.guild.update.UpdateManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -55,6 +58,7 @@ public class GuildPlugin extends JavaPlugin {
     private com.guild.services.GuildInvestmentService guildInvestmentService;
     private com.guild.chat.GuildChatManager guildChatManager;
     private ModuleManager moduleManager;
+    private volatile boolean modulesUnloaded = false;
     private GuildMetrics guildMetrics;
     private UpdateManager updateManager;
     private UpdateChecker updateChecker;
@@ -219,6 +223,22 @@ public class GuildPlugin extends JavaPlugin {
             
             // 注册监听器
             registerListeners();
+
+            // Register plugin disable protection (before modules are loaded)
+            getServer().getPluginManager().registerEvents(new Listener() {
+                @EventHandler
+                public void onPluginDisable(PluginDisableEvent event) {
+                    if (event.getPlugin() == GuildPlugin.this) {
+                        // Bukkit is disabling us (e.g., /reload or plugin manager)
+                        // Ensure modules are properly unloaded before Bukkit removes our listeners
+                        if (moduleManager != null && !modulesUnloaded) {
+                            modulesUnloaded = true;
+                            getLogger().info("[Module] Plugin disable detected — unloading all modules");
+                            moduleManager.unloadAllModules();
+                        }
+                    }
+                }
+            }, this);
             
             // 加载所有扩展模块（在核心服务全部就绪后）
             moduleManager.loadAllModules();
@@ -267,7 +287,8 @@ public class GuildPlugin extends JavaPlugin {
             BedrockFormSender.shutdown();
             
             // 卸载所有扩展模块
-            if (moduleManager != null) {
+            if (moduleManager != null && !modulesUnloaded) {
+                modulesUnloaded = true;
                 moduleManager.unloadAllModules();
             }
 

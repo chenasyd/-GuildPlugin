@@ -68,7 +68,16 @@ public class GuildPluginAPI {
                                   GUIExtensionHook.GUIClickAction handler) {
     }
 
+    public void registerGUIButton(String guiType, int slot, ItemStack item, String moduleId,
+                                  GUIExtensionHook.GUIClickAction handler,
+                                  String displayNameKey, String... loreKeys) {
+    }
+
     public void registerCustomGUI(String guiId, ModuleGUIFactory factory) {
+    }
+
+    /** 注册自定义 GUI（带模块归属追踪） */
+    public void registerCustomGUI(String moduleId, String guiId, ModuleGUIFactory factory) {
     }
 
     public void unregisterCustomGUI(String guiId) {
@@ -134,6 +143,10 @@ public class GuildPluginAPI {
     }
 
     public void registerSubCommand(String parentCommand, String name, ModuleCommandHandler handler, String permission) {
+    }
+
+    /** 注册子命令（带模块归属追踪） */
+    public void registerSubCommand(String moduleId, String parentCommand, String name, ModuleCommandHandler handler, String permission) {
     }
 
     public void onGuildCreate(GuildEventHandler handler) {
@@ -329,6 +342,14 @@ public class GuildPluginAPI {
     /** 注册自定义占位符提供者 */
     public void registerPlaceholderProvider(PlaceholderProvider provider) { }
 
+    /** 注册自定义占位符提供者（带模块归属追踪） */
+    public void registerPlaceholderProvider(String moduleId, PlaceholderProvider provider) { }
+
     /** 注销占位符提供者 */
     public void unregisterPlaceholderProvider(String identifier) { }
+
+    // ==================== 模块清理 ====================
+
+    /** 移除指定模块注册的所有资源（占位符、子命令、自定义 GUI） */
+    public void clearModuleRegistrations(String moduleId) { }
 }

@@ -66,6 +66,7 @@ description: "A simple example module"
 main: com.example.guild.MyFirstModule
 api-version: 1.5.0
 type: mixed
+folia-compatible: true
 depends: []
 soft-depends: []
 config-prefix: my-first-module
@@ -143,6 +144,7 @@ UNLOADED → LOADING → ACTIVE → DISABLING → UNLOADED
 | `depends` | No | `depends` | Hard dependency module IDs |
 | `softDepends` | No | `soft-depends` | Optional dependency module IDs |
 | `configPrefix` | No | `config-prefix` | Config section prefix (default: `modules.{id}`) |
+| `foliaCompatible` | No | `folia-compatible` | Set `true` to allow loading on Folia servers (default: `false`) |
 
 ### ModuleContext
 
@@ -167,11 +169,15 @@ void sendMessage(Player player, String key, Object... args);
 String getMessage(String key, Object... args);
 String getMessage(Player player, String key, Object... args);  // v1.6.5: player-language aware
 
-// Scheduler (Folia/Spigot compatible)
+// Bukkit event listener (auto-tracked, unregistered on unload)
+void registerEvents(Listener listener);
+void trackListener(Listener listener);
+
+// Scheduler (Folia/Spigot compatible, auto-tracked)
 void runSync(Runnable task);
 void runAsync(Runnable task);
-void runLater(long delayTicks, Runnable task);
-void runTimer(long delayTicks, long periodTicks, Runnable task);
+ScheduledTaskHandle runLater(long delayTicks, Runnable task);
+ScheduledTaskHandle runTimer(long delayTicks, long periodTicks, Runnable task);
 
 // GUI navigation
 void openGUI(Player player, GUI gui);
@@ -294,10 +300,13 @@ module:
 
 ```java
 void registerCustomGUI(String guiId, ModuleGUIFactory factory);
+void registerCustomGUI(String moduleId, String guiId, ModuleGUIFactory factory);  // auto-cleanup on unload
 void unregisterCustomGUI(String guiId);
 void openCustomGUI(String guiId, Player player, Map<String, Object> data);
 void openCustomGUI(String guiId, Player player);
 ```
+
+> **Recommended**: Use the `moduleId` overload so the framework automatically removes the GUI registration when the module is unloaded. Manual `unregisterCustomGUI()` in `onDisable()` is no longer necessary.
 
 Use `GUIExtensionHook.AUTO_SLOT` (`-1`) for automatic slot assignment.
 
@@ -308,6 +317,8 @@ Available target GUIs: `GuildSettingsGUI`, `GuildInfoGUI`, `MainGuildGUI`, `Memb
 ```java
 void registerSubCommand(String parentCommand, String name,
                         ModuleCommandHandler handler, String permission);
+void registerSubCommand(String moduleId, String parentCommand, String name,
+                        ModuleCommandHandler handler, String permission);  // auto-cleanup on unload
 boolean hasSubCommand(String parentCommand, String name);
 ModuleCommandHandler getSubCommandHandler(String parentCommand, String name);
 String getSubCommandPermission(String parentCommand, String name);
@@ -366,6 +377,7 @@ boolean withdrawCurrency(int guildId, UUID playerUuid, String currencyType, doub
 
 ```java
 void registerPlaceholderProvider(PlaceholderProvider provider);
+void registerPlaceholderProvider(String moduleId, PlaceholderProvider provider);  // auto-cleanup on unload
 void unregisterPlaceholderProvider(String identifier);
 ```
 
@@ -896,14 +908,28 @@ Gson gson = new GsonBuilder().setPrettyPrinting().create();
 |:---------:|:------:|:------:|
 | Bukkit API (GUI, entities, messages) | Main / Sync | `context.runSync()` |
 | HTTP, file I/O, database queries | Async | `context.runAsync()` |
-| Delayed tasks | — | `context.runLater(long delayTicks, Runnable)` |
-| Repeating tasks | — | `context.runTimer(long delay, long period, Runnable)` |
+| Delayed tasks | — | `context.runLater(long delayTicks, Runnable)` → `ScheduledTaskHandle` |
+| Repeating tasks | — | `context.runTimer(long delay, long period, Runnable)` → `ScheduledTaskHandle` |
 
-Always use `context.runSync()` / `context.runAsync()` instead of `Bukkit.getScheduler()` for Folia compatibility.
+Always use `context.runSync()` / `context.runAsync()` instead of `Bukkit.getScheduler()` for Folia compatibility. Tasks created via `runLater()` / `runTimer()` are automatically tracked and cancelled when the module is unloaded. Similarly, Bukkit listeners registered via `context.registerEvents()` are auto-unregistered — no manual cleanup in `onDisable()` is needed.
 
 ### Inter-Module Communication
 
 Use the event system (recommended) — modules listen to events and react, rather than directly accessing each other's internals.
+
+**EventBus with module tracking (v1.6.6+):**
+
+```java
+// Subscribe with moduleId — auto-unsubscribed when module unloads
+context.getEventBus().subscribe("my-module", MyEvent.class, event -> {
+    context.getLogger().info("Received: " + event.getData());
+});
+
+// Legacy subscribe (no auto-cleanup — must unsubscribe manually)
+context.getEventBus().subscribe(MyEvent.class, event -> { ... });
+```
+
+> **Recommended**: Always use the `moduleId` overload. The framework calls `unsubscribeByModule(moduleId)` during unload, preventing leaked subscriptions across hot-reloads.
 
 ## module.yml Reference
 
@@ -923,6 +949,7 @@ depends: []                      # Hard dependencies (module IDs)
 soft-depends: []                 # Soft dependencies (module IDs)
 config-prefix: your-module       # Custom config.yml section prefix
                                  # Default: modules.{id}
+folia-compatible: true           # Allow loading on Folia servers (default: false)
 permissions:                     # Custom permission nodes
   - guild.admin.your-module.manage
 ```
@@ -974,12 +1001,17 @@ Copy the JAR to `plugins/GuildPlugin/modules/`, then:
 6. Use `context.getMessage(player, key, fallback)` for player-facing i18n, `LanguageManager.getCoreMessage()/getGuiMessage()/getModuleMessage()` for domain-specific needs
 7. Do not directly access other modules' internals — use events and API
 8. **New (v1.5+)**: Use the string-based currency API for runtime flexibility (e.g. `"A_COIN"` vs `CurrencyType.A_COIN`)
+9. **New (v1.6.6+)**: Prefer moduleId-tracking API overloads (`registerCustomGUI(moduleId, ...)`, `registerSubCommand(moduleId, ...)`, `registerPlaceholderProvider(moduleId, ...)`, `eventBus.subscribe(moduleId, ...)`) — the framework auto-cleans all registrations on unload
+10. **New (v1.6.6+)**: Use `context.registerEvents(listener)` instead of `Bukkit.getPluginManager().registerEvents()` for auto-tracked listener cleanup
+11. **New (v1.6.6+)**: Declare `folia-compatible: true` in `module.yml` if your module uses entity-level scheduling and avoids global-state assumptions — otherwise it will be rejected on Folia servers
 
 ## FAQ
 
-**Module fails to load?** Check that `module.yml` exists at JAR root, `main` class is correct, and `api-version` is compatible. Review console error stack trace.
+**Module fails to load?** Check that `module.yml` exists at JAR root, `main` class is correct, and `api-version` is compatible. Review console error stack trace. On Folia servers, ensure `folia-compatible: true` is set in `module.yml`.
 
 **GUI button not showing?** Use `GUIExtensionHook.AUTO_SLOT` to avoid slot conflicts. Verify the GUI type name is correct.
+
+**Do I still need to clean up registrations in onDisable()?** For SDK event handlers (`onGuildCreate`, etc.), GUI buttons, and anything registered via the moduleId-tracking overloads — no. The framework auto-cleans these before `onDisable()` is called. You only need `onDisable()` for module-specific logic (saving data, stopping custom threads, etc.).
 
 **How to hot-reload?** Replace the JAR in `modules/` then run `/guildmodule reload <id>`. `onDisable()` is called to clean up before re-loading.
 

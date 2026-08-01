@@ -7,6 +7,7 @@ import com.guild.core.module.exception.ModuleDependencyException;
 import com.guild.core.module.exception.ModuleLoadException;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.ConsoleLogger;
+import com.guild.core.utils.ServerUtils;
 import com.guild.sdk.GuildPluginAPI;
 import com.guild.update.UpdateManager;
 
@@ -16,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,6 +35,9 @@ public class ModuleManager {
 
     /** 共享 API 实例（所有模块共用，确保事件集中分发） */
     private final GuildPluginAPI sharedApi;
+
+    /** 模块上下文映射（用于卸载时自动清理注册追踪） */
+    private final Map<String, ModuleContext> moduleContexts = new ConcurrentHashMap<>();
 
     /** 核心支持的 API 版本号（运行时从插件描述读取） */
     private String getCoreApiVersion() {
@@ -258,17 +263,33 @@ public class ModuleManager {
         // 4. API 版本兼容性检查
         checkCompatibility(descriptor);
 
+        // 4.5 Folia compatibility guard
+        if (ServerUtils.isFolia() && !descriptor.isFoliaCompatible()) {
+            logger.warning("[Module] " + descriptor.getId() + " does not declare folia-compatible: true — skipping load on Folia server");
+            registry.setState(descriptor.getId(), ModuleState.ERROR);
+            return null;
+        }
+
+        // 4.6 Periodic leak detection
+        List<String> leaked = loader.checkClassLoaderLeaks();
+        if (!leaked.isEmpty()) {
+            logger.warning("[Module] ClassLoader leak detected for previously unloaded modules: " + leaked
+                + " — old module classes may still be referenced");
+        }
+
         // 5. 创建独立 ClassLoader 并实例化模块
         plugin.getLanguageManager().loadModuleLanguageResourcesForModule(moduleId);
         GuildModule module = loader.instantiateModule(jarFile, descriptor);
 
         // 6. 创建模块上下文并启用（使用共享 API 实例）
         ModuleContext context = new ModuleContext(plugin, descriptor, sharedApi);
+        moduleContexts.put(moduleId, context);
         registry.setState(moduleId, ModuleState.LOADING);
 
         try {
             module.onEnable(context);
         } catch (Exception e) {
+            moduleContexts.remove(moduleId);
             registry.setState(moduleId, ModuleState.ERROR);
             loader.unloadClassloader(moduleId);
             throw new ModuleLoadException(
@@ -313,6 +334,15 @@ public class ModuleManager {
         try {
             registry.unregister(moduleId);
             sharedApi.clearModuleHandlers(module);
+            sharedApi.clearModuleRegistrations(moduleId);
+            plugin.getEventBus().unsubscribeByModule(moduleId);
+
+            // Auto-cleanup tracked listeners and tasks BEFORE onDisable
+            ModuleContext ctx = moduleContexts.remove(moduleId);
+            if (ctx != null) {
+                ctx.cleanupTrackedRegistrations();
+            }
+
             module.onDisable();
             loader.unloadClassloader(moduleId);
 

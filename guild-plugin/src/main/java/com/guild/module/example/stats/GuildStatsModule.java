@@ -80,8 +80,8 @@ public class GuildStatsModule implements GuildModule {
                 context.getMessage("module.stats.init-done", "[Stats] Initialization complete, CustomGUI x2 registered"));
         });
 
-        context.getEventBus().subscribe(StatsRefreshedEvent.class, event ->
-            context.getLogger().info(String.format("[Stats-Event] 公会 #%d %s 统计已刷新 (活跃度=%.1f)",
+        context.getEventBus().subscribe("guild-stats", StatsRefreshedEvent.class, event ->
+            context.getLogger().info(String.format("[Stats-Event] Guild #%d %s stats refreshed (activity=%.1f)",
                 event.guildId, event.guildName, event.activityScore)));
 
         context.getLogger().info(
@@ -92,9 +92,6 @@ public class GuildStatsModule implements GuildModule {
     @Override
     public void onDisable() {
         this.state = ModuleState.UNLOADED;
-        GuildPluginAPI api = context.getApi();
-        api.unregisterCustomGUI("stats-player-detail");
-        api.unregisterCustomGUI("stats-overview");
         if (activityTracker != null) {
             activityTracker.stop();
         }
@@ -146,7 +143,7 @@ public class GuildStatsModule implements GuildModule {
             "module.stats.ranking-button",
             "module.stats.ranking-button-desc");
 
-        api.registerCustomGUI("stats-player-detail", (player, data) -> {
+        api.registerCustomGUI("guild-stats", "stats-player-detail", (player, data) -> {
             UUID targetUuid = (UUID) data.get("targetUuid");
             ActivityReport reportData = (ActivityReport) data.get("report");
             EconomyContributionFetcher.EconomySummary econ =
@@ -156,7 +153,7 @@ public class GuildStatsModule implements GuildModule {
             return new PlayerDetailGUI(this, activity, reportData, econ);
         });
 
-        api.registerCustomGUI("stats-overview", (player, data) -> {
+        api.registerCustomGUI("guild-stats", "stats-overview", (player, data) -> {
             com.guild.models.Guild guildObj = (com.guild.models.Guild) data.get("guild");
             GuildStatistics statsData = (GuildStatistics) data.get("stats");
             EconomyContributionFetcher.EconomySummary econ =
@@ -166,7 +163,7 @@ public class GuildStatsModule implements GuildModule {
     }
 
     private void registerCommands(GuildPluginAPI api) {
-        api.registerSubCommand("guild", "stats",
+        api.registerSubCommand("guild-stats", "guild", "stats",
             (sender, args) -> handleStatsCommand(sender, args),
             "guild.stats.view");
     }

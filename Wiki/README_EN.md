@@ -245,6 +245,8 @@ mvn clean package -pl guild-plugin -Pbuild-announcement-module
 
 See [SDK Developer Guide](SDK%20Developer-Guide.md) for module development documentation.
 
+Modules support hot-load/unload/reload at runtime. The framework auto-cleans all registrations (listeners, tasks, commands, GUIs, placeholders, EventBus subscriptions) on unload. Folia compatibility is gated by the `folia-compatible` flag in `module.yml`, and ClassLoader leak detection warns about stale references across reloads.
+
 ### Module GUI Enhancement
 
 Module GUIs support image mode (ImagoCore binding), Bedrock Edition forms (Cumulus provider), and server admin customization of items/text/flags via `gui-config.yml`.

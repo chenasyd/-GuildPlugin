@@ -25,6 +25,7 @@ public class ModuleDescriptor {
     private String type;            // 模块类型：gui | command | event | api | mixed
     private String configPrefix;    // 配置段前缀
     private File sourceFile;        // 来源 jar 文件
+    private boolean foliaCompatible = false;  // 是否声明兼容 Folia（默认：未声明 = 不兼容）
 
     public ModuleDescriptor() {
         this.depends = new ArrayList<>();
@@ -67,6 +68,9 @@ public class ModuleDescriptor {
         if (config.contains("soft-depends")) {
             desc.softDepends = config.getStringList("soft-depends");
         }
+
+        // Folia 兼容性标志
+        desc.foliaCompatible = config.getBoolean("folia-compatible", false);
 
         return desc;
     }
@@ -146,6 +150,9 @@ public class ModuleDescriptor {
 
     public File getSourceFile() { return sourceFile; }
     public void setSourceFile(File sourceFile) { this.sourceFile = sourceFile; }
+
+    public boolean isFoliaCompatible() { return foliaCompatible; }
+    public void setFoliaCompatible(boolean foliaCompatible) { this.foliaCompatible = foliaCompatible; }
 
     @Override
     public String toString() {

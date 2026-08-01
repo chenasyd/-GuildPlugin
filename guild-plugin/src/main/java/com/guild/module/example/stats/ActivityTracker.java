@@ -30,7 +30,7 @@ public class ActivityTracker implements Listener {
     public void start() {
         tickCount = 0;
 
-        Bukkit.getPluginManager().registerEvents(this, module.getContext().getPlugin());
+        module.getContext().registerEvents(this);
 
         // 加载持久化数据
         persistence.load();

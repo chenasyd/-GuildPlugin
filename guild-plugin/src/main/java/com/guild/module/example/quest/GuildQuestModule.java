@@ -62,7 +62,7 @@ public class GuildQuestModule implements GuildModule {
         registerEventHandlers(api);
         startScheduledTasks();
 
-        api.registerCustomGUI("quest-detail", (player, data) -> {
+        api.registerCustomGUI("guild-quest", "quest-detail", (player, data) -> {
             QuestDefinition def = (QuestDefinition) data.get("definition");
             int guildId = toInt(data.get("guildId"), 0);
             UUID playerUuid = (UUID) data.get("playerUuid");
@@ -102,7 +102,7 @@ public class GuildQuestModule implements GuildModule {
             }
         });
 
-        api.registerCustomGUI("quest-active-list", (player, data) -> {
+        api.registerCustomGUI("guild-quest", "quest-active-list", (player, data) -> {
             int guildId = toInt(data.get("guildId"), 0);
             UUID playerUuid = player.getUniqueId();
             List<QuestProgress> active = questManager.getPlayerActiveQuests(guildId, playerUuid);
@@ -114,7 +114,7 @@ public class GuildQuestModule implements GuildModule {
             context.getLogger().info(context.getMessage("module.quest.loaded", questManager.getDefinitions().size()));
         });
 
-        context.getEventBus().subscribe(QuestCompletedEvent.class, event -> {});
+        context.getEventBus().subscribe("guild-quest", QuestCompletedEvent.class, event -> {});
     }
 
     private void registerDefaultQuests() {
@@ -213,10 +213,10 @@ public class GuildQuestModule implements GuildModule {
     }
 
     private void registerCommands(GuildPluginAPI api) {
-        api.registerSubCommand("guild", "quest", (sender, args) -> handleQuestCommand(sender, args), "guild.quest");
-        api.registerSubCommand("guild", "tasks", (sender, args) -> handleQuestCommand(sender, args), "guild.quest");
-        api.registerSubCommand("guild", "currencies", (sender, args) -> handleCurrenciesCommand(sender, args), "guild.quest");
-        api.registerSubCommand("guild", "currency", (sender, args) -> handleCurrenciesCommand(sender, args), "guild.quest");
+        api.registerSubCommand("guild-quest", "guild", "quest", (sender, args) -> handleQuestCommand(sender, args), "guild.quest");
+        api.registerSubCommand("guild-quest", "guild", "tasks", (sender, args) -> handleQuestCommand(sender, args), "guild.quest");
+        api.registerSubCommand("guild-quest", "guild", "currencies", (sender, args) -> handleCurrenciesCommand(sender, args), "guild.quest");
+        api.registerSubCommand("guild-quest", "guild", "currency", (sender, args) -> handleCurrenciesCommand(sender, args), "guild.quest");
     }
 
     private void handleQuestCommand(org.bukkit.command.CommandSender sender, String[] args) {
@@ -374,9 +374,6 @@ public class GuildQuestModule implements GuildModule {
     @Override
     public void onDisable() {
         this.state = ModuleState.UNLOADED;
-        GuildPluginAPI api = context.getApi();
-        api.unregisterCustomGUI("quest-detail");
-        api.unregisterCustomGUI("quest-active-list");
         if (questTracker != null) questTracker.stop();
         if (questManager != null) {
             questManager.saveAll();

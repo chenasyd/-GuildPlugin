@@ -4,8 +4,11 @@ import com.guild.core.module.exception.ModuleLoadException;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,6 +27,7 @@ public class ModuleLoader {
 
     private final ModuleManager manager;
     private final Map<String, URLClassLoader> classLoaders = new ConcurrentHashMap<>();
+    private final Map<String, WeakReference<URLClassLoader>> unloadedLoaders = new ConcurrentHashMap<>();
 
     public ModuleLoader(ModuleManager manager) {
         this.manager = manager;
@@ -116,6 +120,7 @@ public class ModuleLoader {
     public void unloadClassloader(String moduleId) {
         URLClassLoader cl = classLoaders.remove(moduleId);
         if (cl != null) {
+            unloadedLoaders.put(moduleId, new WeakReference<>(cl));
             try {
                 cl.close();  // 触发资源释放
             } catch (IOException ignored) {
@@ -131,6 +136,24 @@ public class ModuleLoader {
         for (String moduleId : new java.util.ArrayList<>(classLoaders.keySet())) {
             unloadClassloader(moduleId);
         }
+    }
+
+    /**
+     * Check if previously unloaded classloaders have been garbage collected.
+     * Call periodically or before loading a new module to detect leaks.
+     * Returns list of moduleIds whose classloaders are still alive (leaked).
+     */
+    public List<String> checkClassLoaderLeaks() {
+        List<String> leaked = new ArrayList<>();
+        unloadedLoaders.entrySet().removeIf(entry -> {
+            if (entry.getValue().get() == null) {
+                return true;  // GC'd, remove from tracking
+            } else {
+                leaked.add(entry.getKey());
+                return false;  // still alive, keep tracking
+            }
+        });
+        return leaked;
     }
 
     /**

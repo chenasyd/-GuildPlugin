@@ -8,13 +8,18 @@ import com.guild.core.gui.GUIManager;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.ScheduledTaskHandle;
 import com.guild.sdk.GuildPluginAPI;
 import com.guild.sdk.config.ModuleConfigSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 /**
@@ -27,6 +32,11 @@ public class ModuleContext {
     private final GuildPluginAPI api;
     private final ModuleConfigSection config;
     private final Logger logger;
+
+    /** Tracked Bukkit event listeners for auto-cleanup on module unload */
+    private final List<Listener> trackedListeners = new CopyOnWriteArrayList<>();
+    /** Tracked scheduled tasks for auto-cleanup on module unload */
+    private final List<ScheduledTaskHandle> trackedTasks = new CopyOnWriteArrayList<>();
 
     public ModuleContext(GuildPlugin plugin, ModuleDescriptor descriptor, GuildPluginAPI sharedApi) {
         this.plugin = plugin;
@@ -61,6 +71,25 @@ public class ModuleContext {
 
     /** 获取模块私有配置段 */
     public ModuleConfigSection getConfig() { return config; }
+
+    // ==================== 事件监听器注册（自动追踪） ====================
+
+    /**
+     * Register a Bukkit event listener with automatic tracking.
+     * The listener will be auto-unregistered when the module is unloaded.
+     * Preferred over direct Bukkit.getPluginManager().registerEvents().
+     */
+    public void registerEvents(Listener listener) {
+        plugin.getServer().getPluginManager().registerEvents(listener, plugin);
+        trackedListeners.add(listener);
+    }
+
+    /**
+     * Track an externally-created listener for auto-cleanup on unload.
+     */
+    public void trackListener(Listener listener) {
+        trackedListeners.add(listener);
+    }
 
     // ==================== 日志 ====================
 
@@ -161,8 +190,10 @@ public class ModuleContext {
     }
 
     /** 延迟调度任务（主线程） */
-    public void runLater(long delayTicks, Runnable task) {
-        CompatibleScheduler.runTaskLater(plugin, task, delayTicks);
+    public ScheduledTaskHandle runLater(long delayTicks, Runnable task) {
+        ScheduledTaskHandle handle = CompatibleScheduler.runTaskLater(plugin, task, delayTicks);
+        trackedTasks.add(handle);
+        return handle;
     }
 
     /**
@@ -175,8 +206,10 @@ public class ModuleContext {
     }
 
     /** 周期性调度任务（主线程） */
-    public void runTimer(long delayTicks, long periodTicks, Runnable task) {
-        CompatibleScheduler.runTaskTimer(plugin, task, delayTicks, periodTicks);
+    public ScheduledTaskHandle runTimer(long delayTicks, long periodTicks, Runnable task) {
+        ScheduledTaskHandle handle = CompatibleScheduler.runTaskTimer(plugin, task, delayTicks, periodTicks);
+        trackedTasks.add(handle);
+        return handle;
     }
 
     // ==================== GUI 导航 ====================
@@ -248,5 +281,25 @@ public class ModuleContext {
         if (listener != null) {
             runSync(() -> listener.onGUIRefresh(guiType, data));
         }
+    }
+
+    // ==================== 注册追踪清理 ====================
+
+    /**
+     * Framework-internal: auto-cleanup all tracked registrations.
+     * Called by ModuleManager during module unload, BEFORE module.onDisable().
+     */
+    public void cleanupTrackedRegistrations() {
+        // Unregister all tracked Bukkit listeners
+        for (Listener listener : trackedListeners) {
+            HandlerList.unregisterAll(listener);
+        }
+        trackedListeners.clear();
+
+        // Cancel all tracked scheduled tasks
+        for (ScheduledTaskHandle handle : trackedTasks) {
+            try { handle.cancel(); } catch (Exception ignored) {}
+        }
+        trackedTasks.clear();
     }
 }

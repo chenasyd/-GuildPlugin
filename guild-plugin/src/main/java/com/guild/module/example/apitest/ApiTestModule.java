@@ -37,7 +37,7 @@ public class ApiTestModule implements GuildModule {
         GuildPluginAPI api = context.getApi();
 
         // 1. 注册测试命令
-        api.registerSubCommand("guild", "apitest",
+        api.registerSubCommand("api-test", "guild", "apitest",
                 new ApiTestCommandHandler(this), "guild.apitest.use");
 
         // 2. 注册 GUI 按钮（在 GuildSettingsGUI 自动找一个槽位，多语言支持）
@@ -57,7 +57,7 @@ public class ApiTestModule implements GuildModule {
         registerAllEventHandlers(api);
 
         // 4. 注册占位符提供者
-        api.registerPlaceholderProvider(new RegionCountProvider());
+        api.registerPlaceholderProvider("api-test", new RegionCountProvider());
 
         context.getLogger().info("[ApiTest] Module enabled — use /guild apitest help to see test commands");
     }

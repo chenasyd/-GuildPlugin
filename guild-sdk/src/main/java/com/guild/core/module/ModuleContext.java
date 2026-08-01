@@ -9,6 +9,7 @@ import com.guild.core.language.LanguageManager;
 import com.guild.sdk.GuildPluginAPI;
 import com.guild.sdk.config.ModuleConfigSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
 import java.util.logging.Logger;
 
@@ -53,6 +54,15 @@ public class ModuleContext {
             return args[0].toString();
         }
         return "";
+    }
+
+    public void registerEvents(Listener listener) {
+    }
+
+    public void trackListener(Listener listener) {
+    }
+
+    public void cleanupTrackedRegistrations() {
     }
 
     public void runSync(Runnable task) {

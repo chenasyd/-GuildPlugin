@@ -75,6 +75,11 @@ public class GuildPluginAPI {
     // 权限注册表 (parentCommand -> (subCommand -> permission))
     private final Map<String, Map<String, String>> permissionRegistry = new java.util.concurrent.ConcurrentHashMap<>();
 
+    // 模块归属追踪（identifier/key → moduleId，用于按模块批量清理）
+    private final Map<String, String> placeholderOwners = new java.util.concurrent.ConcurrentHashMap<>();
+    private final Map<String, String> commandOwners = new java.util.concurrent.ConcurrentHashMap<>();
+    private final Map<String, String> guiFactoryOwners = new java.util.concurrent.ConcurrentHashMap<>();
+
     public GuildPluginAPI(GuildPlugin plugin) {
         this.plugin = plugin;
         this.httpClient = new HttpClientProvider();
@@ -184,6 +189,12 @@ public class GuildPluginAPI {
         customGUIRegistry.put(guiId, factory);
     }
 
+    /** 注册全新的自定义 GUI 页面（带模块归属追踪，卸载时自动清理） */
+    public void registerCustomGUI(String moduleId, String guiId, ModuleGUIFactory factory) {
+        registerCustomGUI(guiId, factory);
+        guiFactoryOwners.put(guiId, moduleId);
+    }
+
     /** 注销自定义 GUI 页面（模块卸载时调用） */
     public void unregisterCustomGUI(String guiId) {
         customGUIRegistry.remove(guiId);
@@ -279,6 +290,14 @@ public class GuildPluginAPI {
             permissionRegistry.computeIfAbsent(parentCommand.toLowerCase(), k -> new java.util.concurrent.ConcurrentHashMap<>())
                 .put(name.toLowerCase(), permission);
         }
+    }
+
+    /** 注册子命令（带模块归属追踪，卸载时自动清理） */
+    public void registerSubCommand(String moduleId, String parentCommand, String name,
+                                   ModuleCommandHandler handler,
+                                   String permission) {
+        registerSubCommand(parentCommand, name, handler, permission);
+        commandOwners.put(parentCommand.toLowerCase() + "." + name.toLowerCase(), moduleId);
     }
 
     /** 检查是否存在子命令 */
@@ -447,6 +466,49 @@ public class GuildPluginAPI {
         onMemberRoleChangeHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
     }
 
+    /**
+     * 移除指定模块注册的所有资源（占位符、子命令、自定义 GUI）。
+     * 由 ModuleManager 在模块卸载时调用，配合 clearModuleHandlers 使用。
+     */
+    public void clearModuleRegistrations(String moduleId) {
+        // 占位符提供者
+        placeholderOwners.entrySet().removeIf(e -> {
+            if (moduleId.equals(e.getValue())) {
+                placeholderProviders.remove(e.getKey());
+                return true;
+            }
+            return false;
+        });
+
+        // 子命令及权限
+        commandOwners.entrySet().removeIf(e -> {
+            if (moduleId.equals(e.getValue())) {
+                String[] parts = e.getKey().split("\\.", 2);
+                if (parts.length == 2) {
+                    Map<String, ModuleCommandHandler> subs = commandRegistry.get(parts[0]);
+                    if (subs != null) {
+                        subs.remove(parts[1]);
+                    }
+                    Map<String, String> perms = permissionRegistry.get(parts[0]);
+                    if (perms != null) {
+                        perms.remove(parts[1]);
+                    }
+                }
+                return true;
+            }
+            return false;
+        });
+
+        // 自定义 GUI 工厂
+        guiFactoryOwners.entrySet().removeIf(e -> {
+            if (moduleId.equals(e.getValue())) {
+                customGUIRegistry.remove(e.getKey());
+                return true;
+            }
+            return false;
+        });
+    }
+
     /** 清除所有事件处理器和自定义 GUI 注册 */
     public void clearAll() {
         onGuildCreateHandlers.clear();
@@ -460,6 +522,9 @@ public class GuildPluginAPI {
         customGUIRegistry.clear();
         commandRegistry.clear();
         permissionRegistry.clear();
+        placeholderOwners.clear();
+        commandOwners.clear();
+        guiFactoryOwners.clear();
     }
 
     // ==================== 货币 API ====================
@@ -544,6 +609,14 @@ public class GuildPluginAPI {
             return;
         }
         placeholderProviders.put(provider.getIdentifier().toLowerCase(), provider);
+    }
+
+    /** 注册自定义占位符提供者（带模块归属追踪，卸载时自动清理） */
+    public void registerPlaceholderProvider(String moduleId, PlaceholderProvider provider) {
+        registerPlaceholderProvider(provider);
+        if (provider != null && provider.getIdentifier() != null && !provider.getIdentifier().trim().isEmpty()) {
+            placeholderOwners.put(provider.getIdentifier().toLowerCase(), moduleId);
+        }
     }
 
     /** 注销占位符提供者 */

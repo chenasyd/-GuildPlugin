@@ -21,11 +21,12 @@ A feature-complete Minecraft guild/faction system with economy, relations, level
 - **Full GUI** — intuitive graphical interface for all operations
 - **Multi-language** — 中文, English, Polski, Português (Brasil), plus 20+ other languages (Deutsch, Français, Español, 日本語, 한국어, etc.)
 - **Async Database** — HikariCP connection pool, MySQL/SQLite support
-- **Modular SDK** — external module development with full API coverage (4 example modules)
+- **Modular SDK** — external module development with full API coverage (6 example modules)
 - **CustomGUI System** — modules can independently register/open/unregister custom GUIs
-- **EventBus** — loose-coupled inter-module communication
+- **EventBus** — loose-coupled inter-module communication with per-module subscription tracking
 - **ServiceContainer** — modules access core system services via DI
 - **Hot-load Modules** — add/remove modules at runtime via `/guildmodule`, no server restart needed
+- **Module Lifecycle Safety** — auto-cleanup of listeners, tasks, commands, GUIs, and placeholders on unload; Folia compatibility guard; ClassLoader leak detection
 - **Module GUI Enhancement** — image mode (ImagoCore), Bedrock Edition forms (Cumulus), and server admin config override via `gui-config.yml`
 
 ## Compatibility
