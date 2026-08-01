@@ -33,6 +33,11 @@ import com.guild.sdk.event.MemberEventHandler;
 import com.guild.sdk.event.MemberRoleChangeEventData;
 import com.guild.sdk.event.MemberRoleChangeEventHandler;
 import com.guild.sdk.gui.ModuleGUIFactory;
+import com.guild.sdk.gui.ModuleGUIRegistration;
+import com.guild.sdk.gui.BedrockFormProvider;
+import com.guild.sdk.gui.GUILayoutDefinition;
+import com.guild.sdk.gui.ModuleGUIConfig;
+import com.guild.sdk.gui.AbstractModuleGUI;
 import com.guild.sdk.http.HttpClientProvider;
 import com.guild.sdk.placeholder.PlaceholderProvider;
 import java.io.File;
@@ -198,6 +203,63 @@ public class GuildPluginAPI {
     /** 打开已注册的自定义 GUI 页面（无额外数据） */
     public void openCustomGUI(String guiId, Player player) {
         openCustomGUI(guiId, player, null);
+    }
+
+    // ==================== 模块 GUI 增强注册 API ====================
+
+    /**
+     * 注册增强版自定义 GUI（支持图像绑定、布局定义、基岩表单、配置覆盖）。
+     * 旧版 registerCustomGUI(guiId, factory) 等价于 builder(guiId, factory).build()。
+     */
+    public void registerCustomGUI(ModuleGUIRegistration registration) {
+        if (registration == null) {
+            throw new IllegalArgumentException("registration cannot be null");
+        }
+        String guiId = registration.getGuiId();
+        if (customGUIRegistry.containsKey(guiId)) {
+            throw new IllegalArgumentException("guiId already registered: " + guiId);
+        }
+        // 同时注册到旧版 factory 映射（保持 openCustomGUI 兼容）
+        customGUIRegistry.put(guiId, registration.getFactory());
+        // 注册到增强注册表
+        ModuleManager mm = plugin.getServiceContainer().get(ModuleManager.class);
+        mm.getRegistry().registerCustomGUI(registration);
+    }
+
+    /**
+     * 查询模块 GUI 是否注册了基岩表单提供者。
+     */
+    public BedrockFormProvider getBedrockFormProvider(String guiId) {
+        ModuleManager mm = plugin.getServiceContainer().get(ModuleManager.class);
+        ModuleGUIRegistration reg = mm.getRegistry().getCustomGUIRegistration(guiId);
+        return reg != null ? reg.getBedrockFormProvider() : null;
+    }
+
+    /**
+     * 查询模块 GUI 是否注册了图像绑定。
+     */
+    public boolean hasModuleImageBinding(String guiId) {
+        ModuleManager mm = plugin.getServiceContainer().get(ModuleManager.class);
+        ModuleGUIRegistration reg = mm.getRegistry().getCustomGUIRegistration(guiId);
+        return reg != null && reg.getImageEntryId() != null;
+    }
+
+    /**
+     * 查询模块 GUI 的布局定义。
+     */
+    public GUILayoutDefinition getModuleGUILayout(String guiId) {
+        ModuleManager mm = plugin.getServiceContainer().get(ModuleManager.class);
+        ModuleGUIRegistration reg = mm.getRegistry().getCustomGUIRegistration(guiId);
+        return reg != null ? reg.getLayout() : null;
+    }
+
+    /**
+     * 获取模块 GUI 的配置覆盖实例。
+     */
+    public ModuleGUIConfig getModuleGUIConfig(String guiId) {
+        ModuleManager mm = plugin.getServiceContainer().get(ModuleManager.class);
+        ModuleGUIRegistration reg = mm.getRegistry().getCustomGUIRegistration(guiId);
+        return reg != null ? reg.getConfig() : null;
     }
 
     // ==================== 命令扩展 API ====================

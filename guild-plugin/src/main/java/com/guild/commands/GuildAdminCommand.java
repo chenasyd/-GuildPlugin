@@ -1365,9 +1365,9 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        // ===== Phase 1: 重载前快照 =====
+        // ===== 重载前快照 =====
         sender.sendMessage(ColorUtils.colorize("&6========== 模块重载测试: " + moduleId + " =========="));
-        sender.sendMessage(ColorUtils.colorize("&e>>> Phase 1: 重载前按钮状态 <<<"));
+        sender.sendMessage(ColorUtils.colorize("&e>>> 重载前按钮状态 <<<"));
 
         GUIExtensionHook guiHook = mm.getRegistry().getGuiExtensionHook();
         String[] guiTypes = {"GuildSettingsGUI", "GuildInfoGUI", "MainGuildGUI"};
@@ -1405,9 +1405,9 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        // ===== Phase 2: 执行重载 =====
+        // ===== 执行重载 =====
         sender.sendMessage("");
-        sender.sendMessage(ColorUtils.colorize("&e>>> Phase 2: 执行 reloadModule(\"" + moduleId + "\") <<<"));
+        sender.sendMessage(ColorUtils.colorize("&e>>> 执行 reloadModule(\"" + moduleId + "\") <<<"));
 
         boolean success = mm.reloadModule(moduleId);
         if (success) {
@@ -1418,9 +1418,9 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        // ===== Phase 3: 重载后对比 =====
+        // ===== 重载后对比 =====
         sender.sendMessage("");
-        sender.sendMessage(ColorUtils.colorize("&e>>> Phase 3: 重载后按钮状态 <<<"));
+        sender.sendMessage(ColorUtils.colorize("&e>>> 重载后按钮状态 <<<"));
 
         int changed = 0;
         int unchanged = 0;

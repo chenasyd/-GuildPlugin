@@ -27,4 +27,16 @@ public interface GUI {
     default String getGuiType() {
         return this.getClass().getSimpleName();
     }
+
+    /**
+     * Called when a Bedrock Edition player opens this GUI.
+     * Return true if a native Cumulus form was sent (skips Java Inventory path).
+     * Default returns false (falls back to Geyser Inventory translation).
+     *
+     * @param player the Bedrock player
+     * @return true if a form was sent
+     */
+    default boolean openBedrockForm(Player player) {
+        return false;
+    }
 }

@@ -11,7 +11,7 @@ GuildPlugin is a Minecraft guild system plugin providing complete guild manageme
 
 ## Developer Documentation
 
-- [SDK Developer Guide](./SDK%20Developer-Guide.md) — Module development tutorial
+- [SDK Developer Guide](./SDK%20Developer-Guide.md) — Module development tutorial (covers Module GUI Enhancement: image mode, Bedrock forms, config override)
 - [PlaceholderAPI Reference](./PLACEHOLDER_API.md) — PlaceholderAPI variable list
 
 ## Resources

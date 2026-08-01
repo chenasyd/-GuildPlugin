@@ -1067,6 +1067,184 @@ public void onExtensionMessage(ExtensionMessageEvent event) {
 }
 ```
 
+## Module GUI Enhancement
+
+The module GUI system supports three new capabilities: **image mode** (ImagoCore binding), **Bedrock Edition forms** (Cumulus provider), and **config override** (server admin customization via `gui-config.yml`).
+
+### New SDK Classes
+
+| Class | Package | Purpose |
+|:-----:|:-------:|:-------:|
+| `ModuleGUIRegistration` | `com.guild.sdk.gui` | Builder-pattern registration descriptor |
+| `BedrockFormProvider` | `com.guild.sdk.gui` | Functional interface for Bedrock forms |
+| `GUILayoutDefinition` | `com.guild.sdk.gui` | Slot layout for image mode |
+| `ModuleGUIConfig` | `com.guild.sdk.gui` | Config override interface |
+| `DefaultModuleGUIConfig` | `com.guild.core.module.config` | YAML-backed config implementation |
+
+### Enhanced Registration API
+
+Use the `ModuleGUIRegistration` builder to register a GUI with all module GUI capabilities in one call:
+
+```java
+import com.guild.sdk.gui.ModuleGUIRegistration;
+import com.guild.sdk.gui.BedrockFormProvider;
+import com.guild.sdk.gui.GUILayoutDefinition;
+
+ModuleGUIRegistration registration = ModuleGUIRegistration.builder("my-gui-id")
+    .factory((player, data) -> new MyCustomGUI(player, data))
+    .imageEntryId("my-module-banner")          // ImagoCore image title binding
+    .layout(GUILayoutDefinition.builder()
+        .slot(10, "feature-a")
+        .slot(12, "feature-b")
+        .slot(14, "feature-c")
+        .transparentCarrier(true)              // transparent carrier layout
+        .build())
+    .bedrockForm((player) -> {
+        // Build and return a Cumulus form for Bedrock players
+        return buildMyForm(player);
+    })
+    .config(new MyModuleGUIConfig())           // config override support
+    .build();
+
+api.registerCustomGUI(registration);
+```
+
+### BedrockFormProvider
+
+`BedrockFormProvider` is a functional interface invoked when a Bedrock Edition player (via Geyser) opens your module GUI. Return a Cumulus form object to render natively on the Bedrock client.
+
+```java
+@FunctionalInterface
+public interface BedrockFormProvider {
+    Object buildForm(Player player);
+}
+```
+
+**Example:**
+
+```java
+.bedrockForm((player) -> {
+    SimpleForm form = SimpleForm.builder()
+        .title("My Module")
+        .content("Select an option:")
+        .button("Option A", (p) -> handleOptionA(p))
+        .button("Option B", (p) -> handleOptionB(p))
+        .build();
+    return form;
+})
+```
+
+> **Thread-safety warning**: `BedrockFormProvider.buildForm()` may be called from an async thread. If your form logic accesses Bukkit APIs (inventory, player state, etc.), wrap those calls in `context.runSync()`. Do NOT perform blocking I/O inside the provider without offloading to `context.runAsync()`.
+
+### GUILayoutDefinition
+
+`GUILayoutDefinition` defines the slot layout used in image mode. When a GUI is bound to an ImagoCore image title, the layout specifies which slots are interactive and whether the carrier is transparent.
+
+```java
+GUILayoutDefinition layout = GUILayoutDefinition.builder()
+    .slot(10, "action-a")       // map slot 10 to action identifier
+    .slot(12, "action-b")
+    .slot(14, "action-c")
+    .slot(16, "action-d")
+    .transparentCarrier(true)   // background image shows through
+    .build();
+```
+
+### ModuleGUIConfig / Config Override
+
+Modules can expose GUI items, text, and flags to server admin customization via `gui-config.yml`. Implement `ModuleGUIConfig` or use the provided `DefaultModuleGUIConfig`.
+
+**Interface:**
+
+```java
+public interface ModuleGUIConfig {
+    String getItem(String key, String defaultMaterial);
+    String getText(String key, String defaultText);
+    boolean getFlag(String key, boolean defaultValue);
+    void inject(ModuleGUIConfig config);
+}
+```
+
+**Using DefaultModuleGUIConfig (YAML-backed):**
+
+```java
+import com.guild.core.module.config.DefaultModuleGUIConfig;
+
+// In your AbstractModuleGUI subclass:
+@Override
+public ModuleGUIConfig getConfig() {
+    return new DefaultModuleGUIConfig("my-module", "my-gui-id");
+}
+
+@Override
+public void injectConfig(ModuleGUIConfig config) {
+    this.config = config;
+}
+```
+
+**gui-config.yml format** (located at `plugins/GuildPlugin/gui-config.yml`):
+
+```yaml
+modules:
+  my-module:
+    my-gui-id:
+      items:
+        feature-a: "DIAMOND_SWORD"
+        feature-b: "GOLDEN_APPLE"
+      text:
+        title: "&6&lMy Custom Title"
+        subtitle: "&7Server-specific subtitle"
+      flags:
+        show-particles: true
+        allow-close: false
+```
+
+Server admins can override any exposed item/text/flag without modifying module code. Values not present in `gui-config.yml` fall back to module defaults.
+
+### AbstractModuleGUI New Hooks
+
+The following overridable hooks are available in `AbstractModuleGUI`:
+
+| Hook | Return Type | Purpose |
+|:----:|:-----------:|:-------:|
+| `getImageEntryId()` | `String` | ImagoCore image title ID for image mode (null = disabled) |
+| `getGUILayout()` | `GUILayoutDefinition` | Slot layout for image mode (null = default) |
+| `openBedrockForm(Player)` | `void` | Open a Cumulus form for Bedrock players |
+| `getConfig()` | `ModuleGUIConfig` | Return the config override handler (null = no override) |
+| `injectConfig(ModuleGUIConfig)` | `void` | Called by framework to inject resolved config |
+
+### GuildPluginAPI New Methods
+
+```java
+// Register a GUI with the full module GUI descriptor
+void registerCustomGUI(ModuleGUIRegistration registration);
+
+// Query Bedrock form provider for a GUI
+BedrockFormProvider getBedrockFormProvider(String guiId);
+
+// Check if a GUI has an ImagoCore image binding
+boolean hasModuleImageBinding(String guiId);
+
+// Get the image-mode layout for a GUI
+GUILayoutDefinition getModuleGUILayout(String guiId);
+
+// Get the config override handler for a GUI
+ModuleGUIConfig getModuleGUIConfig(String guiId);
+```
+
+### Priority / Fallback Rules
+
+When multiple rendering paths are available, the system resolves in the following order:
+
+| Priority | Condition | Rendering Path |
+|:--------:|:---------:|:--------------:|
+| 1 | Player is Bedrock (Geyser) + `BedrockFormProvider` registered | Cumulus native form |
+| 2 | `imageEntryId` set + ImagoCore available + layout defined | Image mode (ImagoCore title + transparent carrier) |
+| 3 | `gui-config.yml` override exists for this GUI | Standard inventory GUI with overridden items/text/flags |
+| 4 | None of the above | Standard inventory GUI with module defaults |
+
+> **Note**: Priorities are evaluated top-down; the first matching condition wins. If ImagoCore is not installed, image mode is silently skipped and falls through to priority 3/4.
+
 ## Links
 
 - GitHub: [chenasyd/-GuildPlugin](https://github.com/chenasyd/-GuildPlugin)

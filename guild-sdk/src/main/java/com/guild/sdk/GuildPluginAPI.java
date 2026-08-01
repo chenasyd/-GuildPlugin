@@ -12,6 +12,10 @@ import com.guild.sdk.event.MemberEventHandler;
 import com.guild.sdk.event.MemberRoleChangeEventData;
 import com.guild.sdk.event.MemberRoleChangeEventHandler;
 import com.guild.sdk.gui.ModuleGUIFactory;
+import com.guild.sdk.gui.ModuleGUIRegistration;
+import com.guild.sdk.gui.BedrockFormProvider;
+import com.guild.sdk.gui.GUILayoutDefinition;
+import com.guild.sdk.gui.ModuleGUIConfig;
 import com.guild.sdk.http.HttpClientProvider;
 import com.guild.sdk.placeholder.PlaceholderProvider;
 import org.bukkit.entity.Player;
@@ -74,6 +78,59 @@ public class GuildPluginAPI {
     }
 
     public void openCustomGUI(String guiId, Player player) {
+    }
+
+    // ═══ Enhanced Module GUI Registration API ═══
+
+    /**
+     * Register a custom GUI with enhanced capabilities (image binding, layout,
+     * Bedrock form, config override). The legacy registerCustomGUI(guiId, factory)
+     * is equivalent to registerCustomGUI(builder(guiId, factory).build()).
+     *
+     * @param registration the full registration descriptor
+     */
+    public void registerCustomGUI(ModuleGUIRegistration registration) {
+    }
+
+    /**
+     * Query the Bedrock form provider registered for a module GUI.
+     * Called internally by GUIManager; modules generally don't need this.
+     *
+     * @param guiId GUI identifier
+     * @return provider, or null if none registered
+     */
+    public BedrockFormProvider getBedrockFormProvider(String guiId) {
+        return null;
+    }
+
+    /**
+     * Query whether a module GUI has an image binding registered.
+     *
+     * @param guiId GUI identifier
+     * @return true if image binding exists
+     */
+    public boolean hasModuleImageBinding(String guiId) {
+        return false;
+    }
+
+    /**
+     * Query the layout definition for a module GUI.
+     *
+     * @param guiId GUI identifier
+     * @return layout definition, or null
+     */
+    public GUILayoutDefinition getModuleGUILayout(String guiId) {
+        return null;
+    }
+
+    /**
+     * Get the config override instance for a module GUI.
+     *
+     * @param guiId GUI identifier
+     * @return config instance, or null
+     */
+    public ModuleGUIConfig getModuleGUIConfig(String guiId) {
+        return null;
     }
 
     public void registerSubCommand(String parentCommand, String name, ModuleCommandHandler handler, String permission) {

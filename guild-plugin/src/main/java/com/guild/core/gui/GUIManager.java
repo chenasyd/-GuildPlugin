@@ -6,6 +6,9 @@ import com.guild.core.hook.ImagoCoreHook;
 import com.guild.core.hook.ImagoGuiConfig;
 import com.guild.core.gui.layout.GuiImageLayoutConfig;
 import com.guild.gui.GuildNameInputGUI;
+import com.guild.sdk.gui.BedrockFormProvider;
+import com.guild.sdk.gui.GUILayoutDefinition;
+import com.guild.sdk.gui.ModuleGUIRegistration;
 import org.a.imagoCore.image.display.gui.GuiTitleRenderer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -189,6 +192,13 @@ public class GUIManager implements Listener {
         if (player != null && PlayerConnectionService.isBedrockPlayer(player)) return;
         if (!isImageGuiActive(guiType)) return;
 
+        // Module GUI layout — apply module-defined layout instead of plugin-body layout
+        ModuleGUIRegistration moduleReg = plugin.getModuleManager().getRegistry().getCustomGUIRegistration(guiType);
+        if (moduleReg != null && moduleReg.getLayout() != null) {
+            applyModuleLayout(inventory, moduleReg.getLayout());
+            return;
+        }
+
         Material transMat = imageLayoutConfig != null
                 ? imageLayoutConfig.getTransparentMaterial() : Material.BARRIER;
         int modelData = imageLayoutConfig != null
@@ -267,6 +277,28 @@ public class GUIManager implements Listener {
     }
 
     /**
+     * 对模块注册的 GUI 应用模块定义的布局。
+     * 遍历布局中所有功能槽位，移除填充物并将其余物品转换为透明载体。
+     */
+    private void applyModuleLayout(Inventory inventory, GUILayoutDefinition layout) {
+        Material transMat = imageLayoutConfig != null ? imageLayoutConfig.getTransparentMaterial() : Material.BARRIER;
+        int modelData = imageLayoutConfig != null ? imageLayoutConfig.getTransparentModelData() : 10001;
+
+        for (Map.Entry<String, int[]> entry : layout.getFunctions().entrySet()) {
+            for (int slot : entry.getValue()) {
+                if (slot < 0 || slot >= inventory.getSize()) continue;
+                ItemStack item = inventory.getItem(slot);
+                if (item == null || item.getType() == Material.AIR) continue;
+                if (isFillerItem(item.getType())) {
+                    inventory.setItem(slot, null);
+                    continue;
+                }
+                inventory.setItem(slot, toTransparentCarrier(item, transMat, modelData));
+            }
+        }
+    }
+
+    /**
      * 检查是否启用了详细调试日志
      */
     private boolean isDebugEnabled() {
@@ -309,6 +341,20 @@ public class GUIManager implements Listener {
                             + gui.getClass().getSimpleName());
                 }
                 return;
+            }
+
+            // 基岩版玩家 — 尝试模块注册的 BedrockFormProvider
+            if (PlayerConnectionService.isBedrockPlayer(player)) {
+                String guiType = gui.getGuiType();
+                BedrockFormProvider provider = plugin.getModuleManager().getSharedApi().getBedrockFormProvider(guiType);
+                if (provider != null) {
+                    provider.sendForm(player, java.util.Map.of());
+                    openGuis.put(player.getUniqueId(), gui);
+                    if (isDebugEnabled()) {
+                        logger.info("Player " + player.getName() + " opened module Bedrock form: " + guiType);
+                    }
+                    return;
+                }
             }
             
             // 创建新的GUI — 优先使用 ImagoCore 图片标题（基岩版玩家跳过）
@@ -383,6 +429,18 @@ public class GUIManager implements Listener {
             if (inv != null) {
                 if (isDebugEnabled()) {
                     logger.info("[ImagoCore] " + guiType + ": image title (background only)");
+                }
+                return inv;
+            }
+        }
+
+        // Check module GUI image binding
+        ModuleGUIRegistration moduleReg = plugin.getModuleManager().getRegistry().getCustomGUIRegistration(guiType);
+        if (moduleReg != null && moduleReg.getImageEntryId() != null) {
+            Inventory inv = imagoHook.createTitledInventoryByEntry(gui.getSize(), moduleReg.getImageEntryId());
+            if (inv != null) {
+                if (isDebugEnabled()) {
+                    logger.info("[ImagoCore] Module GUI " + guiType + ": image title via entry '" + moduleReg.getImageEntryId() + "'");
                 }
                 return inv;
             }

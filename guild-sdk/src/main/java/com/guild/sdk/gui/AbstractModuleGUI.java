@@ -101,4 +101,80 @@ public abstract class AbstractModuleGUI implements GUI {
             setupInventory(inventory);
         }
     }
+
+    // ═══ Image mode hooks ═══
+
+    /**
+     * Return the ImagoCore GuiEntry ID bound to this GUI.
+     * Return null to disable image titles (default).
+     * <p>
+     * Modules may override this method, or specify via
+     * {@link ModuleGUIRegistration.Builder#imageBinding(String)} at registration time.
+     * Priority: registration imageBinding &gt; this method's return value.
+     *
+     * @return ImagoCore entry ID, or null
+     */
+    protected String getImageEntryId() {
+        return null;
+    }
+
+    /**
+     * Return the image-mode slot layout for this GUI.
+     * Return null to disable transparent carrier conversion (default).
+     * <p>
+     * Modules may override this method, or specify via
+     * {@link ModuleGUIRegistration.Builder#layout(GUILayoutDefinition)} at registration time.
+     *
+     * @return layout definition, or null
+     */
+    protected GUILayoutDefinition getGUILayout() {
+        return null;
+    }
+
+    // ═══ Bedrock Edition hook ═══
+
+    /**
+     * Called when a Bedrock Edition player opens this GUI.
+     * Default returns false (falls back to Geyser Inventory translation).
+     * <p>
+     * Modules may override this method to send a Cumulus form directly,
+     * or register a {@link BedrockFormProvider} via
+     * {@link ModuleGUIRegistration.Builder#bedrockForm(BedrockFormProvider)}.
+     * Priority: GUI instance method &gt; registered BedrockFormProvider.
+     *
+     * @param player the Bedrock player
+     * @return true if a form was sent, false to fall back
+     */
+    @Override
+    public boolean openBedrockForm(Player player) {
+        return false;
+    }
+
+    // ═══ Config override support ═══
+
+    private ModuleGUIConfig injectedConfig;
+
+    /**
+     * Get the config override instance for this GUI.
+     * Injected by GUIManager before opening (if registered via
+     * {@link ModuleGUIRegistration.Builder#config(ModuleGUIConfig)}).
+     * <p>
+     * Modules call {@code getConfig().getDisplayItem(...)} in setupInventory
+     * to resolve admin-overridden items. May return null if no config registered.
+     *
+     * @return config override instance, or null
+     */
+    protected ModuleGUIConfig getConfig() {
+        return injectedConfig;
+    }
+
+    /**
+     * Internal: called by GUIManager to inject the config instance.
+     * Modules should NOT call this method.
+     *
+     * @param config the config override to inject
+     */
+    public void injectConfig(ModuleGUIConfig config) {
+        this.injectedConfig = config;
+    }
 }

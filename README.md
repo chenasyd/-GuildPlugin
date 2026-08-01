@@ -26,6 +26,7 @@ A feature-complete Minecraft guild/faction system with economy, relations, level
 - **EventBus** — loose-coupled inter-module communication
 - **ServiceContainer** — modules access core system services via DI
 - **Hot-load Modules** — add/remove modules at runtime via `/guildmodule`, no server restart needed
+- **Module GUI Enhancement** — image mode (ImagoCore), Bedrock Edition forms (Cumulus), and server admin config override via `gui-config.yml`
 
 ## Compatibility
 

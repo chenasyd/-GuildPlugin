@@ -137,6 +137,26 @@ public class ImagoCoreHook {
         return guiController.createTitledInventory(size, title, guiType);
     }
 
+    /**
+     * Creates an inventory with the image title from a specific GuiEntry,
+     * bypassing the guiType binding lookup.
+     *
+     * <p>Used by module GUI registrations that reference an ImagoCore entry
+     * directly.
+     *
+     * @param size    inventory size (multiple of 9)
+     * @param entryId the ImagoCore GUI entry ID (e.g. "54-default")
+     * @return the inventory with image title, or null if entry not found
+     */
+    public Inventory createTitledInventoryByEntry(int size, String entryId) {
+        GuiEntry entry = getGuiEntry(entryId);
+        if (entry == null) return null;
+
+        net.kyori.adventure.text.Component title =
+                GuiTitleRenderer.buildWithOverlays(entry, List.of());
+        return guiController.createTitledInventory(size, title, entryId);
+    }
+
     // ── Char image access ───────────────────────────────────────
 
     /**

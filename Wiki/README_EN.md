@@ -245,6 +245,10 @@ mvn clean package -pl guild-plugin -Pbuild-announcement-module
 
 See [SDK Developer Guide](SDK%20Developer-Guide.md) for module development documentation.
 
+### Module GUI Enhancement
+
+Module GUIs support image mode (ImagoCore binding), Bedrock Edition forms (Cumulus provider), and server admin customization of items/text/flags via `gui-config.yml`.
+
 ## Links
 
 - GitHub: [chenasyd/-GuildPlugin](https://github.com/chenasyd/-GuildPlugin)

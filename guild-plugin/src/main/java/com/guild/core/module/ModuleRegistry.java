@@ -1,6 +1,7 @@
 package com.guild.core.module;
 
 import com.guild.core.module.hook.GUIExtensionHook;
+import com.guild.sdk.gui.ModuleGUIRegistration;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,6 +28,9 @@ public class ModuleRegistry {
     /** GUI 扩展点注册中心 */
     private final GUIExtensionHook guiHook = new GUIExtensionHook();
 
+    /** 模块 GUI 增强注册表（guiId -> registration） */
+    private final Map<String, ModuleGUIRegistration> customGUIRegistrations = new ConcurrentHashMap<>();
+
     /**
      * 注册一个已启用的模块
      */
@@ -45,6 +49,10 @@ public class ModuleRegistry {
 
             // 清理该模块的所有 GUI 扩展注册
             guiHook.unregisterByModule(moduleId);
+
+            // 清理该模块注册的所有增强 GUI
+            customGUIRegistrations.entrySet().removeIf(
+                    e -> moduleId.equals(e.getValue().getModuleId()));
         }
     }
 
@@ -113,6 +121,32 @@ public class ModuleRegistry {
         return guiHook;
     }
 
+    // ==================== 模块 GUI 增强注册 ====================
+
+    /**
+     * 注册增强版模块 GUI（含图像绑定、布局、基岩表单、配置覆盖）
+     */
+    public void registerCustomGUI(ModuleGUIRegistration registration) {
+        customGUIRegistrations.put(registration.getGuiId(), registration);
+    }
+
+    /**
+     * 获取模块 GUI 的增强注册描述符
+     *
+     * @param guiId GUI 标识符
+     * @return 注册描述符，未注册时返回 null
+     */
+    public ModuleGUIRegistration getCustomGUIRegistration(String guiId) {
+        return customGUIRegistrations.get(guiId);
+    }
+
+    /**
+     * 注销单个增强版模块 GUI
+     */
+    public void unregisterCustomGUI(String guiId) {
+        customGUIRegistrations.remove(guiId);
+    }
+
     /**
      * 清空所有注册（插件关闭时调用）
      */
@@ -120,5 +154,6 @@ public class ModuleRegistry {
         modules.clear();
         states.clear();
         guiHook.unregisterAll();
+        customGUIRegistrations.clear();
     }
 }
