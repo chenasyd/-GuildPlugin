@@ -187,6 +187,16 @@ Relation types: `neutral`, `ally`, `enemy`, `war`, `truce`
 | `guild.admin.module` | op | Module management |
 | `guild.admin.update` | op | Download & install updates |
 
+## Version Naming Convention
+
+| Type | Format | Example |
+|:----:|:------:|:-------:|
+| Official release | `x.x.x` | `1.6.5` |
+| Official pre-release | `x.x.x-snapshot.N` | `1.6.6-snapshot.2` |
+| Third-party fork | `x.x.x-forkname.N` | `1.6.4-elaria.1` |
+
+The `v` prefix is optional and auto-recognized (`v1.6.5` = `1.6.5`). Third-party forks MUST use a custom suffix (`x.x.x-yourname.N`) to distinguish from official releases. The update checker queries GitHub and Modrinth simultaneously and warns if the local version is not officially maintained.
+
 ## Links
 
 - **GitHub**: [chenasyd/-GuildPlugin](https://github.com/chenasyd/-GuildPlugin)

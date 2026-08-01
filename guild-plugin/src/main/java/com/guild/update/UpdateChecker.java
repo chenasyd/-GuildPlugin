@@ -7,10 +7,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Logger;
 
 /**
- * Periodic update checker using dual-source detection (GitHub + Modrinth fallback).
+ * Periodic update checker using dual-source detection (GitHub + Modrinth simultaneously).
  * <p>
  * Runs once on startup and every 24 hours thereafter via self-scheduling async tasks.
- * Delegates version fetching to {@link UpdateManager}.
+ * Delegates version fetching to {@link UpdateManager} which queries both sources
+ * and returns the highest version found.
  */
 public class UpdateChecker {
 
@@ -19,6 +20,7 @@ public class UpdateChecker {
     private final JavaPlugin plugin;
     private final UpdateManager updateManager;
     private final Logger logger;
+    private boolean versionValidated = false;
 
     public UpdateChecker(JavaPlugin plugin, UpdateManager updateManager) {
         this.plugin = plugin;
@@ -43,10 +45,19 @@ public class UpdateChecker {
 
     /**
      * Perform a single update check and log the result.
+     * On first run, validates the local version format and warns if it appears
+     * to be a third-party fork not officially maintained.
      */
     public void doCheck() {
         try {
             String localVersion = plugin.getDescription().getVersion();
+
+            // Validate local version format on first check
+            if (!versionValidated) {
+                versionValidated = true;
+                updateManager.validateLocalVersion(localVersion);
+            }
+
             VersionInfo latest = updateManager.checkLatestVersion();
 
             if (latest == null) {

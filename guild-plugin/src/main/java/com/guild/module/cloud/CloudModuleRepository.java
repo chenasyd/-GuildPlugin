@@ -336,13 +336,19 @@ public class CloudModuleRepository {
 
     /**
      * 从 tag_name 提取 SDK 版本号。
-     * 例: "sdk-1.5.5" → "1.5.5"
+     * 支持格式: "sdk-1.5.5", "sdk-v1.5.5", "v1.5.5", "1.5.5"
+     * 统一去除 "sdk-" 前缀和可选的 "v"/"V" 前缀。
      */
     private static String extractSdkVersion(String tagName) {
-        if (tagName.startsWith("sdk-")) {
-            return tagName.substring(4);
+        String version = tagName;
+        if (version.startsWith("sdk-")) {
+            version = version.substring(4);
         }
-        return tagName;
+        // Strip optional v/V prefix (unified with UpdateManager convention)
+        if (version.startsWith("v") || version.startsWith("V")) {
+            version = version.substring(1);
+        }
+        return version;
     }
 
     // ==================== 多语言消息工具方法 ====================

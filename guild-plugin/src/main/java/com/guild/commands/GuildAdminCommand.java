@@ -847,6 +847,17 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 "admin.update.source", "&eSource: &f{source}").replace("{source}", info.source)));
             sendMessage(sender, ColorUtils.colorize(languageManager.getCoreMessage(
                 "admin.update.current", "&eCurrent: &fv{version}").replace("{version}", localVersion)));
+
+            // Warn if local version is not official format
+            UpdateManager.PluginVersion localParsed = UpdateManager.parseVersion(localVersion);
+            if (localParsed == null || !localParsed.official) {
+                sendMessage(sender, ColorUtils.colorize(languageManager.getCoreMessage(
+                    "admin.update.third-party-warning",
+                    "&c[GuildPlugin] Current version \"{version}\" differs from official naming convention. "
+                        + "This may be a third-party fork not officially maintained.")
+                    .replace("{version}", localVersion)));
+            }
+
             sendMessage(sender, ColorUtils.colorize(languageManager.getCoreMessage(
                 cmp < 0 ? "admin.update.latest" : "admin.update.latest-up-to-date",
                 "&eLatest: &fv{version}").replace("{version}", info.version)));

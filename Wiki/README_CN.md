@@ -264,6 +264,22 @@ mvn clean package -pl guild-plugin -Pbuild-announcement-module
 
 模块开发文档请参阅 [SDK 开发者指南](SDK%20Developer-Guide.md)。
 
+## 版本号命名规则
+
+GuildPlugin 使用以下版本号命名规则：
+
+| 类型 | 格式 | 示例 | 说明 |
+|:----:|:----:|:----:|:----:|
+| 正式版本 | `x.x.x` | `1.6.5` | 稳定发布版 |
+| 预发布版本 | `x.x.x-snapshot.N` | `1.6.6-snapshot.2` | 开发快照版，N 为快照序号 |
+| 三方二开版本 | `x.x.x-forkname.N` | `1.6.4-elaria.1` | 非官方维护的修改版 |
+
+`v` 前缀（如 `v1.6.5`）为可选，插件自动识别 — `1.6.5` 和 `v1.6.5` 等价。
+
+**二次开发须知**：如果你 fork 并修改了本插件，必须修改版本号后缀以标识你的分支。格式为 `x.x.x-你的标识.N`，其中 `你的标识` 为小写字母的 fork 名称，`N` 为你的迭代序号。例如从 `1.6.4` fork 后项目名为 "elaria"，则使用 `1.6.4-elaria.1`。这确保更新检查器能区分你的版本与官方版本，并向用户发出相应提示。
+
+更新检查器同时访问 GitHub 和 Modrinth 两个源。若本地版本号不符合官方格式（`x.x.x` 或 `x.x.x-snapshot.N`），控制台将输出警告，提示当前版本可能为三方二开版本，不受官方维护。
+
 ## 链接
 
 - GitHub：[chenasyd/-GuildPlugin](https://github.com/chenasyd/-GuildPlugin)

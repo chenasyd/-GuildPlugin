@@ -19,21 +19,45 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Plugin update manager with dual-source version checking and automatic download.
  * <p>
- * Prioritizes GitHub API with automatic fallback to Modrinth on timeout or failure.
- * Supports both version checking and JAR download to the plugins folder.
+ * Queries BOTH GitHub and Modrinth simultaneously and returns the highest version found.
+ * Supports non-standard version formats including pre-release suffixes ({@code x.x.x-snapshot.N})
+ * and third-party fork markers ({@code x.x.x-forkname.N}).
+ * <p>
+ * Version naming convention:
+ * <ul>
+ *   <li>Official release: {@code 1.6.5} or {@code v1.6.5}</li>
+ *   <li>Official pre-release: {@code 1.6.6-snapshot.2} or {@code v1.6.6-snapshot.2}</li>
+ *   <li>Third-party fork: {@code 1.6.4-elaria.1} (not officially maintained)</li>
+ * </ul>
  */
 public class UpdateManager {
 
-    private static final String GITHUB_API_URL = "https://api.github.com/repos/chenasyd/-GuildPlugin/releases/latest";
+    private static final String GITHUB_API_URL = "https://api.github.com/repos/chenasyd/-GuildPlugin/releases";
     private static final String MODRINTH_API_URL = "https://api.modrinth.com/v2/project/8mvSrFJf/version";
     private static final String USER_AGENT = "GuildPlugin/UpdateManager (chenasyd)";
     private static final int CONNECT_TIMEOUT = 10000;
     private static final int READ_TIMEOUT = 15000;
     private static final int DOWNLOAD_TIMEOUT = 60000;
+
+    /**
+     * Official version pattern (after stripping optional v prefix):
+     * MAJOR.MINOR.PATCH or MAJOR.MINOR.PATCH-snapshot.N
+     */
+    private static final Pattern OFFICIAL_VERSION_PATTERN =
+            Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(?:-(snapshot)\\.(\\d+))?$");
+
+    /**
+     * Any recognizable version pattern (including third-party forks):
+     * MAJOR.MINOR.PATCH[-suffix.N]
+     */
+    private static final Pattern ANY_VERSION_PATTERN =
+            Pattern.compile("^(\\d+)\\.(\\d+)\\.(\\d+)(?:-([a-zA-Z][a-zA-Z0-9]*)\\.(\\d+))?$");
 
     private final JavaPlugin plugin;
     private final Logger logger;
@@ -45,6 +69,151 @@ public class UpdateManager {
         this.gson = new Gson();
     }
 
+    // ==================== Version Parsing ====================
+
+    /**
+     * Parsed representation of a plugin version string.
+     * Supports: x.x.x, x.x.x-snapshot.N, x.x.x-forkname.N
+     */
+    public static class PluginVersion implements Comparable<PluginVersion> {
+        public final int major;
+        public final int minor;
+        public final int patch;
+        /** Pre-release suffix name (e.g. "snapshot", "elaria"), or null for release */
+        public final String suffix;
+        /** Pre-release suffix number, or 0 if no suffix */
+        public final int suffixNum;
+        /** Whether this matches the official naming convention */
+        public final boolean official;
+        /** The original normalized string (without v prefix) */
+        public final String raw;
+
+        public PluginVersion(int major, int minor, int patch, String suffix, int suffixNum, String raw) {
+            this.major = major;
+            this.minor = minor;
+            this.patch = patch;
+            this.suffix = suffix;
+            this.suffixNum = suffixNum;
+            this.official = (suffix == null || "snapshot".equalsIgnoreCase(suffix));
+            this.raw = raw;
+        }
+
+        /**
+         * Whether this is a release version (no pre-release suffix).
+         */
+        public boolean isRelease() {
+            return suffix == null;
+        }
+
+        /**
+         * Whether this is an official pre-release (snapshot).
+         */
+        public boolean isSnapshot() {
+            return "snapshot".equalsIgnoreCase(suffix);
+        }
+
+        /**
+         * Whether this is a third-party fork version.
+         */
+        public boolean isFork() {
+            return suffix != null && !"snapshot".equalsIgnoreCase(suffix);
+        }
+
+        @Override
+        public int compareTo(PluginVersion other) {
+            // Compare base version: MAJOR.MINOR.PATCH
+            int cmp = Integer.compare(this.major, other.major);
+            if (cmp != 0) return cmp;
+            cmp = Integer.compare(this.minor, other.minor);
+            if (cmp != 0) return cmp;
+            cmp = Integer.compare(this.patch, other.patch);
+            if (cmp != 0) return cmp;
+
+            // Same base version — compare suffixes:
+            // release (no suffix) > snapshot > fork
+            if (this.suffix == null && other.suffix == null) return 0;
+            if (this.suffix == null) return 1;   // release > any suffix
+            if (other.suffix == null) return -1;  // any suffix < release
+
+            // Both have suffixes
+            boolean thisSnapshot = "snapshot".equalsIgnoreCase(this.suffix);
+            boolean otherSnapshot = "snapshot".equalsIgnoreCase(other.suffix);
+            if (thisSnapshot && !otherSnapshot) return 1;   // snapshot > fork
+            if (!thisSnapshot && otherSnapshot) return -1;  // fork < snapshot
+
+            // Same suffix type — compare suffix number
+            cmp = Integer.compare(this.suffixNum, other.suffixNum);
+            if (cmp != 0) return cmp;
+
+            // Both are forks with same number — compare suffix name alphabetically
+            return this.suffix.compareToIgnoreCase(other.suffix);
+        }
+
+        @Override
+        public String toString() {
+            return raw;
+        }
+    }
+
+    /**
+     * Parse a version string into a PluginVersion object.
+     * Handles optional v/V prefix and various suffix formats.
+     *
+     * @param versionStr the version string (e.g. "v1.6.5", "1.6.6-snapshot.2", "1.6.4-elaria.1")
+     * @return parsed PluginVersion, or null if completely unparseable
+     */
+    public static PluginVersion parseVersion(String versionStr) {
+        if (versionStr == null || versionStr.isEmpty()) return null;
+
+        String normalized = stripVPrefix(versionStr).trim();
+        Matcher m = ANY_VERSION_PATTERN.matcher(normalized);
+        if (!m.matches()) return null;
+
+        int major = Integer.parseInt(m.group(1));
+        int minor = Integer.parseInt(m.group(2));
+        int patch = Integer.parseInt(m.group(3));
+        String suffix = m.group(4); // may be null
+        int suffixNum = m.group(5) != null ? Integer.parseInt(m.group(5)) : 0;
+
+        return new PluginVersion(major, minor, patch, suffix, suffixNum, normalized);
+    }
+
+    /**
+     * Validate whether a local version string follows the official naming convention.
+     * Logs a warning if the version appears to be a third-party fork or is unrecognizable.
+     *
+     * @param localVersion the version from plugin.yml
+     * @return true if official format, false otherwise
+     */
+    public boolean validateLocalVersion(String localVersion) {
+        String normalized = stripVPrefix(localVersion).trim();
+
+        Matcher officialMatcher = OFFICIAL_VERSION_PATTERN.matcher(normalized);
+        if (officialMatcher.matches()) {
+            return true;
+        }
+
+        // Check if it's a recognizable fork version
+        Matcher anyMatcher = ANY_VERSION_PATTERN.matcher(normalized);
+        if (anyMatcher.matches()) {
+            String suffix = anyMatcher.group(4);
+            logger.warning("[UpdateManager] Current plugin version \"" + localVersion + "\" uses suffix \"-"
+                    + suffix + "." + anyMatcher.group(5) + "\" which differs from the official naming convention.");
+            logger.warning("[UpdateManager] This appears to be a third-party fork version. "
+                    + "It is NOT officially maintained and may not receive updates.");
+            logger.warning("[UpdateManager] Official version format: x.x.x (release) or x.x.x-snapshot.N (pre-release).");
+        } else {
+            logger.warning("[UpdateManager] Current plugin version \"" + localVersion
+                    + "\" does not match any recognized version format.");
+            logger.warning("[UpdateManager] Expected format: [v]x.x.x or [v]x.x.x-snapshot.N "
+                    + "(e.g. 1.6.5, v1.6.5, 1.6.6-snapshot.2)");
+            logger.warning("[UpdateManager] This may be a modified third-party version not officially maintained.");
+        }
+        return false;
+    }
+
+    // ==================== Version Info ====================
+
     /**
      * Version information returned by update checks.
      */
@@ -54,6 +223,7 @@ public class UpdateManager {
         public final String downloadUrl;
         public final String fileName;
         public final String source;
+        public final PluginVersion parsedVersion;
 
         public VersionInfo(String version, String changelog, String downloadUrl, String fileName, String source) {
             this.version = version;
@@ -61,6 +231,7 @@ public class UpdateManager {
             this.downloadUrl = downloadUrl;
             this.fileName = fileName;
             this.source = source;
+            this.parsedVersion = parseVersion(version);
         }
 
         @Override
@@ -69,23 +240,55 @@ public class UpdateManager {
         }
     }
 
+    // ==================== Dual-Source Check ====================
+
     /**
-     * Check latest version. Tries GitHub first, falls back to Modrinth.
+     * Check latest version from BOTH GitHub and Modrinth simultaneously.
+     * Returns the highest version found across both sources.
      *
      * @return latest version info, or null if both sources fail
      */
     public VersionInfo checkLatestVersion() {
         VersionInfo ghInfo = checkGitHub();
-        if (ghInfo != null) {
+        VersionInfo mrInfo = checkModrinth();
+
+        if (ghInfo == null && mrInfo == null) {
+            return null;
+        }
+        if (ghInfo == null) {
+            logger.info("[UpdateManager] GitHub unavailable, using Modrinth result.");
+            return mrInfo;
+        }
+        if (mrInfo == null) {
+            logger.info("[UpdateManager] Modrinth unavailable, using GitHub result.");
             return ghInfo;
         }
 
-        logger.info("[UpdateManager] GitHub unavailable, falling back to Modrinth...");
-        return checkModrinth();
+        // Both sources returned results — pick the higher version
+        PluginVersion ghVer = ghInfo.parsedVersion;
+        PluginVersion mrVer = mrInfo.parsedVersion;
+
+        if (ghVer == null && mrVer == null) return ghInfo;
+        if (ghVer == null) return mrInfo;
+        if (mrVer == null) return ghInfo;
+
+        if (ghVer.compareTo(mrVer) >= 0) {
+            logger.info("[UpdateManager] Dual-source check: GitHub=" + ghInfo.version
+                    + ", Modrinth=" + mrInfo.version + " -> using GitHub");
+            return ghInfo;
+        } else {
+            logger.info("[UpdateManager] Dual-source check: GitHub=" + ghInfo.version
+                    + ", Modrinth=" + mrInfo.version + " -> using Modrinth");
+            return mrInfo;
+        }
     }
 
-    // ---- GitHub API ----
+    // ==================== GitHub API ====================
 
+    /**
+     * Fetch all releases from GitHub and find the highest version with a plugin JAR.
+     * Handles tag_name with or without "v" prefix.
+     */
     private VersionInfo checkGitHub() {
         HttpURLConnection conn = null;
         try {
@@ -99,27 +302,56 @@ public class UpdateManager {
             }
 
             String json = readResponseBody(conn);
-            JsonObject release = gson.fromJson(json, JsonObject.class);
+            JsonArray releases = gson.fromJson(json, JsonArray.class);
 
-            // tag_name always has "v" prefix, e.g. "v1.5.5"
-            String tagName = release.get("tag_name").getAsString();
-            String version = stripVPrefix(tagName);
-            String changelog = release.has("body") && !release.get("body").isJsonNull()
-                    ? release.get("body").getAsString() : "";
+            VersionInfo best = null;
+            PluginVersion bestVersion = null;
 
-            // Find plugin JAR in assets (filter out SDK, modules, original)
-            JsonArray assets = release.getAsJsonArray("assets");
-            for (int i = 0; i < assets.size(); i++) {
-                JsonObject asset = assets.get(i).getAsJsonObject();
-                String name = asset.get("name").getAsString();
-                if (name.startsWith("guild-plugin-") && name.endsWith(".jar")
-                        && !name.contains("original")) {
-                    String downloadUrl = asset.get("browser_download_url").getAsString();
-                    return new VersionInfo(version, changelog, downloadUrl, name, "GitHub");
+            for (int i = 0; i < releases.size(); i++) {
+                JsonObject release = releases.get(i).getAsJsonObject();
+
+                // Skip drafts
+                if (release.has("draft") && release.get("draft").getAsBoolean()) continue;
+
+                String tagName = release.get("tag_name").getAsString();
+                String version = stripVPrefix(tagName);
+
+                // Must be a parseable version
+                PluginVersion parsed = parseVersion(version);
+                if (parsed == null) continue;
+
+                // Find plugin JAR in assets
+                JsonArray assets = release.getAsJsonArray("assets");
+                if (assets == null) continue;
+
+                String downloadUrl = null;
+                String fileName = null;
+                for (int j = 0; j < assets.size(); j++) {
+                    JsonObject asset = assets.get(j).getAsJsonObject();
+                    String name = asset.get("name").getAsString();
+                    if (name.startsWith("guild-plugin-") && name.endsWith(".jar")
+                            && !name.contains("original")) {
+                        downloadUrl = asset.get("browser_download_url").getAsString();
+                        fileName = name;
+                        break;
+                    }
+                }
+
+                if (downloadUrl == null) continue;
+
+                // Track the highest version
+                if (bestVersion == null || parsed.compareTo(bestVersion) > 0) {
+                    String changelog = release.has("body") && !release.get("body").isJsonNull()
+                            ? release.get("body").getAsString() : "";
+                    best = new VersionInfo(version, changelog, downloadUrl, fileName, "GitHub");
+                    bestVersion = parsed;
                 }
             }
 
-            logger.warning("[UpdateManager] No plugin JAR found in GitHub assets");
+            if (best == null) {
+                logger.warning("[UpdateManager] No plugin JAR found in any GitHub release");
+            }
+            return best;
 
         } catch (SocketTimeoutException e) {
             logger.warning("[UpdateManager] GitHub API timed out");
@@ -131,8 +363,12 @@ public class UpdateManager {
         return null;
     }
 
-    // ---- Modrinth API ----
+    // ==================== Modrinth API ====================
 
+    /**
+     * Fetch all versions from Modrinth and find the highest version.
+     * Considers ALL version types (release, alpha, beta) since snapshots are published as alpha.
+     */
     private VersionInfo checkModrinth() {
         HttpURLConnection conn = null;
         try {
@@ -148,28 +384,52 @@ public class UpdateManager {
             String json = readResponseBody(conn);
             JsonArray versions = gson.fromJson(json, JsonArray.class);
 
-            // List is sorted by date_published descending; pick first release
+            VersionInfo best = null;
+            PluginVersion bestVersion = null;
+
             for (int i = 0; i < versions.size(); i++) {
                 JsonObject v = versions.get(i).getAsJsonObject();
-                String type = v.has("version_type") ? v.get("version_type").getAsString() : "";
-                if (!"release".equals(type)) continue;
 
-                // version_number has no "v" prefix, e.g. "1.5.5"
+                // version_number has no "v" prefix, e.g. "1.6.5" or "1.6.6-snapshot.2"
                 String version = v.get("version_number").getAsString();
-                String changelog = v.has("changelog") && !v.get("changelog").isJsonNull()
-                        ? v.get("changelog").getAsString() : "";
+                PluginVersion parsed = parseVersion(version);
+                if (parsed == null) continue;
 
+                // Must have files
                 JsonArray files = v.getAsJsonArray("files");
-                if (files.size() == 0) break;
+                if (files == null || files.size() == 0) continue;
 
-                JsonObject file = files.get(0).getAsJsonObject();
-                String downloadUrl = file.get("url").getAsString();
-                String fileName = file.get("filename").getAsString();
+                // Find primary file (or first file)
+                JsonObject primaryFile = null;
+                for (int j = 0; j < files.size(); j++) {
+                    JsonObject f = files.get(j).getAsJsonObject();
+                    if (f.has("primary") && f.get("primary").getAsBoolean()) {
+                        primaryFile = f;
+                        break;
+                    }
+                }
+                if (primaryFile == null) {
+                    primaryFile = files.get(0).getAsJsonObject();
+                }
 
-                return new VersionInfo(version, changelog, downloadUrl, fileName, "Modrinth");
+                String fileName = primaryFile.get("filename").getAsString();
+                // Only consider plugin JARs (skip bungee JARs)
+                if (!fileName.startsWith("guild-plugin-")) continue;
+
+                // Track the highest version
+                if (bestVersion == null || parsed.compareTo(bestVersion) > 0) {
+                    String changelog = v.has("changelog") && !v.get("changelog").isJsonNull()
+                            ? v.get("changelog").getAsString() : "";
+                    String downloadUrl = primaryFile.get("url").getAsString();
+                    best = new VersionInfo(version, changelog, downloadUrl, fileName, "Modrinth");
+                    bestVersion = parsed;
+                }
             }
 
-            logger.warning("[UpdateManager] No release version found on Modrinth");
+            if (best == null) {
+                logger.warning("[UpdateManager] No plugin version found on Modrinth");
+            }
+            return best;
 
         } catch (SocketTimeoutException e) {
             logger.warning("[UpdateManager] Modrinth API timed out");
@@ -181,7 +441,7 @@ public class UpdateManager {
         return null;
     }
 
-    // ---- Download ----
+    // ==================== Download ====================
 
     /**
      * Download the update JAR to the plugins folder.
@@ -261,26 +521,52 @@ public class UpdateManager {
         }
     }
 
-    // ---- Utility ----
+    // ==================== Utility ====================
 
     /**
-     * Remove the "v" prefix from a GitHub tag name.
-     * Modrinth version numbers already lack the prefix.
+     * Remove the "v" or "V" prefix from a version string.
+     * Handles both "v1.6.5" and "1.6.5" formats transparently.
      */
-    static String stripVPrefix(String version) {
+    public static String stripVPrefix(String version) {
         if (version == null) return "";
         return version.startsWith("v") || version.startsWith("V")
                 ? version.substring(1) : version;
     }
 
     /**
-     * Compare two semantic version strings.
+     * Compare two version strings with full support for pre-release suffixes.
+     * <p>
+     * Comparison rules:
+     * <ol>
+     *   <li>Compare MAJOR.MINOR.PATCH numerically</li>
+     *   <li>If base equal: release (no suffix) &gt; snapshot.N &gt; fork.N</li>
+     *   <li>If same suffix type: compare suffix number</li>
+     * </ol>
+     * <p>
+     * Both inputs may have an optional "v" prefix which is stripped automatically.
      *
-     * @return -1 if v1 &lt; v2, 0 if equal, 1 if v1 &gt; v2
+     * @return negative if v1 &lt; v2, 0 if equal, positive if v1 &gt; v2
      */
     public static int compareVersions(String v1, String v2) {
-        String[] parts1 = v1.split("\\.");
-        String[] parts2 = v2.split("\\.");
+        PluginVersion pv1 = parseVersion(v1);
+        PluginVersion pv2 = parseVersion(v2);
+
+        // If either is unparseable, fall back to legacy numeric comparison
+        if (pv1 == null || pv2 == null) {
+            return compareVersionsLegacy(v1, v2);
+        }
+        return pv1.compareTo(pv2);
+    }
+
+    /**
+     * Legacy version comparison — splits on "." and compares numeric parts.
+     * Used as fallback when version strings don't match the expected pattern.
+     */
+    private static int compareVersionsLegacy(String v1, String v2) {
+        String s1 = stripVPrefix(v1);
+        String s2 = stripVPrefix(v2);
+        String[] parts1 = s1.split("\\.");
+        String[] parts2 = s2.split("\\.");
         int maxLen = Math.max(parts1.length, parts2.length);
 
         for (int i = 0; i < maxLen; i++) {

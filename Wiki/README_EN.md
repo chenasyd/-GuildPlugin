@@ -251,6 +251,22 @@ Modules support hot-load/unload/reload at runtime. The framework auto-cleans all
 
 Module GUIs support image mode (ImagoCore binding), Bedrock Edition forms (Cumulus provider), and server admin customization of items/text/flags via `gui-config.yml`.
 
+## Version Naming Convention
+
+GuildPlugin uses the following version naming rules:
+
+| Type | Format | Example | Description |
+|:----:|:------:|:-------:|:-----------:|
+| Official release | `x.x.x` | `1.6.5` | Stable release |
+| Official pre-release | `x.x.x-snapshot.N` | `1.6.6-snapshot.2` | Development build, N increments per snapshot |
+| Third-party fork | `x.x.x-forkname.N` | `1.6.4-elaria.1` | Modified version, NOT officially maintained |
+
+The `v` prefix (e.g. `v1.6.5`) is optional and automatically recognized — both `1.6.5` and `v1.6.5` are treated identically.
+
+**For third-party developers**: If you fork and modify this plugin, you MUST change the version suffix to identify your fork. The format is `x.x.x-yourname.N` where `yourname` is your fork identifier (lowercase letters) and `N` is your fork's iteration number. For example, if you fork from `1.6.4` and your project is called "elaria", use `1.6.4-elaria.1`. This ensures the update checker can distinguish your version from official releases and warn users accordingly.
+
+The update checker queries both GitHub and Modrinth simultaneously. If the local version does not match the official format (`x.x.x` or `x.x.x-snapshot.N`), a warning is logged indicating it may be a third-party fork not officially maintained.
+
 ## Links
 
 - GitHub: [chenasyd/-GuildPlugin](https://github.com/chenasyd/-GuildPlugin)
