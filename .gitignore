@@ -21,3 +21,9 @@ i18n-missing-keys.txt
 /Plugins/
 /BungeeCord/
 /resourcepacks/GuildPlugin开发/
+/ImagoCore Web/dist/
+/ImagoCore Web/node_modules/
+/tmp_check/
+
+# test
+/ImagoCore Web/

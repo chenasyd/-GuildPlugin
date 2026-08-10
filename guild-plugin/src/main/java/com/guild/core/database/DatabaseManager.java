@@ -162,6 +162,10 @@ public class DatabaseManager {
                 home_z REAL,
                 home_yaw REAL,
                 home_pitch REAL,
+                balance REAL DEFAULT 0.0,
+                level INTEGER DEFAULT 1,
+                max_members INTEGER DEFAULT 6,
+                frozen INTEGER DEFAULT 0,
                 created_at TEXT DEFAULT (datetime('now','localtime')),
                 updated_at TEXT DEFAULT (datetime('now','localtime'))
             )
@@ -298,6 +302,10 @@ public class DatabaseManager {
                 home_z DOUBLE,
                 home_yaw FLOAT,
                 home_pitch FLOAT,
+                balance DOUBLE DEFAULT 0.0,
+                level INT DEFAULT 1,
+                max_members INT DEFAULT 6,
+                frozen BOOLEAN DEFAULT FALSE,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )

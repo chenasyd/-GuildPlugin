@@ -10,8 +10,8 @@ guild:
   max-tag-length: 6
   # Maximum guild description length
   max-description-length: 100
-  # Maximum members per guild
-  max-members: 50
+  # Maximum members per guild (global cap, actual limit also depends on guild level)
+  max-members: 100
   # Cost to create a guild (requires Vault)
   creation-cost: 1000.0
   # Teleport countdown in seconds (0 = instant, no delay)

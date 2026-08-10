@@ -395,6 +395,7 @@ public class GuildService {
     
     /**
      * 添加工会成员 (异步)
+     * 包含人数上限检查：查询目标工会当前成员数，与有效上限比较。
      */
     public CompletableFuture<Boolean> addGuildMemberAsync(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
         logger.info("[AddMember-Debug] Starting member add: guildId=" + guildId + ", player=" + playerName + ", uuid=" + playerUuid);
@@ -405,50 +406,65 @@ public class GuildService {
                 return CompletableFuture.completedFuture(false);
             }
             
-            logger.info("[AddMember-Debug] Player not in any guild, preparing database insert");
+            logger.info("[AddMember-Debug] Player not in any guild, checking capacity");
             
-            return CompletableFuture.supplyAsync(() -> {
-                try {
+            // 人数上限检查：获取目标工会并比较当前成员数与有效上限
+            return getGuildByIdAsync(guildId).thenCompose(targetGuild -> {
+                if (targetGuild == null) {
+                    logger.warning("[AddMember-Debug] Target guild not found: guildId=" + guildId);
+                    return CompletableFuture.completedFuture(false);
+                }
                 
-                String sql = "INSERT INTO guild_members (guild_id, player_uuid, player_name, role, joined_at) VALUES (?, ?, ?, ?, ?)";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
+                return getGuildMemberCountAsync(guildId).thenCompose(memberCount -> {
+                    int effectiveMax = getEffectiveMaxMembers(targetGuild);
+                    if (memberCount >= effectiveMax) {
+                        logger.info("[AddMember-Debug] Guild " + targetGuild.getName() + " is full (" 
+                            + memberCount + "/" + effectiveMax + "), rejecting " + playerName);
+                        return CompletableFuture.completedFuture(false);
+                    }
                     
-                    stmt.setInt(1, guildId);
-                    stmt.setString(2, playerUuid.toString());
-                    stmt.setString(3, playerName);
-                    stmt.setString(4, role.name());
-                    stmt.setString(5, nowString());
+                    logger.info("[AddMember-Debug] Capacity OK (" + memberCount + "/" + effectiveMax + "), preparing database insert");
                     
-                    logger.info("[AddMember-Debug] Executing INSERT: guildId=" + guildId + ", uuid=" + playerUuid + ", name=" + playerName + ", role=" + role.name());
-                    
-                    int affectedRows = stmt.executeUpdate();
-                    if (affectedRows > 0) {
-                        logger.info("[AddMember-Debug] Player " + playerName + " successfully joined guild (ID: " + guildId + ")");
-                        // 更新内置权限缓存
-                        try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                    return CompletableFuture.supplyAsync(() -> {
+                        try {
                         
-                        // 记录成员加入日志
-                        getGuildByIdAsync(guildId).thenAccept(guild -> {
-                            if (guild != null) {
-                                logGuildActionAsync(guildId, guild.getName(), playerUuid.toString(), playerName,
+                        String sql = "INSERT INTO guild_members (guild_id, player_uuid, player_name, role, joined_at) VALUES (?, ?, ?, ?, ?)";
+                        
+                        try (Connection conn = databaseManager.getConnection();
+                             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                            
+                            stmt.setInt(1, guildId);
+                            stmt.setString(2, playerUuid.toString());
+                            stmt.setString(3, playerName);
+                            stmt.setString(4, role.name());
+                            stmt.setString(5, nowString());
+                            
+                            logger.info("[AddMember-Debug] Executing INSERT: guildId=" + guildId + ", uuid=" + playerUuid + ", name=" + playerName + ", role=" + role.name());
+                            
+                            int affectedRows = stmt.executeUpdate();
+                            if (affectedRows > 0) {
+                                logger.info("[AddMember-Debug] Player " + playerName + " successfully joined guild (ID: " + guildId + ")");
+                                // 更新内置权限缓存
+                                try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                                
+                                // 记录成员加入日志
+                                logGuildActionAsync(guildId, targetGuild.getName(), playerUuid.toString(), playerName,
                                     GuildLog.LogType.MEMBER_JOINED, "成员加入", "玩家: " + playerName + ", 职位: " + role.getDisplayName());
                                 // 分发成员加入事件给模块
-                                fireMemberJoin(guild.getId(), guild.getName(), playerUuid, playerName);
+                                fireMemberJoin(targetGuild.getId(), targetGuild.getName(), playerUuid, playerName);
+                                
+                                return true;
+                            } else {
+                                logger.warning("[AddMember-Debug] INSERT did not affect any rows");
                             }
-                        });
-                        
-                        return true;
-                    } else {
-                        logger.warning("[AddMember-Debug] INSERT did not affect any rows");
+                        }
+                    } catch (SQLException e) {
+                        logger.severe("[AddMember-Debug] Error adding guild member: " + e.getMessage());
                     }
-                }
-            } catch (SQLException e) {
-                logger.severe("[AddMember-Debug] Error adding guild member: " + e.getMessage());
-            }
-            return false;
-        });
+                    return false;
+                });
+                });
+            });
         });
     }
     
@@ -1268,6 +1284,7 @@ public class GuildService {
     
     /**
      * 处理申请 (异步)
+     * 审批通过前先检查工会是否满员，避免申请状态已更新但成员无法加入的情况。
      */
     public CompletableFuture<Boolean> processApplicationAsync(int applicationId, GuildApplication.ApplicationStatus status, UUID processorUuid) {
         return getApplicationByIdAsync(applicationId).thenCompose(application -> {
@@ -1282,50 +1299,70 @@ public class GuildService {
                     return CompletableFuture.completedFuture(false);
                 }
                 
-                return CompletableFuture.supplyAsync(() -> {
-                    try {
-                        String sql = "UPDATE guild_applications SET status = ? WHERE id = ?";
-                        
-                        try (Connection conn = databaseManager.getConnection();
-                             PreparedStatement stmt = conn.prepareStatement(sql)) {
-                            
-                            stmt.setString(1, status.name());
-                            stmt.setInt(2, applicationId);
-                            
-                            int affectedRows = stmt.executeUpdate();
-                            if (affectedRows > 0) {
-                                logger.info("Application processed: " + application.getPlayerName() + " -> " + status.name());
-                                
-                                // 记录申请处理日志
-                                getGuildByIdAsync(application.getGuildId()).thenAccept(guild -> {
-                                    if (guild != null) {
-                                        GuildLog.LogType logType = status == GuildApplication.ApplicationStatus.APPROVED ? 
-                                            GuildLog.LogType.APPLICATION_ACCEPTED : GuildLog.LogType.APPLICATION_REJECTED;
-                                        String description = status == GuildApplication.ApplicationStatus.APPROVED ? "申请接受" : "申请拒绝";
-                                        String details = "申请人: " + application.getPlayerName() + ", 处理者: " + processor.getPlayerName();
-                                        
-                                        logGuildActionAsync(application.getGuildId(), guild.getName(), 
-                                            processorUuid.toString(), processor.getPlayerName(),
-                                            logType, description, details);
-                                    }
-                                });
-                                
-                                return true;
-                            }
+                // 审批通过前预检查工会人数上限
+                if (status == GuildApplication.ApplicationStatus.APPROVED) {
+                    return isGuildFullAsync(application.getGuildId()).thenCompose(isFull -> {
+                        if (isFull) {
+                            logger.info("Application approval rejected: guild " + application.getGuildId() 
+                                + " is at member capacity, applicant=" + application.getPlayerName());
+                            return CompletableFuture.completedFuture(false);
                         }
-                    } catch (SQLException e) {
-                        logger.severe("Error processing application: " + e.getMessage());
-                    }
-                    return false;
-                }).thenCompose(success -> {
-                    if (success && status == GuildApplication.ApplicationStatus.APPROVED) {
-                        // 如果申请被通过，自动添加成员
-                        return addGuildMemberAsync(application.getGuildId(), application.getPlayerUuid(), 
-                                                  application.getPlayerName(), GuildMember.Role.MEMBER);
-                    }
-                    return CompletableFuture.completedFuture(success);
-                });
+                        return doProcessApplication(applicationId, application, status, processor, processorUuid);
+                    });
+                }
+                
+                return doProcessApplication(applicationId, application, status, processor, processorUuid);
             });
+        });
+    }
+    
+    /**
+     * 执行申请处理的数据库操作（内部方法）
+     */
+    private CompletableFuture<Boolean> doProcessApplication(int applicationId, GuildApplication application,
+            GuildApplication.ApplicationStatus status, GuildMember processor, UUID processorUuid) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                String sql = "UPDATE guild_applications SET status = ? WHERE id = ?";
+                
+                try (Connection conn = databaseManager.getConnection();
+                     PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    
+                    stmt.setString(1, status.name());
+                    stmt.setInt(2, applicationId);
+                    
+                    int affectedRows = stmt.executeUpdate();
+                    if (affectedRows > 0) {
+                        logger.info("Application processed: " + application.getPlayerName() + " -> " + status.name());
+                        
+                        // 记录申请处理日志
+                        getGuildByIdAsync(application.getGuildId()).thenAccept(guild -> {
+                            if (guild != null) {
+                                GuildLog.LogType logType = status == GuildApplication.ApplicationStatus.APPROVED ? 
+                                    GuildLog.LogType.APPLICATION_ACCEPTED : GuildLog.LogType.APPLICATION_REJECTED;
+                                String description = status == GuildApplication.ApplicationStatus.APPROVED ? "申请接受" : "申请拒绝";
+                                String details = "申请人: " + application.getPlayerName() + ", 处理者: " + processor.getPlayerName();
+                                
+                                logGuildActionAsync(application.getGuildId(), guild.getName(), 
+                                    processorUuid.toString(), processor.getPlayerName(),
+                                    logType, description, details);
+                            }
+                        });
+                        
+                        return true;
+                    }
+                }
+            } catch (SQLException e) {
+                logger.severe("Error processing application: " + e.getMessage());
+            }
+            return false;
+        }).thenCompose(success -> {
+            if (success && status == GuildApplication.ApplicationStatus.APPROVED) {
+                // 如果申请被通过，自动添加成员（addGuildMemberAsync 内部有二次容量校验）
+                return addGuildMemberAsync(application.getGuildId(), application.getPlayerUuid(), 
+                                          application.getPlayerName(), GuildMember.Role.MEMBER);
+            }
+            return CompletableFuture.completedFuture(success);
         });
     }
     
@@ -1675,10 +1712,30 @@ public class GuildService {
     
     /**
      * 处理邀请 (异步) - 直接处理邀请对象
+     * 接受邀请前先检查工会是否满员，避免邀请状态已更新但成员无法加入的情况。
      */
     public CompletableFuture<Boolean> processInvitationDirectAsync(GuildInvitation invitation, boolean accept) {
         logger.info("[Process-Debug] Starting invitation processing: id=" + invitation.getId() + ", guildId=" + invitation.getGuildId() + ", target=" + invitation.getTargetUuid() + ", accept=" + accept);
         
+        // 接受邀请前预检查工会人数上限
+        if (accept) {
+            return isGuildFullAsync(invitation.getGuildId()).thenCompose(isFull -> {
+                if (isFull) {
+                    logger.info("[Process-Debug] Invitation accept rejected: guild " + invitation.getGuildId() 
+                        + " is at member capacity, target=" + invitation.getTargetUuid());
+                    return CompletableFuture.completedFuture(false);
+                }
+                return doProcessInvitation(invitation, accept);
+            });
+        }
+        
+        return doProcessInvitation(invitation, accept);
+    }
+    
+    /**
+     * 执行邀请处理的数据库操作（内部方法）
+     */
+    private CompletableFuture<Boolean> doProcessInvitation(GuildInvitation invitation, boolean accept) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 String status = accept ? "ACCEPTED" : "DECLINED";
@@ -1708,7 +1765,7 @@ public class GuildService {
         }).thenCompose(success -> {
             if (success && accept) {
                 logger.info("[Process-Debug] Preparing to add player to guild: guildId=" + invitation.getGuildId() + ", player=" + invitation.getTargetUuid());
-                // 如果接受邀请，添加玩家到工会
+                // 如果接受邀请，添加玩家到工会（addGuildMemberAsync 内部有二次容量校验）
                 return addGuildMemberAsync(invitation.getGuildId(), invitation.getTargetUuid(), 
                     invitation.getTargetName(), GuildMember.Role.MEMBER)
                     .thenCompose(addSuccess -> {
@@ -2684,6 +2741,42 @@ public class GuildService {
             case 10: return 100;
             default: return 100;
         }
+    }
+    
+    /**
+     * 获取全局最大成员数上限（从 config.yml 的 guild.max-members 读取）。
+     * 作为所有工会的绝对上限，即使等级系统允许更多成员也不能超过此值。
+     */
+    private int getGlobalMaxMembers() {
+        try {
+            return plugin.getConfigManager().getMainConfig().getInt("guild.max-members", 100);
+        } catch (Exception e) {
+            return 100;
+        }
+    }
+    
+    /**
+     * 获取工会的有效最大成员数。
+     * 取工会自身存储的 max_members（由等级决定）与全局配置上限的较小值。
+     * 对于已超限的存量工会，此方法仅影响新成员加入，不会踢出已有成员。
+     */
+    public int getEffectiveMaxMembers(Guild guild) {
+        int guildMax = guild.getMaxMembers();
+        int globalMax = getGlobalMaxMembers();
+        return Math.min(guildMax, globalMax);
+    }
+    
+    /**
+     * 检查工会是否已满员 (异步)
+     * 用于在审批申请/接受邀请前预检查，避免状态已更新但成员无法加入的情况。
+     */
+    public CompletableFuture<Boolean> isGuildFullAsync(int guildId) {
+        return getGuildByIdAsync(guildId).thenCompose(guild -> {
+            if (guild == null) {
+                return CompletableFuture.completedFuture(true);
+            }
+            return getGuildMemberCountAsync(guildId).thenApply(count -> count >= getEffectiveMaxMembers(guild));
+        });
     }
     
     /**
