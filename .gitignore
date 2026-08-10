@@ -24,6 +24,3 @@ i18n-missing-keys.txt
 /ImagoCore Web/dist/
 /ImagoCore Web/node_modules/
 /tmp_check/
-
-# test
-/ImagoCore Web/
