@@ -1,14 +1,16 @@
 import { useEditorStore } from "@/store/useEditorStore";
 import { COLOR_PRESETS } from "@/lib/constants";
 import type { EditorTool } from "@/types/imago";
+import { loadImageDataFromSrc } from "@/lib/persistence";
 import {
   Pencil,
   Eraser,
   Pipette,
-  Grid3X3,
   PaintBucket,
   ZoomIn,
   ZoomOut,
+  ArrowLeft,
+  ArrowRight,
 } from "lucide-react";
 
 const TOOLS: { id: EditorTool; icon: React.ReactNode; label: string }[] = [
@@ -22,10 +24,35 @@ export function PixelToolbar() {
   // Subscribe to individual primitives — avoids re-render on offsetX/Y changes during pan
   const currentTool = useEditorStore((s) => s.pixelEditor.tool);
   const currentColor = useEditorStore((s) => s.pixelEditor.color);
-  const currentShowGrid = useEditorStore((s) => s.pixelEditor.showGrid);
   const currentZoom = useEditorStore((s) => s.pixelEditor.zoom);
   const updatePixelEditor = useEditorStore((s) => s.updatePixelEditor);
   const selected = useEditorStore((s) => s.selectedEntry);
+  const canUndo = useEditorStore((s) =>
+    selected
+      ? s.canUndo(
+          selected.type === "gui"
+            ? `gui:${selected.folderSlot}:${selected.entryName}`
+            : `char:${selected.entryName}`
+        )
+      : false
+  );
+  const canRedo = useEditorStore((s) =>
+    selected
+      ? s.canRedo(
+          selected.type === "gui"
+            ? `gui:${selected.folderSlot}:${selected.entryName}`
+            : `char:${selected.entryName}`
+        )
+      : false
+  );
+  const undoHistory = useEditorStore((s) => s.undoHistory);
+  const redoHistory = useEditorStore((s) => s.redoHistory);
+  const updateGuiEntryTextureFromImageData = useEditorStore(
+    (s) => s.updateGuiEntryTextureFromImageData
+  );
+  const updateCharEntryTextureFromImageData = useEditorStore(
+    (s) => s.updateCharEntryTextureFromImageData
+  );
 
   if (!selected) return null;
 
@@ -83,20 +110,65 @@ export function PixelToolbar() {
 
       <div className="flex-1" />
 
-      {/* Grid toggle */}
+      {/* Undo / Redo */}
       <button
-        title="Toggle grid"
-        onClick={() => updatePixelEditor({ showGrid: !currentShowGrid })}
+        title="Undo"
+        onClick={async () => {
+          if (!selected) return;
+          const entryKey =
+            selected.type === "gui"
+              ? `gui:${selected.folderSlot}:${selected.entryName}`
+              : `char:${selected.entryName}`;
+          const textureSrc = undoHistory(entryKey);
+          if (!textureSrc) return;
+          const imageData = await loadImageDataFromSrc(textureSrc);
+          if (selected.type === "gui") {
+            updateGuiEntryTextureFromImageData(
+              selected.folderSlot,
+              selected.entryName,
+              imageData
+            );
+          } else {
+            updateCharEntryTextureFromImageData(selected.entryName, imageData);
+          }
+        }}
+        disabled={!canUndo}
         className={`p-1.5 rounded transition-colors ${
-          currentShowGrid
-            ? "bg-zinc-600 text-white"
-            : "text-zinc-400 hover:text-white"
+          canUndo ? "text-zinc-400 hover:text-white" : "text-zinc-600 cursor-not-allowed"
         }`}
       >
-        <Grid3X3 size={16} />
+        <ArrowLeft size={16} />
+      </button>
+      <button
+        title="Redo"
+        onClick={async () => {
+          if (!selected) return;
+          const entryKey =
+            selected.type === "gui"
+              ? `gui:${selected.folderSlot}:${selected.entryName}`
+              : `char:${selected.entryName}`;
+          const textureSrc = redoHistory(entryKey);
+          if (!textureSrc) return;
+          const imageData = await loadImageDataFromSrc(textureSrc);
+          if (selected.type === "gui") {
+            updateGuiEntryTextureFromImageData(
+              selected.folderSlot,
+              selected.entryName,
+              imageData
+            );
+          } else {
+            updateCharEntryTextureFromImageData(selected.entryName, imageData);
+          }
+        }}
+        disabled={!canRedo}
+        className={`p-1.5 rounded transition-colors ${
+          canRedo ? "text-zinc-400 hover:text-white" : "text-zinc-600 cursor-not-allowed"
+        }`}
+      >
+        <ArrowRight size={16} />
       </button>
 
-      {/* Zoom controls */}
+      {/* Grid toggle */}
       <button
         title="Zoom out"
         onClick={() =>

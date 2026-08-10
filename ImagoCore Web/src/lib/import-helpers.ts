@@ -8,7 +8,7 @@
  * font/default.json maps each PNG to a Unicode PUA character via bitmap providers:
  *   { "type": "bitmap", "file": "minecraft:textures/gui/54/default.png", ... }
  */
-import JSZip from "jszip";
+import JSZip, { type JSZipObject } from "jszip";
 
 export interface ImportedData {
   guiEntries: Array<{
@@ -16,6 +16,7 @@ export interface ImportedData {
     name: string;
     ascent: number;
     height: number;
+    shiftX?: number;
     character?: string;
     textureSrc: string;
   }>;
@@ -41,7 +42,7 @@ interface BitmapProvider {
  * try to locate the actual PNG inside the zip. Some build packs have an extra
  * "textures/" segment (e.g. assets/minecraft/textures/textures/gui/18/default.png).
  */
-function findZipPng(zip: JSZip, resourcePath: string): ReturnType<typeof zip.file> {
+function findZipPng(zip: JSZip, resourcePath: string): JSZipObject | null {
   // Canonical: assets/minecraft/textures/gui/18/default.png
   const standardPath = `assets/minecraft/${resourcePath}`;
   const found = zip.file(standardPath);
@@ -57,7 +58,7 @@ function findZipPng(zip: JSZip, resourcePath: string): ReturnType<typeof zip.fil
   if (filename) {
     const allFiles = Object.keys(zip.files);
     const match = allFiles.find((p) => p.endsWith(`/${filename}`));
-    if (match) return zip.file(match);
+    if (match) return zip.file(match) as JSZipObject | null;
   }
 
   return null;

@@ -1,4 +1,4 @@
-import type { ImagoCoreConfig, ImagoGuiYml, ImagoCharYml } from "@/types/imago";
+import type { ImagoCoreConfig } from "@/types/imago";
 
 export const GUI_TYPE_OPTIONS = [
   { value: "GUILD", label: "Guild Main" },

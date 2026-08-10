@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useEditorStore } from "@/store/useEditorStore";
 import { GUI_TYPE_OPTIONS, SLOT_LAYOUTS } from "@/lib/constants";
 import type { FunctionItem } from "@/types/imago";
-import { Plus, Trash2, Edit3, X, Check } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
 const FUNCTION_COLORS = [
   "bg-blue-500/50 border-blue-400",
@@ -28,10 +28,6 @@ export function LayoutEditor() {
   const [selectedGui, setSelectedGui] = useState<string>(
     GUI_TYPE_OPTIONS[0].value
   );
-  const [editingFunction, setEditingFunction] = useState<{
-    index: number;
-    fn: FunctionItem;
-  } | null>(null);
   const [addingNew, setAddingNew] = useState(false);
   const [newFnId, setNewFnId] = useState("");
   const [newMaterial, setNewMaterial] = useState("paper");

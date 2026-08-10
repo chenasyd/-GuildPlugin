@@ -33,7 +33,7 @@ export function ImportExportBar() {
           slot: guiEntry.slot as 9 | 18 | 27 | 36 | 45 | 54,
           ascent: guiEntry.ascent,
           height: guiEntry.height,
-          shiftX: guiEntry.shiftX || 0,
+          shiftX: guiEntry.shiftX ?? 0,
           character,
           textureData: null as ImageData | null,
           textureSrc: guiEntry.textureSrc,

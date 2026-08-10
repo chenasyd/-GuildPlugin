@@ -17,10 +17,20 @@ import {
 import { SLOT_SIZES } from "@/lib/constants";
 import {
   indexedDBStorage,
-  persistSerialize,
-  persistDeserialize,
   loadImageDataFromSrc,
 } from "@/lib/persistence";
+
+function imageDataToDataURL(imageData: ImageData): string {
+  const canvas = document.createElement("canvas");
+  canvas.width = imageData.width;
+  canvas.height = imageData.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    throw new Error("Failed to create canvas context for image export");
+  }
+  ctx.putImageData(imageData, 0, 0);
+  return canvas.toDataURL("image/png");
+}
 
 interface EditorStore {
   // --- GUI Images ---
@@ -44,6 +54,18 @@ interface EditorStore {
   _hasHydrated: boolean;
   setHasHydrated: (v: boolean) => void;
 
+  // --- Undo / Redo ---
+  history: Record<string, {
+    past: string[];
+    present: string | null;
+    future: string[];
+  }>;
+  pushEntryHistory: (entryKey: string, textureSrc: string) => void;
+  undoHistory: (entryKey: string) => string | null;
+  redoHistory: (entryKey: string) => string | null;
+  canUndo: (entryKey: string) => boolean;
+  canRedo: (entryKey: string) => boolean;
+
   // --- Actions: GUI ---
   initGuiFolders: () => void;
   setGuiDefaults: (slot: SlotSize, defaults: GuiDefaults) => void;
@@ -51,12 +73,21 @@ interface EditorStore {
   removeGuiEntry: (folderSlot: SlotSize, entryName: string) => void;
   updateGuiEntry: (folderSlot: SlotSize, entryName: string, updates: Partial<GuiEntry>) => void;
   updateGuiEntryTexture: (folderSlot: SlotSize, entryName: string, img: HTMLImageElement) => void;
+  updateGuiEntryTextureFromImageData: (
+    folderSlot: SlotSize,
+    entryName: string,
+    imageData: ImageData
+  ) => void;
 
   // --- Actions: Char ---
   addCharEntry: (entry: CharEntry) => void;
   removeCharEntry: (entryName: string) => void;
   updateCharEntry: (entryName: string, updates: Partial<CharEntry>) => void;
   updateCharEntryTexture: (entryName: string, img: HTMLImageElement) => void;
+  updateCharEntryTextureFromImageData: (
+    entryName: string,
+    imageData: ImageData
+  ) => void;
 
   // --- Actions: Bindings ---
   setEnabled: (v: boolean) => void;
@@ -127,104 +158,204 @@ export const useEditorStore = create<EditorStore>()(
         });
       },
 
-  setGuiDefaults: (slot, defaults) => {
-    set((s) => ({
-      guiFolders: s.guiFolders.map((f) => (f.slot === slot ? { ...f, defaults } : f)),
-    }));
+      setGuiDefaults: (slot, defaults) => {
+        set((s) => ({
+          guiFolders: s.guiFolders.map((f) => (f.slot === slot ? { ...f, defaults } : f)),
+        }));
+      },
+
+      addGuiEntry: (entry) => {
+        set((s) => ({
+          guiFolders: s.guiFolders.map((f) =>
+            f.slot === entry.slot ? { ...f, entries: [...f.entries, entry] } : f
+          ),
+        }));
+      },
+
+      removeGuiEntry: (folderSlot, entryName) => {
+        set((s) => ({
+          guiFolders: s.guiFolders.map((f) =>
+            f.slot === folderSlot
+              ? { ...f, entries: f.entries.filter((e) => e.name !== entryName) }
+              : f
+          ),
+        }));
+      },
+
+      addCharEntry: (entry) => {
+        set((s) => ({ charEntries: [...s.charEntries, entry] }));
+      },
+
+      removeCharEntry: (entryName) => {
+        set((s) => ({ charEntries: s.charEntries.filter((e) => e.name !== entryName) }));
+      },
+
+      updateGuiEntry: (folderSlot, entryName, updates) => {
+        set((s) => ({
+          guiFolders: s.guiFolders.map((f) =>
+            f.slot === folderSlot
+              ? {
+                  ...f,
+                  entries: f.entries.map((e) =>
+                    e.name === entryName ? { ...e, ...updates } : e
+                  ),
+                }
+              : f
+          ),
+        }));
+      },
+
+      updateGuiEntryTexture: (folderSlot, entryName, img) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        set((s) => ({
+          guiFolders: s.guiFolders.map((f) =>
+            f.slot === folderSlot
+              ? {
+                  ...f,
+                  entries: f.entries.map((e) =>
+                    e.name === entryName
+                      ? { ...e, textureData: imageData, textureSrc: canvas.toDataURL() }
+                      : e
+                  ),
+                }
+              : f
+          ),
+        }));
+      },
+
+      updateGuiEntryTextureFromImageData: (folderSlot, entryName, imageData) => {
+        const textureSrc = imageDataToDataURL(imageData);
+        set((s) => ({
+          guiFolders: s.guiFolders.map((f) =>
+            f.slot === folderSlot
+              ? {
+                  ...f,
+                  entries: f.entries.map((e) =>
+                    e.name === entryName
+                      ? { ...e, textureData: imageData, textureSrc }
+                      : e
+                  ),
+                }
+              : f
+          ),
+        }));
+      },
+
+      updateCharEntry: (entryName, updates) => {
+        set((s) => ({
+          charEntries: s.charEntries.map((e) =>
+            e.name === entryName ? { ...e, ...updates } : e
+          ),
+        }));
+      },
+
+      updateCharEntryTexture: (entryName, img) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, 0, 0);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        set((s) => ({
+          charEntries: s.charEntries.map((e) =>
+            e.name === entryName
+              ? { ...e, textureData: imageData, textureSrc: canvas.toDataURL() }
+              : e
+          ),
+        }));
+      },
+
+      updateCharEntryTextureFromImageData: (entryName, imageData) => {
+        const textureSrc = imageDataToDataURL(imageData);
+        set((s) => ({
+          charEntries: s.charEntries.map((e) =>
+            e.name === entryName
+              ? { ...e, textureData: imageData, textureSrc }
+              : e
+          ),
+        }));
+      },
+
+      setEnabled: (v) => set({ enabled: v }),
+      setDefaultEntry: (v) => set({ defaultEntry: v }),
+
+  history: {},
+  pushEntryHistory: (entryKey, textureSrc) => {
+    set((s) => {
+      const existing = s.history[entryKey];
+      const current = existing?.present;
+      const past = current ? [...(existing?.past ?? []), current].slice(-20) : existing?.past ?? [];
+      return {
+        history: {
+          ...s.history,
+          [entryKey]: {
+            past,
+            present: textureSrc,
+            future: [],
+          },
+        },
+      };
+    });
   },
-
-  addGuiEntry: (entry) => {
-    set((s) => ({
-      guiFolders: s.guiFolders.map((f) =>
-        f.slot === entry.slot ? { ...f, entries: [...f.entries, entry] } : f
-      ),
-    }));
+  undoHistory: (entryKey) => {
+    let result: string | null = null;
+    set((s) => {
+      const existing = s.history[entryKey];
+      if (!existing || existing.past.length === 0) return s;
+      const previous = existing.past[existing.past.length - 1];
+      const newPast = existing.past.slice(0, -1);
+      const future = existing.present ? [existing.present, ...existing.future] : existing.future;
+      result = previous;
+      return {
+        history: {
+          ...s.history,
+          [entryKey]: {
+            past: newPast,
+            present: previous,
+            future,
+          },
+        },
+      };
+    });
+    return result;
   },
-
-  removeGuiEntry: (folderSlot, entryName) => {
-    set((s) => ({
-      guiFolders: s.guiFolders.map((f) =>
-        f.slot === folderSlot
-          ? { ...f, entries: f.entries.filter((e) => e.name !== entryName) }
-          : f
-      ),
-    }));
+  redoHistory: (entryKey) => {
+    let result: string | null = null;
+    set((s) => {
+      const existing = s.history[entryKey];
+      if (!existing || existing.future.length === 0) return s;
+      const next = existing.future[0];
+      const future = existing.future.slice(1);
+      const past = existing.present ? [...existing.past, existing.present].slice(-20) : existing.past;
+      result = next;
+      return {
+        history: {
+          ...s.history,
+          [entryKey]: {
+            past,
+            present: next,
+            future,
+          },
+        },
+      };
+    });
+    return result;
   },
-
-  updateGuiEntry: (folderSlot, entryName, updates) => {
-    set((s) => ({
-      guiFolders: s.guiFolders.map((f) =>
-        f.slot === folderSlot
-          ? {
-              ...f,
-              entries: f.entries.map((e) =>
-                e.name === entryName ? { ...e, ...updates } : e
-              ),
-            }
-          : f
-      ),
-    }));
+  canUndo: (entryKey) => {
+    const entry = get().history[entryKey];
+    return Boolean(entry && entry.past.length > 0);
   },
-
-  updateGuiEntryTexture: (folderSlot, entryName, img) => {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(img, 0, 0);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-    set((s) => ({
-      guiFolders: s.guiFolders.map((f) =>
-        f.slot === folderSlot
-          ? {
-              ...f,
-              entries: f.entries.map((e) =>
-                e.name === entryName
-                  ? { ...e, textureData: imageData, textureSrc: canvas.toDataURL() }
-                  : e
-              ),
-            }
-          : f
-      ),
-    }));
+  canRedo: (entryKey) => {
+    const entry = get().history[entryKey];
+    return Boolean(entry && entry.future.length > 0);
   },
-
-  addCharEntry: (entry) => {
-    set((s) => ({ charEntries: [...s.charEntries, entry] }));
-  },
-
-  removeCharEntry: (entryName) => {
-    set((s) => ({ charEntries: s.charEntries.filter((e) => e.name !== entryName) }));
-  },
-
-  updateCharEntry: (entryName, updates) => {
-    set((s) => ({
-      charEntries: s.charEntries.map((e) =>
-        e.name === entryName ? { ...e, ...updates } : e
-      ),
-    }));
-  },
-
-  updateCharEntryTexture: (entryName, img) => {
-    const canvas = document.createElement("canvas");
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(img, 0, 0);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-    set((s) => ({
-      charEntries: s.charEntries.map((e) =>
-        e.name === entryName
-          ? { ...e, textureData: imageData, textureSrc: canvas.toDataURL() }
-          : e
-      ),
-    }));
-  },
-
-  setEnabled: (v) => set({ enabled: v }),
-  setDefaultEntry: (v) => set({ defaultEntry: v }),
 
   setBinding: (guiType, entryId) => {
     set((s) => ({ bindings: { ...s.bindings, [guiType]: entryId } }));
@@ -375,9 +506,9 @@ export const useEditorStore = create<EditorStore>()(
 }),
     {
       name: "imago-core-editor",
-      storage: createJSONStorage(() => indexedDBStorage),
-      serialize: persistSerialize,
-      deserialize: persistDeserialize,
+      storage: createJSONStorage(() => indexedDBStorage, {
+        replacer: (key, value) => (key === "textureData" ? undefined : value),
+      }),
       // Exclude functions (actions) and runtime-only fields from persistence
       partialize: (state) => {
         const {

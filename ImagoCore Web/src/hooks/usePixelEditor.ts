@@ -11,9 +11,21 @@ interface UsePixelEditorOptions {
   imageData: ImageData | null;
   width: number;
   height: number;
+  entryKey: string | null;
+  onBeforeEdit?: () => void;
+  onSaveImageData?: (imageData: ImageData) => void;
 }
 
-export function usePixelEditor({ canvasRef, imageData, width, height }: UsePixelEditorOptions) {
+export function usePixelEditor({
+  canvasRef,
+  imageData,
+  width,
+  height,
+  entryKey,
+  onBeforeEdit,
+  onSaveImageData,
+}: UsePixelEditorOptions) {
+  void entryKey;
   // Subscribe only to slow-changing fields individually — NOT the whole pixelEditor object
   const tool = useEditorStore((s) => s.pixelEditor.tool);
   const color = useEditorStore((s) => s.pixelEditor.color);
@@ -35,6 +47,7 @@ export function usePixelEditor({ canvasRef, imageData, width, height }: UsePixel
   const panOffsetStartX = useRef(0);
   const panOffsetStartY = useRef(0);
   const renderRef = useRef<() => void>(() => {});
+  const saveTimer = useRef<number | null>(null);
 
   // Initialize offscreen canvas with image data
   useEffect(() => {
@@ -78,25 +91,30 @@ export function usePixelEditor({ canvasRef, imageData, width, height }: UsePixel
     };
   }, []);
 
+  const patternCanvas = useRef<HTMLCanvasElement | null>(null);
   const drawCheckerboard = useCallback(
     (ctx: CanvasRenderingContext2D, dw: number, dh: number, ox: number, oy: number, z: number) => {
-      const pattern = document.createElement("canvas");
-      pattern.width = TRANSPARENT_PATTERN_SIZE * 2;
-      pattern.height = TRANSPARENT_PATTERN_SIZE * 2;
-      const pctx = pattern.getContext("2d")!;
+      if (!patternCanvas.current) {
+        const pattern = document.createElement("canvas");
+        pattern.width = TRANSPARENT_PATTERN_SIZE * 2;
+        pattern.height = TRANSPARENT_PATTERN_SIZE * 2;
+        const pctx = pattern.getContext("2d")!;
 
-      pctx.fillStyle = TRANSPARENT_COLOR_LIGHT;
-      pctx.fillRect(0, 0, pattern.width, pattern.height);
-      pctx.fillStyle = TRANSPARENT_COLOR_DARK;
-      pctx.fillRect(0, 0, TRANSPARENT_PATTERN_SIZE, TRANSPARENT_PATTERN_SIZE);
-      pctx.fillRect(
-        TRANSPARENT_PATTERN_SIZE,
-        TRANSPARENT_PATTERN_SIZE,
-        TRANSPARENT_PATTERN_SIZE,
-        TRANSPARENT_PATTERN_SIZE
-      );
+        pctx.fillStyle = TRANSPARENT_COLOR_LIGHT;
+        pctx.fillRect(0, 0, pattern.width, pattern.height);
+        pctx.fillStyle = TRANSPARENT_COLOR_DARK;
+        pctx.fillRect(0, 0, TRANSPARENT_PATTERN_SIZE, TRANSPARENT_PATTERN_SIZE);
+        pctx.fillRect(
+          TRANSPARENT_PATTERN_SIZE,
+          TRANSPARENT_PATTERN_SIZE,
+          TRANSPARENT_PATTERN_SIZE,
+          TRANSPARENT_PATTERN_SIZE
+        );
 
-      const fill = ctx.createPattern(pattern, "repeat");
+        patternCanvas.current = pattern;
+      }
+
+      const fill = ctx.createPattern(patternCanvas.current, "repeat");
       if (fill) {
         ctx.fillStyle = fill;
         ctx.fillRect(ox * z, oy * z, dw, dh);
@@ -226,13 +244,51 @@ export function usePixelEditor({ canvasRef, imageData, width, height }: UsePixel
         const [tr, tg, tb, ta] = targetData;
         if (color === `rgba(${tr},${tg},${tb},${ta})`) return;
         floodFill(ctx, x, y, tr, tg, tb, ta, color, width, height);
+        scheduleSave();
+        render();
         return;
       }
 
       render();
+      scheduleSave();
     },
     [tool, color, width, height, getHexColor, updatePixelEditor, render]
   );
+
+  const flushSave = useCallback(() => {
+    if (saveTimer.current !== null) {
+      window.clearTimeout(saveTimer.current);
+      saveTimer.current = null;
+    }
+    if (!onSaveImageData || !offscreenCanvas.current || width <= 0 || height <= 0) return;
+    const ctx = offscreenCanvas.current.getContext("2d");
+    if (!ctx) return;
+    try {
+      const imageData = ctx.getImageData(0, 0, width, height);
+      onSaveImageData(imageData);
+    } catch {
+      // ignore if canvas is unavailable
+    }
+  }, [height, onSaveImageData, width]);
+
+  const scheduleSave = useCallback(() => {
+    if (!onSaveImageData) return;
+    if (saveTimer.current !== null) {
+      window.clearTimeout(saveTimer.current);
+    }
+    saveTimer.current = window.setTimeout(() => {
+      saveTimer.current = null;
+      flushSave();
+    }, 500);
+  }, [flushSave, onSaveImageData]);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimer.current !== null) {
+        window.clearTimeout(saveTimer.current);
+      }
+    };
+  }, []);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -255,13 +311,16 @@ export function usePixelEditor({ canvasRef, imageData, width, height }: UsePixel
         return;
       }
 
+      if (onBeforeEdit) {
+        onBeforeEdit();
+      }
       isDrawing.current = true;
       const p = screenToPixel(e.clientX, e.clientY);
       setPixel(p.x, p.y);
       lastX.current = p.x;
       lastY.current = p.y;
     },
-    [screenToPixel, setPixel, tool]
+    [screenToPixel, setPixel, tool, onBeforeEdit]
   );
 
   const handleMouseMove = useCallback(
@@ -300,7 +359,8 @@ export function usePixelEditor({ canvasRef, imageData, width, height }: UsePixel
     isPanning.current = false;
     lastX.current = -1;
     lastY.current = -1;
-  }, []);
+    flushSave();
+  }, [flushSave]);
 
   const handleWheel = useCallback(
     (e: React.WheelEvent<HTMLCanvasElement>) => {

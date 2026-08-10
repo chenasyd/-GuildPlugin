@@ -1,7 +1,7 @@
 import { useEditorStore } from "@/store/useEditorStore";
-import type { SlotSize, GuiEntry, CharEntry } from "@/types/imago";
+import type { SlotSize } from "@/types/imago";
 import { SLOT_SIZES } from "@/lib/constants";
-import { Plus, Trash2, Folder, Image, FileImage, GripVertical } from "lucide-react";
+import { Plus, Trash2, Folder, Image, FileImage } from "lucide-react";
 import { useState } from "react";
 import { AddGuiImageDialog } from "@/components/dialogs/AddGuiImageDialog";
 import { AddCharImageDialog } from "@/components/dialogs/AddCharImageDialog";

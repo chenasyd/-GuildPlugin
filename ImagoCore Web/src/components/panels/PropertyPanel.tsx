@@ -14,11 +14,6 @@ export function PropertyPanel() {
 
   const [selectedFolder, setSelectedFolder] = useState<SlotSize>(54);
 
-  if (activeView === "layout-editor") {
-    // In layout mode, show layout-specific controls
-    return null;
-  }
-
   return (
     <div className="w-72 bg-zinc-900 border-l border-zinc-700 flex flex-col h-full select-none">
       {/* Header */}

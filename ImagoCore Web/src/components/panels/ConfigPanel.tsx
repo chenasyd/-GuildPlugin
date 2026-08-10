@@ -1,7 +1,7 @@
 import { useEditorStore } from "@/store/useEditorStore";
 import { GUI_TYPE_OPTIONS } from "@/lib/constants";
-import type { GuiTypeId, OverlayConfig } from "@/types/imago";
-import { Plus, Trash2, X } from "lucide-react";
+import type { GuiTypeId } from "@/types/imago";
+import { Plus, X } from "lucide-react";
 import { useState } from "react";
 
 export function ConfigPanel() {
@@ -15,7 +15,6 @@ export function ConfigPanel() {
   const removeBinding = useEditorStore((s) => s.removeBinding);
   const addOverlay = useEditorStore((s) => s.addOverlay);
   const removeOverlay = useEditorStore((s) => s.removeOverlay);
-  const updateOverlay = useEditorStore((s) => s.updateOverlay);
   const guiFolders = useEditorStore((s) => s.guiFolders);
   const charEntries = useEditorStore((s) => s.charEntries);
 

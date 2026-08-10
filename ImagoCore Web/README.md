@@ -39,6 +39,8 @@ npm run build
 npx tsc --noEmit
 ```
 
+> Note: the correct build command is `npm run build`, which runs `tsc -b && vite build`. Use `npx vite build` only if you want to invoke Vite directly.
+
 ## Project Structure
 
 ```

@@ -3,7 +3,6 @@
  */
 import JSZip from "jszip";
 import { dump } from "js-yaml";
-import type { EditorStore } from "@/store/useEditorStore";
 import type {
   GuiFolder,
   CharEntry,
@@ -12,8 +11,20 @@ import type {
   ImagoCoreConfig,
   FunctionItem,
   GuiDefaults,
+  OverlayConfig,
 } from "@/types/imago";
 import { SHIFT_CHARS } from "@/types/imago";
+
+type EditorStore = {
+  guiFolders: GuiFolder[];
+  charEntries: CharEntry[];
+  enabled: boolean;
+  defaultEntry: string;
+  bindings: Record<string, string>;
+  overlays: OverlayConfig[];
+  transparentItem: { material: string; customModelData: number };
+  layouts: Record<string, FunctionItem[]>;
+};
 
 function padHex(code: number): string {
   return code.toString(16).padStart(4, "0");
@@ -184,13 +195,13 @@ export async function generateExportZip(store: EditorStore): Promise<Blob> {
   }
 
   const bindingsSection: Record<string, string> = {};
-  for (const [guiType, entryId] of Object.entries(store.bindings)) {
+  for (const [guiType, entryId] of Object.entries(store.bindings) as [string, string][]) {
     bindingsSection[guiType] = entryId;
   }
   imagoGuiYml.bindings = bindingsSection;
 
   if (store.overlays.length > 0) {
-    imagoGuiYml.overlays = store.overlays.map((o) => {
+    imagoGuiYml.overlays = store.overlays.map((o: OverlayConfig) => {
       const item: Record<string, unknown> = {
         gui_type: o.guiType,
         char: o.charName,
@@ -207,7 +218,7 @@ export async function generateExportZip(store: EditorStore): Promise<Blob> {
     transparent_item: store.transparentItem,
   };
 
-  for (const [guiType, functions] of Object.entries(store.layouts)) {
+  for (const [guiType, functions] of Object.entries(store.layouts) as [string, FunctionItem[]][]) {
     if (functions.length === 0) continue;
     layoutYml[guiType] = functions.map((f: FunctionItem) => ({
       function_id: f.functionId,
@@ -223,6 +234,7 @@ export async function generateExportZip(store: EditorStore): Promise<Blob> {
   const fontJson = buildFontJson(store.guiFolders, store.charEntries);
   const assetsFolder = zip.folder("assets")!;
   const fontFolder = assetsFolder.folder("minecraft")!.folder("font")!;
+  fontFolder.file("default.json", JSON.stringify(fontJson, null, 2));
 
   // Copy font PNGs
   for (const folder of store.guiFolders) {

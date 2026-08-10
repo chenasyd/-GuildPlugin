@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useEditorStore } from "@/store/useEditorStore";
 import type { CharEntry } from "@/types/imago";
 
