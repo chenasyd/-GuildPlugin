@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.guild.bungee.channel.GuildChannelHandler;
 import com.guild.bungee.data.BungeeMessage;
+import com.guild.bungee.war.WarOrchestrator;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 
@@ -44,6 +45,7 @@ public final class CrossServerBridge {
     private final Logger logger;
     private GuildChannelHandler channelHandler;
     private final FormForwardHandler formForwardHandler;
+    private WarOrchestrator warOrchestrator;
     private boolean initialized;
 
     public CrossServerBridge(Logger logger) {
@@ -57,6 +59,14 @@ public final class CrossServerBridge {
      */
     public void setChannelHandler(GuildChannelHandler channelHandler) {
         this.channelHandler = channelHandler;
+    }
+
+    public void setWarOrchestrator(WarOrchestrator warOrchestrator) {
+        this.warOrchestrator = warOrchestrator;
+    }
+
+    public WarOrchestrator getWarOrchestrator() {
+        return warOrchestrator;
     }
 
     // ── Lifecycle ────────────────────────────────────────────────
@@ -110,6 +120,12 @@ public final class CrossServerBridge {
                 handleEventBroadcast(message, sourceServer);
             } else if (type.startsWith("guild.form.send")) {
                 formForwardHandler.handleFormSend(message, sourceServer);
+            } else if (com.guild.bungee.war.WarMessageTypes.isWarType(type)) {
+                if (warOrchestrator != null) {
+                    warOrchestrator.handle(message, sourceServer);
+                } else {
+                    logger.fine("[Bridge] War message dropped (orchestrator null): " + type);
+                }
             } else {
                 logger.fine("[Bridge] Unrecognized message type: " + type
                         + " from " + sourceServer.getName());
@@ -241,6 +257,11 @@ public final class CrossServerBridge {
             logger.warning("[Bridge] Channel handler not wired — cannot broadcast "
                     + message.getType());
         }
+    }
+
+    /** Public broadcast-except helper for {@link com.guild.bungee.war.WarOrchestrator}. */
+    public void broadcastToAllExceptPublic(ServerInfo exclude, BungeeMessage message) {
+        broadcastToAllExcept(exclude, message);
     }
 
     // ── Payload Helpers ──────────────────────────────────────────

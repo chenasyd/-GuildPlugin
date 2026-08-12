@@ -16,6 +16,10 @@ guild:
   creation-cost: 1000.0
   # Teleport countdown in seconds (0 = instant, no delay)
   home-teleport-delay: 0
+  # Lightweight home protection (non-members cannot break/place in radius)
+  home-protect:
+    enabled: false
+    radius: 16
   # No-economy mode: set to true to skip economy checks when no economy plugin (e.g. Vault) is installed
   no-economy-mode: false
   # Guild tag color
@@ -233,3 +237,17 @@ guild-war:
   max-concurrent: 3
   # On last-standing elimination: spectator in arena (true) or kick to fallback (false)
   eliminate-to-spectator: true
+  # Cancel break/place/bucket in arena during PREPARING/COUNTDOWN/ACTIVE
+  arena-protect: true
+  # Broadcast a short scoreboard report when a match ends
+  broadcast-report: true
+  season:
+    id: "default"
+  rewards:
+    # Builtin rewards (also fire WarMatchEndEvent for external plugins)
+    enabled: false
+    winner-vault: 0
+    loser-vault: 0
+    winner-guild-bank: 0
+    contribution-win: 10
+    contribution-per-kill: 1

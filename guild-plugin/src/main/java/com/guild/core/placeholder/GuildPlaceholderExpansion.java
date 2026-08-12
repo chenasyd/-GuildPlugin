@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import com.guild.core.utils.PlaceholderUtils;
 
 import com.guild.core.time.TimeProvider;
+import com.guild.war.season.WarSeasonService;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
@@ -122,6 +123,8 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
                     return canSetHome(player);
                 case "canmanageeconomy":
                     return canManageEconomy(player);
+                case "war":
+                    return handleWarPlaceholder(player, args);
                 case "module":
                     return handleModulePlaceholder(player, args);
                 
@@ -131,6 +134,32 @@ public class GuildPlaceholderExpansion extends PlaceholderExpansion {
         } catch (Exception e) {
             plugin.getLogger().warning("处理占位符时发生错误: " + e.getMessage());
             return "";
+        }
+    }
+
+    private String handleWarPlaceholder(Player player, String[] args) {
+        if (args.length < 2 || plugin.getWarSeasonService() == null) {
+            return "0";
+        }
+        try {
+            Guild guild = guildService.getPlayerGuild(player.getUniqueId());
+            if (guild == null) {
+                return "0";
+            }
+            String season = plugin.getWarSeasonService().currentSeasonId();
+            WarSeasonService.SeasonRow row = plugin.getWarSeasonService()
+                    .getGuildStats(guild.getId(), season);
+            return switch (args[1].toLowerCase()) {
+                case "wins" -> String.valueOf(row.wins());
+                case "losses" -> String.valueOf(row.losses());
+                case "draws" -> String.valueOf(row.draws());
+                case "kills" -> String.valueOf(row.kills());
+                case "matches" -> String.valueOf(row.matches());
+                case "season" -> season;
+                default -> "0";
+            };
+        } catch (Exception e) {
+            return "0";
         }
     }
 

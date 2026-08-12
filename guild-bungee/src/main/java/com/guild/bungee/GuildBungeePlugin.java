@@ -3,6 +3,7 @@ package com.guild.bungee;
 import com.guild.bungee.bridge.CrossServerBridge;
 import com.guild.bungee.channel.GuildChannelHandler;
 import com.guild.bungee.listener.PlayerTypeDetector;
+import com.guild.bungee.war.WarOrchestrator;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -38,6 +39,7 @@ public final class GuildBungeePlugin extends Plugin {
     private CrossServerBridge bridge;
     private GuildChannelHandler channelHandler;
     private PlayerTypeDetector playerTypeDetector;
+    private WarOrchestrator warOrchestrator;
 
     // ── Singleton ─────────────────────────────────────────────────
 
@@ -70,6 +72,12 @@ public final class GuildBungeePlugin extends Plugin {
         ProxyServer.getInstance().getPluginManager().registerListener(this, channelHandler);
         log.info("[GuildBungee] Channel '" + GuildChannelHandler.CHANNEL_NAME
                 + "' registered.");
+
+        // 2b. War orchestrator skeleton (cross-server guild war routing)
+        warOrchestrator = new WarOrchestrator(log, bridge);
+        bridge.setWarOrchestrator(warOrchestrator);
+        log.info("[GuildBungee] WarOrchestrator ready (battle server='"
+                + warOrchestrator.getBattleServerName() + "').");
 
         // 3. Register player connection type detector (Java/Bedrock via Geyser)
         playerTypeDetector = new PlayerTypeDetector(this);

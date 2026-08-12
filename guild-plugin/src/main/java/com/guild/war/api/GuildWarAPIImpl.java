@@ -3,9 +3,11 @@ package com.guild.war.api;
 import com.guild.war.GuildWarService;
 import com.guild.war.model.VictoryMode;
 import com.guild.war.model.WarMatch;
+import com.guild.war.model.WarReportSnapshot;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -70,7 +72,32 @@ public final class GuildWarAPIImpl implements GuildWarAPI {
     }
 
     @Override
+    public CompletableFuture<Void> ready(Player player) {
+        return service.ready(player);
+    }
+
+    @Override
+    public CompletableFuture<Void> cancel(Player player) {
+        return service.cancel(player);
+    }
+
+    @Override
     public CompletableFuture<Void> forceEnd(int matchId, String reason) {
         return service.forceEnd(matchId, reason);
+    }
+
+    @Override
+    public CompletableFuture<List<WarReportSnapshot>> getRecentMatches(int limit) {
+        return service.reports().getRecentAsync(limit);
+    }
+
+    @Override
+    public CompletableFuture<WarReportSnapshot> getMatchHistory(int reportId) {
+        return service.reports().getByReportIdAsync(reportId);
+    }
+
+    @Override
+    public CompletableFuture<WarReportSnapshot> getLatestMatchForPlayer(UUID uuid) {
+        return service.reports().getLatestForPlayerAsync(uuid);
     }
 }

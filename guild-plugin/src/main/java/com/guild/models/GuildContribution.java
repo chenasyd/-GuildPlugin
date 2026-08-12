@@ -25,7 +25,9 @@ public class GuildContribution {
         TRANSFER,
         CREATION,
         UPGRADE,
-        ADMIN;
+        ADMIN,
+        WAR_WIN,
+        WAR_KILL;
 
         /**
          * 获取贡献类型显示名称（多语言支持）
@@ -49,6 +51,10 @@ public class GuildContribution {
                     return languageManager.getCoreMessage(lang, key, "Guild Upgrade");
                 case ADMIN:
                     return languageManager.getCoreMessage(lang, key, "Admin Operation");
+                case WAR_WIN:
+                    return languageManager.getCoreMessage(lang, key, "War Win");
+                case WAR_KILL:
+                    return languageManager.getCoreMessage(lang, key, "War Kill");
                 default:
                     return name();
             }

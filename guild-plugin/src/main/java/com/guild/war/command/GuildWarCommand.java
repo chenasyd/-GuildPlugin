@@ -4,12 +4,17 @@ import com.guild.GuildPlugin;
 import com.guild.core.language.CoreMsg;
 import com.guild.core.language.LocalizedException;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.gui.WarSeasonGUI;
 import com.guild.war.GuildWarService;
 import com.guild.war.model.VictoryMode;
 import com.guild.war.model.WarMatch;
 import com.guild.war.model.WarParticipant;
+import com.guild.war.model.WarParticipantSnapshot;
 import com.guild.war.model.WarPhase;
+import com.guild.war.model.WarReportSnapshot;
 import com.guild.war.model.WarTeamSide;
+import com.guild.war.season.WarSeasonService;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,14 +25,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 /**
  * /guildwar — 小型固定地图工会战。
  *
  * <pre>
  * /guildwar challenge &lt;工会名|标签&gt; [--preset] [--mode first|timed|survive] [--max N] [--score N] [--time SEC]
- * /guildwar accept|deny|join|leave|ready|cancel|status|help
+ * /guildwar accept|deny|join|leave|ready|cancel|status|report|season|help
  * /guildwar admin end &lt;matchId&gt;
  * </pre>
  */
@@ -75,6 +79,8 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
             case "cancel" -> requirePlayer(sender, p -> war.cancel(p).whenComplete((v, e) ->
                     reply(p, e, "war.cancel.ok", "&e已取消")));
             case "status", "s" -> status(sender);
+            case "report" -> report(sender, args);
+            case "season" -> season(sender);
             case "admin" -> admin(sender, args);
             case "help", "?" -> help(sender);
             default -> help(sender);
@@ -123,16 +129,96 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
                 return;
             }
         }
-        var list = war.getActiveMatches().stream()
-                .filter(m -> m.phase() != WarPhase.ENDED)
-                .collect(Collectors.toList());
-        if (list.isEmpty()) {
+        var active = war.getActiveMatches();
+        if (active.isEmpty()) {
             send(sender, "war.status.none", "&7当前没有进行中的工会战");
             return;
         }
-        for (WarMatch m : list) {
+        for (WarMatch m : active) {
             printMatch(sender, m);
         }
+    }
+
+    private void report(CommandSender sender, String[] args) {
+        if (args.length >= 2) {
+            try {
+                int id = Integer.parseInt(args[1]);
+                war.reports().getByReportIdAsync(id).thenAccept(snap ->
+                        CompatibleScheduler.runTask(plugin, () -> showReport(sender, snap)));
+            } catch (NumberFormatException e) {
+                send(sender, "war.report.bad-id", "&c战报 ID 无效");
+            }
+            return;
+        }
+        if (!(sender instanceof Player player)) {
+            send(sender, "war.report.need-id", "&c控制台请使用 /guildwar report <id>");
+            return;
+        }
+        war.reports().getLatestForPlayerAsync(player.getUniqueId()).thenAccept(snap ->
+                CompatibleScheduler.runTask(plugin, () -> showReport(sender, snap)));
+    }
+
+    private void showReport(CommandSender sender, WarReportSnapshot snap) {
+        if (snap == null) {
+            send(sender, "war.report.none", "&7没有找到战报");
+            return;
+        }
+        String id = snap.reportId() != null ? String.valueOf(snap.reportId()) : "?";
+        send(sender, "war.report.header",
+                "&6── 战报 #{id} ── &f{a} &a{sa}&7:&c{sb} &f{b} &7→ &e{winner}",
+                "{id}", id,
+                "{a}", snap.guildAName(),
+                "{b}", snap.guildBName(),
+                "{sa}", String.valueOf(snap.scoreA()),
+                "{sb}", String.valueOf(snap.scoreB()),
+                "{winner}", snap.winnerName());
+        send(sender, "war.report.meta",
+                "&7模式: &f{mode} &7原因: &f{reason} &7耗时: &f{sec}s",
+                "{mode}", snap.mode().name(),
+                "{reason}", snap.endReason() != null ? snap.endReason() : "-",
+                "{sec}", String.valueOf(snap.durationMs() / 1000));
+        for (WarParticipantSnapshot p : snap.participants()) {
+            send(sender, "war.report.player",
+                    "&7  {side} &f{name} &7kills=&e{kills}{elim}",
+                    "{side}", p.side().name(),
+                    "{name}", p.name(),
+                    "{kills}", String.valueOf(p.kills()),
+                    "{elim}", p.eliminated() ? " &8(out)" : "");
+        }
+    }
+
+    private void season(CommandSender sender) {
+        WarSeasonService seasonService = plugin.getWarSeasonService();
+        if (seasonService == null) {
+            send(sender, "war.season.unavailable", "&c赛季系统未就绪");
+            return;
+        }
+        String seasonId = seasonService.currentSeasonId();
+        seasonService.getLeaderboardAsync(seasonId, 27).thenAccept(rows -> {
+            CompatibleScheduler.runTask(plugin, () -> {
+                if (sender instanceof Player player && plugin.getGuiManager() != null) {
+                    plugin.getGuiManager().openGUI(player,
+                            new WarSeasonGUI(plugin, player, seasonId, rows));
+                } else {
+                    send(sender, "war.season.header",
+                            "&6── 赛季 &f{season} &6排行 ──", "{season}", seasonId);
+                    int i = 1;
+                    for (WarSeasonService.SeasonRow row : rows) {
+                        send(sender, "war.season.row",
+                                "&e#{rank} &f{name} &a{w}&7/&c{l}&7/&8{d} &7kills=&e{k}",
+                                "{rank}", String.valueOf(i++),
+                                "{name}", row.guildName(),
+                                "{w}", String.valueOf(row.wins()),
+                                "{l}", String.valueOf(row.losses()),
+                                "{d}", String.valueOf(row.draws()),
+                                "{k}", String.valueOf(row.kills()));
+                    }
+                    if (rows.isEmpty()) {
+                        send(sender, "war.season.empty", "&7本赛季暂无数据");
+                    }
+                }
+            });
+        });
     }
 
     private void printMatch(CommandSender sender, WarMatch m) {
@@ -212,6 +298,8 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
         send(sender, "war.help.ready", "&e/guildwar ready &7- 报名阶段提前开局（官员，双方都 ready）");
         send(sender, "war.help.cancel", "&e/guildwar cancel &7- 取消未开战对局（官员）");
         send(sender, "war.help.status", "&e/guildwar status &7- 查看状态");
+        send(sender, "war.help.report", "&e/guildwar report [id] &7- 查看战报");
+        send(sender, "war.help.season", "&e/guildwar season &7- 本赛季排行");
         if (sender.hasPermission(PERM_ADMIN)) {
             send(sender, "war.help.admin", "&e/guildwar admin end <id> &7- 强制结束");
         }
@@ -270,7 +358,8 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> out = new ArrayList<>();
         if (args.length == 1) {
-            out.addAll(Arrays.asList("challenge", "accept", "deny", "join", "leave", "ready", "cancel", "status", "help"));
+            out.addAll(Arrays.asList("challenge", "accept", "deny", "join", "leave", "ready", "cancel",
+                    "status", "report", "season", "help"));
             if (sender.hasPermission(PERM_ADMIN)) {
                 out.add("admin");
             }
@@ -299,6 +388,6 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
             out.add("end");
         }
         String last = args[args.length - 1].toLowerCase(Locale.ROOT);
-        return out.stream().filter(s -> s.toLowerCase(Locale.ROOT).startsWith(last)).collect(Collectors.toList());
+        return out.stream().filter(s -> s.toLowerCase(Locale.ROOT).startsWith(last)).toList();
     }
 }

@@ -15,6 +15,7 @@ GuildPlugin is a Minecraft guild system plugin providing complete guild manageme
 - [GuildWar — Fixed-map guild PVP](./GuildWar.md) ([EN](./GuildWar_EN.md))
 - [World / War API](./API-World-War.md) ([EN](./API-World-War_EN.md))
 - [World & War i18n key list](./World-War-I18N.md)
+- [Cross-Server Guild War protocol (P3 skeleton)](./CrossServer-War.md)
 
 ## Developer Documentation
 

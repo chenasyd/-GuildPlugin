@@ -3,19 +3,24 @@ package com.guild.war;
 import com.guild.war.model.WarMatch;
 import com.guild.war.model.WarParticipant;
 import com.guild.war.model.WarPhase;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-/** 工会战战斗监听。 */
+/** 工会战战斗与战场保护监听。 */
 public final class GuildWarListener implements Listener {
 
     private final GuildWarService warService;
@@ -75,6 +80,53 @@ public final class GuildWarListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         warService.handleQuit(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBreak(BlockBreakEvent event) {
+        if (shouldCancelBuild(event.getPlayer())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPlace(BlockPlaceEvent event) {
+        if (shouldCancelBuild(event.getPlayer())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBucketEmpty(PlayerBucketEmptyEvent event) {
+        if (shouldCancelBuild(event.getPlayer())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBucketFill(PlayerBucketFillEvent event) {
+        if (shouldCancelBuild(event.getPlayer())) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean shouldCancelBuild(Player player) {
+        if (player == null || !warService.settings().arenaProtect) {
+            return false;
+        }
+        if (player.hasPermission("guild.admin") || player.hasPermission("guild.admin.world")) {
+            return false;
+        }
+        if (player.getGameMode() == GameMode.CREATIVE && player.hasPermission("guild.war.admin")) {
+            return false;
+        }
+        WarMatch match = warService.getMatchByPlayer(player.getUniqueId());
+        if (match == null) {
+            // 非参赛者在战场世界内也禁止破坏
+            return warService.isArenaWorld(player.getWorld().getName());
+        }
+        WarPhase phase = match.phase();
+        return phase == WarPhase.PREPARING || phase == WarPhase.COUNTDOWN || phase == WarPhase.ACTIVE;
     }
 
     private static Player resolveAttacker(EntityDamageByEntityEvent event) {

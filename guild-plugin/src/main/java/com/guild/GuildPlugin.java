@@ -16,6 +16,7 @@ import com.guild.commands.GuildModuleCommand;
 import com.guild.commands.BedrockFormTestCommand;
 import com.guild.listeners.PlayerListener;
 import com.guild.listeners.GuildListener;
+import com.guild.listeners.GuildHomeProtectListener;
 import com.guild.services.GuildService;
 import com.guild.comm.api.BungeeClientAPI;
 import com.guild.comm.api.CommAPI;
@@ -42,6 +43,8 @@ import com.guild.war.GuildWarService;
 import com.guild.war.api.GuildWarAPI;
 import com.guild.war.api.GuildWarAPIImpl;
 import com.guild.war.command.GuildWarCommand;
+import com.guild.war.reward.WarRewardListener;
+import com.guild.war.season.WarSeasonService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -73,6 +76,7 @@ public class GuildPlugin extends JavaPlugin {
     private GuildWorldAPI guildWorldAPI;
     private GuildWarService guildWarService;
     private GuildWarAPI guildWarAPI;
+    private WarSeasonService warSeasonService;
     private volatile boolean modulesUnloaded = false;
     private GuildMetrics guildMetrics;
     private UpdateManager updateManager;
@@ -242,10 +246,14 @@ public class GuildPlugin extends JavaPlugin {
             // 工会战（依赖世界预设系统）
             guildWarService = new GuildWarService(this, guildService, guildWorldService);
             guildWarAPI = new GuildWarAPIImpl(guildWarService);
+            warSeasonService = new WarSeasonService(this);
             serviceContainer.register(GuildWarService.class, guildWarService);
             serviceContainer.register(GuildWarAPI.class, guildWarAPI);
+            serviceContainer.register(WarSeasonService.class, warSeasonService);
             if (guildWarService.isEnabled()) {
                 getServer().getPluginManager().registerEvents(new GuildWarListener(guildWarService), this);
+                getServer().getPluginManager().registerEvents(new WarRewardListener(this), this);
+                getServer().getPluginManager().registerEvents(warSeasonService, this);
             } else {
                 logger.info("[GuildWar] Disabled: " + guildWarService.unavailableReason());
             }
@@ -401,6 +409,7 @@ public class GuildPlugin extends JavaPlugin {
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new GuildListener(this), this);
+        getServer().getPluginManager().registerEvents(new GuildHomeProtectListener(this), this);
     }
     
     private void startServices() {
@@ -502,6 +511,10 @@ public class GuildPlugin extends JavaPlugin {
 
     public GuildWarAPI getGuildWarAPI() {
         return guildWarAPI;
+    }
+
+    public WarSeasonService getWarSeasonService() {
+        return warSeasonService;
     }
     
     public ModuleManager getModuleManager() {

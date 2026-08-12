@@ -25,22 +25,52 @@ GuildWarAPI warApi = GuildPlugin.getInstance().getGuildWarAPI();
 
 Implementation: `com.guild.world.api.GuildWorldAPIImpl` (delegates to `GuildWorldService`).
 
-Internal helpers (not on the API interface; used by guild war):
-
-- `GuildWorldService.createArenaFromPreset` → world + A/B/spectator spawns
-- `resolvePresetSpawns`
-
 ## GuildWarAPI
 
 | Method | Description |
 |--------|-------------|
 | `isAvailable()` / `unavailableReason()` | False when disabled or worlds unavailable |
-| `getActiveMatches()` / `getMatch(id)` / `getMatchByPlayer(uuid)` | Lookup |
+| `getActiveMatches()` / `getMatch(id)` / `getMatchByPlayer(uuid)` / `status(player)` | Lookup |
 | `challenge(...)` | Start a challenge (`preset`/`mode`/`max`/`score`/`duration` nullable → config) |
-| `accept` / `deny` / `join` / `leave` | Match flow |
+| `accept` / `deny` / `join` / `leave` / `ready` / `cancel` | Match flow |
 | `forceEnd(matchId, reason)` | Force end |
+| `getRecentMatches(limit)` / `getMatchHistory(reportId)` / `getLatestMatchForPlayer(uuid)` | Historical reports (`WarReportSnapshot`) |
 
 Implementation: `com.guild.war.api.GuildWarAPIImpl`.
+
+## Events
+
+Package: `com.guild.war.event`
+
+| Event | When | Cancelable |
+|-------|------|------------|
+| `WarMatchStartEvent` | Phase → `ACTIVE` | No |
+| `WarMatchEndEvent` | After winner/score written, **before** arena destroy | No |
+
+`WarMatchEndEvent#getSnapshot()` → `WarReportSnapshot` (immutable: guilds, scores, mode, reason, participants, seasonId, duration).
+
+### Example: listen and reward
+
+```java
+public final class MyWarHook implements Listener {
+    private final Economy economy; // Vault
+
+    @EventHandler
+    public void onWarEnd(WarMatchEndEvent event) {
+        WarReportSnapshot snap = event.getSnapshot();
+        Integer winner = snap.winnerGuildId();
+        for (WarParticipantSnapshot p : snap.participants()) {
+            boolean win = winner != null && winner == p.guildId();
+            Player player = Bukkit.getPlayer(p.uuid());
+            if (player != null && win) {
+                economy.depositPlayer(player, 100.0);
+            }
+        }
+    }
+}
+```
+
+Builtin config rewards (`guild-war.rewards.*`) also listen to this event; set `enabled: false` to keep events only.
 
 ## Notes
 
@@ -52,4 +82,5 @@ Implementation: `com.guild.war.api.GuildWarAPIImpl`.
 
 - [GuildWorld_EN.md](./GuildWorld_EN.md) / [GuildWorld.md](./GuildWorld.md)
 - [GuildWar_EN.md](./GuildWar_EN.md) / [GuildWar.md](./GuildWar.md)
+- [CrossServer-War.md](./CrossServer-War.md) 
 - [SDK Developer Guide](./SDK%20Developer-Guide.md)

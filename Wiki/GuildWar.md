@@ -63,7 +63,15 @@ B官员: /guildwar accept
 | `ready` | 双方官员就绪后提前开局 |
 | `cancel` | 开战前取消 |
 | `status` | 查看对局 |
+| `report [id]` | 战报（省略 id 则取本人最近一场） |
+| `season` | 本赛季排行 GUI / 列表 |
 | `admin end <id>` | 强制结束 |
+
+## 事件与奖励
+
+- `WarMatchStartEvent` / `WarMatchEndEvent`（包 `com.guild.war.event`）
+- 内置奖励：`guild-war.rewards.*`（默认关闭）
+- 详见 [API-World-War.md](./API-World-War.md)
 
 ## 多语言
 

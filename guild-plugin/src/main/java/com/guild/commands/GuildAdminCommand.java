@@ -721,6 +721,9 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             // 配置和权限轻量，同步执行
             plugin.getConfigManager().reloadAllConfigs();
             plugin.getPermissionManager().reloadFromConfig();
+            if (plugin.getGuildWarService() != null) {
+                plugin.getGuildWarService().reloadSettings();
+            }
 
             // ImagoCore GUI 集成配置重载（enabled 切换、绑定变更等）
             plugin.getGuiManager().reloadImagoConfig();

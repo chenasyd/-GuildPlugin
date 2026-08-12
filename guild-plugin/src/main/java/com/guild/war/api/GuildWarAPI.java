@@ -2,9 +2,12 @@ package com.guild.war.api;
 
 import com.guild.war.model.VictoryMode;
 import com.guild.war.model.WarMatch;
+import com.guild.war.model.WarReportSnapshot;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -22,7 +25,12 @@ public interface GuildWarAPI {
 
     WarMatch getMatch(int id);
 
-    WarMatch getMatchByPlayer(java.util.UUID uuid);
+    WarMatch getMatchByPlayer(UUID uuid);
+
+    /** 等同于命令 status：返回玩家当前对局，无则 null。 */
+    default WarMatch status(Player player) {
+        return player == null ? null : getMatchByPlayer(player.getUniqueId());
+    }
 
     CompletableFuture<WarMatch> challenge(Player player, String targetGuild,
                                           String preset, VictoryMode mode,
@@ -36,5 +44,15 @@ public interface GuildWarAPI {
 
     CompletableFuture<Void> leave(Player player);
 
+    CompletableFuture<Void> ready(Player player);
+
+    CompletableFuture<Void> cancel(Player player);
+
     CompletableFuture<Void> forceEnd(int matchId, String reason);
+
+    CompletableFuture<List<WarReportSnapshot>> getRecentMatches(int limit);
+
+    CompletableFuture<WarReportSnapshot> getMatchHistory(int reportId);
+
+    CompletableFuture<WarReportSnapshot> getLatestMatchForPlayer(UUID uuid);
 }

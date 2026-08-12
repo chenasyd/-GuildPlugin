@@ -9,11 +9,16 @@ import com.guild.core.utils.ScheduledTaskHandle;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.services.GuildService;
+import com.guild.war.event.WarMatchEndEvent;
+import com.guild.war.event.WarMatchStartEvent;
 import com.guild.war.model.VictoryMode;
 import com.guild.war.model.WarMatch;
 import com.guild.war.model.WarParticipant;
+import com.guild.war.model.WarParticipantSnapshot;
 import com.guild.war.model.WarPhase;
+import com.guild.war.model.WarReportSnapshot;
 import com.guild.war.model.WarTeamSide;
+import com.guild.war.report.WarReportRepository;
 import com.guild.world.GuildWorldService;
 import com.guildplugin.util.FoliaTeleportUtils;
 import org.bukkit.Bukkit;
@@ -39,6 +44,7 @@ public final class GuildWarService {
     private final GuildPlugin plugin;
     private final GuildService guildService;
     private final GuildWorldService worldService;
+    private final WarReportRepository reportRepository;
     private WarSettings settings;
 
     private final Map<Integer, WarMatch> matches = new ConcurrentHashMap<>();
@@ -50,7 +56,12 @@ public final class GuildWarService {
         this.plugin = plugin;
         this.guildService = guildService;
         this.worldService = worldService;
+        this.reportRepository = new WarReportRepository(plugin);
         reloadSettings();
+    }
+
+    public WarReportRepository reports() {
+        return reportRepository;
     }
 
     public void reloadSettings() {
@@ -362,6 +373,21 @@ public final class GuildWarService {
                 && player.getWorld().getName().equals(m.worldName());
     }
 
+    /** 是否为当前进行中对局的战场世界名。 */
+    public boolean isArenaWorld(String worldName) {
+        if (worldName == null) {
+            return false;
+        }
+        for (WarMatch m : matches.values()) {
+            if (m.worldName() != null && m.worldName().equals(worldName)
+                    && m.phase() != WarPhase.ENDED
+                    && m.phase() != WarPhase.PENDING) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean shouldCancelDamage(Player attacker, Player victim) {
         WarMatch match = getMatchByPlayer(victim.getUniqueId());
         if (match == null) {
@@ -609,7 +635,9 @@ public final class GuildWarService {
             if (left[0] <= 0) {
                 cancelTimer(match.id());
                 match.setPhase(WarPhase.ACTIVE);
+                match.setStartedAt(System.currentTimeMillis());
                 broadcastMatch(match, "war.broadcast.fight", "&c&l开战！");
+                Bukkit.getPluginManager().callEvent(new WarMatchStartEvent(match));
                 scheduleMatchDuration(match);
                 return;
             }
@@ -710,6 +738,21 @@ public final class GuildWarService {
         match.setWinnerGuildId(winnerGuildId);
         match.setEndReason(reasonKey);
 
+        WarReportSnapshot snapshot = WarReportSnapshot.fromMatch(match, settings.seasonId);
+        try {
+            Bukkit.getPluginManager().callEvent(new WarMatchEndEvent(snapshot));
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.WARNING, "[GuildWar] WarMatchEndEvent listener error", e);
+        }
+        reportRepository.saveAsync(snapshot).whenComplete((saved, err) -> {
+            if (err != null) {
+                plugin.getLogger().log(Level.WARNING, "[GuildWar] Report save failed", err);
+            }
+            if (settings.broadcastReport) {
+                CompatibleScheduler.runTask(plugin, () -> broadcastReportLines(saved != null ? saved : snapshot));
+            }
+        });
+
         String winnerPh = winnerGuildId == null
                 ? "war.draw"
                 : (winnerGuildId == match.guildAId() ? match.guildAName() : match.guildBName());
@@ -740,6 +783,29 @@ public final class GuildWarService {
                     destroyArena(match);
                     unregisterMatch(match);
                 }, 40L));
+    }
+
+    private void broadcastReportLines(WarReportSnapshot snap) {
+        String id = snap.reportId() != null ? String.valueOf(snap.reportId()) : String.valueOf(snap.runtimeMatchId());
+        String header = CoreMsg.rawDefault(plugin, "war.report.broadcast",
+                "&6[战报 #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}",
+                "{id}", id,
+                "{a}", snap.guildAName(),
+                "{b}", snap.guildBName(),
+                "{sa}", String.valueOf(snap.scoreA()),
+                "{sb}", String.valueOf(snap.scoreB()),
+                "{winner}", snap.winnerName());
+        Bukkit.broadcastMessage(ColorUtils.colorize(header));
+        for (WarParticipantSnapshot p : snap.participants()) {
+            if (p.kills() <= 0) {
+                continue;
+            }
+            String line = CoreMsg.rawDefault(plugin, "war.report.kill-line",
+                    "&7  · &f{player} &7kills: &e{kills}",
+                    "{player}", p.name(),
+                    "{kills}", String.valueOf(p.kills()));
+            Bukkit.broadcastMessage(ColorUtils.colorize(line));
+        }
     }
 
     private void destroyArena(WarMatch match) {

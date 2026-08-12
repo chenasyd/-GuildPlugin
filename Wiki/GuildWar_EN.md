@@ -63,7 +63,15 @@ Score modes respawn at the team spawn; survive mode eliminates permanently for t
 | `ready` | Both officers ready → start early |
 | `cancel` | Cancel before fight |
 | `status` | Match status |
+| `report [id]` | Match report (latest for self if omitted) |
+| `season` | Season leaderboard GUI / list |
 | `admin end <id>` | Force end |
+
+## Events / rewards
+
+- `WarMatchStartEvent` / `WarMatchEndEvent` (`com.guild.war.event`)
+- Builtin rewards: `guild-war.rewards.*` (default off)
+- See [API-World-War_EN.md](./API-World-War_EN.md)
 
 ## i18n
 

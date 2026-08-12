@@ -39,6 +39,7 @@ public final class WarMatch {
 
     private final Map<UUID, WarParticipant> participants = new ConcurrentHashMap<>();
     private final long createdAt = System.currentTimeMillis();
+    private volatile long startedAt;
 
     public WarMatch(int guildAId, String guildAName, int guildBId, String guildBName,
                     UUID challengerUuid, String presetName, VictoryMode mode,
@@ -190,6 +191,14 @@ public final class WarMatch {
 
     public long createdAt() {
         return createdAt;
+    }
+
+    public long startedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(long startedAt) {
+        this.startedAt = startedAt;
     }
 
     public Map<UUID, WarParticipant> participants() {
