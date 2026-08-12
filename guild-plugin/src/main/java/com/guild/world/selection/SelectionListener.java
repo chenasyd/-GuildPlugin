@@ -1,6 +1,7 @@
 package com.guild.world.selection;
 
 import com.guild.GuildPlugin;
+import com.guild.core.language.CoreMsg;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import org.bukkit.Material;
@@ -56,14 +57,21 @@ public class SelectionListener implements Listener {
         }
         event.setCancelled(true);
         CompatibleScheduler.runTask(plugin, player, () -> {
+            String prefix = CoreMsg.raw(plugin, player, "world.prefix", "&6[GuildWorld] &r");
             if (action == Action.LEFT_CLICK_BLOCK) {
                 session.pos1 = block.getLocation();
-                player.sendMessage(ColorUtils.colorize("&6[GuildWorld] &aPos1 设为 &f"
-                        + format(session.pos1)));
+                player.sendMessage(ColorUtils.colorize(prefix + CoreMsg.raw(plugin, player,
+                        "world.selection.pos1", "&aPos1 设为 &f{x},{y},{z}",
+                        "{x}", String.valueOf(session.pos1.getBlockX()),
+                        "{y}", String.valueOf(session.pos1.getBlockY()),
+                        "{z}", String.valueOf(session.pos1.getBlockZ()))));
             } else {
                 session.pos2 = block.getLocation();
-                player.sendMessage(ColorUtils.colorize("&6[GuildWorld] &aPos2 设为 &f"
-                        + format(session.pos2)));
+                player.sendMessage(ColorUtils.colorize(prefix + CoreMsg.raw(plugin, player,
+                        "world.selection.pos2", "&aPos2 设为 &f{x},{y},{z}",
+                        "{x}", String.valueOf(session.pos2.getBlockX()),
+                        "{y}", String.valueOf(session.pos2.getBlockY()),
+                        "{z}", String.valueOf(session.pos2.getBlockZ()))));
             }
             if (session.pos1 != null && session.pos2 != null
                     && session.pos1.getWorld() != null
@@ -71,14 +79,14 @@ public class SelectionListener implements Listener {
                 int dx = Math.abs(session.pos1.getBlockX() - session.pos2.getBlockX()) + 1;
                 int dy = Math.abs(session.pos1.getBlockY() - session.pos2.getBlockY()) + 1;
                 int dz = Math.abs(session.pos1.getBlockZ() - session.pos2.getBlockZ()) + 1;
-                player.sendMessage(ColorUtils.colorize("&6[GuildWorld] &7选区 &f"
-                        + dx + "x" + dy + "x" + dz + " &7= &f" + ((long) dx * dy * dz) + " &7块"));
+                long volume = (long) dx * dy * dz;
+                player.sendMessage(ColorUtils.colorize(prefix + CoreMsg.raw(plugin, player,
+                        "world.selection.volume", "&7选区 &f{dx}x{dy}x{dz} &7= &f{volume} &7块",
+                        "{dx}", String.valueOf(dx),
+                        "{dy}", String.valueOf(dy),
+                        "{dz}", String.valueOf(dz),
+                        "{volume}", String.valueOf(volume))));
             }
         });
-    }
-
-    private static String format(org.bukkit.Location loc) {
-        return loc.getWorld().getName() + " "
-                + loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ();
     }
 }

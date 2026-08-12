@@ -46,6 +46,9 @@ All guild operations feature a graphical interface. Slot-based button detection 
 ### Modular SDK
 External module development with full API coverage (6 example modules). Hot load/unload/reload of modules at runtime. Automatic cleanup of listeners, tasks, commands, GUIs, and placeholder registrations on module unload. Folia compatibility guard (`folia-compatible` declaration) and ClassLoader leak detection.
 
+### Worlds & Guild War
+Void-world CRUD, wand selection, self-made `.gws` presets with A/B/spectator anchors. Fixed-map guild war: challenge → signup → arena countdown → score/timed/survive → destroy instance. See [GuildWorld](./GuildWorld.md), [GuildWar](./GuildWar.md).
+
 ### Module GUI Enhancement
 Module GUIs support image mode (ImagoCore binding), Bedrock Edition forms (Cumulus form provider), and server admin customization of items/text/flags via `gui-config.yml`.
 
@@ -139,6 +142,32 @@ Relation types: `neutral`, `ally`, `enemy`, `war`, `truce`
 | `/guildmodule cloud` | `guild.admin.module` | List cloud modules |
 | `/guildmodule cloud download <moduleId>` | `guild.admin.module` | Download from cloud |
 
+### World Management (`/guildworld`)
+
+Permission: `guild.admin.world`. Aliases: `gworld`.  
+Details: [GuildWorld.md](./GuildWorld.md).
+
+| Command | Description |
+|:-------:|:-----------:|
+| `/guildworld create\|list\|info\|load\|unload\|delete` | Void world lifecycle |
+| `/guildworld tp <world>` | Safe teleport |
+| `/guildworld edit …` | Edit mode, selection, anchors, export preset |
+| `/guildworld preset …` | List / paste / delete / bind presets |
+| `/guildworld restore …` | Crash recovery |
+
+### Guild War (`/guildwar`)
+
+Permission: `guild.war` (`guild.war.admin` to force-end). Aliases: `gwar`.  
+Details: [GuildWar.md](./GuildWar.md).
+
+| Command | Description |
+|:-------:|:-----------:|
+| `/guildwar challenge <guild> [opts]` | Challenge (officer) |
+| `/guildwar accept\|deny` | Accept / deny |
+| `/guildwar join\|leave\|ready` | Sign up / early start |
+| `/guildwar cancel\|status` | Cancel / status |
+| `/guildwar admin end <id>` | Force end |
+
 Aliases: `/g` = `/guild`, `/ga` = `/guildadmin`
 
 ### All Permission Nodes
@@ -162,6 +191,9 @@ Aliases: `/g` = `/guild`, `/ga` = `/guildadmin`
 | `guild.admin` | op | Admin privileges |
 | `guild.admin.module` | op | Module management |
 | `guild.admin.update` | op | Download updates |
+| `guild.admin.world` | op | World / preset management |
+| `guild.war` | true | Guild war |
+| `guild.war.admin` | op | Force-end guild war |
 
 ## Configuration
 

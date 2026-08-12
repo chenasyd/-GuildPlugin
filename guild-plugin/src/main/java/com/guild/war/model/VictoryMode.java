@@ -1,5 +1,9 @@
 package com.guild.war.model;
 
+import com.guild.GuildPlugin;
+import com.guild.core.language.CoreMsg;
+import org.bukkit.command.CommandSender;
+
 /** 胜负模式（开战时选定）。 */
 public enum VictoryMode {
     /** 击杀先到 N 分 */
@@ -28,11 +32,25 @@ public enum VictoryMode {
         };
     }
 
-    public String displayName() {
+    public String displayName(GuildPlugin plugin, CommandSender sender) {
         return switch (this) {
-            case FIRST_TO_SCORE -> "积分先到";
-            case TIMED_SCORE -> "限时积分";
-            case LAST_STANDING -> "最终存活";
+            case FIRST_TO_SCORE -> CoreMsg.raw(plugin, sender, "war.mode.first", "积分先到");
+            case TIMED_SCORE -> CoreMsg.raw(plugin, sender, "war.mode.timed", "限时积分");
+            case LAST_STANDING -> CoreMsg.raw(plugin, sender, "war.mode.survive", "最终存活");
+        };
+    }
+
+    /** @deprecated use displayName(plugin, sender) */
+    public String displayName() {
+        return displayName(null, null); // CoreMsg falls back to def
+    }
+
+    /** Lang key for per-recipient broadcasts. */
+    public String langKey() {
+        return switch (this) {
+            case FIRST_TO_SCORE -> "war.mode.first";
+            case TIMED_SCORE -> "war.mode.timed";
+            case LAST_STANDING -> "war.mode.survive";
         };
     }
 }

@@ -1,6 +1,7 @@
 package com.guild.world;
 
 import com.guild.GuildPlugin;
+import com.guild.core.language.CoreMsg;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ServerUtils;
 import com.guild.world.bridge.FoliaWorldCreator;
@@ -694,7 +695,9 @@ public class GuildWorldService {
      * 禁用原因文案（仅 {@link #isEnabled()} 为 false 时有意义）。
      */
     public String unsupportedMessage() {
-        return "当前 Folia 版本 (" + ServerUtils.getMinecraftVersion() + ") 不支持 gworld";
+        return CoreMsg.rawDefault(plugin, "world.disabled.folia-unsupported",
+                "&c当前 Folia 版本 ({version}) 不支持 gworld",
+                "{version}", ServerUtils.getMinecraftVersion());
     }
 
     public GuildWorld getWorld(String name) {

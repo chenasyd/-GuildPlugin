@@ -9,6 +9,13 @@ GuildPlugin is a Minecraft guild system plugin providing complete guild manageme
 - [User Guide](./README_CN.md) — Full documentation in Chinese
 - [Quick Start](./README_EN.md) — Quick reference in English
 
+## Features
+
+- [GuildWorld — Void worlds & presets](./GuildWorld.md)
+- [GuildWar — Fixed-map guild PVP](./GuildWar.md)
+- [World / War API](./API-World-War.md)
+- [World & War i18n key list](./World-War-I18N.md)
+
 ## Developer Documentation
 
 - [SDK Developer Guide](./SDK%20Developer-Guide.md) — Module development tutorial (covers Module GUI Enhancement: image mode, Bedrock forms, config override)

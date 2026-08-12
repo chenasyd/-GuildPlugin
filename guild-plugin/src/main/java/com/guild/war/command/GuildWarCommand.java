@@ -1,6 +1,8 @@
 package com.guild.war.command;
 
 import com.guild.GuildPlugin;
+import com.guild.core.language.CoreMsg;
+import com.guild.core.language.LocalizedException;
 import com.guild.core.utils.ColorUtils;
 import com.guild.war.GuildWarService;
 import com.guild.war.model.VictoryMode;
@@ -45,11 +47,12 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission(PERM)) {
-            send(sender, "&c你没有权限使用工会战");
+            send(sender, "war.no-permission", "&c你没有权限使用工会战");
             return true;
         }
         if (!war.isEnabled()) {
-            send(sender, "&c工会战不可用: " + war.unavailableReason());
+            send(sender, "war.unavailable", "&c工会战不可用: {reason}",
+                    "{reason}", war.unavailableReason());
             return true;
         }
         if (args.length == 0) {
@@ -60,17 +63,17 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
         switch (sub) {
             case "challenge", "c" -> challenge(sender, args);
             case "accept", "a" -> requirePlayer(sender, p -> war.accept(p).whenComplete((m, e) ->
-                    reply(p, e, "&a已接受挑战，开始报名")));
+                    reply(p, e, "war.accept.ok", "&a已接受挑战，开始报名")));
             case "deny", "d" -> requirePlayer(sender, p -> war.deny(p).whenComplete((v, e) ->
-                    reply(p, e, "&e已拒绝挑战")));
+                    reply(p, e, "war.deny.ok", "&e已拒绝挑战")));
             case "join", "j" -> requirePlayer(sender, p -> war.join(p).whenComplete((v, e) ->
-                    reply(p, e, "&a报名成功")));
+                    reply(p, e, "war.join.ok", "&a报名成功")));
             case "leave", "l" -> requirePlayer(sender, p -> war.leave(p).whenComplete((v, e) ->
-                    reply(p, e, "&e已退出报名")));
+                    reply(p, e, "war.leave.ok", "&e已退出报名")));
             case "ready", "r" -> requirePlayer(sender, p -> war.ready(p).whenComplete((v, e) ->
-                    reply(p, e, "&a已标记准备就绪")));
+                    reply(p, e, "war.ready.ok", "&a已标记准备就绪")));
             case "cancel" -> requirePlayer(sender, p -> war.cancel(p).whenComplete((v, e) ->
-                    reply(p, e, "&e已取消")));
+                    reply(p, e, "war.cancel.ok", "&e已取消")));
             case "status", "s" -> status(sender);
             case "admin" -> admin(sender, args);
             case "help", "?" -> help(sender);
@@ -81,11 +84,12 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
 
     private void challenge(CommandSender sender, String[] args) {
         if (!(sender instanceof Player player)) {
-            send(sender, "&c仅玩家可用");
+            send(sender, "war.player-only", "&c仅玩家可用");
             return;
         }
         if (args.length < 2) {
-            send(sender, "&c用法: /guildwar challenge <工会名|标签> [--preset x] [--mode first|timed|survive] [--max N] [--score N] [--time SEC]");
+            send(sender, "war.challenge.usage",
+                    "&c用法: /guildwar challenge <工会名|标签> [--preset x] [--mode first|timed|survive] [--max N] [--score N] [--time SEC]");
             return;
         }
         String target = args[1];
@@ -98,10 +102,15 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
         war.challenge(player, target, preset, mode, max, score, time)
                 .whenComplete((match, err) -> {
                     if (err != null) {
-                        send(player, "&c" + rootMessage(err));
+                        String body = LocalizedException.resolveThrowable(plugin, player, err);
+                        String prefix = CoreMsg.raw(plugin, player, "war.prefix", "&c[工会战] &r");
+                        player.sendMessage(ColorUtils.colorize(prefix + body));
                     } else {
-                        send(player, "&a已向 &f" + match.guildBName() + " &a发起挑战（#" + match.id()
-                                + "，" + match.mode().displayName() + "）");
+                        send(player, "war.challenge.success",
+                                "&a已向 &f{guild} &a发起挑战（#{id}，{mode}）",
+                                "{guild}", match.guildBName(),
+                                "{id}", String.valueOf(match.id()),
+                                "{mode}", match.mode().displayName(plugin, player));
                     }
                 });
     }
@@ -118,7 +127,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
                 .filter(m -> m.phase() != WarPhase.ENDED)
                 .collect(Collectors.toList());
         if (list.isEmpty()) {
-            send(sender, "&7当前没有进行中的工会战");
+            send(sender, "war.status.none", "&7当前没有进行中的工会战");
             return;
         }
         for (WarMatch m : list) {
@@ -127,58 +136,84 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
     }
 
     private void printMatch(CommandSender sender, WarMatch m) {
-        send(sender, "&6── 工会战 #" + m.id() + " ──");
-        send(sender, "&7阶段: &f" + m.phase() + " &7模式: &f" + m.mode().displayName());
-        send(sender, "&a" + m.guildAName() + " &7(" + m.countSide(WarTeamSide.A) + "/" + m.maxPerTeam()
-                + ") &fvs &c" + m.guildBName() + " &7(" + m.countSide(WarTeamSide.B) + "/" + m.maxPerTeam() + ")");
-        send(sender, "&7比分: &a" + m.scoreA() + " &7: &c" + m.scoreB()
-                + " &7预设: &f" + m.presetName());
+        send(sender, "war.status.title", "&6── 工会战 #{id} ──",
+                "{id}", String.valueOf(m.id()));
+        send(sender, "war.status.phase-mode", "&7阶段: &f{phase} &7模式: &f{mode}",
+                "{phase}", phaseName(sender, m.phase()),
+                "{mode}", m.mode().displayName(plugin, sender));
+        send(sender, "war.status.teams",
+                "&a{a} &7({ac}/{max}) &fvs &c{b} &7({bc}/{max})",
+                "{a}", m.guildAName(),
+                "{ac}", String.valueOf(m.countSide(WarTeamSide.A)),
+                "{max}", String.valueOf(m.maxPerTeam()),
+                "{b}", m.guildBName(),
+                "{bc}", String.valueOf(m.countSide(WarTeamSide.B)));
+        send(sender, "war.status.score",
+                "&7比分: &a{sa} &7: &c{sb} &7预设: &f{preset}",
+                "{sa}", String.valueOf(m.scoreA()),
+                "{sb}", String.valueOf(m.scoreB()),
+                "{preset}", m.presetName());
         if (m.phase() == WarPhase.ACTIVE || m.phase() == WarPhase.COUNTDOWN) {
-            StringBuilder sb = new StringBuilder("&7存活: ");
+            StringBuilder sb = new StringBuilder();
             for (WarParticipant p : m.participantList()) {
                 if (p.isFighting()) {
                     sb.append(p.side() == WarTeamSide.A ? "&a" : "&c").append(p.name()).append(" ");
                 }
             }
-            send(sender, sb.toString());
+            send(sender, "war.status.alive", "&7存活: {list}", "{list}", sb.toString());
         }
+    }
+
+    private String phaseName(CommandSender sender, WarPhase phase) {
+        return switch (phase) {
+            case PENDING -> CoreMsg.raw(plugin, sender, "war.phase.pending", "等待接受");
+            case SIGNUP -> CoreMsg.raw(plugin, sender, "war.phase.signup", "报名中");
+            case PREPARING -> CoreMsg.raw(plugin, sender, "war.phase.preparing", "准备中");
+            case COUNTDOWN -> CoreMsg.raw(plugin, sender, "war.phase.countdown", "倒计时");
+            case ACTIVE -> CoreMsg.raw(plugin, sender, "war.phase.active", "激战中");
+            case ENDED -> CoreMsg.raw(plugin, sender, "war.phase.ended", "已结束");
+        };
     }
 
     private void admin(CommandSender sender, String[] args) {
         if (!sender.hasPermission(PERM_ADMIN)) {
-            send(sender, "&c需要 guild.war.admin");
+            send(sender, "war.admin-permission", "&c需要 guild.war.admin");
             return;
         }
         if (args.length < 3 || !args[1].equalsIgnoreCase("end")) {
-            send(sender, "&c用法: /guildwar admin end <matchId>");
+            send(sender, "war.admin.end.usage", "&c用法: /guildwar admin end <matchId>");
             return;
         }
         int id;
         try {
             id = Integer.parseInt(args[2]);
         } catch (NumberFormatException e) {
-            send(sender, "&c无效 ID");
+            send(sender, "war.admin.end.invalid-id", "&c无效 ID");
             return;
         }
-        war.forceEnd(id, "管理员强制结束").whenComplete((v, err) -> {
+        war.forceEnd(id, "war.reason.admin-end").whenComplete((v, err) -> {
             if (err != null) {
-                send(sender, "&c" + rootMessage(err));
+                String body = LocalizedException.resolveThrowable(plugin, sender, err);
+                String prefix = CoreMsg.raw(plugin, sender, "war.prefix", "&c[工会战] &r");
+                sender.sendMessage(ColorUtils.colorize(prefix + body));
             } else {
-                send(sender, "&a已结束对局 #" + id);
+                send(sender, "war.admin.end.ok", "&a已结束对局 #{id}",
+                        "{id}", String.valueOf(id));
             }
         });
     }
 
     private void help(CommandSender sender) {
-        send(sender, "&6── 工会战帮助 ──");
-        send(sender, "&e/guildwar challenge <工会> [--preset] [--mode first|timed|survive] [--max] [--score] [--time]");
-        send(sender, "&e/guildwar accept|deny &7- 接受/拒绝挑战（官员）");
-        send(sender, "&e/guildwar join|leave &7- 报名/退出");
-        send(sender, "&e/guildwar ready &7- 报名阶段提前开局（官员，双方都 ready）");
-        send(sender, "&e/guildwar cancel &7- 取消未开战对局（官员）");
-        send(sender, "&e/guildwar status &7- 查看状态");
+        send(sender, "war.help.title", "&6── 工会战帮助 ──");
+        send(sender, "war.help.challenge",
+                "&e/guildwar challenge <工会> [--preset] [--mode first|timed|survive] [--max] [--score] [--time]");
+        send(sender, "war.help.accept-deny", "&e/guildwar accept|deny &7- 接受/拒绝挑战（官员）");
+        send(sender, "war.help.join-leave", "&e/guildwar join|leave &7- 报名/退出");
+        send(sender, "war.help.ready", "&e/guildwar ready &7- 报名阶段提前开局（官员，双方都 ready）");
+        send(sender, "war.help.cancel", "&e/guildwar cancel &7- 取消未开战对局（官员）");
+        send(sender, "war.help.status", "&e/guildwar status &7- 查看状态");
         if (sender.hasPermission(PERM_ADMIN)) {
-            send(sender, "&e/guildwar admin end <id> &7- 强制结束");
+            send(sender, "war.help.admin", "&e/guildwar admin end <id> &7- 强制结束");
         }
     }
 
@@ -188,17 +223,19 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
 
     private void requirePlayer(CommandSender sender, PlayerAction action) {
         if (!(sender instanceof Player player)) {
-            send(sender, "&c仅玩家可用");
+            send(sender, "war.player-only", "&c仅玩家可用");
             return;
         }
         action.run(player);
     }
 
-    private void reply(Player player, Throwable err, String ok) {
+    private void reply(Player player, Throwable err, String okPath, String okDef) {
         if (err != null) {
-            send(player, "&c" + rootMessage(err));
+            String body = LocalizedException.resolveThrowable(plugin, player, err);
+            String prefix = CoreMsg.raw(plugin, player, "war.prefix", "&c[工会战] &r");
+            player.sendMessage(ColorUtils.colorize(prefix + body));
         } else {
-            send(player, ok);
+            send(player, okPath, okDef);
         }
     }
 
@@ -223,17 +260,10 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    private static String rootMessage(Throwable t) {
-        Throwable c = t;
-        while (c.getCause() != null && (c instanceof java.util.concurrent.CompletionException
-                || c instanceof java.util.concurrent.ExecutionException)) {
-            c = c.getCause();
-        }
-        return c.getMessage() != null ? c.getMessage() : c.toString();
-    }
-
-    private static void send(CommandSender sender, String msg) {
-        sender.sendMessage(ColorUtils.colorize(GuildWarService.PREFIX + msg));
+    private void send(CommandSender sender, String path, String def, String... ph) {
+        String prefix = CoreMsg.raw(plugin, sender, "war.prefix", "&c[工会战] &r");
+        String body = CoreMsg.raw(plugin, sender, path, def, ph);
+        sender.sendMessage(ColorUtils.colorize(prefix + body));
     }
 
     @Override

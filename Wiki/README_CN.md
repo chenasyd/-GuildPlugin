@@ -37,6 +37,9 @@
 ### 模块化 SDK
 支持外部模块开发，完整的 API 覆盖（6 个示例模块）。运行时热加载/卸载/重载模块。模块卸载时自动清理监听器、定时任务、命令、GUI 和占位符注册。Folia 兼容性守卫（`folia-compatible` 声明）和 ClassLoader 泄漏检测。
 
+### 多世界与工会战
+虚空世界 CRUD、选区导出自研 `.gws` 预设、锚点 A/B/观众。固定地图工会战：发起→报名→进场倒计时→积分/限时/存活胜负→战后销毁实例。详见 [GuildWorld](./GuildWorld.md)、[GuildWar](./GuildWar.md)。
+
 ### 模块 GUI 增强
 模块 GUI 支持图片模式（ImagoCore 绑定）、基岩版表单（Cumulus 表单提供者）以及服务器管理员通过 `gui-config.yml` 自定义物品/文本/标志。
 
@@ -130,6 +133,32 @@
 | `/guildmodule cloud` | `guild.admin.module` | 列出云端可用模块 |
 | `/guildmodule cloud download <模块ID>` | `guild.admin.module` | 从云端下载模块 |
 
+### 世界管理 (`/guildworld`)
+
+权限：`guild.admin.world`。别名：`gworld` / `工会世界`。  
+完整说明：[GuildWorld.md](./GuildWorld.md)。
+
+| 命令 | 说明 |
+|:----:|:----:|
+| `/guildworld create\|list\|info\|load\|unload\|delete` | 虚空世界生命周期 |
+| `/guildworld tp <世界>` | 安全传送 |
+| `/guildworld edit …` | 编辑模式、选区、锚点、导出预设 |
+| `/guildworld preset …` | 预设列表/粘贴/删除/绑定 |
+| `/guildworld restore …` | 崩溃残留恢复 |
+
+### 工会战 (`/guildwar`)
+
+权限：`guild.war`（`guild.war.admin` 强制结束）。别名：`gwar` / `工会战`。  
+完整说明：[GuildWar.md](./GuildWar.md)。
+
+| 命令 | 说明 |
+|:----:|:----:|
+| `/guildwar challenge <工会> [选项]` | 发起（官员） |
+| `/guildwar accept\|deny` | 接受/拒绝 |
+| `/guildwar join\|leave\|ready` | 报名 / 提前开局 |
+| `/guildwar cancel\|status` | 取消 / 状态 |
+| `/guildwar admin end <id>` | 强制结束 |
+
 别名：`/g` 对应 `/guild`，`/ga` 对应 `/guildadmin`。
 
 ### 全部权限节点
@@ -153,6 +182,9 @@
 | `guild.admin` | op | 管理员权限 |
 | `guild.admin.module` | op | 模块管理 |
 | `guild.admin.update` | op | 下载安装更新 |
+| `guild.admin.world` | op | 多世界 / 预设管理 |
+| `guild.war` | true | 工会战 |
+| `guild.war.admin` | op | 强制结束工会战 |
 
 ## 配置
 
