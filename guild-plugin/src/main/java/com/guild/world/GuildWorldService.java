@@ -3,6 +3,7 @@ package com.guild.world;
 import com.guild.GuildPlugin;
 import com.guild.core.language.CoreMsg;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.DebugLog;
 import com.guild.core.utils.ServerUtils;
 import com.guild.world.bridge.FoliaWorldCreator;
 import com.guild.world.generator.VoidWorldGen;
@@ -145,12 +146,13 @@ public class GuildWorldService {
         registry.load();
         boolean wasClean = registry.isCleanShutdown();
         if (!wasClean) {
-            plugin.getLogger().warning("[World] Previous shutdown was NOT clean. Startup recovery check will run.");
+            DebugLog.warning(plugin.getLogger(),
+                    "[World] Previous shutdown was NOT clean. Startup recovery check will run.");
         }
         registry.setCleanShutdown(false);
         registry.save();
         recovery.recordShutdownState(wasClean);
-        plugin.getLogger().info("[World] Registry loaded: " + registry.size() + " managed world(s).");
+        DebugLog.info(plugin.getLogger(), "[World] Registry loaded: " + registry.size() + " managed world(s).");
     }
 
     /**
@@ -180,7 +182,7 @@ public class GuildWorldService {
         if (!recoveryTriggered.compareAndSet(false, true)) {
             return;
         }
-        plugin.getLogger().info("[World] Startup recovery check triggered by " + source + ".");
+        DebugLog.info(plugin.getLogger(), "[World] Startup recovery check triggered by " + source + ".");
         runRecovery();
     }
 
@@ -194,7 +196,7 @@ public class GuildWorldService {
             return;
         }
         if (!recoveryCheckEnabled) {
-            plugin.getLogger().info("[World] Recovery check disabled by config, skipping.");
+            DebugLog.info(plugin.getLogger(), "[World] Recovery check disabled by config, skipping.");
             recovery.markRan();
             return;
         }

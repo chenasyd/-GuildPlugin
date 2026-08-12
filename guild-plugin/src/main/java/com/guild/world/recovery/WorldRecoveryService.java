@@ -1,5 +1,6 @@
 package com.guild.world.recovery;
 
+import com.guild.core.utils.DebugLog;
 import com.guild.world.GuildWorldService;
 import com.guild.world.model.GuildWorld;
 import com.guild.world.model.WorldStatus;
@@ -73,8 +74,14 @@ public class WorldRecoveryService {
         List<WorldJournal.PendingOp> pending = journal.pending();
         crashDetected = !lastShutdownWasClean || !pending.isEmpty();
         if (crashDetected) {
-            logger.warning("[World] CRASH DETECTED: previous shutdown was not clean "
-                    + "or journal has " + pending.size() + " interrupted operation(s).");
+            // 有中断操作时始终告警；仅“上次非干净关服但无可恢复项”的噪音进详细日志
+            if (!pending.isEmpty()) {
+                logger.warning("[World] CRASH DETECTED: previous shutdown was not clean "
+                        + "or journal has " + pending.size() + " interrupted operation(s).");
+            } else {
+                DebugLog.warning(logger, "[World] CRASH DETECTED: previous shutdown was not clean "
+                        + "or journal has 0 interrupted operation(s).");
+            }
         }
 
         // 2. 补偿中断操作
@@ -107,7 +114,7 @@ public class WorldRecoveryService {
                 // 服务端已加载（例如 bukkit.yml 配置了该世界）→ 直接恢复 READY
                 gw.setStatus(WorldStatus.READY);
                 gw.touch();
-                logger.info("[World] Recovery: world '" + gw.getWorldName() + "' already loaded, restored to READY.");
+                DebugLog.info(logger, "[World] Recovery: world '" + gw.getWorldName() + "' already loaded, restored to READY.");
                 continue;
             }
             if (WorldFiles.worldDirectoryExists(gw.getWorldName())) {
@@ -162,10 +169,17 @@ public class WorldRecoveryService {
         writeReport(service);
         recoveryRan = true;
 
-        logger.info("[World] Recovery check finished: crash=" + crashDetected
+        String summary = "[World] Recovery check finished: crash=" + crashDetected
                 + ", stale=" + staleWorlds.size()
                 + ", orphaned-records=" + orphanRecords.size()
-                + ", unregistered=" + unregisteredPrefixWorlds.size());
+                + ", unregistered=" + unregisteredPrefixWorlds.size();
+        boolean actionable = !staleWorlds.isEmpty() || !orphanRecords.isEmpty()
+                || !unregisteredPrefixWorlds.isEmpty() || !interruptedOps.isEmpty();
+        if (actionable) {
+            logger.info(summary);
+        } else {
+            DebugLog.info(logger, summary);
+        }
     }
 
     /** 未启用自检时直接标记已执行（跳过）。 */

@@ -166,6 +166,11 @@ logging:
   # Number of log files to retain
   max-files: 5
 
+# Console verbose diagnostics (also toggled in SystemSettingsGUI → 详细后台信息显示)
+# When false: hides PlayerConnection detection steps, quiet world-recovery summaries, etc.
+debug:
+  enabled: false
+
 # Developer mode
 developer-mode:
   # Enable developer mode (required to use custom module repositories)

@@ -25,6 +25,7 @@ import com.guild.core.geyser.GeyserAPI;
 import com.guild.core.geyser.PlayerConnectionService;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.DebugLog;
 import com.guild.core.utils.PluginFileLogger;
 import com.guild.core.utils.ServerUtils;
 import com.guild.core.utils.TestUtils;
@@ -103,7 +104,6 @@ public class GuildPlugin extends JavaPlugin {
         
         // 运行兼容性测试（使用插件日志器）
         TestUtils.testCompatibility(logger);
-        TestUtils.testSchedulerCompatibility(logger);
         
         try {
             // 初始化服务容器
@@ -172,7 +172,7 @@ public class GuildPlugin extends JavaPlugin {
                 CompatibleScheduler.runTask(this, player, () -> {
                     if (player.isOnline() && guiManager.hasOpenGUI(player)) {
                         guiManager.refreshGUI(player);
-                        logger.info("[PlayerConnection] Proxy push received, refreshing "
+                        DebugLog.info(logger, "[PlayerConnection] Proxy push received, refreshing "
                                 + player.getName() + "'s GUI to Bedrock mode");
                     }
                 });

@@ -2,6 +2,7 @@ package com.guild.core.geyser;
 
 import com.guild.GuildPlugin;
 import com.guild.comm.api.BungeeClientAPI;
+import com.guild.core.utils.DebugLog;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
@@ -41,7 +42,7 @@ public final class PlayerConnectionService {
      */
     public static void initialize(Logger pluginLogger) {
         logger = pluginLogger;
-        logger.info("[PlayerConnection] Service initialized."
+        DebugLog.info(logger, "[PlayerConnection] Service initialized."
                 + " Geyser=" + GeyserAPI.isAvailable()
                 + ", BungeeClient=" + BungeeClientAPI.isInitialized());
     }
@@ -70,9 +71,9 @@ public final class PlayerConnectionService {
         if (plugin != null && plugin.isEnabled()) {
             boolean ok = BungeeClientAPI.ensureInitialized(plugin);
             if (ok && logger != null) {
-                logger.info("[PlayerConnection] BungeeClientAPI lazy initialization succeeded (failed during onEnable)");
+                DebugLog.info(logger, "[PlayerConnection] BungeeClientAPI lazy initialization succeeded (failed during onEnable)");
             } else if (logger != null) {
-                logger.warning("[PlayerConnection] BungeeClientAPI lazy initialization still failed: "
+                DebugLog.warning(logger, "[PlayerConnection] BungeeClientAPI lazy initialization still failed: "
                         + BungeeClientAPI.getInitializationError());
             }
         }
@@ -168,53 +169,53 @@ public final class PlayerConnectionService {
         // 懒初始化重试（onEnable 阶段可能因隔离 try-catch 跳过）
         ensureBungeeReady();
 
-        logger.info("[PlayerConnection] === Detection started: " + name + " (" + uuid + ") ===");
+        DebugLog.info(logger, "[PlayerConnection] === Detection started: " + name + " (" + uuid + ") ===");
 
         // ── Step 1: BungeeClientAPI 缓存 ──
         if (BungeeClientAPI.isInitialized()) {
             BungeeClientAPI.PlayerConnectionInfo bungeeInfo = BungeeClientAPI.getConnectionInfo(uuid);
             if (bungeeInfo != null) {
-                logger.info("[PlayerConnection] [1/2] BungeeClientAPI: cache hit"
+                DebugLog.info(logger, "[PlayerConnection] [1/2] BungeeClientAPI: cache hit"
                         + " -> type=" + bungeeInfo.getConnectionType()
                         + ", platform=" + bungeeInfo.getPlatform()
                         + ", inputMode=" + bungeeInfo.getInputMode());
                 ConnectionInfo result = new ConnectionInfo(uuid, name,
                         bungeeInfo.isBedrock(), bungeeInfo.getPlatform(),
                         bungeeInfo.getInputMode(), Source.BUNGEE);
-                logger.info("[PlayerConnection] [Result] " + name + " -> "
+                DebugLog.info(logger, "[PlayerConnection] [Result] " + name + " -> "
                         + (result.isBedrock() ? "BEDROCK" : "JAVA")
                         + " (source: BungeeCord proxy push)");
                 return result;
             } else {
-                logger.info("[PlayerConnection] [1/2] BungeeClientAPI: initialized but no cache for this player"
+                DebugLog.info(logger, "[PlayerConnection] [1/2] BungeeClientAPI: initialized but no cache for this player"
                         + " (proxy has not pushed connection info yet)");
             }
         } else {
             String err = BungeeClientAPI.getInitializationError();
-            logger.info("[PlayerConnection] [1/2] BungeeClientAPI: not initialized (skipping proxy detection)"
+            DebugLog.info(logger, "[PlayerConnection] [1/2] BungeeClientAPI: not initialized (skipping proxy detection)"
                     + (err != null ? " reason: " + err : ""));
         }
 
         // ── Step 2: GeyserAPI 反射检测 ──
         if (GeyserAPI.isAvailable()) {
             boolean bedrock = GeyserAPI.isBedrockPlayer(uuid);
-            logger.info("[PlayerConnection] [2/2] GeyserAPI: "
+            DebugLog.info(logger, "[PlayerConnection] [2/2] GeyserAPI: "
                     + (bedrock ? "Bedrock connection detected" : "No Bedrock connection detected"));
             if (bedrock) {
                 ConnectionInfo result = new ConnectionInfo(uuid, name,
                         true, null, null, Source.GEYSER_LOCAL);
-                logger.info("[PlayerConnection] [Result] " + name + " -> BEDROCK"
+                DebugLog.info(logger, "[PlayerConnection] [Result] " + name + " -> BEDROCK"
                         + " (source: local Geyser reflection detection)");
                 return result;
             }
         } else {
-            logger.info("[PlayerConnection] [2/2] GeyserAPI: unavailable (skipping local detection)");
+            DebugLog.info(logger, "[PlayerConnection] [2/2] GeyserAPI: unavailable (skipping local detection)");
         }
 
         // ── Step 3: 默认 Java ──
         ConnectionInfo result = new ConnectionInfo(uuid, name,
                 false, null, null, Source.NONE);
-        logger.info("[PlayerConnection] [Result] " + name + " -> JAVA (no detection source matched, defaulting to Java)");
+        DebugLog.info(logger, "[PlayerConnection] [Result] " + name + " -> JAVA (no detection source matched, defaulting to Java)");
         return result;
     }
 
