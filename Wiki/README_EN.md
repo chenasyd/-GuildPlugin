@@ -2,7 +2,14 @@
 
 A feature-complete Minecraft guild/faction system. Supports Spigot, Paper, Purpur, and Folia.
 
-## Compatibility
+## Requirements
+
+- Minecraft 1.20.1+
+- Java 17+
+- Vault (optional, for economy)
+- PlaceholderAPI (optional)
+
+### Server Compatibility
 
 | Software | Version |
 |:--------:|:-------:|
@@ -10,8 +17,6 @@ A feature-complete Minecraft guild/faction system. Supports Spigot, Paper, Purpu
 | Paper | 1.20.1+ |
 | Purpur | 1.20.1+ |
 | Folia | 1.20.1+ |
-
-Integrations: Vault (economy), PlaceholderAPI
 
 ## Installation
 
@@ -21,7 +26,28 @@ Integrations: Vault (economy), PlaceholderAPI
 4. Configure `plugins/GuildPlugin/config.yml`
 5. Run `/guildadmin reload`
 
-> ⚠️ **When upgrading**: Always back up your configuration and data first. It is recommended to delete `messages_*.yml` files and let the plugin regenerate them — this ensures all new messages are included and avoids display errors.
+## Features
+
+### Guild Management
+Create and disband guilds; invite, kick, promote, and demote members. Role-based permission system (leader, officer, member). Guild home teleport system and join application system.
+
+### Economy System
+Guild fund management with deposit, withdrawal, and transfer. Vault integration. Level-up costs configurable via `config.yml`.
+
+### Relation System
+Guild relations: neutral, ally, enemy, war, truce. Relation requests with accept/decline flow and automatic expiration.
+
+### Level System
+Guild leveling unlocks higher member caps. Levels and upgrade costs fully configurable.
+
+### GUI Interface
+All guild operations feature a graphical interface. Slot-based button detection ensures cross-language compatibility.
+
+### Modular SDK
+External module development with full API coverage (6 example modules). Hot load/unload/reload of modules at runtime. Automatic cleanup of listeners, tasks, commands, GUIs, and placeholder registrations on module unload. Folia compatibility guard (`folia-compatible` declaration) and ClassLoader leak detection.
+
+### Module GUI Enhancement
+Module GUIs support image mode (ImagoCore binding), Bedrock Edition forms (Cumulus form provider), and server admin customization of items/text/flags via `gui-config.yml`.
 
 ## Commands
 

@@ -17,8 +17,6 @@
 4. 根据需要编辑 `plugins/GuildPlugin/config.yml` 和语言文件
 5. 执行 `/guildadmin reload` 应用更改
 
-> ⚠️ **升级插件时**：建议先备份配置和数据，然后删除 `messages_*.yml` 文件让插件重新生成，以确保包含所有新消息并避免显示异常。
-
 ## 功能
 
 ### 公会管理

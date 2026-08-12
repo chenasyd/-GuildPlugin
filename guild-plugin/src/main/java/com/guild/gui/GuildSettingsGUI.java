@@ -57,7 +57,6 @@ public class GuildSettingsGUI implements GUI {
     public static final String FUNC_LOGS = "LOGS";
     public static final String FUNC_RESERVED = "RESERVED";
     public static final String FUNC_HOME_TELEPORT = "HOME_TELEPORT";
-    public static final String FUNC_LEAVE = "LEAVE";
     public static final String FUNC_DELETE = "DELETE";
     public static final String FUNC_PREV_PAGE = "PREV_PAGE";
     public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
@@ -143,7 +142,6 @@ public class GuildSettingsGUI implements GUI {
                 .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.guild-funds", "&a工会资金"))
                 .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.logs", "&6工会日志"))
                 .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.home-teleport", "&d工会家传送"))
-                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.leave", "&c离开工会"))
                 .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.delete", "&4删除工会"))
                 .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-back-to-main", "&f返回主菜单"))
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
@@ -160,9 +158,8 @@ public class GuildSettingsGUI implements GUI {
                         case 7 -> handleGuildFunds(player);
                         case 8 -> handleGuildLogs(player);
                         case 9 -> handleHomeTeleport(player);
-                        case 10 -> handleLeaveGuild(player);
-                        case 11 -> handleDeleteGuild(player);
-                        case 12 -> plugin.getGuiManager().openGUI(player,
+                        case 10 -> handleDeleteGuild(player);
+                        case 11 -> plugin.getGuiManager().openGUI(player,
                                 new MainGuildGUI(plugin, player));
                     }
                 }))
@@ -266,9 +263,6 @@ public class GuildSettingsGUI implements GUI {
                 break;
             case 33: // 工会家传送
                 handleHomeTeleport(player);
-                break;
-            case 34: // 离开
-                handleLeaveGuild(player);
                 break;
             case 36: // 删除
                 handleDeleteGuild(player);
@@ -435,11 +429,6 @@ public class GuildSettingsGUI implements GUI {
             languageManager.getGuiMessage(player, "gui.guild-settings.home-teleport", "&d工会家传送"), false,
             languageManager.getGuiMessage(player, "gui.guild-settings.home-teleport-desc", "&7单击 &f传送到工会家"));
         inventory.setItem(33, homeTeleport);
-
-        ItemStack leaveGuild = createItem(Material.BARRIER,
-            languageManager.getGuiMessage(player, "gui.guild-settings.leave", "&c离开工会"), false,
-            languageManager.getGuiMessage(player, "gui.guild-settings.leave-desc", "&7单击 &f离开当前工会"));
-        inventory.setItem(34, leaveGuild);
 
         ItemStack deleteGuild = createItem(Material.TNT,
             languageManager.getGuiMessage(player, "gui.guild-settings.delete", "&4删除工会"), false,
@@ -646,11 +635,6 @@ public class GuildSettingsGUI implements GUI {
                 countdown[0]--;
             }
         }, 0L, 20L);
-    }
-
-    private void handleLeaveGuild(Player player) {
-        plugin.getGuiManager().openGUI(player,
-                new ConfirmLeaveGuildGUI(plugin, guild, player, "GuildSettingsGUI"));
     }
 
     private void handleDeleteGuild(Player player) {
