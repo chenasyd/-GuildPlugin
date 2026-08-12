@@ -140,12 +140,19 @@ public final class SchematicPaster {
     }
 
     /** 由 schematic 相对偏移计算世界坐标（相对 origin）。 */
+    /**
+     * 将相对 paste 原点（schematic.origin 对齐点）的锚点偏移转为世界坐标。
+     * <p>Preset 锚点按 {@code location - originAbs} 存储，与 {@code data.origin} 无关。
+     */
     public static Location offsetToWorld(Location pasteAt, SchematicData data, double dx, double dy, double dz,
                                         float yaw, float pitch) {
-        double wx = pasteAt.getX() + (dx - data.origin.x());
-        double wy = pasteAt.getY() + (dy - data.origin.y());
-        double wz = pasteAt.getZ() + (dz - data.origin.z());
-        return new Location(pasteAt.getWorld(), wx, wy, wz, yaw, pitch);
+        return offsetToWorld(pasteAt, dx, dy, dz, yaw, pitch);
+    }
+
+    public static Location offsetToWorld(Location pasteAt, double dx, double dy, double dz,
+                                        float yaw, float pitch) {
+        return new Location(pasteAt.getWorld(),
+                pasteAt.getX() + dx, pasteAt.getY() + dy, pasteAt.getZ() + dz, yaw, pitch);
     }
 
     private record Voxel(int x, int y, int z, BlockData bd) {

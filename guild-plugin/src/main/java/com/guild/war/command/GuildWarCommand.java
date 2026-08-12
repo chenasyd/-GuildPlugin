@@ -1,0 +1,274 @@
+package com.guild.war.command;
+
+import com.guild.GuildPlugin;
+import com.guild.core.utils.ColorUtils;
+import com.guild.war.GuildWarService;
+import com.guild.war.model.VictoryMode;
+import com.guild.war.model.WarMatch;
+import com.guild.war.model.WarParticipant;
+import com.guild.war.model.WarPhase;
+import com.guild.war.model.WarTeamSide;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
+/**
+ * /guildwar — 小型固定地图工会战。
+ *
+ * <pre>
+ * /guildwar challenge &lt;工会名|标签&gt; [--preset] [--mode first|timed|survive] [--max N] [--score N] [--time SEC]
+ * /guildwar accept|deny|join|leave|ready|cancel|status|help
+ * /guildwar admin end &lt;matchId&gt;
+ * </pre>
+ */
+public final class GuildWarCommand implements CommandExecutor, TabCompleter {
+
+    private static final String PERM = "guild.war";
+    private static final String PERM_ADMIN = "guild.war.admin";
+
+    private final GuildPlugin plugin;
+    private final GuildWarService war;
+
+    public GuildWarCommand(GuildPlugin plugin, GuildWarService war) {
+        this.plugin = plugin;
+        this.war = war;
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!sender.hasPermission(PERM)) {
+            send(sender, "&c你没有权限使用工会战");
+            return true;
+        }
+        if (!war.isEnabled()) {
+            send(sender, "&c工会战不可用: " + war.unavailableReason());
+            return true;
+        }
+        if (args.length == 0) {
+            help(sender);
+            return true;
+        }
+        String sub = args[0].toLowerCase(Locale.ROOT);
+        switch (sub) {
+            case "challenge", "c" -> challenge(sender, args);
+            case "accept", "a" -> requirePlayer(sender, p -> war.accept(p).whenComplete((m, e) ->
+                    reply(p, e, "&a已接受挑战，开始报名")));
+            case "deny", "d" -> requirePlayer(sender, p -> war.deny(p).whenComplete((v, e) ->
+                    reply(p, e, "&e已拒绝挑战")));
+            case "join", "j" -> requirePlayer(sender, p -> war.join(p).whenComplete((v, e) ->
+                    reply(p, e, "&a报名成功")));
+            case "leave", "l" -> requirePlayer(sender, p -> war.leave(p).whenComplete((v, e) ->
+                    reply(p, e, "&e已退出报名")));
+            case "ready", "r" -> requirePlayer(sender, p -> war.ready(p).whenComplete((v, e) ->
+                    reply(p, e, "&a已标记准备就绪")));
+            case "cancel" -> requirePlayer(sender, p -> war.cancel(p).whenComplete((v, e) ->
+                    reply(p, e, "&e已取消")));
+            case "status", "s" -> status(sender);
+            case "admin" -> admin(sender, args);
+            case "help", "?" -> help(sender);
+            default -> help(sender);
+        }
+        return true;
+    }
+
+    private void challenge(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player player)) {
+            send(sender, "&c仅玩家可用");
+            return;
+        }
+        if (args.length < 2) {
+            send(sender, "&c用法: /guildwar challenge <工会名|标签> [--preset x] [--mode first|timed|survive] [--max N] [--score N] [--time SEC]");
+            return;
+        }
+        String target = args[1];
+        String preset = flag(args, "--preset");
+        VictoryMode mode = VictoryMode.parse(flag(args, "--mode"));
+        Integer max = intFlag(args, "--max");
+        Integer score = intFlag(args, "--score");
+        Integer time = intFlag(args, "--time");
+
+        war.challenge(player, target, preset, mode, max, score, time)
+                .whenComplete((match, err) -> {
+                    if (err != null) {
+                        send(player, "&c" + rootMessage(err));
+                    } else {
+                        send(player, "&a已向 &f" + match.guildBName() + " &a发起挑战（#" + match.id()
+                                + "，" + match.mode().displayName() + "）");
+                    }
+                });
+    }
+
+    private void status(CommandSender sender) {
+        if (sender instanceof Player player) {
+            WarMatch mine = war.getMatchByPlayer(player.getUniqueId());
+            if (mine != null) {
+                printMatch(sender, mine);
+                return;
+            }
+        }
+        var list = war.getActiveMatches().stream()
+                .filter(m -> m.phase() != WarPhase.ENDED)
+                .collect(Collectors.toList());
+        if (list.isEmpty()) {
+            send(sender, "&7当前没有进行中的工会战");
+            return;
+        }
+        for (WarMatch m : list) {
+            printMatch(sender, m);
+        }
+    }
+
+    private void printMatch(CommandSender sender, WarMatch m) {
+        send(sender, "&6── 工会战 #" + m.id() + " ──");
+        send(sender, "&7阶段: &f" + m.phase() + " &7模式: &f" + m.mode().displayName());
+        send(sender, "&a" + m.guildAName() + " &7(" + m.countSide(WarTeamSide.A) + "/" + m.maxPerTeam()
+                + ") &fvs &c" + m.guildBName() + " &7(" + m.countSide(WarTeamSide.B) + "/" + m.maxPerTeam() + ")");
+        send(sender, "&7比分: &a" + m.scoreA() + " &7: &c" + m.scoreB()
+                + " &7预设: &f" + m.presetName());
+        if (m.phase() == WarPhase.ACTIVE || m.phase() == WarPhase.COUNTDOWN) {
+            StringBuilder sb = new StringBuilder("&7存活: ");
+            for (WarParticipant p : m.participantList()) {
+                if (p.isFighting()) {
+                    sb.append(p.side() == WarTeamSide.A ? "&a" : "&c").append(p.name()).append(" ");
+                }
+            }
+            send(sender, sb.toString());
+        }
+    }
+
+    private void admin(CommandSender sender, String[] args) {
+        if (!sender.hasPermission(PERM_ADMIN)) {
+            send(sender, "&c需要 guild.war.admin");
+            return;
+        }
+        if (args.length < 3 || !args[1].equalsIgnoreCase("end")) {
+            send(sender, "&c用法: /guildwar admin end <matchId>");
+            return;
+        }
+        int id;
+        try {
+            id = Integer.parseInt(args[2]);
+        } catch (NumberFormatException e) {
+            send(sender, "&c无效 ID");
+            return;
+        }
+        war.forceEnd(id, "管理员强制结束").whenComplete((v, err) -> {
+            if (err != null) {
+                send(sender, "&c" + rootMessage(err));
+            } else {
+                send(sender, "&a已结束对局 #" + id);
+            }
+        });
+    }
+
+    private void help(CommandSender sender) {
+        send(sender, "&6── 工会战帮助 ──");
+        send(sender, "&e/guildwar challenge <工会> [--preset] [--mode first|timed|survive] [--max] [--score] [--time]");
+        send(sender, "&e/guildwar accept|deny &7- 接受/拒绝挑战（官员）");
+        send(sender, "&e/guildwar join|leave &7- 报名/退出");
+        send(sender, "&e/guildwar ready &7- 报名阶段提前开局（官员，双方都 ready）");
+        send(sender, "&e/guildwar cancel &7- 取消未开战对局（官员）");
+        send(sender, "&e/guildwar status &7- 查看状态");
+        if (sender.hasPermission(PERM_ADMIN)) {
+            send(sender, "&e/guildwar admin end <id> &7- 强制结束");
+        }
+    }
+
+    private interface PlayerAction {
+        void run(Player player);
+    }
+
+    private void requirePlayer(CommandSender sender, PlayerAction action) {
+        if (!(sender instanceof Player player)) {
+            send(sender, "&c仅玩家可用");
+            return;
+        }
+        action.run(player);
+    }
+
+    private void reply(Player player, Throwable err, String ok) {
+        if (err != null) {
+            send(player, "&c" + rootMessage(err));
+        } else {
+            send(player, ok);
+        }
+    }
+
+    private static String flag(String[] args, String name) {
+        for (int i = 0; i < args.length - 1; i++) {
+            if (args[i].equalsIgnoreCase(name)) {
+                return args[i + 1];
+            }
+        }
+        return null;
+    }
+
+    private static Integer intFlag(String[] args, String name) {
+        String v = flag(args, name);
+        if (v == null) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(v);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private static String rootMessage(Throwable t) {
+        Throwable c = t;
+        while (c.getCause() != null && (c instanceof java.util.concurrent.CompletionException
+                || c instanceof java.util.concurrent.ExecutionException)) {
+            c = c.getCause();
+        }
+        return c.getMessage() != null ? c.getMessage() : c.toString();
+    }
+
+    private static void send(CommandSender sender, String msg) {
+        sender.sendMessage(ColorUtils.colorize(GuildWarService.PREFIX + msg));
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        List<String> out = new ArrayList<>();
+        if (args.length == 1) {
+            out.addAll(Arrays.asList("challenge", "accept", "deny", "join", "leave", "ready", "cancel", "status", "help"));
+            if (sender.hasPermission(PERM_ADMIN)) {
+                out.add("admin");
+            }
+        } else if (args.length >= 2 && args[0].equalsIgnoreCase("challenge")) {
+            if (args.length == 2) {
+                // 不枚举全部工会名（可能很多），给 flag 提示
+                out.addAll(Arrays.asList("--preset", "--mode", "--max", "--score", "--time"));
+            } else {
+                String prev = args[args.length - 2].toLowerCase(Locale.ROOT);
+                switch (prev) {
+                    case "--mode" -> out.addAll(Arrays.asList("first", "timed", "survive"));
+                    case "--preset" -> {
+                        if (plugin.getGuildWorldService() != null) {
+                            plugin.getGuildWorldService().getPresets().list()
+                                    .forEach(p -> out.add(p.name()));
+                        }
+                    }
+                    default -> {
+                        if (!args[args.length - 1].startsWith("--")) {
+                            out.addAll(Arrays.asList("--preset", "--mode", "--max", "--score", "--time"));
+                        }
+                    }
+                }
+            }
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("admin")) {
+            out.add("end");
+        }
+        String last = args[args.length - 1].toLowerCase(Locale.ROOT);
+        return out.stream().filter(s -> s.toLowerCase(Locale.ROOT).startsWith(last)).collect(Collectors.toList());
+    }
+}

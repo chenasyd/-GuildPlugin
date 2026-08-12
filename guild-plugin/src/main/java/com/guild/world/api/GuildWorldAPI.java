@@ -44,4 +44,10 @@ public interface GuildWorldAPI {
     CompletableFuture<GuildWorld> createWorldFromPreset(String worldName, String presetName);
 
     CompletableFuture<Boolean> teleportToWorld(Player player, String worldName);
+
+    CompletableFuture<Boolean> teleportToFallback(Player player);
+
+    CompletableFuture<Void> deleteWorld(String worldName, boolean force);
+
+    CompletableFuture<Void> unloadWorld(String worldName);
 }

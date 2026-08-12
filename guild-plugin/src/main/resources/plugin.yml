@@ -35,6 +35,11 @@ commands:
     usage: /guildworld help
     aliases: [gworld, 工会世界]
     permission: guild.admin.world
+  guildwar:
+    description: Fixed-map guild war (team PVP)
+    usage: /guildwar help
+    aliases: [gwar, 工会战]
+    permission: guild.war
 
 permissions:
   guild.use:
@@ -93,4 +98,10 @@ permissions:
     default: op
   guild.admin.world:
     description: Allows managing guild worlds (create/load/unload/delete/recover)
+    default: op
+  guild.war:
+    description: Allows using guild war commands
+    default: true
+  guild.war.admin:
+    description: Allows force-ending guild wars
     default: op

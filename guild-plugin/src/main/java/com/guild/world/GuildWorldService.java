@@ -903,7 +903,7 @@ public class GuildWorldService {
         PresetService.Anchor spawn = meta.spawnA() != null ? meta.spawnA()
                 : new PresetService.Anchor(0, 0, 0, 0, 0);
         Location worldSpawn = SchematicPaster.offsetToWorld(
-                pasteAt, data, spawn.dx(), spawn.dy(), spawn.dz(), spawn.yaw(), spawn.pitch());
+                pasteAt, spawn.dx(), spawn.dy(), spawn.dz(), spawn.yaw(), spawn.pitch());
         CompatibleScheduler.runTask(plugin, worldSpawn, () -> {
             gw.setSpawnLocation(worldSpawn);
             gw.setPresetName(meta.name());
@@ -916,10 +916,39 @@ public class GuildWorldService {
         });
     }
 
+    /** 粘贴原点 + 预设 A/B/观众出生点。 */
+    public record ArenaSpawns(Location pasteAt, Location spawnA, Location spawnB, Location spectator) {
+    }
+
+    public ArenaSpawns resolvePresetSpawns(World world, Location pasteAt, PresetService.PresetMeta meta) {
+        Location at = pasteAt.clone();
+        at.setWorld(world);
+        Location a = meta.spawnA() == null ? at.clone()
+                : SchematicPaster.offsetToWorld(at, meta.spawnA().dx(), meta.spawnA().dy(), meta.spawnA().dz(),
+                meta.spawnA().yaw(), meta.spawnA().pitch());
+        Location b = meta.spawnB() == null ? at.clone()
+                : SchematicPaster.offsetToWorld(at, meta.spawnB().dx(), meta.spawnB().dy(), meta.spawnB().dz(),
+                meta.spawnB().yaw(), meta.spawnB().pitch());
+        Location spec = meta.spectator() == null ? null
+                : SchematicPaster.offsetToWorld(at, meta.spectator().dx(), meta.spectator().dy(), meta.spectator().dz(),
+                meta.spectator().yaw(), meta.spectator().pitch());
+        return new ArenaSpawns(at, a, b, spec);
+    }
+
     /**
      * 创建 BATTLE 虚空世界并粘贴预设（paste 默认对齐 0.5,64,0.5）。
      */
     public CompletableFuture<GuildWorld> createWorldFromPreset(String worldName, String presetName) {
+        return createArenaFromPreset(worldName, presetName).thenApply(r -> r.world());
+    }
+
+    public record ArenaCreateResult(GuildWorld world, ArenaSpawns spawns) {
+    }
+
+    /**
+     * 创建战场实例并返回出生点（供工会战使用）。
+     */
+    public CompletableFuture<ArenaCreateResult> createArenaFromPreset(String worldName, String presetName) {
         PresetService.PresetMeta meta = presets.get(presetName);
         if (meta == null || !presets.hasSchematicFile(presetName)) {
             return CompletableFuture.failedFuture(
@@ -933,7 +962,13 @@ public class GuildWorldService {
                                 new IllegalStateException("World missing after create"));
                     }
                     Location pasteAt = new Location(world, 0.5, 64, 0.5);
-                    return pastePreset(world, pasteAt, presetName).thenApply(v -> gw);
+                    return pastePreset(world, pasteAt, presetName).thenApply(v -> {
+                        ArenaSpawns spawns = resolvePresetSpawns(world, pasteAt, meta);
+                        gw.setStatus(WorldStatus.BUSY);
+                        gw.touch();
+                        registry.save();
+                        return new ArenaCreateResult(gw, spawns);
+                    });
                 });
     }
 

@@ -36,6 +36,11 @@ import com.guild.world.api.GuildWorldAPI;
 import com.guild.world.api.GuildWorldAPIImpl;
 import com.guild.world.command.GuildWorldCommand;
 import com.guild.world.selection.SelectionListener;
+import com.guild.war.GuildWarListener;
+import com.guild.war.GuildWarService;
+import com.guild.war.api.GuildWarAPI;
+import com.guild.war.api.GuildWarAPIImpl;
+import com.guild.war.command.GuildWarCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -65,6 +70,8 @@ public class GuildPlugin extends JavaPlugin {
     private ModuleManager moduleManager;
     private GuildWorldService guildWorldService;
     private GuildWorldAPI guildWorldAPI;
+    private GuildWarService guildWarService;
+    private GuildWarAPI guildWarAPI;
     private volatile boolean modulesUnloaded = false;
     private GuildMetrics guildMetrics;
     private UpdateManager updateManager;
@@ -232,6 +239,17 @@ public class GuildPlugin extends JavaPlugin {
                                 guildWorldService.getWandMaterial()), this);
             }
 
+            // 工会战（依赖世界预设系统）
+            guildWarService = new GuildWarService(this, guildService, guildWorldService);
+            guildWarAPI = new GuildWarAPIImpl(guildWarService);
+            serviceContainer.register(GuildWarService.class, guildWarService);
+            serviceContainer.register(GuildWarAPI.class, guildWarAPI);
+            if (guildWarService.isEnabled()) {
+                getServer().getPluginManager().registerEvents(new GuildWarListener(guildWarService), this);
+            } else {
+                logger.info("[GuildWar] Disabled: " + guildWarService.unavailableReason());
+            }
+
             // 初始化模块系统（在所有核心服务就绪后）
             moduleManager = new ModuleManager(this);
             serviceContainer.register(ModuleManager.class, moduleManager);
@@ -303,7 +321,10 @@ public class GuildPlugin extends JavaPlugin {
                 guiManager.closeAllGUIs();
             }
 
-            // 优雅卸载所有受管世界（标记 cleanShutdown，意外恢复机制的一部分）
+            // 优雅结束工会战，再卸载受管世界
+            if (guildWarService != null) {
+                guildWarService.shutdown();
+            }
             if (guildWorldService != null) {
                 guildWorldService.shutdown();
             }
@@ -360,6 +381,13 @@ public class GuildPlugin extends JavaPlugin {
             GuildWorldCommand guildWorldCommand = new GuildWorldCommand(this, guildWorldService);
             getCommand("guildworld").setExecutor(guildWorldCommand);
             getCommand("guildworld").setTabCompleter(guildWorldCommand);
+        }
+
+        // 工会战（/guildwar）
+        if (getCommand("guildwar") != null && guildWarService != null) {
+            GuildWarCommand guildWarCommand = new GuildWarCommand(this, guildWarService);
+            getCommand("guildwar").setExecutor(guildWarCommand);
+            getCommand("guildwar").setTabCompleter(guildWarCommand);
         }
 
         // 仅在 Geyser/Cumulus 可用时注册基岩表单测试指令（避免 NoClassDefFoundError）
@@ -466,6 +494,14 @@ public class GuildPlugin extends JavaPlugin {
 
     public GuildWorldAPI getGuildWorldAPI() {
         return guildWorldAPI;
+    }
+
+    public GuildWarService getGuildWarService() {
+        return guildWarService;
+    }
+
+    public GuildWarAPI getGuildWarAPI() {
+        return guildWarAPI;
     }
     
     public ModuleManager getModuleManager() {

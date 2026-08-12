@@ -68,4 +68,19 @@ public final class GuildWorldAPIImpl implements GuildWorldAPI {
     public CompletableFuture<Boolean> teleportToWorld(Player player, String worldName) {
         return service.teleportToWorld(player, worldName);
     }
+
+    @Override
+    public CompletableFuture<Boolean> teleportToFallback(Player player) {
+        return service.teleportToFallbackWorld(player);
+    }
+
+    @Override
+    public CompletableFuture<Void> deleteWorld(String worldName, boolean force) {
+        return service.deleteWorld(worldName, force);
+    }
+
+    @Override
+    public CompletableFuture<Void> unloadWorld(String worldName) {
+        return service.unloadWorld(worldName);
+    }
 }

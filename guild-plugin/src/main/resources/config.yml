@@ -206,5 +206,25 @@ world:
     # Include tile entities (chests/signs/spawners); falls back to blocks-only on failure
     include-block-entities: true
   arena:
-    # Post-match policy for future guild-war module: destroy | reset
+    # Post-match policy for guild-war: destroy | reset (reset currently = destroy + recreate next match)
     post-match: destroy
+
+# Fixed-map guild war (team PVP)
+guild-war:
+  enabled: true
+  # Default schematic preset name (override with /guildwar challenge --preset)
+  default-preset: ""
+  max-per-team: 5
+  signup-seconds: 60
+  countdown-seconds: 10
+  challenge-timeout-seconds: 120
+  # first | timed | survive
+  default-mode: first
+  score-to-win: 20
+  timed-duration-seconds: 600
+  survive-duration-seconds: 600
+  friendly-fire: false
+  keep-inventory: true
+  max-concurrent: 3
+  # On last-standing elimination: spectator in arena (true) or kick to fallback (false)
+  eliminate-to-spectator: true
