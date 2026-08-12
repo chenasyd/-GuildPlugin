@@ -77,8 +77,8 @@ public class GuildPlugin extends JavaPlugin {
         logger.info("Server version: " + ServerUtils.getServerVersion());
         
         // 检查API版本兼容性
-        if (!ServerUtils.supportsApiVersion("1.21")) {
-            logger.severe("This plugin requires 1.21 or higher! Current version: " + ServerUtils.getServerVersion());
+        if (!ServerUtils.supportsApiVersion("1.20")) {
+            logger.severe("This plugin requires 1.20 or higher! Current version: " + ServerUtils.getServerVersion());
             getServer().getPluginManager().disablePlugin(this);
             return;
         }

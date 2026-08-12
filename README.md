@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/Minecraft-1.21+-green?style=for-the-badge&logo=minecraft" alt="Minecraft 1.21+"/>
+  <img src="https://img.shields.io/badge/Minecraft-1.20.1+-green?style=for-the-badge&logo=minecraft" alt="Minecraft 1.20.1+"/>
   <img src="https://img.shields.io/badge/API-Spigot%20%7C%20Folia-orange?style=for-the-badge" alt="Spigot | Folia"/>
   <img src="https://img.shields.io/badge/Version-1.5.6-blue?style=for-the-badge" alt="Version 1.5.6"/>
   <img src="https://img.shields.io/badge/License-GPL%20v3-red?style=for-the-badge" alt="GPL v3"/>
@@ -33,10 +33,10 @@ A feature-complete Minecraft guild/faction system with economy, relations, level
 
 | Software | Version |
 |:--------:|:-------:|
-| [Spigot](https://www.spigotmc.org) | 1.21+ |
-| [PaperMC](https://papermc.io/downloads/paper) | 1.21+ |
-| [Purpur](https://purpurmc.org) | 1.21+ |
-| [Folia](https://papermc.io/software/folia) | 1.21+ |
+| [Spigot](https://www.spigotmc.org) | 1.20.1+ |
+| [PaperMC](https://papermc.io/downloads/paper) | 1.20.1+ |
+| [Purpur](https://purpurmc.org) | 1.20.1+ |
+| [Folia](https://papermc.io/software/folia) | 1.20.1+ |
 
 ## Integrations
 

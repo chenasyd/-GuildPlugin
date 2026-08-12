@@ -4,7 +4,7 @@
 
 ## 环境要求
 
-- Minecraft 1.21+
+- Minecraft 1.20.1+
 - Java 17+
 - Vault（可选，用于经济系统）
 - PlaceholderAPI（可选）

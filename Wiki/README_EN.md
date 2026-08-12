@@ -6,10 +6,10 @@ A feature-complete Minecraft guild/faction system. Supports Spigot, Paper, Purpu
 
 | Software | Version |
 |:--------:|:-------:|
-| Spigot | 1.21+ |
-| Paper | 1.21+ |
-| Purpur | 1.21+ |
-| Folia | 1.21+ |
+| Spigot | 1.20.1+ |
+| Paper | 1.20.1+ |
+| Purpur | 1.20.1+ |
+| Folia | 1.20.1+ |
 
 Integrations: Vault (economy), PlaceholderAPI
 

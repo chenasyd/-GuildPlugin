@@ -15,8 +15,7 @@ public class TestUtils {
         logger.info("=== Server Compatibility Test ===");
         logger.info("Server type: " + ServerUtils.getServerType());
         logger.info("Server version: " + ServerUtils.getServerVersion());
-        logger.info("Supports 1.21: " + ServerUtils.supportsApiVersion("1.21"));
-        logger.info("Supports 1.21.8: " + ServerUtils.supportsApiVersion("1.21.8"));
+        logger.info("Supports 1.20: " + ServerUtils.supportsApiVersion("1.20"));
         logger.info("Is Folia: " + ServerUtils.isFolia());
         logger.info("Is Spigot: " + ServerUtils.isSpigot());
         logger.info("=========================");
