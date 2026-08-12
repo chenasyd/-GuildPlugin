@@ -166,6 +166,7 @@ public class DatabaseManager {
                 level INTEGER DEFAULT 1,
                 max_members INTEGER DEFAULT 6,
                 frozen INTEGER DEFAULT 0,
+                peak_level INTEGER DEFAULT 1,
                 created_at TEXT DEFAULT (datetime('now','localtime')),
                 updated_at TEXT DEFAULT (datetime('now','localtime'))
             )
@@ -282,7 +283,29 @@ public class DatabaseManager {
             )
         """);
 
+        createWarehouseTablesSqlite();
         createWarTablesSqlite();
+    }
+
+    private void createWarehouseTablesSqlite() {
+        executeUpdate("""
+            CREATE TABLE IF NOT EXISTS guild_warehouse_items (
+                guild_id INTEGER NOT NULL,
+                slot INTEGER NOT NULL,
+                nbt TEXT NOT NULL,
+                PRIMARY KEY (guild_id, slot),
+                FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
+            )
+        """);
+        executeUpdate("""
+            CREATE TABLE IF NOT EXISTS guild_warehouse_role_perms (
+                guild_id INTEGER NOT NULL,
+                role TEXT NOT NULL,
+                can_open INTEGER NOT NULL DEFAULT 0,
+                PRIMARY KEY (guild_id, role),
+                FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
+            )
+        """);
     }
 
     private void createWarTablesSqlite() {
@@ -358,6 +381,7 @@ public class DatabaseManager {
                 level INT DEFAULT 1,
                 max_members INT DEFAULT 6,
                 frozen BOOLEAN DEFAULT FALSE,
+                peak_level INT DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
@@ -474,7 +498,29 @@ public class DatabaseManager {
             )
         """);
 
+        createWarehouseTablesMysql();
         createWarTablesMysql();
+    }
+
+    private void createWarehouseTablesMysql() {
+        executeUpdate("""
+            CREATE TABLE IF NOT EXISTS guild_warehouse_items (
+                guild_id INT NOT NULL,
+                slot INT NOT NULL,
+                nbt MEDIUMTEXT NOT NULL,
+                PRIMARY KEY (guild_id, slot),
+                FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
+            )
+        """);
+        executeUpdate("""
+            CREATE TABLE IF NOT EXISTS guild_warehouse_role_perms (
+                guild_id INT NOT NULL,
+                role VARCHAR(20) NOT NULL,
+                can_open BOOLEAN NOT NULL DEFAULT FALSE,
+                PRIMARY KEY (guild_id, role),
+                FOREIGN KEY (guild_id) REFERENCES guilds(id) ON DELETE CASCADE
+            )
+        """);
     }
 
     private void createWarTablesMysql() {
@@ -671,6 +717,19 @@ public class DatabaseManager {
                     logger.info("Added economy columns to guilds table");
                 }
             }
+
+            try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "peak_level")) {
+                if (!rs.next()) {
+                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN peak_level INTEGER DEFAULT 1")) {
+                        stmt.executeUpdate();
+                    }
+                    try (PreparedStatement stmt = conn.prepareStatement(
+                            "UPDATE guilds SET peak_level = level WHERE peak_level IS NULL OR peak_level < level")) {
+                        stmt.executeUpdate();
+                    }
+                    logger.info("Added peak_level column to guilds table");
+                }
+            }
             
             conn.commit(); // 提交事务
         } catch (SQLException e) {
@@ -728,6 +787,19 @@ public class DatabaseManager {
                         stmt.executeUpdate();
                     }
                     logger.info("Added economy columns to guilds table");
+                }
+            }
+
+            try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "peak_level")) {
+                if (!rs.next()) {
+                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN peak_level INT DEFAULT 1")) {
+                        stmt.executeUpdate();
+                    }
+                    try (PreparedStatement stmt = conn.prepareStatement(
+                            "UPDATE guilds SET peak_level = level WHERE peak_level IS NULL OR peak_level < level")) {
+                        stmt.executeUpdate();
+                    }
+                    logger.info("Added peak_level column to guilds table");
                 }
             }
             

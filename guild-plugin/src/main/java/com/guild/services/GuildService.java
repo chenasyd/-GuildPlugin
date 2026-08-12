@@ -110,7 +110,7 @@ public class GuildService {
                 
                 return CompletableFuture.supplyAsync(() -> {
                     try {
-                        String sql = "INSERT INTO guilds (name, tag, description, leader_uuid, leader_name, balance, level, max_members, frozen, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 0.0, 1, 6, 0, ?, ?)";
+                        String sql = "INSERT INTO guilds (name, tag, description, leader_uuid, leader_name, balance, level, peak_level, max_members, frozen, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 0.0, 1, 1, 6, 0, ?, ?)";
                         
                         try (Connection conn = databaseManager.getConnection();
                              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -191,13 +191,15 @@ public class GuildService {
                         // 获取工会余额用于退款
                         double guildBalance = guild.getBalance();
                         
-                        // 删除所有工会成员
+                        // 删除工会成员
                         String deleteMembersSql = "DELETE FROM guild_members WHERE guild_id = ?";
                         try (Connection conn = databaseManager.getConnection();
                              PreparedStatement stmt = conn.prepareStatement(deleteMembersSql)) {
                             stmt.setInt(1, guildId);
                             stmt.executeUpdate();
                         }
+
+                        deleteWarehouseData(guildId);
                         
                         // 删除工会
                         String deleteGuildSql = "DELETE FROM guilds WHERE id = ?";
@@ -253,6 +255,19 @@ public class GuildService {
         }
     }
 
+    private void deleteWarehouseData(int guildId) throws SQLException {
+        try (Connection conn = databaseManager.getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM guild_warehouse_items WHERE guild_id = ?")) {
+                stmt.setInt(1, guildId);
+                stmt.executeUpdate();
+            }
+            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM guild_warehouse_role_perms WHERE guild_id = ?")) {
+                stmt.setInt(1, guildId);
+                stmt.executeUpdate();
+            }
+        }
+    }
+
     /**
      * 管理员强制删除工会 (异步) — 跳过会长身份验证，但资金仍退还至会长
      * @param guildId 工会ID
@@ -276,7 +291,8 @@ public class GuildService {
                         stmt.setInt(1, guildId);
                         stmt.executeUpdate();
                     }
-                    
+
+                    deleteWarehouseData(guildId);
                     // 删除工会
                     String deleteGuildSql = "DELETE FROM guilds WHERE id = ?";
                     try (Connection conn = databaseManager.getConnection();
@@ -1161,6 +1177,16 @@ public class GuildService {
             guild.setLevel(rs.getInt("level"));
         } catch (SQLException e) {
             guild.setLevel(1);
+        }
+
+        try {
+            int peak = rs.getInt("peak_level");
+            if (rs.wasNull() || peak < guild.getLevel()) {
+                peak = guild.getLevel();
+            }
+            guild.setPeakLevel(peak);
+        } catch (SQLException e) {
+            guild.setPeakLevel(guild.getLevel());
         }
         
         try {
@@ -2545,13 +2571,16 @@ public class GuildService {
     public CompletableFuture<Boolean> updateGuildLevelAsync(int guildId, int level) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                String sql = "UPDATE guilds SET level = ? WHERE id = ?";
+                // peak_level 只升不降：降级只改 level
+                String sql = "UPDATE guilds SET level = ?, peak_level = CASE WHEN peak_level IS NULL OR peak_level < ? THEN ? ELSE peak_level END WHERE id = ?";
                 
                 try (Connection conn = databaseManager.getConnection();
                      PreparedStatement stmt = conn.prepareStatement(sql)) {
                     
                     stmt.setInt(1, level);
-                    stmt.setInt(2, guildId);
+                    stmt.setInt(2, level);
+                    stmt.setInt(3, level);
+                    stmt.setInt(4, guildId);
                     
                     int affectedRows = stmt.executeUpdate();
                     return affectedRows > 0;
@@ -2673,15 +2702,17 @@ public class GuildService {
                 
                 CompletableFuture.supplyAsync(() -> {
                     try {
-                        String sql = "UPDATE guilds SET level = ?, max_members = ?, updated_at = ? WHERE id = ?";
+                        String sql = "UPDATE guilds SET level = ?, max_members = ?, peak_level = CASE WHEN peak_level IS NULL OR peak_level < ? THEN ? ELSE peak_level END, updated_at = ? WHERE id = ?";
                         
                         try (Connection conn = databaseManager.getConnection();
                              PreparedStatement stmt = conn.prepareStatement(sql)) {
                             
                             stmt.setInt(1, newLevel);
                             stmt.setInt(2, newMaxMembers);
-                            stmt.setString(3, nowString());
-                            stmt.setInt(4, guildId);
+                            stmt.setInt(3, newLevel);
+                            stmt.setInt(4, newLevel);
+                            stmt.setString(5, nowString());
+                            stmt.setInt(6, guildId);
                             
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {

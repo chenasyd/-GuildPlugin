@@ -152,6 +152,10 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             case "c":
                 handleChat(player, args);
                 break;
+            case "warehouse":
+            case "wh":
+                handleWarehouse(player, args);
+                break;
             default:
                 // 检查是否为模块注册的子命令
                 if (api.hasSubCommand("guild", args[0])) {
@@ -189,7 +193,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         
         if (args.length == 1) {
             List<String> subCommands = new ArrayList<>(Arrays.asList(
-                "create", "info", "members", "invite", "kick", "promote", "demote", "accept", "decline", "leave", "delete", "sethome", "home", "relation", "economy", "deposit", "withdraw", "transfer", "logs", "placeholder", "time", "applications", "help", "chat"
+                "create", "info", "members", "invite", "kick", "promote", "demote", "accept", "decline", "leave", "delete", "sethome", "home", "relation", "economy", "deposit", "withdraw", "transfer", "logs", "placeholder", "time", "applications", "help", "chat", "warehouse"
             ));
             
             // 添加模块注册的子命令
@@ -229,6 +233,14 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                         }
                     }
                     break;
+                case "warehouse":
+                case "wh":
+                    for (String cmd : Arrays.asList("perm", "info", "1", "2")) {
+                        if (cmd.toLowerCase().startsWith(args[1].toLowerCase())) {
+                            completions.add(cmd);
+                        }
+                    }
+                    break;
             }
         } else if (args.length == 3) {
             String subCommand = args[0].toLowerCase();
@@ -242,6 +254,24 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             } else if (subCommand.equals("invite") || subCommand.equals("kick") || subCommand.equals("promote") || subCommand.equals("demote")) {
                 // 这里可以添加在线玩家名称的自动补全
                 // 暂时返回空列表
+            } else if (subCommand.equals("warehouse") || subCommand.equals("wh")) {
+                if (args[1].equalsIgnoreCase("perm")) {
+                    for (String role : Arrays.asList("officer", "member")) {
+                        if (role.startsWith(args[2].toLowerCase())) {
+                            completions.add(role);
+                        }
+                    }
+                }
+            }
+        } else if (args.length == 4) {
+            String subCommand = args[0].toLowerCase();
+            if ((subCommand.equals("warehouse") || subCommand.equals("wh"))
+                    && args[1].equalsIgnoreCase("perm")) {
+                for (String state : Arrays.asList("on", "off")) {
+                    if (state.startsWith(args[3].toLowerCase())) {
+                        completions.add(state);
+                    }
+                }
             }
         }
         
@@ -2164,6 +2194,143 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.time", "&e/guild time &7- View guild time info")));
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.applications", "&e/guild applications &7- Manage guild applications")));
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.chat", "&e/guild chat &7- Toggle guild chat mode &7| &e/guild chat <msg> &7- Send guild message")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.warehouse", "&e/guild warehouse [页码|perm|info] &7- 打开公会仓库")));
         player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "help.help", "&e/guild help &7- Show this help")));
+    }
+
+    private void handleWarehouse(Player player, String[] args) {
+        var warehouse = plugin.getGuildWarehouseService();
+        if (warehouse == null) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.unavailable",
+                    "&c公会仓库当前不可用。")));
+            return;
+        }
+
+        Guild guild = guildService.getPlayerGuild(player.getUniqueId());
+        if (guild == null) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "general.no-guild",
+                    "&c您还没有加入任何工会！")));
+            return;
+        }
+
+        if (args.length == 1) {
+            warehouse.openWarehouse(player, guild, 1);
+            return;
+        }
+
+        String sub = args[1].toLowerCase();
+        switch (sub) {
+            case "info" -> handleWarehouseInfo(player, guild, warehouse);
+            case "perm" -> handleWarehousePerm(player, guild, warehouse, args);
+            default -> {
+                try {
+                    int page = Integer.parseInt(sub);
+                    warehouse.openWarehouse(player, guild, page);
+                } catch (NumberFormatException e) {
+                    player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player,
+                            "warehouse.usage",
+                            "&e用法: /guild warehouse [页码] | /guild warehouse info | /guild warehouse perm <officer|member> <on|off>")));
+                }
+            }
+        }
+    }
+
+    private void handleWarehouseInfo(Player player, Guild guild, com.guild.warehouse.GuildWarehouseService warehouse) {
+        int peak = guild.getPeakLevel();
+        int slots = warehouse.resolveSlots(guild);
+        int pages = warehouse.resolvePageCount(guild);
+        Boolean officerOverride = warehouse.getRoleOpenOverrideSync(guild.getId(), Role.OFFICER);
+        Boolean memberOverride = warehouse.getRoleOpenOverrideSync(guild.getId(), Role.MEMBER);
+        boolean officer = officerOverride != null
+                ? officerOverride
+                : plugin.getPermissionManager().getDefaultCanWarehouse(Role.OFFICER);
+        boolean member = memberOverride != null
+                ? memberOverride
+                : plugin.getPermissionManager().getDefaultCanWarehouse(Role.MEMBER);
+
+        String on = languageManager.getCoreMessage(player, "warehouse.state-on", "&a开");
+        String off = languageManager.getCoreMessage(player, "warehouse.state-off", "&c关");
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.info-header",
+                "&a=== 公会仓库信息 ===")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.info-peak",
+                        "&7历史最高等级: &e{peak}")
+                .replace("{peak}", String.valueOf(peak))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.info-slots",
+                        "&7仓库槽位: &e{slots}")
+                .replace("{slots}", String.valueOf(slots))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.info-pages",
+                        "&7页数: &e{pages} &7（/guild warehouse <页码>）")
+                .replace("{pages}", String.valueOf(pages))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.info-officer",
+                        "&7官员开仓: {state}")
+                .replace("{state}", officer ? on : off)));
+        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.info-member",
+                        "&7成员开仓: {state}")
+                .replace("{state}", member ? on : off)));
+        if (!warehouse.isAvailable()) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.nbtapi-missing",
+                    "&c公会仓库需要安装 NBTAPI 插件才能使用。")));
+        }
+    }
+
+    private void handleWarehousePerm(Player player, Guild guild,
+                                     com.guild.warehouse.GuildWarehouseService warehouse, String[] args) {
+        GuildMember member = guildService.getGuildMember(player.getUniqueId());
+        boolean isLeader = member != null && member.getRole() == Role.LEADER;
+        boolean isAdmin = plugin.getPermissionManager().hasPermission(player, "guild.admin");
+        if (!isLeader && !isAdmin) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.perm-leader-only",
+                    "&c只有会长可以设置仓库开仓权限。")));
+            return;
+        }
+        if (args.length < 4) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.perm-usage",
+                    "&e用法: /guild warehouse perm <officer|member> <on|off>")));
+            return;
+        }
+
+        Role targetRole;
+        if (args[2].equalsIgnoreCase("officer")) {
+            targetRole = Role.OFFICER;
+        } else if (args[2].equalsIgnoreCase("member")) {
+            targetRole = Role.MEMBER;
+        } else {
+            player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.perm-usage",
+                    "&e用法: /guild warehouse perm <officer|member> <on|off>")));
+            return;
+        }
+
+        boolean enable;
+        if (args[3].equalsIgnoreCase("on") || args[3].equalsIgnoreCase("true") || args[3].equalsIgnoreCase("1")) {
+            enable = true;
+        } else if (args[3].equalsIgnoreCase("off") || args[3].equalsIgnoreCase("false") || args[3].equalsIgnoreCase("0")) {
+            enable = false;
+        } else {
+            player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.perm-usage",
+                    "&e用法: /guild warehouse perm <officer|member> <on|off>")));
+            return;
+        }
+
+        warehouse.setRoleOpenPermission(guild.getId(), targetRole, enable).thenAccept(ok ->
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (!player.isOnline()) {
+                        return;
+                    }
+                    if (ok) {
+                        String roleName = targetRole == Role.OFFICER
+                                ? languageManager.getCoreMessage(player, "warehouse.role-officer", "官员")
+                                : languageManager.getCoreMessage(player, "warehouse.role-member", "成员");
+                        String state = enable
+                                ? languageManager.getCoreMessage(player, "warehouse.state-on", "&a开")
+                                : languageManager.getCoreMessage(player, "warehouse.state-off", "&c关");
+                        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.perm-updated",
+                                        "&a已将 {role} 开仓权限设为 {state}")
+                                .replace("{role}", roleName)
+                                .replace("{state}", state)));
+                    } else {
+                        player.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(player, "warehouse.perm-failed",
+                                "&c设置仓库权限失败。")));
+                    }
+                }));
     }
 }

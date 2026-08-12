@@ -148,13 +148,13 @@ public class PermissionManager {
     public void reloadFromConfig() {
         FileConfiguration cfg = plugin.getConfigManager().getMainConfig();
         this.defaultPermissions = readRolePermissions(cfg, "permissions.default",
-                new RolePermissions(false, false, false, false, false, false));
+                new RolePermissions(false, false, false, false, false, false, false));
         this.memberPermissions = readRolePermissions(cfg, "permissions.member",
-                new RolePermissions(true, false, false, false, false, false));
+                new RolePermissions(true, false, false, false, false, false, false));
         this.officerPermissions = readRolePermissions(cfg, "permissions.officer",
-                new RolePermissions(true, true, true, false, false, false));
+                new RolePermissions(true, true, true, false, false, false, true));
         // leader 未配置时，采用全开作为回退
-        RolePermissions leaderFallback = new RolePermissions(true, true, true, true, true, true);
+        RolePermissions leaderFallback = new RolePermissions(true, true, true, true, true, true, true);
         this.leaderPermissions = readRolePermissions(cfg, "permissions.leader", leaderFallback);
         playerPermissions.clear();
         logger.info("Permission matrix reloaded from config, player permission cache cleared");
@@ -168,7 +168,15 @@ public class PermissionManager {
         boolean canPromote = cfg.getBoolean(path + ".can-promote", fallback.canPromote);
         boolean canDemote = cfg.getBoolean(path + ".can-demote", fallback.canDemote);
         boolean canDelete = cfg.getBoolean(path + ".can-delete", fallback.canDelete);
-        return new RolePermissions(canCreate, canInvite, canKick, canPromote, canDemote, canDelete);
+        boolean canWarehouse = cfg.getBoolean(path + ".can-warehouse", fallback.canWarehouse);
+        return new RolePermissions(canCreate, canInvite, canKick, canPromote, canDemote, canDelete, canWarehouse);
+    }
+
+    /**
+     * Config default for opening guild warehouse (per-guild overrides handled by GuildWarehouseService).
+     */
+    public boolean getDefaultCanWarehouse(GuildMember.Role role) {
+        return resolveRolePermissions(role).canWarehouse;
     }
     
     /**
@@ -297,13 +305,15 @@ public class PermissionManager {
         final boolean canPromote;
         final boolean canDemote;
         final boolean canDelete;
-        RolePermissions(boolean canCreate, boolean canInvite, boolean canKick, boolean canPromote, boolean canDemote, boolean canDelete) {
+        final boolean canWarehouse;
+        RolePermissions(boolean canCreate, boolean canInvite, boolean canKick, boolean canPromote, boolean canDemote, boolean canDelete, boolean canWarehouse) {
             this.canCreate = canCreate;
             this.canInvite = canInvite;
             this.canKick = canKick;
             this.canPromote = canPromote;
             this.canDemote = canDemote;
             this.canDelete = canDelete;
+            this.canWarehouse = canWarehouse;
         }
     }
 }

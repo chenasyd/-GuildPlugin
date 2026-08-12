@@ -435,6 +435,9 @@ public class SystemSettingsGUI implements GUI {
         try {
             plugin.getConfigManager().reloadAllConfigs();
             plugin.getPermissionManager().reloadFromConfig();
+            if (plugin.getGuildWarehouseService() != null) {
+                plugin.getGuildWarehouseService().reload();
+            }
 
             // 插件本体语言（core/gui）异步重载 — 与模块语言完全独立
             plugin.getLanguageManager().reloadLanguagesAsync(() -> {

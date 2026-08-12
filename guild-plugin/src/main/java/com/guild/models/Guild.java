@@ -23,6 +23,7 @@ public class Guild {
     private float homePitch;
     private double balance;
     private int level;
+    private int peakLevel;
     private int maxMembers;
     private boolean frozen;
     private LocalDateTime createdAt;
@@ -173,6 +174,14 @@ public class Guild {
     
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public int getPeakLevel() {
+        return peakLevel > 0 ? peakLevel : Math.max(level, 1);
+    }
+
+    public void setPeakLevel(int peakLevel) {
+        this.peakLevel = peakLevel;
     }
     
     public int getMaxMembers() {

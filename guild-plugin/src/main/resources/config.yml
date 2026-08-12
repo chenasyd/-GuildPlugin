@@ -74,6 +74,7 @@ permissions:
     can-promote: true
     can-demote: true
     can-delete: true
+    can-warehouse: true
 
   # Officer permissions
   officer:
@@ -83,6 +84,7 @@ permissions:
     can-promote: false       # Whether to allow promoting members (usually leader only)
     can-demote: false        # Whether to allow demoting members (usually leader only)
     can-delete: false        # Whether to allow deleting the guild (usually leader only)
+    can-warehouse: true
   
   # Member permissions
   member:
@@ -92,6 +94,24 @@ permissions:
     can-promote: false
     can-demote: false
     can-delete: false
+    can-warehouse: false
+
+# Guild warehouse (requires NBTAPI softdepend; capacity uses historical peak level)
+guild-warehouse:
+  enabled: true
+  # peak_level -> slot count (must be multiples of 9).
+  # Each page holds up to 54 slots; e.g. 63 = page1(54) + page2(9). Open with /guild warehouse <page>
+  slots-by-level:
+    1: 9
+    2: 18
+    3: 27
+    4: 36
+    5: 45
+    6: 54
+    7: 63
+    8: 72
+    9: 81
+    10: 90
 
 # Language configuration
 language:

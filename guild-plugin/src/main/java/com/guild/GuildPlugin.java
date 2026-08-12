@@ -77,6 +77,7 @@ public class GuildPlugin extends JavaPlugin {
     private GuildWarService guildWarService;
     private GuildWarAPI guildWarAPI;
     private WarSeasonService warSeasonService;
+    private com.guild.warehouse.GuildWarehouseService guildWarehouseService;
     private volatile boolean modulesUnloaded = false;
     private GuildMetrics guildMetrics;
     private UpdateManager updateManager;
@@ -257,6 +258,12 @@ public class GuildPlugin extends JavaPlugin {
             } else {
                 logger.info("[GuildWar] Disabled: " + guildWarService.unavailableReason());
             }
+
+            // 公会仓库（NBTAPI softdepend）
+            guildWarehouseService = new com.guild.warehouse.GuildWarehouseService(this);
+            serviceContainer.register(com.guild.warehouse.GuildWarehouseService.class, guildWarehouseService);
+            getServer().getPluginManager().registerEvents(
+                    new com.guild.warehouse.WarehouseListener(guildWarehouseService), this);
 
             // 初始化模块系统（在所有核心服务就绪后）
             moduleManager = new ModuleManager(this);
@@ -511,6 +518,10 @@ public class GuildPlugin extends JavaPlugin {
 
     public GuildWarAPI getGuildWarAPI() {
         return guildWarAPI;
+    }
+
+    public com.guild.warehouse.GuildWarehouseService getGuildWarehouseService() {
+        return guildWarehouseService;
     }
 
     public WarSeasonService getWarSeasonService() {
