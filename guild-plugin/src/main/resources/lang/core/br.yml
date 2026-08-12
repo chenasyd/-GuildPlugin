@@ -595,6 +595,8 @@ contribution.type.creation: "Criação da Guilda"
 contribution.type.upgrade: "Upgrade da Guilda"
 contribution.type.admin: "Operação de Admin"
 
+contribution.type.war_win: "Vitória na guerra de guilda"
+contribution.type.war_kill: "Abate (guerra)"
 # Application status
 application.status.pending: "Pendente"
 application.status.approved: "Aprovado"
@@ -960,7 +962,23 @@ war.help.join-leave: "&e/guildwar join|leave &7- Inscrever-se/cancelar inscriç�
 war.help.ready: "&e/guildwar ready &7- Iniciar antes do fim das inscrições (oficiais, ambos prontos)"
 war.help.cancel: "&e/guildwar cancel &7- Cancelar partida não iniciada (oficiais)"
 war.help.status: "&e/guildwar status &7- Ver status"
+war.help.report: "&e/guildwar report [id] &7- Ver relatório"
+war.help.season: "&e/guildwar season &7- Ranking da temporada"
 war.help.admin: "&e/guildwar admin end <id> &7- Encerrar forçadamente"
+
+war.report.broadcast: "&6[Relatório #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
+war.report.kill-line: "&7  · &f{player} &7abates: &e{kills}"
+war.report.none: "&7Nenhum relatório encontrado"
+war.report.bad-id: "&cID de relatório inválido"
+war.report.need-id: "&cConsole: use /guildwar report <id>"
+war.report.header: "&6── Relatório #{id} ── &f{a} &a{sa}&7:&c{sb} &f{b} &7→ &e{winner}"
+war.report.meta: "&7Modo: &f{mode} &7Motivo: &f{reason} &7Duração: &f{sec}s"
+war.report.player: "&7  {side} &f{name} &7kills=&e{kills}{elim}"
+war.season.unavailable: "&cSistema de temporada não pronto"
+war.season.gui-title: "&6Estatísticas da temporada &7({season})"
+war.season.header: "&6── Temporada &f{season} &6Ranking ──"
+war.season.row: "&e#{rank} &f{name} &a{w}&7/&c{l}&7/&8{d} &7kills=&e{k}"
+war.season.empty: "&7Ainda sem dados da temporada"
 
 # ============ service errors ============
 war.error.max-concurrent: "&cLimite de guerras de guilda simultâneas atingido"

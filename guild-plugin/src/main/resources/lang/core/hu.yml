@@ -595,6 +595,8 @@ contribution.type.creation: "C\u00e9h l\u00e9trehoz\u00e1sa"
 contribution.type.upgrade: "C\u00e9h szintl\u00e9p\u00e9s"
 contribution.type.admin: "Adminisztr\u00e1tori m\u0171velet"
 
+contribution.type.war_win: "Céhháborús győzelem"
+contribution.type.war_kill: "Ölés (háború)"
 # Application status
 application.status.pending: "Folyamatban"
 application.status.approved: "J\u00f3v\u00e1hagyva"
@@ -960,7 +962,23 @@ war.help.join-leave: "&e/guildwar join|leave &7- Regisztr\u00e1ci\u00f3/leiratko
 war.help.ready: "&e/guildwar ready &7- Korai ind\u00edt\u00e1s a regisztr\u00e1ci\u00f3s f\u00e1zisban (tisztek, mindk\u00e9t f\u00e9l k\u00e9sz)"
 war.help.cancel: "&e/guildwar cancel &7- Meg nem kezdett meccs lemond\u00e1sa (tisztek)"
 war.help.status: "&e/guildwar status &7- \u00c1llapot megtekint\u00e9se"
+war.help.report: "&e/guildwar report [id] &7- Meccsjelentés"
+war.help.season: "&e/guildwar season &7- Szezonranglista"
 war.help.admin: "&e/guildwar admin end <id> &7- K\u00e9nyszer\u00edtett befejez\u00e9s"
+
+war.report.broadcast: "&6[Jelentés #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
+war.report.kill-line: "&7  · &f{player} &7ölés: &e{kills}"
+war.report.none: "&7Nincs jelentés"
+war.report.bad-id: "&cÉrvénytelen jelentés-ID"
+war.report.need-id: "&cKonzol: használd /guildwar report <id>"
+war.report.header: "&6── Jelentés #{id} ── &f{a} &a{sa}&7:&c{sb} &f{b} &7→ &e{winner}"
+war.report.meta: "&7Mód: &f{mode} &7Ok: &f{reason} &7Idő: &f{sec}s"
+war.report.player: "&7  {side} &f{name} &7kills=&e{kills}{elim}"
+war.season.unavailable: "&cSzezonrendszer nem kész"
+war.season.gui-title: "&6Szezonstatisztika &7({season})"
+war.season.header: "&6── Szezon &f{season} &6Ranglista ──"
+war.season.row: "&e#{rank} &f{name} &a{w}&7/&c{l}&7/&8{d} &7kills=&e{k}"
+war.season.empty: "&7Még nincs szezonadat"
 
 # ============ service errors ============
 war.error.max-concurrent: "&cEl\u00e9rte az egyidej\u0171 kl\u00e1nh\u00e1bor\u00fak korl\u00e1tj\u00e1t"

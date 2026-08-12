@@ -595,6 +595,8 @@ contribution.type.creation: "Killan Luominen"
 contribution.type.upgrade: "Killan Tason Nostaminen"
 contribution.type.admin: "Yll\u00e4pitotoiminto"
 
+contribution.type.war_win: "Killan sodan voitto"
+contribution.type.war_kill: "Tappo (sota)"
 # Hakemuksen tila
 application.status.pending: "Odottaa"
 application.status.approved: "Hyv\u00e4ksytty"
@@ -960,7 +962,23 @@ war.help.join-leave: "&e/guildwar join|leave &7- Ilmoittaudu/peru ilmoittautumin
 war.help.ready: "&e/guildwar ready &7- Aloita ennenaikaisesti ilmoittautumisvaiheessa (upseerit, molemmat valmiit)"
 war.help.cancel: "&e/guildwar cancel &7- Peruuta aloittamaton ottelu (upseerit)"
 war.help.status: "&e/guildwar status &7- Katso tila"
+war.help.report: "&e/guildwar report [id] &7- Näytä raportti"
+war.help.season: "&e/guildwar season &7- Kausisijoitus"
 war.help.admin: "&e/guildwar admin end <id> &7- Pakota p\u00e4\u00e4tt\u00e4minen"
+
+war.report.broadcast: "&6[Raportti #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
+war.report.kill-line: "&7  · &f{player} &7tapot: &e{kills}"
+war.report.none: "&7Raporttia ei löytynyt"
+war.report.bad-id: "&cVirheellinen raportin ID"
+war.report.need-id: "&cKonsoli: käytä /guildwar report <id>"
+war.report.header: "&6── Raportti #{id} ── &f{a} &a{sa}&7:&c{sb} &f{b} &7→ &e{winner}"
+war.report.meta: "&7Tila: &f{mode} &7Syy: &f{reason} &7Kesto: &f{sec}s"
+war.report.player: "&7  {side} &f{name} &7kills=&e{kills}{elim}"
+war.season.unavailable: "&cKausijärjestelmä ei valmis"
+war.season.gui-title: "&6Kaustilastot &7({season})"
+war.season.header: "&6── Kausi &f{season} &6Sijoitus ──"
+war.season.row: "&e#{rank} &f{name} &a{w}&7/&c{l}&7/&8{d} &7kills=&e{k}"
+war.season.empty: "&7Ei vielä kausitietoja"
 
 # ============ service errors ============
 war.error.max-concurrent: "&cSamanaikaisten kiltasotien raja saavutettu"

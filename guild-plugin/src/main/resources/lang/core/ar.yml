@@ -595,6 +595,8 @@ contribution.type.creation: "\u0625\u0646\u0634\u0627\u0621 \u0627\u0644\u0646\u
 contribution.type.upgrade: "\u062a\u0631\u0642\u064a\u0629 \u0627\u0644\u0646\u0642\u0627\u0628\u0629"
 contribution.type.admin: "\u0639\u0645\u0644\u064a\u0629 \u0625\u062f\u0627\u0631\u064a\u0629"
 
+contribution.type.war_win: "فوز حرب النقابة"
+contribution.type.war_kill: "قتل (حرب)"
 # Application status
 application.status.pending: "\u0642\u064a\u062f \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631"
 application.status.approved: "\u062a\u0645 \u0627\u0644\u0645\u0648\u0627\u0641\u0642\u0629"
@@ -960,7 +962,23 @@ war.help.join-leave: "&e/guildwar join|leave &7- \u062a\u0633\u062c\u064a\u0644/
 war.help.ready: "&e/guildwar ready &7- \u0627\u0644\u0628\u062f\u0621 \u0645\u0628\u0643\u0631\u064b\u0627 \u0641\u064a \u0645\u0631\u062d\u0644\u0629 \u0627\u0644\u062a\u0633\u062c\u064a\u0644 (\u0627\u0644\u0636\u0628\u0627\u0637\u060c \u0643\u0644\u0627 \u0627\u0644\u0637\u0631\u0641\u064a\u0646 \u062c\u0627\u0647\u0632\u0627\u0646)"
 war.help.cancel: "&e/guildwar cancel &7- \u0625\u0644\u063a\u0627\u0621 \u0627\u0644\u0645\u0628\u0627\u0631\u0627\u0629 \u063a\u064a\u0631 \u0627\u0644\u0645\u0628\u062f\u0623\u0629 (\u0627\u0644\u0636\u0628\u0627\u0637)"
 war.help.status: "&e/guildwar status &7- \u0639\u0631\u0636 \u0627\u0644\u062d\u0627\u0644\u0629"
+war.help.report: "&e/guildwar report [id] &7- عرض التقرير"
+war.help.season: "&e/guildwar season &7- ترتيب الموسم"
 war.help.admin: "&e/guildwar admin end <id> &7- \u0625\u0646\u0647\u0627\u0621 \u0642\u0633\u0631\u064a"
+
+war.report.broadcast: "&6[تقرير #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
+war.report.kill-line: "&7  · &f{player} &7قتل: &e{kills}"
+war.report.none: "&7لم يتم العثور على تقرير"
+war.report.bad-id: "&cمعرّف تقرير غير صالح"
+war.report.need-id: "&cالكونسول: استخدم /guildwar report <id>"
+war.report.header: "&6── تقرير #{id} ── &f{a} &a{sa}&7:&c{sb} &f{b} &7→ &e{winner}"
+war.report.meta: "&7الوضع: &f{mode} &7السبب: &f{reason} &7المدة: &f{sec}ث"
+war.report.player: "&7  {side} &f{name} &7kills=&e{kills}{elim}"
+war.season.unavailable: "&cنظام الموسم غير جاهز"
+war.season.gui-title: "&6إحصائيات الموسم &7({season})"
+war.season.header: "&6── الموسم &f{season} &6الترتيب ──"
+war.season.row: "&e#{rank} &f{name} &a{w}&7/&c{l}&7/&8{d} &7kills=&e{k}"
+war.season.empty: "&7لا توجد بيانات موسم بعد"
 
 # ============ service errors ============
 war.error.max-concurrent: "&c\u062a\u0645 \u0628\u0644\u0648\u063a \u0627\u0644\u062d\u062f \u0627\u0644\u0623\u0642\u0635\u0649 \u0644\u0644\u062d\u0631\u0648\u0628 \u0627\u0644\u0645\u062a\u0632\u0627\u0645\u0646\u0629"

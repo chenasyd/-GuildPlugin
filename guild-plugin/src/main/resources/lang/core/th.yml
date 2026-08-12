@@ -595,6 +595,8 @@ contribution.type.creation: "\u0e2a\u0e23\u0e49\u0e32\u0e07\u0e01\u0e34\u0e25\u0
 contribution.type.upgrade: "\u0e40\u0e1e\u0e34\u0e48\u0e21\u0e40\u0e25\u0e27\u0e25\u0e01\u0e34\u0e25\u0e14\u0e4c"
 contribution.type.admin: "\u0e01\u0e32\u0e23\u0e14\u0e33\u0e40\u0e19\u0e34\u0e19\u0e01\u0e32\u0e23\u0e02\u0e2d\u0e07\u0e1c\u0e39\u0e49\u0e14\u0e39\u0e41\u0e25"
 
+contribution.type.war_win: "ชนะสงครามกิลด์"
+contribution.type.war_kill: "ฆ่า (สงคราม)"
 # Application status
 application.status.pending: "\u0e23\u0e2d\u0e01\u0e32\u0e23\u0e14\u0e33\u0e40\u0e19\u0e34\u0e19\u0e01\u0e32\u0e23"
 application.status.approved: "\u0e1c\u0e48\u0e32\u0e19\u0e41\u0e25\u0e49\u0e27"
@@ -960,7 +962,23 @@ war.help.join-leave: "&e/guildwar join|leave &7- \u0e25\u0e07\u0e17\u0e30\u0e40\
 war.help.ready: "&e/guildwar ready &7- \u0e40\u0e23\u0e34\u0e48\u0e21\u0e01\u0e48\u0e2d\u0e19\u0e01\u0e33\u0e2b\u0e19\u0e14\u0e43\u0e19\u0e23\u0e30\u0e14\u0e31\u0e1a\u0e01\u0e32\u0e23\u0e25\u0e07\u0e17\u0e30\u0e40\u0e1a\u0e35\u0e22\u0e19 (\u0e40\u0e08\u0e49\u0e32\u0e2b\u0e19\u0e49\u0e32\u0e17\u0e35\u0e48, \u0e17\u0e31\u0e49\u0e07\u0e2a\u0e2d\u0e07\u0e1d\u0e48\u0e32\u0e22\u0e1e\u0e23\u0e49\u0e2d\u0e21)"
 war.help.cancel: "&e/guildwar cancel &7- \u0e22\u0e01\u0e40\u0e25\u0e34\u0e01\u0e01\u0e32\u0e23\u0e41\u0e02\u0e48\u0e07\u0e02\u0e31\u0e19\u0e17\u0e35\u0e48\u0e22\u0e31\u0e07\u0e44\u0e21\u0e48\u0e40\u0e23\u0e34\u0e48\u0e21 (\u0e40\u0e08\u0e49\u0e32\u0e2b\u0e19\u0e49\u0e32\u0e17\u0e35\u0e48)"
 war.help.status: "&e/guildwar status &7- \u0e14\u0e39\u0e2a\u0e16\u0e32\u0e19\u0e30"
+war.help.report: "&e/guildwar report [id] &7- ดูรายงาน"
+war.help.season: "&e/guildwar season &7- อันดับซีซัน"
 war.help.admin: "&e/guildwar admin end <id> &7- \u0e1a\u0e31\u0e07\u0e04\u0e31\u0e1a\u0e43\u0e2b\u0e49\u0e08\u0e1a"
+
+war.report.broadcast: "&6[รายงาน #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
+war.report.kill-line: "&7  · &f{player} &7คิล: &e{kills}"
+war.report.none: "&7ไม่พบรายงาน"
+war.report.bad-id: "&cรหัสรายงานไม่ถูกต้อง"
+war.report.need-id: "&cคอนโซล: ใช้ /guildwar report <id>"
+war.report.header: "&6── รายงาน #{id} ── &f{a} &a{sa}&7:&c{sb} &f{b} &7→ &e{winner}"
+war.report.meta: "&7โหมด: &f{mode} &7เหตุผล: &f{reason} &7เวลา: &f{sec}s"
+war.report.player: "&7  {side} &f{name} &7kills=&e{kills}{elim}"
+war.season.unavailable: "&cระบบซีซันยังไม่พร้อม"
+war.season.gui-title: "&6สถิติซีซัน &7({season})"
+war.season.header: "&6── ซีซัน &f{season} &6อันดับ ──"
+war.season.row: "&e#{rank} &f{name} &a{w}&7/&c{l}&7/&8{d} &7kills=&e{k}"
+war.season.empty: "&7ยังไม่มีข้อมูลซีซัน"
 
 # ============ service errors ============
 war.error.max-concurrent: "&c\u0e16\u0e36\u0e07\u0e02\u0e35\u0e14\u0e08\u0e33\u0e01\u0e31\u0e14\u0e02\u0e2d\u0e07\u0e08\u0e33\u0e19\u0e27\u0e19\u0e2a\u0e07\u0e04\u0e23\u0e32\u0e21\u0e01\u0e34\u0e25\u0e14\u0e4c\u0e17\u0e35\u0e48\u0e40\u0e01\u0e34\u0e14\u0e02\u0e36\u0e49\u0e19\u0e1e\u0e23\u0e49\u0e2d\u0e21\u0e01\u0e31\u0e19\u0e41\u0e25\u0e49\u0e27"

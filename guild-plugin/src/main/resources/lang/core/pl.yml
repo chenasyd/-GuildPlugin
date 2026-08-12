@@ -595,6 +595,8 @@ contribution.type.creation: "Utworzenie Gildii"
 contribution.type.upgrade: "Awans Gildii"
 contribution.type.admin: "Operacja Admina"
 
+contribution.type.war_win: "Zwycięstwo w wojnie gildii"
+contribution.type.war_kill: "Zabójstwo (wojna)"
 # Application status
 application.status.pending: "Oczekujące"
 application.status.approved: "Zatwierdzone"
@@ -960,7 +962,23 @@ war.help.join-leave: "\u0026e/guildwar join|leave \u00267- Zapisz/wypisz si\u011
 war.help.ready: "\u0026e/guildwar ready \u00267- Rozpocznij wcze\u015bniej w fazie zapis\u00f3w (oficerowie, obie strony gotowe)"
 war.help.cancel: "\u0026e/guildwar cancel \u00267- Anuluj nierozpocz\u0119ty mecz (oficerowie)"
 war.help.status: "\u0026e/guildwar status \u00267- Wy\u015bwietl status"
+war.help.report: "&e/guildwar report [id] &7- Raport meczu"
+war.help.season: "&e/guildwar season &7- Ranking sezonu"
 war.help.admin: "\u0026e/guildwar admin end <id> \u00267- Wymu\u015b zako\u0144czenie"
+
+war.report.broadcast: "&6[Raport #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
+war.report.kill-line: "&7  · &f{player} &7zabójstwa: &e{kills}"
+war.report.none: "&7Nie znaleziono raportu"
+war.report.bad-id: "&cNieprawidłowe ID raportu"
+war.report.need-id: "&cKonsola: użyj /guildwar report <id>"
+war.report.header: "&6── Raport #{id} ── &f{a} &a{sa}&7:&c{sb} &f{b} &7→ &e{winner}"
+war.report.meta: "&7Tryb: &f{mode} &7Powód: &f{reason} &7Czas: &f{sec}s"
+war.report.player: "&7  {side} &f{name} &7kills=&e{kills}{elim}"
+war.season.unavailable: "&cSystem sezonu niegotowy"
+war.season.gui-title: "&6Statystyki sezonu &7({season})"
+war.season.header: "&6── Sezon &f{season} &6Ranking ──"
+war.season.row: "&e#{rank} &f{name} &a{w}&7/&c{l}&7/&8{d} &7kills=&e{k}"
+war.season.empty: "&7Brak danych sezonu"
 
 # ============ service errors ============
 war.error.max-concurrent: "\u0026cOsi\u0105gni\u0119to limit r\u00f3wnoczesnych wojen gildii"

@@ -595,6 +595,8 @@ contribution.type.creation: "Crearea breslei"
 contribution.type.upgrade: "Promovarea breslei"
 contribution.type.admin: "Opera\u021biune de administrator"
 
+contribution.type.war_win: "Victorie război de breaslă"
+contribution.type.war_kill: "Ucideri (război)"
 # Application status
 application.status.pending: "\u00cen a\u0219teptare"
 application.status.approved: "Aprobat"
@@ -960,7 +962,23 @@ war.help.join-leave: "&e/guildwar join|leave &7- \u00censcrie/Anuleaz\u0103 \u00
 war.help.ready: "&e/guildwar ready &7- \u00cencepe devreme \u00een faza de \u00eenscriere (ofi\u021beri, ambele p\u0103r\u021bi preg\u0103tite)"
 war.help.cancel: "&e/guildwar cancel &7- Anuleaz\u0103 meciul ne\u00eenceput (ofi\u021beri)"
 war.help.status: "&e/guildwar status &7- Vezi starea"
+war.help.report: "&e/guildwar report [id] &7- Vezi raportul"
+war.help.season: "&e/guildwar season &7- Clasament sezon"
 war.help.admin: "&e/guildwar admin end <id> &7- Termin\u0103 for\u021bat"
+
+war.report.broadcast: "&6[Raport #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
+war.report.kill-line: "&7  · &f{player} &7ucideri: &e{kills}"
+war.report.none: "&7Niciun raport găsit"
+war.report.bad-id: "&cID raport invalid"
+war.report.need-id: "&cConsolă: folosește /guildwar report <id>"
+war.report.header: "&6── Raport #{id} ── &f{a} &a{sa}&7:&c{sb} &f{b} &7→ &e{winner}"
+war.report.meta: "&7Mod: &f{mode} &7Motiv: &f{reason} &7Durată: &f{sec}s"
+war.report.player: "&7  {side} &f{name} &7kills=&e{kills}{elim}"
+war.season.unavailable: "&cSistemul de sezon nu e gata"
+war.season.gui-title: "&6Statistici sezon &7({season})"
+war.season.header: "&6── Sezon &f{season} &6Clasament ──"
+war.season.row: "&e#{rank} &f{name} &a{w}&7/&c{l}&7/&8{d} &7kills=&e{k}"
+war.season.empty: "&7Încă nu există date de sezon"
 
 # ============ service errors ============
 war.error.max-concurrent: "&cS-a atins limita de r\u0103zboaie de breasl\u0103 simultane"

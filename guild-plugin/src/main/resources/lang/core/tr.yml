@@ -595,6 +595,8 @@ contribution.type.creation: "Guild Oluşturma"
 contribution.type.upgrade: "Guild Y\u00fckseltme"
 contribution.type.admin: "Y\u00f6netici İşlemi"
 
+contribution.type.war_win: "Lonca savaşı zaferi"
+contribution.type.war_kill: "Öldürme (savaş)"
 # Application status
 application.status.pending: "Beklemede"
 application.status.approved: "Onaylandı"
@@ -960,7 +962,23 @@ war.help.join-leave: "&e/guildwar join|leave &7- Kay\u0131t ol/kayd\u0131 iptal 
 war.help.ready: "&e/guildwar ready &7- Kay\u0131t a\u015famas\u0131nda erken ba\u015flat (subaylar, her iki taraf da haz\u0131r)"
 war.help.cancel: "&e/guildwar cancel &7- Ba\u015flamam\u0131\u015f ma\u00e7\u0131 iptal et (subaylar)"
 war.help.status: "&e/guildwar status &7- Durumu g\u00f6r"
+war.help.report: "&e/guildwar report [id] &7- Maç raporu"
+war.help.season: "&e/guildwar season &7- Sezon sıralaması"
 war.help.admin: "&e/guildwar admin end <id> &7- Zorla sonland\u0131r"
+
+war.report.broadcast: "&6[Rapor #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
+war.report.kill-line: "&7  · &f{player} &7öldürme: &e{kills}"
+war.report.none: "&7Rapor bulunamadı"
+war.report.bad-id: "&cGeçersiz rapor ID"
+war.report.need-id: "&cKonsol: /guildwar report <id> kullanın"
+war.report.header: "&6── Rapor #{id} ── &f{a} &a{sa}&7:&c{sb} &f{b} &7→ &e{winner}"
+war.report.meta: "&7Mod: &f{mode} &7Sebep: &f{reason} &7Süre: &f{sec}s"
+war.report.player: "&7  {side} &f{name} &7kills=&e{kills}{elim}"
+war.season.unavailable: "&cSezon sistemi hazır değil"
+war.season.gui-title: "&6Sezon istatistikleri &7({season})"
+war.season.header: "&6── Sezon &f{season} &6Sıralama ──"
+war.season.row: "&e#{rank} &f{name} &a{w}&7/&c{l}&7/&8{d} &7kills=&e{k}"
+war.season.empty: "&7Henüz sezon verisi yok"
 
 # ============ service errors ============
 war.error.max-concurrent: "&cE\u015fzamanl\u0131 lonca sava\u015flar\u0131 limitine ula\u015f\u0131ld\u0131"

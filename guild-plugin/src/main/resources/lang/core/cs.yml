@@ -595,6 +595,8 @@ contribution.type.creation: "Vytvo\u0159en\u00ed gildy"
 contribution.type.upgrade: "Pov\u00fd\u0161en\u00ed gildy"
 contribution.type.admin: "Operace spr\u00e1vce"
 
+contribution.type.war_win: "Vítězství ve válce cechů"
+contribution.type.war_kill: "Zabití (válka)"
 # Application status
 application.status.pending: "\u010cek\u00e1 na zpracov\u00e1n\u00ed"
 application.status.approved: "Schv\u00e1leno"
@@ -960,7 +962,23 @@ war.help.join-leave: "&e/guildwar join|leave &7- Registrovat/zru\u0161it registr
 war.help.ready: "&e/guildwar ready &7- P\u0159ed\u010dasn\u011b zah\u00e1jit ve f\u00e1zi registrace (d\u016fstojn\u00edci, ob\u011b strany p\u0159ipraveny)"
 war.help.cancel: "&e/guildwar cancel &7- Zru\u0161it nezah\u00e1jen\u00fd z\u00e1pas (d\u016fstojn\u00edci)"
 war.help.status: "&e/guildwar status &7- Zobrazit stav"
+war.help.report: "&e/guildwar report [id] &7- Zobrazit zprávu"
+war.help.season: "&e/guildwar season &7- Sezónní žebříček"
 war.help.admin: "&e/guildwar admin end <id> &7- Vynutit ukon\u010den\u00ed"
+
+war.report.broadcast: "&6[Zpráva #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
+war.report.kill-line: "&7  · &f{player} &7zabití: &e{kills}"
+war.report.none: "&7Zpráva nenalezena"
+war.report.bad-id: "&cNeplatné ID zprávy"
+war.report.need-id: "&cKonzole: použijte /guildwar report <id>"
+war.report.header: "&6── Zpráva #{id} ── &f{a} &a{sa}&7:&c{sb} &f{b} &7→ &e{winner}"
+war.report.meta: "&7Režim: &f{mode} &7Důvod: &f{reason} &7Doba: &f{sec}s"
+war.report.player: "&7  {side} &f{name} &7kills=&e{kills}{elim}"
+war.season.unavailable: "&cSezónní systém není připraven"
+war.season.gui-title: "&6Sezónní statistiky &7({season})"
+war.season.header: "&6── Sezóna &f{season} &6Žebříček ──"
+war.season.row: "&e#{rank} &f{name} &a{w}&7/&c{l}&7/&8{d} &7kills=&e{k}"
+war.season.empty: "&7Zatím žádná sezónní data"
 
 # ============ service errors ============
 war.error.max-concurrent: "&cByl dosa\u017een limit sou\u010dasn\u00fdch gildijn\u00edch v\u00e1lek"

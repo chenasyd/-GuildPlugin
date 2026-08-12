@@ -595,6 +595,8 @@ contribution.type.creation: "T\u1EA1o c\xF4ng h\u1ED9i"
 contribution.type.upgrade: "N\xE2ng c\u1EA5p c\xF4ng h\u1ED9i"
 contribution.type.admin: "Thao t\xE1c qu\u1EA3n tr\u1ECB"
 
+contribution.type.war_win: "Thắng chiến guild"
+contribution.type.war_kill: "Hạ gục (chiến)"
 # Application status
 application.status.pending: "\u0110ang ch\u1EDD"
 application.status.approved: "\u0110\xE3 duy\u1EC7t"
@@ -960,7 +962,23 @@ war.help.join-leave: "&e/guildwar join|leave &7- \u0110\u0103ng k\u00fd/h\u1ee7y
 war.help.ready: "&e/guildwar ready &7- B\u1eaft \u0111\u1ea7u s\u1edbm trong giai \u0111o\u1ea1n \u0111\u0103ng k\u00fd (s\u0129 quan, c\u1ea3 hai b\u00ean s\u1eb5n s\u00e0ng)"
 war.help.cancel: "&e/guildwar cancel &7- H\u1ee7y tr\u1eadn \u0111\u1ea5u ch\u01b0a b\u1eaft \u0111\u1ea7u (s\u0129 quan)"
 war.help.status: "&e/guildwar status &7- Xem tr\u1ea1ng th\u00e1i"
+war.help.report: "&e/guildwar report [id] &7- Xem báo cáo"
+war.help.season: "&e/guildwar season &7- BXH mùa giải"
 war.help.admin: "&e/guildwar admin end <id> &7- Bu\u1ed9c k\u1ebft th\u00fac"
+
+war.report.broadcast: "&6[Báo cáo #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
+war.report.kill-line: "&7  · &f{player} &7hạ gục: &e{kills}"
+war.report.none: "&7Không tìm thấy báo cáo"
+war.report.bad-id: "&cID báo cáo không hợp lệ"
+war.report.need-id: "&cConsole: dùng /guildwar report <id>"
+war.report.header: "&6── Báo cáo #{id} ── &f{a} &a{sa}&7:&c{sb} &f{b} &7→ &e{winner}"
+war.report.meta: "&7Chế độ: &f{mode} &7Lý do: &f{reason} &7Thời gian: &f{sec}s"
+war.report.player: "&7  {side} &f{name} &7kills=&e{kills}{elim}"
+war.season.unavailable: "&cHệ thống mùa giải chưa sẵn sàng"
+war.season.gui-title: "&6Thống kê mùa &7({season})"
+war.season.header: "&6── Mùa &f{season} &6BXH ──"
+war.season.row: "&e#{rank} &f{name} &a{w}&7/&c{l}&7/&8{d} &7kills=&e{k}"
+war.season.empty: "&7Chưa có dữ liệu mùa"
 
 # ============ service errors ============
 war.error.max-concurrent: "&c\u0110\u00e3 \u0111\u1ea1t gi\u1edbi h\u1ea1n s\u1ed1 l\u01b0\u1ee3ng chi\u1ebfn tranh guild \u0111\u1ed3ng th\u1eddi"
