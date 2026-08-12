@@ -30,6 +30,11 @@ commands:
     description: Bedrock form GUI preview test
     usage: /bformtest [simple|custom|modal]
     permission: guild.use
+  guildworld:
+    description: Guild world management (void worlds, recovery)
+    usage: /guildworld help
+    aliases: [gworld, 工会世界]
+    permission: guild.admin.world
 
 permissions:
   guild.use:
@@ -85,4 +90,7 @@ permissions:
     default: op
   guild.admin.update:
     description: Allows downloading and installing plugin updates
+    default: op
+  guild.admin.world:
+    description: Allows managing guild worlds (create/load/unload/delete/recover)
     default: op

@@ -15,9 +15,13 @@ public class TestUtils {
         logger.info("=== Server Compatibility Test ===");
         logger.info("Server type: " + ServerUtils.getServerType());
         logger.info("Server version: " + ServerUtils.getServerVersion());
+        logger.info("Minecraft version: " + ServerUtils.getMinecraftVersion());
         logger.info("Supports 1.20: " + ServerUtils.supportsApiVersion("1.20"));
         logger.info("Is Folia: " + ServerUtils.isFolia());
         logger.info("Is Spigot: " + ServerUtils.isSpigot());
+        if (ServerUtils.isFolia()) {
+            logger.info("Folia version supported (gworld): " + ServerUtils.isFoliaVersionSupported());
+        }
         logger.info("=========================");
     }
     

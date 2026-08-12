@@ -180,3 +180,31 @@ developer-mode:
   #   - name: "Community Repo"
   #     api: "https://api.github.com/repos/community/repo/releases"
   repositories: []
+
+# World management configuration (void worlds + crash recovery)
+world:
+  # Prefix automatically added to managed world names (e.g. input "arena1" -> "gw_arena1")
+  name-prefix: "gw_"
+  safety:
+    # Fallback world for players when a managed world is unloaded/deleted
+    fallback-world: "world"
+  recovery:
+    # Run startup recovery check (detect worlds left over from a crash/abnormal shutdown)
+    check-on-startup: true
+    # Automatically reload stale worlds found by the recovery check (EDIT worlds are never auto-loaded)
+    auto-load-stale: false
+    # Remove registry records whose world folder no longer exists
+    auto-clean-orphans: true
+  edit:
+    # Wand material for pos1 (left-click) / pos2 (right-click)
+    wand-material: WOODEN_AXE
+  schematic:
+    # Max selection volume (blocks)
+    max-volume: 2000000
+    # Skip air blocks when pasting
+    ignore-air: true
+    # Include tile entities (chests/signs/spawners); falls back to blocks-only on failure
+    include-block-entities: true
+  arena:
+    # Post-match policy for future guild-war module: destroy | reset
+    post-match: destroy

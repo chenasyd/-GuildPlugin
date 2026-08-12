@@ -31,6 +31,11 @@ import com.guild.core.utils.TestUtils;
 import com.guild.metrics.GuildMetrics;
 import com.guild.update.UpdateChecker;
 import com.guild.update.UpdateManager;
+import com.guild.world.GuildWorldService;
+import com.guild.world.api.GuildWorldAPI;
+import com.guild.world.api.GuildWorldAPIImpl;
+import com.guild.world.command.GuildWorldCommand;
+import com.guild.world.selection.SelectionListener;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -58,6 +63,8 @@ public class GuildPlugin extends JavaPlugin {
     private com.guild.services.GuildInvestmentService guildInvestmentService;
     private com.guild.chat.GuildChatManager guildChatManager;
     private ModuleManager moduleManager;
+    private GuildWorldService guildWorldService;
+    private GuildWorldAPI guildWorldAPI;
     private volatile boolean modulesUnloaded = false;
     private GuildMetrics guildMetrics;
     private UpdateManager updateManager;
@@ -75,6 +82,10 @@ public class GuildPlugin extends JavaPlugin {
         logger.info("Starting Guild Plugin...");
         logger.info("Detected server type: " + ServerUtils.getServerType());
         logger.info("Server version: " + ServerUtils.getServerVersion());
+        logger.info("Minecraft version: " + ServerUtils.getMinecraftVersion());
+        if (ServerUtils.isFolia()) {
+            logger.info("Folia world bridge supported: " + ServerUtils.isFoliaVersionSupported());
+        }
         
         // 检查API版本兼容性
         if (!ServerUtils.supportsApiVersion("1.20")) {
@@ -205,6 +216,22 @@ public class GuildPlugin extends JavaPlugin {
             // 初始化公会聊天管理器
             guildChatManager = new com.guild.chat.GuildChatManager(this);
 
+            // 初始化世界管理系统（虚空世界 + 意外恢复，须在模块加载前就绪）
+            guildWorldService = new GuildWorldService(this);
+            serviceContainer.register(GuildWorldService.class, guildWorldService);
+            guildWorldAPI = new GuildWorldAPIImpl(guildWorldService);
+            serviceContainer.register(GuildWorldAPI.class, guildWorldAPI);
+            guildWorldService.load();
+            if (!guildWorldService.isEnabled()) {
+                logger.warning("[World] " + guildWorldService.unsupportedMessage()
+                        + " — create/load/unload/delete 与启动恢复已禁用"
+                        + "（支持: " + ServerUtils.getFoliaSupportedVersions() + "）");
+            } else {
+                getServer().getPluginManager().registerEvents(
+                        new SelectionListener(this, guildWorldService.getSelections(),
+                                guildWorldService.getWandMaterial()), this);
+            }
+
             // 初始化模块系统（在所有核心服务就绪后）
             moduleManager = new ModuleManager(this);
             serviceContainer.register(ModuleManager.class, moduleManager);
@@ -245,6 +272,11 @@ public class GuildPlugin extends JavaPlugin {
             
             // 启动定时清理任务 - 清理过期邀请
             startCleanupTasks();
+
+            // 启动世界恢复自检（延迟到服务器 RUNNING 状态执行，Folia 兼容）
+            if (guildWorldService != null) {
+                guildWorldService.scheduleRecovery();
+            }
             
             logger.info("Guild Plugin started successfully!");
             logger.info("Compatibility mode: " + (ServerUtils.isFolia() ? "Folia" : "Spigot"));
@@ -269,6 +301,11 @@ public class GuildPlugin extends JavaPlugin {
             // 关闭所有GUI
             if (guiManager != null) {
                 guiManager.closeAllGUIs();
+            }
+
+            // 优雅卸载所有受管世界（标记 cleanShutdown，意外恢复机制的一部分）
+            if (guildWorldService != null) {
+                guildWorldService.shutdown();
             }
             
             // 关闭服务
@@ -317,6 +354,13 @@ public class GuildPlugin extends JavaPlugin {
         getCommand("guildadmin").setTabCompleter(guildAdminCommand);
         getCommand("guildmodule").setExecutor(guildModuleCommand);
         getCommand("guildmodule").setTabCompleter(guildModuleCommand);
+
+        // 世界管理命令（/guildworld）
+        if (getCommand("guildworld") != null) {
+            GuildWorldCommand guildWorldCommand = new GuildWorldCommand(this, guildWorldService);
+            getCommand("guildworld").setExecutor(guildWorldCommand);
+            getCommand("guildworld").setTabCompleter(guildWorldCommand);
+        }
 
         // 仅在 Geyser/Cumulus 可用时注册基岩表单测试指令（避免 NoClassDefFoundError）
         if (BedrockFormSender.isAvailable()) {
@@ -414,6 +458,14 @@ public class GuildPlugin extends JavaPlugin {
 
     public com.guild.chat.GuildChatManager getGuildChatManager() {
         return guildChatManager;
+    }
+
+    public GuildWorldService getGuildWorldService() {
+        return guildWorldService;
+    }
+
+    public GuildWorldAPI getGuildWorldAPI() {
+        return guildWorldAPI;
     }
     
     public ModuleManager getModuleManager() {
