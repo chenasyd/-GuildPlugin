@@ -213,7 +213,7 @@ guild.sethome.error: "&cEtt fel uppstod n\u00e4r gillehemmet skulle s\u00e4ttas!
 guild.home.not-in-guild: "&cDu \u00e4r inte i n\u00e5got gille!"
 home.not-set: "&cGillehemmet har inte satts \u00e4nnu!"
 home.success: "&aTeleporterad till gillehemmet!"
-home.folia-disabled: "&cTeleportering \u00e4r inte tillg\u00e4nglig i Folia-milj\u00f6n!"
+home.teleport-failed: "&cTeleportering misslyckades, försök igen!"
 home.teleporting: "&aTeleporterar om &e{seconds} &asekunder..."
 home.teleport-cancelled: "&cTeleportering avbruten (r\u00f6r dig inte)!"
 sethome.only-leader: "&cEndast gilleledaren kan s\u00e4tta gillehemmet!"

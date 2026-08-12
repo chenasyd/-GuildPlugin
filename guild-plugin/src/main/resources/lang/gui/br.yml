@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&7Clique Direito &fpara Editar Descrição"
     text-edit-desc-shift-left: "&7Shift+Clique Esquerdo &fpara Editar Tag"
     guild-settings-title: "&6Configurações da Guilda - {guild_name}"
-    home.folia-disabled: "&cTeleporte não disponível no ambiente Folia!"
+    home.teleport-failed: "&cFalha no teleporte, tente novamente!"
     home.not-set: "&cA casa da guilda ainda não foi definida!"
     home.success: "&aTeleportado para a casa da guilda!"
     sethome.failed: "&cFalha ao definir a casa da guilda!"

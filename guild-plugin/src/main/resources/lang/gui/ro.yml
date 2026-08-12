@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&7Buton dreapta &fModific\u0103 descrierea"
     text-edit-desc-shift-left: "&7Shift+Buton st\u00e2nga &fModific\u0103 eticheta"
     guild-settings-title: "&6Set\u0103ri breasl\u0103 - {guild_name}"
-    home.folia-disabled: "&cFunc\u021bia de teleportare este temporar indisponibil\u0103 \u00een mediul Folia!"
+    home.teleport-failed: "&cTeleportarea a eșuat, încercați din nou!"
     home.not-set: "&cCasa breslei nu a fost \u00eenc\u0103 setat\u0103!"
     home.success: "&aV-a\u021bi teleportat la casa breslei!"
     sethome.failed: "&cSetarea casei breslei a e\u0219uat!"

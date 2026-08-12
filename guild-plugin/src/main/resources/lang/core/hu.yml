@@ -213,7 +213,7 @@ guild.sethome.error: "&cHiba t\u00f6rt\u00e9nt a c\u00e9h otthon\u00e1nak be\u00
 guild.home.not-in-guild: "&cNem vagy egyetlen c\u00e9hben sem!"
 home.not-set: "&cA c\u00e9h otthona m\u00e9g nincs be\u00e1ll\u00edtva!"
 home.success: "&cSikeresen teleport\u00e1lt\u00e1l a c\u00e9h otthon\u00e1ba!"
-home.folia-disabled: "&cA teleport\u00e1ci\u00f3s funkci\u00f3 jelenleg nem el\u00e9rhet\u0151 Folia k\u00f6rnyezetben!"
+home.teleport-failed: "&cA teleportálás sikertelen, próbáld újra!"
 home.teleporting: "&aTeleport\u00e1ci\u00f3 &e{seconds} &am\u00e1sodperc..."
 home.teleport-cancelled: "&cA teleport\u00e1ci\u00f3 lemondva (ne mozgasd magad)!"
 sethome.only-leader: "&cCsak a c\u00e9h vezet\u0151je \u00e1ll\u00edthatja be a c\u00e9h otthon\u00e1t!"

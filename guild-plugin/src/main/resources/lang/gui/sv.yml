@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&8H\u00f6gerklick &ff\u00f6r att redigera beskrivning"
     text-edit-desc-shift-left: "&8Shift+V\u00e4nsterklick &ff\u00f6r att redigera tagg"
     guild-settings-title: "&6Gilleinst\u00e4llningar - {guild_name}"
-    home.folia-disabled: "&cTeleportering \u00e4r inte tillg\u00e4nglig i Folia-milj\u00f6n!"
+    home.teleport-failed: "&cTeleportering misslyckades, försök igen!"
     home.not-set: "&cGillehemmet har inte inst\u00e4llts \u00e4nnu!"
     home.success: "&aTeleporterad till gillehemmet!"
     sethome.failed: "&cMisslyckades med att s\u00e4tta gillehemmet!"

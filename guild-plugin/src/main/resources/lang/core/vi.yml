@@ -213,7 +213,7 @@ guild.sethome.error: "&c\u0110\xE3 x\u1EA3y ra l\u1ED7i khi thi\u1EBFt l\u1EADp 
 guild.home.not-in-guild: "&cB\u1EA1n kh\xF4ng \u1EDF trong b\u1EA5t k\u1EF3 c\xF4ng h\u1ED9i n\xE0o!"
 home.not-set: "&cNh\xE0 c\xF4ng h\u1ED9i ch\u01B0a \u0111\u01B0\u1EE3c thi\u1EBFt l\u1EADp!"
 home.success: "&a\u0110\xE3 d\u1ECBch chuy\u1EC3n v\u1EC1 nh\xE0 c\xF4ng h\u1ED9i!"
-home.folia-disabled: "&cCh\u1EE9c n\u0103ng d\u1ECBch chuy\u1EC3n t\u1EA1m th\u1EDDi kh\xF4ng kh\u1EA3 d\u1EE5ng trong m\xF4i tr\u01B0\u1EDDng Folia!"
+home.teleport-failed: "&cDịch chuyển thất bại, vui lòng thử lại!"
 home.teleporting: "&a\u0110ang d\u1ECBch chuy\u1EC3n &e{seconds} &agi\u00e2y..."
 home.teleport-cancelled: "&cD\u1ECBch chuy\u1EC3n \u0111\u00e3 b\u1ecb h\u01a1y (vui l\u00f2ng \u0111\u00f9ng \u0111\u1ee7ng)!"
 sethome.only-leader: "&cCh\u1EC9 c\xF3 ch\u1EE7 t\u1ECBch c\xF4ng h\u1ED9i m\u1EDBi c\xF3 th\u1EC3 thi\u1EBFt l\u1EADp nh\xE0 c\xF4ng h\u1ED9i!"

@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&8Rechtsklick &fum Beschreibung zu bearbeiten"
     text-edit-desc-shift-left: "&8Umschalt+Linksklick &fum Tag zu bearbeiten"
     guild-settings-title: "&6Gilden Einstellungen - {guild_name}"
-    home.folia-disabled: "&cTeleportation in der Folia-Umgebung nicht verf\u00fcgbar!"
+    home.teleport-failed: "&cTeleport fehlgeschlagen, bitte erneut versuchen!"
     home.not-set: "&cGildenhaus wurde noch nicht festgelegt!"
     home.success: "&aZum Gildenhaus teleportiert!"
     sethome.failed: "&cFestlegen des Gildenhauses fehlgeschlagen!"

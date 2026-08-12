@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&8Rechterklik &fom beschrijving te bewerken"
     text-edit-desc-shift-left: "&8Shift+Linkerklik &fom tag te bewerken"
     guild-settings-title: "&6Gilde-instellingen - {guild_name}"
-    home.folia-disabled: "&cTeleporteren niet beschikbaar in Folia-omgeving!"
+    home.teleport-failed: "&cTeleporteren mislukt, probeer het opnieuw!"
     home.not-set: "&cGildehuis is nog niet ingesteld!"
     home.success: "&aGeteleporteerd naar gildehuis!"
     sethome.failed: "&cInstellen van gildehuis mislukt!"

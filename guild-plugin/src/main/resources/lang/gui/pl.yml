@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&7Kliknij Prawym &faby Edytować Opis"
     text-edit-desc-shift-left: "&7Shift+Lewy &faby Edytować Tag"
     guild-settings-title: "&6Ustawienia Gildii - {guild_name}"
-    home.folia-disabled: "&cTeleportacja niedostępna w środowisku Folia!"
+    home.teleport-failed: "&cTeleportacja nie powiodła się, spróbuj ponownie!"
     home.not-set: "&cDom gildii nie został jeszcze ustawiony!"
     home.success: "&aTeleportowano do domu gildii!"
     sethome.failed: "&cNie udało się ustawić domu gildii!"

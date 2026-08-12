@@ -213,7 +213,7 @@ guild.sethome.error: "&cA ap\u0103rut o eroare la setarea loca\u021biei casei br
 guild.home.not-in-guild: "&cNu sunte\u021bi \u00een nicio breasl\u0103!"
 home.not-set: "&cCasa breslei nu a fost \u00eenc\u0103 setat\u0103!"
 home.success: "&aV-a\u021bi teleportat la casa breslei!"
-home.folia-disabled: "&cFunc\u021bia de teleportare este temporar indisponibil\u0103 \u00een mediul Folia!"
+home.teleport-failed: "&cTeleportarea a eșuat, încercați din nou!"
 home.teleporting: "&aTeleportare \u00een &e{seconds} &asecunde..."
 home.teleport-cancelled: "&cTeleportare anulat\u0103 (nu v\u0103 mi\u015fca\u021bi)!"
 sethome.only-leader: "&cDoar liderul breslei poate seta casa breslei!"

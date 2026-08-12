@@ -213,7 +213,7 @@ guild.sethome.error: "&cEr is een fout opgetreden bij het instellen van het gild
 guild.home.not-in-guild: "&cJe bent geen lid van een gilde!"
 home.not-set: "&cGildehuis is nog niet ingesteld!"
 home.success: "&aGeteleporteerd naar gildehuis!"
-home.folia-disabled: "&cTeleporteren niet beschikbaar in Folia-omgeving!"
+home.teleport-failed: "&cTeleporteren mislukt, probeer het opnieuw!"
 home.teleporting: "&aTeleporteren over &e{seconds} &aseconden..."
 home.teleport-cancelled: "&cTeleporteren geannuleerd (niet bewegen)!"
 sethome.only-leader: "&cAlleen de meester van de gilde kan het gildehuis instellen!"

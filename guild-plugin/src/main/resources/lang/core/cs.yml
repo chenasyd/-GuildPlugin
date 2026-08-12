@@ -213,7 +213,7 @@ guild.sethome.error: "&cP\u0159i nastavov\u00e1n\u00ed domovsk\u00e9ho m\u00edst
 guild.home.not-in-guild: "&cNejste v \u017e\u00e1dn\u00e9 gild\u011b!"
 home.not-set: "&cDomovsk\u00e9 m\u00edsto gildy nebylo dosud nastaveno!"
 home.success: "&aTeleportace na domovsk\u00e9 m\u00edsto gildy prob\u011bhla!"
-home.folia-disabled: "&cFunkce teleportace nen\u00ed v prost\u0159ed\u00ed Folia moment\u00e1ln\u011b k dispozici!"
+home.teleport-failed: "&cTeleportace selhala, zkuste to prosím znovu!"
 home.teleporting: "&aTeleportace za &e{seconds} &avte\u0159iny..."
 home.teleport-cancelled: "&cTeleportace zru\u0161ena (nepohybujte se)!"
 sethome.only-leader: "&cPouze v\u016fdce gildy m\u016f\u017ee nastavit domovsk\u00e9 m\u00edsto gildy!"

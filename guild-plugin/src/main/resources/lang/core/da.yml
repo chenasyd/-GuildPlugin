@@ -213,7 +213,7 @@ guild.sethome.error: "\u0026cAn error occurred while setting the guild home loca
 guild.home.not-in-guild: "\u0026cYou are not in any guild!"
 home.not-set: "\u0026cGuild home has not been set!"
 home.success: "\u0026aTeleported to guild home!"
-home.folia-disabled: "\u0026cTeleportation is not available in the Folia environment!"
+home.teleport-failed: "&cTeleport mislykkedes, prøv igen!"
 home.teleporting: "&aTeleporting in &e{seconds} &aseconds..."
 home.teleport-cancelled: "&cTeleport cancelled (do not move)!"
 sethome.only-leader: "\u0026cOnly the guild leader can set the guild home!"

@@ -213,7 +213,7 @@ guild.sethome.error: "&cBeim Festlegen der Gildenhaus Position ist ein Fehler au
 guild.home.not-in-guild: "&cSie befinden sich in keiner Gilde!"
 home.not-set: "&cGildenhaus wurde noch nicht festgelegt!"
 home.success: "&aZum Gildenhaus teleportiert!"
-home.folia-disabled: "&cTeleportation in der Folia-Umgebung nicht verfügbar!"
+home.teleport-failed: "&cTeleport fehlgeschlagen, bitte erneut versuchen!"
 home.teleporting: "&aTeleportiere in &e{seconds} &aSekunden"
 home.teleport-cancelled: "&cTeleportation abgebrochen (bewegen Sie sich nicht)!"
 sethome.only-leader: "&cNur der Gildenführer kann das Gildenhaus festlegen!"

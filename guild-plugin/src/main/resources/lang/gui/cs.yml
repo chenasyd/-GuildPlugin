@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&7Prav\u00e9 tla\u010d\u00edtko &fZm\u011bnit popis"
     text-edit-desc-shift-left: "&7Shift+Lev\u00e9 tla\u010d\u00edtko &fZm\u011bnit zna\u010dku"
     guild-settings-title: "&6Nastaven\u00ed gildy - {guild_name}"
-    home.folia-disabled: "&cFunkce teleportace nen\u00ed v prost\u0159ed\u00ed Folia moment\u00e1ln\u011b k dispozici!"
+    home.teleport-failed: "&cTeleportace selhala, zkuste to prosím znovu!"
     home.not-set: "&cDomovsk\u00e9 m\u00edsto gildy nebylo dosud nastaveno!"
     home.success: "&aTeleportace na domovsk\u00e9 m\u00edsto gildy prob\u011bhla!"
     sethome.failed: "&cNastaven\u00ed domovsk\u00e9ho m\u00edsta gildy selhalo!"

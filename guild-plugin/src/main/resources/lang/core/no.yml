@@ -213,7 +213,7 @@ guild.sethome.error: "\u0026cEn feil oppstod under setting av gildehjemmets plas
 guild.home.not-in-guild: "\u0026cDu er ikke i noe gilde!"
 home.not-set: "\u0026cGildehjem er ikke satt!"
 home.success: "\u0026aTeleportert til gildehjem!"
-home.folia-disabled: "\u0026cTeleportering er ikke tilgjengelig i Folia-milj\u00f8et!"
+home.teleport-failed: "&cTeleportering mislyktes, prøv igjen!"
 home.teleporting: "&aTeleporterer om &e{seconds} &asekunder..."
 home.teleport-cancelled: "&cTeleportering avbrutt (ikke beveg deg)!"
 sethome.only-leader: "\u0026cBare gildelederen kan sette gildehjem!"

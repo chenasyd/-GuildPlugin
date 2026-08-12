@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&8Clic derecho &fpara editar descripci\u00f3n"
     text-edit-desc-shift-left: "&8May\u00fas+Clic izquierdo &fpara editar etiqueta"
     guild-settings-title: "&6Configuraci\u00f3n de la guild - {guild_name}"
-    home.folia-disabled: "&c\u00a1Teletransporte no disponible en el entorno Folia!"
+    home.teleport-failed: "&c¡Falló el teletransporte, inténtalo de nuevo!"
     home.not-set: "&c\u00a1El hogar de la guild a\u00fan no ha sido establecido!"
     home.success: "&a\u00a1Teletransportado al hogar de la guild!"
     sethome.failed: "&c\u00a1Error al establecer el hogar de la guild!"

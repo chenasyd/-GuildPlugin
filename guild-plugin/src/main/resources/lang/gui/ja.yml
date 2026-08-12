@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&8右クリック &fで説明を編集"
     text-edit-desc-shift-left: "&8Shift+左クリック &fでタグを編集"
     guild-settings-title: "&6ギルド設定 - {guild_name}"
-    home.folia-disabled: "&cFolia環境ではテレポートは利用できません！"
+    home.teleport-failed: "&cテレポートに失敗しました。もう一度お試しください！"
     home.not-set: "&cギルドホームはまだ設定されていません！"
     home.success: "&aギルドホームへテレポートしました！"
     sethome.failed: "&cギルドホームの設定に失敗しました！"

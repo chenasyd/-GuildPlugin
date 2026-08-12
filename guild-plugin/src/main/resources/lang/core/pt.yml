@@ -213,7 +213,7 @@ guild.sethome.error: "&cOcorreu um erro ao definir a localiza\u00e7\u00e3o da ca
 guild.home.not-in-guild: "&cVoc\u00ea n\u00e3o est\u00e1 em nenhuma guilda!"
 home.not-set: "&cA casa da guilda ainda n\u00e3o foi definida!"
 home.success: "&aTeleportado para a casa da guilda!"
-home.folia-disabled: "&cFun\u00e7\u00e3o de teleporte temporariamente indispon\u00edvel no ambiente Folia!"
+home.teleport-failed: "&cFalha no teleporte, tente novamente!"
 home.teleporting: "&aTeletransportando em &e{seconds} &asegundos..."
 home.teleport-cancelled: "&cTeletransporte cancelado (n\u00e3o se mova)!"
 sethome.only-leader: "&cApenas o l\u00edder da guilda pode definir a casa da guilda!"

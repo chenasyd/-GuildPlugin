@@ -17,10 +17,8 @@ import com.guild.core.gui.GUI;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.CompatibleScheduler;
-import com.guild.core.utils.ScheduledTaskHandle;
 
 import org.geysermc.cumulus.form.SimpleForm;
-import com.guild.core.utils.ServerUtils;
 import com.guild.core.language.LanguageManager;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
@@ -177,12 +175,6 @@ public class MemberGuildGUI implements GUI {
     // ==================== 业务逻辑 ====================
 
     private void handleHomeTeleport(Player player) {
-        if (ServerUtils.isFolia()) {
-            String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.folia-disabled", "&c传送功能在Folia环境下暂不可用！");
-            player.sendMessage(ColorUtils.colorize(message));
-            return;
-        }
-
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null) {
             String msg = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
@@ -201,51 +193,17 @@ public class MemberGuildGUI implements GUI {
         });
     }
 
-    private void doHomeTeleport(Player player, org.bukkit.Location targetLocation) {
-        player.teleport(targetLocation);
-        String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.success", "&a已传送到工会家！");
-        player.sendMessage(ColorUtils.colorize(message));
-    }
-
     private void startHomeTeleportDelay(Player player, org.bukkit.Location targetLocation) {
-        int delay = plugin.getConfigManager().getMainConfig().getInt("guild.home-teleport-delay", 0);
-        if (delay <= 0) {
-            doHomeTeleport(player, targetLocation);
-            return;
-        }
-
-        player.closeInventory();
-        org.bukkit.Location startLocation = player.getLocation().clone();
-        org.bukkit.World startWorld = startLocation.getWorld();
-        int[] countdown = {delay};
-        boolean[] done = {false};
-        ScheduledTaskHandle[] handleRef = new ScheduledTaskHandle[1];
-
-        handleRef[0] = CompatibleScheduler.runTaskTimer(plugin, player, () -> {
-            if (!player.isOnline() || done[0]) {
-                handleRef[0].cancel();
-                return;
-            }
-            if (!startWorld.equals(player.getWorld())
-                    || player.getLocation().distanceSquared(startLocation) > 0.5) {
-                done[0] = true;
-                String cancelled = languageManager.getGuiMessage(player, "home.teleport-cancelled",
-                    "&c传送已取消（请不要移动）！");
-                player.sendMessage(ColorUtils.colorize(cancelled));
-                handleRef[0].cancel();
-                return;
-            }
-            if (countdown[0] <= 0) {
-                done[0] = true;
-                handleRef[0].cancel();
-                doHomeTeleport(player, targetLocation);
-            } else {
-                String msg = languageManager.getGuiMessage(player, "home.teleporting",
-                    "&a正在传送 &e{seconds} &a秒", "{seconds}", String.valueOf(countdown[0]));
-                com.guild.util.NotifyUtils.sendActionBar(plugin, player, msg);
-                countdown[0]--;
-            }
-        }, 0L, 20L);
+        com.guild.util.GuildHomeTeleport.start(plugin, player, targetLocation, true,
+                () -> {
+                    String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.success", "&a已传送到工会家！");
+                    player.sendMessage(ColorUtils.colorize(message));
+                },
+                reason -> {
+                    String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.teleport-failed",
+                            "&c传送失败，请稍后重试！");
+                    player.sendMessage(ColorUtils.colorize(message));
+                });
     }
 
     private void handleLeaveGuild(Player player) {

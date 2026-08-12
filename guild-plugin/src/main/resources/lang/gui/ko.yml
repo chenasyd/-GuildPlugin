@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&8우클릭 &f하여 설명 수정"
     text-edit-desc-shift-left: "&8Shift+좌클릭 &f하여 태그 수정"
     guild-settings-title: "&6길드 설정 - {guild_name}"
-    home.folia-disabled: "&cFolia 환경에서는 텔레포트를 사용할 수 없습니다!"
+    home.teleport-failed: "&c텔레포트에 실패했습니다. 다시 시도하세요!"
     home.not-set: "&c길드 홈이 아직 설정되지 않았습니다!"
     home.success: "&a길드 홈으로 텔레포트했습니다!"
     sethome.failed: "&c길드 홈 설정에 실패했습니다!"

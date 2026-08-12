@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&7Chu\u1ED9t ph\u1EA3i &f\u0111\u1EC3 s\u1EEDa m\xF4 t\u1EA3"
     text-edit-desc-shift-left: "&7Shift+Chu\u1ED9t tr\xE1i &f\u0111\u1EC3 s\u1EEDa th\u1EBB"
     guild-settings-title: "&6C\xE0i \u0111\u1EB7t c\xF4ng h\u1ED9i - {guild_name}"
-    home.folia-disabled: "&cCh\u1EE9c n\u0103ng d\u1ECBch chuy\u1EC3n t\u1EA1m th\u1EDDi kh\xF4ng kh\u1EA3 d\u1EE5ng trong m\xF4i tr\u01B0\u1EDDng Folia!"
+    home.teleport-failed: "&cDịch chuyển thất bại, vui lòng thử lại!"
     home.not-set: "&cNh\xE0 c\xF4ng h\u1ED9i ch\u01B0a \u0111\u01B0\u1EE3c thi\u1EBFt l\u1EADp!"
     home.success: "&a\u0110\xE3 d\u1ECBch chuy\u1EC3n v\u1EC1 nh\xE0 c\xF4ng h\u1ED9i!"
     sethome.failed: "&cThi\u1EBFt l\u1EADp nh\xE0 c\xF4ng h\u1ED9i th\u1EA5t b\u1EA1i!"

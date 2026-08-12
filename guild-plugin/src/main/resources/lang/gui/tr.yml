@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&8Sa\u011f t\u0131k &fa\u00e7\u0131klamay\u0131 d\u00fczenle"
     text-edit-desc-shift-left: "&8Shift+Sol t\u0131k &fetiketi d\u00fczenle"
     guild-settings-title: "&6Guild Ayarlar\u0131 - {guild_name}"
-    home.folia-disabled: "&cFolia ortam\u0131nda \u0131\u015f\u0131nlama kullan\u0131lamaz!"
+    home.teleport-failed: "&cIşınlanma başarısız, lütfen tekrar deneyin!"
     home.not-set: "&cGuild evi hen\u00fcz ayarlanmad\u0131!"
     home.success: "&aGuild evine \u0131\u015f\u0131nland\u0131!"
     sethome.failed: "&cGuild evi ayarlanamad\u0131!"

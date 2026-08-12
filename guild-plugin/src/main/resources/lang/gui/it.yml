@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&8Clic destro &fper modificare la descrizione"
     text-edit-desc-shift-left: "&8Shift+Clic sinistro &fper modificare il tag"
     guild-settings-title: "&6Impostazioni della gilda - {guild_name}"
-    home.folia-disabled: "&cTeletrasporto non disponibile nell'ambiente Folia!"
+    home.teleport-failed: "&cTeletrasporto non riuscito, riprova!"
     home.not-set: "&cLa casa della gilda non \u00e8 stata ancora impostata!"
     home.success: "&aTeletrasportato alla casa della gilda!"
     sethome.failed: "&cImpossibile impostare la casa della gilda!"

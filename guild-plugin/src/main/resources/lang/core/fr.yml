@@ -213,7 +213,7 @@ guild.sethome.error: "&cUne erreur est survenue lors de la d\u00e9finition du do
 guild.home.not-in-guild: "&cVous n'\u00eates dans aucune guilde\u00a0!"
 home.not-set: "&cLe domicile de guilde n'a pas encore \u00e9t\u00e9 d\u00e9fini\u00a0!"
 home.success: "&aT\u00e9l\u00e9port\u00e9 au domicile de guilde\u00a0!"
-home.folia-disabled: "&cLa t\u00e9l\u00e9portation n'est pas disponible dans l'environnement Folia\u00a0!"
+home.teleport-failed: "&cÉchec de la téléportation, veuillez réessayer !"
 home.teleporting: "&aT\u00e9l\u00e9portation dans &e{seconds} &asecondes..."
 home.teleport-cancelled: "&cT\u00e9l\u00e9portation annul\u00e9e (ne bougez pas)!"
 sethome.only-leader: "&cSeul le chef de guilde peut d\u00e9finir le domicile de guilde\u00a0!"

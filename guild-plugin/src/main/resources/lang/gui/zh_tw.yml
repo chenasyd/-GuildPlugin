@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&8右鍵 &f修改描述"
     text-edit-desc-shift-left: "&8Shift+左鍵 &f修改標籤"
     guild-settings-title: "&6公會設定 - {guild_name}"
-    home.folia-disabled: "&c傳送功能在Folia環境下暫不可用！"
+    home.teleport-failed: "&c傳送失敗，請稍後重試！"
     home.not-set: "&c公會家尚未設定！"
     home.success: "&a已傳送到公會家！"
     sethome.failed: "&c設定公會家失敗！"

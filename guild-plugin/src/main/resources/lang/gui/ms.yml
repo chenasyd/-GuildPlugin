@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&8Klik Kanan &funtuk edit perihalan"
     text-edit-desc-shift-left: "&8Shift+Klik Kiri &funtuk edit tag"
     guild-settings-title: "&6Tetapan Guild - {guild_name}"
-    home.folia-disabled: "&cTeleport tidak tersedia dalam persekitaran Folia!"
+    home.teleport-failed: "&cTeleport gagal, sila cuba lagi!"
     home.not-set: "&cRumah guild belum ditetapkan!"
     home.success: "&aTeleport ke rumah guild!"
     sethome.failed: "&cGagal menetapkan rumah guild!"

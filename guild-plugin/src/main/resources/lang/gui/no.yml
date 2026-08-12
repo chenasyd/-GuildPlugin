@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&7H\u00f8yreklikk &fEndre beskrivelse"
     text-edit-desc-shift-left: "&7Shift+Venstreklikk &fEndre kode"
     guild-settings-title: "&6Gjengeinnstillinger - {guild_name}"
-    home.folia-disabled: "&cTeleporteringsfunksjonen er midlertidig utilgjengelig i Folia-milj\u00f8et!"
+    home.teleport-failed: "&cTeleportering mislyktes, prøv igjen!"
     home.not-set: "&cGjengehjem er ikke satt enn\u00e5!"
     home.success: "&aTeleportert til gjengehjemmet!"
     sethome.failed: "&cKunne ikke sette gjengehjem!"

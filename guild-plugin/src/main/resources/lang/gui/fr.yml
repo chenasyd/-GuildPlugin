@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&8Clic droit &fpour modifier la description"
     text-edit-desc-shift-left: "&8Shift+Clic gauche &fpour modifier le tag"
     guild-settings-title: "&6Param\u00e8tres de la guilde - {guild_name}"
-    home.folia-disabled: "&cT\u00e9l\u00e9portation indisponible dans l'environnement Folia\u00a0!"
+    home.teleport-failed: "&cÉchec de la téléportation, veuillez réessayer !"
     home.not-set: "&cLe domicile de la guilde n'a pas encore \u00e9t\u00e9 d\u00e9fini\u00a0!"
     home.success: "&aT\u00e9l\u00e9port\u00e9 au domicile de la guilde\u00a0!"
     sethome.failed: "&c\u00c9chec de la d\u00e9finition du domicile\u00a0!"

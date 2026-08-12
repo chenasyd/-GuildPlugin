@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&7Oikea napsautus &fMuokkaa kuvausta"
     text-edit-desc-shift-left: "&7Shift+Vasen napsautus &fMuokkaa tunnistetta"
     guild-settings-title: "&6Guildin asetukset - {guild_name}"
-    home.folia-disabled: "&cTeleporttitoiminto ei ole v\u00e4liaikaisesti k\u00e4ytett\u00e4viss\u00e4 Folia-ymp\u00e4rist\u00f6ss\u00e4!"
+    home.teleport-failed: "&cTeleportti epäonnistui, yritä uudelleen!"
     home.not-set: "&cGuildin kotia ei ole asetettu viel\u00e4!"
     home.success: "&aTeleportattu guildin kotiin!"
     sethome.failed: "&cGuildin kodin asettaminen ep\u00e4onnistui!"

@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&7Jobb klikk &fle\u00edr\u00e1s m\u00f3dos\u00edt\u00e1sa"
     text-edit-desc-shift-left: "&7Shift+Bal klikk &fc\u00edmke m\u00f3dos\u00edt\u00e1sa"
     guild-settings-title: "&6C\u00e9h be\u00e1ll\u00edt\u00e1sok - {guild_name}"
-    home.folia-disabled: "&cA teleport\u00e1ci\u00f3s funkci\u00f3 jelenleg nem el\u00e9rhet\u0151 Folia k\u00f6rnyezetben!"
+    home.teleport-failed: "&cA teleportálás sikertelen, próbáld újra!"
     home.not-set: "&cA c\u00e9h otthon m\u00e9g nincs be\u00e1ll\u00edtva!"
     home.success: "&aSikeresen teleport\u00e1lt\u00e1l a c\u00e9h otthonba!"
     sethome.failed: "&cA c\u00e9h otthon be\u00e1ll\u00edt\u00e1sa sikertelen!"

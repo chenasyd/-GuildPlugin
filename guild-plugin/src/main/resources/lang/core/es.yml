@@ -213,7 +213,7 @@ guild.sethome.error: "&cHa ocurrido un error al establecer el hogar de la guild!
 guild.home.not-in-guild: "&c\u00a1No est\u00e1s en ninguna guild!"
 home.not-set: "&c\u00a1El hogar de la guild a\u00fan no ha sido establecido!"
 home.success: "&a\u00a1Teletransportado al hogar de la guild!"
-home.folia-disabled: "&c\u00a1Teletransporte no disponible en el entorno Folia!"
+home.teleport-failed: "&c¡Falló el teletransporte, inténtalo de nuevo!"
 home.teleporting: "&aTeletransport\u00e1ndose en &e{seconds} &asegundos..."
 home.teleport-cancelled: "&c\u00a1Teletransporte cancelado (no te muevas)!"
 sethome.only-leader: "&c\u00a1Solo el l\u00edder de la guild puede establecer el hogar!"

@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&7คลิกขวา &fแก้ไขคำอธิบาย"
     text-edit-desc-shift-left: "&7Shift+คลิกซ้าย &fแก้ไขแท็ก"
     guild-settings-title: "&6การตั้งค่ากิลด์ - {guild_name}"
-    home.folia-disabled: "&cฟังก์ชันเคลื่อนย้ายยังไม่พร้อมใช้งานในสภาพแวดล้อม Folia!"
+    home.teleport-failed: "&cการวาร์ปล้มเหลว กรุณาลองอีกครั้ง!"
     home.not-set: "&cยังไม่ได้ตั้งค่าบ้านกิลด์!"
     home.success: "&aเคลื่อนย้ายไปยังบ้านกิลด์แล้ว!"
     sethome.failed: "&cตั้งค่าบ้านกิลด์ไม่สำเร็จ!"

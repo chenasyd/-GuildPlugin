@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&7زر أيمن &fتعديل الوصف"
     text-edit-desc-shift-left: "&7Shift+زر أيسر &fتعديل الوسم"
     guild-settings-title: "&6إعدادات النقابة - {guild_name}"
-    home.folia-disabled: "&cوظيفة الانتقال غير متاحة حالياً في بيئة Folia!"
+    home.teleport-failed: "&cفشل الانتقال، يرجى المحاولة مرة أخرى!"
     home.not-set: "&cلم يتم تعيين منزل النقابة بعد!"
     home.success: "&aتم الانتقال إلى منزل النقابة!"
     sethome.failed: "&cفشل تعيين منزل النقابة!"

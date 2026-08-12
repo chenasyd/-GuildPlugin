@@ -663,7 +663,7 @@ gui:
     text-edit-desc-right: "&7Bot\u00e3o direito &fModificar descri\u00e7\u00e3o"
     text-edit-desc-shift-left: "&7Shift+Bot\u00e3o esquerdo &fModificar tag"
     guild-settings-title: "&6Configura\u00e7\u00f5es da Guilda - {guild_name}"
-    home.folia-disabled: "&cFun\u00e7\u00e3o de teleporte temporariamente indispon\u00edvel no ambiente Folia!"
+    home.teleport-failed: "&cFalha no teleporte, tente novamente!"
     home.not-set: "&cCasa da guilda ainda n\u00e3o foi definida!"
     home.success: "&aTeleportado para a casa da guilda!"
     sethome.failed: "&cFalha ao definir a casa da guilda!"
