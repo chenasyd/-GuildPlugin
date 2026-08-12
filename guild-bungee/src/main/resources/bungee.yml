@@ -1,6 +1,6 @@
 name: GuildBungee
 main: com.guild.bungee.GuildBungeePlugin
-version: 1.6.6-snapshot..5
+version: 1.6.6-snapshot.5
 author: GuildPlugin Team
 description: Cross-server guild data synchronization bridge for BungeeCord networks
 
