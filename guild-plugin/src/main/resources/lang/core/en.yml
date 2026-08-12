@@ -743,12 +743,6 @@ bedrock-test.modal-content: "&7Are you sure you want to quit guild &eTest Guild&
 bedrock-test.modal-btn-confirm: "&aConfirm Quit"
 bedrock-test.modal-btn-cancel: "&cCancel"
 
-
-
-
-
-
-
 # ============ World management ============
 world.prefix: "&6[GuildWorld] &r"
 world.disabled.folia-unsupported: "&cCurrent Folia version ({version}) does not support gworld"

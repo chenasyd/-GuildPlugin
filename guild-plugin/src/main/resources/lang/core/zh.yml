@@ -743,12 +743,6 @@ bedrock-test.modal-content: "&7你确定要退出工会 &e测试工会 &7吗？\
 bedrock-test.modal-btn-confirm: "&a确认退出"
 bedrock-test.modal-btn-cancel: "&c取消"
 
-
-
-
-
-
-
 # ============ World management ============
 world.prefix: "&6[GuildWorld] &r"
 world.disabled.folia-unsupported: "&c当前 Folia 版本 ({version}) 不支持 gworld"
