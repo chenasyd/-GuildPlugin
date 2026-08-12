@@ -6,6 +6,7 @@ description: "Guild member contribution ranking system - tracks and displays mem
 type: gui
 api-version: 1.6.6
 main: com.guild.module.example.member.rank.MemberRankModule
+folia-compatible: true
 depends: []
 soft-depends: []
 permissions:

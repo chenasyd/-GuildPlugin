@@ -13,7 +13,6 @@ import com.guild.sdk.placeholder.PlaceholderProvider;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -128,35 +127,10 @@ public class ApiTestModule implements GuildModule {
     // ==================== GUI ====================
 
     void openTestGUI(Player player) {
-        context.runSync(() -> {
-            Inventory inv = Bukkit.createInventory(null, 27, "§dAPI Test Panel");
-            inv.setItem(11, makeItem(Material.PAPER, "§eData Query Test", "§7query all/discover"));
-            inv.setItem(12, makeItem(Material.PLAYER_HEAD, "§eMember Management Test", "§7add/remove/role"));
-            inv.setItem(13, makeItem(Material.GOLD_INGOT, "§eEconomy Test", "§7deposit/withdraw/currency"));
-            inv.setItem(14, makeItem(Material.REDSTONE, "§eHTTP Test", "§7http"));
-            inv.setItem(15, makeItem(Material.NAME_TAG, "§ePlaceholder Test", "§7placeholder"));
-            inv.setItem(16, makeItem(Material.CLOCK, "§eTime/Console Test", "§7server time + console output"));
-            inv.setItem(22, makeItem(Material.BARRIER, "§cClose", "§7Exit"));
-            context.openGUI(player, new com.guild.core.gui.GUI() {
-                @Override public String getTitle() { return "§dAPI Test Panel"; }
-                @Override public int getSize() { return 27; }
-                @Override public void setupInventory(Inventory i) { i.setContents(inv.getContents()); }
-                @Override public void onClick(Player p, int slot, ItemStack item, org.bukkit.event.inventory.ClickType clickType) {
-                    p.closeInventory();
-                    switch (slot) {
-                        case 11: runTest(p, "query"); break;
-                        case 12: runTest(p, "member"); break;
-                        case 13: runTest(p, "economy"); break;
-                        case 14: runTest(p, "http"); break;
-                        case 15: runTest(p, "placeholder"); break;
-                        case 16: runTest(p, "time"); break;
-                    }
-                }
-            });
-        });
+        context.openGUI(player, new ApiTestPanelGUI(this));
     }
 
-    private void runTest(Player player, String test) {
+    void runTest(Player player, String test) {
         TestRunner runner = new TestRunner(this, player);
         Map<String, Runnable> tests = Map.of(
             "query", runner::testQuery,
@@ -167,13 +141,6 @@ public class ApiTestModule implements GuildModule {
             "time", runner::testTimeAndConsole
         );
         tests.getOrDefault(test, () -> player.sendMessage("§cUnknown test: " + test)).run();
-    }
-
-    private static ItemStack makeItem(Material m, String name, String lore) {
-        ItemStack item = new ItemStack(m);
-        org.bukkit.inventory.meta.ItemMeta meta = item.getItemMeta();
-        if (meta != null) { meta.setDisplayName(name); meta.setLore(List.of(lore)); item.setItemMeta(meta); }
-        return item;
     }
 
     // ==================== Placeholder 演示: Region 人数统计 ====================

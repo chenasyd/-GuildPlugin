@@ -6,6 +6,7 @@ description: "Guild plugin announcement system - allows guild admins to publish 
 type: gui
 api-version: 1.6.6
 main: com.guild.module.example.announcement.AnnouncementModule
+folia-compatible: true
 depends: []
 soft-depends: []
 permissions:

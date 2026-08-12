@@ -13,7 +13,6 @@ import com.guild.models.GuildMember;
 import com.guild.sdk.GuildPluginAPI;
 import com.guild.sdk.event.MemberEventData;
 import com.guild.sdk.event.MemberEventHandler;
-import com.guild.sdk.economy.CurrencyManager;
 import com.guild.module.example.member.rank.gui.MemberRankGUI;
 import com.guild.module.example.member.rank.gui.MemberRankSettingsGUI;
 import org.bukkit.Material;
@@ -81,10 +80,12 @@ public class MemberRankModule implements GuildModule {
         api.onMemberLeave(new MemberEventHandler() {
             @Override
             public void onEvent(MemberEventData data) {
-                // Reset this player's A-Coins
-                var currencyManager = context.getApi().getCurrencyManager();
-                currencyManager.withdraw(data.getGuildId(), data.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN, 
-                    currencyManager.getBalance(data.getGuildId(), data.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN));
+                // Reset this player's A-Coins via string currency API (SDK v1.5+)
+                context.getApi().withdrawCurrency(
+                        data.getGuildId(),
+                        data.getPlayerUuid(),
+                        "A_COIN",
+                        context.getApi().getCurrencyBalance(data.getGuildId(), data.getPlayerUuid(), "A_COIN"));
                 
                 // Remove from ranking
                 rankManager.removeMember(data.getGuildId(), data.getPlayerUuid());
@@ -101,17 +102,15 @@ public class MemberRankModule implements GuildModule {
             @Override
             public void onEvent(com.guild.sdk.event.GuildEventData data) {
                 int guildId = data.getGuildId();
-                // Reset A-Coins for all guild members
-                var currencyManager = context.getApi().getCurrencyManager();
                 var guildService = context.getPlugin().getGuildService();
                 
                 try {
-                    // Get all guild members
                     var members = guildService.getGuildMembers(guildId);
                     for (var member : members) {
-                        // Reset each member's A-Coins
-                        currencyManager.withdraw(guildId, member.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN, 
-                            currencyManager.getBalance(guildId, member.getPlayerUuid(), CurrencyManager.CurrencyType.A_COIN));
+                        double bal = context.getApi().getCurrencyBalance(guildId, member.getPlayerUuid(), "A_COIN");
+                        if (bal > 0) {
+                            context.getApi().withdrawCurrency(guildId, member.getPlayerUuid(), "A_COIN", bal);
+                        }
                     }
                 } catch (Exception e) {
                     context.getLogger().severe("[MemberRank] Failed to reset guild members' A-Coins: " + e.getMessage());

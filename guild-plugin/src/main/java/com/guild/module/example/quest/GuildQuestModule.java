@@ -25,13 +25,14 @@ import com.guild.module.example.quest.model.QuestObjective;
 import com.guild.module.example.quest.model.QuestProgress;
 import com.guild.module.example.quest.model.QuestReward;
 import com.guild.sdk.GuildPluginAPI;
-import com.guild.sdk.economy.CurrencyManager;
 import com.guild.sdk.event.EconomyEventData;
 import com.guild.sdk.event.EconomyEventHandler;
 import com.guild.sdk.event.GuildEventData;
 import com.guild.sdk.event.GuildEventHandler;
 import com.guild.sdk.event.MemberEventData;
 import com.guild.sdk.event.MemberEventHandler;
+import com.guild.sdk.gui.GUILayoutDefinition;
+import com.guild.sdk.gui.ModuleGUIRegistration;
 
 public class GuildQuestModule implements GuildModule {
     private ModuleContext context;
@@ -62,7 +63,7 @@ public class GuildQuestModule implements GuildModule {
         registerEventHandlers(api);
         startScheduledTasks();
 
-        api.registerCustomGUI("guild-quest", "quest-detail", (player, data) -> {
+        api.registerCustomGUI(ModuleGUIRegistration.builder("quest-detail", (player, data) -> {
             QuestDefinition def = (QuestDefinition) data.get("definition");
             int guildId = toInt(data.get("guildId"), 0);
             UUID playerUuid = (UUID) data.get("playerUuid");
@@ -100,14 +101,32 @@ public class GuildQuestModule implements GuildModule {
                     throw new RuntimeException("Unable to create any GUI", fallbackEx);
                 }
             }
-        });
+        })
+            .moduleId("guild-quest")
+            .imageBinding("quest-detail")
+            .layout(GUILayoutDefinition.builder()
+                .function("HEADER", 0, 1, 2, 3, 4, 5, 6, 7, 8)
+                .function("CONTENT", 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25)
+                .function("ACTIONS", 28, 29, 30, 31, 32, 33, 34)
+                .function("BACK", 49)
+                .build())
+            .build());
 
-        api.registerCustomGUI("guild-quest", "quest-active-list", (player, data) -> {
+        api.registerCustomGUI(ModuleGUIRegistration.builder("quest-active-list", (player, data) -> {
             int guildId = toInt(data.get("guildId"), 0);
             UUID playerUuid = player.getUniqueId();
             List<QuestProgress> active = questManager.getPlayerActiveQuests(guildId, playerUuid);
             return new ActiveQuestsGUI(this, active, guildId, playerUuid);
-        });
+        })
+            .moduleId("guild-quest")
+            .imageBinding("quest-active-list")
+            .layout(GUILayoutDefinition.builder()
+                .function("HEADER", 0, 1, 2, 3, 4, 5, 6, 7, 8)
+                .function("CONTENT", 10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25,
+                    28, 29, 30, 31, 32, 33, 34, 37, 38, 39, 40, 41, 42, 43)
+                .function("BACK", 49)
+                .build())
+            .build());
 
             context.runLater(100L, () -> {
             questTracker.start();
@@ -268,13 +287,14 @@ public class GuildQuestModule implements GuildModule {
                 .replace("{currency}", goldName).replace("{balance}", economyManager.format(goldBalance))))
                 .append("\n");
 
-            // Query guild currencies (A/B/C coins)
-            var currencyManager = context.getApi().getCurrencyManager();
-            for (CurrencyManager.CurrencyType type : CurrencyManager.CurrencyType.values()) {
-                double balance = currencyManager.getBalance(guildId, playerUuid, type);
+            // Query guild currencies via string API (SDK v1.5+)
+            String[] types = {"A_COIN", "B_COIN", "C_COIN"};
+            String[] names = {"ACoin", "BCoin", "CCoin"};
+            for (int i = 0; i < types.length; i++) {
+                double balance = context.getApi().getCurrencyBalance(guildId, playerUuid, types[i]);
                 message.append(ColorUtils.colorize(context.getLanguageManager().getModuleMessage(
                     "module.quest.currency.coin", "{currency}: {balance}")
-                    .replace("{currency}", type.getDisplayName()).replace("{balance}", String.format("%.0f", balance))))
+                    .replace("{currency}", names[i]).replace("{balance}", String.format("%.0f", balance))))
                     .append("\n");
             }
 

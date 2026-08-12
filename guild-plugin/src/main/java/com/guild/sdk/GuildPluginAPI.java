@@ -232,6 +232,11 @@ public class GuildPluginAPI {
         }
         // 同时注册到旧版 factory 映射（保持 openCustomGUI 兼容）
         customGUIRegistry.put(guiId, registration.getFactory());
+        // 追踪模块归属，卸载时由 clearModuleRegistrations 清理
+        String owner = registration.getModuleId();
+        if (owner != null && !owner.isEmpty()) {
+            guiFactoryOwners.put(guiId, owner);
+        }
         // 注册到增强注册表
         ModuleManager mm = plugin.getServiceContainer().get(ModuleManager.class);
         mm.getRegistry().registerCustomGUI(registration);
@@ -499,7 +504,7 @@ public class GuildPluginAPI {
             return false;
         });
 
-        // 自定义 GUI 工厂
+        // 自定义 GUI 工厂（含 ModuleGUIRegistration 注册路径写入的归属）
         guiFactoryOwners.entrySet().removeIf(e -> {
             if (moduleId.equals(e.getValue())) {
                 customGUIRegistry.remove(e.getKey());

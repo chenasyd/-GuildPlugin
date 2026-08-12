@@ -1,9 +1,9 @@
 # ============ Stats Module Messages ============
-module.stats.init-done: "&a[Stats] Initialization complete, CustomGUI x2 registered"
+module.stats.init-done: "&a[Stats] Initialization complete"
 module.stats.loaded: "&a[Stats] Guild stats system enabled"
 module.stats.unloaded: "&e[Stats] Stats system disabled"
 module.stats.button-name: "&6&lStatistics"
-module.stats.button-desc: "&7View detailed guild operational data"
-module.stats.button-lore: "&7Member activity &8| &7Economy &8| &7Rankings"
+module.stats.button-desc: "&7View guild overview stats"
+module.stats.button-lore: "&7Activity &8| &7Economy &8| &7Score"
 module.stats.ranking-button: "&e&lGuild Ranking"
 module.stats.ranking-button-desc: "&7View server-wide guild ranking"

@@ -16,10 +16,12 @@ import com.guild.sdk.event.GuildEventHandler;
 import com.guild.sdk.event.GuildEventData;
 import com.guild.sdk.event.MemberEventHandler;
 import com.guild.sdk.event.MemberEventData;
-import com.guild.module.example.stats.gui.*;
+import com.guild.sdk.gui.GUILayoutDefinition;
+import com.guild.sdk.gui.ModuleGUIRegistration;
+import com.guild.module.example.stats.gui.GuildRankingGUI;
+import com.guild.module.example.stats.gui.StatsOverviewGUI;
 import com.guild.module.example.stats.model.ActivityReport;
 import com.guild.module.example.stats.model.GuildStatistics;
-import com.guild.module.example.stats.model.PlayerActivity;
 import com.guild.core.events.EventBus;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -77,7 +79,7 @@ public class GuildStatsModule implements GuildModule {
         context.runLater(100L, () -> {
             if (webReporter != null) webReporter.healthCheck();
             context.getLogger().info(
-                context.getMessage("module.stats.init-done", "[Stats] Initialization complete, CustomGUI x2 registered"));
+                context.getMessage("module.stats.init-done", "[Stats] Initialization complete"));
         });
 
         context.getEventBus().subscribe("guild-stats", StatsRefreshedEvent.class, event ->
@@ -119,9 +121,8 @@ public class GuildStatsModule implements GuildModule {
         ItemStack statsButton = new ItemStack(Material.BOOK);
         ItemMeta statsMeta = statsButton.getItemMeta();
         if (statsMeta != null) {
-            statsMeta.setDisplayName("Statistics"); // 回退文本，实际由 getDisplayItem 按模块语言解析
-            statsMeta.setLore(List.of("View detailed guild operational data",
-                    "Member activity | Economy | Rankings"));
+            statsMeta.setDisplayName("Statistics");
+            statsMeta.setLore(List.of("View guild overview stats"));
             statsButton.setItemMeta(statsMeta);
         }
         api.registerGUIButton("GuildInfoGUI", 16, statsButton, "guild-stats",
@@ -133,7 +134,7 @@ public class GuildStatsModule implements GuildModule {
         ItemStack rankingButton = new ItemStack(Material.GOLD_BLOCK);
         ItemMeta rankMeta = rankingButton.getItemMeta();
         if (rankMeta != null) {
-            rankMeta.setDisplayName("Guild Ranking"); // 回退文本
+            rankMeta.setDisplayName("Guild Ranking");
             rankMeta.setLore(List.of("View server-wide guild ranking"));
             rankingButton.setItemMeta(rankMeta);
         }
@@ -143,23 +144,22 @@ public class GuildStatsModule implements GuildModule {
             "module.stats.ranking-button",
             "module.stats.ranking-button-desc");
 
-        api.registerCustomGUI("guild-stats", "stats-player-detail", (player, data) -> {
-            UUID targetUuid = (UUID) data.get("targetUuid");
-            ActivityReport reportData = (ActivityReport) data.get("report");
-            EconomyContributionFetcher.EconomySummary econ =
-                (EconomyContributionFetcher.EconomySummary) data.get("economySummary");
-            com.guild.models.Guild guildObj = (com.guild.models.Guild) data.get("guild");
-            PlayerActivity activity = findPlayerActivity(reportData, targetUuid);
-            return new PlayerDetailGUI(this, activity, reportData, econ);
-        });
-
-        api.registerCustomGUI("guild-stats", "stats-overview", (player, data) -> {
-            com.guild.models.Guild guildObj = (com.guild.models.Guild) data.get("guild");
+        // One custom GUI registration — demonstrates ModuleGUIRegistration (layout + moduleId)
+        api.registerCustomGUI(ModuleGUIRegistration.builder("stats-overview", (player, data) -> {
+            Guild guildObj = (Guild) data.get("guild");
             GuildStatistics statsData = (GuildStatistics) data.get("stats");
             EconomyContributionFetcher.EconomySummary econ =
                 (EconomyContributionFetcher.EconomySummary) data.get("economySummary");
             return new StatsOverviewGUI(this, guildObj, statsData, econ);
-        });
+        })
+            .moduleId("guild-stats")
+            .imageBinding("stats-overview")
+            .layout(GUILayoutDefinition.builder()
+                .function("HEADER", 0, 1, 2, 3, 4, 5, 6, 7, 8)
+                .function("CONTENT", 20, 22, 24, 31)
+                .function("BACK", 49)
+                .build())
+            .build());
     }
 
     private void registerCommands(GuildPluginAPI api) {
@@ -493,16 +493,7 @@ public class GuildStatsModule implements GuildModule {
 
     public ModuleContext getContext() { return context; }
     public StatsDataCache getDataCache() { return dataCache; }
-    public ActivityCalculator getActivityCalculator() { return activityCalculator; }
     public EconomyContributionFetcher getEconomyFetcher() { return economyFetcher; }
-
-    private PlayerActivity findPlayerActivity(ActivityReport report, UUID uuid) {
-        if (report == null || report.getMembers() == null) return null;
-        for (PlayerActivity pa : report.getMembers()) {
-            if (uuid.equals(pa.getPlayerUuid())) return pa;
-        }
-        return null;
-    }
 
     public static class StatsRefreshedEvent {
         public final int guildId;
