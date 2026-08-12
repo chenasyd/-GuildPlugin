@@ -5,6 +5,8 @@
 小型团队 PVP：发起 → 接受 → 报名 → 进场倒计时 → 激战 → 结算 → 回收战场。  
 **不涉及领地/Claim**；与外交 `RelationType.WAR` **不挂钩**。
 
+实战跑通：[工会战实战全流程引导](./GuildWar-Walkthrough.md)（[EN](./GuildWar-Walkthrough_EN.md)）。
+
 ## 前置
 
 - 权限：`guild.war`（玩家）、`guild.war.admin`（强制结束）

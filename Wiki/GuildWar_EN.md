@@ -5,6 +5,8 @@
 Small team PVP: challenge → accept → signup → arena countdown → fight → settle → tear down.  
 **No claims/territory.** Not linked to diplomatic `RelationType.WAR`.
 
+Operator walkthrough: [GuildWar-Walkthrough_EN.md](./GuildWar-Walkthrough_EN.md) ([中文](./GuildWar-Walkthrough.md)).
+
 ## Prerequisites
 
 - Permissions: `guild.war` (players), `guild.war.admin` (force end)

@@ -82,5 +82,6 @@ public final class MyWarHook implements Listener {
 
 - [GuildWorld.md](./GuildWorld.md) / [GuildWorld_EN.md](./GuildWorld_EN.md)
 - [GuildWar.md](./GuildWar.md) / [GuildWar_EN.md](./GuildWar_EN.md)
+- [GuildWar-Walkthrough.md](./GuildWar-Walkthrough.md) / [GuildWar-Walkthrough_EN.md](./GuildWar-Walkthrough_EN.md)
 - [CrossServer-War.md](./CrossServer-War.md)（P3 协议骨架，尚未接线生产开战）
 - [SDK Developer Guide](./SDK%20Developer-Guide.md)
