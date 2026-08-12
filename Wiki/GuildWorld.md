@@ -1,5 +1,7 @@
 # GuildWorld — 多世界 / 预设管理
 
+> 语言: **中文** | [English](./GuildWorld_EN.md)
+
 管理员用虚空世界制作工会战地图，导出为预设（`.gws` + `.yml`），开战时实例化战场。
 
 ## 前置
@@ -56,4 +58,4 @@
 
 ## API
 
-见 [API-World-War.md](./API-World-War.md) 中的 `GuildWorldAPI`。
+见 [API-World-War.md](./API-World-War.md)（中文）/ [API-World-War_EN.md](./API-World-War_EN.md)（English）中的 `GuildWorldAPI`。

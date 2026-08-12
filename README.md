@@ -10,7 +10,7 @@
 
 A feature-complete Minecraft guild/faction system with economy, relations, leveling, full GUI, and modular SDK support. Supports both Spigot and Folia — free and open-source.
 
-> Documentation: [User Guide](./Wiki/README_CN.md) | [Quick Start](./Wiki/README_EN.md) | [SDK Developer Guide](./Wiki/SDK%20Developer-Guide.md) | [GuildWorld](./Wiki/GuildWorld.md) | [GuildWar](./Wiki/GuildWar.md)
+> Documentation: [User Guide](./Wiki/README_CN.md) | [Quick Start](./Wiki/README_EN.md) | [SDK Developer Guide](./Wiki/SDK%20Developer-Guide.md) | [GuildWorld](./Wiki/GuildWorld.md) ([EN](./Wiki/GuildWorld_EN.md)) | [GuildWar](./Wiki/GuildWar.md) ([EN](./Wiki/GuildWar_EN.md))
 
 ## Features
 

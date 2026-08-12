@@ -1,5 +1,7 @@
 # GuildWar — 固定地图工会战
 
+> 语言: **中文** | [English](./GuildWar_EN.md)
+
 小型团队 PVP：发起 → 接受 → 报名 → 进场倒计时 → 激战 → 结算 → 回收战场。  
 **不涉及领地/Claim**；与外交 `RelationType.WAR` **不挂钩**。
 
@@ -70,4 +72,4 @@ B官员: /guildwar accept
 
 ## API
 
-见 [API-World-War.md](./API-World-War.md) 中的 `GuildWarAPI`。
+见 [API-World-War.md](./API-World-War.md)（中文）/ [API-World-War_EN.md](./API-World-War_EN.md)（English）中的 `GuildWarAPI`。

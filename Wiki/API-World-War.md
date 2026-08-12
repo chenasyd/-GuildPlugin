@@ -1,5 +1,7 @@
 # GuildWorldAPI / GuildWarAPI
 
+> 语言: **中文** | [English](./API-World-War_EN.md)
+
 供外部插件或本仓库其它模块调用。通过 `GuildPlugin` getter 或 `ServiceContainer` 获取。
 
 ```java
@@ -48,6 +50,6 @@ GuildWarAPI warApi = GuildPlugin.getInstance().getGuildWarAPI();
 
 ## 相关文档
 
-- [GuildWorld.md](./GuildWorld.md)
-- [GuildWar.md](./GuildWar.md)
+- [GuildWorld.md](./GuildWorld.md) / [GuildWorld_EN.md](./GuildWorld_EN.md)
+- [GuildWar.md](./GuildWar.md) / [GuildWar_EN.md](./GuildWar_EN.md)
 - [SDK Developer Guide](./SDK%20Developer-Guide.md)

@@ -47,7 +47,7 @@ All guild operations feature a graphical interface. Slot-based button detection 
 External module development with full API coverage (6 example modules). Hot load/unload/reload of modules at runtime. Automatic cleanup of listeners, tasks, commands, GUIs, and placeholder registrations on module unload. Folia compatibility guard (`folia-compatible` declaration) and ClassLoader leak detection.
 
 ### Worlds & Guild War
-Void-world CRUD, wand selection, self-made `.gws` presets with A/B/spectator anchors. Fixed-map guild war: challenge → signup → arena countdown → score/timed/survive → destroy instance. See [GuildWorld](./GuildWorld.md), [GuildWar](./GuildWar.md).
+Void-world CRUD, wand selection, self-made `.gws` presets with A/B/spectator anchors. Fixed-map guild war: challenge → signup → arena countdown → score/timed/survive → destroy instance. See [GuildWorld](./GuildWorld_EN.md), [GuildWar](./GuildWar_EN.md).
 
 ### Module GUI Enhancement
 Module GUIs support image mode (ImagoCore binding), Bedrock Edition forms (Cumulus form provider), and server admin customization of items/text/flags via `gui-config.yml`.
@@ -145,7 +145,7 @@ Relation types: `neutral`, `ally`, `enemy`, `war`, `truce`
 ### World Management (`/guildworld`)
 
 Permission: `guild.admin.world`. Aliases: `gworld`.  
-Details: [GuildWorld.md](./GuildWorld.md).
+Details: [GuildWorld_EN.md](./GuildWorld_EN.md).
 
 | Command | Description |
 |:-------:|:-----------:|
@@ -158,7 +158,7 @@ Details: [GuildWorld.md](./GuildWorld.md).
 ### Guild War (`/guildwar`)
 
 Permission: `guild.war` (`guild.war.admin` to force-end). Aliases: `gwar`.  
-Details: [GuildWar.md](./GuildWar.md).
+Details: [GuildWar_EN.md](./GuildWar_EN.md).
 
 | Command | Description |
 |:-------:|:-----------:|
