@@ -53,8 +53,7 @@ You can also run `/guildworld create <arena> --preset <preset>` to create a BATT
 
 ## i18n
 
-Message keys: `world.*` in `lang/core/{zh,en}.yml`.  
-Key inventory: [World-War-I18N.md](./World-War-I18N.md).
+Message keys: `world.*` in `lang/core/{zh,en}.yml`.
 
 ## API
 

@@ -1025,7 +1025,7 @@ Copy the JAR to `plugins/GuildPlugin/modules/`, then:
 
 **Module GUI always shows English despite player language?** Check that you are using `context.getMessage(player, key, fallback)` (with Player parameter) instead of `context.getMessage(key, fallback)` (without Player). The no-Player variant always uses the module default language from `modules.yml`.
 
-**How does `/guildadmin test lang` help debug language issues?** Run subcommands like `overview` (all modules), `lookup <module> <key>` (single key), `files` (file existence check), or `module-context` (trace call chain). See `DEV-GUIDE.md` §"多语言系统" for full details.
+**How does `/guildadmin test lang` help debug language issues?** Run subcommands like `overview` (all modules), `lookup <module> <key>` (single key), `files` (file existence check), or `module-context` (trace call chain).
 
 ## Extension Communication APIs (v1.6.5+)
 

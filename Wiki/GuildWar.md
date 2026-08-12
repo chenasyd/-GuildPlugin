@@ -30,8 +30,18 @@
 | `keep-inventory` | true | 本场死亡不掉落 |
 | `max-concurrent` | 3 | 同时对局上限 |
 | `eliminate-to-spectator` | true | 淘汰进旁观；false 则送回 fallback |
+| `arena-protect` | true | PREPARING/COUNTDOWN/ACTIVE 禁破坏/放置/桶 |
+| `broadcast-report` | true | 结束后广播简短战报行 |
+| `season.id` | `"default"` | 当前赛季 ID（写入 `war_season_stats`） |
+| `rewards.enabled` | false | 内置奖励总开关（事件始终触发） |
+| `rewards.winner-vault` | 0 | 胜方每人 Vault 金额（需 Vault） |
+| `rewards.loser-vault` | 0 | 败方/平局每人 Vault 金额 |
+| `rewards.winner-guild-bank` | 0 | 胜方公会金库加款 |
+| `rewards.contribution-win` | 10 | 胜方每人贡献点数（`WAR_WIN`） |
+| `rewards.contribution-per-kill` | 1 | 每人每击杀贡献点数（`WAR_KILL`） |
 
-战后：先 TP 回 `world.safety.fallback-world`，再按 `world.arena.post-match` 删除战场世界。
+战后：先 TP 回 `world.safety.fallback-world`，再按 `world.arena.post-match` 删除战场世界。  
+战报落库到 `war_matches` / `war_match_players`；赛季统计见 `/guildwar season`。
 
 ## 流程
 
@@ -75,8 +85,7 @@ B官员: /guildwar accept
 
 ## 多语言
 
-文案键：`lang/core/{zh,en}.yml` 中 `war.*`。  
-清单：[World-War-I18N.md](./World-War-I18N.md)。
+文案键：`lang/core/{zh,en}.yml` 中 `war.*`。
 
 ## API
 

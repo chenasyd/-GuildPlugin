@@ -30,8 +30,18 @@ Small team PVP: challenge → accept → signup → arena countdown → fight �
 | `keep-inventory` | true | Keep inventory on death for this match |
 | `max-concurrent` | 3 | Max concurrent matches |
 | `eliminate-to-spectator` | true | Eliminated → spectator; `false` → fallback world |
+| `arena-protect` | true | Cancel break/place/bucket in PREPARING/COUNTDOWN/ACTIVE |
+| `broadcast-report` | true | Broadcast a short report line when the match ends |
+| `season.id` | `"default"` | Current season id (stored in `war_season_stats`) |
+| `rewards.enabled` | false | Builtin rewards master switch (events always fire) |
+| `rewards.winner-vault` | 0 | Vault money per winner player (requires Vault) |
+| `rewards.loser-vault` | 0 | Vault money per loser / draw player |
+| `rewards.winner-guild-bank` | 0 | Add to winning guild bank |
+| `rewards.contribution-win` | 10 | Contribution points per winner (`WAR_WIN`) |
+| `rewards.contribution-per-kill` | 1 | Contribution points per kill (`WAR_KILL`) |
 
-After a match: teleport players to `world.safety.fallback-world`, then delete the arena per `world.arena.post-match`.
+After a match: teleport players to `world.safety.fallback-world`, then delete the arena per `world.arena.post-match`.  
+Reports persist to `war_matches` / `war_match_players`; season stats via `/guildwar season`.
 
 ## Flow
 
@@ -75,8 +85,7 @@ Score modes respawn at the team spawn; survive mode eliminates permanently for t
 
 ## i18n
 
-Message keys: `war.*` in `lang/core/{zh,en}.yml`.  
-Inventory: [World-War-I18N.md](./World-War-I18N.md).
+Message keys: `war.*` in `lang/core/{zh,en}.yml`.
 
 ## API
 

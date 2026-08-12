@@ -53,8 +53,7 @@
 
 ## 多语言
 
-文案键：`lang/core/{zh,en}.yml` 中 `world.*`。  
-实现清单见 [World-War-I18N.md](./World-War-I18N.md)。
+文案键：`lang/core/{zh,en}.yml` 中 `world.*`。
 
 ## API
 

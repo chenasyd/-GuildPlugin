@@ -82,5 +82,5 @@ Builtin config rewards (`guild-war.rewards.*`) also listen to this event; set `e
 
 - [GuildWorld_EN.md](./GuildWorld_EN.md) / [GuildWorld.md](./GuildWorld.md)
 - [GuildWar_EN.md](./GuildWar_EN.md) / [GuildWar.md](./GuildWar.md)
-- [CrossServer-War.md](./CrossServer-War.md) 
+- [CrossServer-War.md](./CrossServer-War.md) (P3 protocol skeleton; not production-wired)
 - [SDK Developer Guide](./SDK%20Developer-Guide.md)
