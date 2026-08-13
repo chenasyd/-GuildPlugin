@@ -553,7 +553,6 @@ guild-role.leader: "&6V\u016fdce"
 guild-role.officer: "&eD\u016fstojn\u00edk"
 guild-role.member: "&7\u010clen"
 guild-role.unknown: "&7Nezn\u00e1m\u00fd"
-
 # Log types
 log.type.guild-created: "Gilda vytvo\u0159ena"
 log.type.guild-dissolved: "Gilda rozpu\u0161t\u011bna"
@@ -580,14 +579,12 @@ log.type.application-rejected: "\u017d\u00e1dost odm\u00edtnuta"
 log.type.invitation-sent: "Pozv\u00e1n\u00ed odesl\u00e1no"
 log.type.invitation-accepted: "Pozv\u00e1n\u00ed p\u0159ijato"
 log.type.invitation-rejected: "Pozv\u00e1n\u00ed odm\u00edtnuto"
-
 # Log time
 log.time.unknown: "Nezn\u00e1m\u00e9"
 log.time.days-ago: "p\u0159ed {0} dny"
 log.time.hours-ago: "p\u0159ed {0} hodinami"
 log.time.minutes-ago: "p\u0159ed {0} minutami"
 log.time.just-now: "Pr\u00e1v\u011b te\u010f"
-
 # Contribution types
 contribution.type.deposit: "Vklad"
 contribution.type.withdraw: "V\u00fdb\u011br"
@@ -595,7 +592,6 @@ contribution.type.transfer: "P\u0159evod"
 contribution.type.creation: "Vytvo\u0159en\u00ed gildy"
 contribution.type.upgrade: "Pov\u00fd\u0161en\u00ed gildy"
 contribution.type.admin: "Operace spr\u00e1vce"
-
 contribution.type.war_win: "Vítězství ve válce cechů"
 contribution.type.war_kill: "Zabití (válka)"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[Syst\u00e9m modul\u016f] P\u0159eskakuji dupli
 module.system.duplicate-cleanup-title: "&6[Syst\u00e9m modul\u016f] &cN\u00e1sleduj\u00edc\u00ed star\u00e9 JAR soubory modul\u016f by m\u011bly b\u00fdt smaz\u00e1ny:"
 module.system.duplicate-cleanup-item: "&c  - {0} (star\u00e1 verze, nahrazena {1})"
 module.system.all-unloaded: "&a[Syst\u00e9m modul\u016f] V\u0161echny roz\u0161i\u0159uj\u00edc\u00ed moduly byly odebr\u00e1ny"
-
 # Error messages
 module.error.already-loaded: "&cModul ji\u017e je na\u010dten: {0}"
 module.error.not-loaded: "&cModul nen\u00ed na\u010dten nebo neexistuje: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cOdebr\u00e1n\u00ed modulu selhalo [{0}]: {1}"
 module.error.has-dependents: "&cNelze odebrat [{0}], n\u00e1sleduj\u00edc\u00ed moduly na n\u011bm z\u00e1vis\u00ed: {1}"
 module.error.unload-failed-during-shutdown: "Odebr\u00e1n\u00ed modulu b\u011bhem vyp\u00edn\u00e1n\u00ed selhalo: {0}"
 module.error.api-too-old: "&cVerze API ({1}) modulu [{0}] je p\u0159\u00edli\u0161 star\u00e1, tento plugin vy\u017eaduje API {2}+, nelze na\u010d\u00edst tento modul!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[Varov\u00e1n\u00ed modulu] M\u011bkk\u00e1 z\u00e1vislost [{0}] nen\u00ed spln\u011bna, modul [{1}] nemus\u00ed b\u00fdt pln\u011b funk\u010dn\u00ed"
 module.warning.no-api-version: "&6[Varov\u00e1n\u00ed modulu] Modul [{0}] neuv\u00e1d\u00ed po\u017eadavky na verzi API"
 module.warning.api-version-mismatch: "&e[Varov\u00e1n\u00ed modulu] Verze API ({1}) modulu [{0}] nesouhlas\u00ed s verz\u00ed pluginu ({2}), m\u016f\u017ee zp\u016fsobit probl\u00e9my s kompatibilitou!"
-
 # Module management commands
 module.command.usage-header: "&e&l====== &6&lP\u0159\u00edkazy spr\u00e1vy modul\u016f &e&l======"
 module.command.usage-list: "&7/guildmodule list  &f- Vypsat v\u0161echny na\u010dten\u00e9 moduly"
@@ -667,7 +660,6 @@ module.command.info.state: "&7Stav: &f{0}"
 module.command.info.description: "&7Popis: &f{0}"
 module.command.info.depends: "&7Z\u00e1vislosti: &f{0}"
 module.command.info.soft-depends: "&7Voliteln\u00e9 z\u00e1vislosti: &f{0}"
-
 # Cloud modules
 cloud.title: "&b&l=== Moduly v cloudu ==="
 cloud.empty: "&cNebyly nalezeny \u017e\u00e1dn\u00e9 moduly v cloudu."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7Vyber typ formul\u00e1\u0159e pro n\u00e1hled:"
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Nab\u00eddka tla\u010d\u00edtek"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Formul\u00e1\u0159 vstupu/nastaven\u00ed"
 bedrock-test.main-btn-modal: "&cModalForm &f- Potvrzovac\u00ed dialog"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Hlavn\u00ed menu guildy &r- &7P\u0159\u00edklad SimpleForm"
 bedrock-test.simple-content: "&7V\u00edtej, &e{player}&7!\n&7Toto je p\u0159\u00edklad nab\u00eddky tla\u010d\u00edtek SimpleForm."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Spr\u00e1va \u010dlen\u016f"
 bedrock-test.simple-name-settings: "Nastaven\u00ed guildy"
 bedrock-test.simple-name-list: "Seznam guild"
 bedrock-test.simple-name-quit: "Odej\u00edt z guildy"
-
 # CustomForm
 bedrock-test.custom-title: "&6Nastaven\u00ed guildy &r- &fP\u0159\u00edklad CustomForm"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Z\u00e1kladn\u00ed nastaven\u00ed \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fPovolit \u010dlen\u016fm vykop\u00e1va
 bedrock-test.custom-label-other: "&7\u2014\u2014 Ostatn\u00ed \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fJazyk guildy"
 bedrock-test.custom-slider-max-members: "&fMaxim\u00e1ln\u00ed po\u010det \u010dlen\u016f"
-
 # ModalForm
 bedrock-test.modal-title: "&cPotvrdit operaci &r- &fP\u0159\u00edklad ModalForm"
 bedrock-test.modal-content: "&7Opravdu chcete opustit guildy &eTestovac\u00ed guildy &7?\n\n&cTuto operaci nelze vr\u00e1tit zp\u011bt!\n&7Po odchodu se budete muset znovu p\u0159ihl\u00e1sit o p\u0159ipojen\u00ed."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Zobrazit stav"
 war.help.report: "&e/guildwar report [id] &7- Zobrazit zprávu"
 war.help.season: "&e/guildwar season &7- Sezónní žebříček"
 war.help.admin: "&e/guildwar admin end <id> &7- Vynutit ukon\u010den\u00ed"
-
 war.report.broadcast: "&6[Zpráva #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7zabití: &e{kills}"
 war.report.none: "&7Zpráva nenalezena"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aSet {role} warehouse access to {state}"
 warehouse.perm-failed: "&cFailed to update warehouse permission."
 warehouse.role-officer: "officer"
 warehouse.role-member: "member"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"

@@ -63,7 +63,7 @@ public class CreateRelationGUI implements GUI {
     @Override
     public String getTitle() {
         return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-relation.title",
-                "&6创建工会关系"));
+                "&6Create Guild Relation"));
     }
     
     @Override
@@ -116,7 +116,7 @@ public class CreateRelationGUI implements GUI {
             if (selectedType != null && targetGuildName != null) {
                 createRelation(player);
             } else {
-                String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.select-both", "&c请先选择关系类型和目标工会！");
+                String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.select-both", "&cPlease select relation type and target guild first!");
                 player.sendMessage(ColorUtils.colorize(message));
             }
             return;
@@ -156,7 +156,7 @@ public class CreateRelationGUI implements GUI {
                     targetGuildName = targetGuild.getName();
                     refreshInventory(player);
 
-                    String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.target-selected", "&a已选择目标工会: {guild}", "{guild}", targetGuildName);
+                    String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.target-selected", "&aSelected target guild: {guild}", "{guild}", targetGuildName);
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             }
@@ -192,16 +192,16 @@ public class CreateRelationGUI implements GUI {
             String displayName = ColorUtils.colorize(color + type.getDisplayName(lang));
 
             List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.relation-type", "关系类型") + ": " + color + type.getDisplayName(lang)));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.relation-type", "Relation Type") + ": " + color + type.getDisplayName(lang)));
 
             // 添加关系类型描述
             String descKey = "relations.type." + type.name().toLowerCase() + ".description";
             lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, descKey, "")));
 
             if (selectedType == type) {
-                lore.add(ColorUtils.colorize("&a✓ " + languageManager.getGuiMessage(player, "gui.common.selected", "已选择")));
+                lore.add(ColorUtils.colorize("&a✓ " + languageManager.getGuiMessage(player, "gui.common.selected", "Selected")));
             } else {
-                lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.common.click-to-select", "点击选择")));
+                lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.common.click-to-select", "Click to select")));
             }
 
             ItemStack item = createItem(material, displayName, lore.toArray(new String[0]));
@@ -224,16 +224,16 @@ public class CreateRelationGUI implements GUI {
             String displayName = ColorUtils.colorize("&f" + targetGuild.getName());
 
             List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.guild-name", "工会名称") + ": " + targetGuild.getName()));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.guild-name", "Guild Name") + ": " + targetGuild.getName()));
             if (targetGuild.getTag() != null && !targetGuild.getTag().isEmpty()) {
-                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.guild-tag", "工会标签") + ": [" + targetGuild.getTag() + "]"));
+                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.guild-tag", "Guild Tag") + ": [" + targetGuild.getTag() + "]"));
             }
-            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.leader", "会长") + ": " + targetGuild.getLeaderName()));
+            lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.leader", "Leader") + ": " + targetGuild.getLeaderName()));
 
             if (targetGuildName != null && targetGuildName.equals(targetGuild.getName())) {
-                lore.add(ColorUtils.colorize("&a✓ " + languageManager.getGuiMessage(player, "gui.common.selected", "已选择")));
+                lore.add(ColorUtils.colorize("&a✓ " + languageManager.getGuiMessage(player, "gui.common.selected", "Selected")));
             } else {
-                lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.common.click-to-select", "点击选择")));
+                lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.common.click-to-select", "Click to select")));
             }
 
             ItemStack item = createItem(material, displayName, lore.toArray(new String[0]));
@@ -250,9 +250,9 @@ public class CreateRelationGUI implements GUI {
         // 确认创建按钮
         ItemStack confirmButton = createItem(
             Material.EMERALD,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-relation.confirm-button", "&a确认创建")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-relation.confirm-lore-1", "&7创建工会关系")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-relation.confirm-lore-2", "&7需要先选择关系类型和目标工会"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-relation.confirm-button", "&aConfirm Create")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-relation.confirm-lore-1", "&7Create guild relation")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-relation.confirm-lore-2", "&7Need to select relation type and target guild first"))
         );
         inventory.setItem(45, confirmButton);
 
@@ -260,14 +260,14 @@ public class CreateRelationGUI implements GUI {
         List<String> selectionLore = new ArrayList<>();
         String typeText = selectedType != null ?
             selectedType.getColor() + selectedType.getDisplayName(lang) :
-            "&c" + languageManager.getGuiMessage(player, "gui.common.not-selected", "未选择");
-        selectionLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.relation-type", "关系类型") + ": " + typeText));
-        selectionLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.target-guild", "目标工会") + ": " +
-            (targetGuildName != null ? "&a" + targetGuildName : "&c" + languageManager.getGuiMessage(player, "gui.common.not-selected", "未选择"))));
+            "&c" + languageManager.getGuiMessage(player, "gui.common.not-selected", "Not selected");
+        selectionLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.relation-type", "Relation Type") + ": " + typeText));
+        selectionLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.target-guild", "Target Guild") + ": " +
+            (targetGuildName != null ? "&a" + targetGuildName : "&c" + languageManager.getGuiMessage(player, "gui.common.not-selected", "Not selected"))));
 
         ItemStack selectionInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-relation.current-selection", "&e当前选择")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-relation.current-selection", "&eCurrent Selection")),
             selectionLore.toArray(new String[0])
         );
         inventory.setItem(47, selectionInfo);
@@ -281,8 +281,8 @@ public class CreateRelationGUI implements GUI {
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&c上一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-previous", "&7查看上一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&e&lPrevious Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-previous", "View previous page"))
             );
             inventory.setItem(52, previousPage);
         }
@@ -292,8 +292,8 @@ public class CreateRelationGUI implements GUI {
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&a下一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-next", "&7查看下一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&e&lNext Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-next", "View next page"))
             );
             inventory.setItem(53, nextPage);
         }
@@ -301,16 +301,16 @@ public class CreateRelationGUI implements GUI {
         // 返回按钮
         ItemStack backButton = createItem(
             Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "&7返回")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-relation.back-lore", "&7返回关系管理"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "Back")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-relation.back-lore", "&7Return to relation management"))
         );
         inventory.setItem(49, backButton);
 
         // 页码显示
         ItemStack pageInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "&e第 {0} 页，共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(maxPage + 1))),
-            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.common.total-guilds", "&7总计 {0} 个工会", String.valueOf(availableGuilds.size())))
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "Page {0} of {1}", String.valueOf(currentPage + 1), String.valueOf(maxPage + 1))),
+            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.common.total-guilds", "Total {0} guilds", String.valueOf(availableGuilds.size())))
         );
         inventory.setItem(51, pageInfo);
     }
@@ -343,7 +343,7 @@ public class CreateRelationGUI implements GUI {
             refreshInventory(player);
 
             String lang = languageManager.getPlayerLanguage(player);
-            String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.type-selected", "&a已选择关系类型: {type}", "{type}", selectedType.getDisplayName(lang));
+            String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.type-selected", "&aSelected relation type: {type}", "{type}", selectedType.getDisplayName(lang));
             player.sendMessage(ColorUtils.colorize(message));
         }
     }
@@ -362,7 +362,7 @@ public class CreateRelationGUI implements GUI {
         }
         
         if (targetGuild[0] == null) {
-            String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.target-not-found", "&c目标工会不存在！");
+            String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.target-not-found", "&cTarget guild not found!");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -372,7 +372,7 @@ public class CreateRelationGUI implements GUI {
             .thenAccept(existingRelation -> {
                 CompatibleScheduler.runTask(plugin, player, () -> {
                     if (existingRelation != null) {
-                        String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.already-exists", "&c与 {guild} 的关系已存在！", "{guild}", targetGuildName);
+                        String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.already-exists", "&cRelation with {guild} already exists!", "{guild}", targetGuildName);
                         player.sendMessage(ColorUtils.colorize(message));
                         return;
                     }
@@ -385,14 +385,14 @@ public class CreateRelationGUI implements GUI {
                     ).thenAccept(success -> {
                         CompatibleScheduler.runTask(plugin, player, () -> {
                             if (success) {
-                                String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.create-success", "&a已向 {guild} 发送 {type} 关系请求！", "{guild}", targetGuildName, "{type}", selectedType.getDisplayName());
+                                String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.create-success", "&aRelation created successfully!", "{guild}", targetGuildName, "{type}", selectedType.getDisplayName());
                                 player.sendMessage(ColorUtils.colorize(message));
 
                                 // 返回关系管理界面
                                 GuildRelationsGUI relationsGUI = new GuildRelationsGUI(plugin, guild, player);
                                 plugin.getGuiManager().openGUI(player, relationsGUI);
                             } else {
-                                String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.create-failed", "&c创建关系失败！");
+                                String message = languageManager.getGuiMessage(player, "gui.guild-relations.relations.create-failed", "&cRelation creation failed!");
                                 player.sendMessage(ColorUtils.colorize(message));
                             }
                         });
@@ -415,13 +415,13 @@ public class CreateRelationGUI implements GUI {
         String lang = languageManager.getPlayerLanguage(player);
 
         SimpleForm.Builder builder = SimpleForm.builder()
-            .title(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-type-title", "&6创建关系 - 选择类型"))
-            .content(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-type-content", "&f请选择关系类型："));
+            .title(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-type-title", "&6Create Relation - Select Type"))
+            .content(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-type-content", "&fPlease select a relation type:"));
 
         for (GuildRelation.RelationType type : types) {
             builder.button(ColorUtils.colorize(type.getColor() + type.getDisplayName(lang)).replace("§7", "§f"));
         }
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-back", "&c返回"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-back", "&cBack"));
 
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             int clicked = response.clickedButtonId();
@@ -443,9 +443,9 @@ public class CreateRelationGUI implements GUI {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (guilds.isEmpty()) {
                     SimpleForm form = SimpleForm.builder()
-                        .title(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-target-title", "&6创建关系 - 选择目标"))
-                        .content(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-target-empty", "&f没有可用的目标工会"))
-                        .button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-back", "&c返回"))
+                        .title(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-target-title", "&6Create Relation - Select Target"))
+                        .content(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-target-empty", "&fNo available target guilds"))
+                        .button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-back", "&cBack"))
                         .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                             plugin.getGuiManager().openGUI(player, new GuildRelationsGUI(plugin, guild, player))))
                         .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
@@ -464,16 +464,16 @@ public class CreateRelationGUI implements GUI {
                 final String lang = languageManager.getPlayerLanguage(player);
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-target-title-page", "&6创建关系 - 选择目标 第{page}页", "{page}", String.valueOf(safePage + 1)))
-                    .content(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-target-content", "&f类型: {type}\n&f选择目标工会：", "{type}", ColorUtils.colorize(type.getColor() + type.getDisplayName(lang))));
+                    .title(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-target-title-page", "&6Create Relation - Select Target Page {page}", "{page}", String.valueOf(safePage + 1)))
+                    .content(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-target-content", "&fType: {type}\n&fSelect target guild:", "{type}", ColorUtils.colorize(type.getColor() + type.getDisplayName(lang))));
 
                 for (int i = startIndex; i < endIndex; i++) {
                     builder.button("§f" + guilds.get(i).getName());
                 }
 
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-prev-page", "&e上一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-next-page", "&e下一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-back", "&c返回"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-prev-page", "&ePrevious Page"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-next-page", "&eNext Page"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-back", "&cBack"));
 
                 builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     int clicked = response.clickedButtonId();
@@ -500,10 +500,10 @@ public class CreateRelationGUI implements GUI {
     private void sendBedrockConfirmCreate(Player player, GuildRelation.RelationType type, Guild targetGuild) {
         String lang = languageManager.getPlayerLanguage(player);
         SimpleForm form = SimpleForm.builder()
-            .title(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-confirm-title", "&6确认创建关系"))
-            .content(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-confirm-content", "&f类型: {type}\n&f目标: {target}", "{type}", ColorUtils.colorize(type.getColor() + type.getDisplayName(lang)), "{target}", targetGuild.getName()))
-            .button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-confirm-create", "&a确认创建"))
-            .button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-cancel", "&c取消"))
+            .title(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-confirm-title", "&6Confirm Create Relation"))
+            .content(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-confirm-content", "&fType: {type}\n&fTarget: {target}", "{type}", ColorUtils.colorize(type.getColor() + type.getDisplayName(lang)), "{target}", targetGuild.getName()))
+            .button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-confirm-create", "&aConfirm Create"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-cancel", "&cCancel"))
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 if (response.clickedButtonId() == 0) {
                     bedrockCreateRelation(player, type, targetGuild);
@@ -522,7 +522,7 @@ public class CreateRelationGUI implements GUI {
             .thenAccept(existingRelation -> {
                 CompatibleScheduler.runTask(plugin, player, () -> {
                     if (existingRelation != null) {
-                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-already-exists", "&c与 {guild} 的关系已存在！", "{guild}", targetGuild.getName()));
+                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-already-exists", "&cRelation with {guild} already exists!", "{guild}", targetGuild.getName()));
                         return;
                     }
                     plugin.getGuildService().createGuildRelationAsync(
@@ -532,10 +532,10 @@ public class CreateRelationGUI implements GUI {
                     ).thenAccept(success -> {
                         CompatibleScheduler.runTask(plugin, player, () -> {
                             if (success) {
-                                player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-create-success", "&a已向 {guild} 发送 {type} 关系请求！", "{guild}", targetGuild.getName(), "{type}", type.getDisplayName()));
+                                player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-create-success", "&aSent {type} relation request to {guild}!", "{guild}", targetGuild.getName(), "{type}", type.getDisplayName()));
                                 plugin.getGuiManager().openGUI(player, new GuildRelationsGUI(plugin, guild, player));
                             } else {
-                                player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-create-failed", "&c创建关系失败！"));
+                                player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.create-relation.bedrock-create-failed", "&cFailed to create relation!"));
                             }
                         });
                     });

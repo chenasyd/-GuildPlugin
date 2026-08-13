@@ -553,7 +553,6 @@ guild-role.leader: "&6Ledare"
 guild-role.officer: "&eOfficer"
 guild-role.member: "&8Medlem"
 guild-role.unknown: "&8Ok\u00e4nd"
-
 # Log types
 log.type.guild-created: "Gille skapat"
 log.type.guild-dissolved: "Gille uppl\u00f6st"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Ans\u00f6kan avslagen"
 log.type.invitation-sent: "Inbjudan skickad"
 log.type.invitation-accepted: "Inbjudan accepterad"
 log.type.invitation-rejected: "Inbjudan avb\u00f6jd"
-
 # Log time
 log.time.unknown: "Ok\u00e4nd"
 log.time.days-ago: "{0} dagar sedan"
 log.time.hours-ago: "{0} timmar sedan"
 log.time.minutes-ago: "{0} minuter sedan"
 log.time.just-now: "Just nu"
-
 # Contribution types
 contribution.type.deposit: "Ins\u00e4ttning"
 contribution.type.withdraw: "Uttag"
@@ -595,7 +592,6 @@ contribution.type.transfer: "\u00d6verf\u00f6ring"
 contribution.type.creation: "Gille skapande"
 contribution.type.upgrade: "Gille uppgradering"
 contribution.type.admin: "Admin \u00e5tg\u00e4rd"
-
 contribution.type.war_win: "Gillekrigsseger"
 contribution.type.war_kill: "Dödande (krig)"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[Modulsystem] Hoppade \u00f6ver dubblettmodul {
 module.system.duplicate-cleanup-title: "&6[Modulsystem] &cF\u00f6ljande gamla modul-JAR-filer b\u00f6r raderas:"
 module.system.duplicate-cleanup-item: "&c  - {0} (gammal version, ersatt av {1})"
 module.system.all-unloaded: "&a[Modulsystem] Alla till\u00e4ggsmoduler avladdade"
-
 # Error messages
 module.error.already-loaded: "&cModulen \u00e4r redan laddad: {0}"
 module.error.not-loaded: "&cModulen \u00e4r inte laddad eller finns inte: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cAvladdning av modul misslyckades [{0}]: {1}"
 module.error.has-dependents: "&cKan inte avladda [{0}], f\u00f6ljande moduler \u00e4r beroende av den: {1}"
 module.error.unload-failed-during-shutdown: "Misslyckades med att avladda modul under avst\u00e4ngning: {0}"
 module.error.api-too-old: "&cAPI-versionen ({1}) f\u00f6r modulen [{0}] \u00e4r f\u00f6r gammal. Detta plugin kr\u00e4ver API {2}+. Denna modul kan inte laddas!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[Modul varning] Mjukt beroende [{0}] inte uppfyllt, modulen [{1}] kan ha partiell funktionalitet otillg\u00e4nglig"
 module.warning.no-api-version: "&6[Modul varning] Modulen [{0}] deklarerade inte API-versionskrav"
 module.warning.api-version-mismatch: "&e[Modul varning] API-versionen ({1}) f\u00f6r modulen [{0}] matchar inte pluginens version ({2}), detta kan orsaka kompatibilitetsproblem!"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&lModulhanteringskommandon &e&l======"
 module.command.usage-list: "&8/guildmodule list  &f- Lista alla laddade moduler"
@@ -667,7 +660,6 @@ module.command.info.state: "&8Status: &f{0}"
 module.command.info.description: "&8Beskrivning: &f{0}"
 module.command.info.depends: "&8Beroenden: &f{0}"
 module.command.info.soft-depends: "&8Valfria beroenden: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== Molnmoduler ==="
 cloud.empty: "&cInga molnmoduler hittades."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7V\u00e4lj en formul\u00e4rtyp f\u00f6r f\u00f6rhan
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Knappmeny"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Inmatnings-/inst\u00e4llningsformul\u00e4r"
 bedrock-test.main-btn-modal: "&cModalForm &f- Bekr\u00e4ftelsedialog"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Gille huvudmeny &r- &7SimpleForm exempel"
 bedrock-test.simple-content: "&7V\u00e4lkommen, &e{player}&7!\n&7Detta \u00e4r ett exempel p\u00e5 SimpleForm knappmeny."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Medlemshantering"
 bedrock-test.simple-name-settings: "Gilleinst\u00e4llningar"
 bedrock-test.simple-name-list: "Gillelista"
 bedrock-test.simple-name-quit: "L\u00e4mna gillet"
-
 # CustomForm
 bedrock-test.custom-title: "&6Gilleinst\u00e4llningar &r- &fCustomForm exempel"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Grundinst\u00e4llningar \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fTill\u00e5t medlemmar att sparka"
 bedrock-test.custom-label-other: "&7\u2014\u2014 \u00d6vrigt \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fGillespr\u00e5k"
 bedrock-test.custom-slider-max-members: "&fMaximalt antal medlemmar"
-
 # ModalForm
 bedrock-test.modal-title: "&cBekr\u00e4fta \u00e5tg\u00e4rd &r- &fModalForm exempel"
 bedrock-test.modal-content: "&7\u00c4r du s\u00e4ker p\u00e5 att du vill l\u00e4mna gillet &eTestgille &7?\n\n&cDenna \u00e5tg\u00e4rd kan inte \u00e5ngras!\n&7Efter uttr\u00e4de m\u00e5ste du ans\u00f6ka om medlemskap igen."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Se status"
 war.help.report: "&e/guildwar report [id] &7- Visa rapport"
 war.help.season: "&e/guildwar season &7- Säsongsranking"
 war.help.admin: "&e/guildwar admin end <id> &7- Tvinga avslutning"
-
 war.report.broadcast: "&6[Rapport #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7kills: &e{kills}"
 war.report.none: "&7Ingen rapport hittades"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aSet {role} warehouse access to {state}"
 warehouse.perm-failed: "&cFailed to update warehouse permission."
 warehouse.role-officer: "officer"
 warehouse.role-member: "member"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"

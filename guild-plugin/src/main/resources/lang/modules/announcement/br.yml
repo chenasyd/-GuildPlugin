@@ -69,3 +69,7 @@ module.announcement.view.detail-updated: "&7Updated: &f{0}"
 module.announcement.view.detail-content: "&6Announcement Content"
 module.announcement.view.detail-content-label: "&fContent:"
 module.announcement.view.detail-summary: "&eAnnouncement Summary"
+
+module:
+  announcement:
+    info-button-count: "{0} announcements"

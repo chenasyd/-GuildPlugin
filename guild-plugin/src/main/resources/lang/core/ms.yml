@@ -553,7 +553,6 @@ guild-role.leader: "&6Ketua"
 guild-role.officer: "&ePegawai"
 guild-role.member: "&8Ahli"
 guild-role.unknown: "&8Tidak diketahui"
-
 # Log types
 log.type.guild-created: "Guild Dicipta"
 log.type.guild-dissolved: "Guild Dibubarkan"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Permohonan Ditolak"
 log.type.invitation-sent: "Jemputan Dihantar"
 log.type.invitation-accepted: "Jemputan Diterima"
 log.type.invitation-rejected: "Jemputan Ditolak"
-
 # Log time
 log.time.unknown: "Tidak diketahui"
 log.time.days-ago: "{0} hari lalu"
 log.time.hours-ago: "{0} jam lalu"
 log.time.minutes-ago: "{0} minit lalu"
 log.time.just-now: "Baru sahaja"
-
 # Contribution types
 contribution.type.deposit: "Deposit"
 contribution.type.withdraw: "Pengeluaran"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Pemindahan"
 contribution.type.creation: "Penciptaan Guild"
 contribution.type.upgrade: "Peningkatan Guild"
 contribution.type.admin: "Operasi Pentadbir"
-
 contribution.type.war_win: "Kemenangan perang guild"
 contribution.type.war_kill: "Bunuh (perang)"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[Sistem Modul] Modul pendua {0} ({1}, SDK: {2})
 module.system.duplicate-cleanup-title: "&6[Sistem Modul] &cJAR modul lama berikut harus dipadam:"
 module.system.duplicate-cleanup-item: "&c  - {0} (versi lama, digantikan oleh {1})"
 module.system.all-unloaded: "&a[Sistem Modul] Semua modul sambungan dibongkar"
-
 # Error messages
 module.error.already-loaded: "&cModul sudah dimuatkan: {0}"
 module.error.not-loaded: "&cModul tidak dimuatkan atau tidak wujud: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cPembongkaran modul gagal [{0}]: {1}"
 module.error.has-dependents: "&cTidak boleh membongkar [{0}], modul berikut bergantung padanya: {1}"
 module.error.unload-failed-during-shutdown: "Gagal membongkar modul semasa penutupan: {0}"
 module.error.api-too-old: "&cVersi API ({1}) modul [{0}] terlalu lama. Plugin ini memerlukan API {2}+. Modul ini tidak boleh dimuatkan!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[Amaran Modul] Kebergantungan lembut [{0}] tidak dipenuhi, modul [{1}] mungkin mempunyai fungsi separa tidak tersedia"
 module.warning.no-api-version: "&6[Amaran Modul] Modul [{0}] tidak mengisytiharkan keperluan versi API"
 module.warning.api-version-mismatch: "&e[Amaran Modul] Versi API ({1}) modul [{0}] tidak sepadan dengan versi plugin ({2}), ini boleh menyebabkan masalah keserasian!"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&lPerintah Pengurusan Modul &e&l======"
 module.command.usage-list: "&8/guildmodule list  &f- Senaraikan semua modul yang dimuatkan"
@@ -667,7 +660,6 @@ module.command.info.state: "&8Keadaan: &f{0}"
 module.command.info.description: "&8Perihalan: &f{0}"
 module.command.info.depends: "&8Kebergantungan: &f{0}"
 module.command.info.soft-depends: "&8Kebergantungan Pilihan: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== Modul Awan ==="
 cloud.empty: "&cTiada modul awan ditemui."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7Pilih jenis borang untuk pratonton:"
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Menu butang"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Borang input/tetapan"
 bedrock-test.main-btn-modal: "&cModalForm &f- Dialog pengesahan"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Menu utama gild &r- &7Contoh SimpleForm"
 bedrock-test.simple-content: "&7Selamat datang, &e{player}&7!\n&7Ini adalah contoh menu butang SimpleForm."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Pengurusan ahli"
 bedrock-test.simple-name-settings: "Tetapan gild"
 bedrock-test.simple-name-list: "Senarai gild"
 bedrock-test.simple-name-quit: "Keluar gild"
-
 # CustomForm
 bedrock-test.custom-title: "&6Tetapan gild &r- &fContoh CustomForm"
 bedrock-test.custom-label-basic: "&7── Tetapan asas ──"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fBenarkan ahli menendang"
 bedrock-test.custom-label-other: "&7── Lain-lain ──"
 bedrock-test.custom-dropdown-lang: "&fBahasa gild"
 bedrock-test.custom-slider-max-members: "&fAhli maksimum"
-
 # ModalForm
 bedrock-test.modal-title: "&cSahkan operasi &r- &fContoh ModalForm"
 bedrock-test.modal-content: "&7Adakah anda pasti mahu keluar dari gild &eGild Ujian &7?\n\n&cOperasi ini tidak boleh dibatalkan!\n&7Selepas keluar, anda perlu memohon untuk sertai semula."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Lihat status"
 war.help.report: "&e/guildwar report [id] &7- Lihat laporan"
 war.help.season: "&e/guildwar season &7- Kedudukan musim"
 war.help.admin: "&e/guildwar admin end <id> &7- Tamatkan secara paksa"
-
 war.report.broadcast: "&6[Laporan #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7bunuh: &e{kills}"
 war.report.none: "&7Tiada laporan dijumpai"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aSet {role} warehouse access to {state}"
 warehouse.perm-failed: "&cFailed to update warehouse permission."
 warehouse.role-officer: "officer"
 warehouse.role-member: "member"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"

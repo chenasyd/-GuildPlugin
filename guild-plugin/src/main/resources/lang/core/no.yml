@@ -553,7 +553,6 @@ guild-role.leader: "\u00266Leder"
 guild-role.officer: "\u0026eOffiser"
 guild-role.member: "\u00267Medlem"
 guild-role.unknown: "\u00267Ukjent"
-
 # Loggtyper
 log.type.guild-created: "Gilde Opprettet"
 log.type.guild-dissolved: "Gilde Oppl\u00f8st"
@@ -580,14 +579,12 @@ log.type.application-rejected: "S\u00f8knad Avsl\u00e5tt"
 log.type.invitation-sent: "Invitasjon Sendt"
 log.type.invitation-accepted: "Invitasjon Akseptert"
 log.type.invitation-rejected: "Invitasjon Avsl\u00e5tt"
-
 # Loggtid
 log.time.unknown: "Ukjent"
 log.time.days-ago: "{0} dager siden"
 log.time.hours-ago: "{0} timer siden"
 log.time.minutes-ago: "{0} minutter siden"
 log.time.just-now: "Akkurat n\u00e5"
-
 # Bidragstyper
 contribution.type.deposit: "Innskudd"
 contribution.type.withdraw: "Uttak"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Overf\u00f8ring"
 contribution.type.creation: "Gildeopprettelse"
 contribution.type.upgrade: "Gildeoppgradering"
 contribution.type.admin: "Admin-operasjon"
-
 contribution.type.war_win: "Gildekrigsseier"
 contribution.type.war_kill: "Dreping (krig)"
 # S\u00f8knadsstatus
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "\u0026e[Modulsystem] Hoppet over duplikatmodul {0
 module.system.duplicate-cleanup-title: "\u00266[Modulsystem] \u0026cF\u00f8lgende gamle versjonsmodul-JAR-er b\u00f8r slettes:"
 module.system.duplicate-cleanup-item: "\u0026c  - {0} (gammel versjon, erstattet av {1})"
 module.system.all-unloaded: "\u0026a[Modulsystem] Alle utvidelsesmoduler er lastet ut"
-
 # Feilmeldinger
 module.error.already-loaded: "\u0026cModul allerede lastet: {0}"
 module.error.not-loaded: "\u0026cModul ikke lastet eller finnes ikke: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "\u0026cKunne ikke laste ut modul [{0}]: {1}"
 module.error.has-dependents: "\u0026cKan ikke laste ut [{0}], f\u00f8lgende moduler er avhengige av den: {1}"
 module.error.unload-failed-during-shutdown: "Kunne ikke laste ut modul under nedstenging: {0}"
 module.error.api-too-old: "\u0026cModul [{0}] API-versjon ({1}) er for gammel. Denne pluginen krever API {2}+. Kan ikke laste denne modulen!"
-
 # Advarselsmeldinger
 module.warning.soft-depend-missing: "\u00266[Moduladvarsel] Myk avhengighet [{0}] er ikke oppfylt. Modul [{1}] kan ha begrenset funksjonalitet"
 module.warning.no-api-version: "\u00266[Moduladvarsel] Modul [{0}] oppgir ikke noe API-versjonskrav"
 module.warning.api-version-mismatch: "\u0026e[Moduladvarsel] Modul [{0}] API-versjon ({1}) samsvarer ikke med plugin-versjonen ({2}). Dette kan for\u00e5rsake kompatibilitetsproblemer!"
-
 # Moduladministrasjonskommandoer
 module.command.usage-header: "\u0026\u0026l====== \u00266\u0026lModuladministrasjonskommandoer \u0026e\u0026l======"
 module.command.usage-list: "\u00267/guildmodule list  \u0026f- List opp alle lastede moduler"
@@ -667,7 +660,6 @@ module.command.info.state: "\u00267Status: \u0026f{0}"
 module.command.info.description: "\u00267Beskrivelse: \u0026f{0}"
 module.command.info.depends: "\u00267Avhengigheter: \u0026f{0}"
 module.command.info.soft-depends: "\u00267Myke avhengigheter: \u0026f{0}"
-
 # Skymoduler
 cloud.title: "\u0026b\u0026l=== Skymoduler ==="
 cloud.empty: "\u0026cIngen skymoduler funnet."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7Velg en skjematype for forh\u00e5ndsvisning:"
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Knappemeny"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Innskrivings-/innstillingsskjema"
 bedrock-test.main-btn-modal: "&cModalForm &f- Bekreftelsesdialog"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Gilde hovedmeny &r- &7SimpleForm eksempel"
 bedrock-test.simple-content: "&7Velkommen, &e{player}&7!\n&7Dette er et eksempel p\u00e5 SimpleForm knappemeny."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Medlemsadministrasjon"
 bedrock-test.simple-name-settings: "Gildeinnstillinger"
 bedrock-test.simple-name-list: "Gildeliste"
 bedrock-test.simple-name-quit: "Forlat gilde"
-
 # CustomForm
 bedrock-test.custom-title: "&6Gildeinnstillinger &r- &fCustomForm eksempel"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Grunninnstillinger \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fTillat medlemmer \u00e5 sparke"
 bedrock-test.custom-label-other: "&7\u2014\u2014 Annet \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fGildespr\u00e5k"
 bedrock-test.custom-slider-max-members: "&fMaksimalt antall medlemmer"
-
 # ModalForm
 bedrock-test.modal-title: "&cBekreft handling &r- &fModalForm eksempel"
 bedrock-test.modal-content: "&7Er du sikker p\u00e5 at du vil forlate gilden &eTestgilde &7?\n\n&cDenne handlingen kan ikke angres!\n&7Etter avslutning m\u00e5 du s\u00f8ke om medlemskap p\u00e5 nytt."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Se status"
 war.help.report: "&e/guildwar report [id] &7- Vis rapport"
 war.help.season: "&e/guildwar season &7- Sesongranking"
 war.help.admin: "&e/guildwar admin end <id> &7- Tving avslutning"
-
 war.report.broadcast: "&6[Rapport #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7kills: &e{kills}"
 war.report.none: "&7Ingen rapport funnet"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aSet {role} warehouse access to {state}"
 warehouse.perm-failed: "&cFailed to update warehouse permission."
 warehouse.role-officer: "officer"
 warehouse.role-member: "member"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"

@@ -553,7 +553,6 @@ guild-role.leader: "&6Ch\u1EE7 t\u1ECBch"
 guild-role.officer: "&eQuan ch\u1EE9c"
 guild-role.member: "&7Th\xE0nh vi\xEAn"
 guild-role.unknown: "&7Kh\xF4ng r\xF5"
-
 # Log types
 log.type.guild-created: "C\xF4ng h\u1ED9i \u0111\u01B0\u1EE3c t\u1EA1o"
 log.type.guild-dissolved: "C\xF4ng h\u1ED9i b\u1ECB gi\u1EA3i t\xE1n"
@@ -580,14 +579,12 @@ log.type.application-rejected: "T\u1EEB ch\u1ED1i \u0111\u01A1n tham gia"
 log.type.invitation-sent: "\u0110\xE3 g\u1EEDi l\u1EDDi m\u1EDDi"
 log.type.invitation-accepted: "Ch\u1EA5p nh\u1EADn l\u1EDDi m\u1EDDi"
 log.type.invitation-rejected: "T\u1EEB ch\u1ED1i l\u1EDDi m\u1EDDi"
-
 # Log time
 log.time.unknown: "Kh\xF4ng r\xF5"
 log.time.days-ago: "{0} ng\xE0y tr\u01B0\u1EDBc"
 log.time.hours-ago: "{0} gi\u1EDD tr\u01B0\u1EDBc"
 log.time.minutes-ago: "{0} ph\xFAt tr\u01B0\u1EDBc"
 log.time.just-now: "V\u1EEBa xong"
-
 # Contribution types
 contribution.type.deposit: "G\u1EEDi ti\u1EC1n"
 contribution.type.withdraw: "R\xFAt ti\u1EC1n"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Chuy\u1EC3n kho\u1EA3n"
 contribution.type.creation: "T\u1EA1o c\xF4ng h\u1ED9i"
 contribution.type.upgrade: "N\xE2ng c\u1EA5p c\xF4ng h\u1ED9i"
 contribution.type.admin: "Thao t\xE1c qu\u1EA3n tr\u1ECB"
-
 contribution.type.war_win: "Thắng chiến guild"
 contribution.type.war_kill: "Hạ gục (chiến)"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[H\u1EC7 th\u1ED1ng m\xF4-\u0111un] B\u1ECF qua
 module.system.duplicate-cleanup-title: "&6[H\u1EC7 th\u1ED1ng m\xF4-\u0111un] &cC\xE1c t\u1EC7p JAR m\xF4-\u0111un phi\xEAn b\u1EA3n c\u0169 sau \u0111\xE2y c\u1EA7n \u0111\u01B0\u1EE3c x\xF3a:"
 module.system.duplicate-cleanup-item: "&c  - {0} (phi\xEAn b\u1EA3n c\u0169, \u0111\xE3 \u0111\u01B0\u1EE3c thay th\u1EBF b\u1EDFi {1})"
 module.system.all-unloaded: "&a[H\u1EC7 th\u1ED1ng m\xF4-\u0111un] T\u1EA5t c\u1EA3 c\xE1c m\xF4-\u0111un m\u1EDF r\u1ED9ng \u0111\xE3 \u0111\u01B0\u1EE3c d\u1EE1 t\u1EA3i"
-
 # Error messages
 module.error.already-loaded: "&cM\xF4-\u0111un \u0111\xE3 \u0111\u01B0\u1EE3c t\u1EA3i: {0}"
 module.error.not-loaded: "&cM\xF4-\u0111un ch\u01B0a \u0111\u01B0\u1EE3c t\u1EA3i ho\u1EB7c kh\xF4ng t\u1ED3n t\u1EA1i: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cD\u1EE1 t\u1EA3i m\xF4-\u0111un th\u1EA5t b\u1EA1
 module.error.has-dependents: "&cKh\xF4ng th\u1EC3 d\u1EE1 t\u1EA3i [{0}], c\xE1c m\xF4-\u0111un sau ph\u1EE5 thu\u1ED9c v\xE0o n\xF3: {1}"
 module.error.unload-failed-during-shutdown: "D\u1EE1 t\u1EA3i m\xF4-\u0111un th\u1EA5t b\u1EA1i khi \u0111\xF3ng: {0}"
 module.error.api-too-old: "&cPhi\xEAn b\u1EA3n API ({1}) c\u1EE7a m\xF4-\u0111un [{0}] qu\xE1 c\u0169, plugin n\xE0y y\xEAu c\u1EA7u API {2}+, kh\xF4ng th\u1EC3 t\u1EA3i m\xF4-\u0111un n\xE0y!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[C\u1EA3nh b\xE1o m\xF4-\u0111un] Ph\u1EE5 thu\u1ED9c m\u1EC1m [{0}] ch\u01B0a \u0111\u01B0\u1EE3c \u0111\xE1p \u1EE9ng, m\xF4-\u0111un [{1}] c\xF3 th\u1EC3 kh\xF4ng ho\u1EA1t \u0111\u1ED9ng \u0111\u1EA7y \u0111\u1EE7 ch\u1EE9c n\u0103ng"
 module.warning.no-api-version: "&6[C\u1EA3nh b\xE1o m\xF4-\u0111un] M\xF4-\u0111un [{0}] kh\xF4ng khai b\xE1o y\xEAu c\u1EA7u phi\xEAn b\u1EA3n API"
 module.warning.api-version-mismatch: "&e[C\u1EA3nh b\xE1o m\xF4-\u0111un] Phi\xEAn b\u1EA3n API ({1}) c\u1EE7a m\xF4-\u0111un [{0}] kh\xF4ng kh\u1EDBp v\u1EDBi phi\xEAn b\u1EA3n plugin ({2}), c\xF3 th\u1EC3 g\xE2y ra v\u1EA5n \u0111\u1EC1 t\u01B0\u01A1ng th\xEDch!"
-
 # Module management commands
 module.command.usage-header: "&e&l====== &6&lL\u1EC7nh qu\u1EA3n l\xFD m\xF4-\u0111un &e&l======"
 module.command.usage-list: "&7/guildmodule list  &f- Li\u1EC7t k\xEA t\u1EA5t c\u1EA3 m\xF4-\u0111un \u0111\xE3 t\u1EA3i"
@@ -667,7 +660,6 @@ module.command.info.state: "&7Tr\u1EA1ng th\xE1i: &f{0}"
 module.command.info.description: "&7M\xF4 t\u1EA3: &f{0}"
 module.command.info.depends: "&7Ph\u1EE5 thu\u1ED9c: &f{0}"
 module.command.info.soft-depends: "&7Ph\u1EE5 thu\u1ED9c t\xF9y ch\u1ECDn: &f{0}"
-
 # Cloud modules
 cloud.title: "&b&l=== M\xF4-\u0111un tr\xEAn \u0111\xE1m m\xE2y ==="
 cloud.empty: "&cKh\xF4ng t\xECm th\u1EA5y m\xF4-\u0111un n\xE0o tr\xEAn \u0111\xE1m m\xE2y."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7Ch\u1ecdn lo\u1ea1i bi\u1ec3u m\u1eabu \u0111\u1ec
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Tr\u00ecnh \u0111\u01a1n n\u00fat"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Bi\u1ec3u m\u1eabu nh\u1eadp/c\u00e0i \u0111\u1eb7t"
 bedrock-test.main-btn-modal: "&cModalForm &f- H\u1ed9p tho\u1ea1i x\u00e1c nh\u1eadn"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Tr\u00ecnh \u0111\u01a1n ch\u00ednh guild &r- &7V\u00ed d\u1ee5 SimpleForm"
 bedrock-test.simple-content: "&7Ch\u00e0o m\u1eebng, &e{player}&7!\n&7\u0110\u00e2y l\u00e0 v\u00ed d\u1ee5 v\u1ec1 tr\u00ecnh \u0111\u01a1n n\u00fat SimpleForm."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Qu\u1ea3n l\u00fd th\u00e0nh vi\u00ean"
 bedrock-test.simple-name-settings: "C\u00e0i \u0111\u1eb7t guild"
 bedrock-test.simple-name-list: "Danh s\u00e1ch guild"
 bedrock-test.simple-name-quit: "R\u1eddi guild"
-
 # CustomForm
 bedrock-test.custom-title: "&6C\u00e0i \u0111\u1eb7t guild &r- &fV\u00ed d\u1ee5 CustomForm"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 C\u00e0i \u0111\u1eb7t c\u01a1 b\u1ea3n \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fCho ph\u00e9p th\u00e0nh vi\u00ean \u0
 bedrock-test.custom-label-other: "&7\u2014\u2014 Kh\u00e1c \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fNg\u00f4n ng\u1eef guild"
 bedrock-test.custom-slider-max-members: "&fS\u1ed1 th\u00e0nh vi\u00ean t\u1ed1i \u0111a"
-
 # ModalForm
 bedrock-test.modal-title: "&cX\u00e1c nh\u1eadn thao t\u00e1c &r- &fV\u00ed d\u1ee5 ModalForm"
 bedrock-test.modal-content: "&7B\u1ea1n c\u00f3 ch\u1eafc ch\u1eafn mu\u1ed1n r\u1eddi guild &eGuild Ki\u1ec3m Tra &7?\n\n&cThao t\u00e1c n\u00e0y kh\u00f4ng th\u1ec3 ho\u00e0n t\u00e1c!\n&7Sau khi r\u1eddi, b\u1ea1n s\u1ebd c\u1ea7n \u0111\u0103ng k\u00fd tham gia l\u1ea1i."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Xem tr\u1ea1ng th\u00e1i"
 war.help.report: "&e/guildwar report [id] &7- Xem báo cáo"
 war.help.season: "&e/guildwar season &7- BXH mùa giải"
 war.help.admin: "&e/guildwar admin end <id> &7- Bu\u1ed9c k\u1ebft th\u00fac"
-
 war.report.broadcast: "&6[Báo cáo #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7hạ gục: &e{kills}"
 war.report.none: "&7Không tìm thấy báo cáo"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aSet {role} warehouse access to {state}"
 warehouse.perm-failed: "&cFailed to update warehouse permission."
 warehouse.role-officer: "officer"
 warehouse.role-member: "member"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"

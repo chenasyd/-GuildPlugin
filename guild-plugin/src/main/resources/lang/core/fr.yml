@@ -553,7 +553,6 @@ guild-role.leader: "&6Chef"
 guild-role.officer: "&eOfficier"
 guild-role.member: "&8Membre"
 guild-role.unknown: "&8Inconnu"
-
 # Types de journal
 log.type.guild-created: "Guilde cr\u00e9\u00e9e"
 log.type.guild-dissolved: "Guilde dissoute"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Candidature rejet\u00e9e"
 log.type.invitation-sent: "Invitation envoy\u00e9e"
 log.type.invitation-accepted: "Invitation accept\u00e9e"
 log.type.invitation-rejected: "Invitation rejet\u00e9e"
-
 # Temps des journaux
 log.time.unknown: "Inconnu"
 log.time.days-ago: "il y a {0} jours"
 log.time.hours-ago: "il y a {0} heures"
 log.time.minutes-ago: "il y a {0} minutes"
 log.time.just-now: "\u00c0 l'instant"
-
 # Types de contribution
 contribution.type.deposit: "D\u00e9p\u00f4t"
 contribution.type.withdraw: "Retrait"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Transfert"
 contribution.type.creation: "Cr\u00e9ation de guilde"
 contribution.type.upgrade: "Am\u00e9lioration de guilde"
 contribution.type.admin: "Op\u00e9ration administrateur"
-
 contribution.type.war_win: "Victoire de guerre de guilde"
 contribution.type.war_kill: "Élimination (guerre)"
 # Statut des candidatures
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[Syst\u00e8me de modules] Module dupliqu\u00e9 
 module.system.duplicate-cleanup-title: "&6[Syst\u00e8me de modules] &cLes anciens JAR de modules suivants devraient \u00eatre supprim\u00e9s:"
 module.system.duplicate-cleanup-item: "&c  - {0} (ancienne version, remplac\u00e9e par {1})"
 module.system.all-unloaded: "&a[Syst\u00e8me de modules] Tous les modules d'extension sont d\u00e9charg\u00e9s"
-
 # Messages d'erreur
 module.error.already-loaded: "&cModule d\u00e9j\u00e0 charg\u00e9: {0}"
 module.error.not-loaded: "&cModule non charg\u00e9 ou inexistant: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&c\u00c9chec du d\u00e9chargement du module [{0}]: 
 module.error.has-dependents: "&cImpossible de d\u00e9charger [{0}], les modules suivants en d\u00e9pendent: {1}"
 module.error.unload-failed-during-shutdown: "\u00c9chec du d\u00e9chargement du module lors de l'arr\u00eat: {0}"
 module.error.api-too-old: "&cLa version API ({1}) du module [{0}] est trop ancienne. Ce plugin n\u00e9cessite API {2}+. Impossible de charger ce module\u00a0!"
-
 # Messages d'avertissement
 module.warning.soft-depend-missing: "&6[Avertissement module] La d\u00e9pendance optionnelle [{0}] n'est pas satisfaite, le module [{1}] peut avoir des fonctionnalit\u00e9s partielles indisponibles"
 module.warning.no-api-version: "&6[Avertissement module] Le module [{0}] n'a pas d\u00e9clar\u00e9 d'exigence de version API"
 module.warning.api-version-mismatch: "&e[Avertissement module] La version API ({1}) du module [{0}] ne correspond pas \u00e0 la version du plugin ({2}), cela peut causer des probl\u00e8mes de compatibilit\u00e9\u00a0!"
-
 # Commandes de gestion des modules
 module.command.usage-header: "&e&l====== &6&lCommandes de gestion des modules &e&l======"
 module.command.usage-list: "&8/guildmodule list  &f- Lister tous les modules charg\u00e9s"
@@ -667,7 +660,6 @@ module.command.info.state: "&8\u00c9tat: &f{0}"
 module.command.info.description: "&8Description: &f{0}"
 module.command.info.depends: "&8D\u00e9pendances: &f{0}"
 module.command.info.soft-depends: "&8D\u00e9pendances optionnelles: &f{0}"
-
 # Modules cloud
 cloud.title: "&b&l=== Modules cloud ==="
 cloud.empty: "&cAucun module cloud trouv\u00e9."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7S\u00e9lectionnez un type de formulaire \u00e0 vis
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Menu de boutons"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Formulaire de saisie/r\u00e9glages"
 bedrock-test.main-btn-modal: "&cModalForm &f- Dialogue de confirmation"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Menu principal de la guilde &r- &7Exemple SimpleForm"
 bedrock-test.simple-content: "&7Bienvenue, &e{player}&7!\n&7Ceci est un exemple de menu de boutons SimpleForm."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Gestion des membres"
 bedrock-test.simple-name-settings: "Param\u00e8tres de la guilde"
 bedrock-test.simple-name-list: "Liste des guildes"
 bedrock-test.simple-name-quit: "Quitter la guilde"
-
 # CustomForm
 bedrock-test.custom-title: "&6Param\u00e8tres de la guilde &r- &fExemple CustomForm"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Param\u00e8tres de base \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fAutoriser les membres \u00e0 expulser"
 bedrock-test.custom-label-other: "&7\u2014\u2014 Autres \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fLangue de la guilde"
 bedrock-test.custom-slider-max-members: "&fNombre maximum de membres"
-
 # ModalForm
 bedrock-test.modal-title: "&cConfirmer l'op\u00e9ration &r- &fExemple ModalForm"
 bedrock-test.modal-content: "&7\u00cates-vous s\u00fbr de vouloir quitter la guilde &eGuilde de Test &7?\n\n&cCette op\u00e9ration est irr\u00e9versible !\n&7Apr\u00e8s avoir quitt\u00e9, vous devrez refaire une demande d'adh\u00e9sion."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Voir le statut"
 war.help.report: "&e/guildwar report [id] &7- Voir le rapport"
 war.help.season: "&e/guildwar season &7- Classement de saison"
 war.help.admin: "&e/guildwar admin end <id> &7- Forcer la fin"
-
 war.report.broadcast: "&6[Rapport #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7éliminations: &e{kills}"
 war.report.none: "&7Aucun rapport trouvé"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aAcces entrepot {role} defini sur {state}"
 warehouse.perm-failed: "&cEchec de la mise a jour des permissions."
 warehouse.role-officer: "officier"
 warehouse.role-member: "membre"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Pièces"
+currency.notify.gain: "&6[Monnaie] &a+{0} {1}"
+currency.notify.spend: "&6[Monnaie] &c-{0} {1}"

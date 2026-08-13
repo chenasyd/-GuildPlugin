@@ -87,6 +87,7 @@ public class GuildPlugin extends JavaPlugin {
     private PluginFileLogger fileLogger;
     private com.guild.module.cloud.CloudModuleRepository cloudModuleRepository;
     private com.guild.core.cache.GuildPlayerDataCache guildPlayerDataCache;
+    private GuildHomeProtectListener guildHomeProtectListener;
     // 等级需求配置（key = 当前等级 -> 所需金额达到下一等级）
     private Map<Integer, Double> levelRequirements = new HashMap<>();
     private int maxGuildLevel = 10;
@@ -432,7 +433,8 @@ public class GuildPlugin extends JavaPlugin {
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new GuildListener(this), this);
-        getServer().getPluginManager().registerEvents(new GuildHomeProtectListener(this), this);
+        guildHomeProtectListener = new GuildHomeProtectListener(this);
+        getServer().getPluginManager().registerEvents(guildHomeProtectListener, this);
     }
     
     private void startServices() {
@@ -677,6 +679,10 @@ public class GuildPlugin extends JavaPlugin {
 
     public com.guild.core.cache.GuildPlayerDataCache getGuildPlayerDataCache() {
         return guildPlayerDataCache;
+    }
+
+    public GuildHomeProtectListener getGuildHomeProtectListener() {
+        return guildHomeProtectListener;
     }
 
     public com.guild.activity.ActivityBootstrap getActivityBootstrap() {

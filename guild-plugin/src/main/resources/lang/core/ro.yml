@@ -553,7 +553,6 @@ guild-role.leader: "&6Lider"
 guild-role.officer: "&eOfi\u021ber"
 guild-role.member: "&7Membru"
 guild-role.unknown: "&7Necunoscut"
-
 # Log types
 log.type.guild-created: "Breasl\u0103 creat\u0103"
 log.type.guild-dissolved: "Breasl\u0103 desfiin\u021bat\u0103"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Cerere refuzat\u0103"
 log.type.invitation-sent: "Invita\u021bie trimis\u0103"
 log.type.invitation-accepted: "Invita\u021bie acceptat\u0103"
 log.type.invitation-rejected: "Invita\u021bie refuzat\u0103"
-
 # Log time
 log.time.unknown: "Necunoscut"
 log.time.days-ago: "acum {0} zile"
 log.time.hours-ago: "acum {0} ore"
 log.time.minutes-ago: "acum {0} minute"
 log.time.just-now: "Chiar acum"
-
 # Contribution types
 contribution.type.deposit: "Depunere"
 contribution.type.withdraw: "Retragere"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Transfer"
 contribution.type.creation: "Crearea breslei"
 contribution.type.upgrade: "Promovarea breslei"
 contribution.type.admin: "Opera\u021biune de administrator"
-
 contribution.type.war_win: "Victorie război de breaslă"
 contribution.type.war_kill: "Ucideri (război)"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[Sistemul de module] Se sare peste modulul dupl
 module.system.duplicate-cleanup-title: "&6[Sistemul de module] &cUrm\u0103toarele fi\u0219iere JAR ale modulelor vechi ar trebui \u0219terse:"
 module.system.duplicate-cleanup-item: "&c  - {0} (versiune veche, \u00eenlocuit\u0103 de {1})"
 module.system.all-unloaded: "&a[Sistemul de module] Toate modulele de extensie au fost desc\u0103rcate"
-
 # Error messages
 module.error.already-loaded: "&cModulul este deja \u00eenc\u0103rcat: {0}"
 module.error.not-loaded: "&cModulul nu este \u00eenc\u0103rcat sau nu exist\u0103: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cDesc\u0103rcarea modulului a e\u0219uat [{0}]: {1
 module.error.has-dependents: "&cNu se poate desc\u0103rca [{0}], urm\u0103toarele module depind de el: {1}"
 module.error.unload-failed-during-shutdown: "Desc\u0103rcarea modulului a e\u0219uat \u00een timpul \u00eenchiderii: {0}"
 module.error.api-too-old: "&cVersiunea API ({1}) a modulului [{0}] este prea veche, acest plugin necesit\u0103 API {2}+, nu se poate \u00eenc\u0103rca acest modul!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[Avertisment modul] Dependen\u021ba moale [{0}] nu este satisf\u0103cut\u0103, modulul [{1}] poate avea func\u021bionalitate par\u021bial\u0103 indisponibil\u0103"
 module.warning.no-api-version: "&6[Avertisment modul] Modulul [{0}] nu declar\u0103 cerin\u021bele versiunii API"
 module.warning.api-version-mismatch: "&e[Avertisment modul] Versiunea API ({1}) a modulului [{0}] nu se potrive\u0219te cu versiunea plugin-ului ({2}), poate cauza probleme de compatibilitate!"
-
 # Module management commands
 module.command.usage-header: "&e&l====== &6&lComenzi de gestionare a modulelor &e&l======"
 module.command.usage-list: "&7/guildmodule list  &f- Listeaz\u0103 toate modulele \u00eenc\u0103rcate"
@@ -667,7 +660,6 @@ module.command.info.state: "&7Stare: &f{0}"
 module.command.info.description: "&7Descriere: &f{0}"
 module.command.info.depends: "&7Dependen\u021be: &f{0}"
 module.command.info.soft-depends: "&7Dependen\u021be op\u021bionale: &f{0}"
-
 # Cloud modules
 cloud.title: "&b&l=== Module \u00een cloud ==="
 cloud.empty: "&cNu au fost g\u0103site module \u00een cloud."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7Selecteaz\u0103 un tip de formular pentru previzua
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Meniu butoane"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Formular de intrare/ set\u0103ri"
 bedrock-test.main-btn-modal: "&cModalForm &f- Dialog de confirmare"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Meniu principal clan &r- &7Exemplu SimpleForm"
 bedrock-test.simple-content: "&7Bun venit, &e{player}&7!\n&7Acesta este un exemplu de meniu cu butoane SimpleForm."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Gestionare membri"
 bedrock-test.simple-name-settings: "Set\u0103ri clan"
 bedrock-test.simple-name-list: "List\u0103 clanuri"
 bedrock-test.simple-name-quit: "P\u0103r\u0103se\u0219te clanul"
-
 # CustomForm
 bedrock-test.custom-title: "&6Set\u0103ri clan &r- &fExemplu CustomForm"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Set\u0103ri de baz\u0103 \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fPermite membrilor s\u0103 elimine"
 bedrock-test.custom-label-other: "&7\u2014\u2014 Altele \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fLimba clanului"
 bedrock-test.custom-slider-max-members: "&fNum\u0103rul maxim de membri"
-
 # ModalForm
 bedrock-test.modal-title: "&cConfirm\u0103 opera\u021biunea &r- &fExemplu ModalForm"
 bedrock-test.modal-content: "&7Sigur dore\u0219ti s\u0103 p\u0103r\u0103se\u0219ti clanul &eClanul de Test &7?\n\n&cAceast\u0103 opera\u021biune este ireversibil\u0103!\n&7Dup\u0103 ie\u0219ire, va trebui s\u0103 depui din nou o cerere de \u00eenscriere."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Vezi starea"
 war.help.report: "&e/guildwar report [id] &7- Vezi raportul"
 war.help.season: "&e/guildwar season &7- Clasament sezon"
 war.help.admin: "&e/guildwar admin end <id> &7- Termin\u0103 for\u021bat"
-
 war.report.broadcast: "&6[Raport #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7ucideri: &e{kills}"
 war.report.none: "&7Niciun raport găsit"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aSet {role} warehouse access to {state}"
 warehouse.perm-failed: "&cFailed to update warehouse permission."
 warehouse.role-officer: "officer"
 warehouse.role-member: "member"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"

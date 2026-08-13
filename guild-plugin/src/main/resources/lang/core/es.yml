@@ -553,7 +553,6 @@ guild-role.leader: "&6L\u00edder"
 guild-role.officer: "&eOficial"
 guild-role.member: "&8Miembro"
 guild-role.unknown: "&8Desconocido"
-
 # Log types
 log.type.guild-created: "Guild creada"
 log.type.guild-dissolved: "Guild disuelta"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Solicitud rechazada"
 log.type.invitation-sent: "Invitaci\u00f3n enviada"
 log.type.invitation-accepted: "Invitaci\u00f3n aceptada"
 log.type.invitation-rejected: "Invitaci\u00f3n rechazada"
-
 # Log time
 log.time.unknown: "Desconocido"
 log.time.days-ago: "hace {0} d\u00edas"
 log.time.hours-ago: "hace {0} horas"
 log.time.minutes-ago: "hace {0} minutos"
 log.time.just-now: "Justo ahora"
-
 # Contribution types
 contribution.type.deposit: "Dep\u00f3sito"
 contribution.type.withdraw: "Retiro"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Transferencia"
 contribution.type.creation: "Creaci\u00f3n de guild"
 contribution.type.upgrade: "Mejora de guild"
 contribution.type.admin: "Operaci\u00f3n de administrador"
-
 contribution.type.war_win: "Victoria de guerra de gremio"
 contribution.type.war_kill: "Asesinato (guerra)"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[Sistema de m\u00f3dulos] M\u00f3dulo duplicado
 module.system.duplicate-cleanup-title: "&6[Sistema de m\u00f3dulos] &cLos siguientes JAR de m\u00f3dulos antiguos deben eliminarse:"
 module.system.duplicate-cleanup-item: "&c  - {0} (versi\u00f3n antigua, reemplazada por {1})"
 module.system.all-unloaded: "&a[Sistema de m\u00f3dulos] Todos los m\u00f3dulos de extensi\u00f3n descargados"
-
 # Error messages
 module.error.already-loaded: "&cM\u00f3dulo ya cargado: {0}"
 module.error.not-loaded: "&cM\u00f3dulo no cargado o no existe: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cFallo al descargar el m\u00f3dulo [{0}]: {1}"
 module.error.has-dependents: "&cNo se puede descargar [{0}], los siguientes m\u00f3dulos dependen de \u00e9l: {1}"
 module.error.unload-failed-during-shutdown: "Fallo al descargar el m\u00f3dulo durante el apagado: {0}"
 module.error.api-too-old: "&cLa versi\u00f3n de API ({1}) del m\u00f3dulo [{0}] es demasiado antigua. Este plugin requiere API {2}+. \u00a1No se puede cargar este m\u00f3dulo!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[Advertencia de m\u00f3dulo] Dependencia suave [{0}] no satisfecha, el m\u00f3dulo [{1}] puede tener funcionalidad parcial no disponible"
 module.warning.no-api-version: "&6[Advertencia de m\u00f3dulo] El m\u00f3dulo [{0}] no declar\u00f3 requisito de versi\u00f3n de API"
 module.warning.api-version-mismatch: "&e[Advertencia de m\u00f3dulo] La versi\u00f3n de API ({1}) del m\u00f3dulo [{0}] no coincide con la versi\u00f3n del plugin ({2}), \u00a1esto puede causar problemas de compatibilidad!"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&lComandos de gesti\u00f3n de m\u00f3dulos &e&l======"
 module.command.usage-list: "&8/guildmodule list  &f- Listar todos los m\u00f3dulos cargados"
@@ -667,7 +660,6 @@ module.command.info.state: "&8Estado: &f{0}"
 module.command.info.description: "&8Descripci\u00f3n: &f{0}"
 module.command.info.depends: "&8Dependencias: &f{0}"
 module.command.info.soft-depends: "&8Dependencias opcionales: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== M\u00f3dulos en la nube ==="
 cloud.empty: "&cNo se encontraron m\u00f3dulos en la nube."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7Selecciona un tipo de formulario para previsualiza
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Men\u00fa de botones"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Formulario de entrada/configuraci\u00f3n"
 bedrock-test.main-btn-modal: "&cModalForm &f- Di\u00e1logo de confirmaci\u00f3n"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Men\u00fa principal del gremio &r- &7Ejemplo de SimpleForm"
 bedrock-test.simple-content: "&7Bienvenido, &e{player}&7!\n&7Este es un ejemplo de men\u00fa de botones SimpleForm."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Gesti\u00f3n de miembros"
 bedrock-test.simple-name-settings: "Configuraci\u00f3n del gremio"
 bedrock-test.simple-name-list: "Lista de gremios"
 bedrock-test.simple-name-quit: "Salir del gremio"
-
 # CustomForm
 bedrock-test.custom-title: "&6Configuraci\u00f3n del gremio &r- &fEjemplo de CustomForm"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Configuraci\u00f3n b\u00e1sica \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fPermitir a los miembros expulsar"
 bedrock-test.custom-label-other: "&7\u2014\u2014 Otros \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fIdioma del gremio"
 bedrock-test.custom-slider-max-members: "&fM\u00e1ximo de miembros"
-
 # ModalForm
 bedrock-test.modal-title: "&cConfirmar operaci\u00f3n &r- &fEjemplo de ModalForm"
 bedrock-test.modal-content: "&7\u00bfEst\u00e1s seguro de que quieres salir del gremio &eGremio de Prueba &7?\n\n&c\u00a1Esta operaci\u00f3n es irreversible!\n&7Despu\u00e9s de salir, deber\u00e1s solicitar la entrada nuevamente."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Ver estado"
 war.help.report: "&e/guildwar report [id] &7- Ver informe"
 war.help.season: "&e/guildwar season &7- Clasificación de temporada"
 war.help.admin: "&e/guildwar admin end <id> &7- Finalizar forzosamente"
-
 war.report.broadcast: "&6[Informe #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7kills: &e{kills}"
 war.report.none: "&7No se encontró informe"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aAcceso de almacen de {role} establecido en {state}"
 warehouse.perm-failed: "&cError al actualizar el permiso."
 warehouse.role-officer: "oficial"
 warehouse.role-member: "miembro"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Monedas"
+currency.notify.gain: "&6[Moneda] &a+{0} {1}"
+currency.notify.spend: "&6[Moneda] &c-{0} {1}"

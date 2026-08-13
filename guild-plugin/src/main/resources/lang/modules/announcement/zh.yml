@@ -68,3 +68,7 @@ module.announcement.view.detail-updated: "&7更新: &f{0}"
 module.announcement.view.detail-content: "&6公告内容"
 module.announcement.view.detail-content-label: "&f公告内容:"
 module.announcement.view.detail-summary: "&e公告摘要"
+
+module:
+  announcement:
+    info-button-count: "{0} announcements"

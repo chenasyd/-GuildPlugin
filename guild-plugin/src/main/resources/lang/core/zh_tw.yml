@@ -553,7 +553,6 @@ guild-role.leader: "&6會長"
 guild-role.officer: "&e官員"
 guild-role.member: "&8成員"
 guild-role.unknown: "&8未知"
-
 # Log types
 log.type.guild-created: "公會建立"
 log.type.guild-dissolved: "公會解散"
@@ -580,14 +579,12 @@ log.type.application-rejected: "申請拒絕"
 log.type.invitation-sent: "邀請發送"
 log.type.invitation-accepted: "邀請接受"
 log.type.invitation-rejected: "邀請拒絕"
-
 # Log time
 log.time.unknown: "未知"
 log.time.days-ago: "{0}天前"
 log.time.hours-ago: "{0}小時前"
 log.time.minutes-ago: "{0}分鐘前"
 log.time.just-now: "剛剛"
-
 # Contribution types
 contribution.type.deposit: "存款"
 contribution.type.withdraw: "提款"
@@ -595,7 +592,6 @@ contribution.type.transfer: "轉帳"
 contribution.type.creation: "建立公會"
 contribution.type.upgrade: "升級公會"
 contribution.type.admin: "管理員操作"
-
 contribution.type.war_win: "工會戰勝場"
 contribution.type.war_kill: "工會戰擊殺"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[模組系統] 跳過重複模組 {0} ({1}, SDK
 module.system.duplicate-cleanup-title: "&6[模組系統] &c以下舊版本模組JAR應被刪除:"
 module.system.duplicate-cleanup-item: "&c  - {0} (舊版本，已由 {1} 替代)"
 module.system.all-unloaded: "&a[模組系統] 所有擴充模組已卸載"
-
 # Error messages
 module.error.already-loaded: "&c模組已載入: {0}"
 module.error.not-loaded: "&c模組未載入或不存在: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&c模組卸載失敗 [{0}]: {1}"
 module.error.has-dependents: "&c無法卸載 [{0}]，以下模組依賴它: {1}"
 module.error.unload-failed-during-shutdown: "關閉時卸載模組失敗: {0}"
 module.error.api-too-old: "&c模組 [{0}] 的 API 版本 ({1}) 過低，此插件需要 API {2}+，無法載入此模組！"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[模組警告] 軟依賴 [{0}] 未滿足，模組 [{1}] 可能部分功能不可用"
 module.warning.no-api-version: "&6[模組警告] 模組 [{0}] 未宣告 API 版本要求"
 module.warning.api-version-mismatch: "&e[模組警告] 模組 [{0}] 的 API 版本 ({1}) 與插件版本 ({2}) 不一致，可能導致相容性問題！"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&l模組管理指令 &e&l======"
 module.command.usage-list: "&8/guildmodule list  &f- 列出所有已載入模組"
@@ -667,7 +660,6 @@ module.command.info.state: "&8狀態: &f{0}"
 module.command.info.description: "&8描述: &f{0}"
 module.command.info.depends: "&8依賴: &f{0}"
 module.command.info.soft-depends: "&8可選依賴: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== 雲端模組 ==="
 cloud.empty: "&c未找到任何雲端模組。"
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7選擇一個表單類型進行預覽："
 bedrock-test.main-btn-simple: "&aSimpleForm &f- 按鈕選單"
 bedrock-test.main-btn-custom: "&bCustomForm &f- 輸入/設定表單"
 bedrock-test.main-btn-modal: "&cModalForm &f- 確認對話框"
-
 # SimpleForm
 bedrock-test.simple-title: "&6公會主選單 &r- &7SimpleForm 範例"
 bedrock-test.simple-content: "&7歡迎, &e{player}&7!\n&7這是 SimpleForm 按鈕選單範例。"
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "成員管理"
 bedrock-test.simple-name-settings: "公會設定"
 bedrock-test.simple-name-list: "公會清單"
 bedrock-test.simple-name-quit: "退出公會"
-
 # CustomForm
 bedrock-test.custom-title: "&6公會設定 &r- &fCustomForm 範例"
 bedrock-test.custom-label-basic: "&7── 基本設定 ──"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&f允許成員踢人"
 bedrock-test.custom-label-other: "&7── 其他 ──"
 bedrock-test.custom-dropdown-lang: "&f公會語言"
 bedrock-test.custom-slider-max-members: "&f最大成員數"
-
 # ModalForm
 bedrock-test.modal-title: "&c確認操作 &r- &fModalForm 範例"
 bedrock-test.modal-content: "&7你確定要退出公會 &e測試公會 &7嗎？\n\n&c此操作不可撤銷！\n&7退出後需要重新申請加入。"
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- 查看狀態"
 war.help.report: "&e/guildwar report [id] &7- 查看戰報"
 war.help.season: "&e/guildwar season &7- 本賽季排行"
 war.help.admin: "&e/guildwar admin end <id> &7- 強制結束"
-
 war.report.broadcast: "&6[戰報 #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7擊殺: &e{kills}"
 war.report.none: "&7沒有找到戰報"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&a已將 {role} 開倉權限設為 {state}"
 warehouse.perm-failed: "&c設置倉庫權限失敗。"
 warehouse.role-officer: "官員"
 warehouse.role-member: "成員"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "金幣"
+currency.notify.gain: "&6[貨幣] &a+{0} {1}"
+currency.notify.spend: "&6[貨幣] &c-{0} {1}"

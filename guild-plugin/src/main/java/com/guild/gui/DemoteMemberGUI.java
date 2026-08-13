@@ -61,7 +61,7 @@ public class DemoteMemberGUI implements GUI {
     @Override
     public String getTitle() {
         return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.demote-member.title",
-                "&6降级成员 - 第" + (currentPage + 1) + "页", "{page}", String.valueOf(currentPage + 1)));
+                "&6Demote Member - Page {page}" + (currentPage + 1) + "页", "{page}", String.valueOf(currentPage + 1)));
     }
     
     @Override
@@ -185,8 +185,8 @@ public class DemoteMemberGUI implements GUI {
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&e上一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-previous", "&7点击查看上一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&e&lPrevious Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-previous", "View previous page"))
             );
             inventory.setItem(45, prevPage);
         }
@@ -196,8 +196,8 @@ public class DemoteMemberGUI implements GUI {
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&e下一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-next", "&7点击查看下一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&e&lNext Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-next", "View next page"))
             );
             inventory.setItem(53, nextPage);
         }
@@ -205,8 +205,8 @@ public class DemoteMemberGUI implements GUI {
         // 返回按钮
         ItemStack back = createItem(
             Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "&c返回")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.member-operation.back-to-settings", "&7返回工会设置"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "Back")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.member-operation.back-to-settings", "Return to guild settings"))
         );
         inventory.setItem(49, back);
     }
@@ -222,9 +222,9 @@ public class DemoteMemberGUI implements GUI {
             meta.setOwningPlayer(member.getOfflinePlayer());
             meta.setDisplayName(ColorUtils.colorize("&7" + member.getPlayerName()));
             meta.setLore(Arrays.asList(
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.member-operation.current-position", "当前职位") + ": &e" + member.getRole().getDisplayName()),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.member-operation.join-time", "加入时间") + ": &e" + member.getJoinedAt()),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.demote-member.click-demote", "点击降级为成员"))
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.member-operation.current-position", "Current position") + ": &e" + member.getRole().getDisplayName()),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.member-operation.join-time", "Join time") + ": &e" + member.getJoinedAt()),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.demote-member.click-demote", "Click to demote to member"))
             ));
             head.setItemMeta(meta);
         }
@@ -238,7 +238,7 @@ public class DemoteMemberGUI implements GUI {
     private void handleDemoteMember(Player demoter, GuildMember member) {
         // 检查权限
         if (!demoter.hasPermission("guild.demote")) {
-            String message = languageManager.getGuiMessage(demoter, "gui.common.no-permission", "&c权限不足");
+            String message = languageManager.getGuiMessage(demoter, "gui.common.no-permission", "&cInsufficient permission");
             demoter.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -246,20 +246,20 @@ public class DemoteMemberGUI implements GUI {
         // 降级成员
         plugin.getGuildService().updateMemberRoleAsync(member.getPlayerUuid(), GuildMember.Role.MEMBER, demoter.getUniqueId()).thenAccept(success -> {
             if (success) {
-                String demoterMessage = languageManager.getGuiMessage(demoter, "gui.demote-member.demote.success", "&a已降级 &e{player} &a为成员！", "{player}", member.getPlayerName());
+                String demoterMessage = languageManager.getGuiMessage(demoter, "gui.demote-member.demote.success", "&aDemoted &e{player} &a to regular member!", "{player}", member.getPlayerName());
                 demoter.sendMessage(ColorUtils.colorize(demoterMessage));
 
                 // 通知被降级的玩家
                 Player demotedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
                 if (demotedPlayer != null) {
-                    String demotedMessage = languageManager.getGuiMessage(demotedPlayer, "gui.demote-member.demote.demoted", "&c你被降级为工会 &e{guild} &c的成员！", "{guild}", guild.getName());
+                    String demotedMessage = languageManager.getGuiMessage(demotedPlayer, "gui.demote-member.demote.demoted", "&aYou have been demoted to regular member of guild &e{guild} &a!", "{guild}", guild.getName());
                     demotedPlayer.sendMessage(ColorUtils.colorize(demotedMessage));
                 }
 
                 // 刷新GUI
                 plugin.getGuiManager().openGUI(demoter, new DemoteMemberGUI(plugin, guild, demoter));
             } else {
-                String message = languageManager.getGuiMessage(demoter, "gui.demote-member.demote.failed", "&c降级成员失败！");
+                String message = languageManager.getGuiMessage(demoter, "gui.demote-member.demote.failed", "&cFailed to demote member!");
                 demoter.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -284,9 +284,9 @@ public class DemoteMemberGUI implements GUI {
 
                 if (officers.isEmpty()) {
                     SimpleForm form = SimpleForm.builder()
-                        .title(languageManager.getGuiColoredMessage(player, "gui.demote-member.bedrock-title", "&6降级成员"))
-                        .content(languageManager.getGuiColoredMessage(player, "gui.demote-member.bedrock-no-members", "&f没有可降级的官员"))
-                        .button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"))
+                        .title(languageManager.getGuiColoredMessage(player, "gui.demote-member.bedrock-title", "&6Demote Member"))
+                        .content(languageManager.getGuiColoredMessage(player, "gui.demote-member.bedrock-no-members", "&fNo officers available to demote"))
+                        .button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&cBack"))
                         .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                             plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))))
                         .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
@@ -304,16 +304,16 @@ public class DemoteMemberGUI implements GUI {
                 final int memberCount = endIndex - startIndex;
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title(languageManager.getGuiColoredMessage(player, "gui.demote-member.bedrock-title-page", "&6降级成员 - 第{page}页", "{page}", String.valueOf(safePage + 1)))
-                    .content(languageManager.getGuiColoredMessage(player, "gui.demote-member.bedrock-content", "&f选择要降级为成员的官员"));
+                    .title(languageManager.getGuiColoredMessage(player, "gui.demote-member.bedrock-title-page", "&6Demote Member - Page {page}", "{page}", String.valueOf(safePage + 1)))
+                    .content(languageManager.getGuiColoredMessage(player, "gui.demote-member.bedrock-content", "&fSelect an officer to demote to member"));
 
                 for (int i = startIndex; i < endIndex; i++) {
                     builder.button("§f" + officers.get(i).getPlayerName());
                 }
 
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-prev-page", "&e上一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-next-page", "&e下一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-prev-page", "&ePrevious Page"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-next-page", "&eNext Page"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&cBack"));
 
                 builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     int clicked = response.clickedButtonId();

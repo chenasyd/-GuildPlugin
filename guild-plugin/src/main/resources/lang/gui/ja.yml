@@ -769,6 +769,8 @@ gui:
     bedrock-input-label: "&f金額を入力"
     bedrock-invalid-amount: "&c金額は0より大きくなければなりません！"
     bedrock-invalid-number: "&c無効な数字です！"
+    next-page.desc: "&7Page {page}"
+    previous-page.desc: "&7Page {page}"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -969,6 +971,7 @@ gui:
     bedrock-delete-success: "&a関係を削除しました: {guild1} ↔ {guild2}"
     bedrock-delete-failed: "&c関係の削除に失敗しました！"
     bedrock-no-permission: "&c管理者権限がありません！"
+    previous-page.desc: "&7Page {0}"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -1244,6 +1247,31 @@ gui:
     bedrock-title: "&6ギルド権限設定"
     bedrock-content: "&6=== マスター権限 ===\n&f• すべての権限\n&f• メンバー管理\n&f• 設定変更\n&f• ギルド削除\n\n&e=== オフィサー権限 ===\n&f• メンバーを招待\n&f• メンバーをキック\n&f• 申請処理\n&f• ギルドホーム設定\n\n&7=== メンバー権限 ===\n&f• ギルド情報の閲覧\n&f• ギルドホームへテレポート\n&f• 他のギルドに加入申請\n\n&a現在の状態: &fギルド {guild} | 権限システム正常稼働中"
     bedrock-back: "&c戻る"
+    leader-title: "&6リーダー権限"
+    leader-lore-1: "&7• すべての権限"
+    leader-lore-2: "&7• メンバー管理"
+    leader-lore-3: "&7• 設定変更"
+    leader-lore-4: "&7• ギルド削除"
+    officer-title: "&eオフィサー権限"
+    officer-lore-1: "&7• メンバー招待"
+    officer-lore-2: "&7• メンバー追放"
+    officer-lore-3: "&7• 申請処理"
+    officer-lore-4: "&7• ホーム設定"
+    member-title: "&7メンバー権限"
+    member-lore-1: "&7• ギルド情報を見る"
+    member-lore-2: "&7• ホームへテレポート"
+    member-lore-3: "&7• 他ギルドに申請"
+    info-title: "&e権限について"
+    info-lore-1: "&7権限は役割に基づきます"
+    info-lore-2: "&7リーダーは昇格/降格できます"
+    info-lore-3: "&7オフィサーはメンバーを管理"
+    info-lore-4: "&7メンバーは基本アクセス"
+    status-title: "&a現在の状態"
+    status-guild: "&7ギルド: &e{0}"
+    status-system: "&7権限システム: &a正常"
+    status-check: "&7権限チェック: &a有効"
+    back: "&7戻る"
+    back-hint: "&7ギルド設定に戻る"
 
   # ================================================
   # InviteMemberGUI (4 keys)

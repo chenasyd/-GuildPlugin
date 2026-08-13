@@ -54,7 +54,7 @@ public class GuildListManagementGUI implements GUI {
     @Override
     public String getTitle() {
         return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-list-management.guild-list-management-title",
-                "&4工会列表管理"));
+                "&4Guild List Management"));
     }
     
     @Override
@@ -101,9 +101,9 @@ public class GuildListManagementGUI implements GUI {
         Material material = guild.isFrozen() ? Material.RED_WOOL : Material.GREEN_WOOL;
 
         List<String> lore = new ArrayList<>();
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.leader", "会长") + ": &e" + guild.getLeaderName()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-list.level", "等级") + ": &e" + guild.getLevel() + "  &7" + languageManager.getGuiMessage(player, "gui.guild-list.balance", "资金") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())));
-        lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.guild-list.left-click-view", "左键: 查看") + "  &c" + languageManager.getGuiMessage(player, "gui.guild-list.right-click-delete", "右键: 删除") + "  &6" + languageManager.getGuiMessage(player, "gui.guild-list.shift-right-freeze", "Shift+右键: 冻结/解冻")));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.leader", "Leader") + ": &e" + guild.getLeaderName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-list.level", "Level") + ": &e" + guild.getLevel() + "  &7" + languageManager.getGuiMessage(player, "gui.guild-list.balance", "Balance") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())));
+        lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.guild-list.left-click-view", "Left click: View") + "  &c" + languageManager.getGuiMessage(player, "gui.guild-list.right-click-delete", "Right click: Delete") + "  &6" + languageManager.getGuiMessage(player, "gui.guild-list.shift-right-freeze", "Shift+Right click: Freeze/Unfreeze")));
 
         return createItem(material, ColorUtils.colorize("&6" + guild.getName()), lore.toArray(new String[0]));
     }
@@ -117,30 +117,30 @@ public class GuildListManagementGUI implements GUI {
         // 上一页按钮
         if (currentPage > 0) {
             inventory.setItem(PREVIOUS_PAGE_SLOT, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&a上一页")),
-                ColorUtils.colorize("&7" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "第 {0} 页，共 {1} 页", String.valueOf(currentPage), String.valueOf(totalPages)))));
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&e&lPrevious Page")),
+                ColorUtils.colorize("&7" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "Page {0} of {1}", String.valueOf(currentPage), String.valueOf(totalPages)))));
         }
 
         // 页码信息
         inventory.setItem(PAGE_INFO_SLOT, createItem(Material.PAPER,
-            ColorUtils.colorize("&e" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "第 {0} 页/共 {1} 页", String.valueOf(currentPage + 1), String.valueOf(totalPages)))));
+            ColorUtils.colorize("&e" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "Page {0} of {1}", String.valueOf(currentPage + 1), String.valueOf(totalPages)))));
 
         // 下一页按钮
         if (currentPage < totalPages - 1) {
             inventory.setItem(NEXT_PAGE_SLOT, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&a下一页")),
-                ColorUtils.colorize("&7" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "第 {0} 页，共 {1} 页", String.valueOf(currentPage + 2), String.valueOf(totalPages)))));
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&e&lNext Page")),
+                ColorUtils.colorize("&7" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "Page {0} of {1}", String.valueOf(currentPage + 2), String.valueOf(totalPages)))));
         }
     }
 
     private void setupActionButtons(Inventory inventory) {
         // 返回按钮
         inventory.setItem(46, createItem(Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "&c返回"))));
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "Back"))));
 
         // 刷新按钮
         inventory.setItem(52, createItem(Material.EMERALD,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-list-management.gui-refresh", "&a刷新列表"))));
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-list-management.gui-refresh", "&aRefresh List"))));
     }
     
     private void fillBorder(Inventory inventory) {
@@ -233,8 +233,8 @@ public class GuildListManagementGUI implements GUI {
         plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus).thenAccept(success -> {
             if (success) {
                 String message = newStatus ?
-                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&a工会 {guild} 已被冻结！", "{guild}", guild.getName()) :
-                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen", "&a工会 {guild} 已被解冻！", "{guild}", guild.getName());
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&aGuild {guild} has been frozen!", "{guild}", guild.getName()) :
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen", "&aGuild {guild} has been unfrozen!", "{guild}", guild.getName());
                 player.sendMessage(ColorUtils.colorize(message));
                 loadGuilds(); // 刷新列表
             } else {
@@ -281,8 +281,8 @@ public class GuildListManagementGUI implements GUI {
                 int endIndex = Math.min(startIndex + itemsPerPage, guilds.size());
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-title", "&4工会列表管理"))
-                    .content(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-page-info", "&f第 {page}/{total} 页 | 共 {count} 个工会",
+                    .title(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-title", "&4Guild List Management"))
+                    .content(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-page-info", "&fPage {page}/{total} | Total {count} guilds",
                             "{page}", String.valueOf(safePage + 1), "{total}", String.valueOf(totalPages), "{count}", String.valueOf(guilds.size())));
 
                 List<Guild> pageGuilds = new ArrayList<>();
@@ -293,10 +293,10 @@ public class GuildListManagementGUI implements GUI {
                     builder.button(prefix + g.getName() + " §f[Lv." + g.getLevel() + "]");
                 }
 
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-refresh", "&a刷新列表"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-prev-page", "&e上一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-next-page", "&e下一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-back", "&c返回"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-refresh", "&aRefresh List"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-prev-page", "&ePrevious Page"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-next-page", "&eNext Page"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-back", "&cBack"));
 
                 final int navOffset = pageGuilds.size();
 
@@ -326,26 +326,26 @@ public class GuildListManagementGUI implements GUI {
 
     private void sendBedrockGuildActions(Player player, Guild guild, int page) {
         String status = guild.isFrozen()
-                ? languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-status-frozen", "&c已冻结")
-                : languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-status-normal", "&a正常");
+                ? languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-status-frozen", "&cFrozen")
+                : languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-status-normal", "&aNormal");
         SimpleForm.Builder builder = SimpleForm.builder()
-            .title(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-actions-title", "&6工会操作 - {guild_name}",
+            .title(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-actions-title", "&6Guild Actions - {guild_name}",
                     "{guild_name}", guild.getName()))
-            .content(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-leader", "&f会长: &e{leader}",
+            .content(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-leader", "&fLeader: &e{leader}",
                     "{leader}", guild.getLeaderName())
-                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-level", "&f等级: &e{level}",
+                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-level", "&fLevel: &e{level}",
                     "{level}", String.valueOf(guild.getLevel()))
-                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-balance", "&f资金: &a{balance}",
+                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-balance", "&fBalance: &a{balance}",
                     "{balance}", plugin.getEconomyManager().format(guild.getBalance()))
-                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-status", "&f状态: {status}",
+                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-status", "&fStatus: {status}",
                     "{status}", status));
 
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-view-detail", "&e查看详情"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-delete", "&c删除工会"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-view-detail", "&eView Details"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-delete", "&cDelete Guild"));
         builder.button(guild.isFrozen()
-                ? languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-unfreeze", "&a解冻工会")
-                : languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-freeze", "&c冻结工会"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-back-list", "&c返回列表"));
+                ? languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-unfreeze", "&aUnfreeze Guild")
+                : languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-freeze", "&cFreeze Guild"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-back-list", "&cBack to List"));
 
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             switch (response.clickedButtonId()) {
@@ -376,11 +376,11 @@ public class GuildListManagementGUI implements GUI {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     String message = newStatus ?
-                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&a工会 {guild} 已被冻结！", "{guild}", guild.getName()) :
-                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen", "&a工会 {guild} 已被解冻！", "{guild}", guild.getName());
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&aGuild {guild} has been frozen!", "{guild}", guild.getName()) :
+                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen", "&aGuild {guild} has been unfrozen!", "{guild}", guild.getName());
                     player.sendMessage(ColorUtils.colorize(message));
                 } else {
-                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.common.operation-failed", "&c操作失败！"));
+                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.common.operation-failed", "&cOperation failed!"));
                 }
                 sendBedrockGuildList(player, page);
             });

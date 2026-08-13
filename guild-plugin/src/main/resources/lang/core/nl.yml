@@ -553,7 +553,6 @@ guild-role.leader: "&6Meester"
 guild-role.officer: "&eOfficier"
 guild-role.member: "&8Lid"
 guild-role.unknown: "&8Onbekend"
-
 # Log types
 log.type.guild-created: "Gilde aangemaakt"
 log.type.guild-dissolved: "Gilde ontbonden"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Verzoek afgewezen"
 log.type.invitation-sent: "Uitnodiging verzonden"
 log.type.invitation-accepted: "Uitnodiging geaccepteerd"
 log.type.invitation-rejected: "Uitnodiging afgewezen"
-
 # Log time
 log.time.unknown: "Onbekend"
 log.time.days-ago: "{0} dagen geleden"
 log.time.hours-ago: "{0} uur geleden"
 log.time.minutes-ago: "{0} minuten geleden"
 log.time.just-now: "Net geleden"
-
 # Contribution types
 contribution.type.deposit: "Storting"
 contribution.type.withdraw: "Opname"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Overschrijving"
 contribution.type.creation: "Gilde aanmaak"
 contribution.type.upgrade: "Gilde upgrade"
 contribution.type.admin: "Beheerdersactie"
-
 contribution.type.war_win: "Gildeoorlog-overwinning"
 contribution.type.war_kill: "Kill (oorlog)"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[Modulesysteem] Duplicaatmodule {0} ({1}, SDK: 
 module.system.duplicate-cleanup-title: "&6[Modulesysteem] &cDe volgende oude module-JAR's moeten worden verwijderd:"
 module.system.duplicate-cleanup-item: "&c  - {0} (oude versie, vervangen door {1})"
 module.system.all-unloaded: "&a[Modulesysteem] Alle extensiemodules ontladen"
-
 # Error messages
 module.error.already-loaded: "&cModule is al geladen: {0}"
 module.error.not-loaded: "&cModule niet geladen of bestaat niet: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cModule ontladen mislukt [{0}]: {1}"
 module.error.has-dependents: "&cKan [{0}] niet ontladen, de volgende modules zijn ervan afhankelijk: {1}"
 module.error.unload-failed-during-shutdown: "Module ontladen tijdens afsluiten mislukt: {0}"
 module.error.api-too-old: "&cDe API-versie ({1}) van module [{0}] is te oud. Deze plugin vereist API {2}+. Deze module kan niet worden geladen!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[Module waarschuwing] Zachte afhankelijkheid [{0}] niet vervuld, module [{1}] kan gedeeltelijke functionaliteit missen"
 module.warning.no-api-version: "&6[Module waarschuwing] Module [{0}] heeft geen API-versievereisten gedeclareerd"
 module.warning.api-version-mismatch: "&e[Module waarschuwing] De API-versie ({1}) van module [{0}] komt niet overeen met de plugin-versie ({2}), dit kan compatibiliteitsproblemen veroorzaken!"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&lModulebeheercommando's &e&l======"
 module.command.usage-list: "&8/guildmodule list  &f- Toon alle geladen modules"
@@ -667,7 +660,6 @@ module.command.info.state: "&8Status: &f{0}"
 module.command.info.description: "&8Beschrijving: &f{0}"
 module.command.info.depends: "&8Afhankelijkheden: &f{0}"
 module.command.info.soft-depends: "&8Optionele afhankelijkheden: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== Cloudmodules ==="
 cloud.empty: "&cGeen cloudmodules gevonden."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7Selecteer een formulierte type voor preview:"
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Knopmenu"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Invoer/instellingen formulier"
 bedrock-test.main-btn-modal: "&cModalForm &f- Bevestigingsdialoog"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Gilde hoofdmenu &r- &7SimpleForm voorbeeld"
 bedrock-test.simple-content: "&7Welkom, &e{player}&7!\n&7Dit is een voorbeeld van een SimpleForm knopmenu."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Ledenbeheer"
 bedrock-test.simple-name-settings: "Gilde instellingen"
 bedrock-test.simple-name-list: "Gilde lijst"
 bedrock-test.simple-name-quit: "Verlaat gilde"
-
 # CustomForm
 bedrock-test.custom-title: "&6Gilde instellingen &r- &fCustomForm voorbeeld"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Basisinstellingen \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fLeden schoppen toestaan"
 bedrock-test.custom-label-other: "&7\u2014\u2014 Overig \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fGilde taal"
 bedrock-test.custom-slider-max-members: "&fMaximale leden"
-
 # ModalForm
 bedrock-test.modal-title: "&cBevestig actie &r- &fModalForm voorbeeld"
 bedrock-test.modal-content: "&7Weet je zeker dat je de gilde &eTestgilde &7 wilt verlaten?\n\n&cDeze actie kan niet ongedaan worden gemaakt!\n&7Na vertrek moet je opnieuw een aanvraag indienen om lid te worden."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Status bekijken"
 war.help.report: "&e/guildwar report [id] &7- Wedstrijdrapport"
 war.help.season: "&e/guildwar season &7- Seizoensranglijst"
 war.help.admin: "&e/guildwar admin end <id> &7- Geforceerd beëindigen"
-
 war.report.broadcast: "&6[Rapport #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7kills: &e{kills}"
 war.report.none: "&7Geen rapport gevonden"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aSet {role} warehouse access to {state}"
 warehouse.perm-failed: "&cFailed to update warehouse permission."
 warehouse.role-officer: "officer"
 warehouse.role-member: "member"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"

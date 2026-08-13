@@ -553,7 +553,6 @@ guild-role.leader: "&6Lider"
 guild-role.officer: "&eMemur"
 guild-role.member: "&8\u00dcye"
 guild-role.unknown: "&8Bilinmiyor"
-
 # Log types
 log.type.guild-created: "Guild Oluşturuldu"
 log.type.guild-dissolved: "Guild Dağıtıldı"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Başvuru Reddedildi"
 log.type.invitation-sent: "Davetiye G\u00f6nderildi"
 log.type.invitation-accepted: "Davetiye Kabul Edildi"
 log.type.invitation-rejected: "Davetiye Reddedildi"
-
 # Log time
 log.time.unknown: "Bilinmiyor"
 log.time.days-ago: "{0} g\u00fcn \u00f6nce"
 log.time.hours-ago: "{0} saat \u00f6nce"
 log.time.minutes-ago: "{0} dakika \u00f6nce"
 log.time.just-now: "Şimdi"
-
 # Contribution types
 contribution.type.deposit: "Yatırma"
 contribution.type.withdraw: "\u00c7ekme"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Transfer"
 contribution.type.creation: "Guild Oluşturma"
 contribution.type.upgrade: "Guild Y\u00fckseltme"
 contribution.type.admin: "Y\u00f6netici İşlemi"
-
 contribution.type.war_win: "Lonca savaşı zaferi"
 contribution.type.war_kill: "Öldürme (savaş)"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[Mod\u00fcl Sistemi] Yinelenen mod\u00fcl {0} (
 module.system.duplicate-cleanup-title: "&6[Mod\u00fcl Sistemi] &cAşağıdaki eski mod\u00fcl JAR dosyaları silinmelidir:"
 module.system.duplicate-cleanup-item: "&c  - {0} (eski s\u00fcr\u00fcm, {1} ile değiştirildi)"
 module.system.all-unloaded: "&a[Mod\u00fcl Sistemi] T\u00fcm genişletme mod\u00fclleri boşaltıldı"
-
 # Error messages
 module.error.already-loaded: "&cMod\u00fcl zaten y\u00fcklendi: {0}"
 module.error.not-loaded: "&cMod\u00fcl y\u00fcklenmedi veya mevcut değil: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cMod\u00fcl boşaltılamadı [{0}]: {1}"
 module.error.has-dependents: "&c[{0}] boşaltılamıyor, aşağıdaki mod\u00fcller buna bağımlı: {1}"
 module.error.unload-failed-during-shutdown: "Kapatma sırasında mod\u00fcl boşaltılamadı: {0}"
 module.error.api-too-old: "&cMod\u00fcl [{0}] API s\u00fcr\u00fcm\u00fc ({1}) \u00e7ok eski. Bu plugin API {2}+ gerektiriyor. Bu mod\u00fcl y\u00fcklenemez!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[Mod\u00fcl Uyarısı] Yumuşak bağımlılık [{0}] karşılanmadı, mod\u00fcl [{1}] kısmen kullanılamayabilir"
 module.warning.no-api-version: "&6[Mod\u00fcl Uyarısı] Mod\u00fcl [{0}] API s\u00fcr\u00fcm gereksinimini bildirmedi"
 module.warning.api-version-mismatch: "&e[Mod\u00fcl Uyarısı] Mod\u00fcl [{0}] API s\u00fcr\u00fcm\u00fc ({1}) plugin s\u00fcr\u00fcm\u00fc ({2}) ile eşleşmiyor, bu uyumluluk sorunlarına neden olabilir!"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&lMod\u00fcl Y\u00f6netim Komutları &e&l======"
 module.command.usage-list: "&8/guildmodule list  &f- Y\u00fcklenen t\u00fcm mod\u00fclleri listele"
@@ -667,7 +660,6 @@ module.command.info.state: "&8Durum: &f{0}"
 module.command.info.description: "&8A\u00e7ıklama: &f{0}"
 module.command.info.depends: "&8Bağımlılıklar: &f{0}"
 module.command.info.soft-depends: "&8İsteğe bağlı bağımlılıklar: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== Bulut Mod\u00fclleri ==="
 cloud.empty: "&cHi\u00e7bir bulut mod\u00fcl\u00fc bulunamadı."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7\u00d6nizleme i\u00e7in bir form t\u00fcr\u00fc se
 bedrock-test.main-btn-simple: "&aSimpleForm &f- D\u00fc\u011fme men\u00fcs\u00fc"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Giri\u015f/ayar formu"
 bedrock-test.main-btn-modal: "&cModalForm &f- Onay ileti\u015fim kutusu"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Lonca ana men\u00fc &r- &7SimpleForm \u00f6rne\u011fi"
 bedrock-test.simple-content: "&7Ho\u015f geldin, &e{player}&7!\n&7Bu bir SimpleForm d\u00fc\u011fme men\u00fcs\u00fc \u00f6rne\u011fidir."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "\u00dcye y\u00f6netimi"
 bedrock-test.simple-name-settings: "Lonca ayarlar\u0131"
 bedrock-test.simple-name-list: "Lonca listesi"
 bedrock-test.simple-name-quit: "Loncadan ayr\u0131l"
-
 # CustomForm
 bedrock-test.custom-title: "&6Lonca ayarlar\u0131 &r- &fCustomForm \u00f6rne\u011fi"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Temel ayarlar \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&f\u00dcyelerin atmas\u0131na izin ver"
 bedrock-test.custom-label-other: "&7\u2014\u2014 Di\u011fer \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fLonca dili"
 bedrock-test.custom-slider-max-members: "&fMaksimum \u00fcye say\u0131s\u0131"
-
 # ModalForm
 bedrock-test.modal-title: "&c\u0130\u015flemi onayla &r- &fModalForm \u00f6rne\u011fi"
 bedrock-test.modal-content: "&7Loncadan &eTest Loncas\u0131 &7ayr\u0131lmak istedi\u011finden emin misin?\n\n&cBu i\u015flem geri al\u0131namaz!\n&7Ayr\u0131ld\u0131ktan sonra tekrar kat\u0131l\u0131m ba\u015fvurusu yapman gerekir."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Durumu g\u00f6r"
 war.help.report: "&e/guildwar report [id] &7- Maç raporu"
 war.help.season: "&e/guildwar season &7- Sezon sıralaması"
 war.help.admin: "&e/guildwar admin end <id> &7- Zorla sonland\u0131r"
-
 war.report.broadcast: "&6[Rapor #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7öldürme: &e{kills}"
 war.report.none: "&7Rapor bulunamadı"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aSet {role} warehouse access to {state}"
 warehouse.perm-failed: "&cFailed to update warehouse permission."
 warehouse.role-officer: "officer"
 warehouse.role-member: "member"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"

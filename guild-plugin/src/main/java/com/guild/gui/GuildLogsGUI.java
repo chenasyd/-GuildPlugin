@@ -53,7 +53,7 @@ public class GuildLogsGUI implements GUI {
     
     @Override
     public String getTitle() {
-        String title = plugin.getLanguageManager().getGuiMessage(player, "gui.guild-logs.title", "&6工会日志 - {guild_name}");
+        String title = plugin.getLanguageManager().getGuiMessage(player, "gui.guild-logs.title", "&6Guild Logs - {guild_name}");
         return ColorUtils.colorize(title.replace("{guild_name}", ColorUtils.stripColor(guild.getName())));
     }
     
@@ -84,9 +84,9 @@ public class GuildLogsGUI implements GUI {
 
                     if (pageLogs == null || pageLogs.isEmpty()) {
                         SimpleForm emptyForm = SimpleForm.builder()
-                                .title(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-title", "&6工会日志 - {guild}", "{guild}", guildName))
-                                .content(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-no-data", "&c暂无日志记录"))
-                                .button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-back", "&c返回"))
+                                .title(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-title", "&6Guild Logs - {guild}", "{guild}", guildName))
+                                .content(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-no-data", "&cNo log records"))
+                                .button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-back", "&cBack"))
                                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                                         plugin.getGuiManager().openGUI(player,
                                                 new GuildSettingsGUI(plugin, guild, player))))
@@ -100,13 +100,13 @@ public class GuildLogsGUI implements GUI {
                     final int safePage = Math.max(0, Math.min(pageNum, totalPages - 1));
 
                     String content = languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-page-info",
-                            "&f第 {page}/{total} 页\n&f总记录: {count}",
+                            "&fPage {page}/{total}\n&fTotal records: {count}",
                             "{page}", String.valueOf(safePage + 1),
                             "{total}", String.valueOf(totalPages),
                             "{count}", String.valueOf(totalLogsLocal));
 
                     SimpleForm.Builder builder = SimpleForm.builder()
-                            .title(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-title", "&6工会日志 - {guild}", "{guild}", guildName))
+                            .title(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-title", "&6Guild Logs - {guild}", "{guild}", guildName))
                             .content(content);
 
                     for (GuildLog log : pageLogs) {
@@ -116,10 +116,10 @@ public class GuildLogsGUI implements GUI {
                                 + " §f" + time);
                     }
 
-                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-prev-page", "&a上一页"));
-                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-next-page", "&a下一页"));
-                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-refresh", "&a刷新"));
-                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-back", "&c返回"));
+                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-prev-page", "&aPrevious Page"));
+                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-next-page", "&aNext Page"));
+                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-refresh", "&aRefresh"));
+                    builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-logs.bedrock-back", "&cBack"));
 
                     final int logCount = pageLogs.size();
                     final int curPage = safePage;
@@ -171,8 +171,8 @@ public class GuildLogsGUI implements GUI {
                 CompatibleScheduler.runTask(plugin, player, () -> {
                     ItemStack errorItem = createItem(
                         Material.BARRIER,
-                        ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.guild-logs.load-failed", "加载失败")),
-                        ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.load-error", "无法加载日志数据，请重试"))
+                        ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.guild-logs.load-failed", "Loading failed")),
+                        ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.load-error", "Failed to load log data, please try again"))
                     );
                     inventory.setItem(22, errorItem);
                     setupBasicNavigationButtons(inventory);
@@ -340,8 +340,8 @@ public class GuildLogsGUI implements GUI {
         // 返回按钮 - 槽位49
         ItemStack backButton = createItem(
             Material.ARROW,
-            ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.common.back", "返回")),
-            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.back-to-settings", "返回工会设置"))
+            ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.common.back", "Back")),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.back-to-settings", "Return to Guild Settings"))
         );
         inventory.setItem(49, backButton);
     }
@@ -353,8 +353,8 @@ public class GuildLogsGUI implements GUI {
         if ((page + 1) * itemsPerPage < totalLogs) {
             ItemStack nextButton = createItem(
                 Material.ARROW,
-                ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "gui.common.next-page", "下一页")),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.view-next", "查看下一页"))
+                ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "gui.common.next-page", "&e&lNext Page")),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.view-next", "View next page"))
             );
             inventory.setItem(50, nextButton);
         }
@@ -363,18 +363,18 @@ public class GuildLogsGUI implements GUI {
         int totalPages = (totalLogs - 1) / itemsPerPage + 1;
         ItemStack pageInfo = createItem(
             Material.PAPER,
-            ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.guild-logs.page-info", "页码信息")),
-            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.current-page", "当前页: {page}", "{page}", String.valueOf(page + 1))),
-            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.total-pages", "总页数: {total}", "{total}", String.valueOf(totalPages))),
-            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.total-records", "总记录: {count}", "{count}", String.valueOf(totalLogs)))
+            ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.guild-logs.page-info", "Page Info")),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.current-page", "Current page: {page}", "{page}", String.valueOf(page + 1))),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.total-pages", "Total pages: {total}", "{total}", String.valueOf(totalPages))),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.total-records", "Total records: {count}", "{count}", String.valueOf(totalLogs)))
         );
         inventory.setItem(46, pageInfo);
 
         // 刷新按钮
         ItemStack refreshButton = createItem(
             Material.EMERALD,
-            ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "gui.common.refresh", "刷新")),
-            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.refresh-logs", "刷新日志列表"))
+            ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "gui.common.refresh", "&aRefresh")),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.refresh-logs", "Refresh log list"))
         );
         inventory.setItem(51, refreshButton);
     }
@@ -424,14 +424,14 @@ public class GuildLogsGUI implements GUI {
      */
     private void handleLogClick(Player player, GuildLog log) {
         // 显示日志详细信息
-        String header = ColorUtils.colorize("&6" + languageManager.getGuiMessage(player, "gui.guild-logs.details-header", "=== 日志详情 ==="));
+        String header = ColorUtils.colorize("&6" + languageManager.getGuiMessage(player, "gui.guild-logs.details-header", "=== Log Details ==="));
         player.sendMessage(header);
-        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.type", "类型") + ": &f" + log.getLogType().getDisplayName()));
-        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.operator", "操作者") + ": &f" + ColorUtils.stripColor(log.getPlayerName())));
-        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.time", "时间") + ": &f" + log.getSimpleTime(languageManager.getPlayerLanguage(player))));
-        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.description", "描述") + ": &f" + ColorUtils.stripColor(log.getDescription())));
+        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.type", "Type") + ": &f" + log.getLogType().getDisplayName()));
+        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.operator", "Operator") + ": &f" + ColorUtils.stripColor(log.getPlayerName())));
+        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.time", "Time") + ": &f" + log.getSimpleTime(languageManager.getPlayerLanguage(player))));
+        player.sendMessage(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.description", "Description") + ": &f" + ColorUtils.stripColor(log.getDescription())));
         if (log.getDetails() != null && !log.getDetails().isEmpty()) {
-            player.sendMessage(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.details", "详情") + ": &f" + ColorUtils.stripColor(log.getDetails())));
+            player.sendMessage(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.details", "Details") + ": &f" + ColorUtils.stripColor(log.getDetails())));
         }
         player.sendMessage(ColorUtils.colorize("&6" + languageManager.getGuiMessage(player, "gui.guild-logs.separator", "==================")));
     }

@@ -553,7 +553,6 @@ guild-role.leader: "&6Führer"
 guild-role.officer: "&eOffizier"
 guild-role.member: "&8Mitglied"
 guild-role.unknown: "&8Unbekannt"
-
 # Log types
 log.type.guild-created: "Gilde erstellt"
 log.type.guild-dissolved: "Gilde aufgelöst"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Bewerbung abgelehnt"
 log.type.invitation-sent: "Einladung gesendet"
 log.type.invitation-accepted: "Einladung angenommen"
 log.type.invitation-rejected: "Einladung abgelehnt"
-
 # Log time
 log.time.unknown: "Unbekannt"
 log.time.days-ago: "vor {0} Tagen"
 log.time.hours-ago: "vor {0} Stunden"
 log.time.minutes-ago: "vor {0} Minuten"
 log.time.just-now: "Gerade eben"
-
 # Contribution types
 contribution.type.deposit: "Einzahlung"
 contribution.type.withdraw: "Auszahlung"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Überweisung"
 contribution.type.creation: "Gildenerstellung"
 contribution.type.upgrade: "Gildenaufstieg"
 contribution.type.admin: "Admin Operation"
-
 contribution.type.war_win: "Gildenkrieg-Sieg"
 contribution.type.war_kill: "Gildenkrieg-Kill"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[Modulsystem] Duplikat Modul {0} ({1}, SDK: {2}
 module.system.duplicate-cleanup-title: "&6[Modulsystem] &cDie folgenden alten Modul JARs sollten gelöscht werden:"
 module.system.duplicate-cleanup-item: "&c  - {0} (alte Version, ersetzt durch {1})"
 module.system.all-unloaded: "&a[Modulsystem] Alle Erweiterungsmodule entladen"
-
 # Error messages
 module.error.already-loaded: "&cModul bereits geladen: {0}"
 module.error.not-loaded: "&cModul nicht geladen oder existiert nicht: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cModulentladung fehlgeschlagen [{0}]: {1}"
 module.error.has-dependents: "&cKann [{0}] nicht entladen, die folgenden Module hängen davon ab: {1}"
 module.error.unload-failed-during-shutdown: "Entladen des Moduls während des Herunterfahrens fehlgeschlagen: {0}"
 module.error.api-too-old: "&cDie API-Version ({1}) des Moduls [{0}] ist zu niedrig. Dieses Plugin benötigt API {2}+. Das Modul kann nicht geladen werden!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[Modul Warnung] Weiche Abhängigkeit [{0}] nicht erfüllt, Modul [{1}] könnte teilweise funktionsunfähig sein"
 module.warning.no-api-version: "&6[Modul Warnung] Modul [{0}] hat keine API-Version angegeben"
 module.warning.api-version-mismatch: "&e[Modul Warnung] Die API-Version ({1}) des Moduls [{0}] stimmt nicht mit der Plugin-Version ({2}) überein, dies könnte Kompatibilitätsprobleme verursachen!"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&lModulverwaltungsbefehle &e&l======"
 module.command.usage-list: "&8/guildmodule list  &f- Alle geladenen Module auflisten"
@@ -667,7 +660,6 @@ module.command.info.state: "&8Status: &f{0}"
 module.command.info.description: "&8Beschreibung: &f{0}"
 module.command.info.depends: "&8Abhängigkeiten: &f{0}"
 module.command.info.soft-depends: "&8Optionale Abhängigkeiten: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== Cloud-Module ==="
 cloud.empty: "&cKeine Cloud-Module gefunden."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7Wähle einen Formulartyp zur Vorschau aus:"
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Button-Menü"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Eingabe-/Einstellungsformular"
 bedrock-test.main-btn-modal: "&cModalForm &f- Bestätigungsdialog"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Gilden-Hauptmenü &r- &7SimpleForm Beispiel"
 bedrock-test.simple-content: "&7Willkommen, &e{player}&7!\n&7Dies ist ein Beispiel für ein SimpleForm-Button-Menü."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Mitgliederverwaltung"
 bedrock-test.simple-name-settings: "Gildeneinstellungen"
 bedrock-test.simple-name-list: "Gildenliste"
 bedrock-test.simple-name-quit: "Gilde verlassen"
-
 # CustomForm
 bedrock-test.custom-title: "&6Gildeneinstellungen &r- &fCustomForm Beispiel"
 bedrock-test.custom-label-basic: "&7── Grundeinstellungen ──"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fMitgliedern Kicken erlauben"
 bedrock-test.custom-label-other: "&7── Sonstiges ──"
 bedrock-test.custom-dropdown-lang: "&fGildensprache"
 bedrock-test.custom-slider-max-members: "&fMaximale Mitglieder"
-
 # ModalForm
 bedrock-test.modal-title: "&cAktion bestätigen &r- &fModalForm Beispiel"
 bedrock-test.modal-content: "&7Bist du sicher, dass du die Gilde &eTestgilde &7verlassen möchtest?\n\n&cDiese Aktion kann nicht rückgängig gemacht werden!\n&7Nach dem Austritt musst du erneut einen Beitrittsantrag stellen."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Status anzeigen"
 war.help.report: "&e/guildwar report [id] &7- Kampfbericht anzeigen"
 war.help.season: "&e/guildwar season &7- Saison-Rangliste"
 war.help.admin: "&e/guildwar admin end <id> &7- Erzwungenes Beenden"
-
 war.report.broadcast: "&6[Bericht #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7Kills: &e{kills}"
 war.report.none: "&7Kein Bericht gefunden"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&a{role}-Lagerzugriff auf {state} gesetzt"
 warehouse.perm-failed: "&cLagerberechtigung konnte nicht aktualisiert werden."
 warehouse.role-officer: "Offizier"
 warehouse.role-member: "Mitglied"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Münzen"
+currency.notify.gain: "&6[Währung] &a+{0} {1}"
+currency.notify.spend: "&6[Währung] &c-{0} {1}"

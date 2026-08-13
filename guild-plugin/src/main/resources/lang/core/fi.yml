@@ -553,7 +553,6 @@ guild-role.leader: "\u00266Johtaja"
 guild-role.officer: "\u0026eUpseeri"
 guild-role.member: "\u00267J\u00e4sen"
 guild-role.unknown: "\u00267Tuntematon"
-
 # Lokityypit
 log.type.guild-created: "Kilta Luotu"
 log.type.guild-dissolved: "Kilta Hajotettu"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Hakemus Hyl\u00e4tty"
 log.type.invitation-sent: "Kutsu L\u00e4hetetty"
 log.type.invitation-accepted: "Kutsu Hyv\u00e4ksytty"
 log.type.invitation-rejected: "Kutsu Hyl\u00e4tty"
-
 # Lokiaika
 log.time.unknown: "Tuntematon"
 log.time.days-ago: "{0} p\u00e4iv\u00e4\u00e4 sitten"
 log.time.hours-ago: "{0} tuntia sitten"
 log.time.minutes-ago: "{0} minuuttia sitten"
 log.time.just-now: "Juuri nyt"
-
 # Kontribuutietyypit
 contribution.type.deposit: "Talletus"
 contribution.type.withdraw: "Nosto"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Siirto"
 contribution.type.creation: "Killan Luominen"
 contribution.type.upgrade: "Killan Tason Nostaminen"
 contribution.type.admin: "Yll\u00e4pitotoiminto"
-
 contribution.type.war_win: "Killan sodan voitto"
 contribution.type.war_kill: "Tappo (sota)"
 # Hakemuksen tila
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "\u0026e[Moduulij\u00e4rjestelm\u00e4] Ohitetaan k
 module.system.duplicate-cleanup-title: "\u00266[Moduulij\u00e4rjestelm\u00e4] \u0026cSeuraavat vanhan version moduuli-JAR-tiedostot tulisi poistaa:"
 module.system.duplicate-cleanup-item: "\u0026c  - {0} (vanha versio, korvattu moduulilla {1})"
 module.system.all-unloaded: "\u0026a[Moduulij\u00e4rjestelm\u00e4] Kaikki laajennusmoduulit purettu"
-
 # Virheilmoitukset
 module.error.already-loaded: "\u0026cModuuli on jo ladattu: {0}"
 module.error.not-loaded: "\u0026cModuulia ei ole ladattu tai sit\u00e4 ei ole olemassa: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "\u0026cModuulin purkaminen ep\u00e4onnistui [{0}]: 
 module.error.has-dependents: "\u0026cModuulia [{0}] ei voi purkaa, seuraavat moduulit ovat riippuvaisia siit\u00e4: {1}"
 module.error.unload-failed-during-shutdown: "Moduulin purkaminen ep\u00e4onnistui sammutuksen aikana: {0}"
 module.error.api-too-old: "\u0026cModuulin [{0}] API-versio ({1}) on liian vanha. T\u00e4m\u00e4 liit\u00e4nn\u00e4inen vaatii API-version {2}+. T\u00e4t\u00e4 moduulia ei voida ladata!"
-
 # Varoitusviestit
 module.warning.soft-depend-missing: "\u00266[Moduulivaroitus] Pehme\u00e4 riippuvuus [{0}] ei t\u00e4yty. Moduulilla [{1}] voi olla rajoitettu toiminnallisuus"
 module.warning.no-api-version: "\u00266[Moduulivaroitus] Moduuli [{0}] ei ilmoita API-versiovaatimusta"
 module.warning.api-version-mismatch: "\u0026e[Moduulivaroitus] Moduulin [{0}] API-versio ({1}) ei vastaa liit\u00e4nn\u00e4isen versiota ({2}). T\u00e4m\u00e4 voi aiheuttaa yhteensopivuusongelmia!"
-
 # Moduulien hallintakomennot
 module.command.usage-header: "\u0026\u0026l====== \u00266\u0026lModuulien Hallintakomennot \u0026e\u0026l======"
 module.command.usage-list: "\u00267/guildmodule list  \u0026f- Listaa kaikki ladatut moduulit"
@@ -667,7 +660,6 @@ module.command.info.state: "\u00267Tila: \u0026f{0}"
 module.command.info.description: "\u00267Kuvaus: \u0026f{0}"
 module.command.info.depends: "\u00267Riippuvuudet: \u0026f{0}"
 module.command.info.soft-depends: "\u00267Pehme\u00e4t riippuvuudet: \u0026f{0}"
-
 # Pilvimoduulit
 cloud.title: "\u0026b\u0026l=== Pilvimoduulit ==="
 cloud.empty: "\u0026cPilvimoduuleja ei l\u00f6ytynyt."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7Valitse lomaketyyppi esikatselua varten:"
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Painikevalikko"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Sy\u00f6tt\u00f6-/asetuslomake"
 bedrock-test.main-btn-modal: "&cModalForm &f- Vahvistusvalintaikkuna"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Killan p\u00e4\u00e4valikko &r- &7SimpleForm-esimerkki"
 bedrock-test.simple-content: "&7Tervetuloa, &e{player}&7!\n&7T\u00e4m\u00e4 on esimerkki SimpleForm-painikevalikosta."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "J\u00e4senhallinta"
 bedrock-test.simple-name-settings: "Killan asetukset"
 bedrock-test.simple-name-list: "Kilta lista"
 bedrock-test.simple-name-quit: "Poistu killasta"
-
 # CustomForm
 bedrock-test.custom-title: "&6Killan asetukset &r- &fCustomForm-esimerkki"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Perusasetukset \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fSalli j\u00e4senten potkia"
 bedrock-test.custom-label-other: "&7\u2014\u2014 Muut \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fKillan kieli"
 bedrock-test.custom-slider-max-members: "&fJ\u00e4senm\u00e4\u00e4r\u00e4n enimm\u00e4ism\u00e4\u00e4r\u00e4"
-
 # ModalForm
 bedrock-test.modal-title: "&cVahvista toimenpide &r- &fModalForm-esimerkki"
 bedrock-test.modal-content: "&7Oletko varma, ett\u00e4 haluat poistua killasta &eTestikilta &7?\n\n&cT\u00e4t\u00e4 toimenpidett\u00e4 ei voi peruuttaa!\n&7Poistumisen j\u00e4lkeen sinun t\u00e4ytyy hakea liittymist\u00e4 uudelleen."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Katso tila"
 war.help.report: "&e/guildwar report [id] &7- Näytä raportti"
 war.help.season: "&e/guildwar season &7- Kausisijoitus"
 war.help.admin: "&e/guildwar admin end <id> &7- Pakota p\u00e4\u00e4tt\u00e4minen"
-
 war.report.broadcast: "&6[Raportti #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7tapot: &e{kills}"
 war.report.none: "&7Raporttia ei löytynyt"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aSet {role} warehouse access to {state}"
 warehouse.perm-failed: "&cFailed to update warehouse permission."
 warehouse.role-officer: "officer"
 warehouse.role-member: "member"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"

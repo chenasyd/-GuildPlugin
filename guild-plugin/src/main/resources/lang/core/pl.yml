@@ -553,7 +553,6 @@ guild-role.leader: "&6Wódz"
 guild-role.officer: "&eOficer"
 guild-role.member: "&7Członek"
 guild-role.unknown: "&7Nieznany"
-
 # Log types
 log.type.guild-created: "Gildia Utworzona"
 log.type.guild-dissolved: "Gildia Rozwiązana"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Podanie Odrzucone"
 log.type.invitation-sent: "Zaproszenie Wysłane"
 log.type.invitation-accepted: "Zaproszenie Zaakceptowane"
 log.type.invitation-rejected: "Zaproszenie Odrzucone"
-
 # Log time
 log.time.unknown: "Nieznany"
 log.time.days-ago: "{0} dni temu"
 log.time.hours-ago: "{0} godzin temu"
 log.time.minutes-ago: "{0} minut temu"
 log.time.just-now: "Przed chwilą"
-
 # Contribution types
 contribution.type.deposit: "Wpłata"
 contribution.type.withdraw: "Wypłata"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Transfer"
 contribution.type.creation: "Utworzenie Gildii"
 contribution.type.upgrade: "Awans Gildii"
 contribution.type.admin: "Operacja Admina"
-
 contribution.type.war_win: "Zwycięstwo w wojnie gildii"
 contribution.type.war_kill: "Zabójstwo (wojna)"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[System Modułów] Pominięto duplikat modułu 
 module.system.duplicate-cleanup-title: "&6[System Modułów] &cNastępujące stare pliki JAR modułów powinny zostać usunięte:"
 module.system.duplicate-cleanup-item: "&c  - {0} (stara wersja, zastąpiona przez {1})"
 module.system.all-unloaded: "&a[System Modułów] Wszystkie moduły rozładowane"
-
 # Error messages
 module.error.already-loaded: "&cModuł już załadowany: {0}"
 module.error.not-loaded: "&cModuł nie jest załadowany lub nie istnieje: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cNie udało się rozładować modułu [{0}]: {1}"
 module.error.has-dependents: "&cNie można rozładować [{0}], następujące moduły są od niego zależne: {1}"
 module.error.unload-failed-during-shutdown: "Nie udało się rozładować modułu podczas wyłączania: {0}"
 module.error.api-too-old: "&cWersja API modułu [{0}] ({1}) jest zbyt stara. Plugin wymaga API {2}+, nie można załadować tego modułu!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[Ostrzeżenie Modułu] Brak miękkiej zależności [{0}], moduł [{1}] może mieć niepełną funkcjonalność"
 module.warning.no-api-version: "&6[Ostrzeżenie Modułu] Moduł [{0}] nie zadeklarował wymaganej wersji API"
 module.warning.api-version-mismatch: "&e[Ostrzeżenie Modułu] Wersja API modułu [{0}] ({1}) nie pasuje do wersji pluginu ({2}), mogą wystąpić problemy z kompatybilnością!"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&lPolecenia Zarządzania Modułami &e&l======"
 module.command.usage-list: "&7/guildmodule list  &f- Wyświetl wszystkie załadowane moduły"
@@ -667,7 +660,6 @@ module.command.info.state: "&7Stan: &f{0}"
 module.command.info.description: "&7Opis: &f{0}"
 module.command.info.depends: "&7Zależności: &f{0}"
 module.command.info.soft-depends: "&7Opcjonalne zależności: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== Moduły w Chmurze ==="
 cloud.empty: "&cNie znaleziono modułów w chmurze."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7Wybierz typ formularza do podgl\u0105du:"
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Menu przycisk\u00f3w"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Formularz wej\u015bcia/ustawie\u0144"
 bedrock-test.main-btn-modal: "&cModalForm &f- Okno dialogowe potwierdzenia"
-
 # SimpleForm
 bedrock-test.simple-title: "&6G\u0142\u00f3wne menu gildii &r- &7Przyk\u0142ad SimpleForm"
 bedrock-test.simple-content: "&7Witaj, &e{player}&7!\n&7To jest przyk\u0142ad menu przycisk\u00f3w SimpleForm."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Zarz\u0105dzanie cz\u0142onkami"
 bedrock-test.simple-name-settings: "Ustawienia gildii"
 bedrock-test.simple-name-list: "Lista gildii"
 bedrock-test.simple-name-quit: "Opu\u015b\u0107 gildi\u0119"
-
 # CustomForm
 bedrock-test.custom-title: "&6Ustawienia gildii &r- &fPrzyk\u0142ad CustomForm"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Ustawienia podstawowe \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fZezwalaj cz\u0142onkom na wyrzucanie"
 bedrock-test.custom-label-other: "&7\u2014\u2014 Inne \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fJ\u0119zyk gildii"
 bedrock-test.custom-slider-max-members: "&fMaksymalna liczba cz\u0142onk\u00f3w"
-
 # ModalForm
 bedrock-test.modal-title: "&cPotwierd\u017a operacj\u0119 &r- &fPrzyk\u0142ad ModalForm"
 bedrock-test.modal-content: "&7Czy na pewno chcesz opu\u015bci\u0107 gildi\u0119 &eTestowa gildia &7?\n\n&cTej operacji nie mo\u017cna cofn\u0105\u0107!\n&7Po opuszczeniu b\u0119dziesz musia\u0142 ponownie z\u0142o\u017cy\u0107 podanie o do\u0142\u0105czenie."
@@ -966,7 +955,6 @@ war.help.status: "\u0026e/guildwar status \u00267- Wy\u015bwietl status"
 war.help.report: "&e/guildwar report [id] &7- Raport meczu"
 war.help.season: "&e/guildwar season &7- Ranking sezonu"
 war.help.admin: "\u0026e/guildwar admin end <id> \u00267- Wymu\u015b zako\u0144czenie"
-
 war.report.broadcast: "&6[Raport #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7zabójstwa: &e{kills}"
 war.report.none: "&7Nie znaleziono raportu"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aUstawiono dostep magazynu {role} na {state}"
 warehouse.perm-failed: "&cNie udalo sie zaktualizowac uprawnien."
 warehouse.role-officer: "oficera"
 warehouse.role-member: "czlonka"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Monety"
+currency.notify.gain: "&6[Waluta] &a+{0} {1}"
+currency.notify.spend: "&6[Waluta] &c-{0} {1}"

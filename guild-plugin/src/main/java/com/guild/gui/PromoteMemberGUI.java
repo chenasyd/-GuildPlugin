@@ -61,7 +61,7 @@ public class PromoteMemberGUI implements GUI {
     @Override
     public String getTitle() {
         return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.promote-member.title",
-                "&6提升成员 - 第" + (currentPage + 1) + "页", "{page}", String.valueOf(currentPage + 1)));
+                "&6Promote Member - Page {page}" + (currentPage + 1) + "页", "{page}", String.valueOf(currentPage + 1)));
     }
     
     @Override
@@ -185,8 +185,8 @@ public class PromoteMemberGUI implements GUI {
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&e上一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-previous", "&7点击查看上一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&e&lPrevious Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-previous", "View previous page"))
             );
             inventory.setItem(45, prevPage);
         }
@@ -196,8 +196,8 @@ public class PromoteMemberGUI implements GUI {
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&e下一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-next", "&7点击查看下一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&e&lNext Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-next", "View next page"))
             );
             inventory.setItem(53, nextPage);
         }
@@ -205,8 +205,8 @@ public class PromoteMemberGUI implements GUI {
         // 返回按钮
         ItemStack back = createItem(
             Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "&c返回")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.member-operation.back-to-settings", "&7返回工会设置"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "Back")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.member-operation.back-to-settings", "Return to guild settings"))
         );
         inventory.setItem(49, back);
     }
@@ -222,9 +222,9 @@ public class PromoteMemberGUI implements GUI {
             meta.setOwningPlayer(member.getOfflinePlayer());
             meta.setDisplayName(ColorUtils.colorize("&6" + member.getPlayerName()));
             meta.setLore(Arrays.asList(
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.member-operation.current-position", "当前职位") + ": &e" + member.getRole().getDisplayName()),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.member-operation.join-time", "加入时间") + ": &e" + member.getJoinedAt()),
-                ColorUtils.colorize("&6" + languageManager.getGuiMessage(player, "gui.promote-member.click-promote", "点击提升为官员"))
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.member-operation.current-position", "Current position") + ": &e" + member.getRole().getDisplayName()),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.member-operation.join-time", "Join time") + ": &e" + member.getJoinedAt()),
+                ColorUtils.colorize("&6" + languageManager.getGuiMessage(player, "gui.promote-member.click-promote", "Click to promote to officer"))
             ));
             head.setItemMeta(meta);
         }
@@ -238,7 +238,7 @@ public class PromoteMemberGUI implements GUI {
     private void handlePromoteMember(Player promoter, GuildMember member) {
         // 检查权限
         if (!promoter.hasPermission("guild.promote")) {
-            String message = languageManager.getGuiMessage(promoter, "gui.common.no-permission", "&c权限不足");
+            String message = languageManager.getGuiMessage(promoter, "gui.common.no-permission", "&cInsufficient permission");
             promoter.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -246,20 +246,20 @@ public class PromoteMemberGUI implements GUI {
         // 提升成员
         plugin.getGuildService().updateMemberRoleAsync(member.getPlayerUuid(), GuildMember.Role.OFFICER, promoter.getUniqueId()).thenAccept(success -> {
             if (success) {
-                String promoterMessage = languageManager.getGuiMessage(promoter, "gui.promote-member.promote.success", "&a已提升 &e{player} &a为官员！", "{player}", member.getPlayerName());
+                String promoterMessage = languageManager.getGuiMessage(promoter, "gui.promote-member.promote.success", "&aPromoted &e{player} &a to officer!", "{player}", member.getPlayerName());
                 promoter.sendMessage(ColorUtils.colorize(promoterMessage));
 
                 // 通知被提升的玩家
                 Player promotedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
                 if (promotedPlayer != null) {
-                    String promotedMessage = languageManager.getGuiMessage(promotedPlayer, "gui.promote-member.promote.promoted", "&a你被提升为工会 &e{guild} &a的官员！", "{guild}", guild.getName());
+                    String promotedMessage = languageManager.getGuiMessage(promotedPlayer, "gui.promote-member.promote.promoted", "&aYou have been promoted to officer of guild &e{guild} &a!", "{guild}", guild.getName());
                     promotedPlayer.sendMessage(ColorUtils.colorize(promotedMessage));
                 }
 
                 // 刷新GUI
                 plugin.getGuiManager().openGUI(promoter, new PromoteMemberGUI(plugin, guild, promoter));
             } else {
-                String message = languageManager.getGuiMessage(promoter, "gui.promote-member.promote.failed", "&c提升成员失败！");
+                String message = languageManager.getGuiMessage(promoter, "gui.promote-member.promote.failed", "&cFailed to promote member!");
                 promoter.sendMessage(ColorUtils.colorize(message));
             }
         });
@@ -284,9 +284,9 @@ public class PromoteMemberGUI implements GUI {
 
                 if (promotable.isEmpty()) {
                     SimpleForm form = SimpleForm.builder()
-                        .title(languageManager.getGuiColoredMessage(player, "gui.promote-member.bedrock-title", "&6提升成员"))
-                        .content(languageManager.getGuiColoredMessage(player, "gui.promote-member.bedrock-no-members", "&f没有可提升的成员"))
-                        .button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"))
+                        .title(languageManager.getGuiColoredMessage(player, "gui.promote-member.bedrock-title", "&6Promote Member"))
+                        .content(languageManager.getGuiColoredMessage(player, "gui.promote-member.bedrock-no-members", "&fNo members available to promote"))
+                        .button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&cBack"))
                         .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                             plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))))
                         .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
@@ -304,16 +304,16 @@ public class PromoteMemberGUI implements GUI {
                 final int memberCount = endIndex - startIndex;
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title(languageManager.getGuiColoredMessage(player, "gui.promote-member.bedrock-title-page", "&6提升成员 - 第{page}页", "{page}", String.valueOf(safePage + 1)))
-                    .content(languageManager.getGuiColoredMessage(player, "gui.promote-member.bedrock-content", "&f选择要提升为官员的成员"));
+                    .title(languageManager.getGuiColoredMessage(player, "gui.promote-member.bedrock-title-page", "&6Promote Member - Page {page}", "{page}", String.valueOf(safePage + 1)))
+                    .content(languageManager.getGuiColoredMessage(player, "gui.promote-member.bedrock-content", "&fSelect a member to promote to officer"));
 
                 for (int i = startIndex; i < endIndex; i++) {
                     builder.button("§6" + promotable.get(i).getPlayerName());
                 }
 
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-prev-page", "&e上一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-next-page", "&e下一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-prev-page", "&ePrevious Page"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-next-page", "&eNext Page"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&cBack"));
 
                 builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     int clicked = response.clickedButtonId();

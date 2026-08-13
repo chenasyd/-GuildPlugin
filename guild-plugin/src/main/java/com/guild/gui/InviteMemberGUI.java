@@ -180,8 +180,8 @@ public class InviteMemberGUI implements GUI {
         if (currentPage > 0) {
             ItemStack prevPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&e上一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-previous", "&7点击查看上一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&e&lPrevious Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-previous", "View previous page"))
             );
             inventory.setItem(45, prevPage);
         }
@@ -191,8 +191,8 @@ public class InviteMemberGUI implements GUI {
         if (currentPage < maxPage) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&e下一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-next", "&7点击查看下一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&e&lNext Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-next", "View next page"))
             );
             inventory.setItem(53, nextPage);
         }
@@ -200,8 +200,8 @@ public class InviteMemberGUI implements GUI {
         // 返回按钮
         ItemStack back = createItem(
             Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "&c返回")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.invite-member.back-to-settings", "&7返回工会设置"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "Back")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.invite-member.back-to-settings", "Return to guild settings"))
         );
         inventory.setItem(49, back);
     }
@@ -217,8 +217,8 @@ public class InviteMemberGUI implements GUI {
             meta.setOwningPlayer(player);
             meta.setDisplayName(ColorUtils.colorize("&a" + player.getName()));
             meta.setLore(Arrays.asList(
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(this.player, "gui.invite-member.click-invite", "点击邀请该玩家")),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(this.player, "gui.invite-member.join-guild", "加入工会"))
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(this.player, "gui.invite-member.click-invite", "Click to invite this player")),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(this.player, "gui.invite-member.join-guild", "Join guild"))
             ));
             head.setItemMeta(meta);
         }
@@ -271,9 +271,9 @@ public class InviteMemberGUI implements GUI {
     private void sendBedrockInviteList(Player player, int page) {
         if (onlinePlayers.isEmpty()) {
             SimpleForm form = SimpleForm.builder()
-                .title(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-title", "&6邀请成员"))
-                .content(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-no-players", "&f当前没有可邀请的在线玩家"))
-                .button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"))
+                .title(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-title", "&6Invite Members"))
+                .content(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-no-players", "&fNo online players available to invite"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&cBack"))
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                     plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))))
                 .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
@@ -291,16 +291,16 @@ public class InviteMemberGUI implements GUI {
         final int playerCount = endIndex - startIndex;
 
         SimpleForm.Builder builder = SimpleForm.builder()
-            .title(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-title-page", "&6邀请成员 - 第{page}页", "{page}", String.valueOf(safePage + 1)))
-            .content(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-player-list", "&f在线玩家 (共{count}人)", "{count}", String.valueOf(onlinePlayers.size())));
+            .title(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-title-page", "&6Invite Members - Page {page}", "{page}", String.valueOf(safePage + 1)))
+            .content(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-player-list", "&fOnline Players (Total {count})", "{count}", String.valueOf(onlinePlayers.size())));
 
         for (int i = startIndex; i < endIndex; i++) {
             builder.button("§a" + onlinePlayers.get(i).getName());
         }
 
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-prev-page", "&e上一页"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-next-page", "&e下一页"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&c返回"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-prev-page", "&ePrevious Page"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-next-page", "&eNext Page"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&cBack"));
 
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             int clicked = response.clickedButtonId();

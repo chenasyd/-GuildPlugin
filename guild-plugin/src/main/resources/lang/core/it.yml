@@ -553,7 +553,6 @@ guild-role.leader: "&6Leader"
 guild-role.officer: "&eUfficiale"
 guild-role.member: "&8Membro"
 guild-role.unknown: "&8Sconosciuto"
-
 # Log types
 log.type.guild-created: "Gilda creata"
 log.type.guild-dissolved: "Gilda sciolta"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Richiesta respinta"
 log.type.invitation-sent: "Invito inviato"
 log.type.invitation-accepted: "Invito accettato"
 log.type.invitation-rejected: "Invito rifiutato"
-
 # Log time
 log.time.unknown: "Sconosciuto"
 log.time.days-ago: "{0} giorni fa"
 log.time.hours-ago: "{0} ore fa"
 log.time.minutes-ago: "{0} minuti fa"
 log.time.just-now: "Proprio ora"
-
 # Contribution types
 contribution.type.deposit: "Deposito"
 contribution.type.withdraw: "Prelievo"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Trasferimento"
 contribution.type.creation: "Creazione gilda"
 contribution.type.upgrade: "Aggiornamento gilda"
 contribution.type.admin: "Operazione amministratore"
-
 contribution.type.war_win: "Vittoria guerra di gilda"
 contribution.type.war_kill: "Uccisione (guerra)"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[Sistema moduli] Modulo duplicato {0} ({1}, SDK
 module.system.duplicate-cleanup-title: "&6[Sistema moduli] &cI seguenti vecchi JAR dei moduli dovrebbero essere eliminati:"
 module.system.duplicate-cleanup-item: "&c  - {0} (versione vecchia, sostituita da {1})"
 module.system.all-unloaded: "&a[Sistema moduli] Tutti i moduli di estensione scaricati"
-
 # Error messages
 module.error.already-loaded: "&cModulo gi\u00e0 caricato: {0}"
 module.error.not-loaded: "&cModulo non caricato o inesistente: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cScaricamento del modulo fallito [{0}]: {1}"
 module.error.has-dependents: "&cImpossibile scaricare [{0}], i seguenti moduli dipendono da esso: {1}"
 module.error.unload-failed-during-shutdown: "Scaricamento del modulo fallito durante l'arresto: {0}"
 module.error.api-too-old: "&cLa versione API ({1}) del modulo [{0}] \u00e8 troppo vecchia. Questo plugin richiede API {2}+. Impossibile caricare questo modulo!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[Avviso modulo] Dipendenza morbida [{0}] non soddisfatta, il modulo [{1}] potrebbe avere funzionalit\u00e0 parziali non disponibili"
 module.warning.no-api-version: "&6[Avviso modulo] Il modulo [{0}] non ha dichiarato il requisito della versione API"
 module.warning.api-version-mismatch: "&e[Avviso modulo] La versione API ({1}) del modulo [{0}] non corrisponde alla versione del plugin ({2}), potrebbe causare problemi di compatibilit\u00e0!"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&lComandi di gestione moduli &e&l======"
 module.command.usage-list: "&8/guildmodule list  &f- Elenca tutti i moduli caricati"
@@ -667,7 +660,6 @@ module.command.info.state: "&8Stato: &f{0}"
 module.command.info.description: "&8Descrizione: &f{0}"
 module.command.info.depends: "&8Dipendenze: &f{0}"
 module.command.info.soft-depends: "&8Dipendenze opzionali: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== Moduli cloud ==="
 cloud.empty: "&cNessun modulo cloud trovato."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7Seleziona un tipo di modulo per l'anteprima:"
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Menu pulsanti"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Modulo di input/impostazioni"
 bedrock-test.main-btn-modal: "&cModalForm &f- Dialogo di conferma"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Menu principale della gilda &r- &7Esempio SimpleForm"
 bedrock-test.simple-content: "&7Benvenuto, &e{player}&7!\n&7Questo \u00e8 un esempio di menu pulsanti SimpleForm."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Gestione membri"
 bedrock-test.simple-name-settings: "Impostazioni della gilda"
 bedrock-test.simple-name-list: "Elenco gilde"
 bedrock-test.simple-name-quit: "Esci dalla gilda"
-
 # CustomForm
 bedrock-test.custom-title: "&6Impostazioni della gilda &r- &fEsempio CustomForm"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Impostazioni di base \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fPermetti ai membri di espellere"
 bedrock-test.custom-label-other: "&7\u2014\u2014 Altro \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fLingua della gilda"
 bedrock-test.custom-slider-max-members: "&fNumero massimo di membri"
-
 # ModalForm
 bedrock-test.modal-title: "&cConferma operazione &r- &fEsempio ModalForm"
 bedrock-test.modal-content: "&7Sei sicuro di voler uscire dalla gilda &eGilda di Test &7?\n\n&cQuesta operazione \u00e8 irreversibile!\n&7Dopo l'uscita, dovrai richiedere nuovamente l'iscrizione."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Visualizza stato"
 war.help.report: "&e/guildwar report [id] &7- Vedi rapporto"
 war.help.season: "&e/guildwar season &7- Classifica stagione"
 war.help.admin: "&e/guildwar admin end <id> &7- Termina forzatamente"
-
 war.report.broadcast: "&6[Rapporto #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7kill: &e{kills}"
 war.report.none: "&7Nessun rapporto trovato"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aSet {role} warehouse access to {state}"
 warehouse.perm-failed: "&cFailed to update warehouse permission."
 warehouse.role-officer: "officer"
 warehouse.role-member: "member"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"

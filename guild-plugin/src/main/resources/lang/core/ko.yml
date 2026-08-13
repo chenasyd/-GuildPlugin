@@ -553,7 +553,6 @@ guild-role.leader: "&6마스터"
 guild-role.officer: "&e오피서"
 guild-role.member: "&8멤버"
 guild-role.unknown: "&8알 수 없음"
-
 # Log types
 log.type.guild-created: "길드 생성"
 log.type.guild-dissolved: "길드 해산"
@@ -580,14 +579,12 @@ log.type.application-rejected: "신청 거절"
 log.type.invitation-sent: "초대 전송"
 log.type.invitation-accepted: "초대 수락"
 log.type.invitation-rejected: "초대 거절"
-
 # Log time
 log.time.unknown: "알 수 없음"
 log.time.days-ago: "{0}일 전"
 log.time.hours-ago: "{0}시간 전"
 log.time.minutes-ago: "{0}분 전"
 log.time.just-now: "방금"
-
 # Contribution types
 contribution.type.deposit: "입금"
 contribution.type.withdraw: "출금"
@@ -595,7 +592,6 @@ contribution.type.transfer: "송금"
 contribution.type.creation: "길드 생성"
 contribution.type.upgrade: "길드 업그레이드"
 contribution.type.admin: "관리자 작업"
-
 contribution.type.war_win: "길드전 승리"
 contribution.type.war_kill: "길드전 킬"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[모듈 시스템] 중복 모듈 {0} ({1}, SDK:
 module.system.duplicate-cleanup-title: "&6[모듈 시스템] &c다음 구버전 모듈 JAR은 삭제해야 합니다:"
 module.system.duplicate-cleanup-item: "&c  - {0} (구버전, {1} 로 대체됨)"
 module.system.all-unloaded: "&a[모듈 시스템] 모든 확장 모듈이 언로드되었습니다"
-
 # Error messages
 module.error.already-loaded: "&c모듈이 이미 로드되었습니다: {0}"
 module.error.not-loaded: "&c모듈이 로드되지 않았거나 존재하지 않습니다: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&c모듈 언로드 실패 [{0}]: {1}"
 module.error.has-dependents: "&c[{0}] 을(를) 언로드할 수 없습니다, 다음 모듈이 의존하고 있습니다: {1}"
 module.error.unload-failed-during-shutdown: "종료 중 모듈 언로드 실패: {0}"
 module.error.api-too-old: "&c모듈 [{0}] 의 API 버전 ({1}) 이 너무 낮습니다. 이 플러그인은 API {2}+ 이 필요합니다. 이 모듈은 로드할 수 없습니다!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[모듈 경고] 소프트 의존성 [{0}] 이 충족되지 않아 모듈 [{1}] 의 일부 기능을 사용할 수 없을 수 있습니다"
 module.warning.no-api-version: "&6[모듈 경고] 모듈 [{0}] 이(가) API 버전 요구 사항을 선언하지 않았습니다"
 module.warning.api-version-mismatch: "&e[모듈 경고] 모듈 [{0}] 의 API 버전 ({1}) 이(가) 플러그인 버전 ({2}) 과 일치하지 않아 호환성 문제가 발생할 수 있습니다!"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&l모듈 관리 명령어 &e&l======"
 module.command.usage-list: "&8/guildmodule list  &f- 로드된 모든 모듈 나열"
@@ -667,7 +660,6 @@ module.command.info.state: "&8상태: &f{0}"
 module.command.info.description: "&8설명: &f{0}"
 module.command.info.depends: "&8의존성: &f{0}"
 module.command.info.soft-depends: "&8선택적 의존성: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== 클라우드 모듈 ==="
 cloud.empty: "&c클라우드 모듈을 찾을 수 없습니다."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7미리 볼 폼 유형을 선택하세요:"
 bedrock-test.main-btn-simple: "&aSimpleForm &f- 버튼 메뉴"
 bedrock-test.main-btn-custom: "&bCustomForm &f- 입력/설정 폼"
 bedrock-test.main-btn-modal: "&cModalForm &f- 확인 대화상자"
-
 # SimpleForm
 bedrock-test.simple-title: "&6길드 메인 메뉴 &r- &7SimpleForm 예제"
 bedrock-test.simple-content: "&7환영합니다, &e{player}&7!\n&7이것은 SimpleForm 버튼 메뉴 예제입니다."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "멤버 관리"
 bedrock-test.simple-name-settings: "길드 설정"
 bedrock-test.simple-name-list: "길드 목록"
 bedrock-test.simple-name-quit: "길드 탈퇴"
-
 # CustomForm
 bedrock-test.custom-title: "&6길드 설정 &r- &fCustomForm 예제"
 bedrock-test.custom-label-basic: "&7── 기본 설정 ──"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&f멤버 추방 허용"
 bedrock-test.custom-label-other: "&7── 기타 ──"
 bedrock-test.custom-dropdown-lang: "&f길드 언어"
 bedrock-test.custom-slider-max-members: "&f최대 멤버 수"
-
 # ModalForm
 bedrock-test.modal-title: "&c작업 확인 &r- &fModalForm 예제"
 bedrock-test.modal-content: "&7길드 &e테스트 길드 &7에서 탈퇴하시겠습니까?\n\n&c이 작업은 되돌릴 수 없습니다!\n&7탈퇴 후 다시 가입 신청을 해야 합니다."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- 상태 보기"
 war.help.report: "&e/guildwar report [id] &7- 전적 보고서"
 war.help.season: "&e/guildwar season &7- 시즌 순위"
 war.help.admin: "&e/guildwar admin end <id> &7- 강제 종료"
-
 war.report.broadcast: "&6[보고서 #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7킬: &e{kills}"
 war.report.none: "&7보고서를 찾을 수 없음"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&a{role} 창고 개방 권한을 {state}(으)로 설정
 warehouse.perm-failed: "&c창고 권한 업데이트에 실패했습니다."
 warehouse.role-officer: "임원"
 warehouse.role-member: "멤버"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "코인"
+currency.notify.gain: "&6[재화] &a+{0} {1}"
+currency.notify.spend: "&6[재화] &c-{0} {1}"

@@ -45,7 +45,7 @@ public class GuildDescriptionInputGUI implements GUI {
     @Override
     public String getTitle() {
         return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-description-input.title",
-                "&6修改工会描述"));
+                "&6Modify Guild Description"));
     }
     
     @Override
@@ -61,9 +61,9 @@ public class GuildDescriptionInputGUI implements GUI {
                 .getInt("guild.max-description-length", 100);
 
         CustomForm form = CustomForm.builder()
-                .title(languageManager.getGuiColoredMessage(player, "gui.guild-description-input.bedrock-title", "&6修改工会描述"))
-                .input(languageManager.getGuiColoredMessage(player, "gui.guild-description-input.bedrock-input-label", "&f输入新的工会描述"),
-                        languageManager.getGuiColoredMessage(player, "gui.guild-description-input.bedrock-input-placeholder", "最多{max}字符", "{max}", String.valueOf(maxLength)),
+                .title(languageManager.getGuiColoredMessage(player, "gui.guild-description-input.bedrock-title", "&6Modify Guild Description"))
+                .input(languageManager.getGuiColoredMessage(player, "gui.guild-description-input.bedrock-input-label", "&fEnter new guild description"),
+                        languageManager.getGuiColoredMessage(player, "gui.guild-description-input.bedrock-input-placeholder", "Max {max} characters", "{max}", String.valueOf(maxLength)),
                         currentDescription)
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     String input = response.getInput(0);
@@ -72,7 +72,7 @@ public class GuildDescriptionInputGUI implements GUI {
                         player.sendMessage(ColorUtils.colorize(
                                 languageManager.getGuiMessage(player,
                                         "gui.common.description-too-long",
-                                        "&c描述过长，最多{max}字符！",
+                                        "&cDescription too long, max {max} characters!",
                                         "{max}", String.valueOf(maxLength))));
                         openBedrockForm(player);
                         return;
@@ -84,14 +84,14 @@ public class GuildDescriptionInputGUI implements GUI {
                                     player.sendMessage(ColorUtils.colorize(
                                             languageManager.getGuiMessage(player,
                                                     "gui.common.description-updated",
-                                                    "&a工会描述已更新！")));
+                                                    "&aGuild description updated!")));
                                     plugin.getGuiManager().openGUI(player,
                                             new GuildSettingsGUI(plugin, guild, player));
                                 } else {
                                     player.sendMessage(ColorUtils.colorize(
                                             languageManager.getGuiMessage(player,
                                                     "gui.common.description-update-failed",
-                                                    "&c工会描述更新失败！")));
+                                                    "&cFailed to update guild description!")));
                                 }
                             }));
                 }))
@@ -153,10 +153,10 @@ public class GuildDescriptionInputGUI implements GUI {
      */
     private void displayCurrentDescription(Inventory inventory) {
         String descText = currentDescription.isEmpty() ?
-            languageManager.getGuiMessage(player, "gui.common.no-description", "无描述") : currentDescription;
+            languageManager.getGuiMessage(player, "gui.common.no-description", "No description") : currentDescription;
         ItemStack currentDesc = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-description-input.current-description", "&e当前描述")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-description-input.current-description", "&eCurrent Description")),
             ColorUtils.colorize("&7" + descText)
         );
         inventory.setItem(11, currentDesc);
@@ -169,16 +169,16 @@ public class GuildDescriptionInputGUI implements GUI {
         // 确认按钮
         ItemStack confirm = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-description-input.confirm-button", "&a确认修改")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-description-input.confirm-lore", "&7确认修改工会描述"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-description-input.confirm-button", "&aConfirm Edit")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-description-input.confirm-lore", "&7Confirm guild description edit"))
         );
         inventory.setItem(15, confirm);
         
         // 取消按钮
         ItemStack cancel = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-description-input.cancel-button", "&c取消")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-description-input.cancel-lore", "&7取消修改"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-description-input.cancel-button", "&cCancel")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-description-input.cancel-lore", "&7Cancel edit"))
         );
         inventory.setItem(13, cancel);
     }
@@ -192,14 +192,14 @@ public class GuildDescriptionInputGUI implements GUI {
 
         // 发送消息提示输入
         int maxLength = plugin.getConfigManager().getMainConfig().getInt("guild.max-description-length", 100);
-        String message = languageManager.getGuiMessage(player, "gui.common.input-description", "&a请在聊天框中输入新的工会描述（最多{max}字符）：", "{max}", String.valueOf(maxLength));
+        String message = languageManager.getGuiMessage(player, "gui.common.input-description", "&aPlease enter guild description in chat (max 100 characters, optional):", "{max}", String.valueOf(maxLength));
         player.sendMessage(ColorUtils.colorize(message));
 
         // 设置玩家为输入模式
         final int finalMaxLength = maxLength; // 使用final变量避免lambda中的变量冲突
         plugin.getGuiManager().setInputMode(player, input -> {
             if (input.length() > finalMaxLength) {
-                String errorMessage = languageManager.getGuiMessage(player, "gui.common.description-too-long", "&c描述过长，最多{max}字符！", "{max}", String.valueOf(finalMaxLength));
+                String errorMessage = languageManager.getGuiMessage(player, "gui.common.description-too-long", "&cDescription too long, max {max} characters!", "{max}", String.valueOf(finalMaxLength));
                 player.sendMessage(ColorUtils.colorize(errorMessage));
                 return false;
             }
@@ -211,13 +211,13 @@ public class GuildDescriptionInputGUI implements GUI {
             plugin.getGuildService().updateGuildDescriptionAsync(guild.getId(), input).thenAccept(success -> {
                 CompatibleScheduler.runTask(plugin, player, () -> {
                     if (success) {
-                        String successMessage = languageManager.getGuiMessage(player, "gui.common.description-updated", "&a工会描述已更新！");
+                        String successMessage = languageManager.getGuiMessage(player, "gui.common.description-updated", "&aGuild description updated!");
                         player.sendMessage(ColorUtils.colorize(successMessage));
 
                         // 安全刷新GUI
                         plugin.getGuiManager().refreshGUI(player);
                     } else {
-                        String errorMessage = languageManager.getGuiMessage(player, "gui.common.description-update-failed", "&c工会描述更新失败！");
+                        String errorMessage = languageManager.getGuiMessage(player, "gui.common.description-update-failed", "&cFailed to update guild description!");
                         player.sendMessage(ColorUtils.colorize(errorMessage));
                     }
                 });

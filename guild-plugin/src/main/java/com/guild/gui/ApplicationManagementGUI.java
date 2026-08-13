@@ -53,7 +53,7 @@ public class ApplicationManagementGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getLanguageManager().getGuiMessage(player, "gui.application-mgmt.application-management-title", "&6申请管理"));
+        return ColorUtils.colorize(plugin.getLanguageManager().getGuiMessage(player, "gui.application-mgmt.application-management-title", "&6Application Management"));
     }
     
     @Override
@@ -123,9 +123,9 @@ public class ApplicationManagementGUI implements GUI {
             // 待处理申请按钮
             ItemStack pendingApplications = createItem(
                 Material.PAPER,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-pending-applications-name", "&e待处理申请")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-pending-applications-lore-1", "&7查看待处理的申请")),
-                ColorUtils.colorize("&f" + pendingCount + " " + languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-applications-count", "个申请"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-pending-applications-name", "&ePending Applications")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-pending-applications-lore-1", "&7View pending applications")),
+                ColorUtils.colorize("&f" + pendingCount + " " + languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-applications-count", "applications"))
             );
             CompatibleScheduler.runTask(plugin, player, () -> {
                 inventory.setItem(47, pendingApplications);
@@ -136,16 +136,16 @@ public class ApplicationManagementGUI implements GUI {
         // 申请历史按钮
         ItemStack applicationHistory = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-application-history-name", "&e申请历史")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-application-history-lore-1", "&7查看申请历史记录"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-application-history-name", "&eApplication History")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-application-history-lore-1", "&7View application history"))
         );
         inventory.setItem(51, applicationHistory);
         
         // 返回按钮
         ItemStack back = createItem(
             Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "&7返回")),
-            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.back-to-main-menu", "返回主菜单"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "Back")),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.back-to-main-menu", "Back to main menu"))
         );
         inventory.setItem(49, back);
     }
@@ -171,8 +171,8 @@ public class ApplicationManagementGUI implements GUI {
                     // 显示无申请信息
                     ItemStack noApplications = createItem(
                         Material.BARRIER,
-                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-no-pending", "&a没有待处理的申请")),
-                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-no-pending-desc", "&7当前没有待处理的申请"))
+                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-no-pending", "&aNo Pending Applications")),
+                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.application-management-no-pending-desc", "&7There are no pending applications"))
                     );
                     inventory.setItem(22, noApplications);
                     return;
@@ -205,8 +205,8 @@ public class ApplicationManagementGUI implements GUI {
                     // 显示无历史信息
                     ItemStack noHistory = createItem(
                         Material.BARRIER,
-                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.no-history", "&a没有申请历史")),
-                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.no-history.desc", "&7当前没有申请历史记录"))
+                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.no-history", "&aNo Application History")),
+                        ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.application-mgmt.no-history.desc", "&7There is no application history"))
                     );
                     inventory.setItem(22, noHistory);
                     return;
@@ -259,8 +259,8 @@ public class ApplicationManagementGUI implements GUI {
         if (currentPage > 0) {
             ItemStack previousPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page-name", "&c上一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page-lore-1", "&7查看上一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page-name", "&cPrevious Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page-lore-1", "&7Page {page}"))
             );
             inventory.setItem(18, previousPage);
         }
@@ -269,8 +269,8 @@ public class ApplicationManagementGUI implements GUI {
         if (currentPage < totalPages) {
             ItemStack nextPage = createItem(
                 Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page-name", "&a下一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page-lore-1", "&7查看下一页"))
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page-name", "&aNext Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page-lore-1", "&7Page {page}"))
             );
             inventory.setItem(26, nextPage);
         }
@@ -380,7 +380,7 @@ public class ApplicationManagementGUI implements GUI {
     private void handleApplicationClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (showingHistory) {
             // 历史记录只能查看，不能操作
-            String message = languageManager.getGuiMessage(player, "gui.common.application-history-view-only", "&7这是历史记录，只能查看");
+            String message = languageManager.getGuiMessage(player, "gui.common.application-history-view-only", "&7This is read-only history");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -403,7 +403,7 @@ public class ApplicationManagementGUI implements GUI {
         plugin.getGuildService().getPendingApplicationsAsync(guild.getId()).thenAccept(applications -> {
             if (applications == null || applications.isEmpty()) {
                 CompatibleScheduler.runTask(plugin, player, () -> {
-                    String message = languageManager.getGuiMessage(player, "gui.common.no-pending-applications", "&c没有待处理的申请");
+                    String message = languageManager.getGuiMessage(player, "gui.common.no-pending-applications", "&aNo pending applications");
                     player.sendMessage(ColorUtils.colorize(message));
                 });
                 return;
@@ -418,7 +418,7 @@ public class ApplicationManagementGUI implements GUI {
                 plugin.getGuildService().processApplicationAsync(application.getId(), GuildApplication.ApplicationStatus.APPROVED, player.getUniqueId()).thenAccept(success -> {
                     CompatibleScheduler.runTask(plugin, player, () -> {
                         if (success) {
-                            String message = languageManager.getGuiMessage(player, "gui.common.application-accepted", "&a申请已接受！");
+                            String message = languageManager.getGuiMessage(player, "gui.common.application-accepted", "&aApplication accepted");
                             player.sendMessage(ColorUtils.colorize(message));
 
                             // 向申请者发送消息
@@ -426,14 +426,14 @@ public class ApplicationManagementGUI implements GUI {
                             if (applicant != null && applicant.isOnline()) {
                                 // 去除工会名称中的颜色代码
                                 String cleanGuildName = ColorUtils.stripColor(guild.getName());
-                                String acceptedMessage = languageManager.getGuiMessage(applicant, "gui.application-mgmt.application.accepted", "&a您的申请已被 {guild} 接受！", "{guild}", cleanGuildName);
+                                String acceptedMessage = languageManager.getGuiMessage(applicant, "gui.application-mgmt.application.accepted", "&aYour application has been accepted by {guild}!", "{guild}", cleanGuildName);
                                 applicant.sendMessage(ColorUtils.colorize(acceptedMessage));
                             }
 
                             // 刷新GUI
                             refreshInventory(player);
                         } else {
-                            String message = languageManager.getGuiMessage(player, "gui.common.application-accept-failed", "&c接受申请失败！");
+                            String message = languageManager.getGuiMessage(player, "gui.common.application-accept-failed", "&cFailed to accept application");
                             player.sendMessage(ColorUtils.colorize(message));
                         }
                     });
@@ -450,7 +450,7 @@ public class ApplicationManagementGUI implements GUI {
         plugin.getGuildService().getPendingApplicationsAsync(guild.getId()).thenAccept(applications -> {
             if (applications == null || applications.isEmpty()) {
                 CompatibleScheduler.runTask(plugin, player, () -> {
-                    String message = languageManager.getGuiMessage(player, "gui.common.no-pending-applications", "&c没有待处理的申请");
+                    String message = languageManager.getGuiMessage(player, "gui.common.no-pending-applications", "&aNo pending applications");
                     player.sendMessage(ColorUtils.colorize(message));
                 });
                 return;
@@ -465,13 +465,13 @@ public class ApplicationManagementGUI implements GUI {
                 plugin.getGuildService().processApplicationAsync(application.getId(), GuildApplication.ApplicationStatus.REJECTED, player.getUniqueId()).thenAccept(success -> {
                     CompatibleScheduler.runTask(plugin, player, () -> {
                         if (success) {
-                            String message = languageManager.getGuiMessage(player, "gui.common.application-rejected", "&c申请已拒绝！");
+                            String message = languageManager.getGuiMessage(player, "gui.common.application-rejected", "&cApplication rejected");
                             player.sendMessage(ColorUtils.colorize(message));
 
                             // 刷新GUI
                             refreshInventory(player);
                         } else {
-                            String message = languageManager.getGuiMessage(player, "gui.common.application-reject-failed", "&c拒绝申请失败！");
+                            String message = languageManager.getGuiMessage(player, "gui.common.application-reject-failed", "&cFailed to reject application");
                             player.sendMessage(ColorUtils.colorize(message));
                         }
                     });
@@ -496,15 +496,15 @@ public class ApplicationManagementGUI implements GUI {
         future.thenAccept(applications -> CompatibleScheduler.runTask(plugin, player, () -> {
             if (applications == null || applications.isEmpty()) {
                 String emptyMsg = history
-                    ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-empty-history", "&f没有申请历史记录")
-                    : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-empty-pending", "&f没有待处理的申请");
+                    ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-empty-history", "&fNo application history")
+                    : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-empty-pending", "&fNo pending applications");
                 SimpleForm form = SimpleForm.builder()
-                    .title(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-title", "&6申请管理"))
+                    .title(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-title", "&6Application Management"))
                     .content(emptyMsg)
                     .button(history
-                        ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-pending-btn", "&e待处理申请")
-                        : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-history-btn", "&e申请历史"))
-                    .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-back", "&c返回"))
+                        ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-pending-btn", "&ePending Applications")
+                        : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-history-btn", "&eApplication History"))
+                    .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-back", "&cBack"))
                     .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                         if (response.clickedButtonId() == 0) {
                             sendBedrockApplicationList(player, 0, !history);
@@ -528,11 +528,11 @@ public class ApplicationManagementGUI implements GUI {
             final boolean isHistory = history;
 
             String modeText = history
-                ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-mode-history", "申请历史")
-                : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-mode-pending", "待处理申请");
+                ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-mode-history", "Application History")
+                : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-mode-pending", "Pending Applications");
             SimpleForm.Builder builder = SimpleForm.builder()
-                .title(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-title-page", "&6申请管理 - {mode} 第{page}页", "{mode}", modeText, "{page}", String.valueOf(safePage + 1)))
-                .content(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-total", "&f共{count}条记录", "{count}", String.valueOf(applications.size())));
+                .title(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-title-page", "&6Application Management - {mode} Page {page}", "{mode}", modeText, "{page}", String.valueOf(safePage + 1)))
+                .content(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-total", "&fTotal {count} records", "{count}", String.valueOf(applications.size())));
 
             for (int i = startIndex; i < endIndex; i++) {
                 GuildApplication app = applications.get(i);
@@ -546,21 +546,21 @@ public class ApplicationManagementGUI implements GUI {
             }
 
             builder.button(history
-                ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-pending-btn", "&e待处理申请")
-                : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-history-btn", "&e申请历史"));
-            builder.button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-prev-page", "&e上一页"));
-            builder.button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-next-page", "&e下一页"));
-            builder.button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-back", "&c返回"));
+                ? languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-pending-btn", "&ePending Applications")
+                : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-history-btn", "&eApplication History"));
+            builder.button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-prev-page", "&ePrevious Page"));
+            builder.button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-next-page", "&eNext Page"));
+            builder.button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-back", "&cBack"));
 
             builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 int clicked = response.clickedButtonId();
                 if (clicked < appCount) {
                     GuildApplication app = applications.get(startIndex + clicked);
                     if (isHistory) {
-                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-applicant", "&f申请人: {name}", "{name}", app.getPlayerName()));
-                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-status", "&f状态: {status}", "{status}", app.getStatus().name()));
+                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-applicant", "&fApplicant: {name}", "{name}", app.getPlayerName()));
+                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-status", "&fStatus: {status}", "{status}", app.getStatus().name()));
                         if (app.getMessage() != null && !app.getMessage().isEmpty()) {
-                            player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-message", "&f留言: {msg}", "{msg}", app.getMessage()));
+                            player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-message", "&fMessage: {msg}", "{msg}", app.getMessage()));
                         }
                         sendBedrockApplicationList(player, safePage, true);
                     } else {
@@ -586,13 +586,13 @@ public class ApplicationManagementGUI implements GUI {
 
     private void sendBedrockApplicationActions(Player player, GuildApplication application) {
         String msg = application.getMessage() != null && !application.getMessage().isEmpty()
-            ? application.getMessage() : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-no-message", "无");
+            ? application.getMessage() : languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-no-message", "None");
         SimpleForm form = SimpleForm.builder()
-            .title(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-actions-title", "&6申请处理 - {name}", "{name}", application.getPlayerName()))
-            .content(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-actions-content", "&f申请人: {name}\n&f留言: {msg}", "{name}", application.getPlayerName(), "{msg}", msg))
-            .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-accept", "&a接受申请"))
-            .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-reject", "&c拒绝申请"))
-            .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-back-to-list", "&e返回列表"))
+            .title(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-actions-title", "&6Application Processing - {name}", "{name}", application.getPlayerName()))
+            .content(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-actions-content", "&fApplicant: {name}\n&fMessage: {msg}", "{name}", application.getPlayerName(), "{msg}", msg))
+            .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-accept", "&aAccept Application"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-reject", "&cReject Application"))
+            .button(languageManager.getGuiColoredMessage(player, "gui.application-mgmt.bedrock-back-to-list", "&eBack to List"))
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 switch (response.clickedButtonId()) {
                     case 0 -> bedrockProcessApplication(player, application, GuildApplication.ApplicationStatus.APPROVED);
@@ -611,21 +611,21 @@ public class ApplicationManagementGUI implements GUI {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     if (status == GuildApplication.ApplicationStatus.APPROVED) {
-                        String message = languageManager.getGuiMessage(player, "gui.common.application-accepted", "&a申请已接受！");
+                        String message = languageManager.getGuiMessage(player, "gui.common.application-accepted", "&aApplication accepted");
                         player.sendMessage(ColorUtils.colorize(message));
                         Player applicant = Bukkit.getPlayer(application.getPlayerUuid());
                         if (applicant != null && applicant.isOnline()) {
                             String cleanGuildName = ColorUtils.stripColor(guild.getName());
-                            String acceptedMessage = languageManager.getGuiMessage(applicant, "gui.application-mgmt.application.accepted", "&a您的申请已被 {guild} 接受！", "{guild}", cleanGuildName);
+                            String acceptedMessage = languageManager.getGuiMessage(applicant, "gui.application-mgmt.application.accepted", "&aYour application has been accepted by {guild}!", "{guild}", cleanGuildName);
                             applicant.sendMessage(ColorUtils.colorize(acceptedMessage));
                         }
                     } else {
-                        String message = languageManager.getGuiMessage(player, "gui.common.application-rejected", "&c申请已拒绝！");
+                        String message = languageManager.getGuiMessage(player, "gui.common.application-rejected", "&cApplication rejected");
                         player.sendMessage(ColorUtils.colorize(message));
                     }
                     sendBedrockApplicationList(player, 0, false);
                 } else {
-                    String message = languageManager.getGuiMessage(player, "gui.common.application-accept-failed", "&c处理申请失败！");
+                    String message = languageManager.getGuiMessage(player, "gui.common.application-accept-failed", "&cFailed to accept application");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });

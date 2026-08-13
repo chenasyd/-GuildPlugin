@@ -5,14 +5,15 @@ import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.services.GuildService;
 
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 短 TTL 缓存：降低 PlaceholderAPI / 权限热路径上的同步 JDBC 压力。
+ * Short-TTL cache to cut sync JDBC on PlaceholderAPI / permission / GUI hot paths.
  * <p>
- * 成员身份变更时应调用 {@link #invalidate(UUID)}（已由 {@code PermissionManager.updatePlayerPermissions} 触发）。
+ * Invalidate via {@link #invalidate(UUID)} on membership changes
+ * ({@code PermissionManager.updatePlayerPermissions} already does this).
  */
 public final class GuildPlayerDataCache {
 
@@ -46,6 +47,8 @@ public final class GuildPlayerDataCache {
     private final ConcurrentHashMap<UUID, Snapshot> cache = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, Boolean> contributionLoading = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Integer, Boolean> memberCountLoading = new ConcurrentHashMap<>();
+    /** Prevent recursive load when GuildService sync wrappers consult this cache. */
+    private final ThreadLocal<Boolean> loading = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
     public GuildPlayerDataCache(GuildPlugin plugin, long ttlMs) {
         this.plugin = plugin;
@@ -64,37 +67,65 @@ public final class GuildPlayerDataCache {
         memberCountLoading.clear();
     }
 
+    /** Return cached snapshot only if still within TTL; never hits JDBC. */
+    public Snapshot getIfPresent(UUID playerUuid) {
+        if (playerUuid == null) return null;
+        Snapshot cached = cache.get(playerUuid);
+        if (cached == null) return null;
+        if (System.currentTimeMillis() - cached.loadedAtMs >= ttlMs) return null;
+        return cached;
+    }
+
     /**
-     * 获取快照；缓存未命中时同步加载 guild+member（单次），贡献/人数异步补齐。
+     * Load-through snapshot. Uses async JDBC once (both guild+member), not sync wrappers,
+     * so {@link com.guild.services.GuildService#getPlayerGuild} can safely prefer this cache.
      */
     public Snapshot get(UUID playerUuid) {
         if (playerUuid == null) return empty();
-        long now = System.currentTimeMillis();
-        Snapshot cached = cache.get(playerUuid);
-        if (cached != null && now - cached.loadedAtMs < ttlMs) {
-            maybeRefreshContributionAsync(playerUuid, cached);
-            maybeRefreshMemberCountAsync(playerUuid, cached);
-            return cached;
+        Snapshot present = getIfPresent(playerUuid);
+        if (present != null) {
+            maybeRefreshContributionAsync(playerUuid, present);
+            maybeRefreshMemberCountAsync(playerUuid, present);
+            return present;
         }
 
         GuildService gs = plugin.getGuildService();
         if (gs == null) return empty();
 
-        Guild guild;
-        GuildMember member;
-        try {
-            guild = gs.getPlayerGuild(playerUuid);
-            member = gs.getGuildMember(playerUuid);
-        } catch (Exception e) {
+        if (Boolean.TRUE.equals(loading.get())) {
+            // Nested call while already loading — avoid deadlock/recursion.
             return empty();
         }
 
-        Snapshot snap = new Snapshot(guild, member, cached != null ? cached.contributionNet : null,
-                cached != null ? cached.memberCount : null, now);
-        cache.put(playerUuid, snap);
-        maybeRefreshContributionAsync(playerUuid, snap);
-        maybeRefreshMemberCountAsync(playerUuid, snap);
-        return snap;
+        long now = System.currentTimeMillis();
+        Snapshot prev = cache.get(playerUuid);
+        loading.set(Boolean.TRUE);
+        try {
+            CompletableFuture<Guild> guildFut = gs.getPlayerGuildAsync(playerUuid);
+            CompletableFuture<GuildMember> memberFut = gs.getGuildMemberAsync(playerUuid);
+            Guild guild = guildFut.join();
+            GuildMember member = memberFut.join();
+            Snapshot snap = new Snapshot(guild, member,
+                    prev != null ? prev.contributionNet : null,
+                    prev != null ? prev.memberCount : null,
+                    now);
+            cache.put(playerUuid, snap);
+            maybeRefreshContributionAsync(playerUuid, snap);
+            maybeRefreshMemberCountAsync(playerUuid, snap);
+            return snap;
+        } catch (Exception e) {
+            return empty();
+        } finally {
+            loading.set(Boolean.FALSE);
+        }
+    }
+
+    public Guild getGuild(UUID playerUuid) {
+        return get(playerUuid).guild;
+    }
+
+    public GuildMember getMember(UUID playerUuid) {
+        return get(playerUuid).member;
     }
 
     private void maybeRefreshContributionAsync(UUID playerUuid, Snapshot snap) {
@@ -117,12 +148,9 @@ public final class GuildPlayerDataCache {
                     net = map.getOrDefault(playerUuid, 0.0);
                 }
                 Snapshot cur = cache.get(playerUuid);
-                if (cur == null) {
-                    cur = new Snapshot(snap.guild, snap.member, net, snap.memberCount, System.currentTimeMillis());
-                } else {
-                    cur = cur.withContribution(net);
+                if (cur != null) {
+                    cache.put(playerUuid, cur.withContribution(net));
                 }
-                cache.put(playerUuid, cur);
             } finally {
                 contributionLoading.remove(playerUuid);
             }
@@ -144,10 +172,11 @@ public final class GuildPlayerDataCache {
         }
         gs.getGuildMemberCountAsync(guildId).whenComplete((count, err) -> {
             try {
+                if (count == null) return;
                 Snapshot cur = cache.get(playerUuid);
-                if (cur == null || cur.guild == null || cur.guild.getId() != guildId) return;
-                int c = count != null ? count : 0;
-                cache.put(playerUuid, cur.withMemberCount(c));
+                if (cur != null && cur.guild != null && cur.guild.getId() == guildId) {
+                    cache.put(playerUuid, cur.withMemberCount(count));
+                }
             } finally {
                 memberCountLoading.remove(guildId);
             }

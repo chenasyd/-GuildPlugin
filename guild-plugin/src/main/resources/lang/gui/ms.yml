@@ -769,6 +769,8 @@ gui:
     bedrock-input-label: "&fMasukkan jumlah"
     bedrock-invalid-amount: "&cJumlah mesti lebih besar daripada 0!"
     bedrock-invalid-number: "&cNombor tidak sah!"
+    next-page.desc: "&7Page {page}"
+    previous-page.desc: "&7Page {page}"
 
   # ================================================
   # ConfirmChangeFundsGUI (25 keys)
@@ -969,6 +971,7 @@ gui:
     bedrock-delete-success: "&aHubungan telah dipadam: {guild1} ↔ {guild2}"
     bedrock-delete-failed: "&cGagal padam hubungan!"
     bedrock-no-permission: "&cAnda tidak mempunyai kebenaran pentadbir!"
+    previous-page.desc: "&7Page {0}"
 
   # ================================================
   # GuildLogsGUI (21 keys)
@@ -1114,6 +1117,7 @@ gui:
     member-details.bedrock-promote-demote: "&6Naik/Turun Pangkat"
     member-details.bedrock-send-message: "&eHantar Mesej"
     member-details.bedrock-back: "&cKembali"
+    member-mgmt.no-members.desc: "&7There are no members in the guild yet"
 
   # ================================================
   # MemberGuildGUI (13 keys)
@@ -1244,6 +1248,31 @@ gui:
     bedrock-title: "&6Tetapan Kebenaran Guild"
     bedrock-content: "&6=== Kebenaran Ketua ===\n&f• Semua Kebenaran\n&f• Pengurusan Ahli\n&f• Edit Tetapan\n&f• Padam Guild\n\n&e=== Kebenaran Pegawai ===\n&f• Jemput Ahli\n&f• Tendang Ahli\n&f• Proses Permohonan\n&f• Tetapkan Rumah Guild\n\n&7=== Kebenaran Ahli ===\n&f• Lihat Maklumat Guild\n&f• Teleport ke Rumah Guild\n&f• Mohon Sertai Guild Lain\n\n&aStatus Semasa: &fGuild {guild} | Sistem kebenaran berfungsi normal"
     bedrock-back: "&cKembali"
+    leader-title: "&6Leader permissions"
+    leader-lore-1: "&7• All permissions"
+    leader-lore-2: "&7• Manage members"
+    leader-lore-3: "&7• Modify settings"
+    leader-lore-4: "&7• Delete guild"
+    officer-title: "&eOfficer permissions"
+    officer-lore-1: "&7• Invite members"
+    officer-lore-2: "&7• Kick members"
+    officer-lore-3: "&7• Handle applications"
+    officer-lore-4: "&7• Set guild home"
+    member-title: "&7Member permissions"
+    member-lore-1: "&7• View guild info"
+    member-lore-2: "&7• Teleport to guild home"
+    member-lore-3: "&7• Apply to join other guilds"
+    info-title: "&ePermission notes"
+    info-lore-1: "&7Permissions are role-based"
+    info-lore-2: "&7Leaders can promote/demote"
+    info-lore-3: "&7Officers manage members"
+    info-lore-4: "&7Members have basic access"
+    status-title: "&aCurrent status"
+    status-guild: "&7Guild: &e{0}"
+    status-system: "&7Permission system: &aOK"
+    status-check: "&7Permission checks: &aEnabled"
+    back: "&7Back"
+    back-hint: "&7Return to guild settings"
 
   # ================================================
   # InviteMemberGUI (4 keys)

@@ -57,7 +57,7 @@ public class MemberGuildGUI implements GUI {
     @Override
     public String getTitle() {
         return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-guild-gui.title",
-                "&6我的工会 - {guild_name}", "{guild_name}",
+                "&6My Guild", "{guild_name}",
                 guild.getName() != null ? guild.getName() : "未知工会"));
     }
 
@@ -70,19 +70,19 @@ public class MemberGuildGUI implements GUI {
     public boolean openBedrockForm(Player player) {
         if (!BedrockFormSender.isAvailable()) return false;
 
-        String name = guild.getName() != null ? guild.getName() : languageManager.getGuiColoredMessage(player, "gui.common.no-name", "无名称");
-        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" : languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.no-tag", "无标签");
-        String homeStatus = guild.hasHome() ? languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.home-set", "&a已设置") : languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.home-not-set", "&c未设置");
+        String name = guild.getName() != null ? guild.getName() : languageManager.getGuiColoredMessage(player, "gui.common.no-name", "No name");
+        String tag = guild.getTag() != null ? "[" + guild.getTag() + "]" : languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.no-tag", "No Tag");
+        String homeStatus = guild.hasHome() ? languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.home-set", "&aSet") : languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.home-not-set", "&cNot Set");
 
         String content = languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.bedrock-content",
-                "&6工会信息\n&f名称: &e{guild_name}\n&f标签: &e{guild_tag}\n&f工会家: {home_status}",
+                "&6Guild Info\n&fName: &e{guild_name}\n&fTag: &e{guild_tag}\n&fGuild Home: {home_status}",
                 "{guild_name}", name, "{guild_tag}", tag, "{home_status}", homeStatus);
 
         SimpleForm form = SimpleForm.builder()
-                .title(languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.bedrock-title", "&6我的工会 - {guild_name}", "{guild_name}", name))
+                .title(languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.bedrock-title", "&6My Guild - {guild_name}", "{guild_name}", name))
                 .content(content)
-                .button(languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.home-teleport", "&d工会家传送"))
-                .button(languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.leave", "&c离开工会"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.home-teleport", "&dTeleport Home"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.member-guild-gui.leave", "&cLeave Guild"))
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     switch (response.clickedButtonId()) {
                         case 0 -> handleHomeTeleport(player);
@@ -134,32 +134,32 @@ public class MemberGuildGUI implements GUI {
 
     private void displayGuildInfo(Inventory inventory) {
         String name = guild.getName() != null ? guild.getName() :
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.no-name", "无名称");
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.no-name", "No Name");
         String tag = guild.getTag() != null ? "&7[" + guild.getTag() + "&7]" :
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.no-tag", "无标签");
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.no-tag", "No Tag");
         String homeStatus = guild.hasHome() ?
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.home-set", "&a已设置") :
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.home-not-set", "&c未设置");
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.home-set", "&aSet") :
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.home-not-set", "&cNot Set");
 
         ItemStack info = createItem(Material.PAPER,
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.info-title", "&6工会信息"),
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.info-name", "&7名称: &e{name}", "{name}", name),
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.info-tag", "&7标签: &e{tag}", "{tag}", tag),
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.info-home", "&7工会家: {status}", "{status}", homeStatus));
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.info-title", "&6Guild Info"),
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.info-name", "&7Name: &e{name}", "{name}", name),
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.info-tag", "&7Tag: &e{tag}", "{tag}", tag),
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.info-home", "&7Home: {status}", "{status}", homeStatus));
         inventory.setItem(13, info);
     }
 
     private void setupButtons(Inventory inventory) {
         // 工会家传送
         ItemStack homeTeleport = createItem(Material.ENDER_PEARL,
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.home-teleport", "&d工会家传送"),
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.home-teleport-desc", "&7单击 &f传送到工会家"));
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.home-teleport", "&dTeleport Home"),
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.home-teleport-desc", "&7Click &fTeleport Home"));
         inventory.setItem(11, homeTeleport);
 
         // 离开工会
         ItemStack leaveGuild = createItem(Material.BARRIER,
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.leave", "&c离开工会"),
-                languageManager.getGuiMessage(player, "gui.member-guild-gui.leave-desc", "&7单击 &f离开当前工会"));
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.leave", "&cLeave Guild"),
+                languageManager.getGuiMessage(player, "gui.member-guild-gui.leave-desc", "&7Click &fLeave Current Guild"));
         inventory.setItem(15, leaveGuild);
     }
 
@@ -177,7 +177,7 @@ public class MemberGuildGUI implements GUI {
     private void handleHomeTeleport(Player player) {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (member == null) {
-            String msg = languageManager.getGuiMessage(player, "gui.common.no-permission", "&c权限不足");
+            String msg = languageManager.getGuiMessage(player, "gui.common.no-permission", "&cInsufficient permission");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -186,7 +186,7 @@ public class MemberGuildGUI implements GUI {
                 if (location != null) {
                     startHomeTeleportDelay(player, location);
                 } else {
-                    String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.not-set", "&c工会家未设置！");
+                    String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.not-set", "&cGuild home has not been set yet!");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
@@ -196,12 +196,12 @@ public class MemberGuildGUI implements GUI {
     private void startHomeTeleportDelay(Player player, org.bukkit.Location targetLocation) {
         com.guild.util.GuildHomeTeleport.start(plugin, player, targetLocation, true,
                 () -> {
-                    String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.success", "&a已传送到工会家！");
+                    String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.success", "&aTeleported to guild home!");
                     player.sendMessage(ColorUtils.colorize(message));
                 },
                 reason -> {
                     String message = languageManager.getGuiMessage(player, "gui.guild-settings.home.teleport-failed",
-                            "&c传送失败，请稍后重试！");
+                            "&cTeleport failed, please try again!");
                     player.sendMessage(ColorUtils.colorize(message));
                 });
     }

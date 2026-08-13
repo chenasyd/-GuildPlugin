@@ -53,7 +53,7 @@ public class EconomyManagementGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.economy-management-title", "&e经济管理"));
+        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.economy-management-title", "&eEconomy Management"));
     }
     
     @Override
@@ -100,11 +100,11 @@ public class EconomyManagementGUI implements GUI {
         Material material = Material.GOLD_INGOT;
         
         List<String> lore = new ArrayList<>();
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.guild-name", "工会名称") + ": " + guild.getName()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.leader", "会长") + ": " + guild.getLeaderName()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.economy-management.level", "等级") + ": " + guild.getLevel()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.economy-management.current-balance", "当前资金") + ": " + plugin.getEconomyManager().format(guild.getBalance())));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.economy-management.max-members", "最大成员") + ": " + guild.getMaxMembers()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.guild-name", "Guild Name") + ": " + guild.getName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.leader", "Leader") + ": " + guild.getLeaderName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.economy-management.level", "Level") + ": " + guild.getLevel()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.economy-management.current-balance", "Current Balance") + ": " + plugin.getEconomyManager().format(guild.getBalance())));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.economy-management.max-members", "Max Members") + ": " + guild.getMaxMembers()));
         lore.add("");
         lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.economy-management.left-click-set", "Left click: Set balance")));
         lore.add(ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "gui.economy-management.right-click-add", "Right click: Add balance")));
@@ -122,30 +122,30 @@ public class EconomyManagementGUI implements GUI {
         // 上一页按钮
         if (currentPage > 0) {
             inventory.setItem(PREVIOUS_PAGE_SLOT, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.previous-page", "&a上一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.previous-page.desc", "&7第 {page} 页", "{page}", String.valueOf(currentPage)))));
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.previous-page", "&aPrevious Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.previous-page.desc", "&7Page {page}", "{page}", String.valueOf(currentPage)))));
         }
 
         // 页码信息
         inventory.setItem(PAGE_INFO_SLOT, createItem(Material.PAPER,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.page-info", "&e第 {current} 页，共 {total} 页", "{current}", String.valueOf(currentPage + 1), "{total}", String.valueOf(totalPages)))));
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.page-info", "&ePage {current} of {total}", "{current}", String.valueOf(currentPage + 1), "{total}", String.valueOf(totalPages)))));
 
         // 下一页按钮
         if (currentPage < totalPages - 1) {
             inventory.setItem(NEXT_PAGE_SLOT, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.next-page", "&a下一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.next-page.desc", "&7第 {page} 页", "{page}", String.valueOf(currentPage + 2)))));
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.next-page", "&aNext Page")),
+                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.next-page.desc", "&7Page {page}", "{page}", String.valueOf(currentPage + 2)))));
         }
     }
 
     private void setupActionButtons(Inventory inventory) {
         // 返回按钮
         inventory.setItem(46, createItem(Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.back", "&c返回"))));
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.back", "&cBack"))));
 
         // 刷新按钮
         inventory.setItem(52, createItem(Material.EMERALD,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.refresh", "&a刷新列表"))));
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.economy-management.refresh", "&aRefresh List"))));
     }
     
     private void fillBorder(Inventory inventory) {
@@ -213,7 +213,7 @@ public class EconomyManagementGUI implements GUI {
                     guild.getBalance());
             String msg = languageManager.getGuiMessage(player,
                     "gui.economy-management.middle-click-desc",
-                    "&c即将清空 &e{guild} &c的资金，请确认", "{guild}", guild.getName());
+                    "&cAbout to clear funds of &e{guild}&c, please confirm", "{guild}", guild.getName());
             player.sendMessage(ColorUtils.colorize(msg));
             plugin.getGuiManager().openGUI(player, confirmGUI);
             return;
@@ -237,7 +237,7 @@ public class EconomyManagementGUI implements GUI {
 
         // 发送提示
         String prompt = languageManager.getGuiMessage(player, promptKey,
-                "&e请输入金额（在聊天框输入数字）:");
+                "&eEnter amount in chat:");
         player.sendMessage(ColorUtils.colorize(prompt));
 
         // 设置输入模式：捕获玩家输入的金额
@@ -248,7 +248,7 @@ public class EconomyManagementGUI implements GUI {
                     player.sendMessage(ColorUtils.colorize(
                             languageManager.getGuiMessage(player,
                                     "gui.economy-management.invalid-amount",
-                                    "&c金额必须大于0！")));
+                                    "&cAmount must be greater than 0!")));
                     return false; // 继续等待有效输入
                 }
                 // 打开确认GUI
@@ -261,13 +261,13 @@ public class EconomyManagementGUI implements GUI {
                     player.sendMessage(ColorUtils.colorize(
                             languageManager.getGuiMessage(player,
                                     "gui.economy-management.input-cancelled",
-                                    "&7已取消操作")));
+                                    "&7Operation cancelled")));
                     return true; // 退出输入模式
                 }
                 player.sendMessage(ColorUtils.colorize(
                         languageManager.getGuiMessage(player,
                                 "gui.economy-management.invalid-number",
-                                "&c无效的数字！请输入有效金额或输入 cancel 取消")));
+                                "&cInvalid number! Enter a valid amount or type cancel to abort")));
                 return false;
             }
         });
@@ -311,8 +311,8 @@ public class EconomyManagementGUI implements GUI {
                 int endIndex = Math.min(startIndex + itemsPerPage, guilds.size());
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-title", "&e经济管理"))
-                    .content(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-page-info", "&f第 {current}/{total} 页 | 共 {count} 个工会", "{current}", String.valueOf(safePage + 1), "{total}", String.valueOf(totalPages), "{count}", String.valueOf(guilds.size())));
+                    .title(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-title", "&eEconomy Management"))
+                    .content(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-page-info", "&fPage {current}/{total} | Total {count} guilds", "{current}", String.valueOf(safePage + 1), "{total}", String.valueOf(totalPages), "{count}", String.valueOf(guilds.size())));
 
                 List<Guild> pageGuilds = new ArrayList<>();
                 for (int i = startIndex; i < endIndex; i++) {
@@ -321,10 +321,10 @@ public class EconomyManagementGUI implements GUI {
                     builder.button("§6" + g.getName() + " §f- " + plugin.getEconomyManager().format(g.getBalance()));
                 }
 
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-refresh", "&a刷新列表"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-prev-page", "&e上一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-next-page", "&e下一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-back", "&c返回"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-refresh", "&aRefresh List"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-prev-page", "&ePrevious Page"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-next-page", "&eNext Page"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-back", "&cBack"));
 
                 final int navOffset = pageGuilds.size();
 
@@ -354,13 +354,13 @@ public class EconomyManagementGUI implements GUI {
 
     private void sendBedrockEconomyActions(Player player, Guild guild, int page) {
         SimpleForm.Builder builder = SimpleForm.builder()
-            .title(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-actions-title", "&e经济管理 - {guild}", "{guild}", guild.getName()))
-            .content(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-actions-content", "&f当前资金: &a{balance}\n&f会长: &e{leader}\n&f等级: &e{level}", "{balance}", plugin.getEconomyManager().format(guild.getBalance()), "{leader}", guild.getLeaderName(), "{level}", String.valueOf(guild.getLevel())));
+            .title(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-actions-title", "&eEconomy Management - {guild}", "{guild}", guild.getName()))
+            .content(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-actions-content", "&fCurrent Balance: &a{balance}\n&fLeader: &e{leader}\n&fLevel: &e{level}", "{balance}", plugin.getEconomyManager().format(guild.getBalance()), "{leader}", guild.getLeaderName(), "{level}", String.valueOf(guild.getLevel())));
 
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-set-funds", "&e设置资金"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-add-funds", "&a增加资金"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-clear-funds", "&c清空资金"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-back-to-list", "&c返回列表"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-set-funds", "&eSet Funds"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-add-funds", "&aAdd Funds"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-clear-funds", "&cClear Funds"));
+        builder.button(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-back-to-list", "&cBack to List"));
 
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             switch (response.clickedButtonId()) {
@@ -388,24 +388,24 @@ public class EconomyManagementGUI implements GUI {
 
     private void sendBedrockAmountInput(Player player, Guild guild, String operationType, int page) {
         String title = operationType.equals("set")
-            ? languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-set-title", "&e设置资金")
-            : languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-add-title", "&a增加资金");
+            ? languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-set-title", "&eSet Funds")
+            : languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-add-title", "&aAdd Funds");
         CustomForm form = CustomForm.builder()
             .title(title + " - " + guild.getName())
-            .input(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-input-label", "&f请输入金额"), "0", "")
+            .input(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-input-label", "&fEnter amount"), "0", "")
             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                 String input = response.getInput(0);
                 try {
                     double amount = Double.parseDouble(input.trim());
                     if (amount <= 0) {
-                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-invalid-amount", "&c金额必须大于0！"));
+                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-invalid-amount", "&cAmount must be greater than 0!"));
                         sendBedrockEconomyActions(player, guild, page);
                         return;
                     }
                     plugin.getGuiManager().openGUI(player,
                         new ConfirmChangeFundsGUI(plugin, guild, player, operationType, amount));
                 } catch (NumberFormatException e) {
-                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-invalid-number", "&c无效的数字！"));
+                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.economy-management.bedrock-invalid-number", "&cInvalid number!"));
                     sendBedrockEconomyActions(player, guild, page);
                 }
             }))

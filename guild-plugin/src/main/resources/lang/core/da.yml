@@ -553,7 +553,6 @@ guild-role.leader: "\u00266Leader"
 guild-role.officer: "\u0026eOfficer"
 guild-role.member: "\u00267Member"
 guild-role.unknown: "\u00267Unknown"
-
 # Log Types
 log.type.guild-created: "Guild Created"
 log.type.guild-dissolved: "Guild Dissolved"
@@ -580,14 +579,12 @@ log.type.application-rejected: "Application Rejected"
 log.type.invitation-sent: "Invitation Sent"
 log.type.invitation-accepted: "Invitation Accepted"
 log.type.invitation-rejected: "Invitation Rejected"
-
 # Log Time
 log.time.unknown: "Unknown"
 log.time.days-ago: "{0} days ago"
 log.time.hours-ago: "{0} hours ago"
 log.time.minutes-ago: "{0} minutes ago"
 log.time.just-now: "Just now"
-
 # Contribution Types
 contribution.type.deposit: "Deposit"
 contribution.type.withdraw: "Withdrawal"
@@ -595,7 +592,6 @@ contribution.type.transfer: "Transfer"
 contribution.type.creation: "Guild Creation"
 contribution.type.upgrade: "Guild Upgrade"
 contribution.type.admin: "Admin Operation"
-
 contribution.type.war_win: "Gildekrig-sejr"
 contribution.type.war_kill: "Drab (krig)"
 # Application Status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "\u0026e[ModuleSystem] Skipping duplicate module {
 module.system.duplicate-cleanup-title: "\u00266[ModuleSystem] \u0026cThe following old version module JARs should be deleted:"
 module.system.duplicate-cleanup-item: "\u0026c  - {0} (old version, replaced by {1})"
 module.system.all-unloaded: "\u0026a[ModuleSystem] All extension modules unloaded"
-
 # Error Messages
 module.error.already-loaded: "\u0026cModule already loaded: {0}"
 module.error.not-loaded: "\u0026cModule not loaded or does not exist: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "\u0026cFailed to unload module [{0}]: {1}"
 module.error.has-dependents: "\u0026cCannot unload [{0}], the following modules depend on it: {1}"
 module.error.unload-failed-during-shutdown: "Failed to unload module during shutdown: {0}"
 module.error.api-too-old: "\u0026cModule [{0}] API version ({1}) is too old. This plugin requires API {2}+. Cannot load this module!"
-
 # Warning Messages
 module.warning.soft-depend-missing: "\u00266[ModuleWarning] Soft dependency [{0}] not satisfied. Module [{1}] may have limited functionality"
 module.warning.no-api-version: "\u00266[ModuleWarning] Module [{0}] does not declare an API version requirement"
 module.warning.api-version-mismatch: "\u0026e[ModuleWarning] Module [{0}] API version ({1}) does not match the plugin version ({2}). This may cause compatibility issues!"
-
 # Module Management Commands
 module.command.usage-header: "\u0026\u0026l====== \u00266\u0026lModule Management Commands \u0026e\u0026l======"
 module.command.usage-list: "\u00267/guildmodule list  \u0026f- List all loaded modules"
@@ -667,7 +660,6 @@ module.command.info.state: "\u00267State: \u0026f{0}"
 module.command.info.description: "\u00267Description: \u0026f{0}"
 module.command.info.depends: "\u00267Depends: \u0026f{0}"
 module.command.info.soft-depends: "\u00267Soft Depends: \u0026f{0}"
-
 # Cloud Modules
 cloud.title: "\u0026b\u0026l=== Cloud Modules ==="
 cloud.empty: "\u0026cNo cloud modules found."
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7V\u00e6lg en formulartype til forh\u00e5ndsvisning
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Knapmenu"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Input/indstillingsformular"
 bedrock-test.main-btn-modal: "&cModalForm &f- Bekr\u00e6ftelsesdialog"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Guild hovedmenu &r- &7SimpleForm eksempel"
 bedrock-test.simple-content: "&7Velkommen, &e{player}&7!\n&7Dette er et eksempel p\u00e5 SimpleForm knapmenu."
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "Medlemsadministration"
 bedrock-test.simple-name-settings: "Guild indstillinger"
 bedrock-test.simple-name-list: "Guild liste"
 bedrock-test.simple-name-quit: "Forlad guild"
-
 # CustomForm
 bedrock-test.custom-title: "&6Guild indstillinger &r- &fCustomForm eksempel"
 bedrock-test.custom-label-basic: "&7\u2014\u2014 Grundl\u00e6ggende indstillinger \u2014\u2014"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fTillad medlemmer at sparke"
 bedrock-test.custom-label-other: "&7\u2014\u2014 Andet \u2014\u2014"
 bedrock-test.custom-dropdown-lang: "&fGuild sprog"
 bedrock-test.custom-slider-max-members: "&fMaksimalt antal medlemmer"
-
 # ModalForm
 bedrock-test.modal-title: "&cBekr\u00e6ft handling &r- &fModalForm eksempel"
 bedrock-test.modal-content: "&7Er du sikker p\u00e5, at du vil forlade guilden &eTest Guild &7?\n\n&cDenne handling kan ikke fortrydes!\n&7Efter afslutning skal du ans\u00f8ge om at blive medlem igen."
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- Se status"
 war.help.report: "&e/guildwar report [id] &7- Vis rapport"
 war.help.season: "&e/guildwar season &7- Sæsonrangliste"
 war.help.admin: "&e/guildwar admin end <id> &7- Tving afslutning"
-
 war.report.broadcast: "&6[Rapport #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7drab: &e{kills}"
 war.report.none: "&7Ingen rapport fundet"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&aSet {role} warehouse access to {state}"
 warehouse.perm-failed: "&cFailed to update warehouse permission."
 warehouse.role-officer: "officer"
 warehouse.role-member: "member"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"

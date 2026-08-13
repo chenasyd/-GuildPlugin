@@ -828,10 +828,19 @@ public class GuildService {
     }
     
     /**
-     * 获取玩家工会 (同步包装器)
+     * 获取玩家工会 (同步包装器；优先短 TTL 缓存)
      */
     public Guild getPlayerGuild(UUID playerUuid) {
         try {
+            var cache = plugin.getGuildPlayerDataCache();
+            if (cache != null) {
+                var hit = cache.getIfPresent(playerUuid);
+                if (hit != null) {
+                    return hit.guild;
+                }
+                // Load-through populates guild+member in one round-trip pair.
+                return cache.getGuild(playerUuid);
+            }
             return getPlayerGuildAsync(playerUuid).get();
         } catch (Exception e) {
             logger.severe("Exception fetching player guild: " + e.getMessage());
@@ -866,10 +875,18 @@ public class GuildService {
     }
     
     /**
-     * 获取工会成员 (同步包装器)
+     * 获取工会成员 (同步包装器；优先短 TTL 缓存)
      */
     public GuildMember getGuildMember(UUID playerUuid) {
         try {
+            var cache = plugin.getGuildPlayerDataCache();
+            if (cache != null) {
+                var hit = cache.getIfPresent(playerUuid);
+                if (hit != null) {
+                    return hit.member;
+                }
+                return cache.getMember(playerUuid);
+            }
             return getGuildMemberAsync(playerUuid).get();
         } catch (Exception e) {
             logger.severe("Exception fetching guild members: " + e.getMessage());

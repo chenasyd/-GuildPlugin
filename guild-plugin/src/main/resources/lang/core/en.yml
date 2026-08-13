@@ -558,7 +558,6 @@ guild-role.leader: "&6Leader"
 guild-role.officer: "&eOfficer"
 guild-role.member: "&7Member"
 guild-role.unknown: "&7Unknown"
-
 # Log types
 log.type.guild-created: "Guild Created"
 log.type.guild-dissolved: "Guild Dissolved"
@@ -585,14 +584,12 @@ log.type.application-rejected: "Application Rejected"
 log.type.invitation-sent: "Invitation Sent"
 log.type.invitation-accepted: "Invitation Accepted"
 log.type.invitation-rejected: "Invitation Rejected"
-
 # Log time
 log.time.unknown: "Unknown"
 log.time.days-ago: "{0} days ago"
 log.time.hours-ago: "{0} hours ago"
 log.time.minutes-ago: "{0} minutes ago"
 log.time.just-now: "Just now"
-
 # Contribution types
 contribution.type.deposit: "Deposit"
 contribution.type.withdraw: "Withdraw"
@@ -602,7 +599,6 @@ contribution.type.upgrade: "Guild Upgrade"
 contribution.type.admin: "Admin Operation"
 contribution.type.war_win: "War Win"
 contribution.type.war_kill: "War Kill"
-
 # Application status
 application.status.pending: "Pending"
 application.status.approved: "Approved"
@@ -623,7 +619,6 @@ module.system.duplicate-skip: "&e[Module System] Skipped duplicate module {0} ({
 module.system.duplicate-cleanup-title: "&6[Module System] &cThe following old module JARs should be deleted:"
 module.system.duplicate-cleanup-item: "&c  - {0} (old version, superseded by {1})"
 module.system.all-unloaded: "&a[Module System] All extension modules unloaded"
-
 # Error messages
 module.error.already-loaded: "&cModule already loaded: {0}"
 module.error.not-loaded: "&cModule not loaded or does not exist: {0}"
@@ -633,12 +628,10 @@ module.error.unload-failed: "&cModule unload failed [{0}]: {1}"
 module.error.has-dependents: "&cCannot unload [{0}], the following modules depend on it: {1}"
 module.error.unload-failed-during-shutdown: "Failed to unload module during shutdown: {0}"
 module.error.api-too-old: "&cModule [{0}] API version ({1}) is too old. This plugin requires API {2}+, cannot load this module!"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[Module Warning] Soft dependency [{0}] not met, module [{1}] may have partial functionality unavailable"
 module.warning.no-api-version: "&6[Module Warning] Module [{0}] did not declare API version requirement"
 module.warning.api-version-mismatch: "&e[Module Warning] Module [{0}] API version ({1}) does not match plugin version ({2}), may cause compatibility issues!"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&lModule Management Commands &e&l======"
 module.command.usage-list: "&7/guildmodule list  &f- List all loaded modules"
@@ -672,7 +665,6 @@ module.command.info.state: "&7State: &f{0}"
 module.command.info.description: "&7Description: &f{0}"
 module.command.info.depends: "&7Dependencies: &f{0}"
 module.command.info.soft-depends: "&7Optional Dependencies: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== Cloud Modules ==="
 cloud.empty: "&cNo cloud modules found."
@@ -711,7 +703,6 @@ bedrock-test.main-content: "&7Select a form type to preview:"
 bedrock-test.main-btn-simple: "&aSimpleForm &f- Button Menu"
 bedrock-test.main-btn-custom: "&bCustomForm &f- Input/Settings Form"
 bedrock-test.main-btn-modal: "&cModalForm &f- Confirm Dialog"
-
 # SimpleForm
 bedrock-test.simple-title: "&6Guild Main Menu &r- &7SimpleForm Example"
 bedrock-test.simple-content: "&7Welcome, &e{player}&7!\n&7This is a SimpleForm button menu example."
@@ -725,7 +716,6 @@ bedrock-test.simple-name-members: "Member Management"
 bedrock-test.simple-name-settings: "Guild Settings"
 bedrock-test.simple-name-list: "Guild List"
 bedrock-test.simple-name-quit: "Quit Guild"
-
 # CustomForm
 bedrock-test.custom-title: "&6Guild Settings &r- &fCustomForm Example"
 bedrock-test.custom-label-basic: "&7── Basic Settings ──"
@@ -742,7 +732,6 @@ bedrock-test.custom-toggle-allow-kick: "&fAllow Member Kick"
 bedrock-test.custom-label-other: "&7── Other ──"
 bedrock-test.custom-dropdown-lang: "&fGuild Language"
 bedrock-test.custom-slider-max-members: "&fMax Members"
-
 # ModalForm
 bedrock-test.modal-title: "&cConfirm Action &r- &fModalForm Example"
 bedrock-test.modal-content: "&7Are you sure you want to quit guild &eTest Guild&7?\n\n&cThis action cannot be undone!\n&7You will need to reapply to join."
@@ -971,7 +960,6 @@ war.help.status: "&e/guildwar status &7- View status"
 war.help.report: "&e/guildwar report [id] &7- View match report"
 war.help.season: "&e/guildwar season &7- Season leaderboard"
 war.help.admin: "&e/guildwar admin end <id> &7- Force end"
-
 war.report.broadcast: "&6[Report #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7kills: &e{kills}"
 war.report.none: "&7No report found"

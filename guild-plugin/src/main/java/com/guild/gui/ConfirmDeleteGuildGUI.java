@@ -51,7 +51,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
     @Override
     public String getTitle() {
         return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.confirm-delete-guild-title",
-                "&4确认删除工会"));
+                "&4Confirm Delete Guild"));
     }
     
     @Override
@@ -65,14 +65,14 @@ public class ConfirmDeleteGuildGUI implements GUI {
 
         String guildName = ColorUtils.stripColor(guild.getName());
         String content = languageManager.getGuiColoredMessage(player, "gui.confirm-delete-guild.bedrock-content",
-                "&f工会: &e{guild}\n&f你确定要删除这个工会吗？\n&c此操作将永久删除工会！\n&c所有成员将被移除！\n&c此操作不可撤销！",
+                "&fGuild: &e{guild}\n&fAre you sure you want to delete this guild?\n&cThis action will permanently delete the guild!\n&cAll members will be removed!\n&cThis action cannot be undone!",
                 "{guild}", guildName);
 
         SimpleForm form = SimpleForm.builder()
-                .title(languageManager.getGuiColoredMessage(player, "gui.confirm-delete-guild.bedrock-title", "&4确认删除工会"))
+                .title(languageManager.getGuiColoredMessage(player, "gui.confirm-delete-guild.bedrock-title", "&4Confirm Delete Guild"))
                 .content(content)
-                .button(languageManager.getGuiColoredMessage(player, "gui.confirm-delete-guild.bedrock-confirm", "&4确认删除"))
-                .button(languageManager.getGuiColoredMessage(player, "gui.confirm-delete-guild.bedrock-cancel", "&a取消"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.confirm-delete-guild.bedrock-confirm", "&4Confirm Delete"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.confirm-delete-guild.bedrock-cancel", "&aCancel"))
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     if (response.clickedButtonId() == 0) {
                         handleConfirmDelete(player);
@@ -135,12 +135,12 @@ public class ConfirmDeleteGuildGUI implements GUI {
         String guildName = ColorUtils.stripColor(guild.getName());
         ItemStack info = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.info-title", "&4确认删除工会")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.guild", "&7工会: &e{guild}", "{guild}", guildName)),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.confirm-question", "&7你确定要删除这个工会吗？")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.warning-1", "&c此操作将永久删除工会！")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.warning-2", "&c所有成员将被移除！")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.warning-3", "&c此操作不可撤销！"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.info-title", "&4Confirm Delete Guild")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.guild", "&7Guild: &e{guild}", "{guild}", guildName)),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.confirm-question", "&7Are you sure you want to delete this guild?")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.warning-1", "&cThis action will permanently delete the guild!")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.warning-2", "&cAll members will be removed!")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.warning-3", "&cThis action cannot be undone!"))
         );
         inventory.setItem(13, info);
     }
@@ -152,17 +152,17 @@ public class ConfirmDeleteGuildGUI implements GUI {
         // 确认删除按钮
         ItemStack confirm = createItem(
             Material.TNT,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.confirm-button", "&4确认删除")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.confirm-lore-1", "&7点击确认删除工会")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.confirm-lore-2", "&c此操作不可撤销！"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.confirm-button", "&4Confirm Delete")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.confirm-lore-1", "&7Click to confirm guild deletion")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.confirm-lore-2", "&cThis action cannot be undone!"))
         );
         inventory.setItem(11, confirm);
         
         // 取消按钮
         ItemStack cancel = createItem(
             Material.EMERALD_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.cancel-button", "&a取消")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.cancel-lore", "&7取消删除工会"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.cancel-button", "&aCancel")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-delete-guild.cancel-lore", "&7Cancel guild deletion"))
         );
         inventory.setItem(15, cancel);
     }
@@ -178,7 +178,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
             // 正常路径：检查权限（只有当前工会会长可以删除）
             GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
             if (member == null || member.getGuildId() != guild.getId() || member.getRole() != GuildMember.Role.LEADER) {
-                String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&c只有工会会长才能执行此操作");
+                String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
@@ -196,7 +196,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
             if (success) {
                 // 去除名称中的颜色代码，避免影响提示消息颜色
                 String cleanGuildName = ColorUtils.stripColor(guild.getName());
-                String message = languageManager.getGuiMessage(player, "gui.confirm-delete-guild.delete.success", "&a工会 &e{guild} &a已被删除！", "{guild}", cleanGuildName);
+                String message = languageManager.getGuiMessage(player, "gui.confirm-delete-guild.delete.success", "&aGuild {guild} has been deleted!", "{guild}", cleanGuildName);
                 // 回到主线程进行界面操作
                 CompatibleScheduler.runTask(plugin, player, () -> {
                     player.sendMessage(ColorUtils.colorize(message));
@@ -210,7 +210,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
                     }
                 });
             } else {
-                String message = languageManager.getGuiMessage(player, "gui.confirm-delete-guild.delete.failed", "&c删除工会失败！");
+                String message = languageManager.getGuiMessage(player, "gui.confirm-delete-guild.delete.failed", "&cFailed to delete the guild!");
                 player.sendMessage(ColorUtils.colorize(message));
             }
         });

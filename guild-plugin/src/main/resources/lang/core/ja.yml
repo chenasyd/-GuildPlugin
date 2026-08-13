@@ -553,7 +553,6 @@ guild-role.leader: "&6マスター"
 guild-role.officer: "&eオフィサー"
 guild-role.member: "&8メンバー"
 guild-role.unknown: "&8不明"
-
 # Log types
 log.type.guild-created: "ギルド作成"
 log.type.guild-dissolved: "ギルド解散"
@@ -580,14 +579,12 @@ log.type.application-rejected: "申請拒否"
 log.type.invitation-sent: "招待送信"
 log.type.invitation-accepted: "招待承諾"
 log.type.invitation-rejected: "招待拒否"
-
 # Log time
 log.time.unknown: "不明"
 log.time.days-ago: "{0}日前"
 log.time.hours-ago: "{0}時間前"
 log.time.minutes-ago: "{0}分前"
 log.time.just-now: "たった今"
-
 # Contribution types
 contribution.type.deposit: "入金"
 contribution.type.withdraw: "出金"
@@ -595,7 +592,6 @@ contribution.type.transfer: "送金"
 contribution.type.creation: "ギルド作成"
 contribution.type.upgrade: "ギルドアップグレード"
 contribution.type.admin: "管理者操作"
-
 contribution.type.war_win: "ギルド戦勝利"
 contribution.type.war_kill: "ギルド戦キル"
 # Application status
@@ -618,7 +614,6 @@ module.system.duplicate-skip: "&e[モジュールシステム] 重複モジュ�
 module.system.duplicate-cleanup-title: "&6[モジュールシステム] &c以下の旧バージョンのモジュールJARは削除すべきです:"
 module.system.duplicate-cleanup-item: "&c  - {0} (旧バージョン、{1} に置き換えられました)"
 module.system.all-unloaded: "&a[モジュールシステム] すべての拡張モジュールをアンロードしました"
-
 # Error messages
 module.error.already-loaded: "&cモジュールは既にロードされています: {0}"
 module.error.not-loaded: "&cモジュールはロードされていないか存在しません: {0}"
@@ -628,12 +623,10 @@ module.error.unload-failed: "&cモジュールのアンロードに失敗しま�
 module.error.has-dependents: "&c[{0}] をアンロードできません、以下のモジュールが依存しています: {1}"
 module.error.unload-failed-during-shutdown: "シャットダウン中のモジュールアンロードに失敗しました: {0}"
 module.error.api-too-old: "&cモジュール [{0}] の API バージョン ({1}) が古すぎます。このプラグインには API {2}+ が必要です。このモジュールはロードできません！"
-
 # Warning messages
 module.warning.soft-depend-missing: "&6[モジュール警告] ソフト依存関係 [{0}] が満たされていません、モジュール [{1}] の一部機能が利用できない可能性があります"
 module.warning.no-api-version: "&6[モジュール警告] モジュール [{0}] は API バージョン要件を宣言していません"
 module.warning.api-version-mismatch: "&e[モジュール警告] モジュール [{0}] の API バージョン ({1}) がプラグインバージョン ({2}) と一致しません、互換性の問題が発生する可能性があります！"
-
 # Module Management Commands
 module.command.usage-header: "&e&l====== &6&lモジュール管理コマンド &e&l======"
 module.command.usage-list: "&8/guildmodule list  &f- ロード済みモジュールを一覧表示"
@@ -667,7 +660,6 @@ module.command.info.state: "&8状態: &f{0}"
 module.command.info.description: "&8説明: &f{0}"
 module.command.info.depends: "&8依存関係: &f{0}"
 module.command.info.soft-depends: "&8オプション依存関係: &f{0}"
-
 # Cloud Modules
 cloud.title: "&b&l=== クラウドモジュール ==="
 cloud.empty: "&cクラウドモジュールが見つかりません。"
@@ -706,7 +698,6 @@ bedrock-test.main-content: "&7プレビューするフォームタイプを選�
 bedrock-test.main-btn-simple: "&aSimpleForm &f- ボタンメニュー"
 bedrock-test.main-btn-custom: "&bCustomForm &f- 入力/設定フォーム"
 bedrock-test.main-btn-modal: "&cModalForm &f- 確認ダイアログ"
-
 # SimpleForm
 bedrock-test.simple-title: "&6ギルドメインメニュー &r- &7SimpleForm サンプル"
 bedrock-test.simple-content: "&7ようこそ, &e{player}&7!\n&7これはSimpleFormボタンメニューのサンプルです。"
@@ -720,7 +711,6 @@ bedrock-test.simple-name-members: "メンバー管理"
 bedrock-test.simple-name-settings: "ギルド設定"
 bedrock-test.simple-name-list: "ギルド一覧"
 bedrock-test.simple-name-quit: "ギルドを退出"
-
 # CustomForm
 bedrock-test.custom-title: "&6ギルド設定 &r- &fCustomForm サンプル"
 bedrock-test.custom-label-basic: "&7── 基本設定 ──"
@@ -737,7 +727,6 @@ bedrock-test.custom-toggle-allow-kick: "&fメンバーによるキックを許�
 bedrock-test.custom-label-other: "&7── その他 ──"
 bedrock-test.custom-dropdown-lang: "&fギルド言語"
 bedrock-test.custom-slider-max-members: "&f最大メンバー数"
-
 # ModalForm
 bedrock-test.modal-title: "&c操作の確認 &r- &fModalForm サンプル"
 bedrock-test.modal-content: "&7ギルド &eテストギルド &7を退出してもよろしいですか？\n\n&cこの操作は取り消せません！\n&7退出後は再び加入申請を行う必要があります。"
@@ -966,7 +955,6 @@ war.help.status: "&e/guildwar status &7- ステータスを表示"
 war.help.report: "&e/guildwar report [id] &7- 戦報を表示"
 war.help.season: "&e/guildwar season &7- シーズン順位"
 war.help.admin: "&e/guildwar admin end <id> &7- 強制終了"
-
 war.report.broadcast: "&6[戦報 #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7キル: &e{kills}"
 war.report.none: "&7戦報が見つかりません"
@@ -1064,3 +1052,8 @@ warehouse.perm-updated: "&a{role} の開庫権限を {state} に設定しまし�
 warehouse.perm-failed: "&c倉庫権限の更新に失敗しました。"
 warehouse.role-officer: "幹部"
 warehouse.role-member: "メンバー"
+
+# --- auto-filled from en.yml ---
+economy.currency-name: "コイン"
+currency.notify.gain: "&6[通貨] &a+{0} {1}"
+currency.notify.spend: "&6[通貨] &c-{0} {1}"

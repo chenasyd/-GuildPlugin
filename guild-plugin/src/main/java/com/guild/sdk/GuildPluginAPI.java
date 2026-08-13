@@ -882,7 +882,12 @@ public class GuildPluginAPI {
             }
         } catch (Exception ignored) {}
 
-        int memberCount = plugin.getGuildService().getGuildMembers(guild.getId()).size();
+        int memberCount;
+        try {
+            memberCount = plugin.getGuildService().getGuildMemberCount(guild.getId());
+        } catch (Exception ignored) {
+            memberCount = 0;
+        }
 
         return new GuildData(
                 guild.getId(),

@@ -558,7 +558,6 @@ guild-role.leader: "&6会长"
 guild-role.officer: "&e官员"
 guild-role.member: "&7成员"
 guild-role.unknown: "&7未知"
-
 # 日志类型
 log.type.guild-created: "工会创建"
 log.type.guild-dissolved: "工会解散"
@@ -585,14 +584,12 @@ log.type.application-rejected: "申请拒绝"
 log.type.invitation-sent: "邀请发送"
 log.type.invitation-accepted: "邀请接受"
 log.type.invitation-rejected: "邀请拒绝"
-
 # 日志时间
 log.time.unknown: "未知"
 log.time.days-ago: "{0}天前"
 log.time.hours-ago: "{0}小时前"
 log.time.minutes-ago: "{0}分钟前"
 log.time.just-now: "刚刚"
-
 # 贡献类型
 contribution.type.deposit: "存款"
 contribution.type.withdraw: "取款"
@@ -602,7 +599,6 @@ contribution.type.upgrade: "升级工会"
 contribution.type.admin: "管理员操作"
 contribution.type.war_win: "工会战胜场"
 contribution.type.war_kill: "工会战击杀"
-
 # 申请状态
 application.status.pending: "待处理"
 application.status.approved: "已通过"
@@ -623,7 +619,6 @@ module.system.duplicate-skip: "&e[模块系统] 跳过重复模块 {0} ({1}, SDK
 module.system.duplicate-cleanup-title: "&6[模块系统] &c以下旧版本模块JAR应被删除:"
 module.system.duplicate-cleanup-item: "&c  - {0} (旧版本，已由 {1} 替代)"
 module.system.all-unloaded: "&a[模块系统] 所有扩展模块已卸载"
-
 # 错误信息
 module.error.already-loaded: "&c模块已加载: {0}"
 module.error.not-loaded: "&c模块未加载或不存在: {0}"
@@ -633,12 +628,10 @@ module.error.unload-failed: "&c模块卸载失败 [{0}]: {1}"
 module.error.has-dependents: "&c无法卸载 [{0}]，以下模块依赖它: {1}"
 module.error.unload-failed-during-shutdown: "关闭时卸载模块失败: {0}"
 module.error.api-too-old: "&c模块 [{0}] 的 API 版本 ({1}) 过低，此插件需要 API {2}+，无法加载此模块！"
-
 # 警告信息
 module.warning.soft-depend-missing: "&6[模块警告] 软依赖 [{0}] 未满足，模块 [{1}] 可能部分功能不可用"
 module.warning.no-api-version: "&6[模块警告] 模块 [{0}] 未声明 API 版本要求"
 module.warning.api-version-mismatch: "&e[模块警告] 模块 [{0}] 的 API 版本 ({1}) 与插件版本 ({2}) 不一致，可能导致兼容性问题！"
-
 # 模块管理命令
 module.command.usage-header: "&e&l====== &6&l模块管理命令 &e&l======"
 module.command.usage-list: "&7/guildmodule list  &f- 列出所有已加载模块"
@@ -672,7 +665,6 @@ module.command.info.state: "&7状态: &f{0}"
 module.command.info.description: "&7描述: &f{0}"
 module.command.info.depends: "&7依赖: &f{0}"
 module.command.info.soft-depends: "&7可选依赖: &f{0}"
-
 # 云端模块
 cloud.title: "&b&l=== 云端模块 ==="
 cloud.empty: "&c未找到任何云端模块。"
@@ -711,7 +703,6 @@ bedrock-test.main-content: "&7选择一个表单类型进行预览："
 bedrock-test.main-btn-simple: "&aSimpleForm &f- 按钮菜单"
 bedrock-test.main-btn-custom: "&bCustomForm &f- 输入/设置表单"
 bedrock-test.main-btn-modal: "&cModalForm &f- 确认对话框"
-
 # SimpleForm
 bedrock-test.simple-title: "&6工会主菜单 &r- &7SimpleForm 示例"
 bedrock-test.simple-content: "&7欢迎, &e{player}&7!\n&7这是 SimpleForm 按钮菜单示例。"
@@ -725,7 +716,6 @@ bedrock-test.simple-name-members: "成员管理"
 bedrock-test.simple-name-settings: "工会设置"
 bedrock-test.simple-name-list: "工会列表"
 bedrock-test.simple-name-quit: "退出工会"
-
 # CustomForm
 bedrock-test.custom-title: "&6工会设置 &r- &fCustomForm 示例"
 bedrock-test.custom-label-basic: "&7── 基本设置 ──"
@@ -742,7 +732,6 @@ bedrock-test.custom-toggle-allow-kick: "&f允许成员踢人"
 bedrock-test.custom-label-other: "&7── 其他 ──"
 bedrock-test.custom-dropdown-lang: "&f工会语言"
 bedrock-test.custom-slider-max-members: "&f最大成员数"
-
 # ModalForm
 bedrock-test.modal-title: "&c确认操作 &r- &fModalForm 示例"
 bedrock-test.modal-content: "&7你确定要退出工会 &e测试工会 &7吗？\n\n&c此操作不可撤销！\n&7退出后需要重新申请加入。"
@@ -971,7 +960,6 @@ war.help.status: "&e/guildwar status &7- 查看状态"
 war.help.report: "&e/guildwar report [id] &7- 查看战报"
 war.help.season: "&e/guildwar season &7- 本赛季排行"
 war.help.admin: "&e/guildwar admin end <id> &7- 强制结束"
-
 war.report.broadcast: "&6[战报 #{id}] &f{a} &a{sa} &7: &c{sb} &f{b} &7→ &e{winner}"
 war.report.kill-line: "&7  · &f{player} &7击杀: &e{kills}"
 war.report.none: "&7没有找到战报"

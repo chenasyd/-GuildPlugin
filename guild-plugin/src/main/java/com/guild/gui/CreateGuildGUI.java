@@ -60,7 +60,7 @@ public class CreateGuildGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(plugin.getLanguageManager().getGuiMessage(player, "gui.create-guild.title", "&6创建工会"));
+        return ColorUtils.colorize(plugin.getLanguageManager().getGuiMessage(player, "gui.create-guild.title", "&6Create Guild"));
     }
     
     @Override
@@ -73,10 +73,10 @@ public class CreateGuildGUI implements GUI {
         if (!BedrockFormSender.isAvailable()) return false;
 
         CustomForm form = CustomForm.builder()
-                .title(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-title", "&6创建工会"))
-                .input(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-name-label", "&f工会名称 (3-20字符)"), languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-name-placeholder", "输入工会名称"), guildName)
-                .input(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-tag-label", "&f工会标签 (最多6字符, 可选)"), languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-tag-placeholder", "输入工会标签"), guildTag)
-                .input(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-desc-label", "&f工会描述 (最多100字符, 可选)"), languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-desc-placeholder", "输入工会描述"), guildDescription)
+                .title(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-title", "&6Create Guild"))
+                .input(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-name-label", "&fGuild Name (3-20 characters)"), languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-name-placeholder", "Enter guild name"), guildName)
+                .input(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-tag-label", "&fGuild Tag (max 6 characters, optional)"), languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-tag-placeholder", "Enter guild tag"), guildTag)
+                .input(languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-desc-label", "&fGuild Description (max 100 characters, optional)"), languageManager.getGuiColoredMessage(player, "gui.create-guild.bedrock-desc-placeholder", "Enter guild description"), guildDescription)
                 .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                     String name = response.getInput(0);
                     String tag = response.getInput(1);
@@ -153,29 +153,29 @@ public class CreateGuildGUI implements GUI {
         // 工会名称输入按钮
         ItemStack nameInput = createItem(
             Material.NAME_TAG,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-name-input-name", "&e工会名称")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-name-input-lore-1", "&7点击输入工会名称")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-name-input-lore-2", "&7长度: 3-20 字符"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-name-input-name", "&eGuild Name")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-name-input-lore-1", "&7Click to enter guild name")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-name-input-lore-2", "&7Length: 3-20 characters"))
         );
         inventory.setItem(20, nameInput);
 
         // 工会标签输入按钮
         ItemStack tagInput = createItem(
             Material.OAK_SIGN,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-tag-input-name", "&e工会标签")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-tag-input-lore-1", "&7点击输入工会标签")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-tag-input-lore-2", "&7长度: 最多6字符")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-tag-input-lore-3", "&7可选"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-tag-input-name", "&eGuild Tag")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-tag-input-lore-1", "&7Click to enter guild tag")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-tag-input-lore-2", "&7Length: Max 6 characters")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-tag-input-lore-3", "&7Optional"))
         );
         inventory.setItem(22, tagInput);
 
         // 工会描述输入按钮
         ItemStack descriptionInput = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-description-input-name", "&e工会描述")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-description-input-lore-1", "&7点击输入工会描述")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-description-input-lore-2", "&7长度: 最多100字符")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-description-input-lore-3", "&7可选"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-description-input-name", "&eGuild Description")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-description-input-lore-1", "&7Click to enter guild description")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-description-input-lore-2", "&7Length: Max 100 characters")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-description-input-lore-3", "&7Optional"))
         );
         inventory.setItem(24, descriptionInput);
     }
@@ -189,10 +189,10 @@ public class CreateGuildGUI implements GUI {
         String costText = String.format("%.0f", creationCost);
 
         // 确认创建按钮
-        String confirmName = languageManager.getGuiMessage(player, "gui.create-guild.create-guild-confirm-name", "&a确认创建");
-        String confirmLore1 = languageManager.getGuiMessage(player, "gui.create-guild.create-guild-confirm-lore-1", "&7确认创建工会");
-        String confirmLore2 = languageManager.getGuiMessage(player, "gui.create-guild.create-guild-confirm-lore-2", "&7费用: {cost} 金币");
-        String confirmLore3 = languageManager.getGuiMessage(player, "gui.create-guild.create-guild-confirm-lore-3", "&7创建者: {player_name}");
+        String confirmName = languageManager.getGuiMessage(player, "gui.create-guild.create-guild-confirm-name", "&aConfirm Create");
+        String confirmLore1 = languageManager.getGuiMessage(player, "gui.create-guild.create-guild-confirm-lore-1", "&7Confirm guild creation");
+        String confirmLore2 = languageManager.getGuiMessage(player, "gui.create-guild.create-guild-confirm-lore-2", "&7Cost: {cost} coins");
+        String confirmLore3 = languageManager.getGuiMessage(player, "gui.create-guild.create-guild-confirm-lore-3", "&7Creator: {player_name}");
 
         // 替换变量
         confirmLore2 = confirmLore2.replace("{cost}", costText);
@@ -210,8 +210,8 @@ public class CreateGuildGUI implements GUI {
         // 取消按钮
         ItemStack cancel = createItem(
             Material.REDSTONE_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-cancel-name", "&c取消")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-cancel-lore-1", "&7取消创建工会"))
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-cancel-name", "&cCancel")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-cancel-lore-1", "&7Cancel guild creation"))
         );
         inventory.setItem(41, cancel);
     }
@@ -222,30 +222,30 @@ public class CreateGuildGUI implements GUI {
     private void displayCurrentInput(Inventory inventory) {
         // 当前工会名称
         String nameDisplay = guildName.isEmpty() ?
-            languageManager.getGuiMessage(player, "gui.common.not-set", "未设置") : guildName;
+            languageManager.getGuiMessage(player, "gui.common.not-set", "Not set") : guildName;
         ItemStack currentName = createItem(
             Material.NAME_TAG,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-current-name", "&e当前工会名称")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-current-name", "&eCurrent Guild Name")),
             ColorUtils.colorize("&7" + nameDisplay)
         );
         inventory.setItem(11, currentName);
         
         // 当前工会标签
         String tagDisplay = guildTag.isEmpty() ?
-            languageManager.getGuiMessage(player, "gui.common.not-set", "未设置") : "&7[" + guildTag + "&7]";
+            languageManager.getGuiMessage(player, "gui.common.not-set", "Not set") : "&7[" + guildTag + "&7]";
         ItemStack currentTag = createItem(
             Material.OAK_SIGN,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-current-tag", "&e当前工会标签")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-current-tag", "&eCurrent Guild Tag")),
             ColorUtils.colorize("&7" + tagDisplay)
         );
         inventory.setItem(13, currentTag);
         
         // 当前工会描述
         String descriptionDisplay = guildDescription.isEmpty() ?
-            languageManager.getGuiMessage(player, "gui.common.not-set", "未设置") : guildDescription;
+            languageManager.getGuiMessage(player, "gui.common.not-set", "Not set") : guildDescription;
         ItemStack currentDescription = createItem(
             Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-current-description", "&e当前工会描述")),
+            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-current-description", "&eCurrent Guild Description")),
             ColorUtils.colorize("&7" + descriptionDisplay)
         );
         inventory.setItem(15, currentDescription);
@@ -255,7 +255,7 @@ public class CreateGuildGUI implements GUI {
      * 处理工会名称输入
      */
     private void handleNameInput(Player player) {
-        String message = languageManager.getGuiMessage(player, "gui.common.input-name", "&a请在聊天中输入工会名称（3-20字符）：");
+        String message = languageManager.getGuiMessage(player, "gui.common.input-name", "&aPlease enter guild name in chat (3-20 characters):");
         player.sendMessage(ColorUtils.colorize(message));
 
         // 强制关闭GUI以便玩家看到输入提示
@@ -269,19 +269,19 @@ public class CreateGuildGUI implements GUI {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() < 3) {
-                    String errorMessage = languageManager.getGuiMessage(player, "gui.create-guild.create.name-too-short", "&c工会名称太短！最少需要 {min} 个字符。", "{min}", "3");
+                    String errorMessage = languageManager.getGuiMessage(player, "gui.create-guild.create.name-too-short", "&cGuild name is too short! Minimum {min} characters required.", "{min}", "3");
                     player.sendMessage(ColorUtils.colorize(errorMessage));
                     return false;
                 }
 
                 if (input.length() > 20) {
-                    String errorMessage = languageManager.getGuiMessage(player, "gui.create-guild.create.name-too-long", "&c工会名称太长！最多只能有 {max} 个字符。", "{max}", "20");
+                    String errorMessage = languageManager.getGuiMessage(player, "gui.create-guild.create.name-too-long", "&cGuild name is too long! Maximum {max} characters allowed.", "{max}", "20");
                     player.sendMessage(ColorUtils.colorize(errorMessage));
                     return false;
                 }
 
                 guildName = input;
-                String successMessage = languageManager.getGuiMessage(player, "gui.common.name-set", "&a工会名称已设置为：{name}", "{name}", guildName);
+                String successMessage = languageManager.getGuiMessage(player, "gui.common.name-set", "&aGuild name set to: &e{name}", "{name}", guildName);
                 player.sendMessage(ColorUtils.colorize(successMessage));
 
                 // 重新打开GUI显示更新后的内容
@@ -295,7 +295,7 @@ public class CreateGuildGUI implements GUI {
      * 处理工会标签输入
      */
     private void handleTagInput(Player player) {
-        String message = languageManager.getGuiMessage(player, "gui.common.input-tag", "&a请在聊天中输入工会标签（最多6字符，可选）：");
+        String message = languageManager.getGuiMessage(player, "gui.common.input-tag", "&aPlease enter guild tag in chat (max 6 characters, optional):");
         player.sendMessage(ColorUtils.colorize(message));
 
         // 强制关闭GUI以便玩家看到输入提示
@@ -309,13 +309,13 @@ public class CreateGuildGUI implements GUI {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() > 6) {
-                    String errorMessage = languageManager.getGuiMessage(player, "gui.create-guild.create.tag-too-long", "&c工会标签太长！最多只能有 {max} 个字符。", "{max}", "6");
+                    String errorMessage = languageManager.getGuiMessage(player, "gui.create-guild.create.tag-too-long", "&cGuild tag is too long! Maximum {max} characters allowed.", "{max}", "6");
                     player.sendMessage(ColorUtils.colorize(errorMessage));
                     return false;
                 }
 
                 guildTag = input;
-                String successMessage = languageManager.getGuiMessage(player, "gui.common.tag-set", "&a工会标签已设置为：{tag}", "{tag}", guildTag.isEmpty() ? "无" : guildTag);
+                String successMessage = languageManager.getGuiMessage(player, "gui.common.tag-set", "&aGuild tag set to: &e{tag}", "{tag}", guildTag.isEmpty() ? "无" : guildTag);
                 player.sendMessage(ColorUtils.colorize(successMessage));
 
                 // 重新打开GUI显示更新后的内容
@@ -329,7 +329,7 @@ public class CreateGuildGUI implements GUI {
      * 处理工会描述输入
      */
     private void handleDescriptionInput(Player player) {
-        String message = languageManager.getGuiMessage(player, "gui.common.input-description", "&a请在聊天中输入工会描述（最多100字符，可选）：");
+        String message = languageManager.getGuiMessage(player, "gui.common.input-description", "&aPlease enter guild description in chat (max 100 characters, optional):");
         player.sendMessage(ColorUtils.colorize(message));
 
         // 强制关闭GUI以便玩家看到输入提示
@@ -343,13 +343,13 @@ public class CreateGuildGUI implements GUI {
             // 设置输入模式
             plugin.getGuiManager().setInputMode(player, input -> {
                 if (input.length() > 100) {
-                    String errorMessage = languageManager.getGuiMessage(player, "gui.create-guild.create.description-too-long", "&c工会描述不能超过100个字符！");
+                    String errorMessage = languageManager.getGuiMessage(player, "gui.create-guild.create.description-too-long", "&cGuild description cannot exceed 100 characters!");
                     player.sendMessage(ColorUtils.colorize(errorMessage));
                     return false;
                 }
 
                 guildDescription = input;
-                String successMessage = languageManager.getGuiMessage(player, "gui.common.description-set", "&a工会描述已设置为：{description}", "{description}", guildDescription.isEmpty() ? "无" : guildDescription);
+                String successMessage = languageManager.getGuiMessage(player, "gui.common.description-set", "&aGuild description set to: &e{description}", "{description}", guildDescription.isEmpty() ? "无" : guildDescription);
                 player.sendMessage(ColorUtils.colorize(successMessage));
 
                 // 重新打开GUI显示更新后的内容
@@ -365,31 +365,31 @@ public class CreateGuildGUI implements GUI {
     private void handleConfirmCreate(Player player) {
         // 验证输入
         if (guildName.isEmpty()) {
-            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.name-required", "&c请先输入工会名称！");
+            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.name-required", "&cPlease enter a guild name first!");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
 
         if (guildName.length() < 3) {
-            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.name-too-short", "&c工会名称太短！最少需要 {min} 个字符。", "{min}", "3");
+            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.name-too-short", "&cGuild name is too short! Minimum {min} characters required.", "{min}", "3");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
 
         if (guildName.length() > 20) {
-            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.name-too-long", "&c工会名称太长！最多只能有 {max} 个字符。", "{max}", "20");
+            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.name-too-long", "&cGuild name is too long! Maximum {max} characters allowed.", "{max}", "20");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
 
         if (!guildTag.isEmpty() && guildTag.length() > 6) {
-            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.tag-too-long", "&c工会标签太长！最多只能有 {max} 个字符。", "{max}", "6");
+            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.tag-too-long", "&cGuild tag is too long! Maximum {max} characters allowed.", "{max}", "6");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
 
         if (!guildDescription.isEmpty() && guildDescription.length() > 100) {
-            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.description-too-long", "&c工会描述不能超过100个字符！");
+            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.description-too-long", "&cGuild description cannot exceed 100 characters!");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -399,7 +399,7 @@ public class CreateGuildGUI implements GUI {
         boolean noEconomyMode = plugin.getEconomyManager().isNoEconomyMode();
 
         if (!vaultAvailable && !noEconomyMode) {
-            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.economy-not-available", "&c经济系统不可用，无法创建工会！");
+            String message = languageManager.getGuiMessage(player, "gui.create-guild.create.economy-not-available", "&cEconomy system is not available, cannot create guild!");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
@@ -412,13 +412,13 @@ public class CreateGuildGUI implements GUI {
         // 仅在有经济系统时检查余额并扣费
         if (vaultAvailable) {
             if (!plugin.getEconomyManager().hasBalance(player, creationCost)) {
-                String message = languageManager.getGuiMessage(player, "gui.create-guild.create.insufficient-funds", "&c您的余额不足！创建工会需要 {amount}！", "{amount}", plugin.getEconomyManager().format(creationCost));
+                String message = languageManager.getGuiMessage(player, "gui.create-guild.create.insufficient-funds", "&cInsufficient balance! Creating a guild requires {amount}!", "{amount}", plugin.getEconomyManager().format(creationCost));
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
 
             if (!plugin.getEconomyManager().withdraw(player, creationCost)) {
-                String message = languageManager.getGuiMessage(player, "gui.create-guild.create.payment-failed", "&c扣除创建费用失败！");
+                String message = languageManager.getGuiMessage(player, "gui.create-guild.create.payment-failed", "&cFailed to deduct creation fee!");
                 player.sendMessage(ColorUtils.colorize(message));
                 return;
             }
@@ -433,7 +433,7 @@ public class CreateGuildGUI implements GUI {
             // 确保在玩家所在区域线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
-                    String message = languageManager.getGuiMessage(player, "gui.create-guild.create.success", "&a工会 {name} 创建成功！", "{name}", guildName);
+                    String message = languageManager.getGuiMessage(player, "gui.create-guild.create.success", "&aGuild {name} created successfully!", "{name}", guildName);
                     player.sendMessage(ColorUtils.colorize(message));
 
                     // 关闭GUI并返回主界面
@@ -443,11 +443,11 @@ public class CreateGuildGUI implements GUI {
                     // 如果创建失败且有扣费，退还费用
                     if (vaultAvailable && finalCost > 0) {
                         plugin.getEconomyManager().deposit(player, finalCost);
-                        String refundMessage = languageManager.getGuiMessage(player, "gui.create-guild.create.payment-refunded", "&e已退还创建费用 {amount}。", "{amount}", plugin.getEconomyManager().format(finalCost));
+                        String refundMessage = languageManager.getGuiMessage(player, "gui.create-guild.create.payment-refunded", "&eCreation fee {amount} has been refunded.", "{amount}", plugin.getEconomyManager().format(finalCost));
                         player.sendMessage(ColorUtils.colorize(refundMessage));
                     }
 
-                    String message = languageManager.getGuiMessage(player, "gui.create-guild.create.failed", "&c工会创建失败！");
+                    String message = languageManager.getGuiMessage(player, "gui.create-guild.create.failed", "&cGuild creation failed! Possible reasons:");
                     player.sendMessage(ColorUtils.colorize(message));
                 }
             });
