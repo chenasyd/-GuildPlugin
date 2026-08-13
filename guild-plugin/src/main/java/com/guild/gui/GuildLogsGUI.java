@@ -319,6 +319,8 @@ public class GuildLogsGUI implements GUI {
             case INVITATION_ACCEPTED:
             case INVITATION_REJECTED:
                 return Material.BOOK;
+            case WAREHOUSE_PERM_CHANGED:
+                return Material.CHEST;
             default:
                 return Material.GRAY_WOOL;
         }

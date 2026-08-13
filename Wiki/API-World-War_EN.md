@@ -35,6 +35,7 @@ Implementation: `com.guild.world.api.GuildWorldAPIImpl` (delegates to `GuildWorl
 | `accept` / `deny` / `join` / `leave` / `ready` / `cancel` | Match flow |
 | `forceEnd(matchId, reason)` | Force end |
 | `getRecentMatches(limit)` / `getMatchHistory(reportId)` / `getLatestMatchForPlayer(uuid)` | Historical reports (`WarReportSnapshot`) |
+| `exportReport(reportId, format)` | Export JSON/CSV under `plugins/GuildPlugin/exports/` |
 
 Implementation: `com.guild.war.api.GuildWarAPIImpl`.
 

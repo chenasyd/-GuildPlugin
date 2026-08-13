@@ -55,4 +55,13 @@ public interface GuildWarAPI {
     CompletableFuture<WarReportSnapshot> getMatchHistory(int reportId);
 
     CompletableFuture<WarReportSnapshot> getLatestMatchForPlayer(UUID uuid);
+
+    /**
+     * Export a persisted report to {@code plugins/GuildPlugin/exports/} as JSON or CSV.
+     *
+     * @param reportId report primary key
+     * @param format   {@code json} or {@code csv}
+     * @return absolute path of the written file
+     */
+    CompletableFuture<java.nio.file.Path> exportReport(int reportId, String format);
 }

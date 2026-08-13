@@ -40,11 +40,18 @@
 同一工会同一时间只允许一个打开会话；他人会收到「仓库正被使用」。
 关箱后异步写库期间仍占用会话；玩家退出也不会提前放锁，避免与进行中的保存竞态。加载失败会释放会话并提示。
 
+## 可选存取流水
+
+配置 `guild-warehouse.access-log: true`（默认 `false`）后，打开与成功保存会写入表 `guild_warehouse_access_log`：
+- `OPEN`：打开页码与槽位数
+- `SAVE`：相对打开快照的 `put=` / `take=` 材料数量摘要（不含 NBT）
+
 ## 配置示例
 
 ```yaml
 guild-warehouse:
   enabled: true
+  access-log: false
   slots-by-level:
     1: 9
     2: 18
@@ -69,7 +76,6 @@ permissions:
 ## 本期不做
 
 - 主 GUI 入口
-- 存取流水日志
 - 硬依赖 NBTAPI
 - 跨服仓库同步
 

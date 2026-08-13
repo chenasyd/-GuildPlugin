@@ -1728,6 +1728,19 @@ public class GuildService {
                          logger.severe("Error sending invitation: " + e.getMessage());
                      }
                      return false;
+                 }).thenCompose(ok -> {
+                     if (!Boolean.TRUE.equals(ok)) {
+                         return CompletableFuture.completedFuture(false);
+                     }
+                     return getGuildByIdAsync(guildId).thenCompose(g -> {
+                         String guildName = g != null ? g.getName() : ("#" + guildId);
+                         return logGuildActionAsync(guildId, guildName,
+                                 inviterUuid.toString(), inviterName,
+                                 GuildLog.LogType.INVITATION_SENT,
+                                 "Invitation sent",
+                                 "target: " + targetName + " (" + targetUuid + ")")
+                                 .thenApply(v -> true);
+                     });
                  });
              });
          });
@@ -1810,26 +1823,42 @@ public class GuildService {
             }
             return false;
         }).thenCompose(success -> {
-            if (success && accept) {
-                DebugLog.info(logger, "[Process-Debug] Preparing to add player to guild: guildId=" + invitation.getGuildId() + ", player=" + invitation.getTargetUuid());
-                // 如果接受邀请，添加玩家到工会（addGuildMemberAsync 内部有二次容量校验）
-                return addGuildMemberAsync(invitation.getGuildId(), invitation.getTargetUuid(), 
-                    invitation.getTargetName(), GuildMember.Role.MEMBER)
-                    .thenCompose(addSuccess -> {
-                        if (addSuccess) {
-                            DebugLog.info(logger, "[Process-Debug] Player added, dispatching event");
-                            // 分发成员加入事件给模块
-                            return getGuildByIdAsync(invitation.getGuildId()).thenAccept(g -> {
-                                if (g != null) fireMemberJoin(g.getId(), g.getName(), 
-                                    invitation.getTargetUuid(), invitation.getTargetName());
-                            }).thenApply(v -> true);
-                        } else {
+            if (!Boolean.TRUE.equals(success)) {
+                return CompletableFuture.completedFuture(false);
+            }
+            GuildLog.LogType inviteLog = accept
+                    ? GuildLog.LogType.INVITATION_ACCEPTED
+                    : GuildLog.LogType.INVITATION_REJECTED;
+            return getGuildByIdAsync(invitation.getGuildId()).thenCompose(g -> {
+                String guildName = g != null ? g.getName() : ("#" + invitation.getGuildId());
+                return logGuildActionAsync(invitation.getGuildId(), guildName,
+                        invitation.getTargetUuid().toString(), invitation.getTargetName(),
+                        inviteLog,
+                        accept ? "Invitation accepted" : "Invitation declined",
+                        "inviter: " + invitation.getInviterName()
+                                + " (" + invitation.getInviterUuid() + ")")
+                        .thenApply(v -> g);
+            }).thenCompose(g -> {
+                if (!accept) {
+                    return CompletableFuture.completedFuture(true);
+                }
+                DebugLog.info(logger, "[Process-Debug] Preparing to add player to guild: guildId="
+                        + invitation.getGuildId() + ", player=" + invitation.getTargetUuid());
+                return addGuildMemberAsync(invitation.getGuildId(), invitation.getTargetUuid(),
+                        invitation.getTargetName(), GuildMember.Role.MEMBER)
+                        .thenCompose(addSuccess -> {
+                            if (addSuccess) {
+                                DebugLog.info(logger, "[Process-Debug] Player added, dispatching event");
+                                if (g != null) {
+                                    fireMemberJoin(g.getId(), g.getName(),
+                                            invitation.getTargetUuid(), invitation.getTargetName());
+                                }
+                                return CompletableFuture.completedFuture(true);
+                            }
                             logger.warning("[Process-Debug] Failed to add player to guild");
                             return CompletableFuture.completedFuture(false);
-                        }
-                    });
-            }
-            return CompletableFuture.completedFuture(success);
+                        });
+            });
         });
     }
      
@@ -2165,6 +2194,19 @@ public class GuildService {
                  logger.severe("Error creating guild relation: " + e.getMessage());
                  return false;
              }
+         }).thenCompose(ok -> {
+             if (!Boolean.TRUE.equals(ok)) {
+                 return CompletableFuture.completedFuture(false);
+             }
+             String details = type.name() + " <-> " + guild2Name;
+             String detailsPeer = type.name() + " <-> " + guild1Name;
+             CompletableFuture<Boolean> a = logGuildActionAsync(guild1Id, guild1Name,
+                     initiatorUuid.toString(), initiatorName,
+                     GuildLog.LogType.RELATION_CREATED, "Relation request created", details);
+             CompletableFuture<Boolean> b = logGuildActionAsync(guild2Id, guild2Name,
+                     initiatorUuid.toString(), initiatorName,
+                     GuildLog.LogType.RELATION_CREATED, "Relation request received", detailsPeer);
+             return a.thenCombine(b, (x, y) -> true);
          });
      }
      
@@ -2172,24 +2214,43 @@ public class GuildService {
       * 更新工会关系状态 (异步)
       */
      public CompletableFuture<Boolean> updateGuildRelationStatusAsync(int relationId, GuildRelation.RelationStatus status) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "UPDATE guild_relations SET status = ?, updated_at = ? WHERE id = ?";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                 
-                     stmt.setString(1, status.name());
-                     stmt.setString(2, nowString());
-                     stmt.setInt(3, relationId);
-                 
-                     int rowsAffected = stmt.executeUpdate();
-                     return rowsAffected > 0;
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error updating guild relation status: " + e.getMessage());
-                 return false;
+         return getGuildRelationByIdAsync(relationId).thenCompose(relation -> {
+             if (relation == null) {
+                 return CompletableFuture.completedFuture(false);
              }
+             return CompletableFuture.supplyAsync(() -> {
+                 try {
+                     String sql = "UPDATE guild_relations SET status = ?, updated_at = ? WHERE id = ?";
+                     try (Connection conn = databaseManager.getConnection();
+                          PreparedStatement stmt = conn.prepareStatement(sql)) {
+                         stmt.setString(1, status.name());
+                         stmt.setString(2, nowString());
+                         stmt.setInt(3, relationId);
+                         return stmt.executeUpdate() > 0;
+                     }
+                 } catch (SQLException e) {
+                     logger.severe("Error updating guild relation status: " + e.getMessage());
+                     return false;
+                 }
+             }).thenCompose(ok -> {
+                 if (!Boolean.TRUE.equals(ok)) {
+                     return CompletableFuture.completedFuture(false);
+                 }
+                 GuildLog.LogType logType = status == GuildRelation.RelationStatus.ACTIVE
+                         ? GuildLog.LogType.RELATION_ACCEPTED
+                         : GuildLog.LogType.RELATION_REJECTED;
+                 String details = relation.getType().name() + " status=" + status.name()
+                         + " peers=" + relation.getGuild1Name() + "/" + relation.getGuild2Name();
+                 String actor = relation.getInitiatorUuid() != null
+                         ? relation.getInitiatorUuid().toString() : "SYSTEM";
+                 String actorName = relation.getInitiatorName() != null
+                         ? relation.getInitiatorName() : "system";
+                 CompletableFuture<Boolean> a = logGuildActionAsync(relation.getGuild1Id(), relation.getGuild1Name(),
+                         actor, actorName, logType, "Relation status updated", details);
+                 CompletableFuture<Boolean> b = logGuildActionAsync(relation.getGuild2Id(), relation.getGuild2Name(),
+                         actor, actorName, logType, "Relation status updated", details);
+                 return a.thenCombine(b, (x, y) -> true);
+             });
          });
      }
      
@@ -2251,25 +2312,64 @@ public class GuildService {
      }
      
      /**
+      * 按 ID 获取工会关系 (异步)
+      */
+     public CompletableFuture<GuildRelation> getGuildRelationByIdAsync(int relationId) {
+         return CompletableFuture.supplyAsync(() -> {
+             try {
+                 String sql = "SELECT * FROM guild_relations WHERE id = ?";
+                 try (Connection conn = databaseManager.getConnection();
+                      PreparedStatement stmt = conn.prepareStatement(sql)) {
+                     stmt.setInt(1, relationId);
+                     try (ResultSet rs = stmt.executeQuery()) {
+                         if (rs.next()) {
+                             return createGuildRelationFromResultSet(rs);
+                         }
+                     }
+                 }
+             } catch (SQLException e) {
+                 logger.severe("Error fetching guild relation by id: " + e.getMessage());
+             }
+             return null;
+         });
+     }
+
+     /**
       * 删除工会关系 (异步)
       */
      public CompletableFuture<Boolean> deleteGuildRelationAsync(int relationId) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "DELETE FROM guild_relations WHERE id = ?";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setInt(1, relationId);
-                     
-                     int rowsAffected = stmt.executeUpdate();
-                     return rowsAffected > 0;
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error deleting guild relation: " + e.getMessage());
-                 return false;
+         return getGuildRelationByIdAsync(relationId).thenCompose(relation -> {
+             if (relation == null) {
+                 return CompletableFuture.completedFuture(false);
              }
+             return CompletableFuture.supplyAsync(() -> {
+                 try {
+                     String sql = "DELETE FROM guild_relations WHERE id = ?";
+                     try (Connection conn = databaseManager.getConnection();
+                          PreparedStatement stmt = conn.prepareStatement(sql)) {
+                         stmt.setInt(1, relationId);
+                         return stmt.executeUpdate() > 0;
+                     }
+                 } catch (SQLException e) {
+                     logger.severe("Error deleting guild relation: " + e.getMessage());
+                     return false;
+                 }
+             }).thenCompose(ok -> {
+                 if (!Boolean.TRUE.equals(ok)) {
+                     return CompletableFuture.completedFuture(false);
+                 }
+                 String details = relation.getType().name()
+                         + " peers=" + relation.getGuild1Name() + "/" + relation.getGuild2Name();
+                 String actor = relation.getInitiatorUuid() != null
+                         ? relation.getInitiatorUuid().toString() : "SYSTEM";
+                 String actorName = relation.getInitiatorName() != null
+                         ? relation.getInitiatorName() : "system";
+                 CompletableFuture<Boolean> a = logGuildActionAsync(relation.getGuild1Id(), relation.getGuild1Name(),
+                         actor, actorName, GuildLog.LogType.RELATION_DELETED, "Relation deleted", details);
+                 CompletableFuture<Boolean> b = logGuildActionAsync(relation.getGuild2Id(), relation.getGuild2Name(),
+                         actor, actorName, GuildLog.LogType.RELATION_DELETED, "Relation deleted", details);
+                 return a.thenCombine(b, (x, y) -> true);
+             });
          });
      }
      

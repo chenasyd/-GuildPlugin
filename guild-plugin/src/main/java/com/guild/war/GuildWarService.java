@@ -64,6 +64,10 @@ public final class GuildWarService {
         return reportRepository;
     }
 
+    public GuildPlugin getPlugin() {
+        return plugin;
+    }
+
     public void reloadSettings() {
         this.settings = new WarSettings(plugin.getConfigManager().getMainConfig());
     }

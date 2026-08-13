@@ -35,6 +35,7 @@ GuildWarAPI warApi = GuildPlugin.getInstance().getGuildWarAPI();
 | `accept` / `deny` / `join` / `leave` / `ready` / `cancel` | 对局流程 |
 | `forceEnd(matchId, reason)` | 强制结束 |
 | `getRecentMatches(limit)` / `getMatchHistory(reportId)` / `getLatestMatchForPlayer(uuid)` | 历史战报（`WarReportSnapshot`） |
+| `exportReport(reportId, format)` | 导出 JSON/CSV 到 `plugins/GuildPlugin/exports/` |
 
 实现：`com.guild.war.api.GuildWarAPIImpl`。
 

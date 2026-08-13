@@ -2,6 +2,7 @@ package com.guild.warehouse;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Marks a chest inventory as one page of a guild warehouse session.
@@ -14,6 +15,8 @@ public class WarehouseChestHolder implements InventoryHolder {
     private final int pageSlotCount;
     private final int totalSlots;
     private Inventory inventory;
+    /** Snapshot of page contents when opened (for optional access-log diffs). */
+    private ItemStack[] openSnapshot = new ItemStack[0];
 
     public WarehouseChestHolder(int guildId, int page, int pageSlotCount, int totalSlots) {
         this.guildId = guildId;
@@ -51,6 +54,23 @@ public class WarehouseChestHolder implements InventoryHolder {
 
     void setInventory(Inventory inventory) {
         this.inventory = inventory;
+    }
+
+    void captureOpenSnapshot(ItemStack[] contents) {
+        if (contents == null) {
+            this.openSnapshot = new ItemStack[0];
+            return;
+        }
+        ItemStack[] copy = new ItemStack[contents.length];
+        for (int i = 0; i < contents.length; i++) {
+            ItemStack stack = contents[i];
+            copy[i] = stack == null ? null : stack.clone();
+        }
+        this.openSnapshot = copy;
+    }
+
+    ItemStack[] getOpenSnapshot() {
+        return openSnapshot;
     }
 
     @Override

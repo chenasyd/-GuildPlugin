@@ -113,6 +113,8 @@ backup:
 # Guild warehouse (requires NBTAPI softdepend; capacity uses historical peak level)
 guild-warehouse:
   enabled: true
+  # When true, log OPEN/SAVE (with slot put/take summary) to guild_warehouse_access_log
+  access-log: false
   # peak_level -> slot count (must be multiples of 9).
   # Each page holds up to 54 slots; e.g. 63 = page1(54) + page2(9). Open with /guild warehouse <page>
   slots-by-level:

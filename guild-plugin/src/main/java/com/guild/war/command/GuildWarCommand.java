@@ -80,6 +80,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
                     reply(p, e, "war.cancel.ok", "&e已取消")));
             case "status", "s" -> status(sender);
             case "report" -> report(sender, args);
+            case "export" -> export(sender, args);
             case "season" -> season(sender);
             case "admin" -> admin(sender, args);
             case "help", "?" -> help(sender);
@@ -156,6 +157,53 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
         }
         war.reports().getLatestForPlayerAsync(player.getUniqueId()).thenAccept(snap ->
                 CompatibleScheduler.runTask(plugin, () -> showReport(sender, snap)));
+    }
+
+    private void export(CommandSender sender, String[] args) {
+        if (!sender.hasPermission(PERM_ADMIN)) {
+            send(sender, "war.admin-permission", "&c需要 guild.war.admin");
+            return;
+        }
+        if (args.length < 2) {
+            send(sender, "war.export.usage",
+                    "&c用法: /guildwar export <reportId> [json|csv]");
+            return;
+        }
+        int id;
+        try {
+            id = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            send(sender, "war.report.bad-id", "&c战报 ID 无效");
+            return;
+        }
+        String format = args.length >= 3 ? args[2] : "json";
+        if (!format.equalsIgnoreCase("json") && !format.equalsIgnoreCase("csv")) {
+            send(sender, "war.export.bad-format", "&c格式须为 json 或 csv");
+            return;
+        }
+        var api = plugin.getGuildWarAPI();
+        if (api == null) {
+            send(sender, "war.unavailable", "&c工会战不可用: {reason}", "{reason}", "API");
+            return;
+        }
+        api.exportReport(id, format).whenComplete((path, err) ->
+                CompatibleScheduler.runTask(plugin, () -> {
+                    if (err != null) {
+                        Throwable cause = err.getCause() != null ? err.getCause() : err;
+                        if (cause instanceof IllegalArgumentException) {
+                            send(sender, "war.report.none", "&7没有找到战报");
+                        } else {
+                            send(sender, "war.export.failed",
+                                    "&c导出失败: {msg}",
+                                    "{msg}", cause.getMessage() != null ? cause.getMessage() : cause.getClass().getSimpleName());
+                        }
+                        return;
+                    }
+                    send(sender, "war.export.ok",
+                            "&a已导出战报 #{id} → &f{path}",
+                            "{id}", String.valueOf(id),
+                            "{path}", path.toAbsolutePath().toString());
+                }));
     }
 
     private void showReport(CommandSender sender, WarReportSnapshot snap) {
@@ -301,6 +349,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
         send(sender, "war.help.report", "&e/guildwar report [id] &7- 查看战报");
         send(sender, "war.help.season", "&e/guildwar season &7- 本赛季排行");
         if (sender.hasPermission(PERM_ADMIN)) {
+            send(sender, "war.help.export", "&e/guildwar export <id> [json|csv] &7- 导出战报到 plugins/.../exports/");
             send(sender, "war.help.admin", "&e/guildwar admin end <id> &7- 强制结束");
         }
     }
@@ -362,6 +411,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
                     "status", "report", "season", "help"));
             if (sender.hasPermission(PERM_ADMIN)) {
                 out.add("admin");
+                out.add("export");
             }
         } else if (args.length >= 2 && args[0].equalsIgnoreCase("challenge")) {
             if (args.length == 2) {
@@ -386,6 +436,8 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
             }
         } else if (args.length == 2 && args[0].equalsIgnoreCase("admin")) {
             out.add("end");
+        } else if (args.length == 3 && args[0].equalsIgnoreCase("export")) {
+            out.addAll(Arrays.asList("json", "csv"));
         }
         String last = args[args.length - 1].toLowerCase(Locale.ROOT);
         return out.stream().filter(s -> s.toLowerCase(Locale.ROOT).startsWith(last)).toList();

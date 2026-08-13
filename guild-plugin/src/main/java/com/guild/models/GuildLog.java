@@ -135,7 +135,8 @@ public class GuildLog {
         APPLICATION_REJECTED,
         INVITATION_SENT,
         INVITATION_ACCEPTED,
-        INVITATION_REJECTED;
+        INVITATION_REJECTED,
+        WAREHOUSE_PERM_CHANGED;
 
         /**
          * 获取日志类型显示名称（多语言支持）
@@ -197,6 +198,8 @@ public class GuildLog {
                     return languageManager.getCoreMessage(lang, key, "Invitation Accepted");
                 case INVITATION_REJECTED:
                     return languageManager.getCoreMessage(lang, key, "Invitation Rejected");
+                case WAREHOUSE_PERM_CHANGED:
+                    return languageManager.getCoreMessage(lang, key, "Warehouse Permission Changed");
                 default:
                     return name();
             }

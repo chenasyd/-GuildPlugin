@@ -76,6 +76,7 @@ Score modes respawn at the team spawn; survive mode eliminates permanently for t
 | `cancel` | Cancel before fight |
 | `status` | Match status |
 | `report [id]` | Match report (latest for self if omitted) |
+| `export <id> [json\|csv]` | Admin export to `plugins/GuildPlugin/exports/` (`guild.war.admin`) |
 | `season` | Season leaderboard GUI / list |
 | `admin end <id>` | Force end |
 

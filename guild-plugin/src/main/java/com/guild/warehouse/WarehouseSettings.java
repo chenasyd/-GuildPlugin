@@ -18,6 +18,7 @@ public class WarehouseSettings {
 
     private final GuildPlugin plugin;
     private boolean enabled = true;
+    private boolean accessLogEnabled = false;
     private final NavigableMap<Integer, Integer> slotsByLevel = new TreeMap<>();
 
     public WarehouseSettings(GuildPlugin plugin) {
@@ -28,6 +29,7 @@ public class WarehouseSettings {
     public void reload() {
         FileConfiguration cfg = plugin.getConfigManager().getMainConfig();
         enabled = cfg.getBoolean("guild-warehouse.enabled", true);
+        accessLogEnabled = cfg.getBoolean("guild-warehouse.access-log", false);
         slotsByLevel.clear();
         ConfigurationSection section = cfg.getConfigurationSection("guild-warehouse.slots-by-level");
         if (section != null) {
@@ -53,6 +55,11 @@ public class WarehouseSettings {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    /** When true, OPEN/SAVE warehouse actions are written to guild_warehouse_access_log. */
+    public boolean isAccessLogEnabled() {
+        return accessLogEnabled;
     }
 
     public int getSlotsForPeakLevel(int peakLevel) {

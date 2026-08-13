@@ -40,11 +40,18 @@ Config `guild-warehouse.slots-by-level` maps `peak_level` → slot count (**mult
 Only one open session per guild at a time; others see “warehouse in use”.
 The session stays held while an async save runs after close; quitting does not drop the lock early (avoids racing an in-flight save). Load failures release the session and notify the player.
 
+## Optional access log
+
+Set `guild-warehouse.access-log: true` (default `false`) to write OPEN/SAVE rows to `guild_warehouse_access_log`:
+- `OPEN`: page and slot capacity
+- `SAVE`: compact `put=` / `take=` material:amount vs open snapshot (no NBT)
+
 ## Config example
 
 ```yaml
 guild-warehouse:
   enabled: true
+  access-log: false
   slots-by-level:
     1: 9
     2: 18
@@ -69,7 +76,6 @@ permissions:
 ## Out of scope (this phase)
 
 - Main GUI entry
-- Access audit log
 - Hard dependency on NBTAPI
 - Cross-server warehouse sync
 

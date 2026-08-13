@@ -2317,7 +2317,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             return;
         }
 
-        warehouse.setRoleOpenPermission(guild.getId(), targetRole, enable).thenAccept(ok ->
+        warehouse.setRoleOpenPermission(guild.getId(), targetRole, enable, player, guild.getName()).thenAccept(ok ->
                 CompatibleScheduler.runTask(plugin, player, () -> {
                     if (!player.isOnline()) {
                         return;

@@ -76,6 +76,7 @@ B官员: /guildwar accept
 | `cancel` | 开战前取消 |
 | `status` | 查看对局 |
 | `report [id]` | 战报（省略 id 则取本人最近一场） |
+| `export <id> [json\|csv]` | 管理员导出到 `plugins/GuildPlugin/exports/`（`guild.war.admin`） |
 | `season` | 本赛季排行 GUI / 列表 |
 | `admin end <id>` | 强制结束 |
 

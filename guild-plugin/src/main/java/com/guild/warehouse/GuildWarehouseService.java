@@ -2,12 +2,15 @@ package com.guild.warehouse;
 
 import com.guild.GuildPlugin;
 import com.guild.core.database.DatabaseManager;
+import com.guild.core.time.TimeProvider;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
+import com.guild.models.GuildLog;
 import com.guild.models.GuildMember;
 import com.guild.models.GuildMember.Role;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -173,6 +176,26 @@ public class GuildWarehouseService {
                 logger.severe("[Warehouse] Failed to set role perm: " + e.getMessage());
                 return false;
             }
+        });
+    }
+
+    /**
+     * Persist role open permission and write a guild_logs audit entry for the actor.
+     */
+    public CompletableFuture<Boolean> setRoleOpenPermission(int guildId, Role role, boolean canOpen,
+                                                            Player actor, String guildName) {
+        return setRoleOpenPermission(guildId, role, canOpen).thenCompose(ok -> {
+            if (!Boolean.TRUE.equals(ok) || actor == null) {
+                return CompletableFuture.completedFuture(ok);
+            }
+            String name = guildName != null ? guildName : ("#" + guildId);
+            return plugin.getGuildService().logGuildActionAsync(
+                            guildId, name,
+                            actor.getUniqueId().toString(), actor.getName(),
+                            GuildLog.LogType.WAREHOUSE_PERM_CHANGED,
+                            "Warehouse permission updated",
+                            role.name() + "=" + (canOpen ? "on" : "off"))
+                    .thenApply(v -> true);
         });
     }
 
@@ -366,7 +389,10 @@ public class GuildWarehouseService {
                         inv.setItem(local, e.getValue());
                     }
                 }
+                holder.captureOpenSnapshot(inv.getContents());
                 player.openInventory(inv);
+                logAccessAsync(guildId, player.getUniqueId(), player.getName(), "OPEN", page,
+                        "slots=" + pageSlots);
             });
         });
     }
@@ -375,6 +401,7 @@ public class GuildWarehouseService {
         int guildId = holder.getGuildId();
         int capacity = holder.getPageSlotCount();
         int offset = holder.getSlotOffset();
+        int page = holder.getPage();
         for (int i = capacity; i < inventory.getSize(); i++) {
             ItemStack extra = inventory.getItem(i);
             if (extra != null && !extra.getType().isAir()) {
@@ -382,13 +409,17 @@ public class GuildWarehouseService {
                 giveOrDrop(player, extra);
             }
         }
+        String diffSummary = summarizeDiff(holder.getOpenSnapshot(), inventory.getContents(), capacity);
         UUID playerUuid = player.getUniqueId();
+        String playerName = player.getName();
         savePage(guildId, inventory, offset, capacity).whenComplete((ok, err) -> {
             if (!Boolean.TRUE.equals(ok) || err != null) {
                 Throwable cause = err instanceof CompletionException && err.getCause() != null
                         ? err.getCause() : err;
                 logger.severe("[Warehouse] Save incomplete for guild " + guildId
                         + (cause != null ? ": " + cause.getMessage() : ""));
+            } else {
+                logAccessAsync(guildId, playerUuid, playerName, "SAVE", page, diffSummary);
             }
             CompatibleScheduler.runTask(plugin, player, () -> {
                 // Switching pages: close saves async; do not drop lock if another page is already open
@@ -403,6 +434,81 @@ public class GuildWarehouseService {
                 }
             });
         });
+    }
+
+    private void logAccessAsync(int guildId, UUID playerUuid, String playerName,
+                                String action, int page, String details) {
+        if (!settings.isAccessLogEnabled()) {
+            return;
+        }
+        CompletableFuture.runAsync(() -> {
+            try (Connection conn = databaseManager.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(
+                         "INSERT INTO guild_warehouse_access_log "
+                                 + "(guild_id, player_uuid, player_name, action, page, details, created_at) "
+                                 + "VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                stmt.setInt(1, guildId);
+                stmt.setString(2, playerUuid.toString());
+                stmt.setString(3, playerName != null ? playerName : "?");
+                stmt.setString(4, action);
+                stmt.setInt(5, page);
+                stmt.setString(6, details);
+                stmt.setString(7, TimeProvider.nowString());
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                logger.warning("[Warehouse] Access log write failed: " + e.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Build a compact put/take summary for access-log (no NBT, material:amount only).
+     */
+    static String summarizeDiff(ItemStack[] before, ItemStack[] after, int capacity) {
+        Map<Material, Integer> delta = new HashMap<>();
+        int limit = Math.min(capacity, Math.max(
+                before != null ? before.length : 0,
+                after != null ? after.length : 0));
+        for (int i = 0; i < limit; i++) {
+            ItemStack b = before != null && i < before.length ? before[i] : null;
+            ItemStack a = after != null && i < after.length ? after[i] : null;
+            applyStackDelta(delta, b, -1);
+            applyStackDelta(delta, a, +1);
+        }
+        if (delta.isEmpty()) {
+            return "unchanged";
+        }
+        StringBuilder put = new StringBuilder();
+        StringBuilder take = new StringBuilder();
+        for (Map.Entry<Material, Integer> e : delta.entrySet()) {
+            int d = e.getValue();
+            if (d == 0) {
+                continue;
+            }
+            StringBuilder target = d > 0 ? put : take;
+            if (target.length() > 0) {
+                target.append(',');
+            }
+            target.append(e.getKey().name()).append(':').append(Math.abs(d));
+        }
+        StringBuilder out = new StringBuilder();
+        if (put.length() > 0) {
+            out.append("put=").append(put);
+        }
+        if (take.length() > 0) {
+            if (out.length() > 0) {
+                out.append(';');
+            }
+            out.append("take=").append(take);
+        }
+        return out.length() == 0 ? "unchanged" : out.toString();
+    }
+
+    private static void applyStackDelta(Map<Material, Integer> delta, ItemStack stack, int sign) {
+        if (stack == null || stack.getType().isAir()) {
+            return;
+        }
+        delta.merge(stack.getType(), sign * stack.getAmount(), Integer::sum);
     }
 
     static void giveOrDrop(Player player, ItemStack stack) {

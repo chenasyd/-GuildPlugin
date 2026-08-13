@@ -4,8 +4,10 @@ import com.guild.war.GuildWarService;
 import com.guild.war.model.VictoryMode;
 import com.guild.war.model.WarMatch;
 import com.guild.war.model.WarReportSnapshot;
+import com.guild.war.report.WarReportExporter;
 import org.bukkit.entity.Player;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -99,5 +101,23 @@ public final class GuildWarAPIImpl implements GuildWarAPI {
     @Override
     public CompletableFuture<WarReportSnapshot> getLatestMatchForPlayer(UUID uuid) {
         return service.reports().getLatestForPlayerAsync(uuid);
+    }
+
+    @Override
+    public CompletableFuture<Path> exportReport(int reportId, String format) {
+        return service.reports().getByReportIdAsync(reportId).thenCompose(snap -> {
+            if (snap == null) {
+                return CompletableFuture.failedFuture(
+                        new IllegalArgumentException("Report not found: " + reportId));
+            }
+            return CompletableFuture.supplyAsync(() -> {
+                try {
+                    Path dir = service.getPlugin().getDataFolder().toPath().resolve("exports");
+                    return WarReportExporter.write(dir, snap, format);
+                } catch (Exception e) {
+                    throw new java.util.concurrent.CompletionException(e);
+                }
+            });
+        });
     }
 }
