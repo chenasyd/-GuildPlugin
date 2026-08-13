@@ -94,15 +94,5 @@ tables:
     auto-create: true
     version: 1
 
-# Backup configuration
-backup:
-  # Whether to enable automatic backup
-  enabled: false
-  # Backup interval (hours)
-  interval: 24
-  # Backup retention (days)
-  retention-days: 7
-  # Backup file path
-  path: "backups/"
-  # Backup file format
-  format: "yyyy-MM-dd_HH-mm-ss"
+# Backup settings live in config.yml under "backup:"
+# (startup daily / version-change / max-backups / MySQL method)

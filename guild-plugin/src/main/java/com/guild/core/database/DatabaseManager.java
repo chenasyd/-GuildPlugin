@@ -21,6 +21,13 @@ public class DatabaseManager {
     private final Logger logger;
     private HikariDataSource dataSource;
     private DatabaseType databaseType;
+    /** Relative or absolute sqlite file name from config (under data folder when relative). */
+    private String sqliteFileName = "guild.db";
+    private String mysqlHost = "localhost";
+    private int mysqlPort = 3306;
+    private String mysqlDatabase = "guild";
+    private String mysqlUsername = "root";
+    private String mysqlPassword = "";
     
     public DatabaseManager(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -68,8 +75,13 @@ public class DatabaseManager {
                 "&characterEncoding=" + config.getString("mysql.character-encoding", config.getString("database.mysql.character-encoding", "UTF-8"));
         hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + params);
         
-        hikariConfig.setUsername(config.getString("mysql.username", config.getString("database.mysql.username", "root")));
-        hikariConfig.setPassword(config.getString("mysql.password", config.getString("database.mysql.password", "")));
+        this.mysqlHost = host;
+        this.mysqlPort = port;
+        this.mysqlDatabase = database;
+        this.mysqlUsername = config.getString("mysql.username", config.getString("database.mysql.username", "root"));
+        this.mysqlPassword = config.getString("mysql.password", config.getString("database.mysql.password", ""));
+        hikariConfig.setUsername(mysqlUsername);
+        hikariConfig.setPassword(mysqlPassword);
         hikariConfig.setMaximumPoolSize(config.getInt("mysql.pool-size", config.getInt("database.mysql.pool-size", 20)));
         hikariConfig.setMinimumIdle(config.getInt("mysql.min-idle", config.getInt("database.mysql.min-idle", 10)));
         hikariConfig.setConnectionTimeout(config.getLong("mysql.connection-timeout", config.getLong("database.mysql.connection-timeout", 60000)));
@@ -86,8 +98,8 @@ public class DatabaseManager {
         databaseType = DatabaseType.SQLITE;
         
         HikariConfig hikariConfig = new HikariConfig();
-        String fileName = config.getString("sqlite.file", config.getString("database.sqlite.file", "guild.db"));
-        String dbPath = plugin.getDataFolder() + "/" + fileName;
+        this.sqliteFileName = config.getString("sqlite.file", config.getString("database.sqlite.file", "guild.db"));
+        String dbPath = plugin.getDataFolder() + "/" + sqliteFileName;
         hikariConfig.setJdbcUrl("jdbc:sqlite:" + dbPath);
         int maxPool = config.getInt("connection-pool.maximum-pool-size", 2);
         if (maxPool < 1) { maxPool = 1; }
@@ -645,6 +657,21 @@ public class DatabaseManager {
     public DatabaseType getDatabaseType() {
         return databaseType;
     }
+
+    /** Absolute path to the primary SQLite database file. */
+    public java.io.File getSqliteDatabaseFile() {
+        java.io.File f = new java.io.File(sqliteFileName);
+        if (f.isAbsolute()) {
+            return f;
+        }
+        return new java.io.File(plugin.getDataFolder(), sqliteFileName);
+    }
+
+    public String getMysqlHost() { return mysqlHost; }
+    public int getMysqlPort() { return mysqlPort; }
+    public String getMysqlDatabase() { return mysqlDatabase; }
+    public String getMysqlUsername() { return mysqlUsername; }
+    public String getMysqlPassword() { return mysqlPassword; }
     
     /**
      * 数据库类型枚举

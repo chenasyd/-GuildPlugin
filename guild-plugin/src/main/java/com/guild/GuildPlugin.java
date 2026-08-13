@@ -78,6 +78,7 @@ public class GuildPlugin extends JavaPlugin {
     private GuildWarAPI guildWarAPI;
     private WarSeasonService warSeasonService;
     private com.guild.warehouse.GuildWarehouseService guildWarehouseService;
+    private com.guild.core.backup.DatabaseBackupService databaseBackupService;
     private volatile boolean modulesUnloaded = false;
     private GuildMetrics guildMetrics;
     private UpdateManager updateManager;
@@ -422,6 +423,11 @@ public class GuildPlugin extends JavaPlugin {
     private void startServices() {
         // 启动数据库连接
         databaseManager.initialize();
+
+        // 数据库备份服务（启动日备 / 版本变化自动备份）
+        databaseBackupService = new com.guild.core.backup.DatabaseBackupService(this);
+        serviceContainer.register(com.guild.core.backup.DatabaseBackupService.class, databaseBackupService);
+        databaseBackupService.maybeAutoBackupOnStartup();
         
         // 注册占位符
         placeholderManager.registerPlaceholders();
@@ -522,6 +528,10 @@ public class GuildPlugin extends JavaPlugin {
 
     public com.guild.warehouse.GuildWarehouseService getGuildWarehouseService() {
         return guildWarehouseService;
+    }
+
+    public com.guild.core.backup.DatabaseBackupService getDatabaseBackupService() {
+        return databaseBackupService;
     }
 
     public WarSeasonService getWarSeasonService() {

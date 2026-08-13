@@ -96,6 +96,20 @@ permissions:
     can-delete: false
     can-warehouse: false
 
+# Database backup (plugins/GuildPlugin/backup/)
+backup:
+  enabled: true
+  directory: backup
+  max-backups: 50
+  # Auto backup on startup if none succeeded today (local date)
+  on-startup-daily: true
+  # Auto backup when plugin version differs from last successful backup
+  on-version-change: true
+  mysql:
+    # jdbc = portable logical dump (.sql.gz); mysqldump = system CLI if installed
+    method: jdbc
+    mysqldump-path: mysqldump
+
 # Guild warehouse (requires NBTAPI softdepend; capacity uses historical peak level)
 guild-warehouse:
   enabled: true

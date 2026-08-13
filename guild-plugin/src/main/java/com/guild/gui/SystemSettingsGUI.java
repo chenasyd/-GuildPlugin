@@ -470,15 +470,68 @@ public class SystemSettingsGUI implements GUI {
     }
 
     private void maintainDatabase(Player player) {
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.database-dev", "&e数据库维护功能开发中...")));
-        // TODO: 实现数据库维护功能
-        // 包括清理过期数据、优化性能等
+        var backupService = plugin.getDatabaseBackupService();
+        if (backupService == null) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.system-settings.backup-unavailable", "&c备份服务未就绪。")));
+            return;
+        }
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                "gui.system-settings.database-running", "&e正在执行数据库维护，请稍候...")));
+        backupService.runMaintenanceAsync().thenAccept(result ->
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (!player.isOnline()) {
+                        return;
+                    }
+                    if (result.success()) {
+                        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                                "gui.system-settings.database-done", "&a数据库维护完成：")));
+                        for (String line : result.summary().split("\n")) {
+                            if (!line.isBlank()) {
+                                player.sendMessage(ColorUtils.colorize("&7" + line));
+                            }
+                        }
+                    } else {
+                        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                                        "gui.system-settings.database-failed", "&c数据库维护失败：{0}")
+                                .replace("{0}", result.summary() != null ? result.summary() : "unknown")));
+                    }
+                }));
     }
 
     private void backupData(Player player) {
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.backup-dev", "&e数据备份功能开发中...")));
-        // TODO: 实现数据备份功能
-        // 创建数据备份文件
+        var backupService = plugin.getDatabaseBackupService();
+        if (backupService == null) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.system-settings.backup-unavailable", "&c备份服务未就绪。")));
+            return;
+        }
+        if (!backupService.isEnabled()) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.system-settings.backup-disabled", "&c备份功能已在配置中禁用 (backup.enabled=false)。")));
+            return;
+        }
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                "gui.system-settings.backup-running", "&e正在备份数据库，请稍候...")));
+        backupService.backupAsync(com.guild.core.backup.DatabaseBackupService.BackupReason.MANUAL)
+                .thenAccept(result -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (!player.isOnline()) {
+                        return;
+                    }
+                    if (result.success()) {
+                        String name = result.file() != null ? result.file().getName() : "";
+                        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                                        "gui.system-settings.backup-success", "&a备份成功：&f{file}")
+                                .replace("{file}", name)));
+                        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                                        "gui.system-settings.backup-path", "&7目录：&f{path}")
+                                .replace("{path}", backupService.getBackupDirectory().getAbsolutePath())));
+                    } else {
+                        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                                        "gui.system-settings.backup-failed", "&c备份失败：{0}")
+                                .replace("{0}", result.message() != null ? result.message() : "unknown")));
+                    }
+                }));
     }
 
     private void saveSettings(Player player) {
