@@ -285,3 +285,15 @@ guild-war:
     winner-guild-bank: 0
     contribution-win: 10
     contribution-per-kill: 1
+
+# Builtin guild activity / hybrid contribution (not A/B coin demos)
+guild-activity:
+  enabled: true
+  # Inject button into GuildInfoGUI module slots
+  register-info-button: true
+  # totalScore = economyPts + activityPts * weight
+  score-weight-activity: 2.0
+  # Online minute sampling interval (seconds)
+  tick-interval-seconds: 60
+  # Minutes online in a day to count as one active day this week
+  daily-active-minutes: 5

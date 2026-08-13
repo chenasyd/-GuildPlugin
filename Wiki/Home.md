@@ -15,6 +15,8 @@ GuildPlugin is a Minecraft guild system plugin providing complete guild manageme
 - [GuildWar — Fixed-map guild PVP](./GuildWar.md) ([EN](./GuildWar_EN.md))
 - [Guild War walkthrough](./GuildWar-Walkthrough.md) ([EN](./GuildWar-Walkthrough_EN.md))
 - [Guild Warehouse (NBTAPI)](./GuildWarehouse.md) ([EN](./GuildWarehouse_EN.md))
+- [Builtin Activity / Contribution](./Guild-Activity.md) ([EN](./Guild-Activity_EN.md))
+- [Builtin vs Example Modules](./Builtin-vs-Example-Modules.md) ([EN](./Builtin-vs-Example-Modules_EN.md))
 - [Database backup & maintenance](./Database-Backup.md) ([EN](./Database-Backup_EN.md))
 - [World / War API](./API-World-War.md) ([EN](./API-World-War_EN.md))
 - [Cross-Server Guild War protocol (P3 skeleton)](./CrossServer-War.md)

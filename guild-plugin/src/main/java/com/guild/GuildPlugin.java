@@ -79,6 +79,7 @@ public class GuildPlugin extends JavaPlugin {
     private WarSeasonService warSeasonService;
     private com.guild.warehouse.GuildWarehouseService guildWarehouseService;
     private com.guild.core.backup.DatabaseBackupService databaseBackupService;
+    private com.guild.activity.ActivityBootstrap activityBootstrap;
     private volatile boolean modulesUnloaded = false;
     private GuildMetrics guildMetrics;
     private UpdateManager updateManager;
@@ -266,9 +267,17 @@ public class GuildPlugin extends JavaPlugin {
             getServer().getPluginManager().registerEvents(
                     new com.guild.warehouse.WarehouseListener(guildWarehouseService), this);
 
+            // 内置活跃度 / 混合贡献
+            activityBootstrap = new com.guild.activity.ActivityBootstrap(this);
+            serviceContainer.register(com.guild.activity.ActivityScoreService.class, activityBootstrap.getScoreService());
+            activityBootstrap.start();
+
             // 初始化模块系统（在所有核心服务就绪后）
             moduleManager = new ModuleManager(this);
             serviceContainer.register(ModuleManager.class, moduleManager);
+
+            // 模块扩展点就绪后注册内置 GuildInfoGUI 按钮
+            activityBootstrap.registerInfoButton();
 
             // 初始化 bStats 数据统计
             int bstatsPluginId = 31803;
@@ -340,6 +349,9 @@ public class GuildPlugin extends JavaPlugin {
             // 优雅结束工会战，再卸载受管世界
             if (guildWarService != null) {
                 guildWarService.shutdown();
+            }
+            if (activityBootstrap != null) {
+                activityBootstrap.shutdown();
             }
             if (guildWorldService != null) {
                 guildWorldService.shutdown();
@@ -532,6 +544,10 @@ public class GuildPlugin extends JavaPlugin {
 
     public com.guild.core.backup.DatabaseBackupService getDatabaseBackupService() {
         return databaseBackupService;
+    }
+
+    public com.guild.activity.ActivityScoreService getActivityScoreService() {
+        return activityBootstrap != null ? activityBootstrap.getScoreService() : null;
     }
 
     public WarSeasonService getWarSeasonService() {

@@ -64,6 +64,14 @@ public class GuildPluginAPI {
         return CompletableFuture.completedFuture(List.of());
     }
 
+    /**
+     * Read-only hybrid contribution / activity scores from the core builtin system.
+     * Empty list if disabled or unavailable.
+     */
+    public CompletableFuture<List<com.guild.sdk.data.ActivityScoreData>> getMemberActivityScores(int guildId) {
+        return CompletableFuture.completedFuture(List.of());
+    }
+
     public void registerGUIButton(String guiType, int slot, ItemStack item, String moduleId,
                                   GUIExtensionHook.GUIClickAction handler) {
     }

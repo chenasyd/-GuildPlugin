@@ -18,7 +18,9 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import com.guild.core.time.TimeProvider;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
@@ -2414,6 +2416,41 @@ public class GuildService {
                  logger.severe("Error fetching player contribution records: " + e.getMessage());
              }
             return contributions;
+        });
+    }
+
+    /**
+     * 按玩家聚合工会净贡献（WITHDRAW 为负，其余为正）。
+     * 返回 Map&lt;playerUuid, netAmount&gt;。
+     */
+    public CompletableFuture<Map<UUID, Double>> getGuildContributionNetByPlayerAsync(int guildId) {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<UUID, Double> nets = new HashMap<>();
+            try {
+                String sql = "SELECT player_uuid, contribution_type, amount FROM guild_contributions WHERE guild_id = ?";
+                try (Connection conn = databaseManager.getConnection();
+                     PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setInt(1, guildId);
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        while (rs.next()) {
+                            UUID uuid = UUID.fromString(rs.getString("player_uuid"));
+                            String typeName = rs.getString("contribution_type");
+                            double amount = rs.getDouble("amount");
+                            GuildContribution.ContributionType type;
+                            try {
+                                type = GuildContribution.ContributionType.valueOf(typeName);
+                            } catch (IllegalArgumentException ex) {
+                                type = GuildContribution.ContributionType.ADMIN;
+                            }
+                            double net = (type == GuildContribution.ContributionType.WITHDRAW) ? -amount : amount;
+                            nets.merge(uuid, net, Double::sum);
+                        }
+                    }
+                }
+            } catch (SQLException e) {
+                logger.severe("Error aggregating guild net contributions: " + e.getMessage());
+            }
+            return nets;
         });
     }
 

@@ -165,7 +165,7 @@ public class MemberRankModule implements GuildModule {
         );
 
         ConsoleLogger.info(context.getMessage("module.member-rank.loaded",
-                "[MemberRank] Member contribution ranking system enabled"));
+                "[MemberRank] A-Coin demo ranking enabled (not production contribution)"));
 
         ModuleDescriptor desc = context.getDescriptor();
         context.getLogger().info(String.format("[Rank-Meta] Module metadata: id=%s name=%s version=%s author=%s",

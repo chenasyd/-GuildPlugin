@@ -206,6 +206,30 @@ gui:
     bedrock-content: "&fChoose a function:"
 
   # ================================================
+  # Builtin Activity / Contribution Ranking
+  # ================================================
+  activity:
+    title: "&6Contribution / Activity"
+    header: "&6&lMember Contribution Ranking"
+    header-lore1: "&7Total = economy + activity × weight"
+    header-lore2: "&7Economy from guild_contributions; activity from online tracking"
+    loading: "&eLoading..."
+    empty: "&7No members"
+    empty-hint: "&7No guild members to rank yet"
+    back: "&cBack"
+    back-hint: "&7Return to previous menu"
+    lore-total: "&7Total: &a{0}"
+    lore-economy: "&7Economy: &f{0}"
+    lore-activity: "&7Activity: &f{0}"
+    online: "&aOnline"
+    offline: "&7Offline"
+    info-button: "&6Contribution"
+    info-button-lore1: "&7View member contribution and activity"
+    info-button-lore2: "&7Hybrid total score ranking"
+    click-open-rank: "&eClick to open guild ranking"
+    disabled: "&7Disabled"
+
+  # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
   system-settings:

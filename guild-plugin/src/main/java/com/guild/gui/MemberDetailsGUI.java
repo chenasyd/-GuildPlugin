@@ -89,6 +89,9 @@ public class MemberDetailsGUI implements GUI {
         // 设置返回按钮
         setupBackButton(inventory);
 
+        // 异步刷新贡献 / 活跃度
+        refreshContributionInfo(inventory);
+
         plugin.getGuiManager().applyImageModeIfNeeded(viewer, inventory, getGuiType());
     }
     
@@ -97,6 +100,16 @@ public class MemberDetailsGUI implements GUI {
         // 检查是否是操作按钮
         if (isActionButton(slot)) {
             handleActionButton(player, slot);
+            return;
+        }
+
+        // 贡献信息 → 打开内置活跃度排行
+        if (slot == 23) {
+            plugin.getGuiManager().openGUI(player,
+                    new com.guild.activity.GuildActivityGUI(
+                            plugin, guild, player,
+                            com.guild.activity.GuildActivityGUI.ReturnTo.MEMBER_DETAILS,
+                            member));
             return;
         }
         
@@ -196,13 +209,57 @@ public class MemberDetailsGUI implements GUI {
         inventory.setItem(22, timeInfo);
 
         // 贡献信息
+        String loading = languageManager.getGuiMessage(viewer, "gui.activity.loading", "&e加载中...");
         ItemStack contributionInfo = createItem(
             Material.EMERALD,
             ColorUtils.colorize("&e" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.contribution-info", "贡献信息")),
-            ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.guild-contribution", "工会贡献") + ": &f" + getMemberContribution()),
-            ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.activity", "活跃度") + ": &f" + getMemberActivity())
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.guild-contribution", "工会贡献") + ": &f" + loading),
+            ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.activity", "活跃度") + ": &f" + loading),
+            "",
+            ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.click-open-rank", "&e点击查看工会排行"))
         );
         inventory.setItem(23, contributionInfo);
+    }
+
+    private void refreshContributionInfo(Inventory inventory) {
+        var service = plugin.getActivityScoreService();
+        if (service == null || !service.getSettings().isEnabled()) {
+            updateContributionItem(inventory,
+                    languageManager.getGuiMessage(viewer, "gui.activity.disabled", "&7未启用"),
+                    languageManager.getGuiMessage(viewer, "gui.activity.disabled", "&7未启用"));
+            return;
+        }
+        service.getMemberScoreAsync(guild.getId(), member.getPlayerUuid()).thenAccept(score ->
+                CompatibleScheduler.runTask(plugin, viewer, () -> {
+                    if (!viewer.isOnline()) {
+                        return;
+                    }
+                    if (!viewer.getOpenInventory().getTopInventory().equals(inventory)) {
+                        return;
+                    }
+                    updateContributionItem(inventory,
+                            formatScore(score.getEconomyPts()),
+                            formatScore(score.getActivityPts()));
+                }));
+    }
+
+    private void updateContributionItem(Inventory inventory, String economy, String activity) {
+        ItemStack contributionInfo = createItem(
+                Material.EMERALD,
+                ColorUtils.colorize("&e" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.contribution-info", "贡献信息")),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.guild-contribution", "工会贡献") + ": &f" + economy),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.activity", "活跃度") + ": &f" + activity),
+                "",
+                ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.click-open-rank", "&e点击查看工会排行"))
+        );
+        inventory.setItem(23, contributionInfo);
+    }
+
+    private static String formatScore(double v) {
+        if (Math.abs(v - Math.rint(v)) < 0.05) {
+            return String.valueOf((long) Math.rint(v));
+        }
+        return String.format("%.1f", v);
     }
     
     /**
@@ -447,22 +504,6 @@ public class MemberDetailsGUI implements GUI {
         }
     }
 
-    /**
-     * 获取成员贡献
-     */
-    private String getMemberContribution() {
-        // TODO: 实现贡献统计系统
-        return languageManager.getGuiMessage(viewer, "gui.member-management.member-details.pending-stat", "待统计");
-    }
-
-    /**
-     * 获取成员活跃度
-     */
-    private String getMemberActivity() {
-        // TODO: 实现活跃度统计系统
-        return languageManager.getGuiMessage(viewer, "gui.member-management.member-details.pending-stat", "待统计");
-    }
-    
     /**
      * 获取角色权限列表
      */

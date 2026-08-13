@@ -67,7 +67,21 @@ public class GuildStatsModule implements GuildModule {
         this.activityCalculator = new ActivityCalculator(activityTracker);
 
         statsManager.loadAll();
-        activityTracker.start();
+
+        // Prefer core builtin activity; keep local tracker only as demo fallback
+        boolean coreActivity = false;
+        try {
+            var core = context.getServiceContainer().get(com.guild.activity.ActivityScoreService.class);
+            coreActivity = core != null && core.getSettings().isEnabled();
+        } catch (Exception ignored) {
+            // service may not be registered in odd load orders
+        }
+        if (coreActivity) {
+            context.getLogger().info("[Stats] Using core ActivityScoreService (local ActivityTracker disabled)");
+        } else {
+            activityTracker.start();
+            context.getLogger().info("[Stats] Core activity unavailable — local ActivityTracker enabled (demo)");
+        }
 
         GuildPluginAPI api = context.getApi();
 
@@ -316,13 +330,16 @@ public class GuildStatsModule implements GuildModule {
         return api.getGuildById(guildId)
             .thenCompose(guild -> {
                 if (guild == null) return CompletableFuture.completedFuture(null);
-                return api.getGuildMembers(guildId)
-                    .thenCombine(expFuture, (members, experience) ->
-                        calculateStats(guild, members, experience));
+                return api.getGuildMembers(guildId).thenCompose(members ->
+                    expFuture.thenCompose(experience ->
+                        api.getMemberActivityScores(guildId)
+                            .exceptionally(ex -> List.of())
+                            .thenApply(scores -> calculateStats(guild, members, experience, scores))));
             });
     }
 
-    private GuildStatistics calculateStats(GuildData guild, List<MemberData> members, long experience) {
+    private GuildStatistics calculateStats(GuildData guild, List<MemberData> members, long experience,
+                                           List<com.guild.sdk.data.ActivityScoreData> coreScores) {
         GuildStatistics stats = new GuildStatistics(guild.getId());
         stats.setGuildName(guild.getName());
         stats.setLevel(guild.getLevel());
@@ -337,26 +354,38 @@ public class GuildStatsModule implements GuildModule {
             totalContrib += m.getContribution();
             if (m.isOnline()) onlineCount++;
         }
+        if (coreScores != null && !coreScores.isEmpty()) {
+            totalContrib = 0;
+            for (var s : coreScores) {
+                totalContrib += s.getEconomyPts();
+            }
+        }
 
         stats.setTotalBCoin(totalContrib);
         stats.setAvgBCoin(members.isEmpty() ? 0 : totalContrib / members.size());
         stats.setActiveMemberCount(onlineCount);
 
-        // 使用 ActivityCalculator 计算真实的活跃度评分（而非简单公式）
         double activityScore;
-        if (!members.isEmpty()) {
+        if (coreScores != null && !coreScores.isEmpty()) {
+            double sum = 0;
+            for (var s : coreScores) {
+                sum += s.getActivityPts();
+            }
+            activityScore = sum / coreScores.size();
+        } else if (!members.isEmpty() && activityCalculator != null) {
             ActivityReport report = activityCalculator.calculate(guild, members);
             if (report != null && !report.getMembers().isEmpty()) {
                 double totalScore = 0;
                 for (var m : report.getMembers()) {
                     totalScore += m.getActivityScore();
                 }
-                activityScore = members.isEmpty() ? 0 : totalScore / members.size();
+                activityScore = totalScore / members.size();
             } else {
                 activityScore = calculateFallbackActivityScore(onlineCount, totalContrib, members.size());
             }
         } else {
-            activityScore = 0;
+            activityScore = members.isEmpty() ? 0
+                    : calculateFallbackActivityScore(onlineCount, totalContrib, members.size());
         }
         stats.setActivityScore(activityScore);
 

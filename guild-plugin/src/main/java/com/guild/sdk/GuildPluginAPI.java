@@ -129,6 +129,27 @@ public class GuildPluginAPI {
         );
     }
 
+    /**
+     * 只读：核心内置混合贡献 / 活跃度排行。
+     * 未启用时返回空列表。
+     */
+    public CompletableFuture<List<com.guild.sdk.data.ActivityScoreData>> getMemberActivityScores(int guildId) {
+        var service = plugin.getActivityScoreService();
+        if (service == null || !service.getSettings().isEnabled()) {
+            return CompletableFuture.completedFuture(List.of());
+        }
+        return service.getGuildScoresAsync(guildId).thenApply(list -> {
+            List<com.guild.sdk.data.ActivityScoreData> out = new ArrayList<>(list.size());
+            for (com.guild.activity.MemberActivityScore s : list) {
+                out.add(new com.guild.sdk.data.ActivityScoreData(
+                        s.getPlayerUuid(), s.getPlayerName(),
+                        s.getEconomyPts(), s.getActivityPts(), s.getTotalScore(),
+                        s.getRank(), s.isOnline()));
+            }
+            return out;
+        });
+    }
+
     // ==================== GUI 扩展 API ====================
 
     /**
