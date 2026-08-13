@@ -139,39 +139,36 @@ public final class GuildActivityGUI implements GUI {
     }
 
     private ItemStack buildScoreItem(MemberActivityScore score) {
-        Material mat = switch (score.getRank()) {
-            case 1 -> Material.GOLD_BLOCK;
-            case 2 -> Material.IRON_BLOCK;
-            case 3 -> Material.COPPER_BLOCK;
-            default -> Material.PLAYER_HEAD;
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) head.getItemMeta();
+        if (meta == null) {
+            return head;
+        }
+
+        meta.setOwningPlayer(Bukkit.getOfflinePlayer(score.getPlayerUuid()));
+
+        String rankColor = switch (score.getRank()) {
+            case 1 -> "&6";
+            case 2 -> "&7";
+            case 3 -> "&c";
+            default -> "&e";
         };
-        ItemStack item = new ItemStack(mat);
-        if (mat == Material.PLAYER_HEAD) {
-            SkullMeta skull = (SkullMeta) item.getItemMeta();
-            if (skull != null) {
-                var offline = Bukkit.getOfflinePlayer(score.getPlayerUuid());
-                skull.setOwningPlayer(offline);
-                item.setItemMeta(skull);
-            }
-        }
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            String onlineTag = score.isOnline()
-                    ? languageManager.getGuiMessage(viewer, "gui.activity.online", "&a在线")
-                    : languageManager.getGuiMessage(viewer, "gui.activity.offline", "&7离线");
-            meta.setDisplayName(ColorUtils.colorize("&e#" + score.getRank() + " &f" + score.getPlayerName()
-                    + " &8(" + onlineTag + "&8)"));
-            List<String> lore = new ArrayList<>();
-            lore.add(ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.lore-total", "&7总分: &a{0}")
-                    .replace("{0}", format(score.getTotalScore()))));
-            lore.add(ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.lore-economy", "&7经济贡献: &f{0}")
-                    .replace("{0}", format(score.getEconomyPts()))));
-            lore.add(ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.lore-activity", "&7活跃度: &f{0}")
-                    .replace("{0}", format(score.getActivityPts()))));
-            meta.setLore(lore);
-            item.setItemMeta(meta);
-        }
-        return item;
+        String onlineTag = score.isOnline()
+                ? languageManager.getGuiMessage(viewer, "gui.activity.online", "&a在线")
+                : languageManager.getGuiMessage(viewer, "gui.activity.offline", "&7离线");
+        meta.setDisplayName(ColorUtils.colorize(rankColor + "#" + score.getRank() + " &f" + score.getPlayerName()
+                + " &8(" + onlineTag + "&8)"));
+
+        List<String> lore = new ArrayList<>();
+        lore.add(ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.lore-total", "&7总分: &a{0}")
+                .replace("{0}", format(score.getTotalScore()))));
+        lore.add(ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.lore-economy", "&7经济贡献: &f{0}")
+                .replace("{0}", format(score.getEconomyPts()))));
+        lore.add(ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.lore-activity", "&7活跃度: &f{0}")
+                .replace("{0}", format(score.getActivityPts()))));
+        meta.setLore(lore);
+        head.setItemMeta(meta);
+        return head;
     }
 
     private void setupNav(Inventory inventory, int page, int totalPages) {
