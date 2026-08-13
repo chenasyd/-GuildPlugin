@@ -53,7 +53,7 @@ public class LanguageManager {
         "de", "fr", "ru", "zh_tw", "ms",
         // 常见 Minecraft 用户语言
         "ja", "ko", "es", "pt", "it", "nl", "sv", "tr",
-        "vi", "th", "ar", "cs", "uk", "ro", "hu", "da", "fi", "no"
+        "vi", "th", "cs", "uk", "ro", "hu", "da", "fi", "no"
     };
 
     private static final String[] MODULE_DIRS = {
@@ -603,7 +603,6 @@ public class LanguageManager {
         codeToName.put("tr", "T\u00fcrk\u00e7e"); // 土耳其语
         codeToName.put("vi", "Ti\u1ebfng Vi\u1ec7t"); // 越南语
         codeToName.put("th", "\u0e44\u0e17\u0e22"); // 泰语
-        codeToName.put("ar", "\u0627\u0644\u0639\u0631\u0628\u064a\u0629"); // 阿拉伯语
         codeToName.put("cs", "\u010ce\u0161tina"); // 捷克语
         codeToName.put("pt", "Portugu\u00eas"); // 葡萄牙语
         codeToName.put("uk", "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430"); // 乌克兰语
