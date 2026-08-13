@@ -1,6 +1,7 @@
 package com.guild.gui;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,8 @@ import com.guild.models.Guild;
  * <ul>
  *   <li><b>第1页</b>：核心信息（概览/统计/经济/状态）+ 模块预留槽位</li>
  *   <li><b>第1页模块预留区域</b>：12-16, 21-25, 30-34, 39-43（共20个槽位）</li>
- *   <li><b>后续页面</b>：全部用于展示模块扩展内容</li>
+ *   <li><b>模块排布</b>：所有模块按钮先紧凑填满第1页预留槽；占满后才分页</li>
+ *   <li><b>后续页面</b>：仅展示溢出模块；未使用的 EXTRA_PAGE_SLOT_LAYOUT 槽位留空</li>
  * </ul>
  */
 public class GuildInfoGUI implements GUI {
@@ -169,6 +171,13 @@ public class GuildInfoGUI implements GUI {
     @Override
     public void setupInventory(Inventory inventory) {
         this.inventory = inventory;
+        calculateTotalPages();
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+        if (currentPage < 1) {
+            currentPage = 1;
+        }
         fillBorder(inventory);
 
         if (currentPage == 1) {
@@ -190,7 +199,7 @@ public class GuildInfoGUI implements GUI {
     }
 
     /**
-     * 计算总页数
+     * 计算总页数：仅当模块按钮超过第1页预留槽位后才产生额外页。
      */
     private void calculateTotalPages() {
         GUIExtensionHook guiHook = getGuiHook();
@@ -198,14 +207,14 @@ public class GuildInfoGUI implements GUI {
             totalPages = 1;
             return;
         }
-        // 固定槽位注入占用第1页，自动分配槽位注入占用额外页面
-        int autoSlotCount = guiHook.getAutoSlotCount(GUI_TYPE);
-        if (autoSlotCount <= 0) {
+        int totalModules = guiHook.getInjectionCount(GUI_TYPE);
+        if (totalModules <= PAGE1_MODULE_SLOTS.length) {
             totalPages = 1;
-        } else {
-            int extraPages = (int) Math.ceil((double) autoSlotCount / MODULE_BUTTONS_PER_PAGE);
-            totalPages = 1 + extraPages;
+            return;
         }
+        int overflow = totalModules - PAGE1_MODULE_SLOTS.length;
+        int extraPages = (int) Math.ceil((double) overflow / MODULE_BUTTONS_PER_PAGE);
+        totalPages = 1 + Math.max(0, extraPages);
     }
 
     @Override
@@ -347,33 +356,30 @@ public class GuildInfoGUI implements GUI {
     }
 
     /**
-     * 渲染第1页的模块固定槽位注入项（紧凑排列）
+     * 渲染第1页的模块按钮（紧凑填满 PAGE1_MODULE_SLOTS）。
      * <p>
-     * 剩余模块从 PAGE1_MODULE_SLOTS[0] 开始向前紧凑排列，
-     * 模块卸载后不会留下空隙，后续槽位由 fillInteriorSlots 填充背景
+     * 固定槽位与自动槽位一并按 moduleId 排序后从左到右填充；
+     * 仅当预留槽位占满后，溢出部分才进入额外分页。
      */
     private void renderModuleFixedSlots(Inventory inv) {
         GUIExtensionHook guiHook = getGuiHook();
         if (guiHook == null) return;
 
-        List<GUIExtensionHook.GUIInjectionSlot> fixedInjections =
-                guiHook.getFixedSlotInjections(GUI_TYPE);
-
-        if (fixedInjections.isEmpty()) return;
+        List<GUIExtensionHook.GUIInjectionSlot> all = guiHook.getInjections(GUI_TYPE);
+        if (all.isEmpty()) return;
 
         fixedSlotMap = new HashMap<>();
-        int slotIndex = 0;
-        for (GUIExtensionHook.GUIInjectionSlot inj : fixedInjections) {
-            if (slotIndex >= PAGE1_MODULE_SLOTS.length) break;
-            int targetSlot = PAGE1_MODULE_SLOTS[slotIndex];
+        int limit = Math.min(all.size(), PAGE1_MODULE_SLOTS.length);
+        for (int i = 0; i < limit; i++) {
+            GUIExtensionHook.GUIInjectionSlot inj = all.get(i);
+            int targetSlot = PAGE1_MODULE_SLOTS[i];
             inv.setItem(targetSlot, inj.getDisplayItem(player, plugin.getLanguageManager()));
             fixedSlotMap.put(targetSlot, inj);
-            slotIndex++;
         }
     }
 
     /**
-     * 分发第1页点击到模块固定槽位（基于紧凑排列映射）
+     * 分发第1页点击到模块槽位（基于紧凑排列映射）
      */
     private void dispatchToModuleFixedSlot(int slot) {
         if (fixedSlotMap == null || fixedSlotMap.isEmpty()) return;
@@ -386,49 +392,65 @@ public class GuildInfoGUI implements GUI {
     // ==================== 额外页面布局 ====================
 
     /**
-     * 渲染额外页面（模块扩展内容）
+     * 渲染额外页面（第1页预留槽位溢出的模块按钮）。
+     * 未使用的 EXTRA_PAGE_SLOT_LAYOUT 槽位保持空白，不填充灰板。
      */
     private void setupExtraPage(Inventory inv) {
         GUIExtensionHook guiHook = getGuiHook();
         if (guiHook == null) return;
 
-        // 当前页对应的自动分配注入项索引偏移
-        int pageIndex = currentPage - 2; // 减去第1页
-        List<GUIExtensionHook.GUIInjectionSlot> pageInjections =
-                guiHook.getPageInjections(GUI_TYPE, pageIndex + 1, MODULE_BUTTONS_PER_PAGE);
+        List<GUIExtensionHook.GUIInjectionSlot> overflow = getOverflowInjections(guiHook);
+        if (overflow.isEmpty()) return;
 
-        // 放置到预定义槽位上
-        for (int i = 0; i < pageInjections.size() && i < EXTRA_PAGE_SLOT_LAYOUT.length; i++) {
-            GUIExtensionHook.GUIInjectionSlot inj = pageInjections.get(i);
-            inv.setItem(EXTRA_PAGE_SLOT_LAYOUT[i], inj.getDisplayItem(player, plugin.getLanguageManager()));
-        }
+        int pageIndex = currentPage - 2; // 0 = 第一张额外页
+        if (pageIndex < 0) return;
 
-        // 填充未使用槽位
-        ItemStack filler = createItem(Material.GRAY_STAINED_GLASS_PANE, " ");
-        for (int i = pageInjections.size(); i < EXTRA_PAGE_SLOT_LAYOUT.length; i++) {
-            if (inv.getItem(EXTRA_PAGE_SLOT_LAYOUT[i]) == null) {
-                inv.setItem(EXTRA_PAGE_SLOT_LAYOUT[i], filler);
-            }
+        int from = pageIndex * MODULE_BUTTONS_PER_PAGE;
+        if (from >= overflow.size()) return;
+        int to = Math.min(from + MODULE_BUTTONS_PER_PAGE, overflow.size());
+
+        for (int i = from; i < to; i++) {
+            int layoutIndex = i - from;
+            if (layoutIndex >= EXTRA_PAGE_SLOT_LAYOUT.length) break;
+            GUIExtensionHook.GUIInjectionSlot inj = overflow.get(i);
+            inv.setItem(EXTRA_PAGE_SLOT_LAYOUT[layoutIndex],
+                    inj.getDisplayItem(player, plugin.getLanguageManager()));
         }
+        // 故意不填充未使用的 EXTRA_PAGE_SLOT_LAYOUT — 保持留空
     }
 
     /**
-     * 分发额外页面点击到模块自动槽位
+     * 分发额外页面点击到溢出模块按钮
      */
     private void dispatchToModuleAutoSlot(int slot) {
         GUIExtensionHook guiHook = getGuiHook();
         if (guiHook == null) return;
 
+        List<GUIExtensionHook.GUIInjectionSlot> overflow = getOverflowInjections(guiHook);
         int pageIndex = currentPage - 2;
-        List<GUIExtensionHook.GUIInjectionSlot> pageInjections =
-                guiHook.getPageInjections(GUI_TYPE, pageIndex + 1, MODULE_BUTTONS_PER_PAGE);
+        if (pageIndex < 0) return;
 
-        for (int i = 0; i < pageInjections.size() && i < EXTRA_PAGE_SLOT_LAYOUT.length; i++) {
-            if (EXTRA_PAGE_SLOT_LAYOUT[i] == slot) {
-                pageInjections.get(i).getAction().onClick(player, guild);
+        int from = pageIndex * MODULE_BUTTONS_PER_PAGE;
+        if (from >= overflow.size()) return;
+        int to = Math.min(from + MODULE_BUTTONS_PER_PAGE, overflow.size());
+
+        for (int i = from; i < to; i++) {
+            int layoutIndex = i - from;
+            if (layoutIndex >= EXTRA_PAGE_SLOT_LAYOUT.length) break;
+            if (EXTRA_PAGE_SLOT_LAYOUT[layoutIndex] == slot) {
+                overflow.get(i).getAction().onClick(player, guild);
                 return;
             }
         }
+    }
+
+    /** 超出第1页预留槽位后的模块注入列表（已排序）。 */
+    private List<GUIExtensionHook.GUIInjectionSlot> getOverflowInjections(GUIExtensionHook guiHook) {
+        List<GUIExtensionHook.GUIInjectionSlot> all = guiHook.getInjections(GUI_TYPE);
+        if (all.size() <= PAGE1_MODULE_SLOTS.length) {
+            return Collections.emptyList();
+        }
+        return all.subList(PAGE1_MODULE_SLOTS.length, all.size());
     }
 
     // ==================== 共用UI组件 ====================
