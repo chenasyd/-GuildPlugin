@@ -17,6 +17,7 @@ import com.guild.core.module.ModuleDescriptor;
 import com.guild.core.module.ModuleState;
 import com.guild.core.module.hook.GUIExtensionHook;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
 import com.guild.module.example.quest.gui.ActiveQuestsGUI;
 import com.guild.module.example.quest.gui.GuildTreeGUI;
 import com.guild.module.example.quest.gui.QuestDetailGUI;
@@ -35,6 +36,11 @@ import com.guild.sdk.event.MemberEventData;
 import com.guild.sdk.event.MemberEventHandler;
 import com.guild.sdk.gui.GUILayoutDefinition;
 import com.guild.sdk.gui.ModuleGUIRegistration;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
+import org.bukkit.Bukkit;
 
 public class GuildQuestModule implements GuildModule {
     private ModuleContext context;
@@ -56,6 +62,7 @@ public class GuildQuestModule implements GuildModule {
 
         this.questManager = new QuestManager(dataDir, context.getLogger());
         questManager.setContext(context);
+        questManager.setCompletionListener(this::notifyQuestCompleted);
         registerDefaultQuests();
         questManager.loadAll();
 
@@ -158,7 +165,7 @@ public class GuildQuestModule implements GuildModule {
 
             context.runLater(100L, () -> {
             questTracker.start();
-            context.getLogger().info(context.getMessage("module.quest.loaded", questManager.getDefinitions().size()));
+            context.logDetail(context.getMessage("module.quest.loaded", questManager.getDefinitions().size()));
         });
 
         context.getEventBus().subscribe("guild-quest", QuestCompletedEvent.class, event -> {});
@@ -266,9 +273,115 @@ public class GuildQuestModule implements GuildModule {
             }
         } else if (args.length > 0 && args[0].equalsIgnoreCase("tree")) {
             openGuildTree(player);
+        } else if (args.length >= 2 && args[0].equalsIgnoreCase("claim")) {
+            claimQuestReward(player, args[1]);
         } else {
             openQuestList(player);
         }
+    }
+
+    /**
+     * Chat / command entry: claim a completed quest reward by quest id.
+     */
+    public void claimQuestReward(Player player, String questId) {
+        if (player == null || questId == null || questId.isEmpty()) return;
+        context.getApi().getPlayerGuild(player.getUniqueId()).thenAccept(guild -> {
+            if (guild == null) {
+                context.runSync(() -> context.sendMessage(player, "module.quest.error.no-guild",
+                    context.getMessage("module.quest.error.no-guild", "&cYou are not in any guild")));
+                return;
+            }
+            int guildId = guild.getId();
+            context.runSync(() -> doClaimQuestReward(player, guildId, questId));
+        }).exceptionally(ex -> {
+            context.runSync(() -> context.sendMessage(player, "module.quest.error.load-fail",
+                "&cFailed to query guild: " + ex.getMessage()));
+            return null;
+        });
+    }
+
+    private void doClaimQuestReward(Player player, int guildId, String questId) {
+        QuestDefinition definition = questManager.getDefinition(questId);
+        QuestProgress progress = questManager.getPlayerQuest(guildId, player.getUniqueId(), questId);
+        if (definition == null || progress == null) {
+            // Also allow claim from completed-but-period record
+            progress = questManager.getPlayerQuestAny(guildId, player.getUniqueId(), questId);
+        }
+        if (definition == null || progress == null) {
+            context.sendMessage(player, "module.quest.claim.not-found",
+                "&c[Quest] No claimable progress for this quest.");
+            return;
+        }
+        if (progress.isClaimed()) {
+            context.sendMessage(player, "module.quest.claim.already",
+                "&e[Quest] Reward already claimed.");
+            return;
+        }
+        if (!progress.isCompletedMarked() && !progress.isObjectivesCompleted(definition)) {
+            context.sendMessage(player, "module.quest.claim.not-ready",
+                "&c[Quest] Quest is not completed yet.");
+            return;
+        }
+        if (!progress.isCompletedMarked()) {
+            questManager.tryMarkCompleted(progress);
+        }
+        rewardHandler.grantRewards(player, definition, progress);
+        questManager.saveGuildProgress(guildId);
+        context.getEventBus().publish(
+            new QuestCompletedEvent(player.getName(), texts().questName(definition), guildId));
+        context.sendMessage(player, "module.quest.reward-claimed", "&a[Quest] Rewards granted!");
+
+        java.util.Map<String, Object> refreshData = new java.util.HashMap<>();
+        refreshData.put("guildId", guildId);
+        refreshData.put("playerUuid", player.getUniqueId());
+        refreshData.put("questId", questId);
+        context.notifyGUIRefresh("quest-active-list", refreshData);
+        context.notifyGUIRefresh("quest-detail", refreshData);
+        context.notifyGUIRefresh("quest-list", refreshData);
+    }
+
+    /**
+     * Notify the player in chat when a quest becomes completed (clickable claim / open panel).
+     */
+    void notifyQuestCompleted(QuestProgress progress, QuestDefinition definition) {
+        if (progress == null || definition == null) return;
+        Player player = Bukkit.getPlayer(progress.getPlayerUuid());
+        if (player == null || !player.isOnline()) return;
+
+        String questName = texts().questName(definition);
+        CompatibleScheduler.runTask(context.getPlugin(), player, () -> {
+            String line = texts().tf("module.quest.complete.notify",
+                "&a[Quest] Quest &e{0} &ahas been completed!", questName);
+            player.sendMessage(line);
+
+            String claimBtn = texts().t("module.quest.complete.claim-button",
+                "&e&l[Click to claim reward]");
+            String claimHover = texts().tf("module.quest.complete.claim-hover",
+                "&7Click to claim rewards for &e{0}", questName);
+            String openBtn = texts().t("module.quest.complete.open-button",
+                "&7[Open quest panel]");
+            String openHover = texts().t("module.quest.complete.open-hover",
+                "&7Run /g quest to open the quest GUI");
+
+            TextComponent claim = new TextComponent(ColorUtils.colorize(claimBtn));
+            claim.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                "/guild quest claim " + definition.getId()));
+            claim.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new Text(ColorUtils.colorize(claimHover))));
+
+            TextComponent sep = new TextComponent(ColorUtils.colorize(" &8| "));
+
+            TextComponent open = new TextComponent(ColorUtils.colorize(openBtn));
+            open.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/guild quest"));
+            open.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new Text(ColorUtils.colorize(openHover))));
+
+            TextComponent row = new TextComponent("");
+            row.addExtra(claim);
+            row.addExtra(sep);
+            row.addExtra(open);
+            player.spigot().sendMessage(row);
+        });
     }
 
     public void openGuildTree(Player player) {
@@ -441,7 +554,7 @@ public class GuildQuestModule implements GuildModule {
         if (questManager != null) {
             questManager.saveAll();
         }
-        context.getLogger().info(
+        context.logDetail(
             context.getMessage("module.quest.unloaded", "[Quest] Quest system disabled"));
     }
 

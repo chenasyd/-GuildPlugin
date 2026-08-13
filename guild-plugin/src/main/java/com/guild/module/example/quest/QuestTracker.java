@@ -228,9 +228,7 @@ public class QuestTracker implements Listener {
 
         // Check if quest is completed
         if (def.isCompleted(progress.getObjectiveProgress())) {
-            // Mark as completed and cancel tracking
-            progress.markAsCompleted();
-            module.getQuestManager().saveGuildProgress(guildId);
+            module.getQuestManager().tryMarkCompleted(progress);
             cancelTask(buildTaskKey(playerUuid, questId));
             return;
         }

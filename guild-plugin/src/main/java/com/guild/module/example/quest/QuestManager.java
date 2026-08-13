@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -35,6 +36,7 @@ public class QuestManager {
     private final Map<Integer, Long> lastSaveTimeMap = new ConcurrentHashMap<>();
     private static final long SAVE_INTERVAL_MS = 300000; // 5 minutes
     private ModuleContext context;
+    private BiConsumer<QuestProgress, QuestDefinition> completionListener;
 
     public QuestManager(File dataDir, Logger logger) {
         this.dataDir = new File(dataDir, "quests");
@@ -43,6 +45,10 @@ public class QuestManager {
     }
 
     public void setContext(ModuleContext ctx) { this.context = ctx; }
+
+    public void setCompletionListener(BiConsumer<QuestProgress, QuestDefinition> listener) {
+        this.completionListener = listener;
+    }
 
     private void detail(String message) {
         if (context != null) {
@@ -196,17 +202,49 @@ public class QuestManager {
         }
     }
 
-    private void checkAndMarkCompletion(QuestProgress progress) {
+    /**
+     * Mark progress completed if all objectives are done (idempotent).
+     * @return true when this call newly marked the quest completed
+     */
+    public boolean tryMarkCompleted(QuestProgress progress) {
+        return checkAndMarkCompletion(progress);
+    }
+
+    private boolean checkAndMarkCompletion(QuestProgress progress) {
+        QuestDefinition definition = null;
+        boolean newlyCompleted = false;
         synchronized (progress) {
-            if (progress.isCompletedMarked() || progress.isClaimed()) return;
-            QuestDefinition definition = definitions.get(progress.getQuestId());
-            if (definition == null) return;
+            if (progress.isCompletedMarked() || progress.isClaimed()) return false;
+            definition = definitions.get(progress.getQuestId());
+            if (definition == null) return false;
             if (progress.isObjectivesCompleted(definition)) {
                 progress.markAsCompleted();
+                newlyCompleted = true;
                 detail("[Quest] Completed: " + definition.getId() +
                     " (" + progress.getPlayerName() + ")");
             }
         }
+        if (newlyCompleted) {
+            saveGuildProgress(progress.getGuildId());
+            lastSaveTimeMap.put(progress.getGuildId(), System.currentTimeMillis());
+            if (completionListener != null && definition != null) {
+                try {
+                    completionListener.accept(progress, definition);
+                } catch (Exception e) {
+                    logger.warning("[Quest] Completion listener failed: " + e.getMessage());
+                }
+            }
+            if (context != null) {
+                java.util.Map<String, Object> refreshData = new java.util.HashMap<>();
+                refreshData.put("guildId", progress.getGuildId());
+                refreshData.put("playerUuid", progress.getPlayerUuid());
+                refreshData.put("questId", progress.getQuestId());
+                context.notifyGUIRefresh("quest-active-list", refreshData);
+                context.notifyGUIRefresh("quest-detail", refreshData);
+                context.notifyGUIRefresh("quest-list", refreshData);
+            }
+        }
+        return newlyCompleted;
     }
 
     public void claimReward(QuestProgress progress) {
