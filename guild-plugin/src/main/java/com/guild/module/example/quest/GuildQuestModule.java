@@ -18,12 +18,14 @@ import com.guild.core.module.ModuleState;
 import com.guild.core.module.hook.GUIExtensionHook;
 import com.guild.core.utils.ColorUtils;
 import com.guild.module.example.quest.gui.ActiveQuestsGUI;
+import com.guild.module.example.quest.gui.GuildTreeGUI;
 import com.guild.module.example.quest.gui.QuestDetailGUI;
 import com.guild.module.example.quest.gui.QuestListGUI;
 import com.guild.module.example.quest.model.QuestDefinition;
 import com.guild.module.example.quest.model.QuestObjective;
 import com.guild.module.example.quest.model.QuestProgress;
 import com.guild.module.example.quest.model.QuestReward;
+import com.guild.module.example.quest.tree.GuildTreeService;
 import com.guild.sdk.GuildPluginAPI;
 import com.guild.sdk.event.EconomyEventData;
 import com.guild.sdk.event.EconomyEventHandler;
@@ -42,6 +44,7 @@ public class GuildQuestModule implements GuildModule {
     private QuestManager questManager;
     private QuestTracker questTracker;
     private QuestRewardHandler rewardHandler;
+    private GuildTreeService treeService;
     private QuestTexts texts;
 
     @Override
@@ -57,6 +60,8 @@ public class GuildQuestModule implements GuildModule {
         questManager.loadAll();
 
         this.rewardHandler = new QuestRewardHandler(context);
+        this.treeService = new GuildTreeService(context);
+        this.rewardHandler.setTreeService(treeService);
         this.questTracker = new QuestTracker(this);
 
         GuildPluginAPI api = context.getApi();
@@ -81,13 +86,25 @@ public class GuildQuestModule implements GuildModule {
                 QuestProgress progress = null;
                 if (def != null && guildId > 0 && playerUuid != null) {
                     progress = questManager.getPlayerQuest(guildId, playerUuid, def.getId());
+                    // Fall back to any progress (including claimed) so detail shows completed state
+                    if (progress == null) {
+                        QuestProgress any = questManager.getPlayerQuestAny(guildId, playerUuid, def.getId());
+                        if (any != null && any.isClaimed()
+                            && questManager.isActiveInCurrentPeriod(any, def)) {
+                            progress = any;
+                        } else if (any != null && def.getType() == QuestDefinition.QuestType.ONE_TIME) {
+                            progress = any;
+                        }
+                    }
                 }
                 
-                return new QuestDetailGUI.Builder(this)
+                QuestDetailGUI gui = new QuestDetailGUI.Builder(this)
                     .fromDefinition(def)
                     .fromProgress(progress)
                     .withGuildInfo(guildId, playerUuid)
                     .build();
+                gui.setViewer(player);
+                return gui;
                 
             } catch (Exception e) {
                 context.getLogger().severe("[Quest-Factory] Failed to create QuestDetailGUI: " + e.getMessage());
@@ -144,7 +161,7 @@ public class GuildQuestModule implements GuildModule {
             "daily_hunter", QuestDefinition.QuestType.DAILY, 1, 1, true);
         daily1.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
             15, "module.quest.daily_hunter.objective"));
-        daily1.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 30));
+        daily1.addReward(new QuestReward(QuestReward.RewardType.EXP, 30));
         daily1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 50));
         questManager.registerDefinition(daily1);
 
@@ -152,8 +169,7 @@ public class GuildQuestModule implements GuildModule {
             "daily_online", QuestDefinition.QuestType.DAILY, 2, 1, true);
         daily2.addObjective(new QuestObjective(QuestObjective.ObjectiveType.ONLINE_HOURS,
             60, "module.quest.daily_online.objective"));
-        daily2.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 20));
-        daily2.addReward(new QuestReward(QuestReward.RewardType.EXP, 500));
+        daily2.addReward(new QuestReward(QuestReward.RewardType.EXP, 520));
         questManager.registerDefinition(daily2);
 
         QuestDefinition weekly1 = new QuestDefinition(
@@ -161,7 +177,7 @@ public class GuildQuestModule implements GuildModule {
         weekly1.addObjective(new QuestObjective(
             QuestObjective.ObjectiveType.DEPOSIT_MONEY, 2000,
             "module.quest.weekly_contributor.objective"));
-        weekly1.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 100));
+        weekly1.addReward(new QuestReward(QuestReward.RewardType.EXP, 100));
         weekly1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 300));
         questManager.registerDefinition(weekly1);
 
@@ -169,15 +185,14 @@ public class GuildQuestModule implements GuildModule {
             "weekly_slayer", QuestDefinition.QuestType.WEEKLY, 2, 3, true);
         weekly2.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
             100, "module.quest.weekly_slayer.objective"));
-        weekly2.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 80));
-        weekly2.addReward(new QuestReward(QuestReward.RewardType.EXP, 2000));
+        weekly2.addReward(new QuestReward(QuestReward.RewardType.EXP, 2080));
         questManager.registerDefinition(weekly2);
 
         QuestDefinition oneTime1 = new QuestDefinition(
             "onetime_first_blood", QuestDefinition.QuestType.ONE_TIME, 1, 1, false);
         oneTime1.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
             5, "module.quest.onetime_first_blood.objective"));
-        oneTime1.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 25));
+        oneTime1.addReward(new QuestReward(QuestReward.RewardType.EXP, 25));
         oneTime1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 100));
         questManager.registerDefinition(oneTime1);
     }
@@ -240,9 +255,27 @@ public class GuildQuestModule implements GuildModule {
             } else {
                 context.sendMessage(player, "module.quest.no-permission", "&cInsufficient permission");
             }
+        } else if (args.length > 0 && args[0].equalsIgnoreCase("tree")) {
+            openGuildTree(player);
         } else {
             openQuestList(player);
         }
+    }
+
+    public void openGuildTree(Player player) {
+        context.getApi().getPlayerGuild(player.getUniqueId()).thenAccept(guild -> {
+            if (guild == null) {
+                context.runSync(() -> context.sendMessage(player, "module.quest.error.no-guild",
+                    context.getMessage("module.quest.error.no-guild", "&cYou are not in any guild")));
+                return;
+            }
+            context.runSync(() -> context.openGUI(player,
+                new GuildTreeGUI(this, guild.getId(), guild.getLevel(), player.getUniqueId())));
+        }).exceptionally(ex -> {
+            context.runSync(() -> context.sendMessage(player, "module.quest.error.load-fail",
+                "&cFailed to query guild: " + ex.getMessage()));
+            return null;
+        });
     }
 
     private void handleCurrenciesCommand(org.bukkit.command.CommandSender sender, String[] args) {
@@ -270,6 +303,19 @@ public class GuildQuestModule implements GuildModule {
                 .replace("{currency}", goldName).replace("{balance}", economyManager.format(goldBalance))))
                 .append("\n");
 
+            // Query guild tree virtual EXP
+            if (treeService != null) {
+                var treeState = treeService.getOrCreate(guildId);
+                message.append(ColorUtils.colorize(context.getLanguageManager().getModuleMessage(
+                    "module.quest.currency.tree", "Guild Tree EXP: {balance}")
+                    .replace("{balance}", String.valueOf(treeState.getVirtualExp()))))
+                    .append("\n");
+                message.append(ColorUtils.colorize(context.getLanguageManager().getModuleMessage(
+                    "module.quest.currency.tree-level", "Guild Tree Level: {level}")
+                    .replace("{level}", String.valueOf(treeState.getTreeLevel()))))
+                    .append("\n");
+            }
+
             // Query guild currencies via string API (SDK v1.5+)
             String[] types = {"A_COIN", "B_COIN", "C_COIN"};
             String[] names = {"ACoin", "BCoin", "CCoin"};
@@ -294,7 +340,12 @@ public class GuildQuestModule implements GuildModule {
     private void registerEventHandlers(GuildPluginAPI api) {
         api.onGuildDelete(new GuildEventHandler() {
             @Override
-            public void onEvent(GuildEventData data) { questManager.saveAll(); }
+            public void onEvent(GuildEventData data) {
+                questManager.saveAll();
+                if (treeService != null) {
+                    treeService.invalidate(data.getGuildId());
+                }
+            }
             @Override
             public Object getModuleInstance() { return GuildQuestModule.this; }
         });
@@ -401,6 +452,8 @@ public class GuildQuestModule implements GuildModule {
     public QuestTracker getQuestTracker() { return questTracker; }
 
     public QuestRewardHandler getRewardHandler() { return rewardHandler; }
+
+    public GuildTreeService getTreeService() { return treeService; }
 
     public QuestTexts texts() {
         if (texts == null) {

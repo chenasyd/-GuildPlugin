@@ -80,6 +80,13 @@ public class QuestManager {
             logger.warning("[Quest] Accept denied: player " + progress.getPlayerName() + " is not in guild " + progress.getGuildId());
             return false;
         }
+
+        QuestDefinition def = definitions.get(progress.getQuestId());
+        if (def != null && !meetsMinGuildLevel(progress.getGuildId(), def)) {
+            logger.warning("[Quest] Accept denied: guild level too low for " + progress.getQuestId()
+                + " (need " + def.getMinGuildLevel() + ")");
+            return false;
+        }
         
         // Check if player has an unfinished same quest in other guilds
         if (hasActiveQuestInOtherGuilds(progress.getGuildId(), progress.getPlayerUuid(), progress.getQuestId())) {
@@ -91,6 +98,11 @@ public class QuestManager {
         List<QuestProgress> list = guildProgressMap.computeIfAbsent(key,
             k -> Collections.synchronizedList(new ArrayList<>()));
         synchronized (list) {
+            // Remove expired same-quest records so daily/weekly can be re-accepted after reset
+            if (def != null) {
+                list.removeIf(p -> p.getQuestId().equals(progress.getQuestId())
+                    && !isActiveInCurrentPeriod(p, def));
+            }
             for (QuestProgress p : list) {
                 if (p.getQuestId().equals(progress.getQuestId())) return false;
             }
@@ -240,25 +252,80 @@ public class QuestManager {
 
     public boolean canAccept(int guildId, UUID playerUuid, QuestDefinition def) {
         if (def == null) return false;
+        if (!meetsMinGuildLevel(guildId, def)) return false;
         switch (def.getType()) {
-            case DAILY:
-                return getAcceptedCount(guildId, playerUuid, QuestDefinition.QuestType.DAILY)
-                    < context.getConfig().getInt("settings.max-daily-quests", 3);
-            case WEEKLY:
-                // Weekly quests can be accepted once per week (per quest)
-                QuestProgress existingWeekly = getPlayerQuestAny(guildId, playerUuid, def.getId());
-                if (existingWeekly != null) {
-                    // Check if it's this week's record
-                    if (isSameWeek(existingWeekly.getAcceptedTime())) {
-                        return false; // Already accepted this week
+            case DAILY: {
+                QuestProgress existing = getPlayerQuestAny(guildId, playerUuid, def.getId());
+                if (existing != null) {
+                    if (isActiveInCurrentPeriod(existing, def)) {
+                        return false; // in progress or completed today
                     }
                 }
+                return getAcceptedCount(guildId, playerUuid, QuestDefinition.QuestType.DAILY)
+                    < context.getConfig().getInt("settings.max-daily-quests", 3);
+            }
+            case WEEKLY: {
+                QuestProgress existingWeekly = getPlayerQuestAny(guildId, playerUuid, def.getId());
+                if (existingWeekly != null && isActiveInCurrentPeriod(existingWeekly, def)) {
+                    return false; // accepted or completed this week
+                }
                 return true;
+            }
             case ONE_TIME:
                 QuestProgress existing = getPlayerQuestAny(guildId, playerUuid, def.getId());
                 return existing == null;
             default:
                 return true;
+        }
+    }
+
+    /**
+     * Whether progress still blocks re-accept in the current daily/weekly period.
+     */
+    public boolean isActiveInCurrentPeriod(QuestProgress progress, QuestDefinition def) {
+        if (progress == null || def == null) return false;
+        long refTime = progress.isClaimed()
+            ? (progress.getClaimedTime() > 0 ? progress.getClaimedTime() : progress.getAcceptedTime())
+            : progress.getAcceptedTime();
+        return switch (def.getType()) {
+            case DAILY -> isSameDay(refTime);
+            case WEEKLY -> isSameWeek(refTime);
+            case ONE_TIME -> true;
+        };
+    }
+
+    /** Claimed (or still held) today for this daily quest. */
+    public boolean isDailyCompletedToday(int guildId, UUID playerUuid, String questId) {
+        QuestProgress p = getPlayerQuestAny(guildId, playerUuid, questId);
+        if (p == null || !p.isClaimed()) return false;
+        QuestDefinition def = definitions.get(questId);
+        return def != null && def.getType() == QuestDefinition.QuestType.DAILY
+            && isActiveInCurrentPeriod(p, def);
+    }
+
+    /** Claimed (or still held) this week for this weekly quest. */
+    public boolean isWeeklyCompletedThisWeek(int guildId, UUID playerUuid, String questId) {
+        QuestProgress p = getPlayerQuestAny(guildId, playerUuid, questId);
+        if (p == null || !p.isClaimed()) return false;
+        QuestDefinition def = definitions.get(questId);
+        return def != null && def.getType() == QuestDefinition.QuestType.WEEKLY
+            && isActiveInCurrentPeriod(p, def);
+    }
+
+    /** Whether the guild's level meets the quest's minimum requirement. */
+    public boolean meetsMinGuildLevel(int guildId, QuestDefinition def) {
+        if (def == null) return false;
+        return getGuildLevel(guildId) >= def.getMinGuildLevel();
+    }
+
+    public int getGuildLevel(int guildId) {
+        if (context == null || guildId <= 0) return 0;
+        try {
+            var guild = context.getPlugin().getGuildService().getGuildById(guildId);
+            return guild != null ? guild.getLevel() : 0;
+        } catch (Exception e) {
+            logger.warning("[Quest] Guild level lookup failed: " + e.getMessage());
+            return 0;
         }
     }
 

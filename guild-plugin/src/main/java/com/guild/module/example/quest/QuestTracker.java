@@ -159,7 +159,16 @@ public class QuestTracker implements Listener {
     }
 
     /**
-     * Start tracking timer for a player's online-hour quest
+     * Public entry: start online tracking after accepting a quest (or on join).
+     */
+    public void startTrackingForQuest(Player player, int guildId, QuestDefinition def, QuestProgress progress) {
+        if (player == null || def == null || progress == null) return;
+        if (!hasOnlineHourObjective(def)) return;
+        startOnlineTracking(player, guildId, def, progress);
+    }
+
+    /**
+     * Start tracking timer for a player's online-hour quest (1 minute = +1 progress).
      */
     private void startOnlineTracking(Player player, int guildId, QuestDefinition def, QuestProgress progress) {
         String taskId = buildTaskKey(player.getUniqueId(), def.getId());
@@ -177,12 +186,12 @@ public class QuestTracker implements Listener {
         UUID playerUuid = player.getUniqueId();
         String questId = def.getId();
 
-        // Create and register timer - every 15 minutes
+        // Every 60 seconds: +1 toward ONLINE_HOURS target (minutes)
         ScheduledTaskHandle task = CompatibleScheduler.runTaskTimer(
             module.getContext().getPlugin(),
             () -> updateOnlineProgress(playerUuid, guildId, questId),
-            1200L,   // 1-minute delay (60s / 20 ticks)
-            18000L   // Every 15 minutes (900s / 20 ticks)
+            1200L,   // 1-minute delay
+            1200L    // every 1 minute
         );
 
         // Store in management map
@@ -226,14 +235,21 @@ public class QuestTracker implements Listener {
             return;
         }
 
-        // Update all online-hour objective progress
+        // Update all online-hour objective progress (+1 minute per tick)
         for (int i = 0; i < def.getObjectives().size(); i++) {
             QuestObjective obj = def.getObjectives().get(i);
             if (obj.getType() == QuestObjective.ObjectiveType.ONLINE_HOURS) {
-                // Update every 15 minutes, +15 each tick
-                module.getQuestManager().updateAndSave(guildId, playerUuid, questId, i, 15);
+                module.getQuestManager().updateAndSave(guildId, playerUuid, questId, i, 1);
             }
         }
+
+        java.util.Map<String, Object> refreshData = new java.util.HashMap<>();
+        refreshData.put("guildId", guildId);
+        refreshData.put("playerUuid", playerUuid);
+        refreshData.put("questId", questId);
+        module.getContext().notifyGUIRefresh("quest-active-list", refreshData);
+        module.getContext().notifyGUIRefresh("quest-detail", refreshData);
+        module.getContext().notifyGUIRefresh("quest-list", refreshData);
     }
 
     /**

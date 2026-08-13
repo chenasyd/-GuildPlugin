@@ -16,6 +16,13 @@ settings:
   auto-save-interval-minutes: 10
 
 rewards:
-  default-contribution-per-quest: 50
   default-money-reward: 100
   enable-exp-reward: true
+
+# Guild Tree (shared virtual EXP from quests)
+tree:
+  base-rate: 1.0
+  rate-per-level: 0.05
+  daily-withdraw-cap-per-level: 1000
+  max-single-withdraw-per-level: 500
+  upgrade-base-cost: 500

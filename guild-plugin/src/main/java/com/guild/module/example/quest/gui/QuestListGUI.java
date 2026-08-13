@@ -137,6 +137,11 @@ public class QuestListGUI extends AbstractModuleGUI {
         inv.setItem(49, createBackButton(
             tx.t("module.quest.back", "&cBack"),
             tx.t("module.quest.back-hint", "&7Return to guild info")));
+        inv.setItem(48, createItem(Material.OAK_SAPLING,
+            tx.t("module.quest.tree.button", "&a&lGuild Tree"),
+            "",
+            tx.t("module.quest.tree.button-lore", "&7View shared virtual EXP & withdraw"),
+            tx.t("module.quest.gui.click-hint", "&8| Click to open")));
     }
 
     private List<String> buildQuestLore(QuestDefinition def, boolean canAccept,
@@ -168,18 +173,48 @@ public class QuestListGUI extends AbstractModuleGUI {
         lore.add(tx.tf("module.quest.gui.min-level", "&7Min Guild Level: &f{0}", def.getMinGuildLevel()));
 
         if (!canAccept) {
+            if (!module.getQuestManager().meetsMinGuildLevel(guildId, def)) {
+                lore.add(tx.tf("module.quest.gui.level-required",
+                    "&cRequires guild level: {0} (current: &f{1}&c)",
+                    def.getMinGuildLevel(),
+                    module.getQuestManager().getGuildLevel(guildId)));
+            } else {
             switch (def.getType()) {
-                case DAILY:
-                    lore.add(tx.tf("module.quest.gui.daily-limit",
-                        "&cDaily limit reached ({0}/{1})", acceptedDaily, maxDaily));
+                case DAILY: {
+                    QuestProgress dailyAny = module.getQuestManager()
+                        .getPlayerQuestAny(guildId, playerUuid, def.getId());
+                    if (dailyAny != null && dailyAny.isClaimed()
+                        && module.getQuestManager().isDailyCompletedToday(guildId, playerUuid, def.getId())) {
+                        lore.add(tx.t("module.quest.gui.daily-completed",
+                            "&cCompleted today, cannot accept again"));
+                    } else if (dailyAny != null && !dailyAny.isClaimed()) {
+                        lore.add(tx.t("module.quest.gui.accepted-progress", "&aAccepted (In Progress)"));
+                        lore.add(tx.t("module.quest.gui.click-details", "&7Click to view details & progress"));
+                    } else {
+                        lore.add(tx.tf("module.quest.gui.daily-limit",
+                            "&cDaily limit reached ({0}/{1})", acceptedDaily, maxDaily));
+                    }
                     lore.add(tx.tf("module.quest.gui.next-available",
                         "&7Next available: &f{0}", formatNextResetTime("daily")));
                     break;
-                case WEEKLY:
-                    lore.add(tx.t("module.quest.gui.weekly-accepted", "&cAlready accepted this week"));
+                }
+                case WEEKLY: {
+                    QuestProgress weeklyAny = module.getQuestManager()
+                        .getPlayerQuestAny(guildId, playerUuid, def.getId());
+                    if (weeklyAny != null && weeklyAny.isClaimed()
+                        && module.getQuestManager().isWeeklyCompletedThisWeek(guildId, playerUuid, def.getId())) {
+                        lore.add(tx.t("module.quest.gui.weekly-completed",
+                            "&cCompleted this week, cannot accept again"));
+                    } else if (weeklyAny != null && !weeklyAny.isClaimed()) {
+                        lore.add(tx.t("module.quest.gui.accepted-progress", "&aAccepted (In Progress)"));
+                        lore.add(tx.t("module.quest.gui.click-details", "&7Click to view details & progress"));
+                    } else {
+                        lore.add(tx.t("module.quest.gui.weekly-accepted", "&cAlready accepted this week"));
+                    }
                     lore.add(tx.tf("module.quest.gui.next-available",
                         "&7Next available: &f{0}", formatNextResetTime("weekly")));
                     break;
+                }
                 case ONE_TIME:
                     QuestProgress oneTimeProgress = module.getQuestManager()
                         .getPlayerQuestAny(guildId, playerUuid, def.getId());
@@ -192,6 +227,7 @@ public class QuestListGUI extends AbstractModuleGUI {
                         lore.add(tx.t("module.quest.cannot-accept", "&cCannot accept this quest"));
                     }
                     break;
+            }
             }
         } else if (alreadyAccepted) {
             lore.add(tx.t("module.quest.gui.accepted-progress", "&aAccepted (In Progress)"));
@@ -239,7 +275,15 @@ public class QuestListGUI extends AbstractModuleGUI {
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         int totalPages = getTotalPages(dailyQuests.size() + weeklyQuests.size() + oneTimeQuests.size());
 
-        if (slot == 49) { context.navigateBack(player); return; }
+        if (slot == 49) {
+            openGuildInfo(player);
+            return;
+        }
+        if (slot == 48) {
+            int gLevel = module.getQuestManager().getGuildLevel(guildId);
+            context.openGUI(player, new GuildTreeGUI(module, guildId, gLevel, player.getUniqueId()));
+            return;
+        }
 
         if (slot == 45 && currentPage > 1) { currentPage--; refresh(player); return; }
         if (slot == 53 && currentPage < totalPages) { currentPage++; refresh(player); return; }
@@ -263,6 +307,21 @@ public class QuestListGUI extends AbstractModuleGUI {
                 player.sendMessage(ColorUtils.colorize(tx.tf("module.quest.error.reason-line",
                     "&7Reason: &c{0}", e.getMessage())));
             }
+        }
+    }
+
+    private void openGuildInfo(Player player) {
+        try {
+            var guild = context.getPlugin().getGuildService().getGuildById(guildId);
+            if (guild == null) {
+                player.closeInventory();
+                return;
+            }
+            context.getPlugin().getGuiManager().openGUI(player,
+                new com.guild.gui.GuildInfoGUI(context.getPlugin(), player, guild));
+        } catch (Exception e) {
+            context.getLogger().warning("[Quest-List] Failed to open GuildInfoGUI: " + e.getMessage());
+            player.closeInventory();
         }
     }
 }

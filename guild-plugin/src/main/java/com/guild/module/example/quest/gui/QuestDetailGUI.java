@@ -46,6 +46,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     // Metadata
     private final int guildId;
     private final UUID playerUuid;
+    private Player viewer;
     
     /**
      * Private constructor - only receives preprocessed data
@@ -68,6 +69,31 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         
         this.guildId = builder.guildId;
         this.playerUuid = builder.playerUuid;
+        registerRefreshListener();
+    }
+
+    private void registerRefreshListener() {
+        module.getContext().registerGUIRefreshListener("quest-detail", (guiType, data) -> {
+            if (viewer == null || !viewer.isOnline()) return;
+            if (this.inventory == null
+                || viewer.getOpenInventory() == null
+                || viewer.getOpenInventory().getTopInventory() != this.inventory) {
+                return;
+            }
+            Object guildIdObj = data.get("guildId");
+            int notifiedGuildId = guildIdObj instanceof Number ? ((Number) guildIdObj).intValue() : 0;
+            UUID notifiedPlayer = data.get("playerUuid") instanceof UUID
+                ? (UUID) data.get("playerUuid") : null;
+            Object questIdObj = data.get("questId");
+            if (notifiedGuildId != guildId) return;
+            if (notifiedPlayer != null && !notifiedPlayer.equals(playerUuid)) return;
+            if (questIdObj != null && !questIdObj.toString().equals(questId)) return;
+            forceRefreshContent(viewer);
+        });
+    }
+
+    public void setViewer(Player player) {
+        this.viewer = player;
     }
     
     private String localizedName() {
@@ -211,11 +237,11 @@ public class QuestDetailGUI extends AbstractModuleGUI {
                 "",
                 tx.t("module.quest.gui.claimed-hint", "&7This quest has been completed and reward claimed")));
         } else if (hasProgress) {
-            inv.setItem(40, createItem(Material.REDSTONE,
-                tx.t("module.quest.gui.cancel-button", "&c&l[ Cancel Quest ]"),
+            inv.setItem(40, createItem(Material.COMPASS,
+                tx.t("module.quest.status.in-progress", "&6&lIn Progress"),
                 "",
-                tx.t("module.quest.gui.cancel-hint", "&7Abandon current progress (cannot undo)"),
-                tx.t("module.quest.gui.click-hint-cancel", "&8| Click to cancel")));
+                tx.t("module.quest.gui.progress-tracking", "&7Progress is being tracked"),
+                getProgressText()));
         } else {
             inv.setItem(40, createItem(Material.BARRIER,
                 tx.t("module.quest.gui.cannot-accept-button", "&c&l[ Cannot Accept ]"),
@@ -223,10 +249,19 @@ public class QuestDetailGUI extends AbstractModuleGUI {
                 getCannotAcceptReason(),
                 tx.t("module.quest.gui.check-requirements", "&7Check requirements and try again")));
         }
+
+        inv.setItem(49, createBackButton(
+            tx.t("module.quest.gui.back-button", "&e&l[ Back ]"),
+            tx.t("module.quest.gui.back-hint", "&7Return to quest list")));
     }
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
+        this.viewer = player;
+        if (slot == 49) {
+            handleBack(player);
+            return;
+        }
         if (slot == 40 && clickType.isLeftClick()) {
             handleActionButtonClick(player);
         }
@@ -240,9 +275,8 @@ public class QuestDetailGUI extends AbstractModuleGUI {
             handleAccept(player);
         } else if (isCompleted && !isClaimed) {
             handleClaimReward(player);
-        } else if (hasProgress && !isCompleted) {
-            handleCancel(player);
         }
+        // In-progress / claimed / cannot-accept: no action on slot 40 (use slot 49 to go back)
     }
     
     private void handleAccept(Player player) {
@@ -268,6 +302,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         if (module.getQuestManager().acceptQuest(newProgress)) {
             module.getContext().sendMessage(player, "module.quest.accepted-named",
                 localizedName());
+            module.getQuestTracker().startTrackingForQuest(player, guildId, definition, newProgress);
             
             notifyOtherGUIsRefresh();
             forceRefreshContent(player);
@@ -302,9 +337,9 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         forceRefreshContent(player);
     }
     
-    private void handleCancel(Player player) {
-        player.sendMessage(ColorUtils.colorize(tx.t("module.quest.cancel-unimplemented",
-            "&c[Quest] Cancel feature not yet implemented")));
+    private void handleBack(Player player) {
+        // Fixed navigation: detail always returns to quest list
+        module.getContext().openGUI(player, new QuestListGUI(module, guildId, playerUuid));
     }
     
     // ==================== Helper Methods ====================
@@ -385,11 +420,29 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         }
         
         try {
-            var guildData = module.getContext().getApi().getPlayerGuild(playerUuid).getNow(null);
-            if (guildData != null && guildData.getLevel() < minGuildLevel) {
+            int currentLevel = module.getQuestManager().getGuildLevel(guildId);
+            if (currentLevel < minGuildLevel) {
                 return tx.tf("module.quest.gui.level-required",
                     "&cRequires guild level: {0} (current: &f{1}&c)",
-                    minGuildLevel, guildData.getLevel());
+                    minGuildLevel, currentLevel);
+            }
+
+            QuestDefinition def = module.getQuestManager().getDefinition(questId);
+            if (def != null) {
+                if (def.getType() == QuestDefinition.QuestType.DAILY
+                    && module.getQuestManager().isDailyCompletedToday(guildId, playerUuid, questId)) {
+                    return tx.t("module.quest.gui.daily-completed",
+                        "&cCompleted today, cannot accept again");
+                }
+                if (def.getType() == QuestDefinition.QuestType.WEEKLY
+                    && module.getQuestManager().isWeeklyCompletedThisWeek(guildId, playerUuid, questId)) {
+                    return tx.t("module.quest.gui.weekly-completed",
+                        "&cCompleted this week, cannot accept again");
+                }
+                QuestProgress any = module.getQuestManager().getPlayerQuestAny(guildId, playerUuid, questId);
+                if (any != null && !any.isClaimed()) {
+                    return tx.t("module.quest.gui.already-accepted", "&cAlready accepted this quest");
+                }
             }
         } catch (Exception ignored) {}
         

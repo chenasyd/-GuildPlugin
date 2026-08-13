@@ -33,7 +33,7 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
         this.module = module;
         this.context = module.getContext();
         this.tx = module.texts();
-        this.activeQuests = activeQuests != null ? activeQuests : Collections.emptyList();
+        this.activeQuests = new ArrayList<>(activeQuests != null ? activeQuests : Collections.emptyList());
         this.guildId = guildId;
         this.playerUuid = playerUuid;
         registerRefreshListener();
@@ -158,6 +158,20 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
 
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
+        if (slot == 49) {
+            try {
+                var guild = context.getPlugin().getGuildService().getGuildById(guildId);
+                if (guild == null) {
+                    player.closeInventory();
+                    return;
+                }
+                context.getPlugin().getGuiManager().openGUI(player,
+                    new com.guild.gui.GuildInfoGUI(context.getPlugin(), player, guild));
+            } catch (Exception e) {
+                player.closeInventory();
+            }
+            return;
+        }
         int totalPages = getTotalPages(activeQuests.size());
         if (slot == 45 && currentPage > 1) { currentPage--; refresh(player); }
         else if (slot == 53 && currentPage < totalPages) { currentPage++; refresh(player); }
