@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.guild.core.module.ModuleContext;
+import com.guild.core.utils.QuietLog;
 import com.guild.module.example.quest.model.QuestDefinition;
 import com.guild.module.example.quest.model.QuestProgress;
 
@@ -43,9 +44,17 @@ public class QuestManager {
 
     public void setContext(ModuleContext ctx) { this.context = ctx; }
 
+    private void detail(String message) {
+        if (context != null) {
+            context.logDetail(message);
+        } else {
+            QuietLog.module("Guild Quests", message);
+        }
+    }
+
     public void registerDefinition(QuestDefinition def) {
         definitions.put(def.getId(), def);
-        logger.info("[Quest] Registered: " + def.getId() + " (" + def.getType() + ")");
+        detail("[Quest] Registered: " + def.getId() + " (" + def.getType() + ")");
     }
 
     public void unregisterDefinition(String questId) {
@@ -109,7 +118,7 @@ public class QuestManager {
             list.add(progress);
         }
         saveGuildProgress(progress.getGuildId());
-        logger.info("[Quest] " + progress.getPlayerName() + " accepted: " + progress.getQuestId() +
+        detail("[Quest] " + progress.getPlayerName() + " accepted: " + progress.getQuestId() +
             " (guildId=" + progress.getGuildId() + ")");
         return true;
     }
@@ -194,7 +203,7 @@ public class QuestManager {
             if (definition == null) return;
             if (progress.isObjectivesCompleted(definition)) {
                 progress.markAsCompleted();
-                logger.info("[Quest] Completed: " + definition.getId() +
+                detail("[Quest] Completed: " + definition.getId() +
                     " (" + progress.getPlayerName() + ")");
             }
         }
@@ -333,7 +342,7 @@ public class QuestManager {
         synchronized (saveLock) {
             resetQuestsByType(guildId, QuestDefinition.QuestType.DAILY);
             doSaveGuildProgress(guildId);
-            logger.info("[Quest] Guild #" + guildId + " daily quests reset");
+            detail("[Quest] Guild #" + guildId + " daily quests reset");
         }
     }
 
@@ -341,7 +350,7 @@ public class QuestManager {
         synchronized (saveLock) {
             resetQuestsByType(guildId, QuestDefinition.QuestType.WEEKLY);
             doSaveGuildProgress(guildId);
-            logger.info("[Quest] Guild #" + guildId + " weekly quests reset");
+            detail("[Quest] Guild #" + guildId + " weekly quests reset");
         }
     }
 
@@ -382,9 +391,9 @@ public class QuestManager {
             }
         }
         if (totalExpired > 0) {
-            logger.info("[Quest] Cleaned up " + totalExpired + " expired progress entries");
+            detail("[Quest] Cleaned up " + totalExpired + " expired progress entries");
         }
-        logger.info("[Quest] Loaded " + totalLoaded + " progress entries from " + files.length + " guild file(s)");
+        detail("[Quest] Loaded " + totalLoaded + " progress entries from " + files.length + " guild file(s)");
     }
 
     private boolean isSameDay(long timestamp) {
@@ -503,7 +512,7 @@ public class QuestManager {
         }
 
         if (expiredCount > 0) {
-            logger.info("[Quest] " + file.getName() + ": " + expiredCount + " expired, " + validCount + " kept");
+            detail("[Quest] " + file.getName() + ": " + expiredCount + " expired, " + validCount + " kept");
         }
 
         return new int[]{expiredCount, validCount};

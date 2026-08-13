@@ -8,6 +8,7 @@ import com.guild.core.gui.GUIManager;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.QuietLog;
 import com.guild.core.utils.ScheduledTaskHandle;
 import com.guild.sdk.GuildPluginAPI;
 import com.guild.sdk.config.ModuleConfigSection;
@@ -93,8 +94,16 @@ public class ModuleContext {
 
     // ==================== 日志 ====================
 
-    /** 获取模块专用 Logger */
+    /** 获取模块专用 Logger（INFO+ 会进控制台；运行时细节请用 {@link #logDetail}） */
     public Logger getLogger() { return logger; }
+
+    /**
+     * 写入插件文件日志（{@code plugins/GuildPlugin/logs/}），默认不刷控制台。
+     * 适合任务完成、奖励、进度等运行时细节。
+     */
+    public void logDetail(String message) {
+        QuietLog.module(descriptor.getName(), message);
+    }
 
     // ==================== 消息发送（本地化） ====================
 

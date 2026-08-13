@@ -18,6 +18,8 @@ import com.guild.core.language.LanguageManager;
 import com.guild.core.permissions.PermissionManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.DebugLog;
+import com.guild.core.utils.QuietLog;
 import com.guild.gui.ConfirmDeleteGuildGUI;
 import com.guild.gui.MainGuildGUI;
 import com.guild.models.Guild;
@@ -874,12 +876,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                         return;
                     }
                     
-                    plugin.getLogger().info("[Accept-Debug] 找到邀请 ID=" + invitation.getId() + " 从 " + invitation.getInviterName() + " 到 " + invitation.getTargetName());
+                    DebugLog.info(plugin.getLogger(), "[Accept-Debug] 找到邀请 ID=" + invitation.getId() + " 从 " + invitation.getInviterName() + " 到 " + invitation.getTargetName());
                     
                     // 处理邀请接受
                     guildService.processInvitationDirectAsync(invitation, true).thenAccept(success -> {
                         if (success) {
-                            plugin.getLogger().info("[Accept-Debug] 邀请处理成功，玩家 " + player.getName() + " 已加入 " + guild.getName());
+                            DebugLog.info(plugin.getLogger(), "[Accept-Debug] 邀请处理成功，玩家 " + player.getName() + " 已加入 " + guild.getName());
+                            QuietLog.system("Player " + player.getName() + " accepted invitation and joined " + guild.getName());
                             CompatibleScheduler.runTask(plugin, player, () -> {
                                 String message = languageManager.getCoreMessage(player, "guild.accept.success", "&a已成功加入公会！");
                                 player.sendMessage(ColorUtils.colorize(message));

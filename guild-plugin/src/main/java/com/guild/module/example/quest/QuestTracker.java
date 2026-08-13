@@ -44,7 +44,7 @@ public class QuestTracker implements Listener {
         try {
             module.getContext().registerEvents(this);
             running = true;
-            logger.info("[Quest-Tracker] Event listeners started");
+            module.getContext().logDetail("[Quest-Tracker] Event listeners started");
         } catch (Exception e) {
             logger.warning("[Quest-Tracker] Failed to register event listeners: " + e.getMessage());
         }
@@ -72,9 +72,9 @@ public class QuestTracker implements Listener {
         PlayerQuitEvent.getHandlerList().unregister(this);
 
         if (taskCount > 0) {
-            logger.info("[Quest-Tracker] Cleaned up " + taskCount + " active timer(s)");
+            module.getContext().logDetail("[Quest-Tracker] Cleaned up " + taskCount + " active timer(s)");
         }
-        logger.info("[Quest-Tracker] Event listeners stopped");
+        module.getContext().logDetail("[Quest-Tracker] Event listeners stopped");
     }
 
     @EventHandler

@@ -1,5 +1,7 @@
 package com.guild.core.events;
 
+import com.guild.core.utils.QuietLog;
+
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -33,7 +35,7 @@ public class EventBus {
     @SuppressWarnings("unchecked")
     public <T> void subscribe(Class<T> eventType, Consumer<T> listener) {
         listeners.computeIfAbsent(eventType, k -> new CopyOnWriteArrayList<>()).add(listener);
-        logger.info("Registered event listener: " + eventType.getSimpleName());
+        QuietLog.system("Registered event listener: " + eventType.getSimpleName());
     }
     
     /**
@@ -54,7 +56,7 @@ public class EventBus {
         CopyOnWriteArrayList<Consumer<?>> eventListeners = listeners.get(eventType);
         if (eventListeners != null) {
             eventListeners.remove(listener);
-            logger.info("Unregistered event listener: " + eventType.getSimpleName());
+            QuietLog.system("Unregistered event listener: " + eventType.getSimpleName());
         }
     }
     
@@ -70,7 +72,7 @@ public class EventBus {
                 eventListeners.remove(record.handler);
             }
         }
-        logger.info("Removed all event subscriptions for module: " + moduleId);
+        QuietLog.system("Removed all event subscriptions for module: " + moduleId);
     }
     
     /**
@@ -103,7 +105,7 @@ public class EventBus {
     public void clear() {
         listeners.clear();
         moduleSubscriptions.clear();
-        logger.info("Cleared all event listeners");
+        QuietLog.system("Cleared all event listeners");
     }
     
     /**

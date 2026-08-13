@@ -196,7 +196,7 @@ public final class BungeeClientAPI implements PluginMessageListener {
 
             String payload = root.has("payload") ? root.get("payload").getAsString() : "{}";
 
-            logger.info("[BungeeClient] Received: type=" + type);
+            logger.fine("[BungeeClient] Received: type=" + type);
 
             // Handle player connection type messages internally
             if ("guild.player.connect".equals(type)) {
@@ -245,7 +245,7 @@ public final class BungeeClientAPI implements PluginMessageListener {
             );
 
             playerConnectionCache.put(uuid, info);
-            logger.info("[BungeeClient] Cached connection type for " + name
+            logger.fine("[BungeeClient] Cached connection type for " + name
                     + ": " + connectionType);
 
             // Notify registered callback (e.g., guild-plugin GUI refresh for late Bedrock detection)

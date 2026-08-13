@@ -69,7 +69,7 @@ public class GuildTreeService {
             String name = player != null ? player.getName() : "system";
             repository.insertLedger(guildId, uuid, name, "DEPOSIT", amount, 0,
                 state.getTreeLevel(), reason);
-            logger.info("[GuildTree] Guild #" + guildId + " +" + amount + " virtual EXP (" + reason + ")");
+            context.logDetail("[GuildTree] Guild #" + guildId + " +" + amount + " virtual EXP (" + reason + ")");
             return true;
         }
     }
@@ -118,7 +118,7 @@ public class GuildTreeService {
             repository.addDailyWithdrawn(guildId, player.getUniqueId(), dayKey, vanilla);
             repository.insertLedger(guildId, player.getUniqueId(), player.getName(),
                 "WITHDRAW", cost, vanilla, state.getTreeLevel(), "player_withdraw");
-            logger.info("[GuildTree] " + player.getName() + " withdrew " + vanilla
+            context.logDetail("[GuildTree] " + player.getName() + " withdrew " + vanilla
                 + " EXP from guild #" + guildId + " (cost " + cost + ")");
             return WithdrawResult.SUCCESS;
         }
@@ -159,7 +159,7 @@ public class GuildTreeService {
             }
             repository.insertLedger(guildId, player.getUniqueId(), player.getName(),
                 "UPGRADE", cost, 0, state.getTreeLevel(), "tree_upgrade");
-            logger.info("[GuildTree] Guild #" + guildId + " tree upgraded to " + state.getTreeLevel()
+            context.logDetail("[GuildTree] Guild #" + guildId + " tree upgraded to " + state.getTreeLevel()
                 + " by " + player.getName());
             return UpgradeResult.SUCCESS;
         }

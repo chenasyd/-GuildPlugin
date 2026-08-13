@@ -35,13 +35,14 @@ import java.util.logging.Logger;
  *   <li>GUI — GUI 打开/关闭/点击操作</li>
  *   <li>QUERY — 数据查询操作</li>
  *   <li>SYSTEM — 插件系统事件（启动/关闭/错误）</li>
+ *   <li>MODULE — 模块运行时细节（默认仅写文件，不刷控制台）</li>
  * </ul>
  */
 public class PluginFileLogger {
 
     /** 日志类别枚举 */
     public enum Category {
-        COMMAND, ADMIN, GUI, QUERY, SYSTEM
+        COMMAND, ADMIN, GUI, QUERY, SYSTEM, MODULE
     }
 
     private static final DateTimeFormatter TIME_FMT =
@@ -130,6 +131,16 @@ public class PluginFileLogger {
      */
     public void logSystem(String message) {
         log(Category.SYSTEM, "System", message);
+    }
+
+    /**
+     * 记录模块运行时细节（文件保留，控制台默认不可见）。
+     *
+     * @param moduleName 模块名
+     * @param message    事件描述
+     */
+    public void logModule(String moduleName, String message) {
+        log(Category.MODULE, moduleName != null ? moduleName : "Module", message);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.guild.module.example.quest;
 
 import com.guild.core.module.ModuleContext;
+import com.guild.core.utils.QuietLog;
 import com.guild.module.example.quest.model.QuestDefinition;
 import com.guild.module.example.quest.model.QuestProgress;
 import com.guild.module.example.quest.model.QuestReward;
@@ -90,7 +91,7 @@ public class QuestRewardHandler {
             boolean success = treeService.deposit(resolvedGuildId, player, expAmount, "quest:" + questName);
             if (success) {
                 successList.add("TreeEXP+" + expAmount);
-                logger.info("[Quest-Reward] " + player.getName()
+                context.logDetail("[Quest-Reward] " + player.getName()
                     + " TreeEXP+" + expAmount + " (quest: " + questName + ", guild=" + resolvedGuildId + ")");
                 return true;
             }
@@ -127,7 +128,7 @@ public class QuestRewardHandler {
             if (success) {
                 String msg = "$" + String.format("%.0f", amount);
                 successList.add(msg);
-                logger.info("[Quest-Reward] " + player.getName()
+                context.logDetail("[Quest-Reward] " + player.getName()
                     + " received $" + String.format("%.0f", amount) + " (quest: " + questName + ")");
                 return true;
             }
@@ -157,9 +158,10 @@ public class QuestRewardHandler {
         }
 
         if (failedList.isEmpty()) {
-            logger.info(logMsg.toString());
+            context.logDetail(logMsg.toString());
         } else {
             logger.warning(logMsg.toString());
+            QuietLog.module(context.getDescriptor().getName(), logMsg.toString());
         }
     }
 

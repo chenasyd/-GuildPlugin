@@ -26,6 +26,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.core.utils.DebugLog;
+import com.guild.core.utils.QuietLog;
 
 public class GuildService {
     
@@ -130,7 +132,7 @@ public class GuildService {
                                 try (ResultSet rs = stmt.getGeneratedKeys()) {
                                     if (rs.next()) {
                                         int guildId = rs.getInt(1);
-                                        logger.info("Guild created successfully: " + name + " (ID: " + guildId + ")");
+                                        QuietLog.system("Guild created successfully: " + name + " (ID: " + guildId + ")");
                                         return guildId;
                                     }
                                 }
@@ -210,7 +212,7 @@ public class GuildService {
                             stmt.setInt(1, guildId);
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
-                                logger.info("Guild deleted successfully: " + guild.getName() + " (ID: " + guildId + ")");
+                                QuietLog.system("Guild deleted successfully: " + guild.getName() + " (ID: " + guildId + ")");
                                 
                                 // 退款给会长（如果经济系统可用）
                                 if (guildBalance > 0 && plugin.getEconomyManager().isVaultAvailable()) {
@@ -302,7 +304,7 @@ public class GuildService {
                         stmt.setInt(1, guildId);
                         int affectedRows = stmt.executeUpdate();
                         if (affectedRows > 0) {
-                            logger.info("Admin force-deleted guild: " + guild.getName() + " (ID: " + guildId + ", by: " + adminUuid + ")");
+                            QuietLog.system("Admin force-deleted guild: " + guild.getName() + " (ID: " + guildId + ", by: " + adminUuid + ")");
                             
                             // 退款给会长（如果经济系统可用）— 注意：退款给会长而非管理员
                             if (guildBalance > 0 && plugin.getEconomyManager().isVaultAvailable()) {
@@ -385,7 +387,7 @@ public class GuildService {
                                     
                                     int affectedRows = stmt.executeUpdate();
                                     if (affectedRows > 0) {
-                                        logger.info("Guild info updated successfully: " + guild.getName() + " (ID: " + guildId + ")");
+                                        QuietLog.system("Guild info updated successfully: " + guild.getName() + " (ID: " + guildId + ")");
                                         return true;
                                     }
                                 }
@@ -416,7 +418,7 @@ public class GuildService {
      * 包含人数上限检查：查询目标工会当前成员数，与有效上限比较。
      */
     public CompletableFuture<Boolean> addGuildMemberAsync(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
-        logger.info("[AddMember-Debug] Starting member add: guildId=" + guildId + ", player=" + playerName + ", uuid=" + playerUuid);
+        DebugLog.info(logger, "[AddMember-Debug] Starting member add: guildId=" + guildId + ", player=" + playerName + ", uuid=" + playerUuid);
         
         return getPlayerGuildAsync(playerUuid).thenCompose(existingGuild -> {
             if (existingGuild != null) {
@@ -424,7 +426,7 @@ public class GuildService {
                 return CompletableFuture.completedFuture(false);
             }
             
-            logger.info("[AddMember-Debug] Player not in any guild, checking capacity");
+            DebugLog.info(logger, "[AddMember-Debug] Player not in any guild, checking capacity");
             
             // 人数上限检查：获取目标工会并比较当前成员数与有效上限
             return getGuildByIdAsync(guildId).thenCompose(targetGuild -> {
@@ -436,12 +438,12 @@ public class GuildService {
                 return getGuildMemberCountAsync(guildId).thenCompose(memberCount -> {
                     int effectiveMax = getEffectiveMaxMembers(targetGuild);
                     if (memberCount >= effectiveMax) {
-                        logger.info("[AddMember-Debug] Guild " + targetGuild.getName() + " is full (" 
+                        DebugLog.info(logger, "[AddMember-Debug] Guild " + targetGuild.getName() + " is full (" 
                             + memberCount + "/" + effectiveMax + "), rejecting " + playerName);
                         return CompletableFuture.completedFuture(false);
                     }
                     
-                    logger.info("[AddMember-Debug] Capacity OK (" + memberCount + "/" + effectiveMax + "), preparing database insert");
+                    DebugLog.info(logger, "[AddMember-Debug] Capacity OK (" + memberCount + "/" + effectiveMax + "), preparing database insert");
                     
                     return CompletableFuture.supplyAsync(() -> {
                         try {
@@ -457,11 +459,11 @@ public class GuildService {
                             stmt.setString(4, role.name());
                             stmt.setString(5, nowString());
                             
-                            logger.info("[AddMember-Debug] Executing INSERT: guildId=" + guildId + ", uuid=" + playerUuid + ", name=" + playerName + ", role=" + role.name());
+                            DebugLog.info(logger, "[AddMember-Debug] Executing INSERT: guildId=" + guildId + ", uuid=" + playerUuid + ", name=" + playerName + ", role=" + role.name());
                             
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
-                                logger.info("[AddMember-Debug] Player " + playerName + " successfully joined guild (ID: " + guildId + ")");
+                                DebugLog.info(logger, "[AddMember-Debug] Player " + playerName + " successfully joined guild (ID: " + guildId + ")");
                                 // 更新内置权限缓存
                                 try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
                                 
@@ -536,7 +538,7 @@ public class GuildService {
                             
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
-                                logger.info("Player " + member.getPlayerName() + " left guild (ID: " + member.getGuildId() + ")");
+                                QuietLog.system("Player " + member.getPlayerName() + " left guild (ID: " + member.getGuildId() + ")");
                                 // 更新内置权限缓存
                                 try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
                                 
@@ -611,7 +613,7 @@ public class GuildService {
                             
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
-                                logger.info("Player " + member.getPlayerName() + " role updated to: " + newRole.name());
+                                QuietLog.system("Player " + member.getPlayerName() + " role updated to: " + newRole.name());
                                 // 更新内置权限缓存
                                 try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
                                 
@@ -1272,7 +1274,7 @@ public class GuildService {
                     
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
-                        logger.info("Player " + playerName + " submitted a join application (guild ID: " + guildId + ")");
+                        QuietLog.system("Player " + playerName + " submitted a join application (guild ID: " + guildId + ")");
                         
                         // 记录申请提交日志
                         getGuildByIdAsync(guildId).thenAccept(guild -> {
@@ -1331,7 +1333,7 @@ public class GuildService {
                 if (status == GuildApplication.ApplicationStatus.APPROVED) {
                     return isGuildFullAsync(application.getGuildId()).thenCompose(isFull -> {
                         if (isFull) {
-                            logger.info("Application approval rejected: guild " + application.getGuildId() 
+                            QuietLog.system("Application approval rejected: guild " + application.getGuildId() 
                                 + " is at member capacity, applicant=" + application.getPlayerName());
                             return CompletableFuture.completedFuture(false);
                         }
@@ -1361,7 +1363,7 @@ public class GuildService {
                     
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
-                        logger.info("Application processed: " + application.getPlayerName() + " -> " + status.name());
+                        QuietLog.system("Application processed: " + application.getPlayerName() + " -> " + status.name());
                         
                         // 记录申请处理日志
                         getGuildByIdAsync(application.getGuildId()).thenAccept(guild -> {
@@ -1611,7 +1613,7 @@ public class GuildService {
                              
                              int affectedRows = stmt.executeUpdate();
                              if (affectedRows > 0) {
-                                 logger.info("Guild home set successfully: " + guild.getName() + " (ID: " + guildId + ")");
+                                 QuietLog.system("Guild home set successfully: " + guild.getName() + " (ID: " + guildId + ")");
                                  return true;
                              }
                          }
@@ -1701,7 +1703,7 @@ public class GuildService {
                          
                              int affectedRows = stmt.executeUpdate();
                              if (affectedRows > 0) {
-                                 logger.info("Invitation sent successfully: " + inviterName + " -> " + targetName + " (guild ID: " + guildId + ")");
+                                 QuietLog.system("Invitation sent successfully: " + inviterName + " -> " + targetName + " (guild ID: " + guildId + ")");
                                  return true;
                              }
                          }
@@ -1743,13 +1745,13 @@ public class GuildService {
      * 接受邀请前先检查工会是否满员，避免邀请状态已更新但成员无法加入的情况。
      */
     public CompletableFuture<Boolean> processInvitationDirectAsync(GuildInvitation invitation, boolean accept) {
-        logger.info("[Process-Debug] Starting invitation processing: id=" + invitation.getId() + ", guildId=" + invitation.getGuildId() + ", target=" + invitation.getTargetUuid() + ", accept=" + accept);
+        DebugLog.info(logger, "[Process-Debug] Starting invitation processing: id=" + invitation.getId() + ", guildId=" + invitation.getGuildId() + ", target=" + invitation.getTargetUuid() + ", accept=" + accept);
         
         // 接受邀请前预检查工会人数上限
         if (accept) {
             return isGuildFullAsync(invitation.getGuildId()).thenCompose(isFull -> {
                 if (isFull) {
-                    logger.info("[Process-Debug] Invitation accept rejected: guild " + invitation.getGuildId() 
+                    DebugLog.info(logger, "[Process-Debug] Invitation accept rejected: guild " + invitation.getGuildId() 
                         + " is at member capacity, target=" + invitation.getTargetUuid());
                     return CompletableFuture.completedFuture(false);
                 }
@@ -1775,11 +1777,11 @@ public class GuildService {
                     stmt.setString(1, status);
                     stmt.setInt(2, invitation.getId());
                     
-                    logger.info("[Process-Debug] Executing update: status=" + status + ", id=" + invitation.getId());
+                    DebugLog.info(logger, "[Process-Debug] Executing update: status=" + status + ", id=" + invitation.getId());
                     
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
-                        logger.info("[Process-Debug] Invitation status updated: " + invitation.getTargetUuid() + " -> " + status);
+                        DebugLog.info(logger, "[Process-Debug] Invitation status updated: " + invitation.getTargetUuid() + " -> " + status);
                         return true;
                     } else {
                         logger.warning("[Process-Debug] Invitation status update failed, no rows affected: id=" + invitation.getId());
@@ -1792,13 +1794,13 @@ public class GuildService {
             return false;
         }).thenCompose(success -> {
             if (success && accept) {
-                logger.info("[Process-Debug] Preparing to add player to guild: guildId=" + invitation.getGuildId() + ", player=" + invitation.getTargetUuid());
+                DebugLog.info(logger, "[Process-Debug] Preparing to add player to guild: guildId=" + invitation.getGuildId() + ", player=" + invitation.getTargetUuid());
                 // 如果接受邀请，添加玩家到工会（addGuildMemberAsync 内部有二次容量校验）
                 return addGuildMemberAsync(invitation.getGuildId(), invitation.getTargetUuid(), 
                     invitation.getTargetName(), GuildMember.Role.MEMBER)
                     .thenCompose(addSuccess -> {
                         if (addSuccess) {
-                            logger.info("[Process-Debug] Player added, dispatching event");
+                            DebugLog.info(logger, "[Process-Debug] Player added, dispatching event");
                             // 分发成员加入事件给模块
                             return getGuildByIdAsync(invitation.getGuildId()).thenAccept(g -> {
                                 if (g != null) fireMemberJoin(g.getId(), g.getName(), 
@@ -1881,15 +1883,15 @@ public class GuildService {
                     stmt.setInt(2, guildId);
                     stmt.setString(3, nowString());
                     
-                    logger.info("[Invite-Debug] Querying invitation: player=" + targetUuid + ", guildId=" + guildId + ", now=" + nowString());
+                    DebugLog.info(logger, "[Invite-Debug] Querying invitation: player=" + targetUuid + ", guildId=" + guildId + ", now=" + nowString());
                 
                     try (ResultSet rs = stmt.executeQuery()) {
                         if (rs.next()) {
                             GuildInvitation invitation = createGuildInvitationFromResultSet(rs);
-                            logger.info("[Invite-Debug] Found invitation: id=" + invitation.getId() + ", status=" + invitation.getStatus() + ", expires=" + invitation.getExpiresAt());
+                            DebugLog.info(logger, "[Invite-Debug] Found invitation: id=" + invitation.getId() + ", status=" + invitation.getStatus() + ", expires=" + invitation.getExpiresAt());
                             return invitation;
                         } else {
-                            logger.info("[Invite-Debug] No invitation found, checking expiry: " + nowString());
+                            DebugLog.info(logger, "[Invite-Debug] No invitation found, checking expiry: " + nowString());
                         }
                     }
                 }
@@ -2027,7 +2029,7 @@ public class GuildService {
                     
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
-                        logger.info("Cleaned up " + affectedRows + " expired guild invitations");
+                        QuietLog.system("Cleaned up " + affectedRows + " expired guild invitations");
                     }
                     return affectedRows;
                 }
@@ -2054,7 +2056,7 @@ public class GuildService {
                     
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
-                        logger.info("Cleaned up " + affectedRows + " old processed invitation records");
+                        QuietLog.system("Cleaned up " + affectedRows + " old processed invitation records");
                     }
                     return affectedRows;
                 }
@@ -2570,7 +2572,7 @@ public class GuildService {
                      
                          int affectedRows = stmt.executeUpdate();
                          if (affectedRows > 0) {
-                             logger.info("Guild balance updated: " + guild.getName() + " (ID: " + guildId + ") new balance: " + balance);
+                             QuietLog.system("Guild balance updated: " + guild.getName() + " (ID: " + guildId + ") new balance: " + balance);
                              
                              // 异步检查是否需要自动升级，不阻塞当前操作
                              CompletableFuture.runAsync(() -> {
@@ -2753,7 +2755,7 @@ public class GuildService {
                             
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
-                                logger.info("Guild auto-upgraded successfully: " + guild.getName() + " (ID: " + guildId + ") level: " + currentLevel + " -> " + newLevel);
+                                QuietLog.system("Guild auto-upgraded successfully: " + guild.getName() + " (ID: " + guildId + ") level: " + currentLevel + " -> " + newLevel);
                                 
                                 // 记录升级日志
                                 logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
@@ -3045,7 +3047,7 @@ public class GuildService {
                         .format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
                     stmt.setString(1, threshold);
                     int affectedRows = stmt.executeUpdate();
-                    logger.info("Cleaned up " + affectedRows + " old log records");
+                    QuietLog.system("Cleaned up " + affectedRows + " old log records");
                     return affectedRows;
                 }
             } catch (SQLException e) {
