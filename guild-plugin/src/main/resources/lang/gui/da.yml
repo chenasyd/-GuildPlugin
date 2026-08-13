@@ -205,6 +205,30 @@ gui:
     title: "&6Guildsystem"
 
   # ================================================
+  # Builtin Activity / Contribution Ranking
+  # ================================================
+  activity:
+    title: "&6Bidrag / Aktivitet"
+    header: "&6&lMedlemsbidragsrangliste"
+    header-lore1: "&7Total = økonomi + aktivitet × vægt"
+    header-lore2: "&7Økonomi fra guild_contributions; aktivitet fra onlinesporing"
+    loading: "&eIndlæser..."
+    empty: "&7Ingen medlemmer"
+    empty-hint: "&7Ingen guildmedlemmer at rangere endnu"
+    back: "&cTilbage"
+    back-hint: "&7Vend tilbage til forrige menu"
+    lore-total: "&7Total: &a{0}"
+    lore-economy: "&7Økonomi: &f{0}"
+    lore-activity: "&7Aktivitet: &f{0}"
+    online: "&aOnline"
+    offline: "&7Offline"
+    info-button: "&6Bidrag"
+    info-button-lore1: "&7Se medlemsbidrag og aktivitet"
+    info-button-lore2: "&7Hybrid totalscore-rangliste"
+    click-open-rank: "&eKlik for at åbne guild-ranglisten"
+    disabled: "&7Deaktiveret"
+
+  # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
     bedrock-content: "&fVælg en funktion:"
@@ -482,6 +506,10 @@ gui:
     next-level-requirement: "Kr\u00e6vet til n\u00e6ste niveau"
     no-tag: "Ingen"
     people: "personer"
+    level-format: "&7Niveau: &e{level}"
+    members-format: "&7Medlemmer: &e{current}/{max} {people}"
+    members-loading-format: "&7Medlemmer: &e{loading}"
+    balance-format: "&7Midler: &a{balance}"
     stats-title: "Guildstatistikker"
     status: "Guildstatus"
     status-frozen: "Frosset"

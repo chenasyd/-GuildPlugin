@@ -205,6 +205,30 @@ gui:
     title: "&6Gildesysteem"
 
   # ================================================
+  # Builtin Activity / Contribution Ranking
+  # ================================================
+  activity:
+    title: "&6Bijdrage / Activiteit"
+    header: "&6&lLedenbijdrage-ranglijst"
+    header-lore1: "&7Totaal = economie + activiteit × gewicht"
+    header-lore2: "&7Economie uit guild_contributions; activiteit uit online tracking"
+    loading: "&eLaden..."
+    empty: "&7Geen leden"
+    empty-hint: "&7Nog geen gildeleden om te rangschikken"
+    back: "&cTerug"
+    back-hint: "&7Terug naar vorig menu"
+    lore-total: "&7Totaal: &a{0}"
+    lore-economy: "&7Economie: &f{0}"
+    lore-activity: "&7Activiteit: &f{0}"
+    online: "&aOnline"
+    offline: "&7Offline"
+    info-button: "&6Bijdrage"
+    info-button-lore1: "&7Bekijk ledenbijdrage en activiteit"
+    info-button-lore2: "&7Hybride totaalscore-ranglijst"
+    click-open-rank: "&eKlik om de gilderanglijst te openen"
+    disabled: "&7Uitgeschakeld"
+
+  # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
     bedrock-content: "&fKies een functie:"
@@ -482,6 +506,10 @@ gui:
     next-level-requirement: "Vereiste voor volgend niveau"
     no-tag: "Geen"
     people: "personen"
+    level-format: "&7Niveau: &e{level}"
+    members-format: "&7Leden: &e{current}/{max} {people}"
+    members-loading-format: "&7Leden: &e{loading}"
+    balance-format: "&7Saldo: &a{balance}"
     stats-title: "Gildecategorie\u00ebn"
     status: "Gildestatus"
     status-frozen: "Bevroren"

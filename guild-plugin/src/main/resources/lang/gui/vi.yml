@@ -206,6 +206,30 @@ gui:
     bedrock-content: "&fChọn một chức năng:"
 
   # ================================================
+  # Builtin Activity / Contribution Ranking
+  # ================================================
+  activity:
+    title: "&6Đóng góp / Hoạt động"
+    header: "&6&lBảng xếp hạng đóng góp"
+    header-lore1: "&7Tổng = kinh tế + hoạt động × trọng số"
+    header-lore2: "&7Kinh tế từ guild_contributions; hoạt động từ theo dõi online"
+    loading: "&eĐang tải..."
+    empty: "&7Không có thành viên"
+    empty-hint: "&7Chưa có thành viên guild để xếp hạng"
+    back: "&cQuay lại"
+    back-hint: "&7Quay lại menu trước"
+    lore-total: "&7Tổng: &a{0}"
+    lore-economy: "&7Kinh tế: &f{0}"
+    lore-activity: "&7Hoạt động: &f{0}"
+    online: "&aTrực tuyến"
+    offline: "&7Ngoại tuyến"
+    info-button: "&6Đóng góp"
+    info-button-lore1: "&7Xem đóng góp và hoạt động thành viên"
+    info-button-lore2: "&7Bảng xếp hạng điểm tổng hợp"
+    click-open-rank: "&eNhấp để mở bảng xếp hạng guild"
+    disabled: "&7Đã tắt"
+
+  # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
   system-settings:
@@ -482,6 +506,10 @@ gui:
     next-level-requirement: "Y\xEAu c\u1EA7u c\u1EA5p ti\u1EBFp theo"
     no-tag: "Kh\xF4ng c\xF3"
     people: "ng\u01B0\u1EDDi"
+    level-format: "&7Cấp: &e{level}"
+    members-format: "&7Thành viên: &e{current}/{max} {people}"
+    members-loading-format: "&7Thành viên: &e{loading}"
+    balance-format: "&7Quỹ: &a{balance}"
     stats-title: "Th\u1ED1ng k\xEA c\xF4ng h\u1ED9i"
     status: "Tr\u1EA1ng th\xE1i c\xF4ng h\u1ED9i"
     status-frozen: "\u0110\xE3 \u0111\xF4ng b\u0103ng"

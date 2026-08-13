@@ -205,6 +205,30 @@ gui:
     title: "&6Gilden System"
 
   # ================================================
+  # Builtin Activity / Contribution Ranking
+  # ================================================
+  activity:
+    title: "&6Beitrag / Aktivität"
+    header: "&6&lMitglieder-Beitragsrangliste"
+    header-lore1: "&7Gesamt = Wirtschaft + Aktivität × Gewicht"
+    header-lore2: "&7Wirtschaft aus guild_contributions; Aktivität aus Online-Tracking"
+    loading: "&eLaden..."
+    empty: "&7Keine Mitglieder"
+    empty-hint: "&7Noch keine Gildenmitglieder zum Rankings"
+    back: "&cZurück"
+    back-hint: "&7Zum vorherigen Menü zurück"
+    lore-total: "&7Gesamt: &a{0}"
+    lore-economy: "&7Wirtschaftsbeitrag: &f{0}"
+    lore-activity: "&7Aktivität: &f{0}"
+    online: "&aOnline"
+    offline: "&7Offline"
+    info-button: "&6Beitrag"
+    info-button-lore1: "&7Mitgliederbeitrag und Aktivität anzeigen"
+    info-button-lore2: "&7Hybrid-Gesamtpunkt-Rangliste"
+    click-open-rank: "&eKlicken, um die Gildenrangliste zu öffnen"
+    disabled: "&7Deaktiviert"
+
+  # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
     bedrock-content: "&fFunktion ausw\u00e4hlen:"
@@ -482,6 +506,10 @@ gui:
     next-level-requirement: "Anforderung n\u00e4chstes Level"
     no-tag: "Kein"
     people: "Personen"
+    level-format: "&7Level: &e{level}"
+    members-format: "&7Mitglieder: &e{current}/{max} {people}"
+    members-loading-format: "&7Mitglieder: &e{loading}"
+    balance-format: "&7Guthaben: &a{balance}"
     stats-title: "Gilden Statistiken"
     status: "Gilden Status"
     status-frozen: "Eingefroren"

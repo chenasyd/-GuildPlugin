@@ -206,6 +206,30 @@ gui:
     bedrock-content: "&f選擇功能："
 
   # ================================================
+  # Builtin Activity / Contribution Ranking
+  # ================================================
+  activity:
+    title: "&6成員貢獻 / 活躍度"
+    header: "&6&l成員貢獻排行"
+    header-lore1: "&7總分 = 經濟貢獻 + 活躍度 × 權重"
+    header-lore2: "&7經濟來自 guild_contributions；活躍來自線上統計"
+    loading: "&e載入中..."
+    empty: "&7暫無成員"
+    empty-hint: "&7工會尚無成員可統計"
+    back: "&c返回"
+    back-hint: "&7返回上一介面"
+    lore-total: "&7總分: &a{0}"
+    lore-economy: "&7經濟貢獻: &f{0}"
+    lore-activity: "&7活躍度: &f{0}"
+    online: "&a線上"
+    offline: "&7離線"
+    info-button: "&6成員貢獻"
+    info-button-lore1: "&7查看工會成員貢獻與活躍度"
+    info-button-lore2: "&7混合總分排行榜"
+    click-open-rank: "&e點擊查看工會排行"
+    disabled: "&7未啟用"
+
+  # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
   system-settings:
@@ -482,6 +506,10 @@ gui:
     next-level-requirement: "下級所需"
     no-tag: "無"
     people: "人"
+    level-format: "&7等級: &e{level}"
+    members-format: "&7成員: &e{current}/{max} {people}"
+    members-loading-format: "&7成員: &e{loading}"
+    balance-format: "&7資金: &a{balance}"
     stats-title: "公會統計"
     status: "公會狀態"
     status-frozen: "已凍結"

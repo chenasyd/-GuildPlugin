@@ -205,6 +205,30 @@ gui:
     title: "&6Sistema gilde"
 
   # ================================================
+  # Builtin Activity / Contribution Ranking
+  # ================================================
+  activity:
+    title: "&6Contributo / Attività"
+    header: "&6&lClassifica contributi membri"
+    header-lore1: "&7Totale = economia + attività × peso"
+    header-lore2: "&7Economia da guild_contributions; attività dal tracciamento online"
+    loading: "&eCaricamento..."
+    empty: "&7Nessun membro"
+    empty-hint: "&7Nessun membro della gilda da classificare"
+    back: "&cIndietro"
+    back-hint: "&7Torna al menu precedente"
+    lore-total: "&7Totale: &a{0}"
+    lore-economy: "&7Economia: &f{0}"
+    lore-activity: "&7Attività: &f{0}"
+    online: "&aOnline"
+    offline: "&7Offline"
+    info-button: "&6Contributo"
+    info-button-lore1: "&7Visualizza contributo e attività dei membri"
+    info-button-lore2: "&7Classifica punteggio ibrido"
+    click-open-rank: "&eClicca per aprire la classifica"
+    disabled: "&7Disabilitato"
+
+  # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
     bedrock-content: "&fScegli una funzione:"
@@ -482,6 +506,10 @@ gui:
     next-level-requirement: "Requisito per il livello successivo"
     no-tag: "Nessuno"
     people: "persone"
+    level-format: "&7Livello: &e{level}"
+    members-format: "&7Membri: &e{current}/{max} {people}"
+    members-loading-format: "&7Membri: &e{loading}"
+    balance-format: "&7Fondi: &a{balance}"
     stats-title: "Statistiche della gilda"
     status: "Stato della gilda"
     status-frozen: "Congelata"

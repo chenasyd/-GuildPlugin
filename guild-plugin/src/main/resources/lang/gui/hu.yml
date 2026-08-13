@@ -205,6 +205,30 @@ gui:
     title: "&6C\u00e9h rendszer"
 
   # ================================================
+  # Builtin Activity / Contribution Ranking
+  # ================================================
+  activity:
+    title: "&6Hozzájárulás / Aktivitás"
+    header: "&6&lTagi hozzájárulás ranglista"
+    header-lore1: "&7Összesen = gazdaság + aktivitás × súly"
+    header-lore2: "&7Gazdaság a guild_contributionsból; aktivitás online követésből"
+    loading: "&eBetöltés..."
+    empty: "&7Nincsenek tagok"
+    empty-hint: "&7Még nincsenek céhtagok a ranglistához"
+    back: "&cVissza"
+    back-hint: "&7Vissza az előző menübe"
+    lore-total: "&7Összesen: &a{0}"
+    lore-economy: "&7Gazdaság: &f{0}"
+    lore-activity: "&7Aktivitás: &f{0}"
+    online: "&aOnline"
+    offline: "&7Offline"
+    info-button: "&6Hozzájárulás"
+    info-button-lore1: "&7Tagok hozzájárulásának és aktivitásának megtekintése"
+    info-button-lore2: "&7Hibrid összpontszám ranglista"
+    click-open-rank: "&eKattints a céh ranglistájának megnyitásához"
+    disabled: "&7Kikapcsolva"
+
+  # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
     bedrock-content: "&fVálassz funkciót:"
@@ -482,6 +506,10 @@ gui:
     next-level-requirement: "K\u00f6vetkez\u0151 szinthez sz\u00fcks\u00e9ges"
     no-tag: "Nincs"
     people: "f\u0151"
+    level-format: "&7Szint: &e{level}"
+    members-format: "&7Tagok: &e{current}/{max} {people}"
+    members-loading-format: "&7Tagok: &e{loading}"
+    balance-format: "&7Alapok: &a{balance}"
     stats-title: "C\u00e9h statisztik\u00e1k"
     status: "C\u00e9h \u00e1llapota"
     status-frozen: "Lefagyasztva"

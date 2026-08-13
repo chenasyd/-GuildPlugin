@@ -205,6 +205,30 @@ gui:
     title: "&6Gillesystem"
 
   # ================================================
+  # Builtin Activity / Contribution Ranking
+  # ================================================
+  activity:
+    title: "&6Bidrag / Aktivitet"
+    header: "&6&lMedlemsbidragsranking"
+    header-lore1: "&7Totalt = ekonomi + aktivitet × vikt"
+    header-lore2: "&7Ekonomi från guild_contributions; aktivitet från onlinespårning"
+    loading: "&eLaddar..."
+    empty: "&7Inga medlemmar"
+    empty-hint: "&7Inga gillemedlemmar att ranka ännu"
+    back: "&cTillbaka"
+    back-hint: "&7Tillbaka till föregående meny"
+    lore-total: "&7Totalt: &a{0}"
+    lore-economy: "&7Ekonomi: &f{0}"
+    lore-activity: "&7Aktivitet: &f{0}"
+    online: "&aOnline"
+    offline: "&7Offline"
+    info-button: "&6Bidrag"
+    info-button-lore1: "&7Visa medlemsbidrag och aktivitet"
+    info-button-lore2: "&7Hybrid totalpoängranking"
+    click-open-rank: "&eKlicka för att öppna gillerankingen"
+    disabled: "&7Inaktiverad"
+
+  # ================================================
   # SystemSettingsGUI - System Settings (111 keys)
   # ================================================
     bedrock-content: "&fVälj en funktion:"
@@ -482,6 +506,10 @@ gui:
     next-level-requirement: "Krav f\u00f6r n\u00e4sta niv\u00e5"
     no-tag: "Ingen"
     people: "personer"
+    level-format: "&7Nivå: &e{level}"
+    members-format: "&7Medlemmar: &e{current}/{max} {people}"
+    members-loading-format: "&7Medlemmar: &e{loading}"
+    balance-format: "&7Medel: &a{balance}"
     stats-title: "Gillestatistik"
     status: "Gillestatus"
     status-frozen: "Fryst"
