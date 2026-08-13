@@ -566,36 +566,87 @@ public class QuestManager {
                 else logger.warning("[Quest] saveAll found invalid key: " + key);
             } catch (Exception ignored) {}
         }
-        // Batch save for better performance
         saveMultipleGuilds(savedGuilds);
     }
 
-    public void saveGuildProgress(int guildId) {
-        synchronized (saveLock) {
-            doSaveGuildProgress(guildId);
+    /** Blocking flush for module disable / server shutdown. */
+    public void saveAllSync() {
+        Set<Integer> savedGuilds = new HashSet<>();
+        for (String key : guildProgressMap.keySet()) {
+            String[] parts = key.split("_", 2);
+            try {
+                int gid = Integer.parseInt(parts[0]);
+                if (gid > 0) savedGuilds.add(gid);
+            } catch (Exception ignored) {}
         }
+        for (int guildId : savedGuilds) {
+            try {
+                doSaveGuildProgress(guildId);
+                lastSaveTimeMap.put(guildId, System.currentTimeMillis());
+            } catch (Exception e) {
+                logger.warning("[Quest] Sync save failed for guild: " + guildId + " - " + e.getMessage());
+            }
+        }
+    }
+
+    public void saveGuildProgress(int guildId) {
+        // Snapshot under lock, write file off the calling thread (often main/entity)
+        final File file;
+        final YamlConfiguration yaml;
+        synchronized (saveLock) {
+            PreparedSave prepared = prepareGuildProgressSave(guildId);
+            if (prepared == null) return;
+            if (prepared.deleteFile) {
+                File target = prepared.file;
+                java.util.concurrent.CompletableFuture.runAsync(() -> {
+                    if (target.exists() && !target.delete()) {
+                        logger.warning("[Quest] Failed to delete empty progress file: " + target.getName());
+                    }
+                });
+                return;
+            }
+            file = prepared.file;
+            yaml = prepared.yaml;
+        }
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            try {
+                file.getParentFile().mkdirs();
+                yaml.save(file);
+            } catch (IOException e) {
+                logger.warning("[Quest] Save failed: " + file.getName() + " - " + e.getMessage());
+            }
+        });
     }
     
     /**
      * Batch save progress for multiple guilds
      */
     public void saveMultipleGuilds(Collection<Integer> guildIds) {
-        synchronized (saveLock) {
-            for (int guildId : guildIds) {
-                try {
-                    doSaveGuildProgress(guildId);
-                    lastSaveTimeMap.put(guildId, System.currentTimeMillis());
-                } catch (Exception e) {
-                    logger.warning("[Quest] Batch save failed for guild: " + guildId + " - " + e.getMessage());
-                }
+        for (int guildId : guildIds) {
+            try {
+                saveGuildProgress(guildId);
+                lastSaveTimeMap.put(guildId, System.currentTimeMillis());
+            } catch (Exception e) {
+                logger.warning("[Quest] Batch save failed for guild: " + guildId + " - " + e.getMessage());
             }
         }
     }
 
-    private void doSaveGuildProgress(int guildId) {
+    private static final class PreparedSave {
+        final File file;
+        final YamlConfiguration yaml;
+        final boolean deleteFile;
+        PreparedSave(File file, YamlConfiguration yaml, boolean deleteFile) {
+            this.file = file;
+            this.yaml = yaml;
+            this.deleteFile = deleteFile;
+        }
+    }
+
+    private PreparedSave prepareGuildProgressSave(int guildId) {
         if (guildId <= 0) {
             logger.warning("[Quest] Refusing to save: guildId=" + guildId + " is invalid!");
-            return;
+            return null;
         }
 
         File file = new File(dataDir, "guild_" + guildId + "_progress.yml");
@@ -605,18 +656,16 @@ public class QuestManager {
 
         List<Map<String, Object>> progressList = new ArrayList<>();
         String prefix = guildId + "_";
-        int entryCount = 0;
 
         for (Map.Entry<String, List<QuestProgress>> entry : guildProgressMap.entrySet()) {
             if (!entry.getKey().startsWith(prefix)) continue;
             List<QuestProgress> list = entry.getValue();
             synchronized (list) {
-                // Filter out expired progress
                 for (QuestProgress p : list) {
                     if (isProgressExpired(p)) {
                         continue;
                     }
-                    
+
                     Map<String, Object> map = new LinkedHashMap<>();
                     map.put("questId", p.getQuestId());
                     map.put("playerUuid", p.getPlayerUuid().toString());
@@ -630,26 +679,35 @@ public class QuestManager {
                     map.put("claimed", p.isClaimed());
                     map.put("claimedTime", p.getClaimedTime());
                     progressList.add(map);
-                    entryCount++;
                 }
             }
         }
 
         if (progressList.isEmpty()) {
-            // Delete file if it exists but has no data
-            if (file.exists()) {
-                file.delete();
-            }
-            return;
+            return new PreparedSave(file, null, true);
         }
 
         yaml.set("progress", progressList);
-        try {
-            // Ensure directory exists
-            file.getParentFile().mkdirs();
-            yaml.save(file);
-        } catch (IOException e) {
-            logger.warning("[Quest] Save failed: " + file.getName() + " - " + e.getMessage());
+        return new PreparedSave(file, yaml, false);
+    }
+
+    private void doSaveGuildProgress(int guildId) {
+        // Synchronous path for shutdown / critical save
+        synchronized (saveLock) {
+            PreparedSave prepared = prepareGuildProgressSave(guildId);
+            if (prepared == null) return;
+            if (prepared.deleteFile) {
+                if (prepared.file.exists()) {
+                    prepared.file.delete();
+                }
+                return;
+            }
+            try {
+                prepared.file.getParentFile().mkdirs();
+                prepared.yaml.save(prepared.file);
+            } catch (IOException e) {
+                logger.warning("[Quest] Save failed: " + prepared.file.getName() + " - " + e.getMessage());
+            }
         }
     }
     

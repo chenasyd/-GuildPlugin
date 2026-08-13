@@ -295,6 +295,16 @@ public class ModuleContext {
     // ==================== 注册追踪清理 ====================
 
     /**
+     * 仅取消已追踪的定时任务（保留 Bukkit 监听器），供配置热重载重启调度。
+     */
+    public void cancelTrackedTasks() {
+        for (ScheduledTaskHandle handle : trackedTasks) {
+            try { handle.cancel(); } catch (Exception ignored) {}
+        }
+        trackedTasks.clear();
+    }
+
+    /**
      * Framework-internal: auto-cleanup all tracked registrations.
      * Called by ModuleManager during module unload, BEFORE module.onDisable().
      */
@@ -305,10 +315,6 @@ public class ModuleContext {
         }
         trackedListeners.clear();
 
-        // Cancel all tracked scheduled tasks
-        for (ScheduledTaskHandle handle : trackedTasks) {
-            try { handle.cancel(); } catch (Exception ignored) {}
-        }
-        trackedTasks.clear();
+        cancelTrackedTasks();
     }
 }

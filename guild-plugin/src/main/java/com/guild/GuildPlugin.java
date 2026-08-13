@@ -656,6 +656,10 @@ public class GuildPlugin extends JavaPlugin {
                     dmc.reload();
                 }
             }
+            int soft = moduleManager.softReloadAllModuleConfigs();
+            if (fileLogger != null) {
+                fileLogger.logSystem("Soft-reloaded module configs: " + soft + " module(s)");
+            }
         }
 
         if (fileLogger != null) {

@@ -67,13 +67,23 @@ public class PlayerActivity {
     }
 
     public String getStatusText() {
-        if (online) return "在线";
+        return getStatusText("en");
+    }
+
+    /** Localized status text; {@code lang} is a language code such as zh/en. */
+    public String getStatusText(String lang) {
+        boolean zh = lang != null && lang.toLowerCase(java.util.Locale.ROOT).startsWith("zh");
+        if (online) return zh ? "在线" : "Online";
         long offlineMillis = System.currentTimeMillis() - lastActiveTime;
         long offlineMinutes = offlineMillis / 60000L;
-        if (offlineMinutes < 60) return offlineMinutes + " 分钟前";
+        if (offlineMinutes < 60) {
+            return zh ? (offlineMinutes + " 分钟前") : (offlineMinutes + "m ago");
+        }
         long offlineHours = offlineMinutes / 60;
-        if (offlineHours < 24) return offlineHours + " 小时前";
+        if (offlineHours < 24) {
+            return zh ? (offlineHours + " 小时前") : (offlineHours + "h ago");
+        }
         long offlineDays = offlineHours / 24;
-        return offlineDays + " 天前";
+        return zh ? (offlineDays + " 天前") : (offlineDays + "d ago");
     }
 }

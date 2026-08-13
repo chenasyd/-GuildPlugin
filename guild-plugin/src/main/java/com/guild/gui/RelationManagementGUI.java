@@ -259,9 +259,12 @@ public class RelationManagementGUI implements GUI {
                     List<GuildRelation> allRelationsList = new ArrayList<>();
                     for (CompletableFuture<List<GuildRelation>> future : relationFutures) {
                         try {
-                            allRelationsList.addAll(future.get());
+                            List<GuildRelation> part = future.join();
+                            if (part != null) {
+                                allRelationsList.addAll(part);
+                            }
                         } catch (Exception e) {
-                            plugin.getLogger().warning("加载工会关系时发生错误: " + e.getMessage());
+                            plugin.getLogger().warning("Failed to load guild relations: " + e.getMessage());
                         }
                     }
                     return allRelationsList;
@@ -471,7 +474,12 @@ public class RelationManagementGUI implements GUI {
                 .thenApply(v -> {
                     List<GuildRelation> list = new ArrayList<>();
                     for (CompletableFuture<List<GuildRelation>> f : futures) {
-                        try { list.addAll(f.get()); } catch (Exception ignored) {}
+                        try {
+                            List<GuildRelation> part = f.join();
+                            if (part != null) {
+                                list.addAll(part);
+                            }
+                        } catch (Exception ignored) {}
                     }
                     return list;
                 });

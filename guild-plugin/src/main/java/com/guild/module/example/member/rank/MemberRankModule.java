@@ -54,10 +54,6 @@ public class MemberRankModule implements GuildModule {
         this.onlineActivityTracker = new OnlineActivityTracker(this);
         onlineActivityTracker.start();
 
-        int defaultContribution = context.getConfig().getInt("default-contribution-on-join", 0);
-        boolean autoDepositEnabled = context.getConfig().getBoolean("auto-deposit.enabled", true);
-        double autoDepositAmount = context.getConfig().getDouble("auto-deposit.amount", 10);
-
         GuildPluginAPI api = context.getApi();
 
         // Listen for member join – auto-create ranking record
@@ -65,6 +61,8 @@ public class MemberRankModule implements GuildModule {
             @Override
             public void onEvent(MemberEventData data) {
                 var record = rankManager.getOrCreate(data.getGuildId(), data.getPlayerUuid(), data.getPlayerName());
+                int defaultContribution = MemberRankModule.this.context.getConfig()
+                        .getInt("default-contribution-on-join", 0);
                 if (defaultContribution > 0 && record != null) {
                     record.addACoin(defaultContribution);
                 }
@@ -170,6 +168,21 @@ public class MemberRankModule implements GuildModule {
         ModuleDescriptor desc = context.getDescriptor();
         context.getLogger().info(String.format("[Rank-Meta] Module metadata: id=%s name=%s version=%s author=%s",
             desc.getId(), desc.getName(), desc.getVersion(), desc.getAuthor()));
+    }
+
+    @Override
+    public void onConfigReload(ModuleContext context) {
+        if (context == null || state != ModuleState.ACTIVE) {
+            return;
+        }
+        this.context = context;
+        // OnlineActivityTracker freezes interval/points at construction — recreate to apply new config.
+        if (onlineActivityTracker != null) {
+            onlineActivityTracker.stop();
+        }
+        onlineActivityTracker = new OnlineActivityTracker(this);
+        onlineActivityTracker.start();
+        context.logDetail("[MemberRank] Config reloaded; online activity tracker restarted");
     }
 
     @Override

@@ -181,9 +181,12 @@ public class AdminGuildGUI implements GUI {
                     final int[] totalMembers = {0};
                     for (CompletableFuture<Integer> future : memberCountFutures) {
                         try {
-                            totalMembers[0] += future.get();
+                            Integer count = future.join();
+                            if (count != null) {
+                                totalMembers[0] += count;
+                            }
                         } catch (Exception e) {
-                            plugin.getLogger().severe("获取成员数量时发生错误: " + e.getMessage());
+                            plugin.getLogger().severe("Failed to get member count: " + e.getMessage());
                         }
                     }
 

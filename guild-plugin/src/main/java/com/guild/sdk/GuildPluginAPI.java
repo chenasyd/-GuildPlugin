@@ -91,42 +91,31 @@ public class GuildPluginAPI {
 
     /** 根据 ID 获取工会信息（异步） */
     public CompletableFuture<GuildData> getGuildById(int id) {
-        return CompletableFuture.supplyAsync(() ->
-                convertGuild(plugin.getGuildService().getGuildById(id))
-        );
+        return plugin.getGuildService().getGuildByIdAsync(id).thenApply(this::convertGuild);
     }
 
     /** 根据名称获取工会信息（异步） */
     public CompletableFuture<GuildData> getGuildByName(String name) {
-        return CompletableFuture.supplyAsync(() ->
-                convertGuild(plugin.getGuildService().getGuildByName(name))
-        );
+        return plugin.getGuildService().getGuildByNameAsync(name).thenApply(this::convertGuild);
     }
 
     /** 获取玩家所属工会（异步） */
     public CompletableFuture<GuildData> getPlayerGuild(UUID playerUuid) {
-        return CompletableFuture.supplyAsync(() ->
-                convertGuild(plugin.getGuildService().getPlayerGuild(playerUuid))
-        );
+        return plugin.getGuildService().getPlayerGuildAsync(playerUuid).thenApply(this::convertGuild);
     }
 
     /** 获取所有工会列表（异步） */
     public CompletableFuture<List<GuildData>> getAllGuilds() {
-        return CompletableFuture.supplyAsync(() ->
-                plugin.getGuildService().getAllGuilds().stream()
-                        .map(this::convertGuild)
-                        .filter(g -> g != null).toList()
-        );
+        return plugin.getGuildService().getAllGuildsAsync().thenApply(list ->
+                list.stream().map(this::convertGuild).filter(g -> g != null).toList());
     }
 
     // ==================== 成员查询 API ====================
 
     /** 获取工会成员列表（异步） */
     public CompletableFuture<List<MemberData>> getGuildMembers(int guildId) {
-        return CompletableFuture.supplyAsync(() ->
-                plugin.getGuildService().getGuildMembers(guildId).stream()
-                        .map(this::convertMember).toList()
-        );
+        return plugin.getGuildService().getGuildMembersAsync(guildId).thenApply(list ->
+                list.stream().map(this::convertMember).toList());
     }
 
     /**

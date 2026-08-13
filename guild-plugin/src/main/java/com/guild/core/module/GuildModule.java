@@ -68,6 +68,15 @@ public interface GuildModule {
     void onDisable();
 
     /**
+     * 配置热重载钩子（{@code /guildadmin reload} 时调用）。
+     * <p>
+     * 默认空实现。模块可覆盖以刷新定时器、缓存等，避免完整 unload/load。
+     * 不要在此重新注册命令/GUI 按钮（会导致重复注册）。
+     */
+    default void onConfigReload(ModuleContext context) {
+    }
+
+    /**
      * 获取模块当前状态
      */
     ModuleState getState();

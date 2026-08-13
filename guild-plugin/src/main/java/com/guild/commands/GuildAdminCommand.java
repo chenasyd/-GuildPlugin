@@ -516,9 +516,12 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                             List<GuildRelation> allRelations = new ArrayList<>();
                             for (CompletableFuture<List<GuildRelation>> future : relationFutures) {
                                 try {
-                                    allRelations.addAll(future.get());
+                                    List<GuildRelation> part = future.join();
+                                    if (part != null) {
+                                        allRelations.addAll(part);
+                                    }
                                 } catch (Exception e) {
-                                    String errorMsg = languageManager.getCoreMessage("admin.relation.fetch-error", "获取工会关系时发生错误: {error}")
+                                    String errorMsg = languageManager.getCoreMessage("admin.relation.fetch-error", "Error fetching guild relations: {error}")
                                         .replace("{error}", e.getMessage());
                                     plugin.getLogger().warning(errorMsg);
                                 }
@@ -588,23 +591,23 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
         CompletableFuture.allOf(guild1Future, guild2Future).thenAccept(v -> {
             try {
-                Guild guild1 = guild1Future.get();
-                Guild guild2 = guild2Future.get();
+                Guild guild1 = guild1Future.join();
+                Guild guild2 = guild2Future.join();
 
                 if (guild1 == null) {
-                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
+                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
                         .replace("{guild}", guild1Name);
                     sendMessage(sender, ColorUtils.colorize(notFound));
                     return;
                 }
                 if (guild2 == null) {
-                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
+                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
                         .replace("{guild}", guild2Name);
                     sendMessage(sender, ColorUtils.colorize(notFound));
                     return;
                 }
                 if (guild1.getId() == guild2.getId()) {
-                    String cantSelf = languageManager.getCoreMessage("admin.relation.cannot-relation-self", "&c不能与自己建立关系！");
+                    String cantSelf = languageManager.getCoreMessage("admin.relation.cannot-relation-self", "&cCannot create a relation with the same guild!");
                     sendMessage(sender, ColorUtils.colorize(cantSelf));
                     return;
                 }
@@ -612,23 +615,23 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 plugin.getGuildService().createGuildRelationAsync(
                     guild1.getId(), guild2.getId(),
                     guild1.getName(), guild2.getName(),
-                    relationType, UUID.randomUUID(), "管理员"
+                    relationType, UUID.randomUUID(), "Admin"
                 ).thenAccept(success -> {
                     if (success) {
                         String typeText = getRelationTypeText(relationType);
-                        String successMsg = languageManager.getCoreMessage("admin.relation.create-success", "&a已创建关系: {guild1} ↔ {guild2} ({type})")
+                        String successMsg = languageManager.getCoreMessage("admin.relation.create-success", "&aCreated relation: {guild1} ↔ {guild2} ({type})")
                             .replace("{guild1}", guild1Name)
                             .replace("{guild2}", guild2Name)
                             .replace("{type}", typeText);
                         sendMessage(sender, ColorUtils.colorize(successMsg));
                     } else {
-                        String failed = languageManager.getCoreMessage("admin.relation.create-failed", "&c创建关系失败！");
+                        String failed = languageManager.getCoreMessage("admin.relation.create-failed", "&cFailed to create relation!");
                         sendMessage(sender, ColorUtils.colorize(failed));
                     }
                 });
 
             } catch (Exception e) {
-                String error = languageManager.getCoreMessage("admin.relation.create-error", "&c创建关系时发生错误: {error}")
+                String error = languageManager.getCoreMessage("admin.relation.create-error", "&cError creating relation: {error}")
                     .replace("{error}", e.getMessage());
                 sendMessage(sender, ColorUtils.colorize(error));
             }
@@ -644,17 +647,17 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
         CompletableFuture.allOf(guild1Future, guild2Future).thenAccept(v -> {
             try {
-                Guild guild1 = guild1Future.get();
-                Guild guild2 = guild2Future.get();
+                Guild guild1 = guild1Future.join();
+                Guild guild2 = guild2Future.join();
 
                 if (guild1 == null) {
-                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
+                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
                         .replace("{guild}", guild1Name);
                     sendMessage(sender, ColorUtils.colorize(notFound));
                     return;
                 }
                 if (guild2 == null) {
-                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&c工会 {guild} 不存在！")
+                    String notFound = languageManager.getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
                         .replace("{guild}", guild2Name);
                     sendMessage(sender, ColorUtils.colorize(notFound));
                     return;
@@ -667,19 +670,19 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
                             plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
                                 if (success) {
-                                    String successMsg = languageManager.getCoreMessage("admin.relation.delete-success", "&a已删除关系: {guild1} ↔ {guild2}")
+                                    String successMsg = languageManager.getCoreMessage("admin.relation.delete-success", "&aDeleted relation: {guild1} ↔ {guild2}")
                                         .replace("{guild1}", guild1Name)
                                         .replace("{guild2}", guild2Name);
                                     sendMessage(sender, ColorUtils.colorize(successMsg));
                                 } else {
-                                    String failed = languageManager.getCoreMessage("admin.relation.delete-failed", "&c删除关系失败！");
+                                    String failed = languageManager.getCoreMessage("admin.relation.delete-failed", "&cFailed to delete relation!");
                                     sendMessage(sender, ColorUtils.colorize(failed));
                                 }
                             });
                             return;
                         }
                     }
-                    String notFound = languageManager.getCoreMessage("admin.relation.not-found", "&c未找到工会 {guild1} 和 {guild2} 之间的关系！")
+                    String notFound = languageManager.getCoreMessage("admin.relation.not-found", "&cNo relation found between {guild1} and {guild2}!")
                         .replace("{guild1}", guild1Name)
                         .replace("{guild2}", guild2Name);
                     sendMessage(sender, ColorUtils.colorize(notFound));

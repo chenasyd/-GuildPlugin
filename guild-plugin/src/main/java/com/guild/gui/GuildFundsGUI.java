@@ -72,7 +72,7 @@ public class GuildFundsGUI implements GUI {
     public String getTitle() {
         return ColorUtils.colorize(
                 languageManager.getGuiMessage(player, "gui.guild-funds.title",
-                        "&6工会资金 - {guild}", "{guild}", guild.getName()));
+                        "&6Guild Funds - {guild}", "{guild}", guild.getName()));
     }
 
     @Override
@@ -240,20 +240,19 @@ public class GuildFundsGUI implements GUI {
     // ==================== 数据加载 ====================
 
     private CompletableFuture<Boolean> loadDataAsync() {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                totals = plugin.getGuildService()
-                        .getGuildContributionTotalsAsync(guild.getId()).get();
-                totalPlayers = totals != null ? totals.size() : 0;
-                if (totals == null) totals = new ArrayList<>();
-                return true;
-            } catch (Exception e) {
-                plugin.getLogger().warning("加载工会资金数据失败: " + e.getMessage());
-                totals = new ArrayList<>();
-                totalPlayers = 0;
-                return false;
-            }
-        });
+        return plugin.getGuildService()
+                .getGuildContributionTotalsAsync(guild.getId())
+                .thenApply(result -> {
+                    totals = result != null ? result : new ArrayList<>();
+                    totalPlayers = totals.size();
+                    return true;
+                })
+                .exceptionally(e -> {
+                    plugin.getLogger().warning("Failed to load guild funds data: " + e.getMessage());
+                    totals = new ArrayList<>();
+                    totalPlayers = 0;
+                    return false;
+                });
     }
 
     // ==================== UI 渲染 ====================
@@ -262,9 +261,9 @@ public class GuildFundsGUI implements GUI {
         if (totals.isEmpty()) {
             ItemStack empty = createItem(Material.BARRIER,
                     ColorUtils.colorize("&c" + languageManager.getGuiMessage(player,
-                            "gui.guild-funds.no-data", "暂无存款记录")),
+                            "gui.guild-funds.no-data", "No deposit records")),
                     ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                            "gui.guild-funds.no-data-desc", "工会成员还没有存入资金")));
+                            "gui.guild-funds.no-data-desc", "No members have deposited funds yet")));
             inventory.setItem(22, empty);
             return;
         }

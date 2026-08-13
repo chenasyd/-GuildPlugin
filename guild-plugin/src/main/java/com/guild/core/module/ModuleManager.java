@@ -412,6 +412,27 @@ public class ModuleManager {
         ConsoleLogger.info(lang.getCoreMessage("module.system.all-unloaded", ""));
     }
 
+    /**
+     * Soft-reload module configs without unload/load (invokes {@link GuildModule#onConfigReload}).
+     * @return number of modules notified
+     */
+    public int softReloadAllModuleConfigs() {
+        int n = 0;
+        for (String moduleId : registry.getModuleIds()) {
+            GuildModule module = registry.getModule(moduleId);
+            ModuleContext ctx = moduleContexts.get(moduleId);
+            if (module == null || ctx == null) continue;
+            if (registry.getState(moduleId) != ModuleState.ACTIVE) continue;
+            try {
+                module.onConfigReload(ctx);
+                n++;
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "[Module] onConfigReload failed for " + moduleId + ": " + e.getMessage(), e);
+            }
+        }
+        return n;
+    }
+
     // ==================== 查询方法 ====================
 
     /** 获取模块注册表 */

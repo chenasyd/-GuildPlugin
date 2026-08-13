@@ -186,73 +186,55 @@ public class GuildLogsGUI implements GUI {
      * 异步加载日志数据
      */
     private CompletableFuture<Boolean> loadLogsAsync() {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                plugin.getLogger().info("Loading guild logs for " + guild.getName() + "...");
-                
-                // 检查工会ID是否有效
-                if (guild.getId() <= 0) {
-                    plugin.getLogger().warning("Invalid guild ID: " + guild.getId());
+        if (guild.getId() <= 0) {
+            plugin.getLogger().warning("Invalid guild ID: " + guild.getId());
+            totalLogs = 0;
+            logs = new java.util.ArrayList<>();
+            return CompletableFuture.completedFuture(false);
+        }
+
+        int offset = page * itemsPerPage;
+        return plugin.getGuildService().getGuildLogsCountAsync(guild.getId())
+                .thenCompose(count -> {
+                    totalLogs = count;
+                    return plugin.getGuildService()
+                            .getGuildLogsAsync(guild.getId(), itemsPerPage, offset);
+                })
+                .thenApply(pageLogs -> {
+                    logs = pageLogs != null ? pageLogs : new java.util.ArrayList<>();
+                    return true;
+                })
+                .exceptionally(e -> {
+                    plugin.getLogger().severe("Error loading guild logs: " + e.getMessage());
+                    totalLogs = 0;
+                    logs = new java.util.ArrayList<>();
                     return false;
-                }
-                
-                // 获取日志总数
-                totalLogs = plugin.getGuildService().getGuildLogsCountAsync(guild.getId()).get();
-                plugin.getLogger().info("Guild " + guild.getName() + " has " + totalLogs + " log records");
-                
-                // 获取当前页的日志
-                int offset = page * itemsPerPage;
-                logs = plugin.getGuildService().getGuildLogsAsync(guild.getId(), itemsPerPage, offset).get();
-                plugin.getLogger().info("Loaded page " + (page + 1) + " with " + logs.size() + " log records");
-                
-                return true;
-            } catch (Exception e) {
-                plugin.getLogger().severe("Error loading guild logs: " + e.getMessage());
-                e.printStackTrace();
-                
-                // 设置默认值
-                totalLogs = 0;
-                logs = new java.util.ArrayList<>();
-                
-                return false;
-            }
-        });
+                });
     }
     
     /**
      * 设置日志物品
      */
     private void setupLogItems(Inventory inventory) {
-        plugin.getLogger().info("Setting up log items, logs size: " + (logs != null ? logs.size() : "null"));
-        
         if (logs == null) {
-            logs = new java.util.ArrayList<>(); // 确保logs不为null
+            logs = new java.util.ArrayList<>();
         }
-        
+
         if (logs.isEmpty()) {
-            plugin.getLogger().info("Log list is empty, showing no-logs message");
-            // 显示无日志信息
             ItemStack noLogs = createItem(
                 Material.BARRIER,
-                ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.guild-logs.no-logs", "暂无日志记录")),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.no-logs-desc", "该工会还没有任何操作记录")),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.wait-for-logs", "请等待工会活动产生日志"))
+                ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.guild-logs.no-logs", "No log records")),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.no-logs-desc", "This guild has no activity logs yet")),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-logs.wait-for-logs", "Logs appear when guild activity happens"))
             );
             inventory.setItem(22, noLogs);
             return;
         }
-        
-        plugin.getLogger().info("Displaying " + logs.size() + " log records");
-        
-        // 显示日志列表
+
         for (int i = 0; i < Math.min(logs.size(), itemsPerPage); i++) {
             GuildLog log = logs.get(i);
             int slot = getLogSlot(i);
-            
-            plugin.getLogger().info("Set log item " + i + " to slot " + slot + ": " + log.getLogType().getDisplayName());
-            
-            ItemStack logItem = createLogItem(log);
-            inventory.setItem(slot, logItem);
+            inventory.setItem(slot, createLogItem(log));
         }
     }
     

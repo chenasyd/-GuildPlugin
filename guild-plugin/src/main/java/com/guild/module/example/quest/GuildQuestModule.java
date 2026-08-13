@@ -496,12 +496,11 @@ public class GuildQuestModule implements GuildModule {
     }
 
     private void startScheduledTasks() {
+        // Persist progress off-thread (saveGuildProgress already async-writes)
         context.runTimer(1200L, 600L, () ->
-            context.getApi().getAllGuilds().thenAcceptAsync(guilds ->
-                com.guild.core.utils.CompatibleScheduler.runTask(context.getPlugin(), () -> {
-                    for (var guild : guilds) questManager.saveGuildProgress(guild.getId());
-                })
-            ));
+            context.getApi().getAllGuilds().thenAcceptAsync(guilds -> {
+                for (var guild : guilds) questManager.saveGuildProgress(guild.getId());
+            }));
         int resetHour = context.getConfig().getInt("settings.quest-reset-hour", 4);
         long resetDelayTicks = calculateSecondsUntil(resetHour) * 20L;
         context.runTimer(Math.max(1200L, resetDelayTicks), 172800000L, () ->
@@ -548,11 +547,20 @@ public class GuildQuestModule implements GuildModule {
     }
 
     @Override
+    public void onConfigReload(ModuleContext context) {
+        this.context = context;
+        // 仅重启定时器（日/周重置小时等），不重复注册 GUI/命令
+        context.cancelTrackedTasks();
+        startScheduledTasks();
+        context.logDetail("[Quest] Schedules refreshed after config reload");
+    }
+
+    @Override
     public void onDisable() {
         this.state = ModuleState.UNLOADED;
         if (questTracker != null) questTracker.stop();
         if (questManager != null) {
-            questManager.saveAll();
+            questManager.saveAllSync();
         }
         context.logDetail(
             context.getMessage("module.quest.unloaded", "[Quest] Quest system disabled"));
