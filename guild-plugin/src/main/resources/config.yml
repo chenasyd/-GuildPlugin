@@ -129,10 +129,9 @@ guild-warehouse:
 
 # Language configuration
 language:
-  # Default language (must match the language code in messages_xx.yml)
-  # Built-in languages: en (English), zh (Chinese), pl (Polish), br (Brazilian Portuguese)
-  # You can add any language by placing the corresponding messages_xx.yml file in the plugin directory
-  # Example: to add French, create messages_fr.yml and set default to "fr"
+  # Default language (must match a code under lang/core/ and lang/gui/)
+  # Bundled languages (26): en, zh, pl, br, de, fr, ru, zh_tw, ms, ja, ko, es, pt, it, nl, sv, tr, vi, th, cs, uk, ro, hu, da, fi, no
+  # You can add more by placing lang/core/<code>.yml and lang/gui/<code>.yml (or via additional-languages)
   default: "en"
   # Whether players can switch languages
   allow-player-switch: true

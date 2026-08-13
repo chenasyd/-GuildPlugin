@@ -19,7 +19,7 @@ A feature-complete Minecraft guild/faction system with economy, relations, level
 - **Relationship System** — ally, hostile, war, truce between guilds
 - **Level System** — guild growth with increasing max member caps
 - **Full GUI** — intuitive graphical interface for all operations
-- **Multi-language** — 中文, English, Polski, Português (Brasil), plus 20+ other languages (Deutsch, Français, Español, 日本語, 한국어, etc.)
+- **Multi-language** — **26** bundled languages (中文, English, Polski, Português (Brasil), Deutsch, Français, Español, 日本語, 한국어, and more)
 - **Worlds & Guild War** — void arenas, `.gws` presets, fixed-map team PVP (`/guildworld`, `/guildwar`)
 - **Async Database** — HikariCP connection pool, MySQL/SQLite support
 - **Modular SDK** — external module development with full API coverage (6 example modules)

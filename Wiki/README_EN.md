@@ -43,6 +43,9 @@ Guild leveling unlocks higher member caps. Levels and upgrade costs fully config
 ### GUI Interface
 All guild operations feature a graphical interface. Slot-based button detection ensures cross-language compatibility.
 
+### Multi-language
+**26** bundled languages (`lang/core/` + `lang/gui/`): `en`, `zh`, `pl`, `br`, `de`, `fr`, `ru`, `zh_tw`, `ms`, `ja`, `ko`, `es`, `pt`, `it`, `nl`, `sv`, `tr`, `vi`, `th`, `cs`, `uk`, `ro`, `hu`, `da`, `fi`, `no`.
+
 ### Modular SDK
 External module development with full API coverage (6 example modules). Hot load/unload/reload of modules at runtime. Automatic cleanup of listeners, tasks, commands, GUIs, and placeholder registrations on module unload. Folia compatibility guard (`folia-compatible` declaration) and ClassLoader leak detection.
 

@@ -495,7 +495,8 @@ module:
     unloaded: "[MyModule] Feature disabled"
 ```
 
-Built-in language codes: `en` (English), `zh` (Chinese), `pl` (Polish), `br` (Brazilian Portuguese).
+Bundled core/GUI languages (**26**): `en`, `zh`, `pl`, `br`, `de`, `fr`, `ru`, `zh_tw`, `ms`, `ja`, `ko`, `es`, `pt`, `it`, `nl`, `sv`, `tr`, `vi`, `th`, `cs`, `uk`, `ro`, `hu`, `da`, `fi`, `no`.  
+Module example packs commonly ship `en` / `zh` / `pl` / `br`.
 
 ##### LanguageManager API (via `context.getLanguageManager()`)
 

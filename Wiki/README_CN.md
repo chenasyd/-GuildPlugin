@@ -34,6 +34,9 @@
 ### GUI 界面
 所有公会操作均有图形化界面。基于槽位的按钮检测机制确保跨语言兼容。
 
+### 多语言
+内置 **26** 种语言包（`lang/core/` + `lang/gui/`）：`en`、`zh`、`pl`、`br`、`de`、`fr`、`ru`、`zh_tw`、`ms`、`ja`、`ko`、`es`、`pt`、`it`、`nl`、`sv`、`tr`、`vi`、`th`、`cs`、`uk`、`ro`、`hu`、`da`、`fi`、`no`。
+
 ### 模块化 SDK
 支持外部模块开发，完整的 API 覆盖（6 个示例模块）。运行时热加载/卸载/重载模块。模块卸载时自动清理监听器、定时任务、命令、GUI 和占位符注册。Folia 兼容性守卫（`folia-compatible` 声明）和 ClassLoader 泄漏检测。
 

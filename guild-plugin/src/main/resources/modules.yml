@@ -8,7 +8,8 @@
 # The plugin core language is used for core/gui messages; the module language is only used for module messages.
 # Both are loaded independently at startup and reload, without affecting each other.
 #
-# Built-in languages: en (English), zh (Chinese), pl (Polski), br (Português-BR)
+# Bundled core/GUI languages (26): en, zh, pl, br, de, fr, ru, zh_tw, ms, ja, ko, es, pt, it, nl, sv, tr, vi, th, cs, uk, ro, hu, da, fi, no
+# Module packs often ship a subset (commonly en / zh / pl / br).
 # ============================================================
 
 language:
