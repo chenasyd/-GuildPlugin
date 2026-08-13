@@ -454,8 +454,13 @@ public class SystemSettingsGUI implements GUI {
 
             // 模块语言异步重载 — 与插件本体并行执行
             plugin.getLanguageManager().reloadModuleLanguagesAsync(() -> {
-                // 通知 SDK 让模块加载其语言资源
                 try {
+                    var lm = plugin.getLanguageManager();
+                    for (String dir : lm.getKnownModuleLangDirs()) {
+                        try {
+                            lm.loadModuleLanguageResourcesForModule(dir);
+                        } catch (Exception ignored) {}
+                    }
                     ModuleManager mm = plugin.getModuleManager();
                     var api = mm.getSharedApi();
                     for (String moduleId : mm.getRegistry().getModuleIds()) {

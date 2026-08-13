@@ -278,7 +278,10 @@ public class ModuleManager {
         }
 
         // 5. 创建独立 ClassLoader 并实例化模块
-        plugin.getLanguageManager().loadModuleLanguageResourcesForModule(moduleId);
+        // 语言目录优先用 config-prefix（如 guild-quest → quest）
+        String langDir = descriptor.getConfigPrefix() != null && !descriptor.getConfigPrefix().isBlank()
+            ? descriptor.getConfigPrefix() : moduleId;
+        plugin.getLanguageManager().loadModuleLanguageResourcesForModule(langDir);
         GuildModule module = loader.instantiateModule(jarFile, descriptor);
 
         // 6. 创建模块上下文并启用（使用共享 API 实例）

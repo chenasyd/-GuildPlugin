@@ -92,9 +92,9 @@ public final class GuildActivityGUI implements GUI {
         renderPage(inventory);
     }
 
-    /** Module lang: {@code lang/modules/builtin-activity/}. */
+    /** Module lang: {@code lang/modules/builtin-activity/} — uses modules.yml language.default. */
     private String modMsg(String key, String fallback) {
-        return languageManager.getModuleMessage(viewer, key, fallback);
+        return languageManager.getModuleMessage(key, fallback);
     }
 
     private void loadAsync(Inventory inventory) {

@@ -208,15 +208,15 @@ public class MemberDetailsGUI implements GUI {
         );
         inventory.setItem(22, timeInfo);
 
-        // 贡献信息（活跃度文案来自 lang/modules/builtin-activity/）
-        String loading = languageManager.getModuleMessage(viewer, "module.activity.loading", "&e加载中...");
+        // 贡献信息（活跃度文案来自 lang/modules/builtin-activity/，使用模块默认语言）
+        String loading = languageManager.getModuleMessage("module.activity.loading", "&e加载中...");
         ItemStack contributionInfo = createItem(
             Material.EMERALD,
             ColorUtils.colorize("&e" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.contribution-info", "贡献信息")),
             ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.guild-contribution", "工会贡献") + ": &f" + loading),
             ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.activity", "活跃度") + ": &f" + loading),
             "",
-            ColorUtils.colorize(languageManager.getModuleMessage(viewer, "module.activity.click-open-rank", "&e点击查看工会排行"))
+            ColorUtils.colorize(languageManager.getModuleMessage("module.activity.click-open-rank", "&e点击查看工会排行"))
         );
         inventory.setItem(23, contributionInfo);
     }
@@ -225,8 +225,8 @@ public class MemberDetailsGUI implements GUI {
         var service = plugin.getActivityScoreService();
         if (service == null || !service.getSettings().isEnabled()) {
             updateContributionItem(inventory,
-                    languageManager.getModuleMessage(viewer, "module.activity.disabled", "&7未启用"),
-                    languageManager.getModuleMessage(viewer, "module.activity.disabled", "&7未启用"));
+                    languageManager.getModuleMessage("module.activity.disabled", "&7未启用"),
+                    languageManager.getModuleMessage("module.activity.disabled", "&7未启用"));
             return;
         }
         service.getMemberScoreAsync(guild.getId(), member.getPlayerUuid()).thenAccept(score ->
@@ -250,7 +250,7 @@ public class MemberDetailsGUI implements GUI {
                 ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.guild-contribution", "工会贡献") + ": &f" + economy),
                 ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.activity", "活跃度") + ": &f" + activity),
                 "",
-                ColorUtils.colorize(languageManager.getModuleMessage(viewer, "module.activity.click-open-rank", "&e点击查看工会排行"))
+                ColorUtils.colorize(languageManager.getModuleMessage("module.activity.click-open-rank", "&e点击查看工会排行"))
         );
         inventory.setItem(23, contributionInfo);
     }

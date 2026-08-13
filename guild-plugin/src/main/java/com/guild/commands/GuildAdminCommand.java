@@ -749,8 +749,14 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
             // 模块语言异步重载 — 与插件本体并行执行
             plugin.getLanguageManager().reloadModuleLanguagesAsync(() -> {
-                // 让 SDK / 模块层加载模块语言资源
+                // 注册表模块 + 已知语言目录（含 builtin-activity 等非 GuildModule）
                 try {
+                    var lm = plugin.getLanguageManager();
+                    for (String dir : lm.getKnownModuleLangDirs()) {
+                        try {
+                            lm.loadModuleLanguageResourcesForModule(dir);
+                        } catch (Exception ignored) {}
+                    }
                     ModuleManager mm = plugin.getModuleManager();
                     var api = mm.getSharedApi();
                     for (String moduleId : mm.getRegistry().getModuleIds()) {

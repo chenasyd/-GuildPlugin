@@ -59,6 +59,26 @@ public class LanguageManager {
     private static final String[] MODULE_DIRS = {
         "announcement", "apitest", "builtin-activity", "member-rank", "quest", "stats", "testlang"
     };
+
+    /**
+     * 模块注册 ID → 语言目录名（当 id 与 lang/modules/{dir} 不一致时）。
+     * 例：guild-quest 模块语言在 lang/modules/quest/。
+     */
+    private static String resolveModuleLangDir(String moduleId) {
+        if (moduleId == null || moduleId.isBlank()) {
+            return moduleId;
+        }
+        String id = moduleId.trim().toLowerCase();
+        return switch (id) {
+            case "guild-quest" -> "quest";
+            default -> id;
+        };
+    }
+
+    /** 已知模块语言目录（含内置非 GuildModule 的 builtin-activity）。 */
+    public String[] getKnownModuleLangDirs() {
+        return MODULE_DIRS.clone();
+    }
     
     public LanguageManager(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -386,7 +406,7 @@ public class LanguageManager {
         if (moduleId == null || moduleId.trim().isEmpty()) {
             return false;
         }
-        String moduleDirName = moduleId.toLowerCase();
+        String moduleDirName = resolveModuleLangDir(moduleId);
         if (loadedModuleLanguages.contains(moduleDirName)) {
             return true;
         }
@@ -420,7 +440,7 @@ public class LanguageManager {
             return false;
         }
 
-        String moduleDirName = moduleId.toLowerCase();
+        String moduleDirName = resolveModuleLangDir(moduleId);
         File moduleDir = new File(plugin.getDataFolder(), MODULES_LANG_PATH + moduleDirName);
         if (!moduleDir.exists()) {
             moduleDir.mkdirs();
@@ -832,6 +852,11 @@ public class LanguageManager {
                 moduleSupportedLanguages.addAll(newModuleLangs);
                 moduleDefaultLanguage = finalModuleDefault;
 
+                // 异步路径已合并全部 MODULE_DIRS；回填已加载标记，避免后续误判未加载
+                for (String md : MODULE_DIRS) {
+                    loadedModuleLanguages.add(md);
+                }
+
                 logger.info("Reloaded module language files asynchronously"
                         + " (modules: " + newModule.size() + ")");
 
@@ -960,16 +985,20 @@ public class LanguageManager {
         } catch (Exception ignored) {}
     }
 
-    /** 合并模块配置（同名语言累加） */
+    /** 合并模块配置（同名语言累加）——必须与 mergeModuleConfig 一致，只写叶子键 */
     private static void mergeInto(String lang, FileConfiguration src,
                                    Map<String, FileConfiguration> target) {
         FileConfiguration existing = target.get(lang);
         if (existing == null) {
             target.put(lang, src);
-        } else {
-            for (String key : src.getKeys(true)) {
-                existing.set(key, src.get(key));
+            return;
+        }
+        // getKeys(true) 含中间 section；set("module", section) 会整棵覆盖其它模块键
+        for (String key : src.getKeys(true)) {
+            if (src.isConfigurationSection(key)) {
+                continue;
             }
+            existing.set(key, src.get(key));
         }
     }
     
