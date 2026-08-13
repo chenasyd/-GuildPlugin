@@ -98,9 +98,9 @@ public class GuildFundsGUI implements GUI {
 
                 if (!success || totals == null || totals.isEmpty()) {
                     SimpleForm emptyForm = SimpleForm.builder()
-                            .title(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-title", "&6工会资金 - {guild}", "{guild}", guildName))
-                            .content(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-no-data", "&c暂无存款记录"))
-                            .button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-back", "&c返回"))
+                            .title(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-title", "&6Guild Funds - {guild}", "{guild}", guildName))
+                            .content(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-no-data", "&cNo deposit records"))
+                            .button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-back", "&cBack"))
                             .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
                                     navigateBack(player)))
                             .build();
@@ -114,13 +114,13 @@ public class GuildFundsGUI implements GUI {
                 int endIndex = Math.min(startIndex + itemsPerPage, totals.size());
 
                 String content = languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-page-info",
-                        "&f第 {page}/{total} 页\n&f总人数: {count}",
+                        "&fPage {page}/{total}\n&fPlayers: {count}",
                         "{page}", String.valueOf(safePage + 1),
                         "{total}", String.valueOf(totalPages),
                         "{count}", String.valueOf(totalPlayers));
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                        .title(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-title", "&6工会资金 - {guild}", "{guild}", guildName))
+                        .title(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-title", "&6Guild Funds - {guild}", "{guild}", guildName))
                         .content(content);
 
                 List<GuildContribution> pageEntries = new ArrayList<>();
@@ -129,16 +129,16 @@ public class GuildFundsGUI implements GUI {
                     pageEntries.add(entry);
                     boolean isOnline = Bukkit.getPlayer(entry.getPlayerUuid()) != null;
                     String status = isOnline
-                            ? languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-online", "&a在线")
-                            : languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-offline", "&f离线");
+                            ? languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-online", "&aOnline")
+                            : languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-offline", "&fOffline");
                     builder.button("§e" + entry.getPlayerName()
                             + " §f- " + formatAmount(entry.getAmount()) + " " + status);
                 }
 
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-prev-page", "&a上一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-next-page", "&a下一页"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-refresh", "&a刷新"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-back", "&c返回"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-prev-page", "&aPrevious"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-next-page", "&aNext"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-refresh", "&aRefresh"));
+                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-funds.bedrock-back", "&cBack"));
 
                 final int entryCount = pageEntries.size();
                 final int curPage = safePage;
@@ -180,9 +180,9 @@ public class GuildFundsGUI implements GUI {
                 } else {
                     ItemStack error = createItem(Material.BARRIER,
                             ColorUtils.colorize("&c" + languageManager.getGuiMessage(player,
-                                    "gui.guild-funds.load-failed", "加载失败")),
+                                    "gui.guild-funds.load-failed", "Load failed")),
                             ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                                    "gui.guild-funds.load-error", "无法加载资金数据，请重试")));
+                                    "gui.guild-funds.load-error", "Failed to load funds data, please retry")));
                     inventory.setItem(22, error);
                     setupBasicNav(inventory);
                 }
@@ -290,21 +290,21 @@ public class GuildFundsGUI implements GUI {
 
         List<String> lore = new ArrayList<>();
         lore.add(ColorUtils.colorize(
-                "&7" + languageManager.getGuiMessage(player, "gui.guild-funds.deposit-total", "存款总额")
+                "&7" + languageManager.getGuiMessage(player, "gui.guild-funds.deposit-total", "Total deposits")
                         + ": &a" + formattedAmount));
         lore.add(ColorUtils.colorize(
-                "&7" + languageManager.getGuiMessage(player, "gui.guild-funds.rank", "排名")
+                "&7" + languageManager.getGuiMessage(player, "gui.guild-funds.rank", "Rank")
                         + ": &e#" + rank));
         lore.add(ColorUtils.colorize(
-                "&7" + languageManager.getGuiMessage(player, "gui.guild-funds.status", "状态")
+                "&7" + languageManager.getGuiMessage(player, "gui.guild-funds.status", "Status")
                         + ": " + (isOnline ? "&a" + languageManager.getGuiMessage(player,
-                                "gui.guild-funds.online", "在线")
+                                "gui.guild-funds.online", "Online")
                                 : "&7" + languageManager.getGuiMessage(player,
-                                        "gui.guild-funds.offline", "离线"))));
+                                        "gui.guild-funds.offline", "Offline"))));
         lore.add("");
         lore.add(ColorUtils.colorize(
                 "&a" + languageManager.getGuiMessage(player, "gui.guild-funds.click-details",
-                        "点击查看详细记录")));
+                        "Click to view details")));
 
         if (meta != null) {
             meta.setOwningPlayer(Bukkit.getOfflinePlayer(entry.getPlayerUuid()));
@@ -322,35 +322,35 @@ public class GuildFundsGUI implements GUI {
         if (page > 0) {
             inventory.setItem(48, createItem(Material.ARROW,
                     ColorUtils.colorize("&e" + languageManager.getGuiMessage(player,
-                            "gui.common.previous-page", "上一页")),
+                            "gui.common.previous-page", "Previous")),
                     ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                            "gui.common.view-previous", "查看上一页"))));
+                            "gui.common.view-previous", "View previous page"))));
         }
 
         inventory.setItem(49, createItem(Material.ARROW,
                 ColorUtils.colorize("&c" + languageManager.getGuiMessage(player,
-                        "gui.common.back", "返回")),
+                        "gui.common.back", "Back")),
                 ColorUtils.colorize("&7" + getBackLore())));
 
         if ((page + 1) * itemsPerPage < totalPlayers) {
             inventory.setItem(50, createItem(Material.ARROW,
                     ColorUtils.colorize("&a" + languageManager.getGuiMessage(player,
-                            "gui.common.next-page", "下一页")),
+                            "gui.common.next-page", "Next")),
                     ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                            "gui.common.view-next", "查看下一页"))));
+                            "gui.common.view-next", "View next page"))));
         }
 
         inventory.setItem(51, createItem(Material.EMERALD,
                 ColorUtils.colorize("&a" + languageManager.getGuiMessage(player,
-                        "gui.guild-funds.refresh", "刷新")),
+                        "gui.guild-funds.refresh", "Refresh")),
                 ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                        "gui.guild-funds.refresh-desc", "刷新资金数据"))));
+                        "gui.guild-funds.refresh-desc", "Refresh funds data"))));
     }
 
     private void setupBasicNav(Inventory inventory) {
         inventory.setItem(49, createItem(Material.ARROW,
                 ColorUtils.colorize("&c" + languageManager.getGuiMessage(player,
-                        "gui.common.back", "返回")),
+                        "gui.common.back", "Back")),
                 ColorUtils.colorize("&7" + getBackLore())));
     }
 
@@ -365,10 +365,10 @@ public class GuildFundsGUI implements GUI {
     private String getBackLore() {
         if ("GuildInfoGUI".equals(sourceGuiType)) {
             return languageManager.getGuiMessage(player,
-                    "gui.guild-funds.back-to-info", "返回工会信息");
+                    "gui.guild-funds.back-to-info", "Back to guild info");
         }
         return languageManager.getGuiMessage(player,
-                "gui.guild-funds.back-to-settings", "返回工会设置");
+                "gui.guild-funds.back-to-settings", "Back to guild settings");
     }
 
     private void setupPageInfo(Inventory inventory) {
@@ -376,15 +376,15 @@ public class GuildFundsGUI implements GUI {
         if (totalPages < 1) totalPages = 1;
         inventory.setItem(46, createItem(Material.PAPER,
                 ColorUtils.colorize("&e" + languageManager.getGuiMessage(player,
-                        "gui.guild-funds.page-info", "页码信息")),
+                        "gui.guild-funds.page-info", "Page info")),
                 ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                        "gui.guild-funds.current-page", "当前页: {page}",
+                        "gui.guild-funds.current-page", "Current page: {page}",
                         "{page}", String.valueOf(page + 1))),
                 ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                        "gui.guild-funds.total-pages", "总页数: {total}",
+                        "gui.guild-funds.total-pages", "Total pages: {total}",
                         "{total}", String.valueOf(totalPages))),
                 ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                        "gui.guild-funds.total-players", "人数: {count}",
+                        "gui.guild-funds.total-players", "Players: {count}",
                         "{count}", String.valueOf(totalPlayers)))));
     }
 
@@ -409,12 +409,12 @@ public class GuildFundsGUI implements GUI {
     private void showPlayerDetails(Player player, GuildContribution entry) {
         player.sendMessage(ColorUtils.colorize(
                 "&6=== " + languageManager.getGuiMessage(player,
-                        "gui.guild-funds.details-header", "存款详情") + " ==="));
+                        "gui.guild-funds.details-header", "Deposit details") + " ==="));
         player.sendMessage(ColorUtils.colorize(
-                "&7" + languageManager.getGuiMessage(player, "gui.guild-funds.player", "玩家")
+                "&7" + languageManager.getGuiMessage(player, "gui.guild-funds.player", "Player")
                         + ": &f" + entry.getPlayerName()));
         player.sendMessage(ColorUtils.colorize(
-                "&7" + languageManager.getGuiMessage(player, "gui.guild-funds.total-deposit", "总存款")
+                "&7" + languageManager.getGuiMessage(player, "gui.guild-funds.total-deposit", "Total deposited")
                         + ": &a" + formatAmount(entry.getAmount())));
 
         // 异步查询该玩家的详细记录

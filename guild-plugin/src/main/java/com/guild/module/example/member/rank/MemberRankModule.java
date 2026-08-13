@@ -78,15 +78,21 @@ public class MemberRankModule implements GuildModule {
         api.onMemberLeave(new MemberEventHandler() {
             @Override
             public void onEvent(MemberEventData data) {
-                // Reset this player's A-Coins via string currency API (SDK v1.5+)
-                context.getApi().withdrawCurrency(
-                        data.getGuildId(),
-                        data.getPlayerUuid(),
-                        "A_COIN",
-                        context.getApi().getCurrencyBalance(data.getGuildId(), data.getPlayerUuid(), "A_COIN"));
-                
-                // Remove from ranking
-                rankManager.removeMember(data.getGuildId(), data.getPlayerUuid());
+                int guildId = data.getGuildId();
+                UUID playerUuid = data.getPlayerUuid();
+                context.getApi().getCurrencyBalanceAsync(guildId, playerUuid, "A_COIN")
+                        .thenCompose(bal -> {
+                            if (bal == null || bal <= 0) {
+                                return java.util.concurrent.CompletableFuture.completedFuture(true);
+                            }
+                            return context.getApi().withdrawCurrencyAsync(guildId, playerUuid, "A_COIN", bal);
+                        })
+                        .whenComplete((ok, err) -> {
+                            if (err != null) {
+                                context.getLogger().warning("[MemberRank] Failed to reset A-Coins on leave: " + err.getMessage());
+                            }
+                            rankManager.removeMember(guildId, playerUuid);
+                        });
             }
 
             @Override
@@ -100,22 +106,30 @@ public class MemberRankModule implements GuildModule {
             @Override
             public void onEvent(com.guild.sdk.event.GuildEventData data) {
                 int guildId = data.getGuildId();
-                var guildService = context.getPlugin().getGuildService();
-                
-                try {
-                    var members = guildService.getGuildMembers(guildId);
-                    for (var member : members) {
-                        double bal = context.getApi().getCurrencyBalance(guildId, member.getPlayerUuid(), "A_COIN");
-                        if (bal > 0) {
-                            context.getApi().withdrawCurrency(guildId, member.getPlayerUuid(), "A_COIN", bal);
-                        }
+                context.getPlugin().getGuildService().getGuildMembersAsync(guildId).thenCompose(members -> {
+                    if (members == null || members.isEmpty()) {
+                        return java.util.concurrent.CompletableFuture.completedFuture(null);
                     }
-                } catch (Exception e) {
-                    context.getLogger().severe("[MemberRank] Failed to reset guild members' A-Coins: " + e.getMessage());
-                }
-                
-                // Clear ranking data for this guild
-                rankManager.clearByGuild(guildId);
+                    java.util.List<java.util.concurrent.CompletableFuture<?>> resets = new java.util.ArrayList<>();
+                    for (var member : members) {
+                        resets.add(context.getApi()
+                                .getCurrencyBalanceAsync(guildId, member.getPlayerUuid(), "A_COIN")
+                                .thenCompose(bal -> {
+                                    if (bal == null || bal <= 0) {
+                                        return java.util.concurrent.CompletableFuture.completedFuture(true);
+                                    }
+                                    return context.getApi().withdrawCurrencyAsync(
+                                            guildId, member.getPlayerUuid(), "A_COIN", bal);
+                                }));
+                    }
+                    return java.util.concurrent.CompletableFuture.allOf(
+                            resets.toArray(new java.util.concurrent.CompletableFuture[0]));
+                }).whenComplete((v, err) -> {
+                    if (err != null) {
+                        context.getLogger().severe("[MemberRank] Failed to reset guild members' A-Coins: " + err.getMessage());
+                    }
+                    rankManager.clearByGuild(guildId);
+                });
             }
 
             @Override

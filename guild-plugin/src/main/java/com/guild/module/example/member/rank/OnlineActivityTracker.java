@@ -174,7 +174,7 @@ public class OnlineActivityTracker implements Listener {
             return;
         }
 
-        module.getRankManager().addACoin(guildId, uuid, playerName, award);
+        module.getRankManager().addACoinAsync(guildId, uuid, playerName, award);
         dailyAwarded.put(uuid, daily + award);
 
         // Reset per-window to avoid drift from tick rate variance

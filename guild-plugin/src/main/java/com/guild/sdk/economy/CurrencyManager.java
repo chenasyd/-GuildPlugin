@@ -6,20 +6,21 @@ import com.guild.core.database.DatabaseManager.DatabaseType;
 import com.guild.core.utils.ColorUtils;
 import org.bukkit.entity.Player;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * 货币管理API
+ * Module currency API (A/B/C coins).
  * <p>
- * 提供多种类型货币的管理，支持：
- * - A币（成员排名模块）
- * - B币（公会统计模块）
- * - C币（任务模块）
- * <p>
- * 所有货币操作都是线程安全的
+ * Cache-first reads; prefer {@code *Async} methods off the server main thread.
+ * Sync methods remain for compatibility but may hit JDBC on cache miss / writes.
  */
 public class CurrencyManager {
 
@@ -54,8 +55,8 @@ public class CurrencyManager {
     private final GuildPlugin plugin;
     private final DatabaseManager databaseManager;
     private final Logger logger;
-    
-    // 内存缓存: (guildId, playerUuid, currencyType) -> amount
+
+    /** (guildId, playerUuid, currencyType) -> amount */
     private final ConcurrentHashMap<String, Double> currencyCache = new ConcurrentHashMap<>();
 
     public CurrencyManager(GuildPlugin plugin) {
@@ -65,9 +66,6 @@ public class CurrencyManager {
         initDatabase();
     }
 
-    /**
-     * 初始化数据库表
-     */
     private void initDatabase() {
         DatabaseType dbType = databaseManager.getDatabaseType();
         String createTableSql;
@@ -111,12 +109,14 @@ public class CurrencyManager {
     }
 
     /**
-     * 获取玩家的货币余额
-     *
-     * @param guildId     公会ID
-     * @param playerUuid  玩家UUID
-     * @param currencyType 货币类型
-     * @return 货币余额
+     * Cached balance only; never hits the database. Returns null on miss.
+     */
+    public Double getCachedBalance(int guildId, UUID playerUuid, CurrencyType currencyType) {
+        return currencyCache.get(buildCacheKey(guildId, playerUuid, currencyType));
+    }
+
+    /**
+     * Get balance (cache-first; JDBC on miss). Prefer {@link #getBalanceAsync}.
      */
     public double getBalance(int guildId, UUID playerUuid, CurrencyType currencyType) {
         String key = buildCacheKey(guildId, playerUuid, currencyType);
@@ -130,23 +130,25 @@ public class CurrencyManager {
         return balance;
     }
 
+    public CompletableFuture<Double> getBalanceAsync(int guildId, UUID playerUuid, CurrencyType currencyType) {
+        String key = buildCacheKey(guildId, playerUuid, currencyType);
+        Double cached = currencyCache.get(key);
+        if (cached != null) {
+            return CompletableFuture.completedFuture(cached);
+        }
+        return CompletableFuture.supplyAsync(() -> getBalance(guildId, playerUuid, currencyType));
+    }
+
     /**
-     * 增加玩家的货币
-     *
-     * @param guildId     公会ID
-     * @param playerUuid  玩家UUID
-     * @param playerName  玩家名称
-     * @param currencyType 货币类型
-     * @param amount      增加金额
-     * @return 操作是否成功
+     * Deposit currency. Prefer {@link #depositAsync} off the main thread.
      */
     public boolean deposit(int guildId, UUID playerUuid, String playerName, CurrencyType currencyType, double amount) {
         if (amount <= 0) {
             return false;
         }
 
+        String key = buildCacheKey(guildId, playerUuid, currencyType);
         try {
-            // 先检查记录是否存在
             String checkSql = "SELECT 1 FROM guild_currencies WHERE guild_id = ? AND player_uuid = ?";
             try (Connection conn = databaseManager.getConnection();
                  PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
@@ -154,7 +156,6 @@ public class CurrencyManager {
                 checkStmt.setString(2, playerUuid.toString());
                 try (ResultSet rs = checkStmt.executeQuery()) {
                     if (rs.next()) {
-                        // 记录存在，执行更新
                         String updateSql = String.format(
                             "UPDATE guild_currencies SET player_name = ?, %s = %s + ?, last_updated = CURRENT_TIMESTAMP WHERE guild_id = ? AND player_uuid = ?",
                             currencyType.getDbColumn(),
@@ -167,15 +168,17 @@ public class CurrencyManager {
                             updateStmt.setString(4, playerUuid.toString());
                             int affected = updateStmt.executeUpdate();
                             if (affected > 0) {
-                                // 更新缓存
-                                String key = buildCacheKey(guildId, playerUuid, currencyType);
-                                double newBalance = getBalance(guildId, playerUuid, currencyType) + amount;
-                                currencyCache.put(key, newBalance);
+                                // Avoid double-count: only bump known cache; otherwise reload from DB.
+                                Double old = currencyCache.get(key);
+                                if (old != null) {
+                                    currencyCache.put(key, old + amount);
+                                } else {
+                                    currencyCache.put(key, loadBalanceFromDatabase(guildId, playerUuid, currencyType));
+                                }
                                 return true;
                             }
                         }
                     } else {
-                        // 记录不存在，执行插入
                         String insertSql = String.format(
                             "INSERT INTO guild_currencies (guild_id, player_uuid, player_name, %s, last_updated) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)",
                             currencyType.getDbColumn()
@@ -187,8 +190,6 @@ public class CurrencyManager {
                             insertStmt.setDouble(4, amount);
                             int affected = insertStmt.executeUpdate();
                             if (affected > 0) {
-                                // 更新缓存
-                                String key = buildCacheKey(guildId, playerUuid, currencyType);
                                 currencyCache.put(key, amount);
                                 return true;
                             }
@@ -202,14 +203,14 @@ public class CurrencyManager {
         return false;
     }
 
+    public CompletableFuture<Boolean> depositAsync(int guildId, UUID playerUuid, String playerName,
+                                                   CurrencyType currencyType, double amount) {
+        return CompletableFuture.supplyAsync(
+                () -> deposit(guildId, playerUuid, playerName, currencyType, amount));
+    }
+
     /**
-     * 减少玩家的货币
-     *
-     * @param guildId     公会ID
-     * @param playerUuid  玩家UUID
-     * @param currencyType 货币类型
-     * @param amount      减少金额
-     * @return 操作是否成功
+     * Withdraw currency. Prefer {@link #withdrawAsync} off the main thread.
      */
     public boolean withdraw(int guildId, UUID playerUuid, CurrencyType currencyType, double amount) {
         if (amount <= 0) {
@@ -238,12 +239,10 @@ public class CurrencyManager {
                 stmt.setString(3, playerUuid.toString());
                 stmt.setDouble(4, amount);
                 int affected = stmt.executeUpdate();
-                
+
                 if (affected > 0) {
-                    // 更新缓存
                     String key = buildCacheKey(guildId, playerUuid, currencyType);
-                    double newBalance = currentBalance - amount;
-                    currencyCache.put(key, newBalance);
+                    currencyCache.put(key, currentBalance - amount);
                     return true;
                 }
             }
@@ -253,14 +252,15 @@ public class CurrencyManager {
         return false;
     }
 
-    /**
-     * 从数据库加载余额
-     */
+    public CompletableFuture<Boolean> withdrawAsync(int guildId, UUID playerUuid,
+                                                    CurrencyType currencyType, double amount) {
+        return CompletableFuture.supplyAsync(() -> withdraw(guildId, playerUuid, currencyType, amount));
+    }
+
     private double loadBalanceFromDatabase(int guildId, UUID playerUuid, CurrencyType currencyType) {
         try {
             String querySql = String.format(
-                "SELECT %s FROM guild_currencies " +
-                "WHERE guild_id = ? AND player_uuid = ?",
+                "SELECT %s FROM guild_currencies WHERE guild_id = ? AND player_uuid = ?",
                 currencyType.getDbColumn()
             );
 
@@ -280,24 +280,19 @@ public class CurrencyManager {
         return 0.0;
     }
 
-    /**
-     * 构建缓存键
-     */
     private String buildCacheKey(int guildId, UUID playerUuid, CurrencyType currencyType) {
-        return guildId + "_" + playerUuid.toString() + "_" + currencyType.name();
+        return guildId + "_" + playerUuid + "_" + currencyType.name();
     }
 
-    /**
-     * 清除缓存
-     */
     public void clearCache() {
         currencyCache.clear();
         logger.info("[Currency] Currency cache cleared");
     }
 
-    /**
-     * 为玩家发送货币变动消息
-     */
+    public void invalidate(int guildId, UUID playerUuid, CurrencyType currencyType) {
+        currencyCache.remove(buildCacheKey(guildId, playerUuid, currencyType));
+    }
+
     public void sendCurrencyMessage(Player player, CurrencyType currencyType, double amount, boolean isDeposit) {
         String key = isDeposit ? "currency.notify.gain" : "currency.notify.spend";
         String fallback = isDeposit

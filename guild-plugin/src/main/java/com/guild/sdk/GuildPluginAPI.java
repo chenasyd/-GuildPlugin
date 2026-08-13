@@ -552,26 +552,41 @@ public class GuildPluginAPI {
     }
 
     /**
-     * 获取玩家的货币余额
+     * 获取玩家的货币余额（缓存优先；未命中可能同步 JDBC，优先用异步版）
      */
     public double getCurrencyBalance(int guildId, UUID playerUuid, CurrencyManager.CurrencyType currencyType) {
         return currencyManager.getBalance(guildId, playerUuid, currencyType);
     }
 
+    public CompletableFuture<Double> getCurrencyBalanceAsync(int guildId, UUID playerUuid,
+                                                             CurrencyManager.CurrencyType currencyType) {
+        return currencyManager.getBalanceAsync(guildId, playerUuid, currencyType);
+    }
+
     /**
-     * 增加玩家的货币
+     * 增加玩家的货币（同步 JDBC；优先用异步版）
      */
-    public boolean depositCurrency(int guildId, UUID playerUuid, String playerName, 
+    public boolean depositCurrency(int guildId, UUID playerUuid, String playerName,
                                  CurrencyManager.CurrencyType currencyType, double amount) {
         return currencyManager.deposit(guildId, playerUuid, playerName, currencyType, amount);
     }
 
+    public CompletableFuture<Boolean> depositCurrencyAsync(int guildId, UUID playerUuid, String playerName,
+                                                           CurrencyManager.CurrencyType currencyType, double amount) {
+        return currencyManager.depositAsync(guildId, playerUuid, playerName, currencyType, amount);
+    }
+
     /**
-     * 减少玩家的货币
+     * 减少玩家的货币（同步 JDBC；优先用异步版）
      */
-    public boolean withdrawCurrency(int guildId, UUID playerUuid, 
+    public boolean withdrawCurrency(int guildId, UUID playerUuid,
                                   CurrencyManager.CurrencyType currencyType, double amount) {
         return currencyManager.withdraw(guildId, playerUuid, currencyType, amount);
+    }
+
+    public CompletableFuture<Boolean> withdrawCurrencyAsync(int guildId, UUID playerUuid,
+                                                            CurrencyManager.CurrencyType currencyType, double amount) {
+        return currencyManager.withdrawAsync(guildId, playerUuid, currencyType, amount);
     }
 
     // 字符串版货币方法（v1.5 新增，与 SDK 桩签名一致）
@@ -581,17 +596,48 @@ public class GuildPluginAPI {
             return currencyManager.getBalance(guildId, playerUuid, CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()));
         } catch (IllegalArgumentException e) { return 0.0; }
     }
+
+    public CompletableFuture<Double> getCurrencyBalanceAsync(int guildId, UUID playerUuid, String currencyType) {
+        try {
+            return currencyManager.getBalanceAsync(guildId, playerUuid,
+                    CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()));
+        } catch (IllegalArgumentException e) {
+            return CompletableFuture.completedFuture(0.0);
+        }
+    }
+
     /** 增加玩家货币（字符串类型） */
     public boolean depositCurrency(int guildId, UUID playerUuid, String playerName, String currencyType, double amount) {
         try {
             return currencyManager.deposit(guildId, playerUuid, playerName, CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()), amount);
         } catch (IllegalArgumentException e) { return false; }
     }
+
+    public CompletableFuture<Boolean> depositCurrencyAsync(int guildId, UUID playerUuid, String playerName,
+                                                           String currencyType, double amount) {
+        try {
+            return currencyManager.depositAsync(guildId, playerUuid, playerName,
+                    CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()), amount);
+        } catch (IllegalArgumentException e) {
+            return CompletableFuture.completedFuture(false);
+        }
+    }
+
     /** 减少玩家货币（字符串类型） */
     public boolean withdrawCurrency(int guildId, UUID playerUuid, String currencyType, double amount) {
         try {
             return currencyManager.withdraw(guildId, playerUuid, CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()), amount);
         } catch (IllegalArgumentException e) { return false; }
+    }
+
+    public CompletableFuture<Boolean> withdrawCurrencyAsync(int guildId, UUID playerUuid,
+                                                            String currencyType, double amount) {
+        try {
+            return currencyManager.withdrawAsync(guildId, playerUuid,
+                    CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()), amount);
+        } catch (IllegalArgumentException e) {
+            return CompletableFuture.completedFuture(false);
+        }
     }
 
     // ==================== 成员管理 API（v1.5 新增） ====================

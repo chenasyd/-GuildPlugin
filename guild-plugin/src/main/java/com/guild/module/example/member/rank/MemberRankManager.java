@@ -4,6 +4,7 @@ import com.guild.sdk.economy.CurrencyManager;
 import com.guild.GuildPlugin;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
@@ -49,9 +50,15 @@ public class MemberRankManager {
         if (list == null) return null;
         for (MemberRank r : list) {
             if (r.getPlayerUuid().equals(playerUuid)) {
-                // Update A-Coin balance from database
-                double balance = currencyManager.getBalance(guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN);
-                r.setACoin((long) balance);
+                Double cached = currencyManager.getCachedBalance(
+                        guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN);
+                if (cached != null) {
+                    r.setACoin(cached.longValue());
+                } else {
+                    // Prefetch off-thread; keep current in-memory value for GUI responsiveness.
+                    currencyManager.getBalanceAsync(guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN)
+                            .thenAccept(bal -> r.setACoin(bal.longValue()));
+                }
                 return r;
             }
         }
@@ -65,54 +72,93 @@ public class MemberRankManager {
         List<MemberRank> list = ranks.computeIfAbsent(guildId, k -> new CopyOnWriteArrayList<>());
         for (MemberRank r : list) {
             if (r.getPlayerUuid().equals(playerUuid)) {
-                // Update name (player may have renamed)
                 r.setPlayerName(playerName);
-                // Update A-Coin balance from database
-                double balance = currencyManager.getBalance(guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN);
-                r.setACoin((long) balance);
+                Double cached = currencyManager.getCachedBalance(
+                        guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN);
+                if (cached != null) {
+                    r.setACoin(cached.longValue());
+                }
                 return r;
             }
         }
-        // Get A-Coin balance from database
-        double balance = currencyManager.getBalance(guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN);
-        MemberRank rank = new MemberRank(playerUuid, playerName, guildId, (long) balance);
+        Double cached = currencyManager.getCachedBalance(
+                guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN);
+        long bal = cached != null ? cached.longValue() : 0L;
+        MemberRank rank = new MemberRank(playerUuid, playerName, guildId, bal);
         list.add(rank);
+        if (cached == null) {
+            currencyManager.getBalanceAsync(guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN)
+                    .thenAccept(v -> rank.setACoin(v.longValue()));
+        }
         return rank;
     }
 
     /**
-     * Add A-Coins for a member
-     *
-     * @return Updated MemberRank, or null if the guild doesn't exist
+     * Add A-Coins for a member (async JDBC). Updates in-memory rank when done.
+     */
+    public CompletableFuture<MemberRank> addACoinAsync(int guildId, UUID playerUuid, String playerName, long amount) {
+        return currencyManager.depositAsync(guildId, playerUuid, playerName, CurrencyManager.CurrencyType.A_COIN, amount)
+                .thenApply(ok -> {
+                    MemberRank rank = getOrCreateCached(guildId, playerUuid, playerName);
+                    if (rank == null) {
+                        return null;
+                    }
+                    Double bal = currencyManager.getCachedBalance(guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN);
+                    if (bal != null) {
+                        rank.setACoin(bal.longValue());
+                    } else {
+                        rank.setACoin(rank.getACoin() + amount);
+                    }
+                    return rank;
+                });
+    }
+
+    /**
+     * Add A-Coins (sync). Prefer {@link #addACoinAsync} off the main thread.
      */
     public MemberRank addACoin(int guildId, UUID playerUuid, String playerName, long amount) {
-        // Use currency manager to deposit A-Coins
         currencyManager.deposit(guildId, playerUuid, playerName, CurrencyManager.CurrencyType.A_COIN, amount);
-        
-        // Update in-memory data
         MemberRank rank = getOrCreate(guildId, playerUuid, playerName);
         if (rank == null) return null;
-        double balance = currencyManager.getBalance(guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN);
-        rank.setACoin((long) balance);
+        Double bal = currencyManager.getCachedBalance(guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN);
+        if (bal != null) {
+            rank.setACoin(bal.longValue());
+        }
         return rank;
     }
 
     /**
      * Subtract A-Coins from a member (floor at 0)
      *
-     * @return Updated MemberRank, or null if the guild doesn't exist
+     * @return Updated MemberRank, or null if the guild doesn't exist / insufficient balance
      */
     public MemberRank reduceACoin(int guildId, UUID playerUuid, String playerName, long amount) {
-        // Use currency manager to withdraw A-Coins
         boolean success = currencyManager.withdraw(guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN, amount);
         if (!success) return null;
-        
-        // Update in-memory data
+
         MemberRank rank = getOrCreate(guildId, playerUuid, playerName);
         if (rank == null) return null;
-        double balance = currencyManager.getBalance(guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN);
-        rank.setACoin((long) balance);
+        Double bal = currencyManager.getCachedBalance(guildId, playerUuid, CurrencyManager.CurrencyType.A_COIN);
+        if (bal != null) {
+            rank.setACoin(bal.longValue());
+        }
         rank.touchActive();
+        return rank;
+    }
+
+    /**
+     * In-memory only create/lookup — does not hit JDBC.
+     */
+    private MemberRank getOrCreateCached(int guildId, UUID playerUuid, String playerName) {
+        List<MemberRank> list = ranks.computeIfAbsent(guildId, k -> new CopyOnWriteArrayList<>());
+        for (MemberRank r : list) {
+            if (r.getPlayerUuid().equals(playerUuid)) {
+                r.setPlayerName(playerName);
+                return r;
+            }
+        }
+        MemberRank rank = new MemberRank(playerUuid, playerName, guildId, 0L);
+        list.add(rank);
         return rank;
     }
 
