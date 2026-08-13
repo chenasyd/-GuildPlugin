@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (pl) ============
+# lang/modules/builtin-activity/pl.yml
+
+module.activity.title: "&6Wkład / Aktywność"
+module.activity.header: "&6&lRanking wkładu członków"
+module.activity.header-lore1: "&7Suma = ekonomia + aktywność × waga"
+module.activity.header-lore2: "&7Ekonomia z guild_contributions; aktywność ze śledzenia online"
+module.activity.loading: "&eŁadowanie..."
+module.activity.empty: "&7Brak członków"
+module.activity.empty-hint: "&7Brak członków gildii do rankingu"
+module.activity.back: "&cWróć"
+module.activity.back-hint: "&7Powrót do poprzedniego menu"
+module.activity.lore-total: "&7Suma: &a{0}"
+module.activity.lore-economy: "&7Ekonomia: &f{0}"
+module.activity.lore-activity: "&7Aktywność: &f{0}"
+module.activity.online: "&aOnline"
+module.activity.offline: "&7Offline"
+module.activity.info-button: "&6Wkład"
+module.activity.info-button-lore1: "&7Zobacz wkład i aktywność członków"
+module.activity.info-button-lore2: "&7Ranking wyniku hybrydowego"
+module.activity.click-open-rank: "&eKliknij, aby otworzyć ranking gildii"
+module.activity.disabled: "&7Wyłączone"

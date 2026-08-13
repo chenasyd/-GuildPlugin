@@ -205,29 +205,6 @@ gui:
     title: "&6Guild Sistemi"
     bedrock-content: "&fBir işlev seçin:"
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6Katkı / Aktivite"
-    header: "&6&lÜye katkı sıralaması"
-    header-lore1: "&7Toplam = ekonomi + aktivite × ağırlık"
-    header-lore2: "&7Ekonomi guild_contributions’tan; aktivite çevrimiçi izlemeden"
-    loading: "&eYükleniyor..."
-    empty: "&7Üye yok"
-    empty-hint: "&7Henüz sıralanacak guild üyesi yok"
-    back: "&cGeri"
-    back-hint: "&7Önceki menüye dön"
-    lore-total: "&7Toplam: &a{0}"
-    lore-economy: "&7Ekonomi: &f{0}"
-    lore-activity: "&7Aktivite: &f{0}"
-    online: "&aÇevrimiçi"
-    offline: "&7Çevrimdışı"
-    info-button: "&6Katkı"
-    info-button-lore1: "&7Üye katkısını ve aktivitesini görüntüle"
-    info-button-lore2: "&7Hibrit toplam puan sıralaması"
-    click-open-rank: "&eGuild sıralamasını açmak için tıkla"
-    disabled: "&7Devre dışı"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

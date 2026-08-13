@@ -204,29 +204,6 @@ gui:
     member-management.name: "&eGestionare Membri"
     title: "&6Sistem Bresle"
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6Contribuție / Activitate"
-    header: "&6&lClasament contribuții membri"
-    header-lore1: "&7Total = economie + activitate × greutate"
-    header-lore2: "&7Economie din guild_contributions; activitate din urmărirea online"
-    loading: "&eSe încarcă..."
-    empty: "&7Niciun membru"
-    empty-hint: "&7Încă nu există membri de breaslă de clasat"
-    back: "&cÎnapoi"
-    back-hint: "&7Revenire la meniul anterior"
-    lore-total: "&7Total: &a{0}"
-    lore-economy: "&7Economie: &f{0}"
-    lore-activity: "&7Activitate: &f{0}"
-    online: "&aOnline"
-    offline: "&7Offline"
-    info-button: "&6Contribuție"
-    info-button-lore1: "&7Vezi contribuția și activitatea membrilor"
-    info-button-lore2: "&7Clasament scor hibrid"
-    click-open-rank: "&eClick pentru a deschide clasamentul"
-    disabled: "&7Dezactivat"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

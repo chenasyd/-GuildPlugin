@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (fi) ============
+# lang/modules/builtin-activity/fi.yml
+
+module.activity.title: "&6Kontribuutio / Aktiivisuus"
+module.activity.header: "&6&lJäsenten panosranking"
+module.activity.header-lore1: "&7Yhteensä = talous + aktiivisuus × paino"
+module.activity.header-lore2: "&7Talous guild_contributionsista; aktiivisuus online-seurannasta"
+module.activity.loading: "&eLadataan..."
+module.activity.empty: "&7Ei jäseniä"
+module.activity.empty-hint: "&7Ei vielä killan jäseniä listattavaksi"
+module.activity.back: "&cTakaisin"
+module.activity.back-hint: "&7Palaa edelliseen valikkoon"
+module.activity.lore-total: "&7Yhteensä: &a{0}"
+module.activity.lore-economy: "&7Talous: &f{0}"
+module.activity.lore-activity: "&7Aktiivisuus: &f{0}"
+module.activity.online: "&aPaikalla"
+module.activity.offline: "&7Poissa"
+module.activity.info-button: "&6Kontribuutio"
+module.activity.info-button-lore1: "&7Näytä jäsenten panos ja aktiivisuus"
+module.activity.info-button-lore2: "&7Hybridipisteiden ranking"
+module.activity.click-open-rank: "&eAvaa killan ranking napsauttamalla"
+module.activity.disabled: "&7Pois käytöstä"

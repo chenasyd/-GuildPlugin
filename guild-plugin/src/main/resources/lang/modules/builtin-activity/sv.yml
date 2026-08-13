@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (sv) ============
+# lang/modules/builtin-activity/sv.yml
+
+module.activity.title: "&6Bidrag / Aktivitet"
+module.activity.header: "&6&lMedlemsbidragsranking"
+module.activity.header-lore1: "&7Totalt = ekonomi + aktivitet × vikt"
+module.activity.header-lore2: "&7Ekonomi från guild_contributions; aktivitet från onlinespårning"
+module.activity.loading: "&eLaddar..."
+module.activity.empty: "&7Inga medlemmar"
+module.activity.empty-hint: "&7Inga gillemedlemmar att ranka ännu"
+module.activity.back: "&cTillbaka"
+module.activity.back-hint: "&7Tillbaka till föregående meny"
+module.activity.lore-total: "&7Totalt: &a{0}"
+module.activity.lore-economy: "&7Ekonomi: &f{0}"
+module.activity.lore-activity: "&7Aktivitet: &f{0}"
+module.activity.online: "&aOnline"
+module.activity.offline: "&7Offline"
+module.activity.info-button: "&6Bidrag"
+module.activity.info-button-lore1: "&7Visa medlemsbidrag och aktivitet"
+module.activity.info-button-lore2: "&7Hybrid totalpoängranking"
+module.activity.click-open-rank: "&eKlicka för att öppna gillerankingen"
+module.activity.disabled: "&7Inaktiverad"

@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (ms) ============
+# lang/modules/builtin-activity/ms.yml
+
+module.activity.title: "&6Sumbangan / Aktiviti"
+module.activity.header: "&6&lKedudukan sumbangan ahli"
+module.activity.header-lore1: "&7Jumlah = ekonomi + aktiviti × pemberat"
+module.activity.header-lore2: "&7Ekonomi dari guild_contributions; aktiviti dari penjejakan dalam talian"
+module.activity.loading: "&eMemuatkan..."
+module.activity.empty: "&7Tiada ahli"
+module.activity.empty-hint: "&7Belum ada ahli guild untuk dinyahutamakan"
+module.activity.back: "&cKembali"
+module.activity.back-hint: "&7Kembali ke menu sebelumnya"
+module.activity.lore-total: "&7Jumlah: &a{0}"
+module.activity.lore-economy: "&7Ekonomi: &f{0}"
+module.activity.lore-activity: "&7Aktiviti: &f{0}"
+module.activity.online: "&aDalam talian"
+module.activity.offline: "&7Luar talian"
+module.activity.info-button: "&6Sumbangan"
+module.activity.info-button-lore1: "&7Lihat sumbangan dan aktiviti ahli"
+module.activity.info-button-lore2: "&7Kedudukan skor hibrid"
+module.activity.click-open-rank: "&eKlik untuk buka kedudukan guild"
+module.activity.disabled: "&7Dilumpuhkan"

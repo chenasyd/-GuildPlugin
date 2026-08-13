@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (uk) ============
+# lang/modules/builtin-activity/uk.yml
+
+module.activity.title: "&6Внесок / Активність"
+module.activity.header: "&6&lРейтинг внеску учасників"
+module.activity.header-lore1: "&7Підсумок = економіка + активність × вага"
+module.activity.header-lore2: "&7Економіка з guild_contributions; активність з онлайн-обліку"
+module.activity.loading: "&eЗавантаження..."
+module.activity.empty: "&7Немає учасників"
+module.activity.empty-hint: "&7Ще немає учасників гільдії для рейтингу"
+module.activity.back: "&cНазад"
+module.activity.back-hint: "&7Повернутися до попереднього меню"
+module.activity.lore-total: "&7Підсумок: &a{0}"
+module.activity.lore-economy: "&7Економіка: &f{0}"
+module.activity.lore-activity: "&7Активність: &f{0}"
+module.activity.online: "&aОнлайн"
+module.activity.offline: "&7Офлайн"
+module.activity.info-button: "&6Внесок"
+module.activity.info-button-lore1: "&7Переглянути внесок і активність учасників"
+module.activity.info-button-lore2: "&7Рейтинг гібридного підсумкового рахунку"
+module.activity.click-open-rank: "&eНатисніть, щоб відкрити рейтинг гільдії"
+module.activity.disabled: "&7Вимкнено"

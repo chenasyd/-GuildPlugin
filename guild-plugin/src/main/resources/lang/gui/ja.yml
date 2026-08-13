@@ -205,29 +205,6 @@ gui:
     title: "&6ギルドシステム"
     bedrock-content: "&f機能を選択："
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6貢献 / アクティビティ"
-    header: "&6&lメンバー貢献ランキング"
-    header-lore1: "&7合計 = 経済貢献 + アクティビティ × 重み"
-    header-lore2: "&7経済は guild_contributions；アクティビティはオンライン追跡"
-    loading: "&e読み込み中..."
-    empty: "&7メンバーがいません"
-    empty-hint: "&7ランキング対象のギルドメンバーがいません"
-    back: "&c戻る"
-    back-hint: "&7前のメニューに戻る"
-    lore-total: "&7合計: &a{0}"
-    lore-economy: "&7経済貢献: &f{0}"
-    lore-activity: "&7アクティビティ: &f{0}"
-    online: "&aオンライン"
-    offline: "&7オフライン"
-    info-button: "&6メンバー貢献"
-    info-button-lore1: "&7メンバーの貢献とアクティビティを表示"
-    info-button-lore2: "&7ハイブリッド合計スコアランキング"
-    click-open-rank: "&eクリックしてギルドランキングを開く"
-    disabled: "&7無効"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

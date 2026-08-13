@@ -205,29 +205,6 @@ gui:
     title: "&6Syst\u00e9m gild"
     bedrock-content: "&fVyberte funkci:"
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6Příspěvek / Aktivita"
-    header: "&6&lŽebříček příspěvků členů"
-    header-lore1: "&7Celkem = ekonomie + aktivita × váha"
-    header-lore2: "&7Ekonomika z guild_contributions; aktivita z online sledování"
-    loading: "&eNačítání..."
-    empty: "&7Žádní členové"
-    empty-hint: "&7Zatím žádní členové gildy k hodnocení"
-    back: "&cZpět"
-    back-hint: "&7Návrat do předchozí nabídky"
-    lore-total: "&7Celkem: &a{0}"
-    lore-economy: "&7Ekonomický příspěvek: &f{0}"
-    lore-activity: "&7Aktivita: &f{0}"
-    online: "&aOnline"
-    offline: "&7Offline"
-    info-button: "&6Příspěvek"
-    info-button-lore1: "&7Zobrazit příspěvek a aktivitu členů"
-    info-button-lore2: "&7Žebříček hybridního skóre"
-    click-open-rank: "&eKliknutím otevřete žebříček gildy"
-    disabled: "&7Vypnuto"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

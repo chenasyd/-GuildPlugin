@@ -205,29 +205,6 @@ gui:
     title: "&6System Gildii"
     bedrock-content: "&fWybierz funkcję:"
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6Wkład / Aktywność"
-    header: "&6&lRanking wkładu członków"
-    header-lore1: "&7Suma = ekonomia + aktywność × waga"
-    header-lore2: "&7Ekonomia z guild_contributions; aktywność ze śledzenia online"
-    loading: "&eŁadowanie..."
-    empty: "&7Brak członków"
-    empty-hint: "&7Brak członków gildii do rankingu"
-    back: "&cWróć"
-    back-hint: "&7Powrót do poprzedniego menu"
-    lore-total: "&7Suma: &a{0}"
-    lore-economy: "&7Ekonomia: &f{0}"
-    lore-activity: "&7Aktywność: &f{0}"
-    online: "&aOnline"
-    offline: "&7Offline"
-    info-button: "&6Wkład"
-    info-button-lore1: "&7Zobacz wkład i aktywność członków"
-    info-button-lore2: "&7Ranking wyniku hybrydowego"
-    click-open-rank: "&eKliknij, aby otworzyć ranking gildii"
-    disabled: "&7Wyłączone"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

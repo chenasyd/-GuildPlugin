@@ -37,6 +37,11 @@ guild-activity:
   daily-active-minutes: 5
 ```
 
+## 多语言
+
+独立模块语言包：`lang/modules/builtin-activity/{lang}.yml`（键前缀 `module.activity.*`）。  
+由 `modules.yml` → `language.default` 控制默认语言，与 `lang/gui/` 核心 GUI 文案分离。
+
 ## 与示例模块的边界
 
 | 能力 | 正式 | 示例（仅演示 SDK） |

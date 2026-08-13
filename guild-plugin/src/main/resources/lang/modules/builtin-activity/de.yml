@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (de) ============
+# lang/modules/builtin-activity/de.yml
+
+module.activity.title: "&6Beitrag / Aktivität"
+module.activity.header: "&6&lMitglieder-Beitragsrangliste"
+module.activity.header-lore1: "&7Gesamt = Wirtschaft + Aktivität × Gewicht"
+module.activity.header-lore2: "&7Wirtschaft aus guild_contributions; Aktivität aus Online-Tracking"
+module.activity.loading: "&eLaden..."
+module.activity.empty: "&7Keine Mitglieder"
+module.activity.empty-hint: "&7Noch keine Gildenmitglieder zum Rankings"
+module.activity.back: "&cZurück"
+module.activity.back-hint: "&7Zum vorherigen Menü zurück"
+module.activity.lore-total: "&7Gesamt: &a{0}"
+module.activity.lore-economy: "&7Wirtschaftsbeitrag: &f{0}"
+module.activity.lore-activity: "&7Aktivität: &f{0}"
+module.activity.online: "&aOnline"
+module.activity.offline: "&7Offline"
+module.activity.info-button: "&6Beitrag"
+module.activity.info-button-lore1: "&7Mitgliederbeitrag und Aktivität anzeigen"
+module.activity.info-button-lore2: "&7Hybrid-Gesamtpunkt-Rangliste"
+module.activity.click-open-rank: "&eKlicken, um die Gildenrangliste zu öffnen"
+module.activity.disabled: "&7Deaktiviert"

@@ -3,6 +3,7 @@ package com.guild.module.example.quest.gui;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.module.ModuleContext;
 import com.guild.module.example.quest.GuildQuestModule;
+import com.guild.module.example.quest.QuestTexts;
 import com.guild.module.example.quest.model.QuestDefinition;
 import com.guild.module.example.quest.model.QuestObjective;
 import com.guild.module.example.quest.model.QuestProgress;
@@ -22,6 +23,7 @@ import java.util.*;
 public class QuestListGUI extends AbstractModuleGUI {
     private final GuildQuestModule module;
     private final ModuleContext context;
+    private final QuestTexts tx;
     private final int guildId;
     private final UUID playerUuid;
     private Player viewer;
@@ -36,6 +38,7 @@ public class QuestListGUI extends AbstractModuleGUI {
         super();
         this.module = module;
         this.context = module.getContext();
+        this.tx = module.texts();
         this.guildId = guildId;
         this.playerUuid = playerUuid;
         this.dailyQuests = new ArrayList<>(module.getQuestManager()
@@ -44,25 +47,23 @@ public class QuestListGUI extends AbstractModuleGUI {
             .getDefinitionsByType(QuestDefinition.QuestType.WEEKLY));
         this.oneTimeQuests = new ArrayList<>(module.getQuestManager()
             .getDefinitionsByType(QuestDefinition.QuestType.ONE_TIME));
-        
-        // Register GUI refresh listener
         registerRefreshListener();
     }
-    
+
     private void registerRefreshListener() {
         context.registerGUIRefreshListener("quest-list", (guiType, data) -> {
             Object guildIdObj = data.get("guildId");
             int notifiedGuildId = guildIdObj instanceof Number ? ((Number) guildIdObj).intValue() : 0;
-            
-            if (notifiedGuildId != 0 && notifiedGuildId == guildId && 
+
+            if (notifiedGuildId != 0 && notifiedGuildId == guildId &&
                 data.containsKey("resetType") && viewer != null && viewer.isOnline()) {
                 refresh(viewer);
                 return;
             }
-            
+
             UUID notifiedPlayerUuid = (UUID) data.get("playerUuid");
-            if (notifiedGuildId != 0 && notifiedGuildId == guildId && 
-                notifiedPlayerUuid != null && notifiedPlayerUuid.equals(playerUuid) && 
+            if (notifiedGuildId != 0 && notifiedGuildId == guildId &&
+                notifiedPlayerUuid != null && notifiedPlayerUuid.equals(playerUuid) &&
                 viewer != null && viewer.isOnline()) {
                 refresh(viewer);
             }
@@ -74,7 +75,7 @@ public class QuestListGUI extends AbstractModuleGUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6&lGuild Quests - Available");
+        return ColorUtils.colorize(tx.t("module.quest.gui.list-title", "&6&lGuild Quests - Available"));
     }
 
     private static final int SLOT_TITLE = 4;
@@ -87,11 +88,13 @@ public class QuestListGUI extends AbstractModuleGUI {
         slotDataMap.clear();
 
         inv.setItem(SLOT_TITLE, createItem(Material.BOOK,
-            "&6&lGuild Quest Panel",
+            tx.t("module.quest.gui.list-header", "&6&lGuild Quest Panel"),
             "",
-            "&7Daily: &f" + dailyQuests.size() + "  &e|&7  Weekly: &f" + weeklyQuests.size() + "  &e|&7  One-time: &f" + oneTimeQuests.size(),
+            tx.tf("module.quest.gui.list-counts",
+                "&7Daily: &f{0}  &e|&7  Weekly: &f{1}  &e|&7  One-time: &f{2}",
+                dailyQuests.size(), weeklyQuests.size(), oneTimeQuests.size()),
             "",
-            "&8| quest module (local persistence)"));
+            tx.t("module.quest.gui.footer", "&8| from quest module")));
 
         List<QuestDefinition> allToShow = new ArrayList<>();
         allToShow.addAll(dailyQuests);
@@ -113,15 +116,13 @@ public class QuestListGUI extends AbstractModuleGUI {
                 case WEEKLY -> Material.SUNFLOWER;
                 case ONE_TIME -> Material.TOTEM_OF_UNDYING;
             };
-            String colorPrefix = !canAccept ? "&7" :
-                def.getType() == QuestDefinition.QuestType.DAILY ? "&e" :
-                def.getType() == QuestDefinition.QuestType.WEEKLY ? "&6" : "&c";
+            String colorPrefix = !canAccept ? "&7" : tx.questTypeColor(def.getType());
             List<String> lore = buildQuestLore(def, canAccept, alreadyAccepted, acceptedDaily, maxDaily);
 
             int slot = mapToSlot(i);
             if (slot != -1) {
                 inv.setItem(slot, createItem(icon,
-                    colorPrefix + "&l" + def.getName(),
+                    colorPrefix + "&l" + tx.questName(def),
                     lore.toArray(new String[0])));
                 slotDataMap.put(slot, def);
             }
@@ -130,11 +131,12 @@ public class QuestListGUI extends AbstractModuleGUI {
         int totalPages = getTotalPages(allToShow.size());
         if (totalPages > 1) {
             setupPagination(inv, currentPage, totalPages,
-                "&e&lPrevious", "&e&lNext");
+                tx.t("module.quest.gui.prev", "&e&lPrevious"),
+                tx.t("module.quest.gui.next", "&e&lNext"));
         }
         inv.setItem(49, createBackButton(
-            context.getMessage("module.quest.back", "&cBack"),
-            context.getMessage("module.quest.back-hint", "&7Return to guild info")));
+            tx.t("module.quest.back", "&cBack"),
+            tx.t("module.quest.back-hint", "&7Return to guild info")));
     }
 
     private List<String> buildQuestLore(QuestDefinition def, boolean canAccept,
@@ -142,73 +144,69 @@ public class QuestListGUI extends AbstractModuleGUI {
                                           int acceptedDaily, int maxDaily) {
         List<String> lore = new ArrayList<>();
         lore.add("");
-        lore.add("&7Type: " + colorPrefix(def));
+        lore.add(tx.tf("module.quest.gui.type-label", "&7Type: {0}",
+            tx.questTypeColor(def.getType()) + tx.questTypeShort(def.getType())));
 
-        StringBuilder objectiveLine = new StringBuilder("&7Goal: ");
+        StringBuilder objectiveLine = new StringBuilder();
         for (int j = 0; j < def.getObjectives().size(); j++) {
             QuestObjective obj = def.getObjectives().get(j);
             if (j > 0) objectiveLine.append(", ");
-            objectiveLine.append(obj.getDescription());
+            objectiveLine.append(tx.objectiveDescription(obj));
         }
-        lore.add(objectiveLine.toString());
+        lore.add(tx.tf("module.quest.gui.goal-label", "&7Goal: {0}", objectiveLine.toString()));
 
         if (!def.getRewards().isEmpty()) {
-            StringBuilder rewardLine = new StringBuilder("&7Rewards: ");
+            StringBuilder rewardLine = new StringBuilder();
             for (int j = 0; j < def.getRewards().size(); j++) {
                 var r = def.getRewards().get(j);
                 if (j > 0) rewardLine.append(", ");
-                rewardLine.append(r.getType().getDisplayName()).append("+").append((int) r.getAmount());
+                rewardLine.append(tx.rewardType(r.getType())).append("+").append((int) r.getAmount());
             }
-            lore.add(rewardLine.toString());
+            lore.add(tx.tf("module.quest.gui.rewards-label", "&7Rewards: {0}", rewardLine.toString()));
         }
 
-        lore.add("&7Min Guild Level: &f" + def.getMinGuildLevel());
+        lore.add(tx.tf("module.quest.gui.min-level", "&7Min Guild Level: &f{0}", def.getMinGuildLevel()));
 
         if (!canAccept) {
             switch (def.getType()) {
                 case DAILY:
-                    lore.add("&cDaily limit reached (" + acceptedDaily + "/" + maxDaily + ")");
-                    lore.add("&7Next available: &f" + formatNextResetTime("daily"));
+                    lore.add(tx.tf("module.quest.gui.daily-limit",
+                        "&cDaily limit reached ({0}/{1})", acceptedDaily, maxDaily));
+                    lore.add(tx.tf("module.quest.gui.next-available",
+                        "&7Next available: &f{0}", formatNextResetTime("daily")));
                     break;
                 case WEEKLY:
-                    lore.add("&cAlready accepted this week");
-                    lore.add("&7Next available: &f" + formatNextResetTime("weekly"));
+                    lore.add(tx.t("module.quest.gui.weekly-accepted", "&cAlready accepted this week"));
+                    lore.add(tx.tf("module.quest.gui.next-available",
+                        "&7Next available: &f{0}", formatNextResetTime("weekly")));
                     break;
                 case ONE_TIME:
                     QuestProgress oneTimeProgress = module.getQuestManager()
                         .getPlayerQuestAny(guildId, playerUuid, def.getId());
                     if (oneTimeProgress != null && oneTimeProgress.isClaimed()) {
-                        lore.add("&cCompleted, cannot re-accept");
+                        lore.add(tx.t("module.quest.gui.completed-once", "&cCompleted, cannot re-accept"));
                     } else if (oneTimeProgress != null) {
-                        lore.add("&aAccepted (In Progress)");
-                        lore.add("&7Click to view details & progress");
+                        lore.add(tx.t("module.quest.gui.accepted-progress", "&aAccepted (In Progress)"));
+                        lore.add(tx.t("module.quest.gui.click-details", "&7Click to view details & progress"));
                     } else {
-                        lore.add("&cCannot accept");
+                        lore.add(tx.t("module.quest.cannot-accept", "&cCannot accept this quest"));
                     }
                     break;
             }
         } else if (alreadyAccepted) {
-            lore.add("&aAccepted (In Progress)");
-            lore.add("&7Click to view details & progress");
+            lore.add(tx.t("module.quest.gui.accepted-progress", "&aAccepted (In Progress)"));
+            lore.add(tx.t("module.quest.gui.click-details", "&7Click to view details & progress"));
         } else {
-            lore.add("&aClick to accept this quest");
+            lore.add(tx.t("module.quest.gui.click-accept", "&aClick to accept this quest"));
         }
         lore.add("");
-        lore.add("&8| from quest module");
+        lore.add(tx.t("module.quest.gui.footer", "&8| from quest module"));
         return lore;
-    }
-
-    private String colorPrefix(QuestDefinition def) {
-        return switch (def.getType()) {
-            case DAILY -> "&eDaily";
-            case WEEKLY -> "&6Weekly";
-            case ONE_TIME -> "&cOne-time";
-        };
     }
 
     private String formatNextResetTime(String type) {
         LocalDateTime now = LocalDateTime.now();
-        LocalTime resetTime = LocalTime.of(0, 0); // Reset at midnight
+        LocalTime resetTime = LocalTime.of(0, 0);
         LocalDateTime nextReset;
         if ("daily".equals(type)) {
             nextReset = now.toLocalDate().plusDays(1).atTime(resetTime);
@@ -228,10 +226,11 @@ public class QuestListGUI extends AbstractModuleGUI {
         if (nextReset.isBefore(now)) nextReset = now.plusSeconds(1);
         LocalDate resetDate = nextReset.toLocalDate();
         LocalTime resetHour = nextReset.toLocalTime();
+        String hhmm = String.format("%02d:%02d", resetHour.getHour(), resetHour.getMinute());
         if (resetDate.equals(now.toLocalDate())) {
-            return "Today " + String.format("%02d:%02d", resetHour.getHour(), resetHour.getMinute());
+            return tx.tf("module.quest.next-reset.today", "Today {0}", hhmm);
         } else if (resetDate.equals(now.toLocalDate().plusDays(1))) {
-            return "Tomorrow " + String.format("%02d:%02d", resetHour.getHour(), resetHour.getMinute());
+            return tx.tf("module.quest.next-reset.tomorrow", "Tomorrow {0}", hhmm);
         }
         return nextReset.format(DateTimeFormatter.ofPattern("MM/dd HH:mm"));
     }
@@ -257,9 +256,12 @@ public class QuestListGUI extends AbstractModuleGUI {
 
             } catch (Exception e) {
                 context.getLogger().severe("[Quest-List] Failed to open quest details: " + e.getMessage());
-                player.sendMessage(ColorUtils.colorize("&c&l[Error] Failed to open quest details"));
-                player.sendMessage(ColorUtils.colorize("&7Quest: &f" + selected.getName()));
-                player.sendMessage(ColorUtils.colorize("&7Reason: &c" + e.getMessage()));
+                player.sendMessage(ColorUtils.colorize(tx.t("module.quest.error.open-detail",
+                    "&c&l[Error] Failed to open quest details")));
+                player.sendMessage(ColorUtils.colorize(tx.tf("module.quest.error.quest-line",
+                    "&7Quest: &f{0}", tx.questName(selected))));
+                player.sendMessage(ColorUtils.colorize(tx.tf("module.quest.error.reason-line",
+                    "&7Reason: &c{0}", e.getMessage())));
             }
         }
     }

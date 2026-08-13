@@ -205,29 +205,6 @@ gui:
     title: "&6길드 시스템"
     bedrock-content: "&f기능 선택:"
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6기여 / 활동"
-    header: "&6&l멤버 기여 순위"
-    header-lore1: "&7총점 = 경제 기여 + 활동 × 가중치"
-    header-lore2: "&7경제는 guild_contributions; 활동은 온라인 추적"
-    loading: "&e로딩 중..."
-    empty: "&7멤버 없음"
-    empty-hint: "&7순위 대상 길드 멤버가 없습니다"
-    back: "&c뒤로"
-    back-hint: "&7이전 메뉴로 돌아가기"
-    lore-total: "&7총점: &a{0}"
-    lore-economy: "&7경제 기여: &f{0}"
-    lore-activity: "&7활동: &f{0}"
-    online: "&a온라인"
-    offline: "&7오프라인"
-    info-button: "&6멤버 기여"
-    info-button-lore1: "&7멤버 기여와 활동 보기"
-    info-button-lore2: "&7혼합 총점 순위"
-    click-open-rank: "&e클릭하여 길드 순위 열기"
-    disabled: "&7비활성화됨"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

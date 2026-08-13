@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (ja) ============
+# lang/modules/builtin-activity/ja.yml
+
+module.activity.title: "&6貢献 / アクティビティ"
+module.activity.header: "&6&lメンバー貢献ランキング"
+module.activity.header-lore1: "&7合計 = 経済貢献 + アクティビティ × 重み"
+module.activity.header-lore2: "&7経済は guild_contributions；アクティビティはオンライン追跡"
+module.activity.loading: "&e読み込み中..."
+module.activity.empty: "&7メンバーがいません"
+module.activity.empty-hint: "&7ランキング対象のギルドメンバーがいません"
+module.activity.back: "&c戻る"
+module.activity.back-hint: "&7前のメニューに戻る"
+module.activity.lore-total: "&7合計: &a{0}"
+module.activity.lore-economy: "&7経済貢献: &f{0}"
+module.activity.lore-activity: "&7アクティビティ: &f{0}"
+module.activity.online: "&aオンライン"
+module.activity.offline: "&7オフライン"
+module.activity.info-button: "&6メンバー貢献"
+module.activity.info-button-lore1: "&7メンバーの貢献とアクティビティを表示"
+module.activity.info-button-lore2: "&7ハイブリッド合計スコアランキング"
+module.activity.click-open-rank: "&eクリックしてギルドランキングを開く"
+module.activity.disabled: "&7無効"

@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (vi) ============
+# lang/modules/builtin-activity/vi.yml
+
+module.activity.title: "&6Đóng góp / Hoạt động"
+module.activity.header: "&6&lBảng xếp hạng đóng góp"
+module.activity.header-lore1: "&7Tổng = kinh tế + hoạt động × trọng số"
+module.activity.header-lore2: "&7Kinh tế từ guild_contributions; hoạt động từ theo dõi online"
+module.activity.loading: "&eĐang tải..."
+module.activity.empty: "&7Không có thành viên"
+module.activity.empty-hint: "&7Chưa có thành viên guild để xếp hạng"
+module.activity.back: "&cQuay lại"
+module.activity.back-hint: "&7Quay lại menu trước"
+module.activity.lore-total: "&7Tổng: &a{0}"
+module.activity.lore-economy: "&7Kinh tế: &f{0}"
+module.activity.lore-activity: "&7Hoạt động: &f{0}"
+module.activity.online: "&aTrực tuyến"
+module.activity.offline: "&7Ngoại tuyến"
+module.activity.info-button: "&6Đóng góp"
+module.activity.info-button-lore1: "&7Xem đóng góp và hoạt động thành viên"
+module.activity.info-button-lore2: "&7Bảng xếp hạng điểm tổng hợp"
+module.activity.click-open-rank: "&eNhấp để mở bảng xếp hạng guild"
+module.activity.disabled: "&7Đã tắt"

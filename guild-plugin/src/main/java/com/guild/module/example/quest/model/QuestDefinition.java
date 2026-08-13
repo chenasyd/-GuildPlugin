@@ -1,12 +1,15 @@
 package com.guild.module.example.quest.model;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Quest template. Display text is resolved from language keys at render time
+ * ({@code module.quest.<id>.name} / {@code .description} / objective keys),
+ * not stored as baked-in strings.
+ */
 public class QuestDefinition {
     private final String id;
-    private final String name;
-    private final String description;
     private final QuestType type;
     private final int sortOrder;
     private final List<QuestObjective> objectives;
@@ -20,12 +23,9 @@ public class QuestDefinition {
         ONE_TIME
     }
 
-    public QuestDefinition(String id, String name, String description,
-                           QuestType type, int sortOrder,
+    public QuestDefinition(String id, QuestType type, int sortOrder,
                            int minGuildLevel, boolean repeatable) {
         this.id = id;
-        this.name = name;
-        this.description = description;
         this.type = type;
         this.sortOrder = sortOrder;
         this.minGuildLevel = minGuildLevel;
@@ -43,8 +43,15 @@ public class QuestDefinition {
     }
 
     public String getId() { return id; }
-    public String getName() { return name; }
-    public String getDescription() { return description; }
+
+    public String getNameKey() {
+        return "module.quest." + id + ".name";
+    }
+
+    public String getDescriptionKey() {
+        return "module.quest." + id + ".description";
+    }
+
     public QuestType getType() { return type; }
     public int getSortOrder() { return sortOrder; }
     public List<QuestObjective> getObjectives() { return objectives; }

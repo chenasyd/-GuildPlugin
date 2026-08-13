@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (es) ============
+# lang/modules/builtin-activity/es.yml
+
+module.activity.title: "&6Contribución / Actividad"
+module.activity.header: "&6&lRanking de contribución"
+module.activity.header-lore1: "&7Total = economía + actividad × peso"
+module.activity.header-lore2: "&7Economía de guild_contributions; actividad del seguimiento online"
+module.activity.loading: "&eCargando..."
+module.activity.empty: "&7Sin miembros"
+module.activity.empty-hint: "&7Aún no hay miembros del gremio para clasificar"
+module.activity.back: "&cVolver"
+module.activity.back-hint: "&7Volver al menú anterior"
+module.activity.lore-total: "&7Total: &a{0}"
+module.activity.lore-economy: "&7Economía: &f{0}"
+module.activity.lore-activity: "&7Actividad: &f{0}"
+module.activity.online: "&aEn línea"
+module.activity.offline: "&7Desconectado"
+module.activity.info-button: "&6Contribución"
+module.activity.info-button-lore1: "&7Ver contribución y actividad de miembros"
+module.activity.info-button-lore2: "&7Ranking de puntuación híbrida"
+module.activity.click-open-rank: "&eClic para abrir el ranking del gremio"
+module.activity.disabled: "&7Desactivado"

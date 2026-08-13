@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (cs) ============
+# lang/modules/builtin-activity/cs.yml
+
+module.activity.title: "&6Příspěvek / Aktivita"
+module.activity.header: "&6&lŽebříček příspěvků členů"
+module.activity.header-lore1: "&7Celkem = ekonomie + aktivita × váha"
+module.activity.header-lore2: "&7Ekonomika z guild_contributions; aktivita z online sledování"
+module.activity.loading: "&eNačítání..."
+module.activity.empty: "&7Žádní členové"
+module.activity.empty-hint: "&7Zatím žádní členové gildy k hodnocení"
+module.activity.back: "&cZpět"
+module.activity.back-hint: "&7Návrat do předchozí nabídky"
+module.activity.lore-total: "&7Celkem: &a{0}"
+module.activity.lore-economy: "&7Ekonomický příspěvek: &f{0}"
+module.activity.lore-activity: "&7Aktivita: &f{0}"
+module.activity.online: "&aOnline"
+module.activity.offline: "&7Offline"
+module.activity.info-button: "&6Příspěvek"
+module.activity.info-button-lore1: "&7Zobrazit příspěvek a aktivitu členů"
+module.activity.info-button-lore2: "&7Žebříček hybridního skóre"
+module.activity.click-open-rank: "&eKliknutím otevřete žebříček gildy"
+module.activity.disabled: "&7Vypnuto"

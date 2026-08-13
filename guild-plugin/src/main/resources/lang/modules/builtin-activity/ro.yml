@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (ro) ============
+# lang/modules/builtin-activity/ro.yml
+
+module.activity.title: "&6Contribuție / Activitate"
+module.activity.header: "&6&lClasament contribuții membri"
+module.activity.header-lore1: "&7Total = economie + activitate × greutate"
+module.activity.header-lore2: "&7Economie din guild_contributions; activitate din urmărirea online"
+module.activity.loading: "&eSe încarcă..."
+module.activity.empty: "&7Niciun membru"
+module.activity.empty-hint: "&7Încă nu există membri de breaslă de clasat"
+module.activity.back: "&cÎnapoi"
+module.activity.back-hint: "&7Revenire la meniul anterior"
+module.activity.lore-total: "&7Total: &a{0}"
+module.activity.lore-economy: "&7Economie: &f{0}"
+module.activity.lore-activity: "&7Activitate: &f{0}"
+module.activity.online: "&aOnline"
+module.activity.offline: "&7Offline"
+module.activity.info-button: "&6Contribuție"
+module.activity.info-button-lore1: "&7Vezi contribuția și activitatea membrilor"
+module.activity.info-button-lore2: "&7Clasament scor hibrid"
+module.activity.click-open-rank: "&eClick pentru a deschide clasamentul"
+module.activity.disabled: "&7Dezactivat"

@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (th) ============
+# lang/modules/builtin-activity/th.yml
+
+module.activity.title: "&6ผลงาน / กิจกรรม"
+module.activity.header: "&6&lอันดับผลงานสมาชิก"
+module.activity.header-lore1: "&7คะแนนรวม = เศรษฐกิจ + กิจกรรม × น้ำหนัก"
+module.activity.header-lore2: "&7เศรษฐกิจจาก guild_contributions; กิจกรรมจากการติดตามออนไลน์"
+module.activity.loading: "&eกำลังโหลด..."
+module.activity.empty: "&7ไม่มีสมาชิก"
+module.activity.empty-hint: "&7ยังไม่มีสมาชิกกิลด์สำหรับจัดอันดับ"
+module.activity.back: "&cกลับ"
+module.activity.back-hint: "&7กลับไปเมนูก่อนหน้า"
+module.activity.lore-total: "&7คะแนนรวม: &a{0}"
+module.activity.lore-economy: "&7เศรษฐกิจ: &f{0}"
+module.activity.lore-activity: "&7กิจกรรม: &f{0}"
+module.activity.online: "&aออนไลน์"
+module.activity.offline: "&7ออฟไลน์"
+module.activity.info-button: "&6ผลงานสมาชิก"
+module.activity.info-button-lore1: "&7ดูผลงานและกิจกรรมของสมาชิก"
+module.activity.info-button-lore2: "&7อันดับคะแนนรวมแบบผสม"
+module.activity.click-open-rank: "&eคลิกเพื่อเปิดอันดับกิลด์"
+module.activity.disabled: "&7ปิดใช้งาน"

@@ -204,29 +204,6 @@ gui:
     member-management.name: "&eJ\u00e4senten hallinta"
     title: "&6Guildij\u00e4rjestelm\u00e4"
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6Kontribuutio / Aktiivisuus"
-    header: "&6&lJäsenten panosranking"
-    header-lore1: "&7Yhteensä = talous + aktiivisuus × paino"
-    header-lore2: "&7Talous guild_contributionsista; aktiivisuus online-seurannasta"
-    loading: "&eLadataan..."
-    empty: "&7Ei jäseniä"
-    empty-hint: "&7Ei vielä killan jäseniä listattavaksi"
-    back: "&cTakaisin"
-    back-hint: "&7Palaa edelliseen valikkoon"
-    lore-total: "&7Yhteensä: &a{0}"
-    lore-economy: "&7Talous: &f{0}"
-    lore-activity: "&7Aktiivisuus: &f{0}"
-    online: "&aPaikalla"
-    offline: "&7Poissa"
-    info-button: "&6Kontribuutio"
-    info-button-lore1: "&7Näytä jäsenten panos ja aktiivisuus"
-    info-button-lore2: "&7Hybridipisteiden ranking"
-    click-open-rank: "&eAvaa killan ranking napsauttamalla"
-    disabled: "&7Pois käytöstä"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

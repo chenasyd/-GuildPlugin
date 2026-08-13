@@ -37,21 +37,22 @@ public class QuestRewardHandler {
 
         for (QuestReward reward : definition.getRewards()) {
             boolean success = false;
+            String questLabel = definition.getId();
             
             switch (reward.getType()) {
                 case CONTRIBUTION:
                     success = grantContributionReward(player, reward.getAmount(), 
-                        definition.getName(), successRewards, failedRewards);
+                        questLabel, successRewards, failedRewards);
                     break;
                     
                 case MONEY:
                     success = grantMoneyReward(player, reward.getAmount(), 
-                        definition.getName(), successRewards, failedRewards);
+                        questLabel, successRewards, failedRewards);
                     break;
                     
                 case EXP:
                     success = grantExpReward(player, reward.getAmount(), 
-                        definition.getName(), successRewards, failedRewards);
+                        questLabel, successRewards, failedRewards);
                     break;
             }
         }
@@ -61,11 +62,14 @@ public class QuestRewardHandler {
             progress.setClaimed();
         }
         
+        QuestTexts tx = new QuestTexts(context);
+        String localizedName = tx.questName(definition);
+        
         // Log detailed result
-        logRewardResult(player.getName(), definition.getName(), successRewards, failedRewards);
+        logRewardResult(player.getName(), definition.getId(), successRewards, failedRewards);
         
         // Notify player
-        notifyPlayer(player, definition.getName(), successRewards, failedRewards);
+        notifyPlayer(player, localizedName, successRewards, failedRewards, tx);
     }
 
     /**
@@ -239,30 +243,31 @@ public class QuestRewardHandler {
      * Notify player of reward result
      */
     private void notifyPlayer(Player player, String questName, 
-                            List<String> successList, List<String> failedList) {
+                            List<String> successList, List<String> failedList,
+                            QuestTexts tx) {
         if (!player.isOnline()) return;
 
-        // Build message
         StringBuilder message = new StringBuilder();
-        message.append("&6&l[Quest Rewards]&r &aYou have claimed rewards for '&e").append(questName)
-              .append("&e'!\n");
+        message.append(tx.tf("module.quest.reward-notify.header",
+            "&6&l[Quest Rewards]&r &aYou have claimed rewards for '&e{0}&e'!\n",
+            questName));
 
         if (!successList.isEmpty()) {
-            message.append("&aReceived: &f").append(String.join("&7, &f", successList)).append("\n");
+            message.append(tx.tf("module.quest.reward-notify.received",
+                "&aReceived: &f{0}\n",
+                String.join("&7, &f", successList)));
         }
 
         if (!failedList.isEmpty()) {
-            message.append("&cSome rewards failed: &7")
-                  .append(String.join("&7, &c", failedList))
-                  .append("\n&7Please contact an administrator");
+            message.append(tx.tf("module.quest.reward-notify.failed",
+                "&cSome rewards failed: &7{0}\n&7Please contact an administrator",
+                String.join("&7, &c", failedList)));
         }
 
-        // Send message (with color codes)
         context.sendMessage(player, "quest.reward-result", message.toString());
 
-        // Extra notice if some rewards failed
         if (!failedList.isEmpty()) {
-            context.sendMessage(player, "quest.reward-partial", 
+            context.sendMessage(player, "module.quest.reward-partial",
                 "&e[Quest] Some rewards could not be delivered. Please screenshot and contact an administrator");
         }
     }

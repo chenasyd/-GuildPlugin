@@ -37,6 +37,11 @@ guild-activity:
   daily-active-minutes: 5
 ```
 
+## i18n
+
+Dedicated module packs: `lang/modules/builtin-activity/{lang}.yml` (keys `module.activity.*`).  
+Default language follows `modules.yml` → `language.default`, separate from core `lang/gui/` strings.
+
 ## Boundary vs example modules
 
 | Capability | Production | Example (SDK demo only) |

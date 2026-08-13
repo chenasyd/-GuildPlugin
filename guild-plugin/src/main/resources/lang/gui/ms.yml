@@ -205,29 +205,6 @@ gui:
     title: "&6Sistem Guild"
     bedrock-content: "&fPilih fungsi:"
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6Sumbangan / Aktiviti"
-    header: "&6&lKedudukan sumbangan ahli"
-    header-lore1: "&7Jumlah = ekonomi + aktiviti × pemberat"
-    header-lore2: "&7Ekonomi dari guild_contributions; aktiviti dari penjejakan dalam talian"
-    loading: "&eMemuatkan..."
-    empty: "&7Tiada ahli"
-    empty-hint: "&7Belum ada ahli guild untuk dinyahutamakan"
-    back: "&cKembali"
-    back-hint: "&7Kembali ke menu sebelumnya"
-    lore-total: "&7Jumlah: &a{0}"
-    lore-economy: "&7Ekonomi: &f{0}"
-    lore-activity: "&7Aktiviti: &f{0}"
-    online: "&aDalam talian"
-    offline: "&7Luar talian"
-    info-button: "&6Sumbangan"
-    info-button-lore1: "&7Lihat sumbangan dan aktiviti ahli"
-    info-button-lore2: "&7Kedudukan skor hibrid"
-    click-open-rank: "&eKlik untuk buka kedudukan guild"
-    disabled: "&7Dilumpuhkan"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

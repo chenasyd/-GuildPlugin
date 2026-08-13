@@ -204,29 +204,6 @@ gui:
     member-management.name: "&eGerenciar Membros"
     title: "&6Sistema de Guildas"
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6Contribuição / Atividade"
-    header: "&6&lRanking de contribuição"
-    header-lore1: "&7Total = economia + atividade × peso"
-    header-lore2: "&7Economia de guild_contributions; atividade do rastreio online"
-    loading: "&eA carregar..."
-    empty: "&7Sem membros"
-    empty-hint: "&7Ainda não há membros da guilda para classificar"
-    back: "&cVoltar"
-    back-hint: "&7Voltar ao menu anterior"
-    lore-total: "&7Total: &a{0}"
-    lore-economy: "&7Economia: &f{0}"
-    lore-activity: "&7Atividade: &f{0}"
-    online: "&aOnline"
-    offline: "&7Offline"
-    info-button: "&6Contribuição"
-    info-button-lore1: "&7Ver contribuição e atividade dos membros"
-    info-button-lore2: "&7Ranking de pontuação híbrida"
-    click-open-rank: "&eClique para abrir o ranking"
-    disabled: "&7Desativado"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

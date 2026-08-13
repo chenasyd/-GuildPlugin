@@ -2,6 +2,7 @@ package com.guild.module.example.quest.gui;
 
 import com.guild.core.utils.ColorUtils;
 import com.guild.module.example.quest.GuildQuestModule;
+import com.guild.module.example.quest.QuestTexts;
 import com.guild.module.example.quest.model.QuestDefinition;
 import com.guild.module.example.quest.model.QuestObjective;
 import com.guild.module.example.quest.model.QuestProgress;
@@ -26,11 +27,10 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     
     // Module reference (for callbacks only)
     private final GuildQuestModule module;
+    private final QuestTexts tx;
     
     // Preloaded data (may be null, must check)
     private final String questId;
-    private final String questName;
-    private final String questDescription;
     private final QuestDefinition.QuestType questType;
     private final int minGuildLevel;
     private final boolean isRepeatable;
@@ -53,9 +53,8 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     private QuestDetailGUI(Builder builder) {
         super();
         this.module = builder.module;
+        this.tx = module.texts();
         this.questId = builder.questId;
-        this.questName = builder.questName != null ? builder.questName : "Unknown Quest";
-        this.questDescription = builder.questDescription != null ? builder.questDescription : "No description";
         this.questType = builder.questType != null ? builder.questType : QuestDefinition.QuestType.DAILY;
         this.minGuildLevel = builder.minGuildLevel;
         this.isRepeatable = builder.isRepeatable;
@@ -71,9 +70,19 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         this.playerUuid = builder.playerUuid;
     }
     
+    private String localizedName() {
+        return tx.questName(questId);
+    }
+
+    private String localizedDescription() {
+        if (questId == null) return "";
+        return tx.t("module.quest." + questId + ".description", "");
+    }
+
     @Override
     public String getTitle() {
-        return ColorUtils.colorize("&6&lQuest Details - " + questName);
+        return ColorUtils.colorize(tx.tf("module.quest.gui.detail-title",
+            "&6&lQuest Details - {0}", localizedName()));
     }
     
     @Override
@@ -90,58 +99,49 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         } catch (Exception e) {
             module.getContext().getLogger().severe("[Quest-Detail] Critical render error: " + e.getMessage());
             
-            // Show error UI
             inv.setItem(13, createItem(Material.BARRIER,
-                "&c&l[ Render Error ]",
+                tx.t("module.quest.gui.render-error", "&c&l[ Render Error ]"),
                 "",
-                "&7Quest ID: &f" + questId,
-                "&7Error: &c" + (e.getMessage() != null ? e.getMessage() : "Unknown error"),
+                tx.tf("module.quest.gui.render-error-id", "&7Quest ID: &f{0}", questId),
+                tx.tf("module.quest.gui.render-error-msg", "&7Error: &c{0}",
+                    e.getMessage() != null ? e.getMessage() : "Unknown error"),
                 "",
-                "&7Please contact an administrator"));
+                tx.t("module.quest.gui.contact-admin", "&7Please contact an administrator")));
         }
     }
     
-    /**
-     * Render header info (quest name, type, description, etc.)
-     */
     private void renderHeader(Inventory inv) {
         String typeColor = getTypeColor();
-        String typeName = getTypeName();
+        String typeName = tx.questTypeFull(questType);
         Material icon = getIcon();
         
         List<String> lore = new ArrayList<>();
         lore.add("");
-        lore.add("&7Type: " + typeColor + typeName);
-        lore.add("&7Min Guild Level: &f" + minGuildLevel);
-        lore.add("&7Repeatable: " + (isRepeatable ? "&aYes" : "&cNo"));
+        lore.add(tx.tf("module.quest.gui.type-label", "&7Type: {0}", typeColor + typeName));
+        lore.add(tx.tf("module.quest.gui.min-level", "&7Min Guild Level: &f{0}", minGuildLevel));
+        lore.add(tx.tf("module.quest.gui.repeatable", "&7Repeatable: {0}",
+            isRepeatable
+                ? tx.t("module.quest.gui.yes", "&aYes")
+                : tx.t("module.quest.gui.no", "&cNo")));
         lore.add("");
-        if (questDescription != null && !questDescription.isEmpty()) {
-            lore.add(questDescription);
+        String desc = localizedDescription();
+        if (desc != null && !desc.isEmpty()) {
+            lore.add(desc);
         }
         
         inv.setItem(4, createItem(icon,
-            typeColor + "&l" + questName,
+            typeColor + "&l" + localizedName(),
             lore.toArray(new String[0])));
     }
     
-    /**
-     * Render status info (progress, status text)
-     */
     private void renderStatus(Inventory inv) {
-        String statusText = getStatusText();
-        String progressText = getProgressText();
-        String hintText = getHintText();
-        
         inv.setItem(13, createItem(Material.PAPER,
-            statusText,
+            getStatusText(),
             "",
-            progressText,
-            hintText));
+            getProgressText(),
+            getHintText()));
     }
     
-    /**
-     * Render objectives list
-     */
     private void renderObjectives(Inventory inv) {
         if (objectives == null || objectives.isEmpty()) {
             return;
@@ -163,18 +163,16 @@ public class QuestDetailGUI extends AbstractModuleGUI {
             
             inv.setItem(slot, createItem(
                 done ? Material.LIME_STAINED_GLASS_PANE : Material.YELLOW_STAINED_GLASS_PANE,
-                (done ? "&a" : "&e") + getObjectiveDisplayName(obj),
+                (done ? "&a" : "&e") + tx.objectiveType(obj.getType()),
                 "",
-                "&7Goal: &f" + getObjectiveDescription(obj),
-                "&7Progress: " + (done ? "&a" : "&e") + current + "/" + target + 
-                    " (" + String.format("%.0f", pct) + "%)",
+                tx.tf("module.quest.gui.goal-label", "&7Goal: {0}", tx.objectiveDescription(obj)),
+                tx.tf("module.quest.gui.progress-detail",
+                    "&7Progress: {0}{1}/{2} ({3}%)",
+                    done ? "&a" : "&e", current, target, String.format("%.0f", pct)),
                 bar));
         }
     }
     
-    /**
-     * Render rewards list
-     */
     private void renderRewards(Inventory inv) {
         if (rewards == null || rewards.isEmpty()) {
             return;
@@ -184,49 +182,46 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         rewardLore.add("");
         for (QuestReward r : rewards) {
             if (r == null) continue;
-            rewardLore.add("&7" + getRewardDisplayName(r) + ": &f+" + String.format("%.0f", r.getAmount()));
+            rewardLore.add("&7" + tx.rewardType(r.getType()) + ": &f+" + String.format("%.0f", r.getAmount()));
         }
         rewardLore.add("");
-        rewardLore.add("&8| from quest module config");
+        rewardLore.add(tx.t("module.quest.gui.footer", "&8| from quest module config"));
         
         inv.setItem(31, createItem(Material.DIAMOND,
-            "&b&lQuest Rewards",
+            tx.t("module.quest.gui.rewards-header", "&b&lQuest Rewards"),
             rewardLore.toArray(new String[0])));
     }
     
-    /**
-     * Render action buttons (accept/cancel/claim)
-     */
     private void renderActionButtons(Inventory inv) {
         if (canAccept()) {
             inv.setItem(40, createItem(Material.EMERALD,
-                "&a&l[ Accept Quest ]",
+                tx.t("module.quest.gui.accept-button", "&a&l[ Accept Quest ]"),
                 "",
-                "&7Accept to start tracking progress",
-                "&8| Click to accept"));
+                tx.t("module.quest.gui.accept-hint", "&7Accept to start tracking progress"),
+                tx.t("module.quest.gui.click-hint", "&8| Click to accept")));
         } else if (isCompleted && !isClaimed) {
             inv.setItem(40, createItem(Material.GOLD_INGOT,
-                "&e&l[ Claim Reward ]",
+                tx.t("module.quest.gui.claim-button", "&e&l[ Claim Reward ]"),
                 "",
-                "&7All objectives completed, claim your reward",
-                "&8| Click to claim"));
+                tx.t("module.quest.gui.claim-hint", "&7All objectives completed, claim your reward"),
+                tx.t("module.quest.gui.click-hint-claim", "&8| Click to claim")));
         } else if (isClaimed) {
             inv.setItem(40, createItem(Material.GRAY_DYE,
-                "&7&lReward Claimed",
+                tx.t("module.quest.gui.claimed-button", "&7&lReward Claimed"),
                 "",
-                "&7This quest has been completed and reward claimed"));
+                tx.t("module.quest.gui.claimed-hint", "&7This quest has been completed and reward claimed")));
         } else if (hasProgress) {
             inv.setItem(40, createItem(Material.REDSTONE,
-                "&c&l[ Cancel Quest ]",
+                tx.t("module.quest.gui.cancel-button", "&c&l[ Cancel Quest ]"),
                 "",
-                "&7Abandon current progress (cannot undo)",
-                "&8| Click to cancel"));
+                tx.t("module.quest.gui.cancel-hint", "&7Abandon current progress (cannot undo)"),
+                tx.t("module.quest.gui.click-hint-cancel", "&8| Click to cancel")));
         } else {
             inv.setItem(40, createItem(Material.BARRIER,
-                "&c&l[ Cannot Accept ]",
+                tx.t("module.quest.gui.cannot-accept-button", "&c&l[ Cannot Accept ]"),
                 "",
                 getCannotAcceptReason(),
-                "&7Check requirements and try again"));
+                tx.t("module.quest.gui.check-requirements", "&7Check requirements and try again")));
         }
     }
     
@@ -252,7 +247,8 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     
     private void handleAccept(Player player) {
         if (guildId <= 0) {
-            player.sendMessage(ColorUtils.colorize("&c[Quest] Invalid guild ID, cannot accept quest! (guildId=" + guildId + ")"));
+            player.sendMessage(ColorUtils.colorize(tx.tf("module.quest.error.bad-guild",
+                "&c[Quest] Invalid guild ID, cannot accept quest! (guildId={0})", guildId)));
             module.getContext().getLogger().warning("[Quest-Detail] Accept denied: guildId=" + guildId +
                 ", questId=" + questId + ", player=" + player.getName());
             return;
@@ -260,7 +256,8 @@ public class QuestDetailGUI extends AbstractModuleGUI {
 
         QuestDefinition definition = module.getQuestManager().getDefinition(questId);
         if (definition == null) {
-            player.sendMessage(ColorUtils.colorize("&c[Quest] Quest definition does not exist!"));
+            player.sendMessage(ColorUtils.colorize(tx.t("module.quest.error.def-missing",
+                "&c[Quest] Quest definition does not exist!")));
             return;
         }
         
@@ -269,8 +266,8 @@ public class QuestDetailGUI extends AbstractModuleGUI {
             definition.getObjectives().size());
         
         if (module.getQuestManager().acceptQuest(newProgress)) {
-            module.getContext().sendMessage(player, "module.quest.accepted",
-                "&a[Quest] Accepted quest: &f" + questName);
+            module.getContext().sendMessage(player, "module.quest.accepted-named",
+                localizedName());
             
             notifyOtherGUIsRefresh();
             forceRefreshContent(player);
@@ -279,7 +276,8 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     
     private void handleClaimReward(Player player) {
         if (guildId <= 0) {
-            player.sendMessage(ColorUtils.colorize("&c[Quest] Invalid guild ID, cannot claim reward!"));
+            player.sendMessage(ColorUtils.colorize(tx.t("module.quest.error.bad-guild-claim",
+                "&c[Quest] Invalid guild ID, cannot claim reward!")));
             return;
         }
 
@@ -288,7 +286,8 @@ public class QuestDetailGUI extends AbstractModuleGUI {
             .getPlayerQuest(guildId, playerUuid, questId);
         
         if (definition == null || progress == null) {
-            player.sendMessage(ColorUtils.colorize("&c[Quest] Cannot retrieve quest data!"));
+            player.sendMessage(ColorUtils.colorize(tx.t("module.quest.error.no-progress",
+                "&c[Quest] Cannot retrieve quest data!")));
             return;
         }
         
@@ -296,7 +295,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         module.getQuestManager().saveGuildProgress(guildId);
         module.getContext().getEventBus().publish(
             new GuildQuestModule.QuestCompletedEvent(
-                player.getName(), questName, guildId));
+                player.getName(), localizedName(), guildId));
         module.getContext().sendMessage(player, "module.quest.reward-claimed", "&a[Quest] Rewards granted!");
         
         notifyOtherGUIsRefresh();
@@ -304,47 +303,31 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     private void handleCancel(Player player) {
-        player.sendMessage(ColorUtils.colorize("&c[Quest] Cancel feature not yet implemented"));
+        player.sendMessage(ColorUtils.colorize(tx.t("module.quest.cancel-unimplemented",
+            "&c[Quest] Cancel feature not yet implemented")));
     }
     
     // ==================== Helper Methods ====================
     
     private String getTypeColor() {
-        if (questType == null) return "&7";
-        switch (questType) {
-            case DAILY: return "&e";
-            case WEEKLY: return "&6";
-            case ONE_TIME: return "&c";
-            default: return "&7";
-        }
-    }
-    
-    private String getTypeName() {
-        if (questType == null) return "Unknown";
-        switch (questType) {
-            case DAILY: return "Daily Quest";
-            case WEEKLY: return "Weekly Quest";
-            case ONE_TIME: return "One-time Quest";
-            default: return "Unknown Type";
-        }
+        return tx.questTypeColor(questType);
     }
     
     private Material getIcon() {
         if (questType == null) return Material.PAPER;
-        switch (questType) {
-            case DAILY: return Material.CLOCK;
-            case WEEKLY: return Material.SUNFLOWER;
-            case ONE_TIME: return Material.TOTEM_OF_UNDYING;
-            default: return Material.PAPER;
-        }
+        return switch (questType) {
+            case DAILY -> Material.CLOCK;
+            case WEEKLY -> Material.SUNFLOWER;
+            case ONE_TIME -> Material.TOTEM_OF_UNDYING;
+        };
     }
     
     private String getStatusText() {
-        if (isClaimed) return "&a&lClaimed";
-        if (isCompleted) return "&e&lCompleted (Claim Pending)";
-        if (hasProgress) return "&6&lIn Progress";
-        if (canAccept()) return "&a&lAvailable";
-        return "&c&lUnavailable";
+        if (isClaimed) return tx.t("module.quest.status.claimed", "&a&lClaimed");
+        if (isCompleted) return tx.t("module.quest.status.claim-pending", "&e&lCompleted (Claim Pending)");
+        if (hasProgress) return tx.t("module.quest.status.in-progress", "&6&lIn Progress");
+        if (canAccept()) return tx.t("module.quest.status.available", "&a&lAvailable");
+        return tx.t("module.quest.status.unavailable", "&c&lUnavailable");
     }
     
     private String getProgressText() {
@@ -355,7 +338,9 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         try {
             QuestDefinition def = module.getQuestManager().getDefinition(questId);
             if (def != null) {
-                return "&7Progress: &f" + String.format("%.1f%%", def.getProgressPercent(objectiveProgress));
+                return tx.tf("module.quest.gui.progress-pct",
+                    "&7Progress: &f{0}%",
+                    String.format("%.1f", def.getProgressPercent(objectiveProgress)));
             }
         } catch (Exception ignored) {}
         
@@ -363,7 +348,9 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     private String getHintText() {
-        if (isCompleted && !isClaimed) return "&eClick to claim reward";
+        if (isCompleted && !isClaimed) {
+            return tx.t("module.quest.gui.click-claim", "&eClick to claim reward");
+        }
         return "";
     }
     
@@ -377,21 +364,6 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     private double calculatePercent(int current, int target) {
         if (target <= 0) return 0;
         return Math.min(100.0, (double) current / target * 100.0);
-    }
-    
-    private String getObjectiveDisplayName(QuestObjective obj) {
-        if (obj == null || obj.getType() == null) return "Unknown Objective";
-        return obj.getType().getDisplayName();
-    }
-    
-    private String getObjectiveDescription(QuestObjective obj) {
-        if (obj == null) return "No description";
-        return obj.getDescription() != null ? obj.getDescription() : "No description";
-    }
-    
-    private String getRewardDisplayName(QuestReward r) {
-        if (r == null || r.getType() == null) return "Unknown";
-        return r.getType().getDisplayName();
     }
     
     private boolean canAccept() {
@@ -408,16 +380,20 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     private String getCannotAcceptReason() {
-        if (hasProgress) return "&cAlready accepted this quest";
+        if (hasProgress) {
+            return tx.t("module.quest.gui.already-accepted", "&cAlready accepted this quest");
+        }
         
         try {
             var guildData = module.getContext().getApi().getPlayerGuild(playerUuid).getNow(null);
             if (guildData != null && guildData.getLevel() < minGuildLevel) {
-                return "&cRequires guild level: " + minGuildLevel + " (current: &f" + guildData.getLevel() + "&c)";
+                return tx.tf("module.quest.gui.level-required",
+                    "&cRequires guild level: {0} (current: &f{1}&c)",
+                    minGuildLevel, guildData.getLevel());
             }
         } catch (Exception ignored) {}
         
-        return "&cCannot accept this quest";
+        return tx.t("module.quest.cannot-accept", "&cCannot accept this quest");
     }
     
     private void notifyOtherGUIsRefresh() {
@@ -488,8 +464,6 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     public static class Builder {
         private GuildQuestModule module;
         private String questId;
-        private String questName;
-        private String questDescription;
         private QuestDefinition.QuestType questType;
         private int minGuildLevel = 1;
         private boolean isRepeatable = false;
@@ -510,8 +484,6 @@ public class QuestDetailGUI extends AbstractModuleGUI {
             if (def == null) return this;
             
             this.questId = def.getId();
-            this.questName = def.getName();
-            this.questDescription = def.getDescription();
             this.questType = def.getType();
             this.minGuildLevel = def.getMinGuildLevel();
             this.isRepeatable = def.isRepeatable();

@@ -21,7 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * <p>
  * 支持多语言按钮：使用 {@link #registerButton(String, int, ItemStack, String, GUIClickAction, String, String...)}
  * 注册带语言键的按钮，GUI 渲染时会通过 {@link GUIInjectionSlot#getDisplayItem(Player, LanguageManager)}
- * 按玩家语言实时解析文本。
+ * 按模块默认语言实时解析文本（{@code gui.*} 走 GUI 语言包，其余走模块语言包）。
  */
 public class GUIExtensionHook implements HookPoint {
 
@@ -258,13 +258,13 @@ public class GUIExtensionHook implements HookPoint {
         public ItemStack getItem() { return item; }
 
         /**
-         * 获取按模块全局语言配置解析后的显示物品
+         * 获取按语言配置实时解析后的显示物品
          * <p>
-         * 如果注册时提供了 displayNameKey，则通过 {@link LanguageManager#getModuleMessage(String, String, String)}
-         * 按模块默认语言解析显示名称和 lore，并自动转换 {@code &} 颜色码；
-         * 否则直接返回原始 ItemStack。
+         * 语言键以 {@code gui.} 开头时走 {@link LanguageManager#getGuiMessage}；
+         * 否则走 {@link LanguageManager#getModuleMessage}。
+         * 均使用模块默认语言（{@code modules.yml} → {@code language.default}）。
          *
-         * @param player 当前查看 GUI 的玩家（保留参数兼容性，实际不使用玩家语言）
+         * @param player 当前查看 GUI 的玩家（保留参数兼容性）
          * @param lm     LanguageManager 实例
          * @return 已解析语言和颜色码的 ItemStack（新副本，不影响原始 item）
          */
@@ -277,28 +277,24 @@ public class GUIExtensionHook implements HookPoint {
             ItemMeta meta = resolved.getItemMeta();
             if (meta == null) return resolved;
 
-            // 使用模块全局语言配置（不感知玩家个人语言）
             String lang = lm.getModuleDefaultLanguage();
 
-            // 解析显示名称并转换颜色码
             String fallback = meta.hasDisplayName() ? meta.getDisplayName() : null;
-            String displayName = lm.getModuleMessage(lang, displayNameKey, fallback);
+            String displayName = resolveMessage(lm, lang, displayNameKey, fallback);
             if (displayName != null) {
                 meta.setDisplayName(ColorUtils.colorize(displayName));
             }
 
-            // 解析 lore 并转换颜色码（仅当提供了 lore 语言键时）
             if (!loreKeys.isEmpty()) {
                 List<String> originalLore = meta.hasLore() ? meta.getLore() : Collections.emptyList();
                 List<String> resolvedLore = new ArrayList<>();
                 for (int i = 0; i < loreKeys.size(); i++) {
                     String fallbackLine = i < originalLore.size() ? originalLore.get(i) : "";
-                    String line = lm.getModuleMessage(lang, loreKeys.get(i), fallbackLine);
-                    if (!line.isEmpty()) {
+                    String line = resolveMessage(lm, lang, loreKeys.get(i), fallbackLine);
+                    if (line != null && !line.isEmpty()) {
                         resolvedLore.add(ColorUtils.colorize(line));
                     }
                 }
-                // 保留原始 lore 中超出语言键范围的尾随行（如空行、运行时动态内容等）
                 for (int i = loreKeys.size(); i < originalLore.size(); i++) {
                     resolvedLore.add(originalLore.get(i));
                 }
@@ -309,6 +305,13 @@ public class GUIExtensionHook implements HookPoint {
 
             resolved.setItemMeta(meta);
             return resolved;
+        }
+
+        private static String resolveMessage(LanguageManager lm, String lang, String key, String fallback) {
+            if (key != null && key.startsWith("gui.")) {
+                return lm.getGuiMessage(lang, key, fallback);
+            }
+            return lm.getModuleMessage(lang, key, fallback);
         }
 
         public GUIClickAction getAction() { return action; }

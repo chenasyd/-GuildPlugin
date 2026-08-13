@@ -2,13 +2,13 @@ package com.guild.module.example.quest.model;
 
 public class QuestReward {
     public enum RewardType {
-        CONTRIBUTION("C-Coins"),
-        MONEY("Coins"),
-        EXP("Experience");
+        CONTRIBUTION,
+        MONEY,
+        EXP;
 
-        private final String displayName;
-        RewardType(String displayName) { this.displayName = displayName; }
-        public String getDisplayName() { return displayName; }
+        public String langKey() {
+            return "module.quest.reward." + name().toLowerCase();
+        }
     }
 
     private final RewardType type;

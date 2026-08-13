@@ -3,7 +3,6 @@ package com.guild.activity;
 import com.guild.GuildPlugin;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.module.hook.GUIExtensionHook;
-import com.guild.core.utils.ColorUtils;
 import com.guild.gui.GuildInfoGUI;
 import com.guild.models.Guild;
 import org.bukkit.Material;
@@ -67,13 +66,10 @@ public final class ActivityBootstrap {
         ItemStack button = new ItemStack(Material.EXPERIENCE_BOTTLE);
         ItemMeta meta = button.getItemMeta();
         if (meta != null) {
-            var lm = plugin.getLanguageManager();
-            String lang = lm.getModuleDefaultLanguage();
-            meta.setDisplayName(ColorUtils.colorize(lm.getGuiMessage(lang, "gui.activity.info-button", "&6成员贡献")));
+            meta.setDisplayName("Member Contribution"); // fallback; resolved via lang keys
             meta.setLore(Arrays.asList(
-                    ColorUtils.colorize(lm.getGuiMessage(lang, "gui.activity.info-button-lore1", "&7查看工会成员贡献与活跃度")),
-                    ColorUtils.colorize(lm.getGuiMessage(lang, "gui.activity.info-button-lore2", "&7混合总分排行榜"))
-            ));
+                    "View member contribution and activity",
+                    "Hybrid score leaderboard"));
             button.setItemMeta(meta);
         }
         hook.registerButton(GuildInfoGUI.GUI_TYPE, 12, button, MODULE_ID,
@@ -83,7 +79,10 @@ public final class ActivityBootstrap {
                         g = (Guild) ctx[0];
                     }
                     openFromInfo(player, g);
-                });
+                },
+                "module.activity.info-button",
+                "module.activity.info-button-lore1",
+                "module.activity.info-button-lore2");
         buttonRegistered = true;
         plugin.getLogger().info("[Activity] Registered GuildInfoGUI button (" + MODULE_ID + ")");
     }

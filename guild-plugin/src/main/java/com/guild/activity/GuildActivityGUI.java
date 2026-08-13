@@ -63,8 +63,7 @@ public final class GuildActivityGUI implements GUI {
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getGuiMessage(viewer,
-                "gui.activity.title", "&6成员贡献 / 活跃度"));
+        return ColorUtils.colorize(modMsg("module.activity.title", "&6成员贡献 / 活跃度"));
     }
 
     @Override
@@ -77,13 +76,13 @@ public final class GuildActivityGUI implements GUI {
         inventory.clear();
         fillBorder(inventory);
         inventory.setItem(4, createItem(Material.BOOK,
-                ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.header", "&6&l成员贡献排行")),
-                ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.header-lore1", "&7总分 = 经济贡献 + 活跃度 × 权重")),
-                ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.header-lore2", "&7经济来自 guild_contributions；活跃来自在线统计"))));
+                ColorUtils.colorize(modMsg("module.activity.header", "&6&l成员贡献排行")),
+                ColorUtils.colorize(modMsg("module.activity.header-lore1", "&7总分 = 经济贡献 + 活跃度 × 权重")),
+                ColorUtils.colorize(modMsg("module.activity.header-lore2", "&7经济来自 guild_contributions；活跃来自在线统计"))));
 
         if (!loaded) {
             inventory.setItem(22, createItem(Material.CLOCK,
-                    ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.loading", "&e加载中..."))));
+                    ColorUtils.colorize(modMsg("module.activity.loading", "&e加载中..."))));
             setupNav(inventory, 1, 1);
             fillInterior(inventory);
             loadAsync(inventory);
@@ -91,6 +90,11 @@ public final class GuildActivityGUI implements GUI {
         }
 
         renderPage(inventory);
+    }
+
+    /** Module lang: {@code lang/modules/builtin-activity/}. */
+    private String modMsg(String key, String fallback) {
+        return languageManager.getModuleMessage(viewer, key, fallback);
     }
 
     private void loadAsync(Inventory inventory) {
@@ -122,8 +126,8 @@ public final class GuildActivityGUI implements GUI {
 
         if (scores.isEmpty()) {
             inventory.setItem(22, createItem(Material.BARRIER,
-                    ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.empty", "&7暂无成员")),
-                    ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.empty-hint", "&7工会尚无成员可统计"))));
+                    ColorUtils.colorize(modMsg("module.activity.empty", "&7暂无成员")),
+                    ColorUtils.colorize(modMsg("module.activity.empty-hint", "&7工会尚无成员可统计"))));
         } else {
             int from = (currentPage - 1) * PER_PAGE;
             int to = Math.min(from + PER_PAGE, scores.size());
@@ -154,17 +158,17 @@ public final class GuildActivityGUI implements GUI {
             default -> "&e";
         };
         String onlineTag = score.isOnline()
-                ? languageManager.getGuiMessage(viewer, "gui.activity.online", "&a在线")
-                : languageManager.getGuiMessage(viewer, "gui.activity.offline", "&7离线");
+                ? modMsg("module.activity.online", "&a在线")
+                : modMsg("module.activity.offline", "&7离线");
         meta.setDisplayName(ColorUtils.colorize(rankColor + "#" + score.getRank() + " &f" + score.getPlayerName()
                 + " &8(" + onlineTag + "&8)"));
 
         List<String> lore = new ArrayList<>();
-        lore.add(ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.lore-total", "&7总分: &a{0}")
+        lore.add(ColorUtils.colorize(modMsg("module.activity.lore-total", "&7总分: &a{0}")
                 .replace("{0}", format(score.getTotalScore()))));
-        lore.add(ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.lore-economy", "&7经济贡献: &f{0}")
+        lore.add(ColorUtils.colorize(modMsg("module.activity.lore-economy", "&7经济贡献: &f{0}")
                 .replace("{0}", format(score.getEconomyPts()))));
-        lore.add(ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.lore-activity", "&7活跃度: &f{0}")
+        lore.add(ColorUtils.colorize(modMsg("module.activity.lore-activity", "&7活跃度: &f{0}")
                 .replace("{0}", format(score.getActivityPts()))));
         meta.setLore(lore);
         head.setItemMeta(meta);
@@ -177,8 +181,8 @@ public final class GuildActivityGUI implements GUI {
                     ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.common.previous-page", "&e上一页"))));
         }
         inventory.setItem(49, createItem(Material.BARRIER,
-                ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.back", "&c返回")),
-                ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.activity.back-hint", "&7返回上一界面"))));
+                ColorUtils.colorize(modMsg("module.activity.back", "&c返回")),
+                ColorUtils.colorize(modMsg("module.activity.back-hint", "&7返回上一界面"))));
         if (page < totalPages) {
             inventory.setItem(53, createItem(Material.ARROW,
                     ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.common.next-page", "&e下一页"))));

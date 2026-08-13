@@ -204,29 +204,6 @@ gui:
     member-management.name: "&eMedlemsadministrasjon"
     title: "&6Gjengesystem"
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6Bidrag / Aktivitet"
-    header: "&6&lMedlemsbidragsrangliste"
-    header-lore1: "&7Total = økonomi + aktivitet × vekt"
-    header-lore2: "&7Økonomi fra guild_contributions; aktivitet fra online-sporing"
-    loading: "&eLaster..."
-    empty: "&7Ingen medlemmer"
-    empty-hint: "&7Ingen guildmedlemmer å rangere ennå"
-    back: "&cTilbake"
-    back-hint: "&7Tilbake til forrige meny"
-    lore-total: "&7Total: &a{0}"
-    lore-economy: "&7Økonomi: &f{0}"
-    lore-activity: "&7Aktivitet: &f{0}"
-    online: "&aPålogget"
-    offline: "&7Frakoblet"
-    info-button: "&6Bidrag"
-    info-button-lore1: "&7Se medlemsbidrag og aktivitet"
-    info-button-lore2: "&7Hybrid totalpoeng-rangliste"
-    click-open-rank: "&eKlikk for å åpne guild-ranglisten"
-    disabled: "&7Deaktivert"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

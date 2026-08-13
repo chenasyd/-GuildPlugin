@@ -3,6 +3,7 @@ package com.guild.module.example.quest.gui;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.module.ModuleContext;
 import com.guild.module.example.quest.GuildQuestModule;
+import com.guild.module.example.quest.QuestTexts;
 import com.guild.module.example.quest.model.QuestDefinition;
 import com.guild.module.example.quest.model.QuestObjective;
 import com.guild.module.example.quest.model.QuestProgress;
@@ -19,6 +20,7 @@ import java.util.*;
 public class ActiveQuestsGUI extends AbstractModuleGUI {
     private final GuildQuestModule module;
     private final ModuleContext context;
+    private final QuestTexts tx;
     private final List<QuestProgress> activeQuests;
     private final int guildId;
     private final Map<Integer, QuestProgress> slotDataMap = new HashMap<>();
@@ -30,20 +32,19 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
         super();
         this.module = module;
         this.context = module.getContext();
+        this.tx = module.texts();
         this.activeQuests = activeQuests != null ? activeQuests : Collections.emptyList();
         this.guildId = guildId;
         this.playerUuid = playerUuid;
-        
-        // Register GUI refresh listener
         registerRefreshListener();
     }
-    
+
     private void registerRefreshListener() {
         context.registerGUIRefreshListener("quest-active-list", (guiType, data) -> {
             Object guildIdObj = data.get("guildId");
             int notifiedGuildId = guildIdObj instanceof Number ? ((Number) guildIdObj).intValue() : 0;
-            
-            if (notifiedGuildId != 0 && notifiedGuildId == guildId && 
+
+            if (notifiedGuildId != 0 && notifiedGuildId == guildId &&
                 data.containsKey("resetType")) {
                 org.bukkit.entity.Player player = org.bukkit.Bukkit.getPlayer(playerUuid);
                 if (player != null && player.isOnline()) {
@@ -55,9 +56,9 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
                 }
                 return;
             }
-            
+
             UUID notifiedPlayerUuid = (UUID) data.get("playerUuid");
-            if (notifiedGuildId != 0 && notifiedGuildId == guildId && 
+            if (notifiedGuildId != 0 && notifiedGuildId == guildId &&
                 notifiedPlayerUuid != null && notifiedPlayerUuid.equals(playerUuid)) {
                 List<QuestProgress> updatedActiveQuests = module.getQuestManager()
                     .getPlayerActiveQuests(guildId, playerUuid);
@@ -72,7 +73,9 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
     }
 
     @Override
-    public String getTitle() { return ColorUtils.colorize("&a&lActive Quests"); }
+    public String getTitle() {
+        return ColorUtils.colorize(tx.t("module.quest.gui.active-title", "&a&lActive Quests"));
+    }
 
     @Override
     public void setupInventory(Inventory inv) {
@@ -82,17 +85,17 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
         slotDataMap.clear();
 
         inv.setItem(4, createItem(Material.COMPASS,
-            "&a&lActive Quests",
+            tx.t("module.quest.gui.active-header", "&a&lActive Quests"),
             "",
-            "&7Ongoing: &f" + activeQuests.size() + " quest(s)",
-            "&8| from quest module"));
+            tx.tf("module.quest.gui.active-count", "&7Ongoing: &f{0} quest(s)", activeQuests.size()),
+            tx.t("module.quest.gui.footer", "&8| from quest module")));
 
         if (activeQuests.isEmpty()) {
             inv.setItem(22, createItem(Material.BARRIER,
-                "&c&lNo Active Quests",
+                tx.t("module.quest.gui.no-active", "&c&lNo Active Quests"),
                 "",
-                "&7Go to the quest list and accept some!",
-                "&8| Click to go back"));
+                tx.t("module.quest.gui.no-active-hint", "&7Go to the quest list and accept some!"),
+                tx.t("module.quest.gui.footer", "&8| Click to go back")));
             return;
         }
 
@@ -101,8 +104,7 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
             QuestProgress p = activeQuests.get(startIndex + i);
             QuestDefinition def = module.getQuestManager().getDefinition(p.getQuestId());
             if (def == null) continue;
-            
-            // Use unified state check logic
+
             boolean isCompleted = p.isObjectivesCompleted(def) || p.isCompletedMarked();
             double pct = p.getCompletionPercent(def);
             Material icon = isCompleted ? Material.LIME_STAINED_GLASS_PANE :
@@ -116,24 +118,29 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
 
             List<String> lore = new ArrayList<>();
             lore.add("");
-            lore.add(colorPrefix + typeIcon + " " + typeLabel(def.getType()));
-            lore.add("&7Progress: " + colorPrefix + String.format("%.1f%%", pct));
+            lore.add(colorPrefix + typeIcon + " " + tx.questTypeShort(def.getType()));
+            lore.add(tx.tf("module.quest.gui.progress", "&7Progress: {0}{1}%",
+                colorPrefix, String.format("%.1f", pct)));
             if (!isCompleted && p.getObjectiveProgress().length > 0) {
                 QuestObjective mainObj = def.getObjectives().get(0);
-                lore.add("&7" + mainObj.getType().getDisplayName() + ": &f"
+                lore.add("&7" + tx.objectiveType(mainObj.getType()) + ": &f"
                     + p.getObjectiveProgress()[0] + "/" + mainObj.getTarget());
             }
             if (isCompleted && !p.isClaimed()) lore.add("");
-            if (isCompleted && !p.isClaimed()) lore.add("&eClick to claim reward");
-            else if (isCompleted) lore.add("&7Claimed");
-            else lore.add("&7Click to view details");
+            if (isCompleted && !p.isClaimed()) {
+                lore.add(tx.t("module.quest.gui.click-claim", "&eClick to claim reward"));
+            } else if (isCompleted) {
+                lore.add(tx.t("module.quest.gui.claimed", "&7Claimed"));
+            } else {
+                lore.add(tx.t("module.quest.gui.click-details", "&7Click to view details"));
+            }
             lore.add("");
-            lore.add("&8| from quest module");
+            lore.add(tx.t("module.quest.gui.footer", "&8| from quest module"));
 
             int slot = mapToSlot(i);
             if (slot != -1) {
                 inv.setItem(slot, createItem(icon,
-                    colorPrefix + def.getName(), lore.toArray(new String[0])));
+                    colorPrefix + tx.questName(def), lore.toArray(new String[0])));
                 slotDataMap.put(slot, p);
             }
         }
@@ -141,19 +148,12 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
         int totalPages = getTotalPages(activeQuests.size());
         if (totalPages > 1) {
             setupPagination(inv, currentPage, totalPages,
-                "&e&lPrevious", "&e&lNext");
+                tx.t("module.quest.gui.prev", "&e&lPrevious"),
+                tx.t("module.quest.gui.next", "&e&lNext"));
         }
         inv.setItem(49, createBackButton(
-            context.getMessage("module.quest.back", "&cBack"),
-            context.getMessage("module.quest.back-hint", "&7Return to guild info")));
-    }
-
-    private String typeLabel(QuestDefinition.QuestType type) {
-        return switch (type) {
-            case DAILY -> "Daily";
-            case WEEKLY -> "Weekly";
-            case ONE_TIME -> "One-time";
-        };
+            tx.t("module.quest.back", "&cBack"),
+            tx.t("module.quest.back-hint", "&7Return to guild info")));
     }
 
     @Override
@@ -172,8 +172,8 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
                 GuildPluginAPI api = context.getApi();
                 api.openCustomGUI("quest-detail", player, data);
             } catch (Exception e) {
-                player.sendMessage(ColorUtils.colorize(
-                    "&c[Quest] Failed to open details: " + e.getMessage()));
+                player.sendMessage(ColorUtils.colorize(tx.tf("module.quest.error.open-detail-short",
+                    "&c[Quest] Failed to open details: {0}", e.getMessage())));
             }
         }
     }

@@ -45,7 +45,7 @@ public class QuestManager {
 
     public void registerDefinition(QuestDefinition def) {
         definitions.put(def.getId(), def);
-        logger.info("[Quest] Registered: " + def.getName() + " (" + def.getType() + ")");
+        logger.info("[Quest] Registered: " + def.getId() + " (" + def.getType() + ")");
     }
 
     public void unregisterDefinition(String questId) {
@@ -182,7 +182,7 @@ public class QuestManager {
             if (definition == null) return;
             if (progress.isObjectivesCompleted(definition)) {
                 progress.markAsCompleted();
-                logger.info("[Quest] Completed: " + definition.getName() +
+                logger.info("[Quest] Completed: " + definition.getId() +
                     " (" + progress.getPlayerName() + ")");
             }
         }

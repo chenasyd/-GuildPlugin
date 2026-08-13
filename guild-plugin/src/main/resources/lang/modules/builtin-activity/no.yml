@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (no) ============
+# lang/modules/builtin-activity/no.yml
+
+module.activity.title: "&6Bidrag / Aktivitet"
+module.activity.header: "&6&lMedlemsbidragsrangliste"
+module.activity.header-lore1: "&7Total = økonomi + aktivitet × vekt"
+module.activity.header-lore2: "&7Økonomi fra guild_contributions; aktivitet fra online-sporing"
+module.activity.loading: "&eLaster..."
+module.activity.empty: "&7Ingen medlemmer"
+module.activity.empty-hint: "&7Ingen guildmedlemmer å rangere ennå"
+module.activity.back: "&cTilbake"
+module.activity.back-hint: "&7Tilbake til forrige meny"
+module.activity.lore-total: "&7Total: &a{0}"
+module.activity.lore-economy: "&7Økonomi: &f{0}"
+module.activity.lore-activity: "&7Aktivitet: &f{0}"
+module.activity.online: "&aPålogget"
+module.activity.offline: "&7Frakoblet"
+module.activity.info-button: "&6Bidrag"
+module.activity.info-button-lore1: "&7Se medlemsbidrag og aktivitet"
+module.activity.info-button-lore2: "&7Hybrid totalpoeng-rangliste"
+module.activity.click-open-rank: "&eKlikk for å åpne guild-ranglisten"
+module.activity.disabled: "&7Deaktivert"

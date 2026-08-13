@@ -205,29 +205,6 @@ gui:
     title: "&6ระบบกิลด์"
     bedrock-content: "&fเลือกฟังก์ชัน:"
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6ผลงาน / กิจกรรม"
-    header: "&6&lอันดับผลงานสมาชิก"
-    header-lore1: "&7คะแนนรวม = เศรษฐกิจ + กิจกรรม × น้ำหนัก"
-    header-lore2: "&7เศรษฐกิจจาก guild_contributions; กิจกรรมจากการติดตามออนไลน์"
-    loading: "&eกำลังโหลด..."
-    empty: "&7ไม่มีสมาชิก"
-    empty-hint: "&7ยังไม่มีสมาชิกกิลด์สำหรับจัดอันดับ"
-    back: "&cกลับ"
-    back-hint: "&7กลับไปเมนูก่อนหน้า"
-    lore-total: "&7คะแนนรวม: &a{0}"
-    lore-economy: "&7เศรษฐกิจ: &f{0}"
-    lore-activity: "&7กิจกรรม: &f{0}"
-    online: "&aออนไลน์"
-    offline: "&7ออฟไลน์"
-    info-button: "&6ผลงานสมาชิก"
-    info-button-lore1: "&7ดูผลงานและกิจกรรมของสมาชิก"
-    info-button-lore2: "&7อันดับคะแนนรวมแบบผสม"
-    click-open-rank: "&eคลิกเพื่อเปิดอันดับกิลด์"
-    disabled: "&7ปิดใช้งาน"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

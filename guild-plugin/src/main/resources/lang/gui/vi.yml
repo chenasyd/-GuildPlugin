@@ -205,29 +205,6 @@ gui:
     title: "&6H\u1ec7 th\u1ed1ng Guild"
     bedrock-content: "&fChọn một chức năng:"
 
-  # ================================================
-  # Builtin Activity / Contribution Ranking
-  # ================================================
-  activity:
-    title: "&6Đóng góp / Hoạt động"
-    header: "&6&lBảng xếp hạng đóng góp"
-    header-lore1: "&7Tổng = kinh tế + hoạt động × trọng số"
-    header-lore2: "&7Kinh tế từ guild_contributions; hoạt động từ theo dõi online"
-    loading: "&eĐang tải..."
-    empty: "&7Không có thành viên"
-    empty-hint: "&7Chưa có thành viên guild để xếp hạng"
-    back: "&cQuay lại"
-    back-hint: "&7Quay lại menu trước"
-    lore-total: "&7Tổng: &a{0}"
-    lore-economy: "&7Kinh tế: &f{0}"
-    lore-activity: "&7Hoạt động: &f{0}"
-    online: "&aTrực tuyến"
-    offline: "&7Ngoại tuyến"
-    info-button: "&6Đóng góp"
-    info-button-lore1: "&7Xem đóng góp và hoạt động thành viên"
-    info-button-lore2: "&7Bảng xếp hạng điểm tổng hợp"
-    click-open-rank: "&eNhấp để mở bảng xếp hạng guild"
-    disabled: "&7Đã tắt"
 
   # ================================================
   # SystemSettingsGUI - System Settings (111 keys)

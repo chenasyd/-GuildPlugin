@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (hu) ============
+# lang/modules/builtin-activity/hu.yml
+
+module.activity.title: "&6Hozzájárulás / Aktivitás"
+module.activity.header: "&6&lTagi hozzájárulás ranglista"
+module.activity.header-lore1: "&7Összesen = gazdaság + aktivitás × súly"
+module.activity.header-lore2: "&7Gazdaság a guild_contributionsból; aktivitás online követésből"
+module.activity.loading: "&eBetöltés..."
+module.activity.empty: "&7Nincsenek tagok"
+module.activity.empty-hint: "&7Még nincsenek céhtagok a ranglistához"
+module.activity.back: "&cVissza"
+module.activity.back-hint: "&7Vissza az előző menübe"
+module.activity.lore-total: "&7Összesen: &a{0}"
+module.activity.lore-economy: "&7Gazdaság: &f{0}"
+module.activity.lore-activity: "&7Aktivitás: &f{0}"
+module.activity.online: "&aOnline"
+module.activity.offline: "&7Offline"
+module.activity.info-button: "&6Hozzájárulás"
+module.activity.info-button-lore1: "&7Tagok hozzájárulásának és aktivitásának megtekintése"
+module.activity.info-button-lore2: "&7Hibrid összpontszám ranglista"
+module.activity.click-open-rank: "&eKattints a céh ranglistájának megnyitásához"
+module.activity.disabled: "&7Kikapcsolva"

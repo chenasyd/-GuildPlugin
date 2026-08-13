@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (zh) ============
+# lang/modules/builtin-activity/zh.yml
+
+module.activity.title: "&6成员贡献 / 活跃度"
+module.activity.header: "&6&l成员贡献排行"
+module.activity.header-lore1: "&7总分 = 经济贡献 + 活跃度 × 权重"
+module.activity.header-lore2: "&7经济来自 guild_contributions；活跃来自在线统计"
+module.activity.loading: "&e加载中..."
+module.activity.empty: "&7暂无成员"
+module.activity.empty-hint: "&7工会尚无成员可统计"
+module.activity.back: "&c返回"
+module.activity.back-hint: "&7返回上一界面"
+module.activity.lore-total: "&7总分: &a{0}"
+module.activity.lore-economy: "&7经济贡献: &f{0}"
+module.activity.lore-activity: "&7活跃度: &f{0}"
+module.activity.online: "&a在线"
+module.activity.offline: "&7离线"
+module.activity.info-button: "&6成员贡献"
+module.activity.info-button-lore1: "&7查看工会成员贡献与活跃度"
+module.activity.info-button-lore2: "&7混合总分排行榜"
+module.activity.click-open-rank: "&e点击查看工会排行"
+module.activity.disabled: "&7未启用"

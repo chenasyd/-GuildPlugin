@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (ru) ============
+# lang/modules/builtin-activity/ru.yml
+
+module.activity.title: "&6Вклад / Активность"
+module.activity.header: "&6&lРейтинг вклада участников"
+module.activity.header-lore1: "&7Итого = экономика + активность × вес"
+module.activity.header-lore2: "&7Экономика из guild_contributions; активность из онлайн-учёта"
+module.activity.loading: "&eЗагрузка..."
+module.activity.empty: "&7Нет участников"
+module.activity.empty-hint: "&7Пока нет участников гильдии для рейтинга"
+module.activity.back: "&cНазад"
+module.activity.back-hint: "&7Вернуться в предыдущее меню"
+module.activity.lore-total: "&7Итого: &a{0}"
+module.activity.lore-economy: "&7Экономика: &f{0}"
+module.activity.lore-activity: "&7Активность: &f{0}"
+module.activity.online: "&aВ сети"
+module.activity.offline: "&7Не в сети"
+module.activity.info-button: "&6Вклад"
+module.activity.info-button-lore1: "&7Просмотр вклада и активности участников"
+module.activity.info-button-lore2: "&7Рейтинг гибридного итогового счёта"
+module.activity.click-open-rank: "&eНажмите, чтобы открыть рейтинг гильдии"
+module.activity.disabled: "&7Отключено"

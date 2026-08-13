@@ -42,11 +42,13 @@ public class GuildQuestModule implements GuildModule {
     private QuestManager questManager;
     private QuestTracker questTracker;
     private QuestRewardHandler rewardHandler;
+    private QuestTexts texts;
 
     @Override
     public void onEnable(ModuleContext context) throws Exception {
         this.context = context;
         this.state = ModuleState.ACTIVE;
+        this.texts = new QuestTexts(context);
         File dataDir = ModuleDataDirectory.getModuleDataRoot(context);
 
         this.questManager = new QuestManager(dataDir, context.getLogger());
@@ -137,63 +139,44 @@ public class GuildQuestModule implements GuildModule {
     }
 
     private void registerDefaultQuests() {
-        // Daily quest 1: Daily Hunter
+        // Display text comes from lang keys at render time (module.quest.<id>.*)
         QuestDefinition daily1 = new QuestDefinition(
-            "daily_hunter", 
-            context.getMessage("module.quest.daily_hunter.name", "Daily Hunter"), 
-            context.getMessage("module.quest.daily_hunter.description", "Kill a specified number of monsters"),
-            QuestDefinition.QuestType.DAILY, 1, 1, true);
+            "daily_hunter", QuestDefinition.QuestType.DAILY, 1, 1, true);
         daily1.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
-            15, context.getMessage("module.quest.daily_hunter.objective", "Kill 15 hostile mobs")));
+            15, "module.quest.daily_hunter.objective"));
         daily1.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 30));
         daily1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 50));
         questManager.registerDefinition(daily1);
 
-        // Daily quest 2: Daily Standby
         QuestDefinition daily2 = new QuestDefinition(
-            "daily_online", 
-            context.getMessage("module.quest.daily_online.name", "Daily Standby"), 
-            context.getMessage("module.quest.daily_online.description", "Stay online for a certain amount of time"),
-            QuestDefinition.QuestType.DAILY, 2, 1, true);
+            "daily_online", QuestDefinition.QuestType.DAILY, 2, 1, true);
         daily2.addObjective(new QuestObjective(QuestObjective.ObjectiveType.ONLINE_HOURS,
-            60, context.getMessage("module.quest.daily_online.objective", "Stay online for 60 minutes")));
+            60, "module.quest.daily_online.objective"));
         daily2.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 20));
         daily2.addReward(new QuestReward(QuestReward.RewardType.EXP, 500));
         questManager.registerDefinition(daily2);
 
-        // Weekly quest 1: Weekly Contributor
         QuestDefinition weekly1 = new QuestDefinition(
-            "weekly_contributor", 
-            context.getMessage("module.quest.weekly_contributor.name", "Weekly Contributor"), 
-            context.getMessage("module.quest.weekly_contributor.description", "Make significant contributions to the guild"),
-            QuestDefinition.QuestType.WEEKLY, 1, 2, true);
+            "weekly_contributor", QuestDefinition.QuestType.WEEKLY, 1, 2, true);
         weekly1.addObjective(new QuestObjective(
-            QuestObjective.ObjectiveType.DEPOSIT_MONEY, 2000, 
-            context.getMessage("module.quest.weekly_contributor.objective", "Deposit $2000 to guild funds")));
+            QuestObjective.ObjectiveType.DEPOSIT_MONEY, 2000,
+            "module.quest.weekly_contributor.objective"));
         weekly1.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 100));
         weekly1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 300));
         questManager.registerDefinition(weekly1);
 
-        // Weekly quest 2: Weekly Slayer
         QuestDefinition weekly2 = new QuestDefinition(
-            "weekly_slayer", 
-            context.getMessage("module.quest.weekly_slayer.name", "Weekly Slayer"), 
-            context.getMessage("module.quest.weekly_slayer.description", "Prove your strength by slaying many monsters"),
-            QuestDefinition.QuestType.WEEKLY, 2, 3, true);
+            "weekly_slayer", QuestDefinition.QuestType.WEEKLY, 2, 3, true);
         weekly2.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
-            100, context.getMessage("module.quest.weekly_slayer.objective", "Kill 100 hostile mobs")));
+            100, "module.quest.weekly_slayer.objective"));
         weekly2.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 80));
         weekly2.addReward(new QuestReward(QuestReward.RewardType.EXP, 2000));
         questManager.registerDefinition(weekly2);
 
-        // One-time quest: First Blood
         QuestDefinition oneTime1 = new QuestDefinition(
-            "onetime_first_blood", 
-            context.getMessage("module.quest.onetime_first_blood.name", "First Blood"), 
-            context.getMessage("module.quest.onetime_first_blood.description", "Complete your first quest"),
-            QuestDefinition.QuestType.ONE_TIME, 1, 1, false);
+            "onetime_first_blood", QuestDefinition.QuestType.ONE_TIME, 1, 1, false);
         oneTime1.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
-            5, context.getMessage("module.quest.onetime_first_blood.objective", "Kill 5 mobs")));
+            5, "module.quest.onetime_first_blood.objective"));
         oneTime1.addReward(new QuestReward(QuestReward.RewardType.CONTRIBUTION, 25));
         oneTime1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 100));
         questManager.registerDefinition(oneTime1);
@@ -418,6 +401,13 @@ public class GuildQuestModule implements GuildModule {
     public QuestTracker getQuestTracker() { return questTracker; }
 
     public QuestRewardHandler getRewardHandler() { return rewardHandler; }
+
+    public QuestTexts texts() {
+        if (texts == null) {
+            texts = new QuestTexts(context);
+        }
+        return texts;
+    }
 
     public static int toInt(Object value, int defaultValue) {
         if (value instanceof Integer) return (Integer) value;

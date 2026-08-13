@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (ko) ============
+# lang/modules/builtin-activity/ko.yml
+
+module.activity.title: "&6기여 / 활동"
+module.activity.header: "&6&l멤버 기여 순위"
+module.activity.header-lore1: "&7총점 = 경제 기여 + 활동 × 가중치"
+module.activity.header-lore2: "&7경제는 guild_contributions; 활동은 온라인 추적"
+module.activity.loading: "&e로딩 중..."
+module.activity.empty: "&7멤버 없음"
+module.activity.empty-hint: "&7순위 대상 길드 멤버가 없습니다"
+module.activity.back: "&c뒤로"
+module.activity.back-hint: "&7이전 메뉴로 돌아가기"
+module.activity.lore-total: "&7총점: &a{0}"
+module.activity.lore-economy: "&7경제 기여: &f{0}"
+module.activity.lore-activity: "&7활동: &f{0}"
+module.activity.online: "&a온라인"
+module.activity.offline: "&7오프라인"
+module.activity.info-button: "&6멤버 기여"
+module.activity.info-button-lore1: "&7멤버 기여와 활동 보기"
+module.activity.info-button-lore2: "&7혼합 총점 순위"
+module.activity.click-open-rank: "&e클릭하여 길드 순위 열기"
+module.activity.disabled: "&7비활성화됨"

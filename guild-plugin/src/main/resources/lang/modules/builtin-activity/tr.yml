@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (tr) ============
+# lang/modules/builtin-activity/tr.yml
+
+module.activity.title: "&6Katkı / Aktivite"
+module.activity.header: "&6&lÜye katkı sıralaması"
+module.activity.header-lore1: "&7Toplam = ekonomi + aktivite × ağırlık"
+module.activity.header-lore2: "&7Ekonomi guild_contributions’tan; aktivite çevrimiçi izlemeden"
+module.activity.loading: "&eYükleniyor..."
+module.activity.empty: "&7Üye yok"
+module.activity.empty-hint: "&7Henüz sıralanacak guild üyesi yok"
+module.activity.back: "&cGeri"
+module.activity.back-hint: "&7Önceki menüye dön"
+module.activity.lore-total: "&7Toplam: &a{0}"
+module.activity.lore-economy: "&7Ekonomi: &f{0}"
+module.activity.lore-activity: "&7Aktivite: &f{0}"
+module.activity.online: "&aÇevrimiçi"
+module.activity.offline: "&7Çevrimdışı"
+module.activity.info-button: "&6Katkı"
+module.activity.info-button-lore1: "&7Üye katkısını ve aktivitesini görüntüle"
+module.activity.info-button-lore2: "&7Hibrit toplam puan sıralaması"
+module.activity.click-open-rank: "&eGuild sıralamasını açmak için tıkla"
+module.activity.disabled: "&7Devre dışı"

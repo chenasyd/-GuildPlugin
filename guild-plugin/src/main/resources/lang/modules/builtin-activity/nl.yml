@@ -1,0 +1,22 @@
+# ============ Builtin Activity Module (nl) ============
+# lang/modules/builtin-activity/nl.yml
+
+module.activity.title: "&6Bijdrage / Activiteit"
+module.activity.header: "&6&lLedenbijdrage-ranglijst"
+module.activity.header-lore1: "&7Totaal = economie + activiteit × gewicht"
+module.activity.header-lore2: "&7Economie uit guild_contributions; activiteit uit online tracking"
+module.activity.loading: "&eLaden..."
+module.activity.empty: "&7Geen leden"
+module.activity.empty-hint: "&7Nog geen gildeleden om te rangschikken"
+module.activity.back: "&cTerug"
+module.activity.back-hint: "&7Terug naar vorig menu"
+module.activity.lore-total: "&7Totaal: &a{0}"
+module.activity.lore-economy: "&7Economie: &f{0}"
+module.activity.lore-activity: "&7Activiteit: &f{0}"
+module.activity.online: "&aOnline"
+module.activity.offline: "&7Offline"
+module.activity.info-button: "&6Bijdrage"
+module.activity.info-button-lore1: "&7Bekijk ledenbijdrage en activiteit"
+module.activity.info-button-lore2: "&7Hybride totaalscore-ranglijst"
+module.activity.click-open-rank: "&eKlik om de gilderanglijst te openen"
+module.activity.disabled: "&7Uitgeschakeld"
