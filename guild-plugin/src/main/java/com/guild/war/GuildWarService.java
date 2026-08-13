@@ -65,7 +65,7 @@ public final class GuildWarService {
     }
 
     public void reloadSettings() {
-        this.settings = new WarSettings(plugin.getConfig());
+        this.settings = new WarSettings(plugin.getConfigManager().getMainConfig());
     }
 
     public WarSettings settings() {

@@ -433,11 +433,7 @@ public class SystemSettingsGUI implements GUI {
     
     private void reloadConfigs(Player player) {
         try {
-            plugin.getConfigManager().reloadAllConfigs();
-            plugin.getPermissionManager().reloadFromConfig();
-            if (plugin.getGuildWarehouseService() != null) {
-                plugin.getGuildWarehouseService().reload();
-            }
+            plugin.reloadRuntimeConfiguration();
 
             // 插件本体语言（core/gui）异步重载 — 与模块语言完全独立
             plugin.getLanguageManager().reloadLanguagesAsync(() -> {
@@ -465,6 +461,13 @@ public class SystemSettingsGUI implements GUI {
                     var api = mm.getSharedApi();
                     for (String moduleId : mm.getRegistry().getModuleIds()) {
                         try { api.loadModuleLanguageResource(moduleId, null); } catch (Exception ignored) {}
+                    }
+                } catch (Exception ignored) {}
+                try {
+                    for (org.bukkit.entity.Player p : org.bukkit.Bukkit.getOnlinePlayers()) {
+                        if (plugin.getGuiManager().hasOpenGUI(p)) {
+                            plugin.getGuiManager().refreshGUI(p);
+                        }
                     }
                 } catch (Exception ignored) {}
             });

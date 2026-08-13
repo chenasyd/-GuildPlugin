@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Minecraft-1.20.1+-green?style=for-the-badge&logo=minecraft" alt="Minecraft 1.20.1+"/>
   <img src="https://img.shields.io/badge/API-Spigot%20%7C%20Folia-orange?style=for-the-badge" alt="Spigot | Folia"/>
-  <img src="https://img.shields.io/badge/Version-1.5.6-blue?style=for-the-badge" alt="Version 1.5.6"/>
+  <img src="https://img.shields.io/badge/Version-1.5.6-blue?style=for-the-badge" alt="Version 1.6.6"/>
   <img src="https://img.shields.io/badge/License-GPL%20v3-red?style=for-the-badge" alt="GPL v3"/>
   <img src="https://img.shields.io/badge/Java-17%2B-brightgreen?style=for-the-badge" alt="Java 17+"/>
 </p>

@@ -91,7 +91,7 @@ public class CloudModuleRepository {
     private final GuildPlugin plugin;
     private final Gson gson = new Gson();
     private final List<RepositorySource> sources = new ArrayList<>();
-    private final boolean devMode;
+    private boolean devMode;
     private final String officialSourceName;
 
     public CloudModuleRepository(GuildPlugin plugin) {
@@ -100,9 +100,16 @@ public class CloudModuleRepository {
         // 官方仓库始终存在且不可修改，名称从语言键读取
         officialSourceName = plugin.getLanguageManager().getCoreMessage(
                 "cloud.official-repo", "&b&lOfficial Repository");
+        reloadFromConfig();
+    }
+
+    /**
+     * 热重载 developer-mode 与外置仓库列表（保留官方源）。
+     */
+    public synchronized void reloadFromConfig() {
+        sources.clear();
         sources.add(new RepositorySource(officialSourceName, OFFICIAL_API_URL));
 
-        // 读取开发者模式与外置仓库配置
         FileConfiguration config = plugin.getConfigManager().getMainConfig();
         devMode = config.getBoolean("developer-mode.enabled", false);
 

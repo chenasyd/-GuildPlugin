@@ -85,6 +85,7 @@ public class GuildPlugin extends JavaPlugin {
     private UpdateManager updateManager;
     private UpdateChecker updateChecker;
     private PluginFileLogger fileLogger;
+    private com.guild.module.cloud.CloudModuleRepository cloudModuleRepository;
     // 等级需求配置（key = 当前等级 -> 所需金额达到下一等级）
     private Map<Integer, Double> levelRequirements = new HashMap<>();
     private int maxGuildLevel = 10;
@@ -574,11 +575,20 @@ public class GuildPlugin extends JavaPlugin {
      * 从配置加载等级需求映射并提供访问方法
      */
     private void loadLevelRequirements() {
+        reloadLevelRequirements();
+    }
+
+    /**
+     * 热重载公会等级上限与升级资金需求表（ConfigManager）。
+     */
+    public void reloadLevelRequirements() {
         try {
-            int cfgMax = getConfig().getInt("guild.max-level", 10);
+            levelRequirements.clear();
+            var cfg = getConfigManager() != null ? getConfigManager().getMainConfig() : getConfig();
+            int cfgMax = cfg.getInt("guild.max-level", 10);
             this.maxGuildLevel = Math.max(1, cfgMax);
             for (int lvl = 1; lvl < maxGuildLevel; lvl++) {
-                double val = getConfig().getDouble("guild.levels." + lvl, getDefaultRequirementForLevel(lvl));
+                double val = cfg.getDouble("guild.levels." + lvl, getDefaultRequirementForLevel(lvl));
                 levelRequirements.put(lvl, val);
             }
         } catch (Exception e) {
@@ -587,6 +597,77 @@ public class GuildPlugin extends JavaPlugin {
                 levelRequirements.put(lvl, getDefaultRequirementForLevel(lvl));
             }
         }
+    }
+
+    /**
+     * 完善热重载：刷新 ConfigManager、同步 Bukkit getConfig、并通知各运行时服务。
+     * <p>不重连数据库 / Bungee；语言文件由调用方异步重载。
+     */
+    public void reloadRuntimeConfiguration() {
+        if (configManager != null) {
+            configManager.reloadAllConfigs();
+        }
+        // 同步 Bukkit 配置快照，避免遗留 plugin.getConfig() 调用读到启动时缓存
+        try {
+            reloadConfig();
+        } catch (Exception e) {
+            getLogger().warning("[Reload] Bukkit reloadConfig failed: " + e.getMessage());
+        }
+
+        if (permissionManager != null) {
+            permissionManager.reloadFromConfig();
+        }
+        reloadLevelRequirements();
+        com.guild.core.utils.PlaceholderUtils.reloadRoleConfigCache();
+
+        if (guildChatManager != null) {
+            guildChatManager.reloadConfig();
+        }
+        if (guildWorldService != null) {
+            guildWorldService.reloadSettings();
+        }
+        if (guildWarService != null) {
+            guildWarService.reloadSettings();
+        }
+        if (guildWarehouseService != null) {
+            guildWarehouseService.reload();
+        }
+        if (activityBootstrap != null) {
+            activityBootstrap.reload();
+        }
+        if (guiManager != null) {
+            guiManager.reloadImagoConfig();
+        }
+        if (cloudModuleRepository != null) {
+            cloudModuleRepository.reloadFromConfig();
+        }
+
+        // 模块 GUI 外观覆盖 gui-config.yml
+        if (moduleManager != null) {
+            for (com.guild.sdk.gui.ModuleGUIRegistration reg
+                    : moduleManager.getRegistry().getCustomGUIRegistrations()) {
+                com.guild.sdk.gui.ModuleGUIConfig cfg = reg.getConfig();
+                if (cfg instanceof com.guild.core.module.config.DefaultModuleGUIConfig dmc) {
+                    dmc.reload();
+                }
+            }
+        }
+
+        if (fileLogger != null) {
+            fileLogger.logSystem("Runtime configuration reloaded");
+        }
+    }
+
+    public void setCloudModuleRepository(com.guild.module.cloud.CloudModuleRepository repo) {
+        this.cloudModuleRepository = repo;
+    }
+
+    public com.guild.module.cloud.CloudModuleRepository getCloudModuleRepository() {
+        return cloudModuleRepository;
+    }
+
+    public com.guild.activity.ActivityBootstrap getActivityBootstrap() {
+        return activityBootstrap;
     }
 
     private double getDefaultRequirementForLevel(int level) {

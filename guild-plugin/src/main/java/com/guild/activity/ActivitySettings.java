@@ -19,7 +19,7 @@ public final class ActivitySettings {
     }
 
     public void reload(GuildPlugin plugin) {
-        FileConfiguration cfg = plugin.getConfig();
+        FileConfiguration cfg = plugin.getConfigManager().getMainConfig();
         enabled = cfg.getBoolean("guild-activity.enabled", true);
         registerInfoButton = cfg.getBoolean("guild-activity.register-info-button", true);
         scoreWeightActivity = cfg.getDouble("guild-activity.score-weight-activity", 2.0);

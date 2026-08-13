@@ -31,6 +31,11 @@ public class GuildModuleCommand implements CommandExecutor, TabCompleter {
     public GuildModuleCommand(GuildPlugin plugin) {
         this.plugin = plugin;
         this.cloudRepo = new CloudModuleRepository(plugin);
+        plugin.setCloudModuleRepository(cloudRepo);
+    }
+
+    public CloudModuleRepository getCloudRepo() {
+        return cloudRepo;
     }
 
     @Override

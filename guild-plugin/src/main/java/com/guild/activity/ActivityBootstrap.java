@@ -52,6 +52,58 @@ public final class ActivityBootstrap {
     }
 
     /**
+     * Hot-reload activity settings. Restarts tracker when enabled/interval changes;
+     * (un)registers GuildInfo button when toggle changes.
+     */
+    public void reload() {
+        int previousInterval = settings.getTickIntervalSeconds();
+        boolean wasEnabled = settings.isEnabled();
+        boolean wasButton = settings.isRegisterInfoButton();
+        settings.reload(plugin);
+
+        if (!settings.isEnabled()) {
+            if (tracker != null) {
+                tracker.stop();
+                tracker = null;
+            }
+            unregisterInfoButton();
+            if (wasEnabled) {
+                plugin.getLogger().info("[Activity] Disabled after reload (guild-activity.enabled=false)");
+            }
+            return;
+        }
+
+        boolean needRestart = tracker == null
+                || !wasEnabled
+                || previousInterval != settings.getTickIntervalSeconds();
+        if (needRestart) {
+            if (tracker != null) {
+                tracker.stop();
+                tracker = null;
+            }
+            tracker = new ActivityTracker(plugin, repository, settings);
+            tracker.start();
+        }
+
+        if (!settings.isRegisterInfoButton()) {
+            unregisterInfoButton();
+        } else if (!wasButton || !buttonRegistered) {
+            registerInfoButton();
+        }
+    }
+
+    private void unregisterInfoButton() {
+        if (!buttonRegistered) {
+            return;
+        }
+        ModuleManager mm = plugin.getModuleManager();
+        if (mm != null) {
+            mm.getRegistry().getGuiExtensionHook().unregisterByModule(MODULE_ID);
+        }
+        buttonRegistered = false;
+    }
+
+    /**
      * Call after {@link ModuleManager} is ready so GUI extension hook exists.
      */
     public void registerInfoButton() {
@@ -105,11 +157,7 @@ public final class ActivityBootstrap {
             tracker.stop();
             tracker = null;
         }
-        ModuleManager mm = plugin.getModuleManager();
-        if (mm != null && buttonRegistered) {
-            mm.getRegistry().getGuiExtensionHook().unregisterByModule(MODULE_ID);
-            buttonRegistered = false;
-        }
+        unregisterInfoButton();
     }
 
     /** Tiny helper to avoid importing CompatibleScheduler in multiple call sites. */

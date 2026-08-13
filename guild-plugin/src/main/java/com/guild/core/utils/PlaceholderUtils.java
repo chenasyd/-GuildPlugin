@@ -284,9 +284,16 @@ public class PlaceholderUtils {
         if (cachedLeaderColor != null) {
             return;
         }
+        reloadRoleConfigCache();
+    }
+
+    /**
+     * 使角色颜色 / 分隔符缓存失效，并立即从 ConfigManager 重新读取。
+     * 由 {@code /guildadmin reload} 调用。
+     */
+    public static void reloadRoleConfigCache() {
         GuildPlugin plugin = GuildPlugin.getInstance();
         if (plugin == null || plugin.getConfigManager() == null) {
-            // 合理的默认值
             cachedLeaderColor = "&6";
             cachedOfficerColor = "&b";
             cachedMemberColor = "&7";
@@ -304,6 +311,12 @@ public class PlaceholderUtils {
         cachedSeparatorEnabled = cfg.getBoolean("display.role-separator.enabled", true);
         cachedSeparatorFollowRoleColor = cfg.getBoolean("display.role-separator.color-per-role", true);
         cachedSeparatorDefaultColor = cfg.getString("display.role-separator.default-color", "&7");
+    }
+
+    /** @deprecated 使用 {@link #reloadRoleConfigCache()} */
+    public static void invalidateRoleConfigCache() {
+        cachedLeaderColor = null;
+        ensureRoleConfigCached();
     }
     
     /**

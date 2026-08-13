@@ -88,17 +88,17 @@ public class GuildWorldService {
      */
     private final boolean enabled;
 
-    // 配置项
-    private final String namePrefix;
-    private final String fallbackWorldName;
-    private final boolean recoveryCheckEnabled;
-    private final boolean autoLoadStale;
-    private final boolean autoCleanOrphans;
-    private final Material wandMaterial;
-    private final int maxSchematicVolume;
-    private final boolean ignoreAirOnPaste;
-    private final boolean includeBlockEntities;
-    private final String postMatchPolicy;
+    // 配置项（支持 /guildadmin reload 热更新；enabled 为能力开关，不随配置变）
+    private String namePrefix;
+    private String fallbackWorldName;
+    private boolean recoveryCheckEnabled;
+    private boolean autoLoadStale;
+    private boolean autoCleanOrphans;
+    private Material wandMaterial;
+    private int maxSchematicVolume;
+    private boolean ignoreAirOnPaste;
+    private boolean includeBlockEntities;
+    private String postMatchPolicy;
 
     public GuildWorldService(GuildPlugin plugin) {
         this.plugin = plugin;
@@ -112,7 +112,13 @@ public class GuildWorldService {
         this.presets = new PresetService(worldsDir, plugin.getLogger());
         // Folia 需 NMS 桥接，仅支持列表内版本；非 Folia 用 Bukkit.createWorld，始终可用
         this.enabled = !ServerUtils.isFolia() || ServerUtils.isFoliaVersionSupported();
+        reloadSettings();
+    }
 
+    /**
+     * 从 ConfigManager 重新读取世界相关配置（name-prefix / wand / schematic / post-match 等）。
+     */
+    public void reloadSettings() {
         FileConfiguration config = plugin.getConfigManager().getMainConfig();
         this.namePrefix = config.getString("world.name-prefix", "gw_");
         this.fallbackWorldName = config.getString("world.safety.fallback-world", "world");

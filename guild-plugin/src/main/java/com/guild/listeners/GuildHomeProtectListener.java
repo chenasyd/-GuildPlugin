@@ -24,11 +24,13 @@ public final class GuildHomeProtectListener implements Listener {
     }
 
     private boolean enabled() {
-        return plugin.getConfig().getBoolean("guild.home-protect.enabled", false);
+        return plugin.getConfigManager().getMainConfig()
+                .getBoolean("guild.home-protect.enabled", false);
     }
 
     private double radiusSq() {
-        double r = plugin.getConfig().getDouble("guild.home-protect.radius", 16);
+        double r = plugin.getConfigManager().getMainConfig()
+                .getDouble("guild.home-protect.radius", 16);
         return r * r;
     }
 

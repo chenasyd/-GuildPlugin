@@ -140,6 +140,11 @@ public class ModuleRegistry {
         return customGUIRegistrations.get(guiId);
     }
 
+    /** 已注册的增强版模块 GUI（用于热重载 gui-config 等）。 */
+    public Collection<ModuleGUIRegistration> getCustomGUIRegistrations() {
+        return java.util.Collections.unmodifiableCollection(customGUIRegistrations.values());
+    }
+
     /**
      * 注销单个增强版模块 GUI
      */
