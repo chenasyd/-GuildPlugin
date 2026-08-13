@@ -10,7 +10,7 @@ This guide covers developing external modules for GuildPlugin using the SDK. Mod
 |:----:|:-----------:|
 | JDK | 17+ |
 | Maven | 3.6+ |
-| SDK | `com.guild:guild-sdk:1.5.6` (provided scope) |
+| SDK | `com.guild:guild-sdk:1.6.6-snapshot.5` (provided scope) |
 
 ### Project Setup
 
@@ -33,7 +33,7 @@ This guide covers developing external modules for GuildPlugin using the SDK. Mod
         <dependency>
             <groupId>com.guild</groupId>
             <artifactId>guild-sdk</artifactId>
-            <version>1.5.6</version>
+            <version>1.6.6-snapshot.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -299,14 +299,15 @@ module:
 ##### Custom GUI
 
 ```java
-void registerCustomGUI(String guiId, ModuleGUIFactory factory);
-void registerCustomGUI(String moduleId, String guiId, ModuleGUIFactory factory);  // auto-cleanup on unload
+// Required: moduleId for hot-unload cleanup
+void registerCustomGUI(String moduleId, String guiId, ModuleGUIFactory factory);
+void registerCustomGUI(ModuleGUIRegistration registration); // must set .moduleId(...)
 void unregisterCustomGUI(String guiId);
 void openCustomGUI(String guiId, Player player, Map<String, Object> data);
 void openCustomGUI(String guiId, Player player);
 ```
 
-> **Recommended**: Use the `moduleId` overload so the framework automatically removes the GUI registration when the module is unloaded. Manual `unregisterCustomGUI()` in `onDisable()` is no longer necessary.
+> **Required (v1.6.6+)**: Every custom GUI registration must include a non-empty `moduleId`. The legacy `registerCustomGUI(guiId, factory)` overload throws `IllegalArgumentException`. Manual `unregisterCustomGUI()` in `onDisable()` is no longer necessary when `moduleId` is set.
 
 Use `GUIExtensionHook.AUTO_SLOT` (`-1`) for automatic slot assignment.
 
@@ -1002,7 +1003,7 @@ Copy the JAR to `plugins/GuildPlugin/modules/`, then:
 6. Use `context.getMessage(player, key, fallback)` for player-facing i18n, `LanguageManager.getCoreMessage()/getGuiMessage()/getModuleMessage()` for domain-specific needs
 7. Do not directly access other modules' internals — use events and API
 8. **New (v1.5+)**: Use the string-based currency API for runtime flexibility (e.g. `"A_COIN"` vs `CurrencyType.A_COIN`)
-9. **New (v1.6.6+)**: Prefer moduleId-tracking API overloads (`registerCustomGUI(moduleId, ...)`, `registerSubCommand(moduleId, ...)`, `registerPlaceholderProvider(moduleId, ...)`, `eventBus.subscribe(moduleId, ...)`) — the framework auto-cleans all registrations on unload
+9. **Required (v1.6.6+)**: Custom GUI registration must include `moduleId` (`registerCustomGUI(moduleId, ...)`, `.moduleId(...)` on `ModuleGUIRegistration`, or equivalent). Prefer moduleId-tracking overloads for subcommands/placeholders/EventBus too — the framework auto-cleans on unload.
 10. **New (v1.6.6+)**: Use `context.registerEvents(listener)` instead of `Bukkit.getPluginManager().registerEvents()` for auto-tracked listener cleanup
 11. **New (v1.6.6+)**: Declare `folia-compatible: true` in `module.yml` if your module uses entity-level scheduling and avoids global-state assumptions — otherwise it will be rejected on Folia servers
 

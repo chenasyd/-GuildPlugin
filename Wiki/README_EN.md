@@ -16,7 +16,7 @@ A feature-complete Minecraft guild/faction system. Supports Spigot, Paper, Purpu
 | Spigot | 1.20.1+ |
 | Paper | 1.20.1+ |
 | Purpur | 1.20.1+ |
-| Folia | 1.20.1+ |
+| Folia | Core OK; `/guildworld` only on whitelist (not 1.20.1) |
 
 ## Installation
 
@@ -24,7 +24,7 @@ A feature-complete Minecraft guild/faction system. Supports Spigot, Paper, Purpu
 2. Place the JAR in `plugins/`
 3. Restart the server
 4. Configure `plugins/GuildPlugin/config.yml`
-5. Run `/guildadmin reload`
+5. Run `/guildadmin reload` (runtime configs + languages; does not reconnect DB/Bungee)
 
 ## Features
 
@@ -50,7 +50,7 @@ All guild operations feature a graphical interface. Slot-based button detection 
 External module development with full API coverage (6 example modules). Hot load/unload/reload of modules at runtime. Automatic cleanup of listeners, tasks, commands, GUIs, and placeholder registrations on module unload. Folia compatibility guard (`folia-compatible` declaration) and ClassLoader leak detection.
 
 ### Worlds & Guild War
-Void-world CRUD, wand selection, self-made `.gws` presets with A/B/spectator anchors. Fixed-map guild war: challenge → signup → arena countdown → score/timed/survive → destroy instance. See [GuildWorld](./GuildWorld_EN.md), [GuildWar](./GuildWar_EN.md).
+Void-world CRUD, wand selection, self-made `.gws` presets with A/B/spectator anchors. Fixed-map guild war: challenge → signup → arena countdown → score/timed/survive → destroy instance. See [GuildWorld](./GuildWorld_EN.md), [GuildWar](./GuildWar_EN.md). Cross-server war is a **P3 proxy skeleton only** (not production-wired — see [CrossServer-War](./CrossServer-War.md)).
 
 ### Module GUI Enhancement
 Module GUIs support image mode (ImagoCore binding), Bedrock Edition forms (Cumulus form provider), and server admin customization of items/text/flags via `gui-config.yml`.
@@ -111,7 +111,7 @@ Relation types: `neutral`, `ally`, `enemy`, `war`, `truce`
 | Command | Permission | Description |
 |:-------:|:----------:|:-----------:|
 | `/guildadmin` | `guild.admin` | Admin panel |
-| `/guildadmin reload` | `guild.admin` | Reload all configs |
+| `/guildadmin reload` | `guild.admin` | Reload runtime configs + languages (not DB/Bungee) |
 | `/guildadmin list` | `guild.admin` | List all guilds |
 | `/guildadmin info <guild>` | `guild.admin` | Guild details |
 | `/guildadmin delete <guild>` | `guild.admin` | Force delete guild |

@@ -1,4 +1,4 @@
-﻿# ==========================================
+# ==========================================
 # GuildPlugin - 核心消息 (非GUI)
 # 命令提示、错误消息、模型显示名、通知等
 # ==========================================
@@ -1040,7 +1040,8 @@ warehouse.nbtapi-missing: "&c公会仓库需要安装 NBTAPI 插件才能使用�
 warehouse.unavailable: "&c公会仓库当前不可用。"
 warehouse.guild-frozen: "&c工会已冻结，无法打开仓库。"
 warehouse.no-permission: "&c你没有权限打开公会仓库。"
-warehouse.in-use: "&c仓库正被其他成员使用，请稍后再试。"
+warehouse.in-use: "&c仓库正被其他成员使用，请稍后再试。"
+warehouse.load-failed: "&c加载公会仓库失败，请稍后重试。"
 warehouse.invalid-page: "&c无效页码。可用页: &e1-{pages} &7（共 {slots} 槽）"
 warehouse.usage: "&e用法: /guild warehouse [页码] | /guild warehouse info | /guild warehouse perm <officer|member> <on|off>"
 warehouse.info-header: "&a=== 公会仓库信息 ==="

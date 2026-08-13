@@ -81,7 +81,14 @@ public class GuildPluginAPI {
                                   String displayNameKey, String... loreKeys) {
     }
 
+    /**
+     * @deprecated Use {@link #registerCustomGUI(String, String, ModuleGUIFactory)} with moduleId.
+     *             This stub always throws when called through a real implementation.
+     */
+    @Deprecated
     public void registerCustomGUI(String guiId, ModuleGUIFactory factory) {
+        throw new IllegalArgumentException(
+                "registerCustomGUI(guiId, factory) requires moduleId; use registerCustomGUI(moduleId, guiId, factory)");
     }
 
     /** 注册自定义 GUI（带模块归属追踪） */
@@ -101,8 +108,7 @@ public class GuildPluginAPI {
 
     /**
      * Register a custom GUI with enhanced capabilities (image binding, layout,
-     * Bedrock form, config override). The legacy registerCustomGUI(guiId, factory)
-     * is equivalent to registerCustomGUI(builder(guiId, factory).build()).
+     * Bedrock form, config override). {@code registration.moduleId} is required.
      *
      * @param registration the full registration descriptor
      */

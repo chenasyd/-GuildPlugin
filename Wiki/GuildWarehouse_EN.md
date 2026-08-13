@@ -38,6 +38,7 @@ Config `guild-warehouse.slots-by-level` maps `peak_level` → slot count (**mult
 ## Concurrency
 
 Only one open session per guild at a time; others see “warehouse in use”.
+The session stays held while an async save runs after close; quitting does not drop the lock early (avoids racing an in-flight save). Load failures release the session and notify the player.
 
 ## Config example
 

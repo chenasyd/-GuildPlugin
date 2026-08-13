@@ -4,10 +4,17 @@
 
 ## 环境要求
 
-- Minecraft 1.20.1+
+- Minecraft 1.20.1+（Spigot / Paper / Purpur）
 - Java 17+
 - Vault（可选，用于经济系统）
 - PlaceholderAPI（可选）
+
+### 服务端兼容
+
+| 软件 | 版本 |
+|:----:|:----:|
+| Spigot / Paper / Purpur | 1.20.1+ |
+| Folia | 核心可运行；`/guildworld` 仅白名单版本（**不含 1.20.1**，见 `ServerUtils.FOLIA_SUPPORTED_VERSIONS`） |
 
 ## 安装
 
@@ -15,7 +22,7 @@
 2. 将 `guild-plugin-{version}.jar` 放入服务器 `plugins/` 目录
 3. 重启服务器，配置文件将自动生成
 4. 根据需要编辑 `plugins/GuildPlugin/config.yml` 和语言文件
-5. 执行 `/guildadmin reload` 应用更改
+5. 执行 `/guildadmin reload` 应用更改（运行时配置 + 语言；**不会**重连数据库 / Bungee）
 
 ## 功能
 
@@ -41,7 +48,7 @@
 支持外部模块开发，完整的 API 覆盖（6 个示例模块）。运行时热加载/卸载/重载模块。模块卸载时自动清理监听器、定时任务、命令、GUI 和占位符注册。Folia 兼容性守卫（`folia-compatible` 声明）和 ClassLoader 泄漏检测。
 
 ### 多世界与工会战
-虚空世界 CRUD、选区导出自研 `.gws` 预设、锚点 A/B/观众。固定地图工会战：发起→报名→进场倒计时→积分/限时/存活胜负→战后销毁实例。详见 [GuildWorld](./GuildWorld.md)、[GuildWar](./GuildWar.md)。
+虚空世界 CRUD、选区导出自研 `.gws` 预设、锚点 A/B/观众。固定地图工会战：发起→报名→进场倒计时→积分/限时/存活胜负→战后销毁实例。详见 [GuildWorld](./GuildWorld.md)、[GuildWar](./GuildWar.md)。跨服战场仅为 **P3 代理骨架**，**未接线生产开战**（见 [CrossServer-War](./CrossServer-War.md)）。
 
 ### 模块 GUI 增强
 模块 GUI 支持图片模式（ImagoCore 绑定）、基岩版表单（Cumulus 表单提供者）以及服务器管理员通过 `gui-config.yml` 自定义物品/文本/标志。
@@ -102,7 +109,7 @@
 | 命令 | 权限 | 说明 |
 |:----:|:----:|:----:|
 | `/guildadmin` | `guild.admin` | 管理员主菜单 |
-| `/guildadmin reload` | `guild.admin` | 重载所有配置 |
+| `/guildadmin reload` | `guild.admin` | 重载运行时配置与语言（不重连 DB/Bungee） |
 | `/guildadmin list` | `guild.admin` | 列出所有公会 |
 | `/guildadmin info <公会>` | `guild.admin` | 查看公会详情 |
 | `/guildadmin delete <公会>` | `guild.admin` | 强制删除公会 |

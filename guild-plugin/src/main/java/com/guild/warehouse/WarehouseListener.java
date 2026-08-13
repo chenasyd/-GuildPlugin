@@ -90,7 +90,8 @@ public class WarehouseListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        // InventoryCloseEvent normally fires on quit; this is a safety net for session locks
-        warehouseService.releaseSessionByPlayer(event.getPlayer().getUniqueId());
+        // Close normally starts an async save and holds the session until it finishes.
+        // Only drop the lock here when no save is in flight (close event missing).
+        warehouseService.releaseSessionByPlayerIfIdle(event.getPlayer().getUniqueId());
     }
 }

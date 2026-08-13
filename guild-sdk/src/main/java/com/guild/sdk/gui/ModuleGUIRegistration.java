@@ -9,6 +9,7 @@ package com.guild.sdk.gui;
  * Usage:
  * <pre>{@code
  * api.registerCustomGUI(ModuleGUIRegistration.builder("stats-overview", factory)
+ *     .moduleId("guild-stats")
  *     .imageBinding("stats-overview")
  *     .layout(GUILayoutDefinition.builder()
  *         .function("HEADER", 0,1,2,3,4,5,6,7,8)
@@ -19,8 +20,8 @@ package com.guild.sdk.gui;
  *     .build());
  * }</pre>
  * <p>
- * The legacy {@code registerCustomGUI(guiId, factory)} remains fully compatible
- * and is equivalent to {@code registerCustomGUI(builder(guiId, factory).build())}.
+ * {@code moduleId} is <b>required</b> for hot-unload cleanup. Prefer
+ * {@code registerCustomGUI(moduleId, guiId, factory)} or always call {@link Builder#moduleId(String)}.
  */
 public final class ModuleGUIRegistration {
 
@@ -137,8 +138,7 @@ public final class ModuleGUIRegistration {
         }
 
         /**
-         * Set the owning module ID (used for cleanup on module unload).
-         * Typically set internally by the API during registration.
+         * Set the owning module ID (required for cleanup on module unload).
          *
          * @param moduleId module identifier
          * @return this builder
@@ -149,6 +149,9 @@ public final class ModuleGUIRegistration {
         }
 
         public ModuleGUIRegistration build() {
+            if (moduleId == null || moduleId.isEmpty()) {
+                throw new IllegalArgumentException("moduleId is required (call .moduleId(...))");
+            }
             return new ModuleGUIRegistration(this);
         }
     }

@@ -10,7 +10,7 @@ import java.util.Map;
  * <p>
  * 实现此接口来创建模块专属的完整 GUI 界面：
  * <pre>{@code
- * ctx.getApi().registerCustomGUI("my-gui-page",
+ * ctx.getApi().registerCustomGUI("my-module", "my-gui-page",
  *     (player, data) -> new MyCustomGUI(player, data, context));
  * }</pre>
  */

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -34,6 +35,8 @@ public class GuildWarehouseService {
     private final Logger logger;
     private final WarehouseSettings settings;
     private final ConcurrentHashMap<Integer, UUID> openSessions = new ConcurrentHashMap<>();
+    /** In-flight page saves keyed by guild id; quit must not drop the session until these finish. */
+    private final ConcurrentHashMap<Integer, CompletableFuture<Boolean>> pendingSaves = new ConcurrentHashMap<>();
     private volatile boolean nbtApiAvailable;
 
     public GuildWarehouseService(GuildPlugin plugin) {
@@ -79,8 +82,18 @@ public class GuildWarehouseService {
                 holder.equals(playerUuid) ? null : holder);
     }
 
-    public void releaseSessionByPlayer(UUID playerUuid) {
-        openSessions.entrySet().removeIf(e -> e.getValue().equals(playerUuid));
+    /**
+     * Safety net for quit when InventoryClose never started a save.
+     * If a save is still in flight, leave the session until {@link #handleClose} completes.
+     */
+    public void releaseSessionByPlayerIfIdle(UUID playerUuid) {
+        openSessions.entrySet().removeIf(e -> {
+            if (!e.getValue().equals(playerUuid)) {
+                return false;
+            }
+            CompletableFuture<Boolean> pending = pendingSaves.get(e.getKey());
+            return pending == null || pending.isDone();
+        });
     }
 
     public UUID getSessionHolder(int guildId) {
@@ -175,16 +188,19 @@ public class GuildWarehouseService {
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
                         int slot = rs.getInt("slot");
-                        ItemStack stack = NbtItemSerializer.itemFromSnbt(rs.getString("nbt"));
-                        if (stack != null && !stack.getType().isAir()) {
-                            items.put(slot, stack);
+                        try {
+                            ItemStack stack = NbtItemSerializer.itemFromSnbt(rs.getString("nbt"));
+                            if (stack != null && !stack.getType().isAir()) {
+                                items.put(slot, stack);
+                            }
+                        } catch (Throwable t) {
+                            logger.warning("[Warehouse] Skipping corrupt NBT at guild=" + guildId
+                                    + " slot=" + slot + ": " + t.getMessage());
                         }
                     }
                 }
             } catch (SQLException e) {
-                logger.severe("[Warehouse] Failed to load items: " + e.getMessage());
-            } catch (Throwable t) {
-                logger.severe("[Warehouse] NBT deserialize failed: " + t.getMessage());
+                throw new CompletionException(e);
             }
             return items;
         });
@@ -192,10 +208,11 @@ public class GuildWarehouseService {
 
     /**
      * Saves one warehouse page. Only replaces absolute slots in [slotOffset, slotOffset + pageCapacity).
+     * Callers must invoke from the region/main thread so inventory contents are snapshotted safely.
      */
     public CompletableFuture<Boolean> savePage(int guildId, Inventory inventory, int slotOffset, int pageCapacity) {
-        ItemStack[] contents = inventory.getContents();
-        return CompletableFuture.supplyAsync(() -> {
+        ItemStack[] contents = cloneContents(inventory.getContents());
+        CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
             try (Connection conn = databaseManager.getConnection()) {
                 conn.setAutoCommit(false);
                 try {
@@ -239,6 +256,21 @@ public class GuildWarehouseService {
                 return false;
             }
         });
+        pendingSaves.put(guildId, future);
+        future.whenComplete((ok, err) -> pendingSaves.remove(guildId, future));
+        return future;
+    }
+
+    private static ItemStack[] cloneContents(ItemStack[] source) {
+        if (source == null) {
+            return new ItemStack[0];
+        }
+        ItemStack[] copy = new ItemStack[source.length];
+        for (int i = 0; i < source.length; i++) {
+            ItemStack stack = source[i];
+            copy[i] = stack == null ? null : stack.clone();
+        }
+        return copy;
     }
 
     public void openWarehouse(Player player, Guild guild) {
@@ -251,7 +283,7 @@ public class GuildWarehouseService {
     public void openWarehouse(Player player, Guild guild, int page) {
         if (!isAvailable()) {
             String msg = plugin.getLanguageManager().getCoreMessage(player, "warehouse.nbtapi-missing",
-                    "&c公会仓库需要安装 NBTAPI 插件才能使用。");
+                    "&cGuild warehouse requires the NBTAPI plugin.");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -260,7 +292,7 @@ public class GuildWarehouseService {
         }
         if (guild.isFrozen()) {
             String msg = plugin.getLanguageManager().getCoreMessage(player, "warehouse.guild-frozen",
-                    "&c工会已冻结，无法打开仓库。");
+                    "&cThe guild is frozen; warehouse cannot be opened.");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -268,7 +300,7 @@ public class GuildWarehouseService {
         GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
         if (!canOpenWarehouse(guild, member, player)) {
             String msg = plugin.getLanguageManager().getCoreMessage(player, "warehouse.no-permission",
-                    "&c你没有权限打开公会仓库。");
+                    "&cYou do not have permission to open the guild warehouse.");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -277,7 +309,7 @@ public class GuildWarehouseService {
         int pageCount = WarehouseSettings.getPageCount(totalSlots);
         if (page < 1 || page > pageCount) {
             String msg = plugin.getLanguageManager().getCoreMessage(player, "warehouse.invalid-page",
-                            "&c无效页码。可用页: &e1-{pages} &7（共 {slots} 槽）")
+                            "&cInvalid page. Available: &e1-{pages} &7({slots} slots)")
                     .replace("{pages}", String.valueOf(pageCount))
                     .replace("{slots}", String.valueOf(totalSlots));
             player.sendMessage(ColorUtils.colorize(msg));
@@ -286,7 +318,7 @@ public class GuildWarehouseService {
 
         if (!tryAcquireSession(guild.getId(), player.getUniqueId())) {
             String msg = plugin.getLanguageManager().getCoreMessage(player, "warehouse.in-use",
-                    "&c仓库正被其他成员使用，请稍后再试。");
+                    "&cThe warehouse is in use by another member. Try again later.");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -295,31 +327,48 @@ public class GuildWarehouseService {
         int offset = WarehouseSettings.getPageOffset(page);
         String titleTemplate = pageCount > 1
                 ? plugin.getLanguageManager().getCoreMessage(player, "warehouse.title-page",
-                "&8公会仓库 ({page}/{pages})")
+                "&8Guild Warehouse ({page}/{pages})")
                 : plugin.getLanguageManager().getCoreMessage(player, "warehouse.title",
-                "&8公会仓库");
+                "&8Guild Warehouse");
         String title = ColorUtils.colorize(titleTemplate
                 .replace("{page}", String.valueOf(page))
                 .replace("{pages}", String.valueOf(pageCount)));
 
-        loadItemsInRange(guild.getId(), offset, offset + pageSlots).thenAccept(items ->
+        final int guildId = guild.getId();
+        loadItemsInRange(guildId, offset, offset + pageSlots).whenComplete((items, err) -> {
+            if (err != null || items == null) {
+                Throwable cause = err instanceof CompletionException && err.getCause() != null
+                        ? err.getCause() : err;
+                logger.severe("[Warehouse] Failed to load items for guild " + guildId + ": "
+                        + (cause != null ? cause.getMessage() : "unknown"));
                 CompatibleScheduler.runTask(plugin, player, () -> {
-                    if (!player.isOnline()) {
-                        releaseSession(guild.getId(), player.getUniqueId());
-                        return;
+                    releaseSession(guildId, player.getUniqueId());
+                    if (player.isOnline()) {
+                        String msg = plugin.getLanguageManager().getCoreMessage(player, "warehouse.load-failed",
+                                "&cFailed to load guild warehouse. Please try again.");
+                        player.sendMessage(ColorUtils.colorize(msg));
                     }
-                    WarehouseChestHolder holder = new WarehouseChestHolder(guild.getId(), page, pageSlots, totalSlots);
-                    Inventory inv = Bukkit.createInventory(holder, pageSlots, title);
-                    holder.setInventory(inv);
-                    for (Map.Entry<Integer, ItemStack> e : items.entrySet()) {
-                        int absolute = e.getKey();
-                        int local = absolute - offset;
-                        if (local >= 0 && local < pageSlots) {
-                            inv.setItem(local, e.getValue());
-                        }
+                });
+                return;
+            }
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (!player.isOnline()) {
+                    releaseSession(guildId, player.getUniqueId());
+                    return;
+                }
+                WarehouseChestHolder holder = new WarehouseChestHolder(guildId, page, pageSlots, totalSlots);
+                Inventory inv = Bukkit.createInventory(holder, pageSlots, title);
+                holder.setInventory(inv);
+                for (Map.Entry<Integer, ItemStack> e : items.entrySet()) {
+                    int absolute = e.getKey();
+                    int local = absolute - offset;
+                    if (local >= 0 && local < pageSlots) {
+                        inv.setItem(local, e.getValue());
                     }
-                    player.openInventory(inv);
-                }));
+                }
+                player.openInventory(inv);
+            });
+        });
     }
 
     public void handleClose(Player player, WarehouseChestHolder holder, Inventory inventory) {
@@ -333,19 +382,27 @@ public class GuildWarehouseService {
                 giveOrDrop(player, extra);
             }
         }
-        savePage(guildId, inventory, offset, capacity).whenComplete((ok, err) ->
-                CompatibleScheduler.runTask(plugin, player, () -> {
-                    // Switching pages: close saves async; do not drop lock if another page is already open
-                    if (!player.isOnline()) {
-                        releaseSession(guildId, player.getUniqueId());
-                        return;
-                    }
-                    Inventory top = player.getOpenInventory().getTopInventory();
-                    if (!(top.getHolder() instanceof WarehouseChestHolder open)
-                            || open.getGuildId() != guildId) {
-                        releaseSession(guildId, player.getUniqueId());
-                    }
-                }));
+        UUID playerUuid = player.getUniqueId();
+        savePage(guildId, inventory, offset, capacity).whenComplete((ok, err) -> {
+            if (!Boolean.TRUE.equals(ok) || err != null) {
+                Throwable cause = err instanceof CompletionException && err.getCause() != null
+                        ? err.getCause() : err;
+                logger.severe("[Warehouse] Save incomplete for guild " + guildId
+                        + (cause != null ? ": " + cause.getMessage() : ""));
+            }
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                // Switching pages: close saves async; do not drop lock if another page is already open
+                if (!player.isOnline()) {
+                    releaseSession(guildId, playerUuid);
+                    return;
+                }
+                Inventory top = player.getOpenInventory().getTopInventory();
+                if (!(top.getHolder() instanceof WarehouseChestHolder open)
+                        || open.getGuildId() != guildId) {
+                    releaseSession(guildId, playerUuid);
+                }
+            });
+        });
     }
 
     static void giveOrDrop(Player player, ItemStack stack) {

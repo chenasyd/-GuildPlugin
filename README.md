@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Minecraft-1.20.1+-green?style=for-the-badge&logo=minecraft" alt="Minecraft 1.20.1+"/>
   <img src="https://img.shields.io/badge/API-Spigot%20%7C%20Folia-orange?style=for-the-badge" alt="Spigot | Folia"/>
-  <img src="https://img.shields.io/badge/Version-1.5.6-blue?style=for-the-badge" alt="Version 1.6.6"/>
+  <img src="https://img.shields.io/badge/Version-1.6.6--snapshot.5-blue?style=for-the-badge" alt="Version 1.6.6-snapshot.5"/>
   <img src="https://img.shields.io/badge/License-GPL%20v3-red?style=for-the-badge" alt="GPL v3"/>
   <img src="https://img.shields.io/badge/Java-17%2B-brightgreen?style=for-the-badge" alt="Java 17+"/>
 </p>
@@ -20,10 +20,10 @@ A feature-complete Minecraft guild/faction system with economy, relations, level
 - **Level System** — guild growth with increasing max member caps
 - **Full GUI** — intuitive graphical interface for all operations
 - **Multi-language** — **26** bundled languages (中文, English, Polski, Português (Brasil), Deutsch, Français, Español, 日本語, 한국어, and more)
-- **Worlds & Guild War** — void arenas, `.gws` presets, fixed-map team PVP (`/guildworld`, `/guildwar`)
+- **Worlds & Guild War** — void arenas, `.gws` presets, fixed-map team PVP (`/guildworld`, `/guildwar`); cross-server war is a **P3 proxy skeleton only** (not production-wired — see [CrossServer-War](./Wiki/CrossServer-War.md))
 - **Async Database** — HikariCP connection pool, MySQL/SQLite support
 - **Modular SDK** — external module development with full API coverage (6 example modules)
-- **CustomGUI System** — modules can independently register/open/unregister custom GUIs
+- **CustomGUI System** — modules register/open/unregister custom GUIs (**`moduleId` required** for hot-unload cleanup)
 - **EventBus** — loose-coupled inter-module communication with per-module subscription tracking
 - **ServiceContainer** — modules access core system services via DI
 - **Hot-load Modules** — add/remove modules at runtime via `/guildmodule`, no server restart needed
@@ -37,7 +37,9 @@ A feature-complete Minecraft guild/faction system with economy, relations, level
 | [Spigot](https://www.spigotmc.org) | 1.20.1+ |
 | [PaperMC](https://papermc.io/downloads/paper) | 1.20.1+ |
 | [Purpur](https://purpurmc.org) | 1.20.1+ |
-| [Folia](https://papermc.io/software/folia) | 1.20.1+ |
+| [Folia](https://papermc.io/software/folia) | Core runs on Folia; **`/guildworld` NMS bridge** only on whitelist versions (see below) |
+
+Folia multi-world (`gworld`) whitelist is defined in `ServerUtils.FOLIA_SUPPORTED_VERSIONS` (e.g. 1.19.4, 1.20.4, 1.20.6, 1.21.x, 26.1.x). **1.20.1 is intentionally not included** — the plugin loads, but world create/load stays disabled on unsupported Folia builds.
 
 ## Integrations
 
@@ -49,10 +51,10 @@ A feature-complete Minecraft guild/faction system with economy, relations, level
 ## Installation
 
 1. Download the latest release from [Releases](https://github.com/chenasyd/-GuildPlugin/releases)
-2. Place `guild-plugin-1.5.3.jar` in your server's `plugins/` folder
+2. Place `guild-plugin-{version}.jar` in your server's `plugins/` folder
 3. Restart the server
 4. Configure `plugins/GuildPlugin/config.yml` to your needs
-5. Run `/guildadmin reload` to apply configuration changes
+5. Run `/guildadmin reload` to apply configuration changes (runtime configs + languages; does **not** reconnect DB/Bungee)
 
 > ⚠️ **When upgrading the plugin**: Always back up your configuration and data first. It is recommended to delete `messages_*.yml` files and let the plugin regenerate them — this ensures all new messages are included and avoids display errors.
 
@@ -66,7 +68,7 @@ cd -GuildPlugin
 mvn clean package -pl guild-plugin
 ```
 
-The output JAR will be at `guild-plugin/target/guild-plugin-1.5.3.jar`.
+The output JAR will be at `guild-plugin/target/guild-plugin-*.jar`.
 
 To include example modules:
 
@@ -132,7 +134,7 @@ Relation types: `neutral`, `ally`, `enemy`, `war`, `truce`
 | Command | Permission | Description |
 |:-------:|:----------:|:-----------:|
 | `/guildadmin` | `guild.admin` | Admin panel |
-| `/guildadmin reload` | `guild.admin` | Reload all configs |
+| `/guildadmin reload` | `guild.admin` | Reload runtime configs + languages (not DB/Bungee) |
 | `/guildadmin list` | `guild.admin` | List all guilds |
 | `/guildadmin info <guild>` | `guild.admin` | Guild details |
 | `/guildadmin delete <guild>` | `guild.admin` | Force delete guild |

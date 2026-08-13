@@ -188,26 +188,39 @@ public class GuildPluginAPI {
                 .registerButton(guiType, slot, item, moduleId, handler, displayNameKey, loreKeys);
     }
 
-    /** 注册全新的自定义 GUI 页面 */
+    /**
+     * @deprecated Use {@link #registerCustomGUI(String, String, ModuleGUIFactory)} with a non-empty moduleId.
+     *             This overload always throws — unowned factories leak on module hot-unload.
+     */
+    @Deprecated
     public void registerCustomGUI(String guiId, ModuleGUIFactory factory) {
+        throw new IllegalArgumentException(
+                "registerCustomGUI(guiId, factory) is removed; use registerCustomGUI(moduleId, guiId, factory) "
+                        + "or ModuleGUIRegistration.builder(...).moduleId(moduleId).build()");
+    }
+
+    /** 注册全新的自定义 GUI 页面（带模块归属追踪，卸载时自动清理） */
+    public void registerCustomGUI(String moduleId, String guiId, ModuleGUIFactory factory) {
+        if (moduleId == null || moduleId.isEmpty()) {
+            throw new IllegalArgumentException("moduleId cannot be empty");
+        }
         if (guiId == null || guiId.isEmpty()) {
             throw new IllegalArgumentException("guiId cannot be empty");
+        }
+        if (factory == null) {
+            throw new IllegalArgumentException("factory cannot be null");
         }
         if (customGUIRegistry.containsKey(guiId)) {
             throw new IllegalArgumentException("guiId already registered: " + guiId);
         }
         customGUIRegistry.put(guiId, factory);
-    }
-
-    /** 注册全新的自定义 GUI 页面（带模块归属追踪，卸载时自动清理） */
-    public void registerCustomGUI(String moduleId, String guiId, ModuleGUIFactory factory) {
-        registerCustomGUI(guiId, factory);
         guiFactoryOwners.put(guiId, moduleId);
     }
 
     /** 注销自定义 GUI 页面（模块卸载时调用） */
     public void unregisterCustomGUI(String guiId) {
         customGUIRegistry.remove(guiId);
+        guiFactoryOwners.remove(guiId);
     }
 
     /** 打开已注册的自定义 GUI 页面 */
@@ -230,24 +243,23 @@ public class GuildPluginAPI {
 
     /**
      * 注册增强版自定义 GUI（支持图像绑定、布局定义、基岩表单、配置覆盖）。
-     * 旧版 registerCustomGUI(guiId, factory) 等价于 builder(guiId, factory).build()。
+     * {@code registration.moduleId} 必填，否则热卸载无法清理。
      */
     public void registerCustomGUI(ModuleGUIRegistration registration) {
         if (registration == null) {
             throw new IllegalArgumentException("registration cannot be null");
         }
+        String owner = registration.getModuleId();
+        if (owner == null || owner.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "moduleId is required on ModuleGUIRegistration (call .moduleId(...))");
+        }
         String guiId = registration.getGuiId();
         if (customGUIRegistry.containsKey(guiId)) {
             throw new IllegalArgumentException("guiId already registered: " + guiId);
         }
-        // 同时注册到旧版 factory 映射（保持 openCustomGUI 兼容）
         customGUIRegistry.put(guiId, registration.getFactory());
-        // 追踪模块归属，卸载时由 clearModuleRegistrations 清理
-        String owner = registration.getModuleId();
-        if (owner != null && !owner.isEmpty()) {
-            guiFactoryOwners.put(guiId, owner);
-        }
-        // 注册到增强注册表
+        guiFactoryOwners.put(guiId, owner);
         ModuleManager mm = plugin.getServiceContainer().get(ModuleManager.class);
         mm.getRegistry().registerCustomGUI(registration);
     }
