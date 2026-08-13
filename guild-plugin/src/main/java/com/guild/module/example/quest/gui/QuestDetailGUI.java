@@ -24,6 +24,11 @@ import java.util.UUID;
  * Design principles: constructor only takes preprocessed data; setupInventory uses defensive coding.
  */
 public class QuestDetailGUI extends AbstractModuleGUI {
+
+    public enum ParentView {
+        LIST,
+        ACTIVE
+    }
     
     // Module reference (for callbacks only)
     private final GuildQuestModule module;
@@ -46,6 +51,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     // Metadata
     private final int guildId;
     private final UUID playerUuid;
+    private final ParentView parentView;
     private Player viewer;
     
     /**
@@ -69,6 +75,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         
         this.guildId = builder.guildId;
         this.playerUuid = builder.playerUuid;
+        this.parentView = builder.parentView != null ? builder.parentView : ParentView.LIST;
         registerRefreshListener();
     }
 
@@ -252,7 +259,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
 
         inv.setItem(49, createBackButton(
             tx.t("module.quest.gui.back-button", "&e&l[ Back ]"),
-            tx.t("module.quest.gui.back-hint", "&7Return to quest list")));
+            tx.t("module.quest.gui.back-hint", "&7Return to previous menu")));
     }
     
     @Override
@@ -338,8 +345,14 @@ public class QuestDetailGUI extends AbstractModuleGUI {
     }
     
     private void handleBack(Player player) {
-        // Fixed navigation: detail always returns to quest list
-        module.getContext().openGUI(player, new QuestListGUI(module, guildId, playerUuid));
+        if (parentView == ParentView.ACTIVE) {
+            List<QuestProgress> active = module.getQuestManager()
+                .getPlayerActiveQuests(guildId, playerUuid);
+            module.getContext().openGUI(player,
+                new ActiveQuestsGUI(module, active, guildId, playerUuid));
+        } else {
+            module.getContext().openGUI(player, new QuestListGUI(module, guildId, playerUuid));
+        }
     }
     
     // ==================== Helper Methods ====================
@@ -475,6 +488,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
                     reopenData.put("definition", def);  // May be null, but Builder can handle
                     reopenData.put("guildId", guildId);
                     reopenData.put("playerUuid", playerUuid);
+                    reopenData.put("parent", parentView.name());
                     
                     // Reopen GUI (replaces current GUI instance)
                     module.getContext().getApi().openCustomGUI("quest-detail", player, reopenData);
@@ -528,6 +542,7 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         private boolean isClaimed = false;
         private int guildId;
         private UUID playerUuid;
+        private ParentView parentView = ParentView.LIST;
         
         public Builder(GuildQuestModule module) {
             this.module = module;
@@ -561,6 +576,11 @@ public class QuestDetailGUI extends AbstractModuleGUI {
         public Builder withGuildInfo(int guildId, UUID playerUuid) {
             this.guildId = guildId;
             this.playerUuid = playerUuid;
+            return this;
+        }
+
+        public Builder withParent(ParentView parentView) {
+            if (parentView != null) this.parentView = parentView;
             return this;
         }
         

@@ -98,10 +98,19 @@ public class GuildQuestModule implements GuildModule {
                     }
                 }
                 
+                QuestDetailGUI.ParentView parent = QuestDetailGUI.ParentView.LIST;
+                Object parentObj = data.get("parent");
+                if (parentObj != null) {
+                    try {
+                        parent = QuestDetailGUI.ParentView.valueOf(parentObj.toString());
+                    } catch (IllegalArgumentException ignored) {}
+                }
+
                 QuestDetailGUI gui = new QuestDetailGUI.Builder(this)
                     .fromDefinition(def)
                     .fromProgress(progress)
                     .withGuildInfo(guildId, playerUuid)
+                    .withParent(parent)
                     .build();
                 gui.setViewer(player);
                 return gui;

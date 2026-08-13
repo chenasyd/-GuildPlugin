@@ -295,6 +295,7 @@ public class QuestListGUI extends AbstractModuleGUI {
                 data.put("definition", selected);
                 data.put("guildId", guildId);
                 data.put("playerUuid", playerUuid);
+                data.put("parent", QuestDetailGUI.ParentView.LIST.name());
 
                 context.getApi().openCustomGUI("quest-detail", player, data);
 

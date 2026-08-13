@@ -183,6 +183,7 @@ public class ActiveQuestsGUI extends AbstractModuleGUI {
                 data.put("definition", module.getQuestManager().getDefinition(selected.getQuestId()));
                 data.put("guildId", guildId);
                 data.put("playerUuid", player.getUniqueId());
+                data.put("parent", QuestDetailGUI.ParentView.ACTIVE.name());
                 GuildPluginAPI api = context.getApi();
                 api.openCustomGUI("quest-detail", player, data);
             } catch (Exception e) {
