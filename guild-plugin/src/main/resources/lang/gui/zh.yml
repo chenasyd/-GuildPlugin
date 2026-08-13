@@ -1031,7 +1031,7 @@ gui:
     member-details.demote-member-desc: "将官员降级为普通成员"
     member-details.disband-guild: "解散工会"
     member-details.executable-actions: "可执行操作"
-    member-details.guild-contribution: "工会贡献"
+    member-details.guild-contribution: "公会金库净贡献"
     member-details.guild-duration: "在工会时长"
     member-details.hour: "小时"
     member-details.invite-kick-actions: "邀请、踢出"

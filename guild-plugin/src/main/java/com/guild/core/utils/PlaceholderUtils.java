@@ -83,18 +83,30 @@ public class PlaceholderUtils {
             .replace("{guild_balance_formatted}", formatBalance(guild.getBalance()))
             .replace("{guild_next_level_requirement}", getNextLevelRequirement(guild.getLevel(), lang))
             .replace("{guild_level_progress}", getLevelProgress(guild.getLevel(), guild.getBalance()))
-            .replace("{guild_upgrade_cost}", getUpgradeCost(guild.getLevel()))
-            .replace("{guild_currency_name}", "金币")
-            .replace("{guild_currency_name_singular}", "金币")
-            
+            .replace("{guild_upgrade_cost}", getUpgradeCost(guild.getLevel()));
+
+        String currencyName = "Coins";
+        try {
+            GuildPlugin p = GuildPlugin.getInstance();
+            if (p != null && p.getEconomyManager() != null && p.getEconomyManager().isVaultAvailable()) {
+                currencyName = p.getEconomyManager().getCurrencyName();
+            } else if (p != null && p.getLanguageManager() != null) {
+                currencyName = p.getLanguageManager().getCoreMessage(
+                        "economy.currency-name", "Coins");
+            }
+        } catch (Exception ignored) {}
+
+        result = result
+            .replace("{guild_currency_name}", currencyName)
+            .replace("{guild_currency_name_singular}", currencyName)
             // 兼容性变量 - 支持旧格式
             .replace("{guild_max_exp}", getNextLevelRequirement(guild.getLevel(), lang))
             .replace("{guild_exp_percentage}", getLevelProgress(guild.getLevel(), guild.getBalance()));
-        
+
         // 处理颜色代码
         return ColorUtils.colorize(result);
     }
-    
+
     /**
      * 异步替换工会相关占位符（包含动态数据）
      * @param text 原始文本

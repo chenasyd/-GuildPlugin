@@ -57,13 +57,13 @@ public class StatsOverviewGUI extends AbstractModuleGUI {
         boolean hasEconomy = economySummary != null && !economySummary.allContributions.isEmpty();
         double net = hasEconomy ? economySummary.netTotal : stats.getTotalBCoin();
         inv.setItem(22, createItem(Material.GOLD_INGOT,
-            "&6&lEconomy",
+            "&6&lGuild Bank Contribution",
             hasEconomy
-                ? "&7Net B-Coin: &e" + String.format("%,.0f", net)
-                : "&7Total B-Coin: &e" + String.format("%.0f", net),
+                ? "&7Net bank: &e" + String.format("%,.0f", net)
+                : "&7Net bank: &e" + String.format("%.0f", net),
             hasEconomy
                 ? "&7Deposit: &a+$" + String.format("%,.0f", economySummary.totalDeposited)
-                : "&7Avg B-Coin: &f" + String.format("%.1f", stats.getAvgBCoin()),
+                : "&7Avg bank contrib: &f" + String.format("%.1f", stats.getAvgBCoin()),
             hasEconomy
                 ? "&7Withdraw: &c-$" + String.format("%,.0f", economySummary.totalWithdrawn)
                 : "&7Growth: " + growthColor(stats.getEconomyGrowthRate())
@@ -73,7 +73,7 @@ public class StatsOverviewGUI extends AbstractModuleGUI {
             "&b&lOverall Score",
             "&7Score: " + overallColor(stats.getOverallScore())
                 + String.format("%.1f", stats.getOverallScore()) + "&7/1000",
-            "&8level×50 + activity×3 + B-Coin×0.05",
+            "&8level×50 + activity×3 + bankContrib×0.05",
             "",
             "&7Use &e/guild stats top &7for rankings"));
 

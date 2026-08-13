@@ -86,6 +86,7 @@ public class GuildPlugin extends JavaPlugin {
     private UpdateChecker updateChecker;
     private PluginFileLogger fileLogger;
     private com.guild.module.cloud.CloudModuleRepository cloudModuleRepository;
+    private com.guild.core.cache.GuildPlayerDataCache guildPlayerDataCache;
     // 等级需求配置（key = 当前等级 -> 所需金额达到下一等级）
     private Map<Integer, Double> levelRequirements = new HashMap<>();
     private int maxGuildLevel = 10;
@@ -213,6 +214,7 @@ public class GuildPlugin extends JavaPlugin {
             // 注册工会服务
             guildService = new GuildService(this);
             serviceContainer.register(GuildService.class, guildService);
+            guildPlayerDataCache = new com.guild.core.cache.GuildPlayerDataCache(this, 3000L);
             
             // 设置PlaceholderManager的GuildService引用
             placeholderManager.setGuildService(guildService);
@@ -617,6 +619,9 @@ public class GuildPlugin extends JavaPlugin {
         if (permissionManager != null) {
             permissionManager.reloadFromConfig();
         }
+        if (guildPlayerDataCache != null) {
+            guildPlayerDataCache.invalidateAll();
+        }
         reloadLevelRequirements();
         com.guild.core.utils.PlaceholderUtils.reloadRoleConfigCache();
 
@@ -664,6 +669,10 @@ public class GuildPlugin extends JavaPlugin {
 
     public com.guild.module.cloud.CloudModuleRepository getCloudModuleRepository() {
         return cloudModuleRepository;
+    }
+
+    public com.guild.core.cache.GuildPlayerDataCache getGuildPlayerDataCache() {
+        return guildPlayerDataCache;
     }
 
     public com.guild.activity.ActivityBootstrap getActivityBootstrap() {

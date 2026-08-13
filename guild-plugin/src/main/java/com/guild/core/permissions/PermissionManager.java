@@ -95,14 +95,22 @@ public class PermissionManager {
     private PlayerPermissions getPlayerPermissions(UUID playerUuid) {
         return playerPermissions.computeIfAbsent(playerUuid, uuid -> {
             PlayerPermissions resolved = new PlayerPermissions();
-            GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
             GuildMember.Role role = null;
-            if (guildService != null) {
-                Guild guild = guildService.getPlayerGuild(uuid);
-                if (guild != null) {
-                    GuildMember member = guildService.getGuildMember(uuid);
-                    if (member != null) {
-                        role = member.getRole();
+            var cache = plugin.getGuildPlayerDataCache();
+            if (cache != null) {
+                var snap = cache.get(uuid);
+                if (snap.member != null) {
+                    role = snap.member.getRole();
+                }
+            } else {
+                GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
+                if (guildService != null) {
+                    Guild guild = guildService.getPlayerGuild(uuid);
+                    if (guild != null) {
+                        GuildMember member = guildService.getGuildMember(uuid);
+                        if (member != null) {
+                            role = member.getRole();
+                        }
                     }
                 }
             }
@@ -113,7 +121,6 @@ public class PermissionManager {
             resolved.setCanDeleteGuild(rp.canDelete);
             resolved.setCanPromoteMembers(rp.canPromote);
             resolved.setCanDemoteMembers(rp.canDemote);
-            // isAdmin 仍由 Bukkit 权限系统控制
             return resolved;
         });
     }
@@ -138,6 +145,11 @@ public class PermissionManager {
      */
     public void updatePlayerPermissions(UUID playerUuid) {
         playerPermissions.remove(playerUuid);
+        try {
+            if (plugin.getGuildPlayerDataCache() != null) {
+                plugin.getGuildPlayerDataCache().invalidate(playerUuid);
+            }
+        } catch (Exception ignored) {}
         // 重新计算权限
         getPlayerPermissions(playerUuid);
     }
@@ -157,6 +169,11 @@ public class PermissionManager {
         RolePermissions leaderFallback = new RolePermissions(true, true, true, true, true, true, true);
         this.leaderPermissions = readRolePermissions(cfg, "permissions.leader", leaderFallback);
         playerPermissions.clear();
+        try {
+            if (plugin.getGuildPlayerDataCache() != null) {
+                plugin.getGuildPlayerDataCache().invalidateAll();
+            }
+        } catch (Exception ignored) {}
         logger.info("Permission matrix reloaded from config, player permission cache cleared");
     }
 
@@ -186,19 +203,8 @@ public class PermissionManager {
         if (!hasPermission(player, "guild.invite")) {
             return false;
         }
-        
-        // 检查玩家是否在工会中
-        GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
-        if (guildService == null) {
-            return false;
-        }
-        
-        Guild guild = guildService.getPlayerGuild(player.getUniqueId());
-        if (guild == null) {
-            return false;
-        }
-        
-        return getPlayerPermissions(player.getUniqueId()).canInviteMembers();
+        return isInGuildCached(player.getUniqueId())
+                && getPlayerPermissions(player.getUniqueId()).canInviteMembers();
     }
     
     /**
@@ -208,19 +214,8 @@ public class PermissionManager {
         if (!hasPermission(player, "guild.kick")) {
             return false;
         }
-        
-        // 检查玩家是否在工会中
-        GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
-        if (guildService == null) {
-            return false;
-        }
-        
-        Guild guild = guildService.getPlayerGuild(player.getUniqueId());
-        if (guild == null) {
-            return false;
-        }
-        
-        return getPlayerPermissions(player.getUniqueId()).canKickMembers();
+        return isInGuildCached(player.getUniqueId())
+                && getPlayerPermissions(player.getUniqueId()).canKickMembers();
     }
     
     /**
@@ -230,19 +225,8 @@ public class PermissionManager {
         if (!hasPermission(player, "guild.delete")) {
             return false;
         }
-        
-        // 检查玩家是否在工会中
-        GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
-        if (guildService == null) {
-            return false;
-        }
-        
-        Guild guild = guildService.getPlayerGuild(player.getUniqueId());
-        if (guild == null) {
-            return false;
-        }
-        
-        return getPlayerPermissions(player.getUniqueId()).canDeleteGuild();
+        return isInGuildCached(player.getUniqueId())
+                && getPlayerPermissions(player.getUniqueId()).canDeleteGuild();
     }
     
     /**
@@ -252,14 +236,19 @@ public class PermissionManager {
         if (!hasPermission(player, "guild.create")) {
             return false;
         }
-        
-        // 检查玩家是否已有工会
+        return !isInGuildCached(player.getUniqueId());
+    }
+
+    private boolean isInGuildCached(UUID playerUuid) {
+        var cache = plugin.getGuildPlayerDataCache();
+        if (cache != null) {
+            return cache.get(playerUuid).guild != null;
+        }
         GuildService guildService = plugin.getServiceContainer().get(GuildService.class);
         if (guildService == null) {
             return false;
         }
-        
-        return guildService.getPlayerGuild(player.getUniqueId()) == null;
+        return guildService.getPlayerGuild(playerUuid) != null;
     }
     
     /**

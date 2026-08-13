@@ -547,7 +547,7 @@ public class SystemSettingsGUI implements GUI {
             plugin.getConfigManager().saveMainConfig();
             player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.save-success", "&a设置保存成功！")));
         } catch (Exception e) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.system-settings.save-failed", "&c设置保存失败：{0}", e.getMessage())));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.system-settings.save-failed", "&c设置保存失败：{0}", e.getMessage())));
         }
     }
     

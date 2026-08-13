@@ -198,7 +198,7 @@ public class RelationManagementGUI implements GUI {
         if (currentPage > 0) {
             inventory.setItem(PREVIOUS_PAGE_SLOT, createItem(Material.ARROW,
                 ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.previous-page", "&a上一页")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.previous-page.desc", "&7第 {0} 页", String.valueOf(currentPage)))));
+                ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.previous-page.desc", "&7第 {0} 页", String.valueOf(currentPage)))));
         }
 
         // 页码信息
@@ -361,7 +361,7 @@ public class RelationManagementGUI implements GUI {
         pendingDeletions.put(player.getUniqueId(), relation);
         deletionTimers.put(player.getUniqueId(), System.currentTimeMillis());
         
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.confirm-delete", "&c确定要删除关系: {0} ↔ {1} 吗？", relation.getGuild1Name(), relation.getGuild2Name())));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.confirm-delete-question", "&c确定要删除关系: {0} ↔ {1} 吗？", relation.getGuild1Name(), relation.getGuild2Name())));
         player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.confirm-delete-instruction", "&c左键: 确认删除 | 右键: 取消删除")));
         player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.auto-cancel", "&e10秒后自动取消")));
         
@@ -386,7 +386,7 @@ public class RelationManagementGUI implements GUI {
         plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
-                    player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.delete-success", "&a已删除关系: {0} ↔ {1}", relation.getGuild1Name(), relation.getGuild2Name())));
+                    player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.delete-success", "&a已删除关系: {0} ↔ {1}", relation.getGuild1Name(), relation.getGuild2Name())));
                     // 从列表中移除
                     allRelations.remove(relation);
                     // 刷新GUI
@@ -397,7 +397,7 @@ public class RelationManagementGUI implements GUI {
             });
         }).exceptionally(throwable -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
-                player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.delete-error", "&c删除关系时发生错误: {0}", throwable.getMessage())));
+                player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.delete-error", "&c删除关系时发生错误: {0}", throwable.getMessage())));
             });
             return null;
         });
@@ -408,7 +408,7 @@ public class RelationManagementGUI implements GUI {
         deletionTimers.remove(player.getUniqueId());
         
         if (relation != null) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.cancel-delete", "&e已取消删除关系: {0} ↔ {1}", relation.getGuild1Name(), relation.getGuild2Name())));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.cancel-delete", "&e已取消删除关系: {0} ↔ {1}", relation.getGuild1Name(), relation.getGuild2Name())));
             // 刷新GUI
             plugin.getGuiManager().refreshGUI(player);
         }

@@ -299,11 +299,18 @@ public class CurrencyManager {
      * 为玩家发送货币变动消息
      */
     public void sendCurrencyMessage(Player player, CurrencyType currencyType, double amount, boolean isDeposit) {
-        String prefix = isDeposit ? "&a获得" : "&c消耗";
+        String key = isDeposit ? "currency.notify.gain" : "currency.notify.spend";
+        String fallback = isDeposit
+                ? "&6[Currency] &a+{0} {1}"
+                : "&6[Currency] &c-{0} {1}";
         String amountStr = String.format("%.0f", amount);
-        String message = ColorUtils.colorize(
-            String.format("&6[货币] %s %s %s", prefix, amountStr, currencyType.getDisplayName())
-        );
-        player.sendMessage(message);
+        String msg;
+        try {
+            msg = plugin.getLanguageManager().getCoreIndexedMessage(
+                    key, fallback, amountStr, currencyType.getDisplayName());
+        } catch (Exception e) {
+            msg = fallback.replace("{0}", amountStr).replace("{1}", currencyType.getDisplayName());
+        }
+        player.sendMessage(ColorUtils.colorize(msg));
     }
 }

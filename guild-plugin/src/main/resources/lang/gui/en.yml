@@ -1031,7 +1031,7 @@ gui:
     member-details.demote-member-desc: "Demote officer to member"
     member-details.disband-guild: "Disband guild"
     member-details.executable-actions: "Executable actions"
-    member-details.guild-contribution: "Guild contribution"
+    member-details.guild-contribution: "Guild bank contribution (net)"
     member-details.guild-duration: "Guild duration"
     member-details.hour: "hour"
     member-details.invite-kick-actions: "Invite, Kick"

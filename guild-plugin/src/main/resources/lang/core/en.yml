@@ -282,6 +282,9 @@ economy.transfer-success: "&aSuccessfully transferred &e{amount} &ato guild &e{t
 economy.transfer-failed: "&cTransfer failed!"
 economy.target-guild-not-found: "&cTarget guild does not exist!"
 economy.cannot-transfer-to-self: "&cCannot transfer to your own guild!"
+economy.currency-name: "Coins"
+currency.notify.gain: "&6[Currency] &a+{0} {1}"
+currency.notify.spend: "&6[Currency] &c-{0} {1}"
 
 # ============ Guild Chat ============
 guild.chat.enabled: "&aGuild chat &aenabled&a. Your messages will be sent to guild members."

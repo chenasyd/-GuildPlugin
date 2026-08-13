@@ -891,12 +891,24 @@ public class GuildPluginAPI {
             }
         } catch (Exception ignored) {}
 
+        // 净贡献：优先短缓存；未命中时保持 0，避免 SDK 转换路径同步打库
+        double contribution = 0.0;
+        try {
+            var cache = plugin.getGuildPlayerDataCache();
+            if (cache != null) {
+                var snap = cache.get(member.getPlayerUuid());
+                if (snap.contributionNet != null) {
+                    contribution = snap.contributionNet;
+                }
+            }
+        } catch (Exception ignored) {}
+
         return new MemberData(
                 member.getPlayerUuid(),
                 member.getPlayerName(),
                 member.getRole().name(),
                 joinTimeMillis,
-                0.0,  // contribution: not in core model
+                contribution,
                 online,
                 investedBalance
         );
