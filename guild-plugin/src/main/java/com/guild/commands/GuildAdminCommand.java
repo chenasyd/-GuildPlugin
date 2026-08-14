@@ -28,7 +28,7 @@ import com.guild.update.UpdateManager;
 import com.guild.update.UpdateManager.VersionInfo;
 
 /**
- * 工会管理员命令
+ * 公会管理员命令
  */
 public class GuildAdminCommand implements CommandExecutor, TabCompleter {
     
@@ -129,7 +129,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 case "unfreeze":
                 case "transfer":
                 case "economy":
-                    // 获取所有工会名称
+                    // 获取所有公会名称
                     plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
                         for (Guild guild : guilds) {
                             completions.add(guild.getName());
@@ -159,7 +159,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                     break;
                 case "relation":
                     if ("create".equals(args[1])) {
-                        // 第3个参数是第一个工会名称，获取所有工会名称
+                        // 第3个参数是第一个公会名称，获取所有公会名称
                         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
                             for (Guild guild : guilds) {
                                 completions.add(guild.getName());
@@ -179,7 +179,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
             switch (args[0].toLowerCase()) {
                 case "relation":
                     if ("create".equals(args[1])) {
-                        // 第4个参数是第二个工会名称，获取所有工会名称
+                        // 第4个参数是第二个公会名称，获取所有公会名称
                         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
                             for (Guild guild : guilds) {
                                 completions.add(guild.getName());

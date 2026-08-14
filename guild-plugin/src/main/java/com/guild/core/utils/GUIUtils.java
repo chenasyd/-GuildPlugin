@@ -17,7 +17,7 @@ public class GUIUtils {
     /**
      * 处理GUI配置中的变量替换
      * @param text 原始文本
-     * @param guild 工会对象
+     * @param guild 公会对象
      * @param player 玩家对象
      * @return 替换后的文本
      */
@@ -36,7 +36,7 @@ public class GUIUtils {
     /**
      * 异步处理GUI配置中的变量替换（包含动态数据）
      * @param text 原始文本
-     * @param guild 工会对象
+     * @param guild 公会对象
      * @param player 玩家对象
      * @param plugin 插件实例
      * @return 替换后的文本的CompletableFuture
@@ -60,7 +60,7 @@ public class GUIUtils {
     /**
      * 处理GUI配置中的物品描述列表
      * @param loreList 原始描述列表
-     * @param guild 工会对象
+     * @param guild 公会对象
      * @param player 玩家对象
      * @return 处理后的描述列表
      */
@@ -79,7 +79,7 @@ public class GUIUtils {
     /**
      * 异步处理GUI配置中的物品描述列表（包含动态数据）
      * @param loreList 原始描述列表
-     * @param guild 工会对象
+     * @param guild 公会对象
      * @param player 玩家对象
      * @param plugin 插件实例
      * @return 处理后的描述列表的CompletableFuture
@@ -114,7 +114,7 @@ public class GUIUtils {
      * 处理成员相关的GUI变量
      * @param text 原始文本
      * @param member 成员对象
-     * @param guild 工会对象
+     * @param guild 公会对象
      * @param player 玩家对象（可为null）
      * @return 替换后的文本
      */

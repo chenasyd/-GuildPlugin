@@ -14,7 +14,7 @@
     <packaging>jar</packaging>
 
     <name>Guild Plugin</name>
-    <description>一个功能完整的我的世界工会插件</description>
+    <description>一个功能完整的我的世界公会插件</description>
 
     <dependencies>
         <!-- Guild SDK -->

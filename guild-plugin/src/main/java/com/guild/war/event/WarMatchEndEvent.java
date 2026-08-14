@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 工会战结算事件（同步、不可取消）。
+ * 公会战结算事件（同步、不可取消）。
  * 在删图 / unregister 之前触发；扩展插件应监听此事件发奖或记分。
  */
 public final class WarMatchEndEvent extends Event {

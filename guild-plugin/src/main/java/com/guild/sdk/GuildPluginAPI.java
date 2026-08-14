@@ -87,24 +87,24 @@ public class GuildPluginAPI {
         this.currencyManager = plugin.getServiceContainer().get(CurrencyManager.class);
     }
 
-    // ==================== 工会查询 API ====================
+    // ==================== 公会查询 API ====================
 
-    /** 根据 ID 获取工会信息（异步） */
+    /** 根据 ID 获取公会信息（异步） */
     public CompletableFuture<GuildData> getGuildById(int id) {
         return plugin.getGuildService().getGuildByIdAsync(id).thenApply(this::convertGuild);
     }
 
-    /** 根据名称获取工会信息（异步） */
+    /** 根据名称获取公会信息（异步） */
     public CompletableFuture<GuildData> getGuildByName(String name) {
         return plugin.getGuildService().getGuildByNameAsync(name).thenApply(this::convertGuild);
     }
 
-    /** 获取玩家所属工会（异步） */
+    /** 获取玩家所属公会（异步） */
     public CompletableFuture<GuildData> getPlayerGuild(UUID playerUuid) {
         return plugin.getGuildService().getPlayerGuildAsync(playerUuid).thenApply(this::convertGuild);
     }
 
-    /** 获取所有工会列表（异步） */
+    /** 获取所有公会列表（异步） */
     public CompletableFuture<List<GuildData>> getAllGuilds() {
         return plugin.getGuildService().getAllGuildsAsync().thenApply(list ->
                 list.stream().map(this::convertGuild).filter(g -> g != null).toList());
@@ -112,7 +112,7 @@ public class GuildPluginAPI {
 
     // ==================== 成员查询 API ====================
 
-    /** 获取工会成员列表（异步） */
+    /** 获取公会成员列表（异步） */
     public CompletableFuture<List<MemberData>> getGuildMembers(int guildId) {
         return plugin.getGuildService().getGuildMembersAsync(guildId).thenApply(list ->
                 list.stream().map(this::convertMember).toList());
@@ -353,22 +353,22 @@ public class GuildPluginAPI {
 
     // ==================== 事件 API ====================
 
-    /** 监听工会创建事件 */
+    /** 监听公会创建事件 */
     public void onGuildCreate(GuildEventHandler handler) {
         onGuildCreateHandlers.add(handler);
     }
 
-    /** 监听工会解散事件 */
+    /** 监听公会解散事件 */
     public void onGuildDelete(GuildEventHandler handler) {
         onGuildDeleteHandlers.add(handler);
     }
 
-    /** 监听成员加入工会事件 */
+    /** 监听成员加入公会事件 */
     public void onMemberJoin(MemberEventHandler handler) {
         onMemberJoinHandlers.add(handler);
     }
 
-    /** 监听成员离开工会事件 */
+    /** 监听成员离开公会事件 */
     public void onMemberLeave(MemberEventHandler handler) {
         onMemberLeaveHandlers.add(handler);
     }
@@ -390,7 +390,7 @@ public class GuildPluginAPI {
 
     // ==================== 事件分发（供核心服务调用） ====================
 
-    /** 分发工会创建事件 */
+    /** 分发公会创建事件 */
     public void fireGuildCreate(int guildId, String guildName, String leaderName) {
         if (onGuildCreateHandlers.isEmpty()) return;
         GuildEventData data = new GuildEventData(guildId, guildName, leaderName);
@@ -403,7 +403,7 @@ public class GuildPluginAPI {
         }
     }
 
-    /** 分发工会解散事件 */
+    /** 分发公会解散事件 */
     public void fireGuildDelete(int guildId, String guildName, String leaderName) {
         if (onGuildDeleteHandlers.isEmpty()) return;
         GuildEventData data = new GuildEventData(guildId, guildName, leaderName);

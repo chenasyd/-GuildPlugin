@@ -61,7 +61,7 @@ public class PermissionManager {
         // 检查具体权限
         switch (permission) {
             case "guild.use":
-                return true; // 所有玩家都可以使用工会系统
+                return true; // 所有玩家都可以使用公会系统
                 
             case "guild.create":
                 return permissions.canCreateGuild();
@@ -141,7 +141,7 @@ public class PermissionManager {
     }
     
     /**
-     * 更新玩家权限（当工会状态改变时调用）
+     * 更新玩家权限（当公会状态改变时调用）
      */
     public void updatePlayerPermissions(UUID playerUuid) {
         playerPermissions.remove(playerUuid);
@@ -219,7 +219,7 @@ public class PermissionManager {
     }
     
     /**
-     * 检查玩家是否可以删除工会
+     * 检查玩家是否可以删除公会
      */
     public boolean canDeleteGuild(Player player) {
         if (!hasPermission(player, "guild.delete")) {
@@ -230,7 +230,7 @@ public class PermissionManager {
     }
     
     /**
-     * 检查玩家是否可以创建工会
+     * 检查玩家是否可以创建公会
      */
     public boolean canCreateGuild(Player player) {
         if (!hasPermission(player, "guild.create")) {

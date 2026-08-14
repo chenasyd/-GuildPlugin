@@ -199,7 +199,7 @@ transparent_item:
 # ============================================================
 
 layouts:
-  # ── 工会主界面（多槽位大按钮） ──
+  # ── 公会主界面（多槽位大按钮） ──
   MainGuildGUI:
     CREATE_GUILD: [0, 1, 2, 9, 10, 11]
     GUILD_INFO: [3, 4, 5, 12, 13, 14]
@@ -209,7 +209,7 @@ layouts:
     GUILD_LIST: [24, 25, 26, 33, 34, 35]
     GUILD_RELATIONS: [36, 37, 38, 45, 46, 47]
 
-  # ── 工会信息 ──
+  # ── 公会信息 ──
   GuildInfoGUI:
     SUMMARY: [10]
     STATS: [19]
@@ -219,7 +219,7 @@ layouts:
     NEXT_PAGE: [53]
     BACK: [49]
 
-  # ── 工会设置 ──
+  # ── 公会设置 ──
   GuildSettingsGUI:
     OVERVIEW: [10]
     TEXT_EDIT: [11]
@@ -235,13 +235,13 @@ layouts:
     NEXT_PAGE: [53]
     BACK: [49]
 
-  # ── 成员工会界面 (27槽) ──
+  # ── 成员公会界面 (27槽) ──
   MemberGuildGUI:
     HOME_TELEPORT: [11]
     GUILD_INFO: [13]
     LEAVE_GUILD: [15]
 
-  # ── 工会资金（列表内容区 10-43 不配置） ──
+  # ── 公会资金（列表内容区 10-43 不配置） ──
   GuildFundsGUI:
     PAGE_INFO: [46]
     PREV_PAGE: [48]
@@ -249,14 +249,14 @@ layouts:
     NEXT_PAGE: [50]
     REFRESH: [51]
 
-  # ── 工会日志（列表内容区 10-43 不配置） ──
+  # ── 公会日志（列表内容区 10-43 不配置） ──
   GuildLogsGUI:
     PAGE_INFO: [46]
     BACK: [49]
     NEXT_PAGE: [50]
     REFRESH: [51]
 
-  # ── 工会列表（列表内容区 10-44 不配置） ──
+  # ── 公会列表（列表内容区 10-44 不配置） ──
   GuildListGUI:
     PREV_PAGE: [18]
     NEXT_PAGE: [26]
@@ -264,7 +264,7 @@ layouts:
     FILTER: [47]
     BACK: [49]
 
-  # ── 工会关系（列表内容区 10-43 不配置） ──
+  # ── 公会关系（列表内容区 10-43 不配置） ──
   GuildRelationsGUI:
     CREATE_RELATION: [45]
     PAGE_INFO: [46]
@@ -272,7 +272,7 @@ layouts:
     BACK: [49]
     NEXT_PAGE: [50]
 
-  # ── 创建工会 ──
+  # ── 创建公会 ──
   CreateGuildGUI:
     CURRENT_NAME: [11]
     CURRENT_TAG: [13]
@@ -324,7 +324,7 @@ layouts:
     MESSAGE: [41]
     BACK: [49]
 
-  # ── 工会详情（成员列表区 19-25,28-34,37-43 不配置） ──
+  # ── 公会详情（成员列表区 19-25,28-34,37-43 不配置） ──
   GuildDetailGUI:
     GUILD_NAME: [4]
     LEADER_HEAD: [12]
@@ -338,7 +338,7 @@ layouts:
     TRANSFER: [51]
     REFRESH: [53]
 
-  # ── 工会筛选（列表内容区 10-44 不配置） ──
+  # ── 公会筛选（列表内容区 10-44 不配置） ──
   GuildFilterGUI:
     PREV_PAGE: [18]
     NEXT_PAGE: [26]
@@ -356,7 +356,7 @@ layouts:
     STATUS: [22]
     BACK: [49]
 
-  # ── 工会列表管理（列表内容区 10-13 不配置） ──
+  # ── 公会列表管理（列表内容区 10-13 不配置） ──
   GuildListManagementGUI:
     BACK: [46]
     PREV_PAGE: [48]

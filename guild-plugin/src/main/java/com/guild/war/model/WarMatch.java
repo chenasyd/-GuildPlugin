@@ -8,7 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/** 一场工会战对局。 */
+/** 一场公会战对局。 */
 public final class WarMatch {
 
     private static final AtomicInteger ID_SEQ = new AtomicInteger(1);

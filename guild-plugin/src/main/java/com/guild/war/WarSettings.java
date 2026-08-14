@@ -3,7 +3,7 @@ package com.guild.war;
 import com.guild.war.model.VictoryMode;
 import org.bukkit.configuration.file.FileConfiguration;
 
-/** 工会战配置快照。 */
+/** 公会战配置快照。 */
 public final class WarSettings {
 
     public final boolean enabled;

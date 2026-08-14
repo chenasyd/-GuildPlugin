@@ -27,10 +27,10 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * /guildwar — 小型固定地图工会战。
+ * /guildwar — 小型固定地图公会战。
  *
  * <pre>
- * /guildwar challenge &lt;工会名|标签&gt; [--preset] [--mode first|timed|survive] [--max N] [--score N] [--time SEC]
+ * /guildwar challenge &lt;公会名|标签&gt; [--preset] [--mode first|timed|survive] [--max N] [--score N] [--time SEC]
  * /guildwar accept|deny|join|leave|ready|cancel|status|report|season|help
  * /guildwar admin end &lt;matchId&gt;
  * </pre>
@@ -51,11 +51,11 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission(PERM)) {
-            send(sender, "war.no-permission", "&c你没有权限使用工会战");
+            send(sender, "war.no-permission", "&c你没有权限使用公会战");
             return true;
         }
         if (!war.isEnabled()) {
-            send(sender, "war.unavailable", "&c工会战不可用: {reason}",
+            send(sender, "war.unavailable", "&c公会战不可用: {reason}",
                     "{reason}", war.unavailableReason());
             return true;
         }
@@ -96,7 +96,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
         }
         if (args.length < 2) {
             send(sender, "war.challenge.usage",
-                    "&c用法: /guildwar challenge <工会名|标签> [--preset x] [--mode first|timed|survive] [--max N] [--score N] [--time SEC]");
+                    "&c用法: /guildwar challenge <公会名|标签> [--preset x] [--mode first|timed|survive] [--max N] [--score N] [--time SEC]");
             return;
         }
         String target = args[1];
@@ -110,7 +110,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
                 .whenComplete((match, err) -> {
                     if (err != null) {
                         String body = LocalizedException.resolveThrowable(plugin, player, err);
-                        String prefix = CoreMsg.raw(plugin, player, "war.prefix", "&c[工会战] &r");
+                        String prefix = CoreMsg.raw(plugin, player, "war.prefix", "&c[公会战] &r");
                         player.sendMessage(ColorUtils.colorize(prefix + body));
                     } else {
                         send(player, "war.challenge.success",
@@ -132,7 +132,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
         }
         var active = war.getActiveMatches();
         if (active.isEmpty()) {
-            send(sender, "war.status.none", "&7当前没有进行中的工会战");
+            send(sender, "war.status.none", "&7当前没有进行中的公会战");
             return;
         }
         for (WarMatch m : active) {
@@ -183,7 +183,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
         }
         var api = plugin.getGuildWarAPI();
         if (api == null) {
-            send(sender, "war.unavailable", "&c工会战不可用: {reason}", "{reason}", "API");
+            send(sender, "war.unavailable", "&c公会战不可用: {reason}", "{reason}", "API");
             return;
         }
         api.exportReport(id, format).whenComplete((path, err) ->
@@ -270,7 +270,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
     }
 
     private void printMatch(CommandSender sender, WarMatch m) {
-        send(sender, "war.status.title", "&6── 工会战 #{id} ──",
+        send(sender, "war.status.title", "&6── 公会战 #{id} ──",
                 "{id}", String.valueOf(m.id()));
         send(sender, "war.status.phase-mode", "&7阶段: &f{phase} &7模式: &f{mode}",
                 "{phase}", phaseName(sender, m.phase()),
@@ -328,7 +328,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
         war.forceEnd(id, "war.reason.admin-end").whenComplete((v, err) -> {
             if (err != null) {
                 String body = LocalizedException.resolveThrowable(plugin, sender, err);
-                String prefix = CoreMsg.raw(plugin, sender, "war.prefix", "&c[工会战] &r");
+                String prefix = CoreMsg.raw(plugin, sender, "war.prefix", "&c[公会战] &r");
                 sender.sendMessage(ColorUtils.colorize(prefix + body));
             } else {
                 send(sender, "war.admin.end.ok", "&a已结束对局 #{id}",
@@ -338,9 +338,9 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
     }
 
     private void help(CommandSender sender) {
-        send(sender, "war.help.title", "&6── 工会战帮助 ──");
+        send(sender, "war.help.title", "&6── 公会战帮助 ──");
         send(sender, "war.help.challenge",
-                "&e/guildwar challenge <工会> [--preset] [--mode first|timed|survive] [--max] [--score] [--time]");
+                "&e/guildwar challenge <公会> [--preset] [--mode first|timed|survive] [--max] [--score] [--time]");
         send(sender, "war.help.accept-deny", "&e/guildwar accept|deny &7- 接受/拒绝挑战（官员）");
         send(sender, "war.help.join-leave", "&e/guildwar join|leave &7- 报名/退出");
         send(sender, "war.help.ready", "&e/guildwar ready &7- 报名阶段提前开局（官员，双方都 ready）");
@@ -369,7 +369,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
     private void reply(Player player, Throwable err, String okPath, String okDef) {
         if (err != null) {
             String body = LocalizedException.resolveThrowable(plugin, player, err);
-            String prefix = CoreMsg.raw(plugin, player, "war.prefix", "&c[工会战] &r");
+            String prefix = CoreMsg.raw(plugin, player, "war.prefix", "&c[公会战] &r");
             player.sendMessage(ColorUtils.colorize(prefix + body));
         } else {
             send(player, okPath, okDef);
@@ -398,7 +398,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
     }
 
     private void send(CommandSender sender, String path, String def, String... ph) {
-        String prefix = CoreMsg.raw(plugin, sender, "war.prefix", "&c[工会战] &r");
+        String prefix = CoreMsg.raw(plugin, sender, "war.prefix", "&c[公会战] &r");
         String body = CoreMsg.raw(plugin, sender, path, def, ph);
         sender.sendMessage(ColorUtils.colorize(prefix + body));
     }
@@ -415,7 +415,7 @@ public final class GuildWarCommand implements CommandExecutor, TabCompleter {
             }
         } else if (args.length >= 2 && args[0].equalsIgnoreCase("challenge")) {
             if (args.length == 2) {
-                // 不枚举全部工会名（可能很多），给 flag 提示
+                // 不枚举全部公会名（可能很多），给 flag 提示
                 out.addAll(Arrays.asList("--preset", "--mode", "--max", "--score", "--time"));
             } else {
                 String prev = args[args.length - 2].toLowerCase(Locale.ROOT);

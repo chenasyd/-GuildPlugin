@@ -1,4 +1,4 @@
-# 工会战实战全流程引导
+# 公会战实战全流程引导
 
 > 语言: **中文** | [English](./GuildWar-Walkthrough_EN.md)
 
@@ -15,7 +15,7 @@
 |----|------|
 | 插件 | GuildPlugin 已加载，无 Folia「版本不支持 gworld」警告（或 Paper/Spigot） |
 | 权限 | 管理员：`guild.admin.world`；开战：`guild.war`；强制结束：`guild.war.admin` |
-| 工会 | 至少 **2 个工会**，各有会长或官员在线；每边至少 1 名成员准备参赛 |
+| 公会 | 至少 **2 个公会**，各有会长或官员在线；每边至少 1 名成员准备参赛 |
 | 配置 | 打开 `plugins/GuildPlugin/config.yml`，改完执行 `/guildadmin reload` 或重启 |
 | 经济（可选） | 若测 `rewards` Vault 发奖，需已装 Vault + 经济插件 |
 
@@ -148,21 +148,21 @@ world:
 
 ---
 
-## 2. 开战前（双方工会）
+## 2. 开战前（双方公会）
 
 ### 2.1 角色
 
 | 角色 | 操作 |
 |------|------|
-| A 工会官员 | `challenge` |
-| B 工会官员 | `accept` / `deny` |
+| A 公会官员 | `challenge` |
+| B 公会官员 | `accept` / `deny` |
 | 双方想上场的成员 | `join`（未 join 的人**不会**进场） |
 | 双方官员 | 可 `ready` 跳过报名倒计时（两边都 ready 且各有 ≥1 人） |
 
 ### 2.2 发起挑战（A 官员）
 
 ```text
-/guildwar challenge <B工会名或标签> --preset demo_arena --mode first --max 5 --score 5
+/guildwar challenge <B公会名或标签> --preset demo_arena --mode first --max 5 --score 5
 ```
 
 常用参数：
@@ -177,7 +177,7 @@ world:
 | `--score` | 先到分数（first） |
 | `--time` | 秒（timed / survive） |
 
-对方工会会收到提示。超时未 accept 会自动取消（`challenge-timeout-seconds`）。
+对方公会会收到提示。超时未 accept 会自动取消（`challenge-timeout-seconds`）。
 
 ### 2.3 接受（B 官员）
 
@@ -320,8 +320,8 @@ guild-war:
 ## 5. 推荐最小测试剧本（2 人）
 
 1. 管理员做完 §1，配置 `default-preset: demo_arena`，`score-to-win: 3`，`rewards.enabled: false`  
-2. 玩家甲（工会甲官员）、玩家乙（工会乙官员）在线  
-3. 甲：`/guildwar challenge <乙工会> --mode first --max 1 --score 3`  
+2. 玩家甲（公会甲官员）、玩家乙（公会乙官员）在线  
+3. 甲：`/guildwar challenge <乙公会> --mode first --max 1 --score 3`  
 4. 乙：`/guildwar accept`  
 5. 甲乙：`/guildwar join`  
 6. 甲乙：`/guildwar ready`（或等报名结束）  
@@ -341,7 +341,7 @@ guild-war:
 | 「未指定预设」 | 未配 `default-preset` 且未加 `--preset` |
 | 「预设不存在或缺少 schematic」 | 只写了 yml 没 `save` 成功，或名字不一致 |
 | 「只有会长或官员可以…」 | 普通成员不能 challenge/accept |
-| 「当前没有可报名的工会战」 | 还没 accept，或已开战 |
+| 「当前没有可报名的公会战」 | 还没 accept，或已开战 |
 | 「本队报名已满」 | 超过 `--max` / `max-per-team` |
 | Folia 无法建世界 | 版本不在支持列表，见启动日志 |
 | 英文服看到中文 | 玩家语言未切 en；确认 `lang/core/en.yml` 已含 `war.*` |
@@ -360,7 +360,7 @@ guild-war:
 | `plugins/GuildPlugin/worlds/presets/` | `.gws` + `.yml` |
 | `plugins/GuildPlugin/lang/core/zh.yml` | `world.*` / `war.*` 文案 |
 | [GuildWorld.md](./GuildWorld.md) | 世界管理 |
-| [GuildWar.md](./GuildWar.md) | 工会战配置与命令 |
+| [GuildWar.md](./GuildWar.md) | 公会战配置与命令 |
 | [API-World-War.md](./API-World-War.md) | API / 事件 |
 | [CrossServer-War.md](./CrossServer-War.md) | 跨服协议骨架（未接线生产） |
 

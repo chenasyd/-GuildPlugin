@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
- * 工会家传送（Spigot / Paper / Folia 安全）。
+ * 公会家传送（Spigot / Paper / Folia 安全）。
  *
  * <p>支持 {@code guild.home-teleport-delay} 倒计时；倒计时在玩家实体线程执行，
  * 最终传送走 {@link FoliaTeleportUtils#safeTeleport}。

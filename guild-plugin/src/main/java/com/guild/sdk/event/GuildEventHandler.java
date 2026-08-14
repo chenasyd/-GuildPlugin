@@ -1,7 +1,7 @@
 package com.guild.sdk.event;
 
 /**
- * 工会创建/删除事件处理器
+ * 公会创建/删除事件处理器
  * <p>
  * 使用示例：
  * <pre>{@code
@@ -13,7 +13,7 @@ package com.guild.sdk.event;
 @FunctionalInterface
 public interface GuildEventHandler {
 
-    /** 处理工会事件 */
+    /** 处理公会事件 */
     void onEvent(GuildEventData data);
 
     /**

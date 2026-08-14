@@ -22,7 +22,7 @@ import com.guild.core.utils.CompatibleScheduler;
 import org.geysermc.cumulus.form.CustomForm;
 
 /**
- * 创建工会GUI
+ * 创建公会GUI
  */
 public class CreateGuildGUI implements GUI {
 
@@ -113,13 +113,13 @@ public class CreateGuildGUI implements GUI {
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 20: // 工会名称输入
+            case 20: // 公会名称输入
                 handleNameInput(player);
                 break;
-            case 22: // 工会标签输入
+            case 22: // 公会标签输入
                 handleTagInput(player);
                 break;
-            case 24: // 工会描述输入
+            case 24: // 公会描述输入
                 handleDescriptionInput(player);
                 break;
             case 39: // 确认创建
@@ -150,7 +150,7 @@ public class CreateGuildGUI implements GUI {
      * 设置输入按钮
      */
     private void setupInputButtons(Inventory inventory) {
-        // 工会名称输入按钮
+        // 公会名称输入按钮
         ItemStack nameInput = createItem(
             Material.NAME_TAG,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-name-input-name", "&eGuild Name")),
@@ -159,7 +159,7 @@ public class CreateGuildGUI implements GUI {
         );
         inventory.setItem(20, nameInput);
 
-        // 工会标签输入按钮
+        // 公会标签输入按钮
         ItemStack tagInput = createItem(
             Material.OAK_SIGN,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-tag-input-name", "&eGuild Tag")),
@@ -169,7 +169,7 @@ public class CreateGuildGUI implements GUI {
         );
         inventory.setItem(22, tagInput);
 
-        // 工会描述输入按钮
+        // 公会描述输入按钮
         ItemStack descriptionInput = createItem(
             Material.BOOK,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.create-guild.create-guild-description-input-name", "&eGuild Description")),
@@ -220,7 +220,7 @@ public class CreateGuildGUI implements GUI {
      * 显示当前输入信息
      */
     private void displayCurrentInput(Inventory inventory) {
-        // 当前工会名称
+        // 当前公会名称
         String nameDisplay = guildName.isEmpty() ?
             languageManager.getGuiMessage(player, "gui.common.not-set", "Not set") : guildName;
         ItemStack currentName = createItem(
@@ -230,7 +230,7 @@ public class CreateGuildGUI implements GUI {
         );
         inventory.setItem(11, currentName);
         
-        // 当前工会标签
+        // 当前公会标签
         String tagDisplay = guildTag.isEmpty() ?
             languageManager.getGuiMessage(player, "gui.common.not-set", "Not set") : "&7[" + guildTag + "&7]";
         ItemStack currentTag = createItem(
@@ -240,7 +240,7 @@ public class CreateGuildGUI implements GUI {
         );
         inventory.setItem(13, currentTag);
         
-        // 当前工会描述
+        // 当前公会描述
         String descriptionDisplay = guildDescription.isEmpty() ?
             languageManager.getGuiMessage(player, "gui.common.not-set", "Not set") : guildDescription;
         ItemStack currentDescription = createItem(
@@ -252,7 +252,7 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 处理工会名称输入
+     * 处理公会名称输入
      */
     private void handleNameInput(Player player) {
         String message = languageManager.getGuiMessage(player, "gui.common.input-name", "&aPlease enter guild name in chat (3-20 characters):");
@@ -292,7 +292,7 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 处理工会标签输入
+     * 处理公会标签输入
      */
     private void handleTagInput(Player player) {
         String message = languageManager.getGuiMessage(player, "gui.common.input-tag", "&aPlease enter guild tag in chat (max 6 characters, optional):");
@@ -326,7 +326,7 @@ public class CreateGuildGUI implements GUI {
     }
     
     /**
-     * 处理工会描述输入
+     * 处理公会描述输入
      */
     private void handleDescriptionInput(Player player) {
         String message = languageManager.getGuiMessage(player, "gui.common.input-description", "&aPlease enter guild description in chat (max 100 characters, optional):");
@@ -424,7 +424,7 @@ public class CreateGuildGUI implements GUI {
             }
         }
 
-        // 创建工会
+        // 创建公会
         String finalTag = guildTag.isEmpty() ? null : guildTag;
         String finalDescription = guildDescription.isEmpty() ? null : guildDescription;
         final double finalCost = creationCost;

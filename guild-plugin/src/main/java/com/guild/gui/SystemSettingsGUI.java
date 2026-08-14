@@ -202,7 +202,7 @@ public class SystemSettingsGUI implements GUI {
         );
         inventory.setItem(23, inviteToggle);
 
-        // 工会家系统开关
+        // 公会家系统开关
         boolean homeEnabled = plugin.getConfigManager().getMainConfig().getBoolean("guild-home.enabled", true);
         Material homeMaterial = homeEnabled ? Material.LIME_WOOL : Material.RED_WOOL;
         String homeStatus = ColorUtils.colorize(homeEnabled
@@ -314,7 +314,7 @@ public class SystemSettingsGUI implements GUI {
             case 23: // 邀请系统开关
                 toggleInvites(player);
                 break;
-            case 25: // 工会家系统开关
+            case 25: // 公会家系统开关
                 toggleGuildHome(player);
                 break;
             case 28: // 重载配置

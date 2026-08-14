@@ -424,7 +424,7 @@ public class ApplicationManagementGUI implements GUI {
                             // 向申请者发送消息
                             Player applicant = Bukkit.getPlayer(application.getPlayerUuid());
                             if (applicant != null && applicant.isOnline()) {
-                                // 去除工会名称中的颜色代码
+                                // 去除公会名称中的颜色代码
                                 String cleanGuildName = ColorUtils.stripColor(guild.getName());
                                 String acceptedMessage = languageManager.getGuiMessage(applicant, "gui.application-mgmt.application.accepted", "&aYour application has been accepted by {guild}!", "{guild}", cleanGuildName);
                                 applicant.sendMessage(ColorUtils.colorize(acceptedMessage));

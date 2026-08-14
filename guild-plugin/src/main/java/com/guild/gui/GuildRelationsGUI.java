@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 工会关系GUI - 管理工会关系
+ * 公会关系GUI - 管理公会关系
  */
 public class GuildRelationsGUI implements GUI {
 
@@ -137,7 +137,7 @@ public class GuildRelationsGUI implements GUI {
     }
     
     /**
-     * 加载工会关系数据
+     * 加载公会关系数据
      */
     private CompletableFuture<List<GuildRelation>> loadRelations() {
         return plugin.getGuildService().getGuildRelationsAsync(guild.getId());

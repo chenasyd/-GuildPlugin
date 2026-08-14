@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * 工会公告数据模型
+ * 公会公告数据模型
  * <p>
- * 每条公告包含：ID、所属工会ID、作者信息、标题、内容、创建/更新时间
+ * 每条公告包含：ID、所属公会ID、作者信息、标题、内容、创建/更新时间
  */
 public class Announcement {
 

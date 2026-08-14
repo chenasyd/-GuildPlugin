@@ -24,12 +24,12 @@ import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 
 /**
- * 普通成员工会GUI - 为普通成员提供有限的工会功能。
+ * 普通成员公会GUI - 为普通成员提供有限的公会功能。
  * <p>
  * 包含功能：
  * <ul>
- *   <li>工会家传送</li>
- *   <li>离开工会</li>
+ *   <li>公会家传送</li>
+ *   <li>离开公会</li>
  * </ul>
  * <p>
  * 该GUI与 {@link GuildSettingsGUI} 分离，避免普通成员看到会长专属的设置项，
@@ -58,7 +58,7 @@ public class MemberGuildGUI implements GUI {
     public String getTitle() {
         return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.member-guild-gui.title",
                 "&6My Guild", "{guild_name}",
-                guild.getName() != null ? guild.getName() : "未知工会"));
+                guild.getName() != null ? guild.getName() : "未知公会"));
     }
 
     @Override
@@ -107,10 +107,10 @@ public class MemberGuildGUI implements GUI {
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 11: // 工会家传送
+            case 11: // 公会家传送
                 handleHomeTeleport(player);
                 break;
-            case 15: // 离开工会
+            case 15: // 离开公会
                 handleLeaveGuild(player);
                 break;
         }
@@ -150,13 +150,13 @@ public class MemberGuildGUI implements GUI {
     }
 
     private void setupButtons(Inventory inventory) {
-        // 工会家传送
+        // 公会家传送
         ItemStack homeTeleport = createItem(Material.ENDER_PEARL,
                 languageManager.getGuiMessage(player, "gui.member-guild-gui.home-teleport", "&dTeleport Home"),
                 languageManager.getGuiMessage(player, "gui.member-guild-gui.home-teleport-desc", "&7Click &fTeleport Home"));
         inventory.setItem(11, homeTeleport);
 
-        // 离开工会
+        // 离开公会
         ItemStack leaveGuild = createItem(Material.BARRIER,
                 languageManager.getGuiMessage(player, "gui.member-guild-gui.leave", "&cLeave Guild"),
                 languageManager.getGuiMessage(player, "gui.member-guild-gui.leave-desc", "&7Click &fLeave Current Guild"));

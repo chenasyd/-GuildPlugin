@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * 工会公告模块 - 示例模块
+ * 公会公告模块 - 示例模块
  * <p>
  * 功能：
  * <ul>
@@ -140,7 +140,7 @@ public class AnnouncementModule implements GuildModule {
         if (guild == null) {
             player.sendMessage(ColorUtils.colorize(
                     context.getMessage("module.announcement.error.no-guild",
-                            "&c无法获取工会信息")));
+                            "&c无法获取公会信息")));
             return;
         }
 
@@ -161,7 +161,7 @@ public class AnnouncementModule implements GuildModule {
         if (guild == null) {
             player.sendMessage(ColorUtils.colorize(
                     context.getMessage("module.announcement.error.no-guild",
-                            "&c无法获取工会信息")));
+                            "&c无法获取公会信息")));
             return;
         }
 

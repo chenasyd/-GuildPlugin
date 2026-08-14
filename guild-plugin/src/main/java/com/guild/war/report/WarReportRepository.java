@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-/** 工会战战报持久化。 */
+/** 公会战战报持久化。 */
 public final class WarReportRepository {
 
     private final GuildPlugin plugin;

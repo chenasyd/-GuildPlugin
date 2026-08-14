@@ -6,7 +6,7 @@ import com.guild.core.language.LanguageManager;
 import com.guild.GuildPlugin;
 
 /**
- * 工会邀请数据模型
+ * 公会邀请数据模型
  */
 public class GuildInvitation {
     

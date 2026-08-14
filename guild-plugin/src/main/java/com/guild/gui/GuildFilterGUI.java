@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 工会筛选GUI - 筛选结果直接展示在本GUI中
+ * 公会筛选GUI - 筛选结果直接展示在本GUI中
  * 筛选独立于 GuildListGUI 的搜索，两者不同时生效
  */
 public class GuildFilterGUI implements GUI {
@@ -295,7 +295,7 @@ public class GuildFilterGUI implements GUI {
     // ======================== 公会列表加载（筛选逻辑） ========================
 
     /**
-     * 加载筛选后的工会列表到本GUI
+     * 加载筛选后的公会列表到本GUI
      */
     private void loadFilteredGuilds(Inventory inventory) {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {

@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 工会插件世界管理对外 API（供外部插件 / 后续工会战模块调用）。
+ * 公会插件世界管理对外 API（供外部插件 / 后续公会战模块调用）。
  *
  * <p>通过 {@code GuildPlugin.getGuildWorldAPI()} 或 ServiceContainer 获取。
  */

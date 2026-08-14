@@ -26,7 +26,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 工会资金 GUI — 展示每名成员在工会中的存款总额
+ * 公会资金 GUI — 展示每名成员在公会中的存款总额
  * <p>
  * 布局：9×6，边框 BLACK_STAINED_GLASS_PANE
  * 内容区 4×7 (slot 10~43)，每页最多 28 条

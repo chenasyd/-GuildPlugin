@@ -5,7 +5,7 @@ package com.guild.world.model;
  */
 public enum WorldType {
 
-    /** 工会战/活动战斗世界（独立世界，战后可回收） */
+    /** 公会战/活动战斗世界（独立世界，战后可回收） */
     BATTLE,
 
     /** 编辑世界（用于建造预设地图；崩溃后可直接丢弃重建） */

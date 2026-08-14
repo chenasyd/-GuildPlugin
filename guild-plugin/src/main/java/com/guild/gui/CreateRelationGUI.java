@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 创建工会关系GUI
+ * 创建公会关系GUI
  */
 public class CreateRelationGUI implements GUI {
 
@@ -76,7 +76,7 @@ public class CreateRelationGUI implements GUI {
         // 填充边框
         fillBorder(inventory);
         
-        // 加载可用工会列表
+        // 加载可用公会列表
         loadAvailableGuilds().thenAccept(guilds -> {
             this.availableGuilds = guilds;
             
@@ -85,7 +85,7 @@ public class CreateRelationGUI implements GUI {
                 // 显示关系类型选择
                 displayRelationTypes(inventory);
                 
-                // 显示目标工会选择
+                // 显示目标公会选择
                 displayTargetGuilds(inventory);
                 
                 // 添加功能按钮
@@ -146,7 +146,7 @@ public class CreateRelationGUI implements GUI {
             return;
         }
 
-        // 目标工会选择
+        // 目标公会选择
         if (isTargetGuildSlot(slot)) {
             int slotIndex = getTargetGuildSlotIndex(slot);
             if (slotIndex >= 0) {
@@ -164,7 +164,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 加载可用工会列表
+     * 加载可用公会列表
      */
     private CompletableFuture<List<Guild>> loadAvailableGuilds() {
         return plugin.getGuildService().getAllGuildsAsync().thenApply(guilds -> {
@@ -210,7 +210,7 @@ public class CreateRelationGUI implements GUI {
     }
     
     /**
-     * 显示目标工会选择
+     * 显示目标公会选择
      */
     private void displayTargetGuilds(Inventory inventory) {
         int startIndex = currentPage * itemsPerPage;
@@ -352,7 +352,7 @@ public class CreateRelationGUI implements GUI {
      * 创建关系
      */
     private void createRelation(Player player) {
-        // 查找目标工会
+        // 查找目标公会
         final Guild[] targetGuild = {null};
         for (Guild g : availableGuilds) {
             if (g.getName().equals(targetGuildName)) {

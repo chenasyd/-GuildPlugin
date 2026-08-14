@@ -230,7 +230,7 @@ public class InviteMemberGUI implements GUI {
      * 处理邀请玩家
      */
     private void handleInvitePlayer(Player inviter, Player target) {
-        // 检查目标玩家是否已经在工会中
+        // 检查目标玩家是否已经在公会中
         plugin.getGuildService().getGuildMemberAsync(target.getUniqueId()).thenAccept(member -> {
             if (member != null) {
                 CompatibleScheduler.runTask(plugin, inviter, () -> inviter.sendMessage(InviteMessageUtils.formatAlreadyInGuild(plugin, inviter, target.getName())));

@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 /**
- * 工会战核心服务：发起 → 接受 → 报名 → 进场倒计时 → 激战 → 结算回收。
+ * 公会战核心服务：发起 → 接受 → 报名 → 进场倒计时 → 激战 → 结算回收。
  */
 public final class GuildWarService {
 
@@ -82,7 +82,7 @@ public final class GuildWarService {
 
     public String unavailableReason() {
         if (!settings.enabled) {
-            return CoreMsg.rawDefault(plugin, "war.disabled.config", "&c工会战已在配置中关闭");
+            return CoreMsg.rawDefault(plugin, "war.disabled.config", "&c公会战已在配置中关闭");
         }
         if (worldService == null) {
             return CoreMsg.rawDefault(plugin, "war.disabled.world-uninit", "&c世界管理未初始化");
@@ -119,37 +119,37 @@ public final class GuildWarService {
         CompletableFuture<WarMatch> future = new CompletableFuture<>();
         if (!isEnabled()) {
             future.completeExceptionally(new LocalizedException(
-                    "war.unavailable", "&c工会战不可用: {reason}",
+                    "war.unavailable", "&c公会战不可用: {reason}",
                     "{reason}", unavailableReason()));
             return future;
         }
         if (countNonEnded() >= settings.maxConcurrent) {
             future.completeExceptionally(new LocalizedException(
-                    "war.error.max-concurrent", "&c同时进行的工会战已达上限"));
+                    "war.error.max-concurrent", "&c同时进行的公会战已达上限"));
             return future;
         }
 
         guildService.getPlayerGuildAsync(player.getUniqueId()).thenCompose(own -> {
             if (own == null) {
-                return failed("war.no-guild", "&c你不在任何工会中");
+                return failed("war.no-guild", "&c你不在任何公会中");
             }
             return guildService.getGuildMemberAsync(player.getUniqueId()).thenCompose(member -> {
                 if (member == null || !isOfficerOrLeader(member)) {
-                    return failed("war.officer-only.challenge", "&c只有会长或官员可以发起工会战");
+                    return failed("war.officer-only.challenge", "&c只有会长或官员可以发起公会战");
                 }
                 if (getMatchByGuild(own.getId()) != null) {
-                    return failed("war.error.guild-busy", "&c本工会已有进行中的工会战");
+                    return failed("war.error.guild-busy", "&c本公会已有进行中的公会战");
                 }
                 return resolveGuild(targetGuildQuery).thenCompose(target -> {
                     if (target == null) {
-                        return failed("war.error.target-not-found", "&c找不到目标工会: {query}",
+                        return failed("war.error.target-not-found", "&c找不到目标公会: {query}",
                                 "{query}", targetGuildQuery);
                     }
                     if (target.getId() == own.getId()) {
-                        return failed("war.error.self", "&c不能向自己的工会宣战");
+                        return failed("war.error.self", "&c不能向自己的公会宣战");
                     }
                     if (getMatchByGuild(target.getId()) != null) {
-                        return failed("war.error.target-busy", "&c对方工会已有进行中的工会战");
+                        return failed("war.error.target-busy", "&c对方公会已有进行中的公会战");
                     }
                     String preset = (presetOverride != null && !presetOverride.isBlank())
                             ? presetOverride.trim() : settings.defaultPreset;
@@ -175,14 +175,14 @@ public final class GuildWarService {
                     );
                     registerMatch(match);
                     broadcastGuild(own.getId(), "war.broadcast.challenged-own",
-                            "&e{player} &7向 &f{guild} &7发起工会战（模式: &a{mode}&7，预设: &a{preset}&7，每队上限: &a{max}&7）",
+                            "&e{player} &7向 &f{guild} &7发起公会战（模式: &a{mode}&7，预设: &a{preset}&7，每队上限: &a{max}&7）",
                             "{player}", player.getName(),
                             "{guild}", target.getName(),
                             "{mode}", mode.langKey(),
                             "{preset}", preset,
                             "{max}", String.valueOf(max));
                     broadcastGuild(target.getId(), "war.broadcast.challenged-target",
-                            "&e{guild} &7向你们发起工会战！官员请执行 &a/guildwar accept &7或 &c/guildwar deny",
+                            "&e{guild} &7向你们发起公会战！官员请执行 &a/guildwar accept &7或 &c/guildwar deny",
                             "{guild}", own.getName());
                     scheduleChallengeTimeout(match);
                     return CompletableFuture.completedFuture(match);
@@ -201,15 +201,15 @@ public final class GuildWarService {
     public CompletableFuture<WarMatch> accept(Player player) {
         return guildService.getPlayerGuildAsync(player.getUniqueId()).thenCompose(guild -> {
             if (guild == null) {
-                return failed("war.no-guild", "&c你不在任何工会中");
+                return failed("war.no-guild", "&c你不在任何公会中");
             }
             return guildService.getGuildMemberAsync(player.getUniqueId()).thenCompose(member -> {
                 if (member == null || !isOfficerOrLeader(member)) {
-                    return failed("war.officer-only.accept", "&c只有会长或官员可以接受工会战");
+                    return failed("war.officer-only.accept", "&c只有会长或官员可以接受公会战");
                 }
                 WarMatch match = getMatchByGuild(guild.getId());
                 if (match == null || match.phase() != WarPhase.PENDING) {
-                    return failed("war.error.no-pending", "&c没有待接受的工会战邀请");
+                    return failed("war.error.no-pending", "&c没有待接受的公会战邀请");
                 }
                 if (match.guildBId() != guild.getId()) {
                     return failed("war.error.accept-not-defender", "&c只有被挑战方可以接受");
@@ -228,7 +228,7 @@ public final class GuildWarService {
     public CompletableFuture<Void> deny(Player player) {
         return guildService.getPlayerGuildAsync(player.getUniqueId()).thenCompose(guild -> {
             if (guild == null) {
-                return failed("war.no-guild", "&c你不在任何工会中");
+                return failed("war.no-guild", "&c你不在任何公会中");
             }
             return guildService.getGuildMemberAsync(player.getUniqueId()).thenCompose(member -> {
                 if (member == null || !isOfficerOrLeader(member)) {
@@ -242,7 +242,7 @@ public final class GuildWarService {
                     return failed("war.error.deny-not-defender", "&c只有被挑战方可以拒绝");
                 }
                 broadcastMatch(match, "war.broadcast.denied",
-                        "&c{guild} 拒绝了工会战挑战",
+                        "&c{guild} 拒绝了公会战挑战",
                         "{guild}", guild.getName());
                 cleanupMatch(match, false);
                 return CompletableFuture.completedFuture(null);
@@ -253,7 +253,7 @@ public final class GuildWarService {
     public CompletableFuture<Void> cancel(Player player) {
         return guildService.getPlayerGuildAsync(player.getUniqueId()).thenCompose(guild -> {
             if (guild == null) {
-                return failed("war.no-guild", "&c你不在任何工会中");
+                return failed("war.no-guild", "&c你不在任何公会中");
             }
             return guildService.getGuildMemberAsync(player.getUniqueId()).thenCompose(member -> {
                 if (member == null || !isOfficerOrLeader(member)) {
@@ -261,14 +261,14 @@ public final class GuildWarService {
                 }
                 WarMatch match = getMatchByGuild(guild.getId());
                 if (match == null || match.phase() == WarPhase.ENDED) {
-                    return failed("war.error.nothing-to-cancel", "&c没有可取消的工会战");
+                    return failed("war.error.nothing-to-cancel", "&c没有可取消的公会战");
                 }
                 if (match.phase() == WarPhase.ACTIVE || match.phase() == WarPhase.COUNTDOWN
                         || match.phase() == WarPhase.PREPARING) {
                     return failed("war.error.cancel-too-late",
                             "&c战斗已开始，无法取消（可用管理员强制结束）");
                 }
-                broadcastMatch(match, "war.broadcast.cancelled", "&e工会战已被取消");
+                broadcastMatch(match, "war.broadcast.cancelled", "&e公会战已被取消");
                 cleanupMatch(match, false);
                 return CompletableFuture.completedFuture(null);
             });
@@ -280,21 +280,21 @@ public final class GuildWarService {
     public CompletableFuture<Void> join(Player player) {
         return guildService.getPlayerGuildAsync(player.getUniqueId()).thenCompose(guild -> {
             if (guild == null) {
-                return failed("war.no-guild", "&c你不在任何工会中");
+                return failed("war.no-guild", "&c你不在任何公会中");
             }
             WarMatch match = getMatchByGuild(guild.getId());
             if (match == null || (match.phase() != WarPhase.SIGNUP && match.phase() != WarPhase.PENDING)) {
-                return failed("war.error.no-signup", "&c当前没有可报名的工会战");
+                return failed("war.error.no-signup", "&c当前没有可报名的公会战");
             }
             if (match.phase() == WarPhase.PENDING && match.guildAId() != guild.getId()) {
                 return failed("war.error.wait-accept", "&c请等待官员接受挑战后再报名");
             }
             WarTeamSide side = match.sideOfGuild(guild.getId());
             if (side == null) {
-                return failed("war.error.guild-not-in-match", "&c你的工会不在本场对局中");
+                return failed("war.error.guild-not-in-match", "&c你的公会不在本场对局中");
             }
             if (playerToMatch.containsKey(player.getUniqueId())) {
-                return failed("war.error.already-in-match", "&c你已在一场工会战中");
+                return failed("war.error.already-in-match", "&c你已在一场公会战中");
             }
             if (match.countSide(side) >= match.maxPerTeam()) {
                 return failed("war.error.team-full", "&c本队报名已满（{max}）",
@@ -316,7 +316,7 @@ public final class GuildWarService {
     public CompletableFuture<Void> leave(Player player) {
         WarMatch match = getMatchByPlayer(player.getUniqueId());
         if (match == null) {
-            return failed("war.error.not-in-war", "&c你不在工会战中");
+            return failed("war.error.not-in-war", "&c你不在公会战中");
         }
         if (match.phase() != WarPhase.SIGNUP && match.phase() != WarPhase.PENDING) {
             return failed("war.error.leave-locked", "&c战斗阶段无法退出报名，请等待结束");
@@ -332,7 +332,7 @@ public final class GuildWarService {
     public CompletableFuture<Void> ready(Player player) {
         return guildService.getPlayerGuildAsync(player.getUniqueId()).thenCompose(guild -> {
             if (guild == null) {
-                return failed("war.no-guild", "&c你不在任何工会中");
+                return failed("war.no-guild", "&c你不在任何公会中");
             }
             return guildService.getGuildMemberAsync(player.getUniqueId()).thenCompose(member -> {
                 if (member == null || !isOfficerOrLeader(member)) {
@@ -916,7 +916,7 @@ public final class GuildWarService {
                     Player p = Bukkit.getPlayer(m.getPlayerUuid());
                     if (p != null && p.isOnline()) {
                         String[] localizedPh = localizePlaceholders(p, ph);
-                        String prefix = CoreMsg.raw(plugin, p, "war.prefix", "&c[工会战] &r");
+                        String prefix = CoreMsg.raw(plugin, p, "war.prefix", "&c[公会战] &r");
                         String body = CoreMsg.raw(plugin, p, key, def, localizedPh);
                         p.sendMessage(ColorUtils.colorize(prefix + body));
                     }
@@ -962,7 +962,7 @@ public final class GuildWarService {
     }
 
     private void msg(Player player, String key, String def, String... ph) {
-        String prefix = CoreMsg.raw(plugin, player, "war.prefix", "&c[工会战] &r");
+        String prefix = CoreMsg.raw(plugin, player, "war.prefix", "&c[公会战] &r");
         String body = CoreMsg.raw(plugin, player, key, def, ph);
         player.sendMessage(ColorUtils.colorize(prefix + body));
     }

@@ -159,7 +159,7 @@ public class DatabaseManager {
      * 创建SQLite数据表
      */
     private void createSQLiteTables() {
-        // 工会表
+        // 公会表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guilds (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -184,7 +184,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会成员表
+        // 公会成员表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_members (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -198,7 +198,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会申请表
+        // 公会申请表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_applications (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -212,7 +212,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会邀请表
+        // 公会邀请表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_invites (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -228,7 +228,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会关系表
+        // 公会关系表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_relations (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -249,7 +249,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会经济表
+        // 公会经济表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_economy (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -264,7 +264,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会贡献记录表
+        // 公会贡献记录表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_contributions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -279,7 +279,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会日志表
+        // 公会日志表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_logs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -446,7 +446,7 @@ public class DatabaseManager {
      * 创建MySQL数据表
      */
     private void createMySQLTables() {
-        // 工会表
+        // 公会表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guilds (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -471,7 +471,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会成员表
+        // 公会成员表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_members (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -485,7 +485,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会申请表
+        // 公会申请表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_applications (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -499,7 +499,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会邀请表
+        // 公会邀请表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_invites (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -515,7 +515,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会关系表
+        // 公会关系表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_relations (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -536,7 +536,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会经济表
+        // 公会经济表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_economy (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -551,7 +551,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会贡献记录表
+        // 公会贡献记录表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_contributions (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -566,7 +566,7 @@ public class DatabaseManager {
             )
         """);
         
-        // 工会日志表
+        // 公会日志表
         executeUpdate("""
             CREATE TABLE IF NOT EXISTS guild_logs (
                 id INT AUTO_INCREMENT PRIMARY KEY,

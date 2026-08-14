@@ -714,7 +714,7 @@ public class GUIManager implements Listener {
         }
         
         try {
-            // 为工会名称输入创建特殊的输入处理器
+            // 为公会名称输入创建特殊的输入处理器
             if ("guild_name_input".equals(mode) && gui instanceof GuildNameInputGUI) {
                 GuildNameInputGUI nameInputGUI = (GuildNameInputGUI) gui;
                 inputModes.put(player.getUniqueId(), input -> {

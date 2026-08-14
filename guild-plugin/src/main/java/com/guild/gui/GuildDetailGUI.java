@@ -24,7 +24,7 @@ import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 
 /**
- * 工会详情GUI
+ * 公会详情GUI
  */
 public class GuildDetailGUI implements GUI {
 
@@ -79,10 +79,10 @@ public class GuildDetailGUI implements GUI {
         // 填充边框
         fillBorder(inventory);
         
-        // 设置工会基本信息
+        // 设置公会基本信息
         setupGuildInfo(inventory);
         
-        // 设置工会成员列表
+        // 设置公会成员列表
         setupMembersList(inventory);
         
         // 设置操作按钮
@@ -95,7 +95,7 @@ public class GuildDetailGUI implements GUI {
         String guildTag = guild.getTag() != null ? guild.getTag() :
             languageManager.getGuiMessage(viewer, "gui.common.no-tag", "No tag");
 
-        // 工会名称和标签 - 放在顶部中央
+        // 公会名称和标签 - 放在顶部中央
         List<String> guildLore = new ArrayList<>();
         guildLore.add(ColorUtils.colorize("&7ID: " + guild.getId()));
         guildLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.common.guild-tag", "Guild Tag") + ": [" + guildTag + "]"));
@@ -105,7 +105,7 @@ public class GuildDetailGUI implements GUI {
 
         inventory.setItem(4, createItem(Material.SHIELD, ColorUtils.colorize("&6" + guild.getName()), guildLore.toArray(new String[0])));
 
-        // 工会等级和资金 - 放在 slot 16
+        // 公会等级和资金 - 放在 slot 16
         List<String> economyLore = new ArrayList<>();
         economyLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.guild-detail.current-level", "Current level") + ": &e" + guild.getLevel()));
         economyLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.guild-detail.current-balance", "Current balance") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())));
@@ -116,7 +116,7 @@ public class GuildDetailGUI implements GUI {
             ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.guild-detail.economy-info", "Economy info")),
             economyLore.toArray(new String[0])));
 
-        // 工会描述 - 放在 slot 14
+        // 公会描述 - 放在 slot 14
         List<String> descLore = new ArrayList<>();
         String description = guild.getDescription();
         if (description != null && !description.isEmpty()) {
@@ -286,11 +286,11 @@ public class GuildDetailGUI implements GUI {
             loadMembers();
             return;
         } else if (slot == 47 && player.hasPermission("guild.admin")) {
-            // 冻结/解冻工会
+            // 冻结/解冻公会
             toggleGuildFreeze(player);
             return;
         } else if (slot == 49 && player.hasPermission("guild.admin")) {
-            // 删除工会
+            // 删除公会
             deleteGuild(player);
             return;
         } else if (slot == 51 && player.hasPermission("guild.admin")) {

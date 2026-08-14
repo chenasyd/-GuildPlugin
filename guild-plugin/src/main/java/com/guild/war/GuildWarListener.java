@@ -20,7 +20,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
-/** 工会战战斗与战场保护监听。 */
+/** 公会战战斗与战场保护监听。 */
 public final class GuildWarListener implements Listener {
 
     private final GuildWarService warService;

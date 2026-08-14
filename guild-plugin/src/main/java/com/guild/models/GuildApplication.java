@@ -6,7 +6,7 @@ import com.guild.core.language.LanguageManager;
 import com.guild.GuildPlugin;
 
 /**
- * 工会申请数据模型
+ * 公会申请数据模型
  */
 public class GuildApplication {
     

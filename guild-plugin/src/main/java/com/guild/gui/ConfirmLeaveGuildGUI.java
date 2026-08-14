@@ -19,7 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 /**
- * 确认离开工会GUI
+ * 确认离开公会GUI
  */
 public class ConfirmLeaveGuildGUI implements GUI {
 
@@ -178,7 +178,7 @@ public class ConfirmLeaveGuildGUI implements GUI {
             return;
         }
 
-        // 离开工会
+        // 离开公会
         plugin.getGuildService().removeGuildMemberAsync(player.getUniqueId(), player.getUniqueId()).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {

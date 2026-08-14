@@ -99,7 +99,7 @@ public class GuildService {
     private String plusDaysString(int days) { return TimeProvider.plusDaysString(days); }
     
     /**
-     * 创建工会 (异步)
+     * 创建公会 (异步)
      */
     public CompletableFuture<Boolean> createGuildAsync(String name, String tag, String description, UUID leaderUuid, String leaderName) {
         return getGuildByNameAsync(name).thenCompose(existingGuildByName -> {
@@ -144,14 +144,14 @@ public class GuildService {
                     return -1;
                 }).thenCompose(guildId -> {
                     if ((Integer) guildId > 0) {
-                        // 添加会长为工会成员（避免重复查询）
+                        // 添加会长为公会成员（避免重复查询）
                         return addGuildMemberDirectAsync((Integer) guildId, leaderUuid, leaderName, GuildMember.Role.LEADER)
                             .thenCompose(success -> {
                                 if (success) {
                                     fireGuildCreate((Integer) guildId, name, leaderName);
-                                    // 记录工会创建日志
+                                    // 记录公会创建日志
                                     return logGuildActionAsync((Integer) guildId, name, leaderUuid.toString(), leaderName,
-                                        GuildLog.LogType.GUILD_CREATED, "创建工会", "工会名称: " + name + ", 标签: " + tag)
+                                        GuildLog.LogType.GUILD_CREATED, "创建公会", "公会名称: " + name + ", 标签: " + tag)
                                         .thenApply(logSuccess -> success);
                                 }
                                 return CompletableFuture.completedFuture(success);
@@ -164,7 +164,7 @@ public class GuildService {
     }
     
     /**
-     * 创建工会 (同步包装器)
+     * 创建公会 (同步包装器)
      */
     public boolean createGuild(String name, String tag, String description, UUID leaderUuid, String leaderName) {
         try {
@@ -176,7 +176,7 @@ public class GuildService {
     }
     
     /**
-     * 删除工会 (异步)
+     * 删除公会 (异步)
      */
     public CompletableFuture<Boolean> deleteGuildAsync(int guildId, UUID requesterUuid) {
         return getGuildByIdAsync(guildId).thenCompose(guild -> {
@@ -192,10 +192,10 @@ public class GuildService {
                 
                 return CompletableFuture.supplyAsync(() -> {
                     try {
-                        // 获取工会余额用于退款
+                        // 获取公会余额用于退款
                         double guildBalance = guild.getBalance();
                         
-                        // 删除工会成员
+                        // 删除公会成员
                         String deleteMembersSql = "DELETE FROM guild_members WHERE guild_id = ?";
                         try (Connection conn = databaseManager.getConnection();
                              PreparedStatement stmt = conn.prepareStatement(deleteMembersSql)) {
@@ -205,7 +205,7 @@ public class GuildService {
 
                         deleteWarehouseData(guildId);
                         
-                        // 删除工会
+                        // 删除公会
                         String deleteGuildSql = "DELETE FROM guilds WHERE id = ?";
                         try (Connection conn = databaseManager.getConnection();
                              PreparedStatement stmt = conn.prepareStatement(deleteGuildSql)) {
@@ -220,7 +220,7 @@ public class GuildService {
                                         org.bukkit.entity.Player leaderPlayer = org.bukkit.Bukkit.getPlayer(guild.getLeaderUuid());
                                         if (leaderPlayer != null && leaderPlayer.isOnline()) {
                                             plugin.getEconomyManager().deposit(leaderPlayer, guildBalance);
-                                            String message = plugin.getLanguageManager().getCoreMessage(leaderPlayer, "economy.disband-compensation", "&a工会解散，您获得了 {amount} 金币补偿！", "{amount}", plugin.getEconomyManager().format(guildBalance));
+                                            String message = plugin.getLanguageManager().getCoreMessage(leaderPlayer, "economy.disband-compensation", "&a公会解散，您获得了 {amount} 金币补偿！", "{amount}", plugin.getEconomyManager().format(guildBalance));
                                             leaderPlayer.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                                         }
                                     } catch (Exception e) {
@@ -228,11 +228,11 @@ public class GuildService {
                                     }
                                 }
                                 
-                                // 记录工会解散日志
+                                // 记录公会解散日志
                                 logGuildActionAsync(guildId, guild.getName(), guild.getLeaderUuid().toString(), guild.getLeaderName(),
-                                    GuildLog.LogType.GUILD_DISSOLVED, "工会解散", "工会余额: " + guildBalance + " 金币");
+                                    GuildLog.LogType.GUILD_DISSOLVED, "公会解散", "公会余额: " + guildBalance + " 金币");
                                 
-                                // 分发工会解散事件给模块
+                                // 分发公会解散事件给模块
                                 fireGuildDelete(guildId, guild.getName(), guild.getLeaderName());
                                 
                                 return true;
@@ -248,7 +248,7 @@ public class GuildService {
     }
     
     /**
-     * 删除工会 (同步包装器)
+     * 删除公会 (同步包装器)
      */
     public boolean deleteGuild(int guildId, UUID requesterUuid) {
         try {
@@ -273,8 +273,8 @@ public class GuildService {
     }
 
     /**
-     * 管理员强制删除工会 (异步) — 跳过会长身份验证，但资金仍退还至会长
-     * @param guildId 工会ID
+     * 管理员强制删除公会 (异步) — 跳过会长身份验证，但资金仍退还至会长
+     * @param guildId 公会ID
      * @param adminUuid 管理员UUID（执行删除的人，非会长）
      */
     public CompletableFuture<Boolean> forceDeleteGuildAsync(int guildId, UUID adminUuid) {
@@ -285,10 +285,10 @@ public class GuildService {
             
             return CompletableFuture.supplyAsync(() -> {
                 try {
-                    // 获取工会余额用于退款（退款给会长，而非管理员）
+                    // 获取公会余额用于退款（退款给会长，而非管理员）
                     double guildBalance = guild.getBalance();
                     
-                    // 删除所有工会成员
+                    // 删除所有公会成员
                     String deleteMembersSql = "DELETE FROM guild_members WHERE guild_id = ?";
                     try (Connection conn = databaseManager.getConnection();
                          PreparedStatement stmt = conn.prepareStatement(deleteMembersSql)) {
@@ -297,7 +297,7 @@ public class GuildService {
                     }
 
                     deleteWarehouseData(guildId);
-                    // 删除工会
+                    // 删除公会
                     String deleteGuildSql = "DELETE FROM guilds WHERE id = ?";
                     try (Connection conn = databaseManager.getConnection();
                          PreparedStatement stmt = conn.prepareStatement(deleteGuildSql)) {
@@ -312,7 +312,7 @@ public class GuildService {
                                     org.bukkit.entity.Player leaderPlayer = org.bukkit.Bukkit.getPlayer(guild.getLeaderUuid());
                                     if (leaderPlayer != null && leaderPlayer.isOnline()) {
                                         plugin.getEconomyManager().deposit(leaderPlayer, guildBalance);
-                                        String message = plugin.getLanguageManager().getCoreMessage(leaderPlayer, "economy.disband-compensation", "&a工会解散，您获得了 {amount} 金币补偿！", "{amount}", plugin.getEconomyManager().format(guildBalance));
+                                        String message = plugin.getLanguageManager().getCoreMessage(leaderPlayer, "economy.disband-compensation", "&a公会解散，您获得了 {amount} 金币补偿！", "{amount}", plugin.getEconomyManager().format(guildBalance));
                                         leaderPlayer.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                                     }
                                 } catch (Exception e) {
@@ -320,12 +320,12 @@ public class GuildService {
                                 }
                             }
                             
-                            // 记录工会强制解散日志
+                            // 记录公会强制解散日志
                             logGuildActionAsync(guildId, guild.getName(), guild.getLeaderUuid().toString(), guild.getLeaderName(),
                                 GuildLog.LogType.GUILD_DISSOLVED, "Admin force deleted",
                                 "By: " + adminUuid + ", balance: " + guildBalance + " coins");
                             
-                            // 分发工会解散事件给模块
+                            // 分发公会解散事件给模块
                             fireGuildDelete(guildId, guild.getName(), guild.getLeaderName());
                             
                             return true;
@@ -340,7 +340,7 @@ public class GuildService {
     }
     
     /**
-     * 更新工会信息 (异步)
+     * 更新公会信息 (异步)
      */
     public CompletableFuture<Boolean> updateGuildAsync(int guildId, String name, String tag, String description, UUID requesterUuid) {
         return getGuildByIdAsync(guildId).thenCompose(guild -> {
@@ -355,7 +355,7 @@ public class GuildService {
                     return CompletableFuture.completedFuture(false);
                 }
                 
-                // 检查名称和标签是否与其他工会冲突
+                // 检查名称和标签是否与其他公会冲突
                 CompletableFuture<Boolean> nameCheck = CompletableFuture.completedFuture(true);
                 if (name != null && !name.equals(guild.getName())) {
                     nameCheck = getGuildByNameAsync(name).thenApply(existingGuild -> existingGuild == null);
@@ -402,7 +402,7 @@ public class GuildService {
     }
     
     /**
-     * 更新工会信息 (同步包装器)
+     * 更新公会信息 (同步包装器)
      */
     public boolean updateGuild(int guildId, String name, String tag, String description, UUID requesterUuid) {
         try {
@@ -414,8 +414,8 @@ public class GuildService {
     }
     
     /**
-     * 添加工会成员 (异步)
-     * 包含人数上限检查：查询目标工会当前成员数，与有效上限比较。
+     * 添加公会成员 (异步)
+     * 包含人数上限检查：查询目标公会当前成员数，与有效上限比较。
      */
     public CompletableFuture<Boolean> addGuildMemberAsync(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
         DebugLog.info(logger, "[AddMember-Debug] Starting member add: guildId=" + guildId + ", player=" + playerName + ", uuid=" + playerUuid);
@@ -428,7 +428,7 @@ public class GuildService {
             
             DebugLog.info(logger, "[AddMember-Debug] Player not in any guild, checking capacity");
             
-            // 人数上限检查：获取目标工会并比较当前成员数与有效上限
+            // 人数上限检查：获取目标公会并比较当前成员数与有效上限
             return getGuildByIdAsync(guildId).thenCompose(targetGuild -> {
                 if (targetGuild == null) {
                     logger.warning("[AddMember-Debug] Target guild not found: guildId=" + guildId);
@@ -489,7 +489,7 @@ public class GuildService {
     }
     
     /**
-     * 添加工会成员 (同步包装器)
+     * 添加公会成员 (同步包装器)
      */
     public boolean addGuildMember(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
         try {
@@ -501,7 +501,7 @@ public class GuildService {
     }
     
     /**
-     * 移除工会成员 (异步)
+     * 移除公会成员 (异步)
      */
     public CompletableFuture<Boolean> removeGuildMemberAsync(UUID playerUuid, UUID requesterUuid) {
         return getGuildMemberAsync(playerUuid).thenCompose(member -> {
@@ -574,7 +574,7 @@ public class GuildService {
     }
     
     /**
-     * 移除工会成员 (同步包装器)
+     * 移除公会成员 (同步包装器)
      */
     public boolean removeGuildMember(UUID playerUuid, UUID requesterUuid) {
         try {
@@ -800,7 +800,7 @@ public class GuildService {
     }
 
     /**
-     * 获取玩家工会 (异步)
+     * 获取玩家公会 (异步)
      */
     public CompletableFuture<Guild> getPlayerGuildAsync(UUID playerUuid) {
         return CompletableFuture.supplyAsync(() -> {
@@ -828,7 +828,7 @@ public class GuildService {
     }
     
     /**
-     * 获取玩家工会 (同步包装器；优先短 TTL 缓存)
+     * 获取玩家公会 (同步包装器；优先短 TTL 缓存)
      */
     public Guild getPlayerGuild(UUID playerUuid) {
         try {
@@ -849,7 +849,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会成员 (异步)
+     * 获取公会成员 (异步)
      */
     public CompletableFuture<GuildMember> getGuildMemberAsync(UUID playerUuid) {
         return CompletableFuture.supplyAsync(() -> {
@@ -875,7 +875,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会成员 (同步包装器；优先短 TTL 缓存)
+     * 获取公会成员 (同步包装器；优先短 TTL 缓存)
      */
     public GuildMember getGuildMember(UUID playerUuid) {
         try {
@@ -895,7 +895,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会成员数量 (异步)
+     * 获取公会成员数量 (异步)
      */
     public CompletableFuture<Integer> getGuildMemberCountAsync(int guildId) {
         return CompletableFuture.supplyAsync(() -> {
@@ -921,7 +921,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会成员数量 (同步包装器)
+     * 获取公会成员数量 (同步包装器)
      */
     public int getGuildMemberCount(int guildId) {
         try {
@@ -933,7 +933,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会所有成员 (异步)
+     * 获取公会所有成员 (异步)
      */
     public CompletableFuture<List<GuildMember>> getGuildMembersAsync(int guildId) {
         return CompletableFuture.supplyAsync(() -> {
@@ -960,7 +960,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会所有成员 (同步包装器)
+     * 获取公会所有成员 (同步包装器)
      */
     public List<GuildMember> getGuildMembers(int guildId) {
         try {
@@ -972,7 +972,7 @@ public class GuildService {
     }
     
     /**
-     * 根据ID获取工会 (异步)
+     * 根据ID获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByIdAsync(int guildId) {
         return CompletableFuture.supplyAsync(() -> {
@@ -998,7 +998,7 @@ public class GuildService {
     }
     
     /**
-     * 根据ID获取工会 (同步包装器)
+     * 根据ID获取公会 (同步包装器)
      */
     public Guild getGuildById(int guildId) {
         try {
@@ -1010,7 +1010,7 @@ public class GuildService {
     }
     
     /**
-     * 根据名称获取工会 (异步)
+     * 根据名称获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByNameAsync(String name) {
         return CompletableFuture.supplyAsync(() -> {
@@ -1036,7 +1036,7 @@ public class GuildService {
     }
     
     /**
-     * 根据名称获取工会 (同步包装器)
+     * 根据名称获取公会 (同步包装器)
      */
     public Guild getGuildByName(String name) {
         try {
@@ -1048,7 +1048,7 @@ public class GuildService {
     }
     
     /**
-     * 根据标签获取工会 (异步)
+     * 根据标签获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByTagAsync(String tag) {
         return CompletableFuture.supplyAsync(() -> {
@@ -1074,7 +1074,7 @@ public class GuildService {
     }
     
     /**
-     * 根据标签获取工会 (同步包装器)
+     * 根据标签获取公会 (同步包装器)
      */
     public Guild getGuildByTag(String tag) {
         try {
@@ -1086,7 +1086,7 @@ public class GuildService {
     }
     
     /**
-     * 获取所有工会 (异步)
+     * 获取所有公会 (异步)
      */
     public CompletableFuture<List<Guild>> getAllGuildsAsync() {
         return CompletableFuture.supplyAsync(() -> {
@@ -1110,7 +1110,7 @@ public class GuildService {
     }
     
     /**
-     * 获取所有工会 (同步包装器)
+     * 获取所有公会 (同步包装器)
      */
     public List<Guild> getAllGuilds() {
         try {
@@ -1122,7 +1122,7 @@ public class GuildService {
     }
     
     /**
-     * 检查是否为工会会长
+     * 检查是否为公会会长
      */
     public boolean isGuildLeader(UUID playerUuid) {
         GuildMember member = getGuildMember(playerUuid);
@@ -1130,7 +1130,7 @@ public class GuildService {
     }
     
     /**
-     * 检查是否为指定工会的会长
+     * 检查是否为指定公会的会长
      */
     public boolean isGuildLeader(UUID playerUuid, int guildId) {
         GuildMember member = getGuildMember(playerUuid);
@@ -1138,7 +1138,7 @@ public class GuildService {
     }
     
     /**
-     * 检查是否为工会官员
+     * 检查是否为公会官员
      */
     public boolean isGuildOfficer(UUID playerUuid) {
         GuildMember member = getGuildMember(playerUuid);
@@ -1146,7 +1146,7 @@ public class GuildService {
     }
     
     /**
-     * 检查是否有工会权限
+     * 检查是否有公会权限
      */
     public boolean hasGuildPermission(UUID playerUuid) {
         GuildMember member = getGuildMember(playerUuid);
@@ -1302,7 +1302,7 @@ public class GuildService {
                                 // 创建申请对象用于通知
                                 GuildApplication application = new GuildApplication(guildId, playerUuid, playerName, message);
                                 
-                                // 实时通知工会会长
+                                // 实时通知公会会长
                                 NotifyUtils.notifyLeaderNewApplication(plugin, guild, application);
                             }
                         });
@@ -1331,7 +1331,7 @@ public class GuildService {
     
     /**
      * 处理申请 (异步)
-     * 审批通过前先检查工会是否满员，避免申请状态已更新但成员无法加入的情况。
+     * 审批通过前先检查公会是否满员，避免申请状态已更新但成员无法加入的情况。
      */
     public CompletableFuture<Boolean> processApplicationAsync(int applicationId, GuildApplication.ApplicationStatus status, UUID processorUuid) {
         return getApplicationByIdAsync(applicationId).thenCompose(application -> {
@@ -1346,7 +1346,7 @@ public class GuildService {
                     return CompletableFuture.completedFuture(false);
                 }
                 
-                // 审批通过前预检查工会人数上限
+                // 审批通过前预检查公会人数上限
                 if (status == GuildApplication.ApplicationStatus.APPROVED) {
                     return isGuildFullAsync(application.getGuildId()).thenCompose(isFull -> {
                         if (isFull) {
@@ -1466,7 +1466,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会申请列表 (异步)
+     * 获取公会申请列表 (异步)
      */
     public CompletableFuture<List<GuildApplication>> getGuildApplicationsAsync(int guildId) {
         return CompletableFuture.supplyAsync(() -> {
@@ -1493,7 +1493,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会申请列表 (同步包装器)
+     * 获取公会申请列表 (同步包装器)
      */
     public List<GuildApplication> getGuildApplications(int guildId) {
         try {
@@ -1598,7 +1598,7 @@ public class GuildService {
      }
      
      /**
-      * 设置工会家 (异步)
+      * 设置公会家 (异步)
       */
      public CompletableFuture<Boolean> setGuildHomeAsync(int guildId, org.bukkit.Location location, UUID requesterUuid) {
          return getGuildByIdAsync(guildId).thenCompose(guild -> {
@@ -1644,7 +1644,7 @@ public class GuildService {
      }
      
      /**
-      * 设置工会家 (同步包装器)
+      * 设置公会家 (同步包装器)
       */
      public boolean setGuildHome(int guildId, org.bukkit.Location location, UUID requesterUuid) {
          try {
@@ -1656,7 +1656,7 @@ public class GuildService {
      }
      
      /**
-      * 获取工会家位置 (异步)
+      * 获取公会家位置 (异步)
       */
      public CompletableFuture<org.bukkit.Location> getGuildHomeAsync(int guildId) {
          return getGuildByIdAsync(guildId).thenApply(guild -> {
@@ -1675,7 +1675,7 @@ public class GuildService {
      }
      
      /**
-      * 获取工会家位置 (同步包装器)
+      * 获取公会家位置 (同步包装器)
       */
      public org.bukkit.Location getGuildHome(int guildId) {
          try {
@@ -1772,12 +1772,12 @@ public class GuildService {
     
     /**
      * 处理邀请 (异步) - 直接处理邀请对象
-     * 接受邀请前先检查工会是否满员，避免邀请状态已更新但成员无法加入的情况。
+     * 接受邀请前先检查公会是否满员，避免邀请状态已更新但成员无法加入的情况。
      */
     public CompletableFuture<Boolean> processInvitationDirectAsync(GuildInvitation invitation, boolean accept) {
         DebugLog.info(logger, "[Process-Debug] Starting invitation processing: id=" + invitation.getId() + ", guildId=" + invitation.getGuildId() + ", target=" + invitation.getTargetUuid() + ", accept=" + accept);
         
-        // 接受邀请前预检查工会人数上限
+        // 接受邀请前预检查公会人数上限
         if (accept) {
             return isGuildFullAsync(invitation.getGuildId()).thenCompose(isFull -> {
                 if (isFull) {
@@ -2060,7 +2060,7 @@ public class GuildService {
     }
     
     /**
-     * 清理过期的工会邀请 (异步) - 将过期邀请状态更新为EXPIRED
+     * 清理过期的公会邀请 (异步) - 将过期邀请状态更新为EXPIRED
      * 建议定时调用，避免数据库中积累过多过期邀请
      */
     public CompletableFuture<Integer> cleanupExpiredInvitationsAsync() {
@@ -2114,7 +2114,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会成员 (异步) - 重载方法，接受guildId参数
+     * 获取公会成员 (异步) - 重载方法，接受guildId参数
      */
     public CompletableFuture<GuildMember> getGuildMemberAsync(int guildId, UUID playerUuid) {
          return CompletableFuture.supplyAsync(() -> {
@@ -2141,7 +2141,7 @@ public class GuildService {
      }
      
      /**
-      * 更新工会描述 (异步)
+      * 更新公会描述 (异步)
       */
      public CompletableFuture<Boolean> updateGuildDescriptionAsync(int guildId, String description) {
          return CompletableFuture.supplyAsync(() -> {
@@ -2164,10 +2164,10 @@ public class GuildService {
          });
      }
      
-     // ==================== 工会关系系统 ====================
+     // ==================== 公会关系系统 ====================
      
      /**
-      * 创建工会关系 (异步)
+      * 创建公会关系 (异步)
       */
      public CompletableFuture<Boolean> createGuildRelationAsync(int guild1Id, int guild2Id, String guild1Name, String guild2Name,
                                                               GuildRelation.RelationType type, UUID initiatorUuid, String initiatorName) {
@@ -2211,7 +2211,7 @@ public class GuildService {
      }
      
      /**
-      * 更新工会关系状态 (异步)
+      * 更新公会关系状态 (异步)
       */
      public CompletableFuture<Boolean> updateGuildRelationStatusAsync(int relationId, GuildRelation.RelationStatus status) {
          return getGuildRelationByIdAsync(relationId).thenCompose(relation -> {
@@ -2255,7 +2255,7 @@ public class GuildService {
      }
      
      /**
-      * 获取工会关系 (异步)
+      * 获取公会关系 (异步)
       */
      public CompletableFuture<GuildRelation> getGuildRelationAsync(int guild1Id, int guild2Id) {
          return CompletableFuture.supplyAsync(() -> {
@@ -2284,7 +2284,7 @@ public class GuildService {
      }
      
      /**
-      * 获取工会的所有关系 (异步)
+      * 获取公会的所有关系 (异步)
       */
      public CompletableFuture<List<GuildRelation>> getGuildRelationsAsync(int guildId) {
          return CompletableFuture.supplyAsync(() -> {
@@ -2312,7 +2312,7 @@ public class GuildService {
      }
      
      /**
-      * 按 ID 获取工会关系 (异步)
+      * 按 ID 获取公会关系 (异步)
       */
      public CompletableFuture<GuildRelation> getGuildRelationByIdAsync(int relationId) {
          return CompletableFuture.supplyAsync(() -> {
@@ -2335,7 +2335,7 @@ public class GuildService {
      }
 
      /**
-      * 删除工会关系 (异步)
+      * 删除公会关系 (异步)
       */
      public CompletableFuture<Boolean> deleteGuildRelationAsync(int relationId) {
          return getGuildRelationByIdAsync(relationId).thenCompose(relation -> {
@@ -2373,10 +2373,10 @@ public class GuildService {
          });
      }
      
-     // ==================== 工会经济系统 ====================
+     // ==================== 公会经济系统 ====================
      
      /**
-      * 初始化工会经济 (异步)
+      * 初始化公会经济 (异步)
       */
      public CompletableFuture<Boolean> initializeGuildEconomyAsync(int guildId) {
          return CompletableFuture.supplyAsync(() -> {
@@ -2400,7 +2400,7 @@ public class GuildService {
      }
      
      /**
-      * 获取工会经济信息 (异步)
+      * 获取公会经济信息 (异步)
       */
      public CompletableFuture<GuildEconomy> getGuildEconomyAsync(int guildId) {
          return CompletableFuture.supplyAsync(() -> {
@@ -2426,7 +2426,7 @@ public class GuildService {
      }
      
      /**
-      * 更新工会经济 (异步)
+      * 更新公会经济 (异步)
       */
      public CompletableFuture<Boolean> updateGuildEconomyAsync(int guildId, double balance, int level, double experience, double maxExperience, int maxMembers) {
          return CompletableFuture.supplyAsync(() -> {
@@ -2455,7 +2455,7 @@ public class GuildService {
      }
      
      /**
-      * 添加工会贡献记录 (异步)
+      * 添加公会贡献记录 (异步)
       */
      public CompletableFuture<Boolean> addGuildContributionAsync(int guildId, UUID playerUuid, String playerName,
                                                                double amount, GuildContribution.ContributionType type, String description) {
@@ -2485,7 +2485,7 @@ public class GuildService {
      }
      
      /**
-      * 获取工会贡献记录 (异步)
+      * 获取公会贡献记录 (异步)
       */
      public CompletableFuture<List<GuildContribution>> getGuildContributionsAsync(int guildId) {
          return CompletableFuture.supplyAsync(() -> {
@@ -2539,7 +2539,7 @@ public class GuildService {
     }
 
     /**
-     * 按玩家聚合工会净贡献（WITHDRAW 为负，其余为正）。
+     * 按玩家聚合公会净贡献（WITHDRAW 为负，其余为正）。
      * 返回 Map&lt;playerUuid, netAmount&gt;。
      */
     public CompletableFuture<Map<UUID, Double>> getGuildContributionNetByPlayerAsync(int guildId) {
@@ -2574,7 +2574,7 @@ public class GuildService {
     }
 
     /**
-     * 获取工会中各成员的存款总额（聚合查询，仅 DEPOSIT 类型）
+     * 获取公会中各成员的存款总额（聚合查询，仅 DEPOSIT 类型）
      * 返回 List<GuildContribution>，每个玩家一条，amount 为累计存款总额。
      */
     public CompletableFuture<List<GuildContribution>> getGuildContributionTotalsAsync(int guildId) {
@@ -2660,10 +2660,10 @@ public class GuildService {
          return contribution;
      }
      
-     // ==================== 工会经济管理方法 ====================
+     // ==================== 公会经济管理方法 ====================
      
      /**
-      * 更新工会余额 (异步)
+      * 更新公会余额 (异步)
       */
      public CompletableFuture<Boolean> updateGuildBalanceAsync(int guildId, double balance) {
         return updateGuildBalanceAsync(guildId, balance, null, null);
@@ -2722,7 +2722,7 @@ public class GuildService {
      }
     
     /**
-     * 更新工会等级 (异步)
+     * 更新公会等级 (异步)
      */
     public CompletableFuture<Boolean> updateGuildLevelAsync(int guildId, int level) {
         return CompletableFuture.supplyAsync(() -> {
@@ -2749,7 +2749,7 @@ public class GuildService {
     }
     
     /**
-     * 更新工会最大成员数 (异步)
+     * 更新公会最大成员数 (异步)
      */
     public CompletableFuture<Boolean> updateGuildMaxMembersAsync(int guildId, int maxMembers) {
         return CompletableFuture.supplyAsync(() -> {
@@ -2773,7 +2773,7 @@ public class GuildService {
     }
     
     /**
-     * 更新工会冻结状态 (异步)
+     * 更新公会冻结状态 (异步)
      */
     public CompletableFuture<Boolean> updateGuildFrozenStatusAsync(int guildId, boolean frozen) {
         return getGuildByIdAsync(guildId).thenCompose(guild -> {
@@ -2795,7 +2795,7 @@ public class GuildService {
                         if (affectedRows > 0) {
                             // 记录冻结状态变更日志
                             GuildLog.LogType logType = frozen ? GuildLog.LogType.GUILD_FROZEN : GuildLog.LogType.GUILD_UNFROZEN;
-                            String description = frozen ? "工会冻结" : "工会解冻";
+                            String description = frozen ? "公会冻结" : "公会解冻";
                             
                             logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
                                 logType, description, "操作: " + (frozen ? "冻结" : "解冻"));
@@ -2812,7 +2812,7 @@ public class GuildService {
     }
 
     /**
-     * 直接插入工会成员（不做已有工会检查）。
+     * 直接插入公会成员（不做已有公会检查）。
      * 仅用于建会后插入会长，以避免额外读库造成的连接争用。
      */
     private CompletableFuture<Boolean> addGuildMemberDirectAsync(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
@@ -2840,7 +2840,7 @@ public class GuildService {
     }
 
     /**
-     * 检查并自动升级工会等级
+     * 检查并自动升级公会等级
      */
     private void checkAndUpgradeGuildLevel(int guildId, double currentBalance) {
         getGuildByIdAsync(guildId).thenAccept(guild -> {
@@ -2876,7 +2876,7 @@ public class GuildService {
                                 
                                 // 记录升级日志
                                 logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
-                                    GuildLog.LogType.GUILD_LEVEL_UP, "工会升级", "新等级: " + newLevel + ", 新最大成员数: " + newMaxMembers);
+                                    GuildLog.LogType.GUILD_LEVEL_UP, "公会升级", "新等级: " + newLevel + ", 新最大成员数: " + newMaxMembers);
                                 
                                 return true;
                             }
@@ -2932,7 +2932,7 @@ public class GuildService {
     
     /**
      * 获取全局最大成员数上限（从 config.yml 的 guild.max-members 读取）。
-     * 作为所有工会的绝对上限，即使等级系统允许更多成员也不能超过此值。
+     * 作为所有公会的绝对上限，即使等级系统允许更多成员也不能超过此值。
      */
     private int getGlobalMaxMembers() {
         try {
@@ -2943,9 +2943,9 @@ public class GuildService {
     }
     
     /**
-     * 获取工会的有效最大成员数。
-     * 取工会自身存储的 max_members（由等级决定）与全局配置上限的较小值。
-     * 对于已超限的存量工会，此方法仅影响新成员加入，不会踢出已有成员。
+     * 获取公会的有效最大成员数。
+     * 取公会自身存储的 max_members（由等级决定）与全局配置上限的较小值。
+     * 对于已超限的存量公会，此方法仅影响新成员加入，不会踢出已有成员。
      */
     public int getEffectiveMaxMembers(Guild guild) {
         int guildMax = guild.getMaxMembers();
@@ -2954,7 +2954,7 @@ public class GuildService {
     }
     
     /**
-     * 检查工会是否已满员 (异步)
+     * 检查公会是否已满员 (异步)
      * 用于在审批申请/接受邀请前预检查，避免状态已更新但成员无法加入的情况。
      */
     public CompletableFuture<Boolean> isGuildFullAsync(int guildId) {
@@ -2967,7 +2967,7 @@ public class GuildService {
     }
     
     /**
-     * 通知工会成员升级成功
+     * 通知公会成员升级成功
      */
     private void notifyGuildMembersOfUpgrade(int guildId, int newLevel, int newMaxMembers) {
         getGuildMembersAsync(guildId).thenAccept(members -> {
@@ -2976,7 +2976,7 @@ public class GuildService {
                 Player player = Bukkit.getPlayer(member.getPlayerUuid());
                 if (player != null && player.isOnline()) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
-                        String message = plugin.getLanguageManager().getCoreMessage(player, "economy.level-up", "&a工会升级成功！当前等级：{level}", "{level}", String.valueOf(newLevel), "{max_members}", String.valueOf(newMaxMembers));
+                        String message = plugin.getLanguageManager().getCoreMessage(player, "economy.level-up", "&a公会升级成功！当前等级：{level}", "{level}", String.valueOf(newLevel), "{max_members}", String.valueOf(newMaxMembers));
                         player.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                     });
                 }
@@ -2987,10 +2987,10 @@ public class GuildService {
         });
     }
     
-    // ==================== 工会日志系统 ====================
+    // ==================== 公会日志系统 ====================
     
     /**
-     * 记录工会日志 (异步)
+     * 记录公会日志 (异步)
      */
     public CompletableFuture<Boolean> logGuildActionAsync(int guildId, String guildName, String playerUuid, 
                                                         String playerName, GuildLog.LogType logType, 
@@ -3022,7 +3022,7 @@ public class GuildService {
     }
     
     /**
-     * 记录工会日志 (同步包装器)
+     * 记录公会日志 (同步包装器)
      */
     public boolean logGuildAction(int guildId, String guildName, String playerUuid, String playerName, 
                                 GuildLog.LogType logType, String description, String details) {
@@ -3035,7 +3035,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会日志列表 (异步)
+     * 获取公会日志列表 (异步)
      */
     public CompletableFuture<List<GuildLog>> getGuildLogsAsync(int guildId, int limit, int offset) {
         return CompletableFuture.supplyAsync(() -> {
@@ -3065,7 +3065,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会日志列表 (同步包装器)
+     * 获取公会日志列表 (同步包装器)
      */
     public List<GuildLog> getGuildLogs(int guildId, int limit, int offset) {
         try {
@@ -3077,7 +3077,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会日志总数 (异步)
+     * 获取公会日志总数 (异步)
      */
     public CompletableFuture<Integer> getGuildLogsCountAsync(int guildId) {
         return CompletableFuture.supplyAsync(() -> {
@@ -3103,7 +3103,7 @@ public class GuildService {
     }
     
     /**
-     * 获取工会日志总数 (同步包装器)
+     * 获取公会日志总数 (同步包装器)
      */
     public int getGuildLogsCount(int guildId) {
         try {

@@ -5,7 +5,7 @@
   <artifactId>guild-plugin</artifactId>
   <name>Guild Plugin</name>
   <version>${guild.version}</version>
-  <description>一个功能完整的我的世界工会插件</description>
+  <description>一个功能完整的我的世界公会插件</description>
   <build>
     <plugins>
       <plugin>

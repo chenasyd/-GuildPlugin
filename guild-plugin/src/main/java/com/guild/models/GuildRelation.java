@@ -6,7 +6,7 @@ import com.guild.core.language.LanguageManager;
 import com.guild.GuildPlugin;
 
 /**
- * 工会关系数据模型
+ * 公会关系数据模型
  */
 public class GuildRelation {
     
@@ -243,14 +243,14 @@ public class GuildRelation {
     }
     
     /**
-     * 获取另一个工会的ID
+     * 获取另一个公会的ID
      */
     public int getOtherGuildId(int currentGuildId) {
         return guild1Id == currentGuildId ? guild2Id : guild1Id;
     }
     
     /**
-     * 获取另一个工会的名称
+     * 获取另一个公会的名称
      */
     public String getOtherGuildName(int currentGuildId) {
         return guild1Id == currentGuildId ? guild2Name : guild1Name;

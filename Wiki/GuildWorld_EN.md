@@ -7,7 +7,7 @@ Admins build guild-war maps in void worlds, export presets (`.gws` + `.yml`), an
 ## Prerequisites
 
 - Permission: `guild.admin.world`
-- Command: `/guildworld` (aliases: `gworld` / `工会世界`)
+- Command: `/guildworld` (aliases: `gworld` / `公会世界`)
 - Folia: only versions listed in `ServerUtils.FOLIA_SUPPORTED_VERSIONS`; otherwise create/load/unload/delete are disabled
 - Paper/Spigot: always available
 

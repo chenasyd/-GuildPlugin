@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 工会日志查看GUI
+ * 公会日志查看GUI
  */
 public class GuildLogsGUI implements GUI {
 
@@ -385,7 +385,7 @@ public class GuildLogsGUI implements GUI {
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (clickedItem == null || !clickedItem.hasItemMeta()) return;
 
-        // 返回工会设置 (槽位49)
+        // 返回公会设置 (槽位49)
         if (slot == 49) {
             GuildSettingsGUI settingsGUI = new GuildSettingsGUI(plugin, guild, player);
             plugin.getGuiManager().openGUI(player, settingsGUI);

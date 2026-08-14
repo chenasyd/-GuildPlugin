@@ -133,29 +133,29 @@ enabled: true
 
 bindings:
   # ── 主要功能 GUI ──
-  MainGuildGUI: "54-default"          # 工会主界面（入口）
-  GuildInfoGUI: false                  # 工会信息
-  GuildSettingsGUI: false              # 工会设置
-  MemberGuildGUI: false                # 成员列表（工会内）
-  GuildFundsGUI: false                 # 工会资金
-  GuildLogsGUI: false                  # 工会日志
-  GuildListGUI: false                  # 工会列表（浏览所有工会）
-  GuildRelationsGUI: false             # 工会关系
-  CreateGuildGUI: false                # 创建工会
+  MainGuildGUI: "54-default"          # 公会主界面（入口）
+  GuildInfoGUI: false                  # 公会信息
+  GuildSettingsGUI: false              # 公会设置
+  MemberGuildGUI: false                # 成员列表（公会内）
+  GuildFundsGUI: false                 # 公会资金
+  GuildLogsGUI: false                  # 公会日志
+  GuildListGUI: false                  # 公会列表（浏览所有公会）
+  GuildRelationsGUI: false             # 公会关系
+  CreateGuildGUI: false                # 创建公会
   EconomyManagementGUI: false          # 经济管理
 
   # ── 管理/操作 GUI ──
   ApplicationManagementGUI: false      # 申请管理
   MemberManagementGUI: false           # 成员管理
   MemberDetailsGUI: false              # 成员详情
-  GuildDetailGUI: false                # 工会详情（查看其他工会）
-  GuildFilterGUI: false                # 工会筛选
+  GuildDetailGUI: false                # 公会详情（查看其他公会）
+  GuildFilterGUI: false                # 公会筛选
   GuildPermissionsGUI: false           # 权限设置
-  GuildListManagementGUI: false        # 工会列表管理
+  GuildListManagementGUI: false        # 公会列表管理
 
   # ── 确认对话框 ──
-  ConfirmDeleteGuildGUI: false         # 确认解散工会
-  ConfirmLeaveGuildGUI: false          # 确认退出工会
+  ConfirmDeleteGuildGUI: false         # 确认解散公会
+  ConfirmLeaveGuildGUI: false          # 确认退出公会
   ConfirmChangeFundsGUI: false         # 确认资金操作
 
   # ── 成员操作 GUI ──
@@ -165,7 +165,7 @@ bindings:
   InviteMemberGUI: false               # 邀请成员
 
   # ── 管理员/系统 GUI ──
-  AdminGuildGUI: false                 # 管理员工会管理
+  AdminGuildGUI: false                 # 管理员公会管理
   SystemSettingsGUI: false             # 系统设置
 
   # ── 关系 GUI ──
@@ -173,9 +173,9 @@ bindings:
   RelationManagementGUI: false         # 关系管理
 
   # ── 输入 GUI ──
-  GuildTagInputGUI: false              # 工会标签输入
-  GuildDescriptionInputGUI: false      # 工会描述输入
-  GuildNameInputGUI: false             # 工会名称输入
+  GuildTagInputGUI: false              # 公会标签输入
+  GuildDescriptionInputGUI: false      # 公会描述输入
+  GuildNameInputGUI: false             # 公会名称输入
 
 # ============================================================
 # 叠加装饰层配置（可选）

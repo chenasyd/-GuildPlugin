@@ -483,7 +483,7 @@ public class MemberDetailsGUI implements GUI {
     }
 
     /**
-     * 获取在工会时长
+     * 获取在公会时长
      */
     private String getGuildDuration(java.time.LocalDateTime joinDateTime) {
         if (joinDateTime == null) return languageManager.getGuiMessage(viewer, "gui.member-management.member-details.unknown", "Unknown");

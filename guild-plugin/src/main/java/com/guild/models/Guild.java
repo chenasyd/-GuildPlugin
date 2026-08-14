@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 
 /**
- * 工会数据模型
+ * 公会数据模型
  */
 public class Guild {
     
@@ -201,7 +201,7 @@ public class Guild {
     }
     
     /**
-     * 检查工会是否设置了家
+     * 检查公会是否设置了家
      */
     public boolean hasHome() {
         return homeWorld != null && !homeWorld.isEmpty();

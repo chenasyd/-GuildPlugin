@@ -59,7 +59,7 @@ public class PlayerListener implements Listener {
             plugin.getFileLogger().logSystem(detail);
         }
 
-        // 检查工会战争状态
+        // 检查公会战争状态
         checkWarStatus(player);
         
         // 检查待处理的申请和邀请通知
@@ -77,19 +77,19 @@ public class PlayerListener implements Listener {
     }
     
     /**
-     * 检查工会战争状态并发送通知
+     * 检查公会战争状态并发送通知
      */
     private void checkWarStatus(org.bukkit.entity.Player player) {
-        // 异步检查玩家的工会
+        // 异步检查玩家的公会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             if (guild != null) {
-                // 检查工会的所有关系
+                // 检查公会的所有关系
                 plugin.getGuildService().getGuildRelationsAsync(guild.getId()).thenAccept(relations -> {
                     // 确保在玩家所在区域线程中执行
                     CompatibleScheduler.runTask(plugin, player, () -> {
                         for (com.guild.models.GuildRelation relation : relations) {
                             if (relation.isWar()) {
-                                String message = languageManager.getCoreMessage(player, "relations.war-notification", "&4[工会战争] &c您的工会与 {guild} 处于开战状态！", "{guild}", relation.getOtherGuildName(guild.getId()));
+                                String message = languageManager.getCoreMessage(player, "relations.war-notification", "&4[公会战争] &c您的公会与 {guild} 处于开战状态！", "{guild}", relation.getOtherGuildName(guild.getId()));
                                 player.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                             }
                         }

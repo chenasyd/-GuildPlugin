@@ -29,10 +29,10 @@ public final class NotifyUtils {
     private NotifyUtils() {}
 
     /**
-     * 发送实时通知给工会会长（有新申请时）
+     * 发送实时通知给公会会长（有新申请时）
      */
     public static void notifyLeaderNewApplication(GuildPlugin plugin, Guild guild, GuildApplication application) {
-        // 获取工会会长
+        // 获取公会会长
         plugin.getGuildService().getGuildMemberAsync(guild.getLeaderUuid()).thenAccept(member -> {
             if (member == null) return;
 
@@ -68,11 +68,11 @@ public final class NotifyUtils {
         
         // 标题
         String title = plugin.getLanguageManager().getMessage(target, "invite.received-title",
-            "&6&l═══ 工会邀请 ═══");
+            "&6&l═══ 公会邀请 ═══");
         
         // 主消息（公会名称带颜色）
         String mainMsg = plugin.getLanguageManager().getMessage(target, "invite.received",
-            "&e{inviter} &7邀请您加入工会: &f{guild}",
+            "&e{inviter} &7邀请您加入公会: &f{guild}",
             "{inviter}", inviter.getName(), "{guild}", guildName);
         
         // 接受按钮
@@ -134,7 +134,7 @@ public final class NotifyUtils {
         // 异步检查
         plugin.getGuildService().getGuildMemberAsync(player.getUniqueId()).thenAccept(member -> {
             if (member == null) {
-                // 玩家没有工会，检查是否有待处理邀请
+                // 玩家没有公会，检查是否有待处理邀请
                 notifyPendingInvitations(plugin, player);
             } else if (member.getRole() == GuildMember.Role.LEADER) {
                 // 玩家是会长，检查是否有待处理申请
@@ -194,7 +194,7 @@ public final class NotifyUtils {
             
             // 在显示邀请前，再次检查玩家是否已经加入公会
             plugin.getGuildService().getGuildMemberAsync(player.getUniqueId()).thenAccept(member -> {
-                // 如果玩家已经是工会成员，不显示邀请通知
+                // 如果玩家已经是公会成员，不显示邀请通知
                 if (member != null) {
                     return;
                 }
@@ -208,7 +208,7 @@ public final class NotifyUtils {
                 
                 CompatibleScheduler.runTask(plugin, player, () -> {
                     String msg = plugin.getLanguageManager().getMessage(player, "notify.pending-invitations",
-                        "&6[工会邀请] &e您有 &a{count} &e个待处理的工会邀请！",
+                        "&6[公会邀请] &e您有 &a{count} &e个待处理的公会邀请！",
                         "{count}", String.valueOf(validInvitations.size()));
                     
                     player.sendMessage(ColorUtils.colorize("&a"));
@@ -279,15 +279,15 @@ public final class NotifyUtils {
                 
                 if (status == GuildApplication.ApplicationStatus.APPROVED) {
                     String msg = plugin.getLanguageManager().getMessage(applicant, "notify.application-approved",
-                        "&a[工会通知] &f您的加入申请已被 &a批准&f！",
+                        "&a[公会通知] &f您的加入申请已被 &a批准&f！",
                         "{guild}", guildName);
                     applicant.sendMessage(ColorUtils.colorize("&a"));
                     applicant.sendMessage(ColorUtils.colorize(msg));
                     sendActionBar(plugin, applicant, plugin.getLanguageManager().getMessage(applicant, 
-                        "notify.application-approved-actionbar", "&a您已成功加入工会 &f{guild}", "{guild}", guild.getName()));
+                        "notify.application-approved-actionbar", "&a您已成功加入公会 &f{guild}", "{guild}", guild.getName()));
                 } else {
                     String msg = plugin.getLanguageManager().getMessage(applicant, "notify.application-rejected",
-                        "&c[工会通知] &f您的加入申请已被 &c拒绝&f！",
+                        "&c[公会通知] &f您的加入申请已被 &c拒绝&f！",
                         "{guild}", guildName);
                     applicant.sendMessage(ColorUtils.colorize("&a"));
                     applicant.sendMessage(ColorUtils.colorize(msg));
@@ -310,13 +310,13 @@ public final class NotifyUtils {
                 
                 if (accepted) {
                     String msg = plugin.getLanguageManager().getMessage(inviter, "notify.invitation-accepted",
-                        "&a[工会通知] &f{target} &a已接受&f您的邀请加入了工会！",
+                        "&a[公会通知] &f{target} &a已接受&f您的邀请加入了公会！",
                         "{target}", targetName, "{guild}", guildName);
                     inviter.sendMessage(ColorUtils.colorize("&a"));
                     inviter.sendMessage(ColorUtils.colorize(msg));
                 } else {
                     String msg = plugin.getLanguageManager().getMessage(inviter, "notify.invitation-declined",
-                        "&c[工会通知] &f{target} &c已拒绝&f您的邀请！",
+                        "&c[公会通知] &f{target} &c已拒绝&f您的邀请！",
                         "{target}", targetName);
                     inviter.sendMessage(ColorUtils.colorize("&a"));
                     inviter.sendMessage(ColorUtils.colorize(msg));

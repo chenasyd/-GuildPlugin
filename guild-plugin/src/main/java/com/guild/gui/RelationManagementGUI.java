@@ -246,7 +246,7 @@ public class RelationManagementGUI implements GUI {
         
         isLoading = true;
         
-        // 获取所有工会的关系
+        // 获取所有公会的关系
         plugin.getGuildService().getAllGuildsAsync().thenCompose(guilds -> {
             List<CompletableFuture<List<GuildRelation>>> relationFutures = new ArrayList<>();
             

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 管理员工会GUI
+ * 管理员公会GUI
  */
 public class AdminGuildGUI implements GUI {
 
@@ -56,7 +56,7 @@ public class AdminGuildGUI implements GUI {
         // 填充边框
         fillBorder(inventory);
 
-        // 工会列表管理
+        // 公会列表管理
         ItemStack guildList = createItem(
             Material.BOOKSHELF,
             ColorUtils.colorize(plugin.getLanguageManager().getGuiMessage(player, "gui.admin-gui.admin-gui-guild-list-name", "&eGuild List Management")),
@@ -115,7 +115,7 @@ public class AdminGuildGUI implements GUI {
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         switch (slot) {
-            case 20: // 工会列表管理
+            case 20: // 公会列表管理
                 openGuildListManagement(player);
                 break;
             case 22: // 经济管理
@@ -137,7 +137,7 @@ public class AdminGuildGUI implements GUI {
     }
     
     private void openGuildListManagement(Player player) {
-        // 打开工会列表管理GUI
+        // 打开公会列表管理GUI
         GuildListManagementGUI guildListGUI = new GuildListManagementGUI(plugin, player);
         plugin.getGuiManager().openGUI(player, guildListGUI);
     }

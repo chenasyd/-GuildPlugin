@@ -119,7 +119,7 @@ public class GuildWorldCommand implements CommandExecutor, TabCompleter {
     private void handleCreate(CommandSender sender, String[] args) {
         if (args.length < 2) {
             sendPrefixed(sender, "world.create.usage",
-                    "&c用法: /guildworld create <名称> [--type battle|edit|template] [--preset <预设>] [--guild <工会ID>]");
+                    "&c用法: /guildworld create <名称> [--type battle|edit|template] [--preset <预设>] [--guild <公会ID>]");
             return;
         }
         String name = args[1];
@@ -195,7 +195,7 @@ public class GuildWorldCommand implements CommandExecutor, TabCompleter {
                 "{preset}", gw.getPresetName().isEmpty() ? "-" : gw.getPresetName());
         sendPlain(sender, "world.info.spawn", "&e出生点: &f{spawn}",
                 "{spawn}", gw.getSpawn().isEmpty() ? "-" : gw.getSpawn());
-        sendPlain(sender, "world.info.guild", "&e关联工会: &f{guild}",
+        sendPlain(sender, "world.info.guild", "&e关联公会: &f{guild}",
                 "{guild}", gw.getOwnerGuildId().isEmpty() ? "-" : gw.getOwnerGuildId());
         sendPlain(sender, "world.info.created", "&e创建时间: &f{time}",
                 "{time}", fmt.format(new Date(gw.getCreatedAt())));

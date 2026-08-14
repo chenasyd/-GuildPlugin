@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 工会权限设置GUI
+ * 公会权限设置GUI
  */
 public class GuildPermissionsGUI implements GUI {
 

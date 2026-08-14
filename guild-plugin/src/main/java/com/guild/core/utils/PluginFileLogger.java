@@ -24,13 +24,13 @@ import java.util.logging.Logger;
  * <pre>
  * [2026-07-26 19:30:15] [COMMAND] [Player:Steve] /guild create MyGuild
  * [2026-07-26 19:30:16] [GUI] [Player:Steve] 打开 MainGuildGUI
- * [2026-07-26 19:30:17] [QUERY] [System] 查询工会列表 page=1
+ * [2026-07-26 19:30:17] [QUERY] [System] 查询公会列表 page=1
  * [2026-07-26 19:30:18] [ADMIN] [Console] /guildadmin delete TestGuild
  * </pre>
  *
  * <h3>日志类别：</h3>
  * <ul>
- *   <li>COMMAND — 玩家执行工会指令</li>
+ *   <li>COMMAND — 玩家执行公会指令</li>
  *   <li>ADMIN — 管理员执行管理指令</li>
  *   <li>GUI — GUI 打开/关闭/点击操作</li>
  *   <li>QUERY — 数据查询操作</li>

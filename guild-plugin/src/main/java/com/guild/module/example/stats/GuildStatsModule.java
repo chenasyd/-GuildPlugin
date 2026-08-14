@@ -406,7 +406,7 @@ public class GuildStatsModule implements GuildModule {
     private void openStatsOverview(Player player, Object... ctx) {
         Guild guild = extractGuild(ctx);
         if (guild == null) {
-            context.sendMessage(player, "stats.error.no-guild", "&c无法获取工会信息");
+            context.sendMessage(player, "stats.error.no-guild", "&c无法获取公会信息");
             return;
         }
 

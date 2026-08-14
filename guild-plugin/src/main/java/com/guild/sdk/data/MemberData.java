@@ -3,7 +3,7 @@ package com.guild.sdk.data;
 import java.util.UUID;
 
 /**
- * 工会成员数据传输对象（只读）
+ * 公会成员数据传输对象（只读）
  */
 public class MemberData {
 

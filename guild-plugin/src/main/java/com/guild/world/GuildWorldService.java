@@ -253,7 +253,7 @@ public class GuildWorldService {
      * @param worldName   世界名（自动加 {@link #namePrefix} 前缀）
      * @param type        世界类型
      * @param presetName  预设名（预设系统下期实现，本期仅记录）
-     * @param ownerGuildId 关联工会 ID（可为空）
+     * @param ownerGuildId 关联公会 ID（可为空）
      * @param seed        种子（可为空）
      */
     public CompletableFuture<GuildWorld> createVoidWorld(String worldName, WorldType type,
@@ -957,7 +957,7 @@ public class GuildWorldService {
     }
 
     /**
-     * 创建战场实例并返回出生点（供工会战使用）。
+     * 创建战场实例并返回出生点（供公会战使用）。
      */
     public CompletableFuture<ArenaCreateResult> createArenaFromPreset(String worldName, String presetName) {
         PresetService.PresetMeta meta = presets.get(presetName);

@@ -1,6 +1,6 @@
 package com.guild.war.model;
 
-/** 工会战对局阶段。 */
+/** 公会战对局阶段。 */
 public enum WarPhase {
     /** 已发起，等待对方接受 */
     PENDING,

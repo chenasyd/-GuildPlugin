@@ -19,7 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 /**
- * 工会标签输入GUI
+ * 公会标签输入GUI
  */
 public class GuildTagInputGUI implements GUI {
 
@@ -233,7 +233,7 @@ public class GuildTagInputGUI implements GUI {
      * 处理确认
      */
     private void handleConfirm(Player player) {
-        // 返回工会设置GUI
+        // 返回公会设置GUI
         plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
     }
     
@@ -241,7 +241,7 @@ public class GuildTagInputGUI implements GUI {
      * 处理取消
      */
     private void handleCancel(Player player) {
-        // 返回工会设置GUI
+        // 返回公会设置GUI
         plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
     }
     

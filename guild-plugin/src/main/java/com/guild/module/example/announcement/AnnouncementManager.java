@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
- * 工会公告管理器 - 管理所有工会的公告数据
+ * 公会公告管理器 - 管理所有公会的公告数据
  * <p>
  * 存储结构：guildId -> List&lt;Announcement&gt;
  * 使用 ConcurrentHashMap 保证线程安全
@@ -30,10 +30,10 @@ import java.util.logging.Logger;
  */
 public class AnnouncementManager {
 
-    /** 工会ID -> 该工会的公告列表（按创建时间倒序，最新的在前） */
+    /** 公会ID -> 该公会的公告列表（按创建时间倒序，最新的在前） */
     private final Map<Integer, List<Announcement>> announcements = new ConcurrentHashMap<>();
 
-    /** 每个工会最大公告数量限制 */
+    /** 每个公会最大公告数量限制 */
     private static final int MAX_ANNOUNCEMENTS_PER_GUILD = 10;
 
     private final Gson gson;
@@ -136,7 +136,7 @@ public class AnnouncementManager {
     }
 
     /**
-     * 获取工会的所有公告（按时间倒序）
+     * 获取公会的所有公告（按时间倒序）
      */
     public List<Announcement> getAnnouncements(int guildId) {
         List<Announcement> list = announcements.get(guildId);
@@ -194,14 +194,14 @@ public class AnnouncementManager {
     }
 
     /**
-     * 获取指定工会的公告数量
+     * 获取指定公会的公告数量
      */
     public int getCount(int guildId) {
         List<Announcement> list = announcements.get(guildId);
         return list != null ? list.size() : 0;
     }
 
-    /** 清除某个工会的所有公告（工会删除时调用） */
+    /** 清除某个公会的所有公告（公会删除时调用） */
     public void clearByGuild(int guildId) {
         List<Announcement> removed = announcements.remove(guildId);
         if (removed != null) {

@@ -26,7 +26,7 @@ import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 
 /**
- * 工会设置GUI - 支持多页布局
+ * 公会设置GUI - 支持多页布局
  * <p>
  * 布局设计：
  * <ul>
@@ -98,7 +98,7 @@ public class GuildSettingsGUI implements GUI {
     public String getTitle() {
         String baseTitle = ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-settings.guild-settings-title",
                 "&6Guild Settings - {guild_name}", "{guild_name}",
-                guild.getName() != null ? guild.getName() : "未知工会"));
+                guild.getName() != null ? guild.getName() : "未知公会"));
         if (totalPages > 1) {
             baseTitle += ColorUtils.colorize(" &7(" +
                     languageManager.getGuiIndexedMessage(
@@ -248,18 +248,18 @@ public class GuildSettingsGUI implements GUI {
                 else if (clickType == ClickType.RIGHT) handleKickMember(player);
                 else if (clickType == ClickType.SHIFT_LEFT) plugin.getGuiManager().openGUI(player, new PromoteMemberGUI(plugin, guild, player));
                 break;
-            case 13: // 设置工会家
+            case 13: // 设置公会家
                 handleSetHome(player);
                 break;
-            case 28: // 工会资金
+            case 28: // 公会资金
                 handleGuildFunds(player);
                 break;
             case 29: // 预留扩展（顶替原关系管理入口）
                 break;
-            case 31: // 工会日志
+            case 31: // 公会日志
                 if (clickType == ClickType.LEFT) handleGuildLogs(player);
                 break;
-            case 33: // 工会家传送
+            case 33: // 公会家传送
                 handleHomeTeleport(player);
                 break;
             case 36: // 删除

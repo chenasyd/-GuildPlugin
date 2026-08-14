@@ -14,7 +14,7 @@ public class VariableTestUtils {
     /**
      * 测试GUI变量替换
      * @param plugin 插件实例
-     * @param guild 工会对象
+     * @param guild 公会对象
      * @param player 玩家对象
      */
     public static void testGUIVariables(GuildPlugin plugin, Guild guild, Player player) {
@@ -22,15 +22,15 @@ public class VariableTestUtils {
         
         // 测试基础变量
         String[] testTexts = {
-            "工会名称: {guild_name}",
-            "工会标签: {guild_tag}",
-            "工会描述: {guild_description}",
-            "工会ID: {guild_id}",
+            "公会名称: {guild_name}",
+            "公会标签: {guild_tag}",
+            "公会描述: {guild_description}",
+            "公会ID: {guild_id}",
             "会长: {leader_name}",
-            "工会等级: {guild_level}",
-            "工会资金: {guild_balance_formatted}",
+            "公会等级: {guild_level}",
+            "公会资金: {guild_balance_formatted}",
             "最大成员: {guild_max_members}",
-            "工会状态: {guild_frozen}",
+            "公会状态: {guild_frozen}",
             "创建时间: {guild_created_date}",
             "成员数量: {member_count}/{guild_max_members}",
             "升级需求: {guild_next_level_requirement}",
@@ -95,13 +95,13 @@ public class VariableTestUtils {
     
     /**
      * 测试PlaceholderUtils
-     * @param guild 工会对象
+     * @param guild 公会对象
      * @param player 玩家对象
      */
     public static void testPlaceholderUtils(Guild guild, Player player) {
         player.sendMessage("§6=== PlaceholderUtils测试 ===");
         
-        String testText = "工会: {guild_name}, 会长: {leader_name}, 等级: {guild_level}, 资金: {guild_balance_formatted}";
+        String testText = "公会: {guild_name}, 会长: {leader_name}, 等级: {guild_level}, 资金: {guild_balance_formatted}";
         String processed = PlaceholderUtils.replaceGuildPlaceholders(testText, guild, player);
         
         player.sendMessage("§e原始: §f" + testText);

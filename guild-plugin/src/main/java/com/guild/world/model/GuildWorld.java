@@ -19,7 +19,7 @@ public class GuildWorld {
     private String presetName = "";
     /** 出生点，格式 "x,y,z,yaw,pitch" */
     private String spawn = "";
-    /** 关联工会 ID（战斗世界） */
+    /** 关联公会 ID（战斗世界） */
     private String ownerGuildId = "";
     private long createdAt;
     private long lastActiveAt;

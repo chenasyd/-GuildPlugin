@@ -1,16 +1,16 @@
-# GuildWar — 固定地图工会战
+# GuildWar — 固定地图公会战
 
 > 语言: **中文** | [English](./GuildWar_EN.md)
 
 小型团队 PVP：发起 → 接受 → 报名 → 进场倒计时 → 激战 → 结算 → 回收战场。  
 **不涉及领地/Claim**；与外交 `RelationType.WAR` **不挂钩**。
 
-实战跑通：[工会战实战全流程引导](./GuildWar-Walkthrough.md)（[EN](./GuildWar-Walkthrough_EN.md)）。
+实战跑通：[公会战实战全流程引导](./GuildWar-Walkthrough.md)（[EN](./GuildWar-Walkthrough_EN.md)）。
 
 ## 前置
 
 - 权限：`guild.war`（玩家）、`guild.war.admin`（强制结束）
-- 命令：`/guildwar`（别名 `gwar` / `工会战`）
+- 命令：`/guildwar`（别名 `gwar` / `公会战`）
 - 依赖：`GuildWorld` 可用，且存在带 schematic 的预设
 - 发起/接受/取消/ready：会长或官员
 
@@ -48,7 +48,7 @@
 ## 流程
 
 ```text
-A官员: /guildwar challenge <工会名|标签> [--preset] [--mode first|timed|survive] [--max] [--score] [--time]
+A官员: /guildwar challenge <公会名|标签> [--preset] [--mode first|timed|survive] [--max] [--score] [--time]
 B官员: /guildwar accept
 双方成员: /guildwar join
 （超时或双方官员 /guildwar ready）→ 创建 BATTLE 世界并粘贴 → TP 到 A/B 出生点

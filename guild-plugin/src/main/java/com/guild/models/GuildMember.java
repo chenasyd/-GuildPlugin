@@ -10,7 +10,7 @@ import com.guild.core.language.LanguageManager;
 import com.guild.GuildPlugin;
 
 /**
- * 工会成员数据模型
+ * 公会成员数据模型
  */
 public class GuildMember {
     
@@ -88,7 +88,7 @@ public class GuildMember {
     }
     
     /**
-     * 工会成员角色枚举
+     * 公会成员角色枚举
      */
     public enum Role {
         LEADER,

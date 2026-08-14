@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 公告浏览GUI - 只读查看工会公告
+ * 公告浏览GUI - 只读查看公会公告
  * <p>
- * 所有工会成员均可查看，无需管理权限。
+ * 所有公会成员均可查看，无需管理权限。
  * 点击某条公告可查看完整内容。
  * <p>
  * 布局 (54槽 / 6行x9列)：
@@ -61,7 +61,7 @@ public class AnnouncementViewGUI implements GUI {
         }
         String baseTitle = ColorUtils.colorize(
                 module.getContext().getMessage("module.announcement.view.title",
-                        "&6&l工会公告"));
+                        "&6&l公会公告"));
         int totalPages = getTotalPages();
         if (totalPages > 1) {
             baseTitle += ColorUtils.colorize(" &7(" +
@@ -98,7 +98,7 @@ public class AnnouncementViewGUI implements GUI {
         } else {
             inventory.setItem(49, createBackButton(
                     module.getContext().getMessage("module.announcement.view.back", "&c返回"),
-                    module.getContext().getMessage("module.announcement.view.back-hint", "&7点击返回工会信息")));
+                    module.getContext().getMessage("module.announcement.view.back-hint", "&7点击返回公会信息")));
         }
 
         // 翻页按钮（仅列表页且多页时）
@@ -132,7 +132,7 @@ public class AnnouncementViewGUI implements GUI {
                 selectedAnnouncement = null;
                 refresh(player);
             } else {
-                // 列表页 -> 返回工会信息
+                // 列表页 -> 返回公会信息
                 module.getContext().navigateBack(player);
             }
             return;
@@ -178,7 +178,7 @@ public class AnnouncementViewGUI implements GUI {
                                     "&7暂无公告")),
                     ColorUtils.colorize("&7" +
                             module.getContext().getMessage("module.announcement.view.empty-hint",
-                                    "&7工会尚未发布任何公告")));
+                                    "&7公会尚未发布任何公告")));
             inv.setItem(22, emptyItem);
             return;
         }

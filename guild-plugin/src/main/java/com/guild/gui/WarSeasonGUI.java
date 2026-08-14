@@ -15,7 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-/** 本赛季工会战排行（轻量 GUI）。 */
+/** 本赛季公会战排行（轻量 GUI）。 */
 public final class WarSeasonGUI implements GUI {
 
     private final GuildPlugin plugin;

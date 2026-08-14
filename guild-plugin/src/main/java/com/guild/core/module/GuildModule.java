@@ -1,7 +1,7 @@
 package com.guild.core.module;
 
 /**
- * 工会插件扩展模块接口
+ * 公会插件扩展模块接口
  * <p>
  * 所有扩展模块必须实现此接口。模块的生命周期由 ModuleManager 管理：
  * <ol>

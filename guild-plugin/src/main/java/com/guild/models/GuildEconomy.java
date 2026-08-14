@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
- * 工会经济系统数据模型
+ * 公会经济系统数据模型
  */
 public class GuildEconomy {
     
@@ -125,7 +125,7 @@ public class GuildEconomy {
     }
     
     /**
-     * 升级工会
+     * 升级公会
      */
     public boolean levelUp() {
         if (canLevelUp()) {

@@ -6,7 +6,7 @@ import com.guild.core.language.LanguageManager;
 import com.guild.GuildPlugin;
 
 /**
- * 工会贡献记录数据模型
+ * 公会贡献记录数据模型
  */
 public class GuildContribution {
     

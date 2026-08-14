@@ -15,7 +15,7 @@ import org.bukkit.event.Listener;
 
 import java.util.logging.Level;
 
-/** 配置驱动的内置工会战奖励（监听 {@link WarMatchEndEvent}）。 */
+/** 配置驱动的内置公会战奖励（监听 {@link WarMatchEndEvent}）。 */
 public final class WarRewardListener implements Listener {
 
     private final GuildPlugin plugin;

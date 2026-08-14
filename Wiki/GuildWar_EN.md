@@ -10,7 +10,7 @@ Operator walkthrough: [GuildWar-Walkthrough_EN.md](./GuildWar-Walkthrough_EN.md)
 ## Prerequisites
 
 - Permissions: `guild.war` (players), `guild.war.admin` (force end)
-- Command: `/guildwar` (aliases: `gwar` / `工会战`)
+- Command: `/guildwar` (aliases: `gwar` / `公会战`)
 - Requires: GuildWorld available, and a preset that has a schematic
 - Challenge / accept / cancel / ready: leader or officer
 

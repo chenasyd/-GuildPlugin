@@ -5,8 +5,8 @@ import com.guild.core.language.LanguageManager;
 import com.guild.GuildPlugin;
 
 /**
- * 工会日志模型
- * 用于记录工会的各种操作历史
+ * 公会日志模型
+ * 用于记录公会的各种操作历史
  */
 public class GuildLog {
     private int id;

@@ -27,7 +27,7 @@ import org.geysermc.cumulus.form.SimpleForm;
 import com.guild.models.Guild;
 
 /**
- * 工会信息GUI - 支持模块扩展注入
+ * 公会信息GUI - 支持模块扩展注入
  * <p>
  * 布局设计：
  * <ul>

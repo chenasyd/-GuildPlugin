@@ -1,7 +1,7 @@
 package com.guild.sdk.event;
 
 /**
- * 通用事件数据 - 工会事件
+ * 通用事件数据 - 公会事件
  */
 public class GuildEventData {
     private final int guildId;

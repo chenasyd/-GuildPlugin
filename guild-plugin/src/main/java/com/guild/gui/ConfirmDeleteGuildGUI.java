@@ -20,7 +20,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 /**
- * 确认删除工会GUI
+ * 确认删除公会GUI
  */
 public class ConfirmDeleteGuildGUI implements GUI {
 
@@ -175,7 +175,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
         boolean isAdminForceDelete = "GuildListManagementGUI".equals(sourceGuiType);
 
         if (!isAdminForceDelete) {
-            // 正常路径：检查权限（只有当前工会会长可以删除）
+            // 正常路径：检查权限（只有当前公会会长可以删除）
             GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
             if (member == null || member.getGuildId() != guild.getId() || member.getRole() != GuildMember.Role.LEADER) {
                 String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
@@ -184,7 +184,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
             }
         }
 
-        // 删除工会（管理员强制删除走 forceDeleteGuildAsync，资金仍转至会长）
+        // 删除公会（管理员强制删除走 forceDeleteGuildAsync，资金仍转至会长）
         java.util.concurrent.CompletableFuture<Boolean> deleteFuture;
         if (isAdminForceDelete) {
             deleteFuture = plugin.getGuildService().forceDeleteGuildAsync(guild.getId(), player.getUniqueId());
@@ -203,7 +203,7 @@ public class ConfirmDeleteGuildGUI implements GUI {
                     // 使用GUIManager以确保主线程安全关闭与打开
                     plugin.getGuiManager().closeGUI(player);
                     if (isAdminForceDelete) {
-                        // 管理员强制删除后返回工会列表管理GUI
+                        // 管理员强制删除后返回公会列表管理GUI
                         plugin.getGuiManager().openGUI(player, new GuildListManagementGUI(plugin, player));
                     } else {
                         plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
@@ -221,12 +221,12 @@ public class ConfirmDeleteGuildGUI implements GUI {
      */
     private void handleCancel(Player player) {
         if ("GuildListManagementGUI".equals(sourceGuiType)) {
-            // 管理员取消删除，返回工会列表管理GUI
+            // 管理员取消删除，返回公会列表管理GUI
             plugin.getGuiManager().openGUI(player, new GuildListManagementGUI(plugin, player));
         } else if ("GuildDetailGUI".equals(sourceGuiType)) {
             plugin.getGuiManager().openGUI(player, new GuildDetailGUI(plugin, guild, player));
         } else {
-            // 默认返回工会设置GUI
+            // 默认返回公会设置GUI
             plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
         }
     }

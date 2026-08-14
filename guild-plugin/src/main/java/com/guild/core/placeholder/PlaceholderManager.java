@@ -19,7 +19,7 @@ public class PlaceholderManager {
     }
     
     /**
-     * 设置工会服务（在服务容器初始化后调用）
+     * 设置公会服务（在服务容器初始化后调用）
      */
     public void setGuildService(GuildService guildService) {
         this.guildService = guildService;

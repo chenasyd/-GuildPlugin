@@ -33,7 +33,7 @@ import com.guild.util.InviteMessageUtils;
 import com.guild.util.NotifyUtils;
 
 /**
- * 工会主命令
+ * 公会主命令
  */
 public class GuildCommand implements CommandExecutor, TabCompleter {
     

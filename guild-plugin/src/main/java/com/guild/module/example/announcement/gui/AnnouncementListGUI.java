@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 工会公告列表GUI
+ * 公会公告列表GUI
  * <p>
  * 布局 (54槽 / 6行x9列)：
  * <ul>
@@ -58,7 +58,7 @@ public class AnnouncementListGUI implements GUI {
     public String getTitle() {
         String baseTitle = ColorUtils.colorize(
                 module.getContext().getMessage("module.announcement.list.title",
-                        "&e&l工会公告管理"));
+                        "&e&l公会公告管理"));
         int totalPages = getTotalPages();
         if (totalPages > 1) {
             baseTitle += ColorUtils.colorize(" &7(" +
@@ -114,7 +114,7 @@ public class AnnouncementListGUI implements GUI {
         // 返回按钮
         inventory.setItem(49, createBackButton(
                 module.getContext().getMessage("module.announcement.list.back", "&c返回"),
-                module.getContext().getMessage("module.announcement.list.back-hint", "&7点击返回工会设置")));
+                module.getContext().getMessage("module.announcement.list.back-hint", "&7点击返回公会设置")));
 
         // 翻页按钮（如果有多页）
         if (getTotalPages() > 1) {
@@ -265,7 +265,7 @@ public class AnnouncementListGUI implements GUI {
                                 "&a&l+ 发布新公告")),
                 ColorUtils.colorize("&7" +
                         module.getContext().getMessage("module.announcement.list.create-hint",
-                                "&7点击创建新的工会公告")));
+                                "&7点击创建新的公会公告")));
     }
 
     private void setupPagination(Inventory inv) {

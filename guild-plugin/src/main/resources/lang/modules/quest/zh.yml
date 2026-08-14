@@ -44,7 +44,7 @@ module.quest.currency.tree: "公会树经验: {balance}"
 module.quest.currency.tree-level: "公会树等级: {level}"
 module.quest.currency.footer: "================"
 module.quest.back: "&c返回"
-module.quest.back-hint: "&7返回工会信息"
+module.quest.back-hint: "&7返回公会信息"
 
 # ---- GUI / runtime i18n ----
 module.quest.unknown: "未知任务"

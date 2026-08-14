@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 工会列表GUI - 仅负责搜索功能
+ * 公会列表GUI - 仅负责搜索功能
  * 搜索：按名称/标签/描述搜索，结果展示在本GUI中
  */
 public class GuildListGUI implements GUI {
@@ -77,7 +77,7 @@ public class GuildListGUI implements GUI {
     }
 
     /**
-     * 构建并发送基岩版工会列表表单（异步加载数据）
+     * 构建并发送基岩版公会列表表单（异步加载数据）
      */
     private void sendBedrockGuildList(Player player, int page) {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
@@ -125,7 +125,7 @@ public class GuildListGUI implements GUI {
                         .title(languageManager.getGuiColoredMessage(player, "gui.guild-list.bedrock-title", "&6Guild List"))
                         .content(content.toString());
 
-                // 工会按钮
+                // 公会按钮
                 List<Guild> pageGuilds = new ArrayList<>();
                 for (int i = startIndex; i < endIndex; i++) {
                     Guild g = filtered.get(i);
@@ -187,7 +187,7 @@ public class GuildListGUI implements GUI {
     }
 
     /**
-     * 发送基岩版工会详情子菜单（查看详情 / 申请加入 / 返回列表）
+     * 发送基岩版公会详情子菜单（查看详情 / 申请加入 / 返回列表）
      */
     private void sendBedrockGuildDetail(Player player, Guild targetGuild) {
         String tagStr = targetGuild.getTag() != null ? " [" + targetGuild.getTag() + "]" : "";
@@ -281,7 +281,7 @@ public class GuildListGUI implements GUI {
     }
 
     /**
-     * 加载工会列表（仅搜索筛选）
+     * 加载公会列表（仅搜索筛选）
      */
     private void loadGuilds(Inventory inventory) {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
@@ -318,7 +318,7 @@ public class GuildListGUI implements GUI {
     }
 
     /**
-     * 按搜索关键词筛选工会（名称、标签、描述）
+     * 按搜索关键词筛选公会（名称、标签、描述）
      */
     private List<Guild> searchGuilds(List<Guild> guilds) {
         if (searchQuery.isEmpty()) {
@@ -339,7 +339,7 @@ public class GuildListGUI implements GUI {
     }
 
     /**
-     * 在GUI中显示工会列表
+     * 在GUI中显示公会列表
      */
     private void displayGuildsInInventory(Inventory inventory, List<Guild> guilds) {
         int totalItems = guilds.size();

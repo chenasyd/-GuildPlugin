@@ -5,7 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-/** 工会战进入 ACTIVE 时触发（同步、不可取消）。 */
+/** 公会战进入 ACTIVE 时触发（同步、不可取消）。 */
 public final class WarMatchStartEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();

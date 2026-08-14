@@ -22,7 +22,7 @@ import com.guild.core.utils.CompatibleScheduler;
 import org.geysermc.cumulus.form.SimpleForm;
 
 /**
- * 主工会GUI - 七个主要入口
+ * 主公会GUI - 七个主要入口
  *
  * <p>支持两种渲染模式：
  * <ul>
@@ -103,7 +103,7 @@ public class MainGuildGUI implements GUI {
         // 填充边框
         fillBorder(inventory);
 
-        // 工会信息按钮
+        // 公会信息按钮
         ItemStack guildInfo = createItem(
             Material.BOOK,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-info.name", "&eGuild Info")),
@@ -130,7 +130,7 @@ public class MainGuildGUI implements GUI {
         );
         inventory.setItem(24, applicationManagement);
 
-        // 工会设置按钮
+        // 公会设置按钮
         ItemStack guildSettings = createItem(
             Material.COMPASS,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-settings.name", "&eGuild Settings")),
@@ -139,7 +139,7 @@ public class MainGuildGUI implements GUI {
         );
         inventory.setItem(29, guildSettings);
 
-        // 工会列表按钮
+        // 公会列表按钮
         ItemStack guildList = createItem(
             Material.BOOKSHELF,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-list.name", "&eGuild List")),
@@ -148,7 +148,7 @@ public class MainGuildGUI implements GUI {
         );
         inventory.setItem(31, guildList);
 
-        // 工会关系按钮
+        // 公会关系按钮
         ItemStack guildRelations = createItem(
             Material.RED_WOOL,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.guild-relations.name", "&eGuild Relations")),
@@ -157,7 +157,7 @@ public class MainGuildGUI implements GUI {
         );
         inventory.setItem(33, guildRelations);
 
-        // 创建工会按钮
+        // 创建公会按钮
         ItemStack createGuild = createItem(
             Material.EMERALD_BLOCK,
             ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.main-menu.create-guild.name", "&aCreate Guild")),
@@ -263,7 +263,7 @@ public class MainGuildGUI implements GUI {
 
         // ── 标准模式（原始行为）──────────────────────────────────
         switch (slot) {
-            case 20: // 工会信息
+            case 20: // 公会信息
                 openGuildInfoGUI(player);
                 break;
             case 22: // 成员管理
@@ -272,16 +272,16 @@ public class MainGuildGUI implements GUI {
             case 24: // 申请管理
                 openApplicationManagementGUI(player);
                 break;
-            case 29: // 工会设置
+            case 29: // 公会设置
                 openGuildSettingsGUI(player);
                 break;
-            case 31: // 工会列表
+            case 31: // 公会列表
                 openGuildListGUI(player);
                 break;
-            case 33: // 工会关系
+            case 33: // 公会关系
                 openGuildRelationsGUI(player);
                 break;
-            case 4: // 创建工会
+            case 4: // 创建公会
                 openCreateGuildGUI(player);
                 break;
         }
@@ -303,10 +303,10 @@ public class MainGuildGUI implements GUI {
     }
     
     /**
-     * 打开工会信息GUI
+     * 打开公会信息GUI
      */
     private void openGuildInfoGUI(Player player) {
-        // 检查玩家是否有工会
+        // 检查玩家是否有公会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在玩家实体线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, player, () -> {
@@ -316,7 +316,7 @@ public class MainGuildGUI implements GUI {
                     return;
                 }
 
-                // 打开工会信息GUI
+                // 打开公会信息GUI
                 GuildInfoGUI guildInfoGUI = new GuildInfoGUI(plugin, player, guild);
                 plugin.getGuiManager().openGUI(player, guildInfoGUI);
             });
@@ -327,7 +327,7 @@ public class MainGuildGUI implements GUI {
      * 打开成员管理GUI
      */
     private void openMemberManagementGUI(Player player) {
-        // 检查玩家是否有工会
+        // 检查玩家是否有公会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在玩家实体线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, player, () -> {
@@ -348,7 +348,7 @@ public class MainGuildGUI implements GUI {
      * 打开申请管理GUI
      */
     private void openApplicationManagementGUI(Player player) {
-        // 检查玩家是否有工会
+        // 检查玩家是否有公会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在玩家实体线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, player, () -> {
@@ -378,10 +378,10 @@ public class MainGuildGUI implements GUI {
     }
     
     /**
-     * 打开工会设置GUI
+     * 打开公会设置GUI
      */
     private void openGuildSettingsGUI(Player player) {
-        // 检查玩家是否有工会
+        // 检查玩家是否有公会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在玩家实体线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, player, () -> {
@@ -401,11 +401,11 @@ public class MainGuildGUI implements GUI {
                         }
 
                         if (member.getRole() == com.guild.models.GuildMember.Role.LEADER) {
-                            // 打开工会设置GUI（完整版）
+                            // 打开公会设置GUI（完整版）
                             GuildSettingsGUI guildSettingsGUI = new GuildSettingsGUI(plugin, guild, player);
                             plugin.getGuiManager().openGUI(player, guildSettingsGUI);
                         } else {
-                            // 打开成员工会GUI（简化版：仅传送家 + 离开工会）
+                            // 打开成员公会GUI（简化版：仅传送家 + 离开公会）
                             MemberGuildGUI memberGUI = new MemberGuildGUI(plugin, guild, player);
                             plugin.getGuiManager().openGUI(player, memberGUI);
                         }
@@ -416,19 +416,19 @@ public class MainGuildGUI implements GUI {
     }
     
     /**
-     * 打开工会列表GUI
+     * 打开公会列表GUI
      */
     private void openGuildListGUI(Player player) {
-        // 打开工会列表GUI
+        // 打开公会列表GUI
         GuildListGUI guildListGUI = new GuildListGUI(plugin, player);
         plugin.getGuiManager().openGUI(player, guildListGUI);
     }
     
     /**
-     * 打开工会关系GUI
+     * 打开公会关系GUI
      */
     private void openGuildRelationsGUI(Player player) {
-        // 检查玩家是否有工会
+        // 检查玩家是否有公会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在玩家实体线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, player, () -> {
@@ -448,7 +448,7 @@ public class MainGuildGUI implements GUI {
                             return;
                         }
 
-                        // 打开工会关系GUI
+                        // 打开公会关系GUI
                         GuildRelationsGUI guildRelationsGUI = new GuildRelationsGUI(plugin, guild, player);
                         plugin.getGuiManager().openGUI(player, guildRelationsGUI);
                     });
@@ -458,10 +458,10 @@ public class MainGuildGUI implements GUI {
     }
     
     /**
-     * 打开创建工会GUI
+     * 打开创建公会GUI
      */
     private void openCreateGuildGUI(Player player) {
-        // 检查玩家是否已有工会
+        // 检查玩家是否已有公会
         plugin.getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
             // 确保在玩家实体线程中执行GUI操作
             CompatibleScheduler.runTask(plugin, player, () -> {
@@ -471,7 +471,7 @@ public class MainGuildGUI implements GUI {
                     return;
                 }
 
-                // 打开创建工会GUI
+                // 打开创建公会GUI
                 CreateGuildGUI createGuildGUI = new CreateGuildGUI(plugin, player);
                 plugin.getGuiManager().openGUI(player, createGuildGUI);
             });

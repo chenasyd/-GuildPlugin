@@ -14,12 +14,12 @@ commands:
   guild:
     description: Main guild command and GUI
     usage: /guild help
-    aliases: [g, 工会]
+    aliases: [g, 公会]
     permission: guild.use
   guildadmin:
     description: Guild admin commands and GUI
     usage: /guildadmin help
-    aliases: [ga, 工会管理]
+    aliases: [ga, 公会管理]
     permission: guild.admin
   guildmodule:
     description: Hot-load/unload modules at runtime
@@ -33,12 +33,12 @@ commands:
   guildworld:
     description: Guild world management (void worlds, recovery)
     usage: /guildworld help
-    aliases: [gworld, 工会世界]
+    aliases: [gworld, 公会世界]
     permission: guild.admin.world
   guildwar:
     description: Fixed-map guild war (team PVP)
     usage: /guildwar help
-    aliases: [gwar, 工会战]
+    aliases: [gwar, 公会战]
     permission: guild.war
 
 permissions:

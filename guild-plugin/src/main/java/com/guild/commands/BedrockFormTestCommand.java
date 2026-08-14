@@ -136,7 +136,7 @@ public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
         sendForm(player.getUniqueId(), form);
     }
 
-    // ── SimpleForm 示例（模拟工会主菜单）──────────────────────────
+    // ── SimpleForm 示例（模拟公会主菜单）──────────────────────────
 
     private void sendSimpleForm(Player player) {
         SimpleForm form = SimpleForm.builder()
@@ -167,7 +167,7 @@ public class BedrockFormTestCommand implements CommandExecutor, TabCompleter {
         sendForm(player.getUniqueId(), form);
     }
 
-    // ── CustomForm 示例（模拟工会设置）────────────────────────────
+    // ── CustomForm 示例（模拟公会设置）────────────────────────────
 
     private void sendCustomForm(Player player) {
         CustomForm form = CustomForm.builder()

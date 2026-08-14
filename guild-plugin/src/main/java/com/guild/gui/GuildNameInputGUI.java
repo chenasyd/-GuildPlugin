@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 工会名称输入GUI
+ * 公会名称输入GUI
  */
 public class GuildNameInputGUI implements GUI {
 
@@ -175,7 +175,7 @@ public class GuildNameInputGUI implements GUI {
      * 处理确认
      */
     private void handleConfirm(Player player) {
-        // 检查权限（只有会长可以修改工会名称）
+        // 检查权限（只有会长可以修改公会名称）
         if (!plugin.getGuildService().isGuildLeader(player.getUniqueId(), guild.getId())) {
             String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
             player.sendMessage(ColorUtils.colorize(message));
@@ -196,7 +196,7 @@ public class GuildNameInputGUI implements GUI {
      * 处理取消
      */
     public void handleCancel(Player player) {
-        // 返回到工会设置GUI
+        // 返回到公会设置GUI
         plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
     }
     
@@ -275,14 +275,14 @@ public class GuildNameInputGUI implements GUI {
                                 player.getUniqueId().toString(),
                                 player.getName(),
                                 com.guild.models.GuildLog.LogType.GUILD_RENAMED,
-                                "工会名称从 " + currentName + " 修改为 " + newName,
+                                "公会名称从 " + currentName + " 修改为 " + newName,
                                 "原名称: " + currentName + ", 新名称: " + newName
                             );
 
-                            // 重新获取最新的工会信息
+                            // 重新获取最新的公会信息
                             plugin.getGuildService().getGuildByIdAsync(guild.getId()).thenAccept(updatedGuild -> {
                                 if (updatedGuild != null) {
-                                    // 返回到工会设置GUI（使用最新的工会信息）
+                                    // 返回到公会设置GUI（使用最新的公会信息）
                                     plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, updatedGuild, player));
                                 } else {
                                     // 如果获取失败，使用本地更新的对象

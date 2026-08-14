@@ -19,7 +19,7 @@ public final class InviteMessageUtils {
 
     public static String formatInviteReceived(GuildPlugin plugin, Player receiver, Player inviter, Guild guild) {
         String template = plugin.getLanguageManager().getMessage(receiver, "invite.received",
-            "&e{inviter} 邀请您加入工会: {guild}",
+            "&e{inviter} 邀请您加入公会: {guild}",
             "{inviter}", inviter.getName(), "{guild}", guild.getName());
         return ColorUtils.colorize(template);
     }
@@ -32,13 +32,13 @@ public final class InviteMessageUtils {
 
     public static String formatAlreadyInGuild(GuildPlugin plugin, Player player, String playerName) {
         String template = plugin.getLanguageManager().getMessage(player, "invite.already-in-guild",
-            "&c玩家 {player} 已经加入了其他工会！",
+            "&c玩家 {player} 已经加入了其他公会！",
             "{player}", playerName);
         return ColorUtils.colorize(template);
     }
 
     public static String formatInviteTitle(GuildPlugin plugin, Player player) {
         return ColorUtils.colorize(plugin.getLanguageManager().getMessage(player, "invite.title",
-            "&6=== 工会邀请 ==="));
+            "&6=== 公会邀请 ==="));
     }
 }

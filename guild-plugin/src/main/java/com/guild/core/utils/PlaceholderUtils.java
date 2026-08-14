@@ -33,9 +33,9 @@ public class PlaceholderUtils {
     }
     
     /**
-     * 替换工会相关占位符
+     * 替换公会相关占位符
      * @param text 原始文本
-     * @param guild 工会对象
+     * @param guild 公会对象
      * @param player 玩家对象
      * @return 替换后的文本
      */
@@ -48,7 +48,7 @@ public class PlaceholderUtils {
         String lang = getLanguage(player);
         
         String result = text
-            // 工会基本信息
+            // 公会基本信息
             .replace("{guild_name}", guild.getName())
             // 限制标签颜色作用域：去除方括号并在末尾追加复位码，最终会由 ColorUtils.colorize() 转义
             .replace("{guild_tag}", guild.getTag() != null ? guild.getTag().replace("[", "").replace("]", "") + "&r" : "")
@@ -57,11 +57,11 @@ public class PlaceholderUtils {
             .replace("{guild_created_time}", guild.getCreatedAt().format(DATE_FORMATTER))
             .replace("{guild_created_date}", guild.getCreatedAt().toLocalDate().toString())
             
-            // 工会领导信息
+            // 公会领导信息
             .replace("{leader_name}", guild.getLeaderName())
             .replace("{leader_uuid}", guild.getLeaderUuid().toString())
             
-            // 工会位置信息
+            // 公会位置信息
             .replace("{guild_home_world}", guild.getHomeWorld() != null ? guild.getHomeWorld() : "")
             .replace("{guild_home_x}", String.valueOf(guild.getHomeX()))
             .replace("{guild_home_y}", String.valueOf(guild.getHomeY()))
@@ -108,11 +108,11 @@ public class PlaceholderUtils {
     }
 
     /**
-     * 异步替换工会相关占位符（包含动态数据）
+     * 异步替换公会相关占位符（包含动态数据）
      * @param text 原始文本
-     * @param guild 工会对象
+     * @param guild 公会对象
      * @param player 玩家对象
-     * @param guildService 工会服务
+     * @param guildService 公会服务
      * @return 替换后的文本的CompletableFuture
      */
     public static CompletableFuture<String> replaceGuildPlaceholdersAsync(String text, Guild guild, Player player, com.guild.services.GuildService guildService) {
@@ -149,7 +149,7 @@ public class PlaceholderUtils {
      * 替换成员相关占位符
      * @param text 原始文本
      * @param member 成员对象
-     * @param guild 工会对象
+     * @param guild 公会对象
      * @param player 玩家对象（用于获取语言设置，可为null）
      * @return 替换后的文本
      */
@@ -170,7 +170,7 @@ public class PlaceholderUtils {
             .replace("{member_join_time}", member.getJoinedAt().format(DATE_FORMATTER))
             .replace("{member_join_date}", member.getJoinedAt().toLocalDate().toString())
             
-            // 工会信息
+            // 公会信息
             .replace("{guild_name}", guild != null ? guild.getName() : "")
             .replace("{guild_tag}", guild != null && guild.getTag() != null ? guild.getTag().replace("[", "").replace("]", "") + "&r" : "");
         
@@ -182,7 +182,7 @@ public class PlaceholderUtils {
      * 替换申请相关占位符
      * @param text 原始文本
      * @param applicantName 申请人名称
-     * @param guildName 工会名称
+     * @param guildName 公会名称
      * @param applyTime 申请时间
      * @return 替换后的文本
      */
@@ -226,7 +226,7 @@ public class PlaceholderUtils {
     }
     
     /**
-     * 格式化工会家位置
+     * 格式化公会家位置
      */
     private static String formatHomeLocation(Guild guild, String lang) {
         if (guild.getHomeWorld() == null) {

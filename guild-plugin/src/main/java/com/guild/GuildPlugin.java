@@ -212,7 +212,7 @@ public class GuildPlugin extends JavaPlugin {
             // 加载等级需求配置
             loadLevelRequirements();
 
-            // 注册工会服务
+            // 注册公会服务
             guildService = new GuildService(this);
             serviceContainer.register(GuildService.class, guildService);
             guildPlayerDataCache = new com.guild.core.cache.GuildPlayerDataCache(this, 3000L);
@@ -250,7 +250,7 @@ public class GuildPlugin extends JavaPlugin {
                                 guildWorldService.getWandMaterial()), this);
             }
 
-            // 工会战（依赖世界预设系统）
+            // 公会战（依赖世界预设系统）
             guildWarService = new GuildWarService(this, guildService, guildWorldService);
             guildWarAPI = new GuildWarAPIImpl(guildWarService);
             warSeasonService = new WarSeasonService(this);
@@ -350,7 +350,7 @@ public class GuildPlugin extends JavaPlugin {
                 guiManager.closeAllGUIs();
             }
 
-            // 优雅结束工会战，再卸载受管世界
+            // 优雅结束公会战，再卸载受管世界
             if (guildWarService != null) {
                 guildWarService.shutdown();
             }
@@ -415,7 +415,7 @@ public class GuildPlugin extends JavaPlugin {
             getCommand("guildworld").setTabCompleter(guildWorldCommand);
         }
 
-        // 工会战（/guildwar）
+        // 公会战（/guildwar）
         if (getCommand("guildwar") != null && guildWarService != null) {
             GuildWarCommand guildWarCommand = new GuildWarCommand(this, guildWarService);
             getCommand("guildwar").setExecutor(guildWarCommand);

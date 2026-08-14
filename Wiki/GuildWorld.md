@@ -2,12 +2,12 @@
 
 > 语言: **中文** | [English](./GuildWorld_EN.md)
 
-管理员用虚空世界制作工会战地图，导出为预设（`.gws` + `.yml`），开战时实例化战场。
+管理员用虚空世界制作公会战地图，导出为预设（`.gws` + `.yml`），开战时实例化战场。
 
 ## 前置
 
 - 权限：`guild.admin.world`
-- 命令：`/guildworld`（别名 `gworld` / `工会世界`）
+- 命令：`/guildworld`（别名 `gworld` / `公会世界`）
 - Folia：仅支持列表内版本（见 `ServerUtils.FOLIA_SUPPORTED_VERSIONS`）；不支持时 create/load/unload/delete 禁用
 - Paper/Spigot：始终可用
 
@@ -21,7 +21,7 @@
 | `schematic.max-volume` | 选区最大体积 |
 | `schematic.ignore-air` | 粘贴时跳过空气 |
 | `schematic.include-block-entities` | 导出方块实体（失败降级为仅方块） |
-| `arena.post-match` | 工会战后策略：`destroy`（默认）\| `reset`（本期等同 destroy） |
+| `arena.post-match` | 公会战后策略：`destroy`（默认）\| `reset`（本期等同 destroy） |
 
 ## 制作战图流程
 

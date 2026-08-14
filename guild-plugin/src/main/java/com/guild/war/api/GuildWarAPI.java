@@ -11,7 +11,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 工会战对外 API。
+ * 公会战对外 API。
  *
  * <p>通过 {@code GuildPlugin.getGuildWarAPI()} 或 ServiceContainer 获取。
  */

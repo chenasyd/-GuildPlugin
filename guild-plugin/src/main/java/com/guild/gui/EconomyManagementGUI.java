@@ -66,7 +66,7 @@ public class EconomyManagementGUI implements GUI {
         // 填充边框
         fillBorder(inventory);
         
-        // 设置工会列表
+        // 设置公会列表
         setupGuildList(inventory);
         
         // 设置分页按钮
@@ -191,7 +191,7 @@ public class EconomyManagementGUI implements GUI {
             currentPage++;
             refresh(player);
         } else if (slot >= 10 && slot <= 43) {
-            // 工会项目 - 检查是否在2-8列，2-5行范围内
+            // 公会项目 - 检查是否在2-8列，2-5行范围内
             int row = slot / 9;
             int col = slot % 9;
             if (row >= 1 && row <= 4 && col >= 1 && col <= 7) {

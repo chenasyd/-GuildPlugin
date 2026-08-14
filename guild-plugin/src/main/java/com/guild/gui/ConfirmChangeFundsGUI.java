@@ -22,9 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 确认变更工会资金 GUI
+ * 确认变更公会资金 GUI
  * <p>
- * 显示：工会名称、当前资金、操作类型、变更金额、新资金
+ * 显示：公会名称、当前资金、操作类型、变更金额、新资金
  * 操作类型：set（设置）、add（增加）、remove（减少）
  */
 public class ConfirmChangeFundsGUI implements GUI {
@@ -75,7 +75,7 @@ public class ConfirmChangeFundsGUI implements GUI {
             inventory.setItem(i + 8, border);
         }
 
-        // 工会信息
+        // 公会信息
         double currentBalance = guild.getBalance();
         double newBalance = calculateNewBalance(currentBalance);
         String operationName = getOperationName();

@@ -21,7 +21,7 @@ import com.guild.core.utils.ColorUtils;
 import com.guild.models.Guild;
 
 /**
- * 工会列表管理GUI
+ * 公会列表管理GUI
  */
 public class GuildListManagementGUI implements GUI {
 
@@ -67,7 +67,7 @@ public class GuildListManagementGUI implements GUI {
         // 填充边框
         fillBorder(inventory);
         
-        // 设置工会列表
+        // 设置公会列表
         setupGuildList(inventory);
         
         // 设置分页按钮
@@ -186,7 +186,7 @@ public class GuildListManagementGUI implements GUI {
             currentPage++;
             refresh(player);
         } else if (slot >= 10 && slot <= 43) {
-            // 工会项目 - 检查是否在3列布局，列 2,3,4，行 1..4 范围内
+            // 公会项目 - 检查是否在3列布局，列 2,3,4，行 1..4 范围内
             int row = slot / 9;
             int col = slot % 9;
             if (row >= 1 && row <= 4 && col >= 1 && col <= 3) {
@@ -206,16 +206,16 @@ public class GuildListManagementGUI implements GUI {
             // 查看详情
             openGuildDetailGUI(player, guild);
         } else if (clickType == ClickType.RIGHT) {
-            // 删除工会
+            // 删除公会
             deleteGuild(player, guild);
         } else if (clickType == ClickType.SHIFT_RIGHT) {
-            // 冻结/解冻工会（Shift+右键）
+            // 冻结/解冻公会（Shift+右键）
             toggleGuildFreeze(player, guild);
         }
     }
     
     private void openGuildDetailGUI(Player player, Guild guild) {
-        // 打开工会详情GUI
+        // 打开公会详情GUI
         plugin.getGuiManager().openGUI(player, new GuildDetailGUI(plugin, guild, player));
     }
     
