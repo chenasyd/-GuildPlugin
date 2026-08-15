@@ -405,10 +405,9 @@ public class MemberDetailsGUI implements GUI {
                     return;
                 }
 
-                // 确认踢出
-                String message = languageManager.getGuiMessage(player, "gui.common.confirm-kick", "&cKick {member}? Type &f/guild kick {member} confirm &cto confirm", "{member}", member.getPlayerName());
-                player.sendMessage(ColorUtils.colorize(message));
-                player.closeInventory();
+                // 打开确认踢出GUI
+                ConfirmKickMemberGUI confirmGui = new ConfirmKickMemberGUI(plugin, guild, member, player, "MemberDetailsGUI");
+                plugin.getGuiManager().openGUI(player, confirmGui);
             });
         });
     }

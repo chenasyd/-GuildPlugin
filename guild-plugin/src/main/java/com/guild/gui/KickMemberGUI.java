@@ -242,26 +242,9 @@ public class KickMemberGUI implements GUI {
             return;
         }
 
-        // 踢出成员
-        plugin.getGuildService().removeGuildMemberAsync(member.getPlayerUuid(), kicker.getUniqueId()).thenAccept(success -> {
-            if (success) {
-                String kickerMessage = languageManager.getGuiMessage(kicker, "gui.kick-member.kick.success", "&aSuccessfully kicked &e{player} &a!", "{player}", member.getPlayerName());
-                kicker.sendMessage(ColorUtils.colorize(kickerMessage));
-
-                // 通知被踢出的玩家
-                Player kickedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
-                if (kickedPlayer != null) {
-                    String kickedMessage = languageManager.getGuiMessage(kickedPlayer, "gui.kick-member.kick.kicked", "&cYou have been kicked from guild &e{guild} &c!", "{guild}", guild.getName());
-                    kickedPlayer.sendMessage(ColorUtils.colorize(kickedMessage));
-                }
-
-                // 刷新GUI
-                plugin.getGuiManager().openGUI(kicker, new KickMemberGUI(plugin, guild, kicker));
-            } else {
-                String message = languageManager.getGuiMessage(kicker, "gui.kick-member.kick.failed", "&cFailed to kick member!");
-                kicker.sendMessage(ColorUtils.colorize(message));
-            }
-        });
+        // 打开确认踢出GUI
+        ConfirmKickMemberGUI confirmGui = new ConfirmKickMemberGUI(plugin, guild, member, kicker, "KickMemberGUI");
+        plugin.getGuiManager().openGUI(kicker, confirmGui);
     }
 
     // ── 基岩版表单 ──

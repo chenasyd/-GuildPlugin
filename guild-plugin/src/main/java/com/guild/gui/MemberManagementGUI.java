@@ -397,22 +397,24 @@ public class MemberManagementGUI implements GUI {
     private void handleKickMemberDirect(Player player, GuildMember member) {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
-            if (executor == null || !executor.getRole().canKick()) {
-                String message = languageManager.getGuiMessage(player, "gui.common.no-permission", "&cInsufficient permission");
-                player.sendMessage(ColorUtils.colorize(message));
-                return;
-            }
-            
-            // 不能踢出会长
-            if (member.getRole() == GuildMember.Role.LEADER) {
-                String message = languageManager.getGuiMessage(player, "gui.common.cannot-kick-leader", "&cCannot kick guild leader");
-                player.sendMessage(ColorUtils.colorize(message));
-                return;
-            }
-            
-            // 确认踢出
-            String message = languageManager.getGuiMessage(player, "gui.common.confirm-kick", "&cAre you sure you want to kick member {member}? Type &f/guild kick {member} confirm &cto confirm", "{member}", member.getPlayerName());
-            player.sendMessage(ColorUtils.colorize(message));
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (executor == null || !executor.getRole().canKick()) {
+                    String message = languageManager.getGuiMessage(player, "gui.common.no-permission", "&cInsufficient permission");
+                    player.sendMessage(ColorUtils.colorize(message));
+                    return;
+                }
+                
+                // 不能踢出会长
+                if (member.getRole() == GuildMember.Role.LEADER) {
+                    String message = languageManager.getGuiMessage(player, "gui.common.cannot-kick-leader", "&cCannot kick guild leader");
+                    player.sendMessage(ColorUtils.colorize(message));
+                    return;
+                }
+                
+                // 打开确认踢出GUI
+                ConfirmKickMemberGUI confirmGui = new ConfirmKickMemberGUI(plugin, guild, member, player, "MemberManagementGUI");
+                plugin.getGuiManager().openGUI(player, confirmGui);
+            });
         });
     }
     

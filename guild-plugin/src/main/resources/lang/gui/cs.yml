@@ -1300,6 +1300,31 @@ gui:
     bedrock-no-members: "&f\u017d\u00e1dn\u00ed \u010dlenov\u00e9 k vyhozen\u00ed"
     bedrock-content: "&fVyberte \u010dlena k vyhozen\u00ed"
 
+
+  # ================================================
+  # ConfirmKickMemberGUI (13 keys)
+  # ================================================
+  confirm-kick-member:
+    cancel-button: "&aCancel"
+    cancel-lore: "&7Click to cancel kicking member"
+    confirm-button: "&cConfirm Kick"
+    confirm-lore: "&7Click to confirm kicking member"
+    confirm-question: "&7Are you sure you want to kick this member?"
+    guild: "&7Guild: &e{guild}"
+    info-title: "&cConfirm Kick Member"
+    member: "&7Member: &e{member}"
+    title: "&cConfirm Kick Member"
+    warning: "&cThis action cannot be undone!"
+    cannot-kick-leader: "&cCannot kick the guild leader!"
+    member-left: "&cThat member is no longer in the guild!"
+    kick.failed: "&cFailed to kick member!"
+    kick.kicked: "&cYou have been kicked from guild &e{guild} &c!"
+    kick.success: "&aSuccessfully kicked &e{member} &a!"
+    bedrock-title: "&cConfirm Kick Member"
+    bedrock-content: "&fGuild: &e{guild}\n&fMember: &e{member}\n&fAre you sure you want to kick this member?\n&cThis action cannot be undone!"
+    bedrock-confirm: "&cConfirm Kick"
+    bedrock-cancel: "&aCancel"
+
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================

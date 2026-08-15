@@ -610,16 +610,10 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
         }
         
         String targetName = args[1];
-        Player targetPlayer = Bukkit.getPlayer(targetName);
-        
-        if (targetPlayer == null) {
-            String message = languageManager.getCoreMessage(player, "guild.kick.player-not-found", "&cPlayer is not online!");
-            player.sendMessage(ColorUtils.colorize(message));
-            return;
-        }
         
         CompletableFuture.runAsync(() -> {
             try {
+                // 获取踢出者的公会
                 Guild guild = guildService.getPlayerGuild(player.getUniqueId());
                 if (guild == null) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
@@ -629,6 +623,7 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     return;
                 }
                 
+                // 检查踢出者权限
                 if (!guildService.hasGuildPermission(player.getUniqueId())) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
                         String message = languageManager.getCoreMessage(player, "guild.kick.no-permission", "&cYou do not have permission to kick members!");
@@ -637,15 +632,30 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     return;
                 }
                 
-                GuildMember targetMember = guildService.getGuildMember(targetPlayer.getUniqueId());
+                // 通过玩家名获取离线玩家对象
+                @SuppressWarnings("deprecation")
+                org.bukkit.OfflinePlayer targetOfflinePlayer = Bukkit.getOfflinePlayer(targetName);
+                
+                // 通过UUID获取目标成员信息
+                GuildMember targetMember = guildService.getGuildMember(targetOfflinePlayer.getUniqueId());
                 if (targetMember == null) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
-                        String message = languageManager.getCoreMessage(player, "guild.kick.player-not-found", "&cPlayer is not online!");
+                        String message = languageManager.getCoreMessage(player, "guild.kick.player-not-in-guild", "&cThat player is not in your guild!");
                         player.sendMessage(ColorUtils.colorize(message));
                     });
                     return;
                 }
                 
+                // 检查目标成员是否在同一个公会中
+                if (targetMember.getGuildId() != guild.getId()) {
+                    CompatibleScheduler.runTask(plugin, player, () -> {
+                        String message = languageManager.getCoreMessage(player, "guild.kick.player-not-in-guild", "&cThat player is not in your guild!");
+                        player.sendMessage(ColorUtils.colorize(message));
+                    });
+                    return;
+                }
+                
+                // 不能踢出会长
                 if (targetMember.getRole() == Role.LEADER) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
                         String message = languageManager.getCoreMessage(player, "guild.kick.cannot-kick-master", "&cYou cannot kick the leader!");
@@ -654,24 +664,12 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     return;
                 }
                 
-                boolean success = guildService.removeGuildMember(targetPlayer.getUniqueId(), player.getUniqueId());
-                if (success) {
-                    CompatibleScheduler.runTask(plugin, player, () -> {
-                        String message = languageManager.getCoreMessage(player, "guild.kick.success", "&aSuccessfully kicked the player!");
-                        player.sendMessage(ColorUtils.colorize(message));
-                    });
-                    
-                    // 通知被踢出的玩家
-                    CompatibleScheduler.runTask(plugin, targetPlayer, () -> {
-                        String kickMessage = languageManager.getCoreMessage(targetPlayer, "guild.kick.kicked", "&cYou have been kicked from the guild!");
-                        targetPlayer.sendMessage(ColorUtils.colorize(kickMessage));
-                    });
-                } else {
-                    CompatibleScheduler.runTask(plugin, player, () -> {
-                        String message = languageManager.getCoreMessage(player, "guild.kick.error", "&cAn error occurred while kicking the player!");
-                        player.sendMessage(ColorUtils.colorize(message));
-                    });
-                }
+                // 打开确认踢出GUI
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    com.guild.gui.ConfirmKickMemberGUI confirmGui = new com.guild.gui.ConfirmKickMemberGUI(
+                        plugin, guild, targetMember, player, "MemberManagementGUI");
+                    plugin.getGuiManager().openGUI(player, confirmGui);
+                });
             } catch (Exception e) {
                 e.printStackTrace();
                 CompatibleScheduler.runTask(plugin, player, () -> {

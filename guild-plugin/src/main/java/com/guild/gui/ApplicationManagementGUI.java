@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -279,40 +280,61 @@ public class ApplicationManagementGUI implements GUI {
     /**
      * 创建申请物品
      */
+    /**
+     * 创建申请项 - 使用玩家头像显示
+     */
     private ItemStack createApplicationItem(GuildApplication application) {
-        Material material;
         String name;
+        String colorPrefix;
+        String statusMessage;
         List<String> lore = new ArrayList<>();
 
+        // 根据申请状态设置颜色和信息
         switch (application.getStatus()) {
             case PENDING:
-                material = Material.YELLOW_WOOL;
-                name = PlaceholderUtils.replaceApplicationPlaceholders("&e{applicant_name} " + languageManager.getGuiMessage(player, "gui.application-mgmt.application-suffix", "'s Application"), application.getPlayerName(), guild.getName(), application.getCreatedAt());
-                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.application-mgmt.status", "gui.guild-relations.status") + ": &e" + languageManager.getGuiMessage(player, "gui.application-mgmt.status-pending", "Pending")));
+                colorPrefix = "&e";
+                statusMessage = languageManager.getGuiMessage(player, "gui.application-mgmt.status-pending", "Pending");
+                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.application-mgmt.status", "Status") + ": &e" + statusMessage));
                 lore.add(PlaceholderUtils.replaceApplicationPlaceholders("&7" + languageManager.getGuiMessage(player, "gui.application-mgmt.apply-time", "Apply time") + ": {apply_time}", application.getPlayerName(), guild.getName(), application.getCreatedAt()));
-                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.application-mgmt.message", "gui.application-mgmt.message") + ": " + application.getMessage()));
+                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.application-mgmt.message", "Message") + ": " + application.getMessage()));
                 lore.add("");
                 lore.add(ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "gui.application-mgmt.left-accept", "Left click: Accept")));
                 lore.add(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.application-mgmt.right-reject", "Right click: Reject")));
                 break;
             case APPROVED:
-                material = Material.GREEN_WOOL;
-                name = PlaceholderUtils.replaceApplicationPlaceholders("&a{applicant_name} " + languageManager.getGuiMessage(player, "gui.application-mgmt.application-suffix", "'s Application"), application.getPlayerName(), guild.getName(), application.getCreatedAt());
-                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.application-mgmt.status", "gui.guild-relations.status") + ": &a" + languageManager.getGuiMessage(player, "gui.application-mgmt.status-approved", "Approved")));
+                colorPrefix = "&a";
+                statusMessage = languageManager.getGuiMessage(player, "gui.application-mgmt.status-approved", "Approved");
+                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.application-mgmt.status", "Status") + ": &a" + statusMessage));
                 break;
             case REJECTED:
-                material = Material.RED_WOOL;
-                name = PlaceholderUtils.replaceApplicationPlaceholders("&c{applicant_name} " + languageManager.getGuiMessage(player, "gui.application-mgmt.application-suffix", "'s Application"), application.getPlayerName(), guild.getName(), application.getCreatedAt());
-                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.application-mgmt.status", "gui.guild-relations.status") + ": &c" + languageManager.getGuiMessage(player, "gui.application-mgmt.status-rejected", "Rejected")));
+                colorPrefix = "&c";
+                statusMessage = languageManager.getGuiMessage(player, "gui.application-mgmt.status-rejected", "Rejected");
+                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.application-mgmt.status", "Status") + ": &c" + statusMessage));
                 break;
             default:
-                material = Material.GRAY_WOOL;
-                name = PlaceholderUtils.replaceApplicationPlaceholders("&7{applicant_name} " + languageManager.getGuiMessage(player, "gui.application-mgmt.application-suffix", "'s Application"), application.getPlayerName(), guild.getName(), application.getCreatedAt());
-                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.application-mgmt.status", "gui.guild-relations.status") + ": &7" + languageManager.getGuiMessage(player, "gui.application-mgmt.status-unknown", "gui.guild-relations.unknown")));
+                colorPrefix = "&7";
+                statusMessage = languageManager.getGuiMessage(player, "gui.application-mgmt.status-unknown", "Unknown");
+                lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.application-mgmt.status", "Status") + ": &7" + statusMessage));
                 break;
         }
 
-        return createItem(material, name, lore.toArray(new String[0]));
+        name = PlaceholderUtils.replaceApplicationPlaceholders(colorPrefix + "{applicant_name} " + languageManager.getGuiMessage(player, "gui.application-mgmt.application-suffix", "'s Application"), application.getPlayerName(), guild.getName(), application.getCreatedAt());
+
+        // 创建玩家头像项
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) head.getItemMeta();
+        
+        if (meta != null) {
+            // 通过玩家名设置头像
+            @SuppressWarnings("deprecation")
+            org.bukkit.OfflinePlayer applicant = Bukkit.getOfflinePlayer(application.getPlayerName());
+            meta.setOwningPlayer(applicant);
+            meta.setDisplayName(ColorUtils.colorize(name));
+            meta.setLore(lore);
+            head.setItemMeta(meta);
+        }
+
+        return head;
     }
     
     /**

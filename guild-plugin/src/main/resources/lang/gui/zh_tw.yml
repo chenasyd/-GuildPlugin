@@ -1300,6 +1300,31 @@ gui:
     bedrock-no-members: "&f沒有可踢出的成員"
     bedrock-content: "&f選擇要踢出的成員"
 
+
+  # ================================================
+  # ConfirmKickMemberGUI (13 keys)
+  # ================================================
+  confirm-kick-member:
+    cancel-button: "&a取消"
+    cancel-lore: "&7點擊取消踢出成員"
+    confirm-button: "&c確認踢出"
+    confirm-lore: "&7點擊確認踢出成員"
+    confirm-question: "&7你確定要踢出這個成員嗎？"
+    guild: "&7公會：&e{guild}"
+    info-title: "&c確認踢出成員"
+    member: "&7成員：&e{member}"
+    title: "&c確認踢出成員"
+    warning: "&c此操作無法撤銷！"
+    cannot-kick-leader: "&c無法踢出公會會長！"
+    member-left: "&c該成員已不在公會中！"
+    kick.failed: "&c踢出成員失敗！"
+    kick.kicked: "&c你被踢出了公會 &e{guild} &c！"
+    kick.success: "&a已踢出成員 &e{member} &a！"
+    bedrock-title: "&c確認踢出成員"
+    bedrock-content: "&f公會：&e{guild}\n&f成員：&e{member}\n&f你確定要踢出這個成員嗎？\n&c此操作無法撤銷！"
+    bedrock-confirm: "&c確認踢出"
+    bedrock-cancel: "&a取消"
+
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
