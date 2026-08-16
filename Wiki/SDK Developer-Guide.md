@@ -10,7 +10,7 @@ This guide covers developing external modules for GuildPlugin using the SDK. Mod
 |:----:|:-----------:|
 | JDK | 17+ |
 | Maven | 3.6+ |
-| SDK | `com.guild:guild-sdk:1.6.6-snapshot.5` (provided scope) |
+| SDK | `com.guild:guild-sdk:1.6.6` (provided scope) |
 
 ### Project Setup
 
@@ -33,7 +33,7 @@ This guide covers developing external modules for GuildPlugin using the SDK. Mod
         <dependency>
             <groupId>com.guild</groupId>
             <artifactId>guild-sdk</artifactId>
-            <version>1.6.6-snapshot.5</version>
+            <version>1.6.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
