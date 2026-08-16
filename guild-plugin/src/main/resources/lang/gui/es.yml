@@ -652,10 +652,8 @@ gui:
     leave-desc: "&8Clic &fpara abandonar la guild actual"
     logs: "&6Registros de la guild"
     logs-desc: "&8Clic &fpara ver registros de la guild"
-    member-mgmt: "&aGesti\u00f3n de miembros"
-    member-mgmt-desc-left: "&8Clic izquierdo &fpara invitar miembro"
-    member-mgmt-desc-right: "&8Clic derecho &fpara expulsar miembro"
-    member-mgmt-desc-shift-left: "&8May\u00fas+Clic izquierdo &fpara ascender/descender"
+    transfer-leader: "&cTransferir liderazgo"
+    transfer-leader-desc: "&7Clic &fpara transferir el liderazgo a un miembro"
     overview: "&6Resumen de la guild"
     overview-desc: "&8Descripci\u00f3n: &7{desc}"
     overview-home: "&8Hogar: {home}"
@@ -1328,6 +1326,43 @@ gui:
     bedrock-title-page: "&6Expulsar un miembro - P\u00e1gina {page}"
     bedrock-no-members: "&fNo hay miembros disponibles para expulsar"
     bedrock-content: "&fSelecciona un miembro para expulsar"
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Transferir liderazgo - Página {page}"
+    click-transfer: "Clic para transferir el liderazgo"
+    bedrock-title: "&6Transferir liderazgo"
+    bedrock-title-page: "&6Transferir liderazgo - Página {page}"
+    bedrock-no-members: "&fNo hay miembros disponibles para transferir el liderazgo"
+    bedrock-content: "&fSelecciona un miembro para transferir el liderazgo"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cConfirmar transferencia de liderazgo"
+    info-title: "&cConfirmar transferencia de liderazgo"
+    guild: "&7Guild: &e{guild}"
+    member: "&7Nuevo líder: &e{member}"
+    confirm-question: "&7¿Seguro que quieres transferir el liderazgo?"
+    warning-demote: "&c¡Te convertirás en un miembro normal!"
+    warning: "&c¡Esta acción no se puede deshacer!"
+    confirm-button: "&cConfirmar transferencia"
+    confirm-lore: "&7Clic para confirmar la transferencia de liderazgo"
+    cancel-button: "&aCancelar"
+    cancel-lore: "&7Clic para cancelar la transferencia"
+    transfer-self: "&cNo se puede transferir el liderazgo al líder actual"
+    not-member: "&c¡Ese jugador no es miembro de esta guild!"
+    success: "&a¡Liderazgo transferido a &e{name}&a!"
+    failed: "&c¡Falló la transferencia de liderazgo!"
+    notify-new: "&a¡Ahora eres el líder de la guild &e{guild}&a!"
+    notify-old: "&c¡El liderazgo de la guild &e{guild} &cha sido transferido a &e{name}&c!"
+    bedrock-title: "&cConfirmar transferencia de liderazgo"
+    bedrock-content: "&fGuild: &e{guild}\n&fNuevo líder: &e{member}\n&f¿Seguro que quieres transferir el liderazgo?\n&c¡Te convertirás en un miembro normal!\n&c¡Esta acción no se puede deshacer!"
+    bedrock-confirm: "&cConfirmar transferencia"
+    bedrock-cancel: "&aCancelar"
+
   promote-member:
     promote.failed: "&c\u00a1Error al ascender al miembro!"
     promote.promoted: "&a\u00a1Has sido ascendido a oficial de la guild &e{guild}&a!"

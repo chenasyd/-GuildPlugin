@@ -652,10 +652,8 @@ gui:
     leave-desc: "&7Klik &ffor at forlade den aktuelle guild"
     logs: "&6Guildlogger"
     logs-desc: "&7Klik &ffor at se guildlogger"
-    member-mgmt: "&aMedlemsadministration"
-    member-mgmt-desc-left: "&7Venstreklik &fInviter medlemmer"
-    member-mgmt-desc-right: "&7H\u00f8jreklik &fSpark medlemmer"
-    member-mgmt-desc-shift-left: "&7Shift+Venstreklik &fForfrem/Degrader"
+    transfer-leader: "&cOverfør lederskab"
+    transfer-leader-desc: "&7Klik &ffor at overføre lederskab til et medlem"
     overview: "&6Guildoversigt"
     overview-desc: "&7Beskrivelse: &7{desc}"
     overview-home: "&7Guildhjem: {home}"
@@ -1328,6 +1326,43 @@ gui:
     bedrock-title-page: "&6Spark medlem - Side {page}"
     bedrock-no-members: "&fIngen medlemmer tilgængelige at sparke"
     bedrock-content: "&fVælg et medlem at sparke"
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Overfør lederskab - Side {page}"
+    click-transfer: "Klik for at overføre lederskab"
+    bedrock-title: "&6Overfør lederskab"
+    bedrock-title-page: "&6Overfør lederskab - Side {page}"
+    bedrock-no-members: "&fIngen medlemmer at overføre lederskab til"
+    bedrock-content: "&fVælg et medlem at overføre lederskab til"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cBekræft overførsel af lederskab"
+    info-title: "&cBekræft overførsel af lederskab"
+    guild: "&7Gilde: &e{guild}"
+    member: "&7Ny leder: &e{member}"
+    confirm-question: "&7Er du sikker på, at du vil overføre lederskabet?"
+    warning-demote: "&cDu bliver et almindeligt medlem!"
+    warning: "&cDenne handling kan ikke fortrydes!"
+    confirm-button: "&cBekræft overførsel"
+    confirm-lore: "&7Klik for at bekræfte overførsel af lederskab"
+    cancel-button: "&aAnnuller"
+    cancel-lore: "&7Klik for at annullere overførslen"
+    transfer-self: "&cKan ikke overføre lederskab til den nuværende leder"
+    not-member: "&cDen spiller er ikke medlem af denne gilde!"
+    success: "&aLederskab overført til &e{name}&a!"
+    failed: "&cOverførsel af lederskab mislykkedes!"
+    notify-new: "&aDu er nu leder af gilden &e{guild}&a!"
+    notify-old: "&cLederskabet af gilden &e{guild} &cer blevet overført til &e{name}&c!"
+    bedrock-title: "&cBekræft overførsel af lederskab"
+    bedrock-content: "&fGilde: &e{guild}\n&fNy leder: &e{member}\n&fEr du sikker på, at du vil overføre lederskabet?\n&cDu bliver et almindeligt medlem!\n&cDenne handling kan ikke fortrydes!"
+    bedrock-confirm: "&cBekræft overførsel"
+    bedrock-cancel: "&aAnnuller"
+
   promote-member:
     promote.failed: "&cKunne ikke forfremme medlemmet!"
     promote.promoted: "&aDu er blevet forfremmet til officer i guilden &e{guild} &a!"

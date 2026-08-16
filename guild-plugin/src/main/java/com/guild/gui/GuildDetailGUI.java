@@ -417,24 +417,15 @@ public class GuildDetailGUI implements GUI {
             return;
         }
 
-        // 执行转移
-        plugin.getGuildService().transferGuildLeadershipAsync(guild.getId(), target.getPlayerUuid(), target.getPlayerName())
-            .thenAccept(success -> {
-                CompatibleScheduler.runTask(plugin, player, () -> {
-                    if (success) {
-                        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
-                                "gui.guild-detail.transfer-success", "&aSuccessfully transferred to &e{name}")
-                                .replace("{name}", target.getPlayerName())));
-                        guild.setLeaderUuid(target.getPlayerUuid());
-                        guild.setLeaderName(target.getPlayerName());
-                        loadMembers();
-                    } else {
-                        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
-                                "gui.guild-detail.transfer-failed", "&cLeadership transfer failed!")));
-                        refresh(player);
-                    }
-                });
-            });
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.common.no-permission", "&cInsufficient permission")));
+            refresh(player);
+            return;
+        }
+
+        plugin.getGuiManager().openGUI(player,
+                new ConfirmTransferLeaderGUI(plugin, guild, target, player, "GuildDetailGUI", true));
     }
 
     private boolean isPlayerOnline(java.util.UUID uuid) {
@@ -650,21 +641,16 @@ public class GuildDetailGUI implements GUI {
             return;
         }
 
-        plugin.getGuildService().transferGuildLeadershipAsync(guild.getId(), target.getPlayerUuid(), target.getPlayerName())
-            .thenAccept(success -> {
-                CompatibleScheduler.runTask(plugin, player, () -> {
-                    if (success) {
-                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-transfer-success", "&aSuccessfully transferred to &e{name}",
-                                "{name}", target.getPlayerName()));
-                        guild.setLeaderUuid(target.getPlayerUuid());
-                        guild.setLeaderName(target.getPlayerName());
-                        transferMode = false;
-                    } else {
-                        player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.guild-detail.bedrock-transfer-failed", "&cLeadership transfer failed!"));
-                    }
-                    sendBedrockGuildDetail(player, 0);
-                });
-            });
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.common.no-permission", "&cInsufficient permission")));
+            sendBedrockGuildDetail(player, 0);
+            return;
+        }
+
+        transferMode = false;
+        plugin.getGuiManager().openGUI(player,
+                new ConfirmTransferLeaderGUI(plugin, guild, target, player, "GuildDetailGUI", true));
     }
 
     @Override

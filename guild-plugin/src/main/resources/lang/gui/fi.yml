@@ -652,10 +652,8 @@ gui:
     leave-desc: "&7Napsauta &fpoistuaksesi nykyisest\u00e4 guildista"
     logs: "&6Guildin lokit"
     logs-desc: "&7Napsauta &fn\u00e4hd\u00e4ksesi guildin lokit"
-    member-mgmt: "&aJ\u00e4senten hallinta"
-    member-mgmt-desc-left: "&7Vasen napsautus &fKutsu j\u00e4seni\u00e4"
-    member-mgmt-desc-right: "&7Oikea napsautus &fPotki j\u00e4seni\u00e4"
-    member-mgmt-desc-shift-left: "&7Shift+Vasen napsautus &fYlenn\u00e4/Alenna"
+    transfer-leader: "&cSiirrä johtajuus"
+    transfer-leader-desc: "&7Napsauta &fsiirtääksesi johtajuuden jäsenelle"
     overview: "&6Guildin yleiskatsaus"
     overview-desc: "&7Kuvaus: &7{desc}"
     overview-home: "&7Guildin koti: {home}"
@@ -1328,6 +1326,43 @@ gui:
     bedrock-title-page: "&6Potki jäsen - Sivu {page}"
     bedrock-no-members: "&fEi potkittavissa olevia jäseniä"
     bedrock-content: "&fValitse potkittava jäsen"
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Siirrä johtajuus - Sivu {page}"
+    click-transfer: "Napsauta siirtääksesi johtajuuden"
+    bedrock-title: "&6Siirrä johtajuus"
+    bedrock-title-page: "&6Siirrä johtajuus - Sivu {page}"
+    bedrock-no-members: "&fEi jäseniä, joille johtajuuden voi siirtää"
+    bedrock-content: "&fValitse jäsen, jolle siirrät johtajuuden"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cVahvista johtajuuden siirto"
+    info-title: "&cVahvista johtajuuden siirto"
+    guild: "&7Kilta: &e{guild}"
+    member: "&7Uusi johtaja: &e{member}"
+    confirm-question: "&7Haluatko varmasti siirtää johtajuuden?"
+    warning-demote: "&cSinusta tulee tavallinen jäsen!"
+    warning: "&cTätä toimintoa ei voi peruuttaa!"
+    confirm-button: "&cVahvista siirto"
+    confirm-lore: "&7Napsauta vahvistaaksesi johtajuuden siirron"
+    cancel-button: "&aPeruuta"
+    cancel-lore: "&7Napsauta peruuttaaksesi siirron"
+    transfer-self: "&cJohtajuutta ei voi siirtää nykyiselle johtajalle"
+    not-member: "&cTuo pelaaja ei ole tämän killan jäsen!"
+    success: "&aJohtajuus siirretty pelaajalle &e{name}&a!"
+    failed: "&cJohtajuuden siirto epäonnistui!"
+    notify-new: "&aOlet nyt killan &e{guild} &ajohtaja!"
+    notify-old: "&cKillan &e{guild} &cjohtajuus on siirretty pelaajalle &e{name}&c!"
+    bedrock-title: "&cVahvista johtajuuden siirto"
+    bedrock-content: "&fKilta: &e{guild}\n&fUusi johtaja: &e{member}\n&fHaluatko varmasti siirtää johtajuuden?\n&cSinusta tulee tavallinen jäsen!\n&cTätä toimintoa ei voi peruuttaa!"
+    bedrock-confirm: "&cVahvista siirto"
+    bedrock-cancel: "&aPeruuta"
+
   promote-member:
     promote.failed: "&cJ\u00e4senen ylent\u00e4minen ep\u00e4onnistui!"
     promote.promoted: "&aSinut ylennettiin upseeriksi guildissa &e{guild} &a!"

@@ -224,7 +224,7 @@ layouts:
     OVERVIEW: [10]
     TEXT_EDIT: [11]
     SET_HOME: [13]
-    MEMBER_MGMT: [15]
+    TRANSFER_LEADER: [15]
     GUILD_FUNDS: [28]
     LOGS: [31]
     RESERVED: [29]
@@ -380,6 +380,11 @@ layouts:
     DETAILS: [13]
     CANCEL: [15]
 
+  ConfirmTransferLeaderGUI:
+    CONFIRM: [11]
+    INFO: [13]
+    CANCEL: [15]
+
   # ── 成员操作（列表内容区 10-43 不配置） ──
   DemoteMemberGUI:
     PREV_PAGE: [45]
@@ -392,6 +397,11 @@ layouts:
     NEXT_PAGE: [53]
 
   KickMemberGUI:
+    PREV_PAGE: [45]
+    BACK: [49]
+    NEXT_PAGE: [53]
+
+  TransferLeaderGUI:
     PREV_PAGE: [45]
     BACK: [49]
     NEXT_PAGE: [53]

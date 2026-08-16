@@ -652,10 +652,8 @@ gui:
     leave-desc: "&7Klikn\u011bte &fpro opu\u0161t\u011bn\u00ed aktu\u00e1ln\u00ed gildy"
     logs: "&6Z\u00e1znamy gildy"
     logs-desc: "&7Klikn\u011bte &fpro zobrazen\u00ed z\u00e1znam\u016f gildy"
-    member-mgmt: "&aSpr\u00e1va \u010dlen\u016f"
-    member-mgmt-desc-left: "&7Lev\u00e9 tla\u010d\u00edtko &fPozvat \u010dleny"
-    member-mgmt-desc-right: "&7Prav\u00e9 tla\u010d\u00edtko &fVyhodit \u010dleny"
-    member-mgmt-desc-shift-left: "&7Shift+Lev\u00e9 tla\u010d\u00edtko &fPov\u00fd\u0161it/Sn\u00ed\u017eit"
+    transfer-leader: "&cPředat vedení"
+    transfer-leader-desc: "&7Kliknutím &fpředáte vedení členovi"
     overview: "&6P\u0159ehled gildy"
     overview-desc: "&7Popis: &7{desc}"
     overview-home: "&7Domovsk\u00e9 m\u00edsto gildy: {home}"
@@ -1324,6 +1322,43 @@ gui:
     bedrock-content: "&fGuild: &e{guild}\n&fMember: &e{member}\n&fAre you sure you want to kick this member?\n&cThis action cannot be undone!"
     bedrock-confirm: "&cConfirm Kick"
     bedrock-cancel: "&aCancel"
+
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Předání vedení - Strana {page}"
+    click-transfer: "Kliknutím předáte vedení"
+    bedrock-title: "&6Předání vedení"
+    bedrock-title-page: "&6Předání vedení - Strana {page}"
+    bedrock-no-members: "&fŽádní členové k předání vedení"
+    bedrock-content: "&fVyberte člena, kterému chcete předat vedení"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cPotvrdit předání vedení"
+    info-title: "&cPotvrdit předání vedení"
+    guild: "&7Cech: &e{guild}"
+    member: "&7Nový vůdce: &e{member}"
+    confirm-question: "&7Opravdu chcete předat vedení?"
+    warning-demote: "&cStanete se běžným členem!"
+    warning: "&cTuto akci nelze vrátit!"
+    confirm-button: "&cPotvrdit předání"
+    confirm-lore: "&7Kliknutím potvrdíte předání vedení"
+    cancel-button: "&aZrušit"
+    cancel-lore: "&7Kliknutím zrušíte předání vedení"
+    transfer-self: "&cNelze předat vedení současnému vůdci"
+    not-member: "&cTento hráč není členem cechu!"
+    success: "&aVedení úspěšně předáno hráči &e{name}&a!"
+    failed: "&cPředání vedení selhalo!"
+    notify-new: "&aNyní jste vůdcem cechu &e{guild}&a!"
+    notify-old: "&cVedení cechu &e{guild} &cbylo předáno hráči &e{name}&c!"
+    bedrock-title: "&cPotvrdit předání vedení"
+    bedrock-content: "&fCech: &e{guild}\n&fNový vůdce: &e{member}\n&fOpravdu chcete předat vedení?\n&cStanete se běžným členem!\n&cTuto akci nelze vrátit!"
+    bedrock-confirm: "&cPotvrdit předání"
+    bedrock-cancel: "&aZrušit"
 
   # ================================================
   # PromoteMemberGUI (5 keys)

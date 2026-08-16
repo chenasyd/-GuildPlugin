@@ -652,10 +652,8 @@ gui:
     leave-desc: "&8Cliquer &fpour quitter la guilde actuelle"
     logs: "&6Journaux de la guilde"
     logs-desc: "&8Cliquer &fpour voir les journaux"
-    member-mgmt: "&aGestion des membres"
-    member-mgmt-desc-left: "&8Clic gauche &fpour inviter un membre"
-    member-mgmt-desc-right: "&8Clic droit &fpour exclure un membre"
-    member-mgmt-desc-shift-left: "&8Shift+Clic gauche &fpour promouvoir/r\u00e9trograder"
+    transfer-leader: "&cTransférer le chef"
+    transfer-leader-desc: "&7Cliquez &fpour transférer le leadership à un membre"
     overview: "&6Aper\u00e7u de la guilde"
     overview-desc: "&8Description: &7{desc}"
     overview-home: "&8Domicile: {home}"
@@ -1329,6 +1327,43 @@ gui:
     bedrock-title-page: "&6Exclure un membre - Page {page}"
     bedrock-no-members: "&fAucun membre disponible \u00e0 exclure"
     bedrock-content: "&fS\u00e9lectionner un membre \u00e0 exclure"
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Transférer le leadership - Page {page}"
+    click-transfer: "Cliquez pour transférer le leadership"
+    bedrock-title: "&6Transférer le leadership"
+    bedrock-title-page: "&6Transférer le leadership - Page {page}"
+    bedrock-no-members: "&fAucun membre disponible pour le transfert"
+    bedrock-content: "&fSélectionnez un membre pour transférer le leadership"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cConfirmer le transfert de leadership"
+    info-title: "&cConfirmer le transfert de leadership"
+    guild: "&7Guilde: &e{guild}"
+    member: "&7Nouveau chef: &e{member}"
+    confirm-question: "&7Êtes-vous sûr de vouloir transférer le leadership ?"
+    warning-demote: "&cVous deviendrez un membre ordinaire !"
+    warning: "&cCette action est irréversible !"
+    confirm-button: "&cConfirmer le transfert"
+    confirm-lore: "&7Cliquez pour confirmer le transfert de leadership"
+    cancel-button: "&aAnnuler"
+    cancel-lore: "&7Cliquez pour annuler le transfert"
+    transfer-self: "&cImpossible de transférer le leadership au chef actuel"
+    not-member: "&cCe joueur n'est pas membre de cette guilde !"
+    success: "&aLeadership transféré avec succès à &e{name}&a !"
+    failed: "&cÉchec du transfert de leadership !"
+    notify-new: "&aVous êtes maintenant le chef de la guilde &e{guild}&a !"
+    notify-old: "&cLe leadership de la guilde &e{guild} &ca été transféré à &e{name}&c !"
+    bedrock-title: "&cConfirmer le transfert de leadership"
+    bedrock-content: "&fGuilde: &e{guild}\n&fNouveau chef: &e{member}\n&fÊtes-vous sûr de vouloir transférer le leadership ?\n&cVous deviendrez un membre ordinaire !\n&cCette action est irréversible !"
+    bedrock-confirm: "&cConfirmer le transfert"
+    bedrock-cancel: "&aAnnuler"
+
   promote-member:
     promote.failed: "&c\u00c9chec de la promotion du membre\u00a0!"
     promote.promoted: "&aVous avez \u00e9t\u00e9 promu officier de la guilde &e{guild} &a\u00a0!"

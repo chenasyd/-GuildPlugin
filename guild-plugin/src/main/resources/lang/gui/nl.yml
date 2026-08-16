@@ -652,10 +652,8 @@ gui:
     leave-desc: "&8Klik &fom huidige gilde te verlaten"
     logs: "&6Gildelogboeken"
     logs-desc: "&8Klik &fom gildelogboeken te bekijken"
-    member-mgmt: "&aLedenbeheer"
-    member-mgmt-desc-left: "&8Linkerklik &fom lid uit te nodigen"
-    member-mgmt-desc-right: "&8Rechterklik &fom lid te schoppen"
-    member-mgmt-desc-shift-left: "&8Shift+Linkerklik &fom te promoveren/degraderen"
+    transfer-leader: "&cLeiderschap overdragen"
+    transfer-leader-desc: "&7Klik &fom leiderschap over te dragen aan een lid"
     overview: "&6Gilde-overzicht"
     overview-desc: "&8Beschrijving: &7{desc}"
     overview-home: "&8Huis: {home}"
@@ -1329,6 +1327,43 @@ gui:
     bedrock-title-page: "&6Lid schoppen - Pagina {page}"
     bedrock-no-members: "&fGeen leden beschikbaar om te schoppen"
     bedrock-content: "&fSelecteer een lid om te schoppen"
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Leiderschap overdragen - Pagina {page}"
+    click-transfer: "Klik om leiderschap over te dragen"
+    bedrock-title: "&6Leiderschap overdragen"
+    bedrock-title-page: "&6Leiderschap overdragen - Pagina {page}"
+    bedrock-no-members: "&fGeen leden beschikbaar voor overdracht"
+    bedrock-content: "&fSelecteer een lid om leiderschap over te dragen"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cBevestig leiderschapsoverdracht"
+    info-title: "&cBevestig leiderschapsoverdracht"
+    guild: "&7Gilde: &e{guild}"
+    member: "&7Nieuwe leider: &e{member}"
+    confirm-question: "&7Weet je zeker dat je het leiderschap wilt overdragen?"
+    warning-demote: "&cJe wordt een gewoon lid!"
+    warning: "&cDeze actie kan niet ongedaan worden gemaakt!"
+    confirm-button: "&cBevestig overdracht"
+    confirm-lore: "&7Klik om de leiderschapsoverdracht te bevestigen"
+    cancel-button: "&aAnnuleren"
+    cancel-lore: "&7Klik om de overdracht te annuleren"
+    transfer-self: "&cKan leiderschap niet overdragen aan de huidige leider"
+    not-member: "&cDie speler is geen lid van deze gilde!"
+    success: "&aLeiderschap succesvol overgedragen aan &e{name}&a!"
+    failed: "&cLeiderschapsoverdracht mislukt!"
+    notify-new: "&aJe bent nu de leider van gilde &e{guild}&a!"
+    notify-old: "&cHet leiderschap van gilde &e{guild} &cis overgedragen aan &e{name}&c!"
+    bedrock-title: "&cBevestig leiderschapsoverdracht"
+    bedrock-content: "&fGilde: &e{guild}\n&fNieuwe leider: &e{member}\n&fWeet je zeker dat je het leiderschap wilt overdragen?\n&cJe wordt een gewoon lid!\n&cDeze actie kan niet ongedaan worden gemaakt!"
+    bedrock-confirm: "&cBevestig overdracht"
+    bedrock-cancel: "&aAnnuleren"
+
   promote-member:
     promote.failed: "&cPromoveren van lid mislukt!"
     promote.promoted: "&aJe bent gepromoveerd tot officier van de gilde &e{guild}&a!"

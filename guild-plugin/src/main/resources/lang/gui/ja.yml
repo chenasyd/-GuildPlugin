@@ -652,10 +652,8 @@ gui:
     leave-desc: "&8クリック &fで現在のギルドを脱退"
     logs: "&6ギルドログ"
     logs-desc: "&8クリック &fでギルドログを表示"
-    member-mgmt: "&aメンバー管理"
-    member-mgmt-desc-left: "&8左クリック &fでメンバーを招待"
-    member-mgmt-desc-right: "&8右クリック &fでメンバーをキック"
-    member-mgmt-desc-shift-left: "&8Shift+左クリック &fで昇格/降格"
+    transfer-leader: "&cマスターを譲渡"
+    transfer-leader-desc: "&7クリック &fメンバーにマスターを譲渡"
     overview: "&6ギルド概要"
     overview-desc: "&8説明: &7{desc}"
     overview-home: "&8ホーム: {home}"
@@ -1324,6 +1322,43 @@ gui:
     bedrock-content: "&fGuild: &e{guild}\n&fMember: &e{member}\n&fAre you sure you want to kick this member?\n&cThis action cannot be undone!"
     bedrock-confirm: "&cConfirm Kick"
     bedrock-cancel: "&aCancel"
+
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6マスター譲渡 - {page}ページ"
+    click-transfer: "クリックしてマスターを譲渡"
+    bedrock-title: "&6マスター譲渡"
+    bedrock-title-page: "&6マスター譲渡 - {page}ページ"
+    bedrock-no-members: "&f譲渡できるメンバーがいません"
+    bedrock-content: "&fマスターを譲渡するメンバーを選択"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cマスター譲渡の確認"
+    info-title: "&cマスター譲渡の確認"
+    guild: "&7ギルド: &e{guild}"
+    member: "&7新しいマスター: &e{member}"
+    confirm-question: "&7本当にマスターを譲渡しますか？"
+    warning-demote: "&cあなたは一般メンバーになります！"
+    warning: "&cこの操作は取り消せません！"
+    confirm-button: "&c譲渡を確認"
+    confirm-lore: "&7クリックしてマスター譲渡を確認"
+    cancel-button: "&aキャンセル"
+    cancel-lore: "&7クリックして譲渡をキャンセル"
+    transfer-self: "&c現在のマスターに譲渡することはできません"
+    not-member: "&cそのプレイヤーはこのギルドのメンバーではありません！"
+    success: "&aマスターを &e{name} &aに譲渡しました！"
+    failed: "&cマスターの譲渡に失敗しました！"
+    notify-new: "&aあなたはギルド &e{guild} &aのマスターになりました！"
+    notify-old: "&cギルド &e{guild} &cのマスターは &e{name} &cに譲渡されました！"
+    bedrock-title: "&cマスター譲渡の確認"
+    bedrock-content: "&fギルド: &e{guild}\n&f新しいマスター: &e{member}\n&f本当にマスターを譲渡しますか？\n&cあなたは一般メンバーになります！\n&cこの操作は取り消せません！"
+    bedrock-confirm: "&c譲渡を確認"
+    bedrock-cancel: "&aキャンセル"
 
   # ================================================
   # PromoteMemberGUI (5 keys)

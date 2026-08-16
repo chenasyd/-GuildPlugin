@@ -652,10 +652,8 @@ gui:
     leave-desc: "&8Klicken &fum aktuelle Gilde zu verlassen"
     logs: "&6Gilden Logs"
     logs-desc: "&8Klicken &fum Gilden Logs anzuzeigen"
-    member-mgmt: "&aMitglieder Verwaltung"
-    member-mgmt-desc-left: "&8Linksklick &fum Mitglied einzuladen"
-    member-mgmt-desc-right: "&8Rechtsklick &fum Mitglied auszuschlie\u00dfen"
-    member-mgmt-desc-shift-left: "&8Umschalt+Linksklick &fum zu bef\u00f6rdern/zur\u00fcckzustufen"
+    transfer-leader: "&cFührung Übertragen"
+    transfer-leader-desc: "&7Klicke &fum die Führung an ein Mitglied zu übertragen"
     overview: "&6Gilden \u00dcbersicht"
     overview-desc: "&8Beschreibung: &7{desc}"
     overview-home: "&8Gildenhaus: {home}"
@@ -1328,6 +1326,43 @@ gui:
     bedrock-title-page: "&6Mitglied Ausschlie\u00dfen - Seite {page}"
     bedrock-no-members: "&fKeine Mitglieder zum Ausschlie\u00dfen verf\u00fcgbar"
     bedrock-content: "&fW\u00e4hlen Sie ein Mitglied zum Ausschlie\u00dfen"
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Führung übertragen - Seite {page}"
+    click-transfer: "Klicken, um die Führung zu übertragen"
+    bedrock-title: "&6Führung übertragen"
+    bedrock-title-page: "&6Führung übertragen - Seite {page}"
+    bedrock-no-members: "&fKeine Mitglieder für die Führungsübertragung verfügbar"
+    bedrock-content: "&fWähle ein Mitglied für die Führungsübertragung"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cFührungsübertragung bestätigen"
+    info-title: "&cFührungsübertragung bestätigen"
+    guild: "&7Gilde: &e{guild}"
+    member: "&7Neuer Anführer: &e{member}"
+    confirm-question: "&7Möchtest du die Führung wirklich übertragen?"
+    warning-demote: "&cDu wirst ein normales Mitglied!"
+    warning: "&cDiese Aktion kann nicht rückgängig gemacht werden!"
+    confirm-button: "&cÜbertragung bestätigen"
+    confirm-lore: "&7Klicke, um die Führungsübertragung zu bestätigen"
+    cancel-button: "&aAbbrechen"
+    cancel-lore: "&7Klicke, um die Übertragung abzubrechen"
+    transfer-self: "&cDie Führung kann nicht an den aktuellen Anführer übertragen werden"
+    not-member: "&cDieser Spieler ist kein Mitglied dieser Gilde!"
+    success: "&aFührung erfolgreich an &e{name} &aübertragen!"
+    failed: "&cFührungsübertragung fehlgeschlagen!"
+    notify-new: "&aDu bist jetzt Anführer der Gilde &e{guild}&a!"
+    notify-old: "&cDie Führung der Gilde &e{guild} &cwurde an &e{name} &cübertragen!"
+    bedrock-title: "&cFührungsübertragung bestätigen"
+    bedrock-content: "&fGilde: &e{guild}\n&fNeuer Anführer: &e{member}\n&fMöchtest du die Führung wirklich übertragen?\n&cDu wirst ein normales Mitglied!\n&cDiese Aktion kann nicht rückgängig gemacht werden!"
+    bedrock-confirm: "&cÜbertragung bestätigen"
+    bedrock-cancel: "&aAbbrechen"
+
   promote-member:
     promote.failed: "&cBef\u00f6rderung des Mitglieds fehlgeschlagen!"
     promote.promoted: "&aSie wurden zum Offizier der Gilde &e{guild} &abef\u00f6rdert!"

@@ -652,10 +652,8 @@ gui:
     leave-desc: "&7Kliknij &faby Opuścić Bieżącą Gildię"
     logs: "&6Logi Gildii"
     logs-desc: "&7Kliknij &faby Zobaczyć Logi Gildii"
-    member-mgmt: "&aZarządzanie Członkami"
-    member-mgmt-desc-left: "&7Kliknij Lewym &faby Zaprosić Członka"
-    member-mgmt-desc-right: "&7Kliknij Prawym &faby Wyrzucić Członka"
-    member-mgmt-desc-shift-left: "&7Shift+Lewy &faby Awansować/Rozdegradować"
+    transfer-leader: "&cTransfer lidera"
+    transfer-leader-desc: "&7Kliknij &faby przekazać przywództwo członkowi"
     overview: "&6Przegląd Gildii"
     overview-desc: "&7Opis: &7{desc}"
     overview-home: "&7Dom: {home}"
@@ -1324,6 +1322,43 @@ gui:
     bedrock-content: "&fGuild: &e{guild}\n&fMember: &e{member}\n&fAre you sure you want to kick this member?\n&cThis action cannot be undone!"
     bedrock-confirm: "&cConfirm Kick"
     bedrock-cancel: "&aCancel"
+
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Transfer lidera - Strona {page}"
+    click-transfer: "Kliknij, aby przekazać przywództwo"
+    bedrock-title: "&6Transfer lidera"
+    bedrock-title-page: "&6Transfer lidera - Strona {page}"
+    bedrock-no-members: "&fBrak członków do przekazania przywództwa"
+    bedrock-content: "&fWybierz członka, któremu chcesz przekazać przywództwo"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cPotwierdź transfer lidera"
+    info-title: "&cPotwierdź transfer lidera"
+    guild: "&7Gildia: &e{guild}"
+    member: "&7Nowy lider: &e{member}"
+    confirm-question: "&7Czy na pewno chcesz przekazać przywództwo?"
+    warning-demote: "&cStaniesz się zwykłym członkiem!"
+    warning: "&cTej czynności nie można cofnąć!"
+    confirm-button: "&cPotwierdź transfer"
+    confirm-lore: "&7Kliknij, aby potwierdzić transfer lidera"
+    cancel-button: "&aAnuluj"
+    cancel-lore: "&7Kliknij, aby anulować transfer"
+    transfer-self: "&cNie można przekazać przywództwa obecnemu liderowi"
+    not-member: "&cTen gracz nie jest członkiem tej gildii!"
+    success: "&aPrzywództwo przekazane graczowi &e{name}&a!"
+    failed: "&cTransfer lidera nie powiódł się!"
+    notify-new: "&aJesteś teraz liderem gildii &e{guild}&a!"
+    notify-old: "&cPrzywództwo gildii &e{guild} &czostało przekazane graczowi &e{name}&c!"
+    bedrock-title: "&cPotwierdź transfer lidera"
+    bedrock-content: "&fGildia: &e{guild}\n&fNowy lider: &e{member}\n&fCzy na pewno chcesz przekazać przywództwo?\n&cStaniesz się zwykłym członkiem!\n&cTej czynności nie można cofnąć!"
+    bedrock-confirm: "&cPotwierdź transfer"
+    bedrock-cancel: "&aAnuluj"
 
   # ================================================
   # PromoteMemberGUI (5 keys)

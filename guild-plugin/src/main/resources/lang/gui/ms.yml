@@ -652,10 +652,8 @@ gui:
     leave-desc: "&8Klik &funtuk tinggalkan guild semasa"
     logs: "&6Log Guild"
     logs-desc: "&8Klik &funtuk lihat log guild"
-    member-mgmt: "&aPengurusan Ahli"
-    member-mgmt-desc-left: "&8Klik Kiri &funtuk jemput ahli"
-    member-mgmt-desc-right: "&8Klik Kanan &funtuk tendang ahli"
-    member-mgmt-desc-shift-left: "&8Shift+Klik Kiri &funtuk naikkan/turunkan pangkat"
+    transfer-leader: "&cPindah Ketua"
+    transfer-leader-desc: "&7Klik &funtuk memindahkan ketua kepada ahli"
     overview: "&6Gambaran Keseluruhan Guild"
     overview-desc: "&8Perihalan: &7{desc}"
     overview-home: "&8Rumah: {home}"
@@ -1325,6 +1323,43 @@ gui:
     bedrock-content: "&fGuild: &e{guild}\n&fMember: &e{member}\n&fAre you sure you want to kick this member?\n&cThis action cannot be undone!"
     bedrock-confirm: "&cConfirm Kick"
     bedrock-cancel: "&aCancel"
+
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Pindah Ketua - Halaman {page}"
+    click-transfer: "Klik untuk memindahkan ketua"
+    bedrock-title: "&6Pindah Ketua"
+    bedrock-title-page: "&6Pindah Ketua - Halaman {page}"
+    bedrock-no-members: "&fTiada ahli tersedia untuk pemindahan ketua"
+    bedrock-content: "&fPilih ahli untuk menerima jawatan ketua"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cSahkan Pemindahan Ketua"
+    info-title: "&cSahkan Pemindahan Ketua"
+    guild: "&7Guild: &e{guild}"
+    member: "&7Ketua Baharu: &e{member}"
+    confirm-question: "&7Adakah anda pasti mahu memindahkan ketua?"
+    warning-demote: "&cAnda akan menjadi ahli biasa!"
+    warning: "&cTindakan ini tidak boleh dibatalkan!"
+    confirm-button: "&cSahkan Pemindahan"
+    confirm-lore: "&7Klik untuk mengesahkan pemindahan ketua"
+    cancel-button: "&aBatal"
+    cancel-lore: "&7Klik untuk membatalkan pemindahan"
+    transfer-self: "&cTidak boleh memindahkan ketua kepada ketua semasa"
+    not-member: "&cPemain itu bukan ahli guild ini!"
+    success: "&aKetua berjaya dipindahkan kepada &e{name}&a!"
+    failed: "&cPemindahan ketua gagal!"
+    notify-new: "&aAnda kini ketua guild &e{guild}&a!"
+    notify-old: "&cKetua guild &e{guild} &ctelah dipindahkan kepada &e{name}&c!"
+    bedrock-title: "&cSahkan Pemindahan Ketua"
+    bedrock-content: "&fGuild: &e{guild}\n&fKetua Baharu: &e{member}\n&fAdakah anda pasti mahu memindahkan ketua?\n&cAnda akan menjadi ahli biasa!\n&cTindakan ini tidak boleh dibatalkan!"
+    bedrock-confirm: "&cSahkan Pemindahan"
+    bedrock-cancel: "&aBatal"
 
   # ================================================
   # PromoteMemberGUI (5 keys)

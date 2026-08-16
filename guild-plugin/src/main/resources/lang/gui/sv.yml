@@ -652,10 +652,8 @@ gui:
     leave-desc: "&8Klicka &ff\u00f6r att l\u00e4mna nuvarande gille"
     logs: "&6Gilleloggar"
     logs-desc: "&8Klicka &ff\u00f6r att visa gilleloggar"
-    member-mgmt: "&aMedlemshantering"
-    member-mgmt-desc-left: "&8V\u00e4nsterklick &ff\u00f6r att bjuda in medlem"
-    member-mgmt-desc-right: "&8H\u00f6gerklick &ff\u00f6r att sparka medlem"
-    member-mgmt-desc-shift-left: "&8Shift+V\u00e4nsterklick &ff\u00f6r att befordra/degradera"
+    transfer-leader: "&cÖverför ledarskap"
+    transfer-leader-desc: "&7Klicka &fför att överföra ledarskap till en medlem"
     overview: "&6Gille\u00f6versikt"
     overview-desc: "&8Beskrivning: &7{desc}"
     overview-home: "&8Hem: {home}"
@@ -1329,6 +1327,43 @@ gui:
     bedrock-title-page: "&6Sparka medlem - Sida {page}"
     bedrock-no-members: "&fInga medlemmar tillgängliga att sparka"
     bedrock-content: "&fVälj en medlem att sparka"
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Överför ledarskap - Sida {page}"
+    click-transfer: "Klicka för att överföra ledarskap"
+    bedrock-title: "&6Överför ledarskap"
+    bedrock-title-page: "&6Överför ledarskap - Sida {page}"
+    bedrock-no-members: "&fInga medlemmar att överföra ledarskap till"
+    bedrock-content: "&fVälj en medlem att överföra ledarskap till"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cBekräfta överföring av ledarskap"
+    info-title: "&cBekräfta överföring av ledarskap"
+    guild: "&7Gille: &e{guild}"
+    member: "&7Ny ledare: &e{member}"
+    confirm-question: "&7Är du säker på att du vill överföra ledarskapet?"
+    warning-demote: "&cDu blir en vanlig medlem!"
+    warning: "&cDenna åtgärd kan inte ångras!"
+    confirm-button: "&cBekräfta överföring"
+    confirm-lore: "&7Klicka för att bekräfta överföring av ledarskap"
+    cancel-button: "&aAvbryt"
+    cancel-lore: "&7Klicka för att avbryta överföringen"
+    transfer-self: "&cKan inte överföra ledarskap till den nuvarande ledaren"
+    not-member: "&cDen spelaren är inte medlem i detta gille!"
+    success: "&aLedarskap överfört till &e{name}&a!"
+    failed: "&cÖverföring av ledarskap misslyckades!"
+    notify-new: "&aDu är nu ledare för gillet &e{guild}&a!"
+    notify-old: "&cLedarskapet för gillet &e{guild} &char överförts till &e{name}&c!"
+    bedrock-title: "&cBekräfta överföring av ledarskap"
+    bedrock-content: "&fGille: &e{guild}\n&fNy ledare: &e{member}\n&fÄr du säker på att du vill överföra ledarskapet?\n&cDu blir en vanlig medlem!\n&cDenna åtgärd kan inte ångras!"
+    bedrock-confirm: "&cBekräfta överföring"
+    bedrock-cancel: "&aAvbryt"
+
   promote-member:
     promote.failed: "&cMisslyckades med att befordra medlem!"
     promote.promoted: "&aDu har blivit befordrad till officer i gillet &e{guild}&a!"

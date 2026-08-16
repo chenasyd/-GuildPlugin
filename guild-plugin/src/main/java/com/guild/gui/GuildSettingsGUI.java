@@ -30,7 +30,7 @@ import com.guild.models.GuildMember;
  * <p>
  * 布局设计：
  * <ul>
- *   <li><b>第1页</b>：保持原有布局不变（概览、文本编辑、成员管理、功能按钮等）</li>
+ *   <li><b>第1页</b>：保持原有布局（概览、文本编辑、转移会长、功能按钮等）</li>
  *   <li><b>第2页及以后</b>：展示模块注入的功能按钮（通过 {@link GUIExtensionHook} 注册的自动分配按钮）</li>
  * </ul>
  * <p>
@@ -50,7 +50,7 @@ public class GuildSettingsGUI implements GUI {
     public static final String FUNC_OVERVIEW = "OVERVIEW";
     public static final String FUNC_TEXT_EDIT = "TEXT_EDIT";
     public static final String FUNC_SET_HOME = "SET_HOME";
-    public static final String FUNC_MEMBER_MGMT = "MEMBER_MGMT";
+    public static final String FUNC_TRANSFER_LEADER = "TRANSFER_LEADER";
     public static final String FUNC_GUILD_FUNDS = "GUILD_FUNDS";
     public static final String FUNC_LOGS = "LOGS";
     public static final String FUNC_RESERVED = "RESERVED";
@@ -134,7 +134,7 @@ public class GuildSettingsGUI implements GUI {
                 .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-change-description", "&eChange Description"))
                 .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-change-tag", "&eChange Tag"))
                 .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.set-home", "&bSet Guild Home"))
-                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.member-mgmt", "&aMember Management"))
+                .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.transfer-leader", "&cTransfer Leadership"))
                 .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-kick-member", "&cKick Member"))
                 .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.bedrock-promote-demote", "&ePromote/Demote"))
                 .button(languageManager.getGuiColoredMessage(player, "gui.guild-settings.guild-funds", "&aGuild Funds"))
@@ -148,8 +148,7 @@ public class GuildSettingsGUI implements GUI {
                         case 1 -> handleChangeDescription(player);
                         case 2 -> handleChangeTag(player);
                         case 3 -> handleSetHome(player);
-                        case 4 -> plugin.getGuiManager().openGUI(player,
-                                new MemberManagementGUI(plugin, guild, player));
+                        case 4 -> handleTransferLeader(player);
                         case 5 -> handleKickMember(player);
                         case 6 -> plugin.getGuiManager().openGUI(player,
                                 new PromoteMemberGUI(plugin, guild, player));
@@ -243,10 +242,8 @@ public class GuildSettingsGUI implements GUI {
                 else if (clickType == ClickType.RIGHT) handleChangeDescription(player);
                 else if (clickType == ClickType.SHIFT_LEFT) handleChangeTag(player);
                 break;
-            case 15: // 成员管理
-                if (clickType == ClickType.LEFT) plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player));
-                else if (clickType == ClickType.RIGHT) handleKickMember(player);
-                else if (clickType == ClickType.SHIFT_LEFT) plugin.getGuiManager().openGUI(player, new PromoteMemberGUI(plugin, guild, player));
+            case 15: // 转移会长
+                handleTransferLeader(player);
                 break;
             case 13: // 设置公会家
                 handleSetHome(player);
@@ -393,12 +390,10 @@ public class GuildSettingsGUI implements GUI {
             languageManager.getGuiMessage(player, "gui.guild-settings.text-edit-desc-shift-left", "&7Shift+Left &fEdit Tag"));
         inventory.setItem(11, textEdit);
 
-        ItemStack memberMgmt = createItem(Material.SHIELD,
-            languageManager.getGuiMessage(player, "gui.guild-settings.member-mgmt", "&aMember Management"), false,
-            languageManager.getGuiMessage(player, "gui.guild-settings.member-mgmt-desc-left", "&7Left Click &fInvite Member"),
-            languageManager.getGuiMessage(player, "gui.guild-settings.member-mgmt-desc-right", "&7Right Click &fKick Member"),
-            languageManager.getGuiMessage(player, "gui.guild-settings.member-mgmt-desc-shift-left", "&7Shift+Left &fPromote/Demote"));
-        inventory.setItem(15, memberMgmt);
+        ItemStack transferLeader = createItem(Material.GOLD_INGOT,
+            languageManager.getGuiMessage(player, "gui.guild-settings.transfer-leader", "&cTransfer Leadership"), false,
+            languageManager.getGuiMessage(player, "gui.guild-settings.transfer-leader-desc", "&7Click &fTransfer leadership to a member"));
+        inventory.setItem(15, transferLeader);
 
         ItemStack setHome = createItem(Material.COMPASS,
             languageManager.getGuiMessage(player, "gui.guild-settings.set-home", "&bSet Guild Home"), false,
@@ -605,6 +600,20 @@ public class GuildSettingsGUI implements GUI {
             return;
         }
         plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player));
+    }
+
+    private void handleTransferLeader(Player player) {
+        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
+        if (member == null
+                || member.getGuildId() != guild.getId()
+                || member.getRole() != GuildMember.Role.LEADER
+                || !player.getUniqueId().equals(guild.getLeaderUuid())) {
+            String msg = languageManager.getGuiMessage(player, "gui.common.leader-only",
+                    "&cOnly the guild leader can perform this operation");
+            player.sendMessage(ColorUtils.colorize(msg));
+            return;
+        }
+        plugin.getGuiManager().openGUI(player, new TransferLeaderGUI(plugin, guild, player));
     }
 
     // ==================== 工具方法 ====================

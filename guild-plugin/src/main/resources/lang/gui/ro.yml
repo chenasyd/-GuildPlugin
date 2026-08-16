@@ -652,10 +652,8 @@ gui:
     leave-desc: "&7Face\u021bi clic &fpentru a p\u0103r\u0103si breasla curent\u0103"
     logs: "&6Jurnalele breslei"
     logs-desc: "&7Face\u021bi clic &fpentru a vedea jurnalele breslei"
-    member-mgmt: "&aGestionare membri"
-    member-mgmt-desc-left: "&7Buton st\u00e2nga &fInvit\u0103 membri"
-    member-mgmt-desc-right: "&7Buton dreapta &fD\u0103 afar\u0103 membri"
-    member-mgmt-desc-shift-left: "&7Shift+Buton st\u00e2nga &fPromoveaz\u0103/Retrogradeaz\u0103"
+    transfer-leader: "&cTransferă conducerea"
+    transfer-leader-desc: "&7Click &fpentru a transfera conducerea unui membru"
     overview: "&6Prezentare general\u0103 a breslei"
     overview-desc: "&7Descriere: &7{desc}"
     overview-home: "&7Casa breslei: {home}"
@@ -1328,6 +1326,43 @@ gui:
     bedrock-title-page: "&6Exclude membru - Pagina {page}"
     bedrock-no-members: "&fNu există membri disponibili pentru excludere"
     bedrock-content: "&fSelectați un membru pentru excludere"
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Transferă conducerea - Pagina {page}"
+    click-transfer: "Click pentru a transfera conducerea"
+    bedrock-title: "&6Transferă conducerea"
+    bedrock-title-page: "&6Transferă conducerea - Pagina {page}"
+    bedrock-no-members: "&fNiciun membru disponibil pentru transfer"
+    bedrock-content: "&fSelectează un membru căruia să-i transferi conducerea"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cConfirmă transferul conducerii"
+    info-title: "&cConfirmă transferul conducerii"
+    guild: "&7Bresla: &e{guild}"
+    member: "&7Noul lider: &e{member}"
+    confirm-question: "&7Sigur vrei să transferi conducerea?"
+    warning-demote: "&cVei deveni un membru obișnuit!"
+    warning: "&cAceastă acțiune nu poate fi anulată!"
+    confirm-button: "&cConfirmă transferul"
+    confirm-lore: "&7Click pentru a confirma transferul conducerii"
+    cancel-button: "&aAnulează"
+    cancel-lore: "&7Click pentru a anula transferul"
+    transfer-self: "&cNu poți transfera conducerea liderului actual"
+    not-member: "&cAcel jucător nu este membru al acestei bresle!"
+    success: "&aConducerea a fost transferată către &e{name}&a!"
+    failed: "&cTransferul conducerii a eșuat!"
+    notify-new: "&aEști acum liderul breslei &e{guild}&a!"
+    notify-old: "&cConducerea breslei &e{guild} &ca fost transferată către &e{name}&c!"
+    bedrock-title: "&cConfirmă transferul conducerii"
+    bedrock-content: "&fBresla: &e{guild}\n&fNoul lider: &e{member}\n&fSigur vrei să transferi conducerea?\n&cVei deveni un membru obișnuit!\n&cAceastă acțiune nu poate fi anulată!"
+    bedrock-confirm: "&cConfirmă transferul"
+    bedrock-cancel: "&aAnulează"
+
   promote-member:
     promote.failed: "&cPromovarea membrului a e\u0219uat!"
     promote.promoted: "&aA\u021bi fost promovat la ofi\u021ber al breslei &e{guild} &a!"

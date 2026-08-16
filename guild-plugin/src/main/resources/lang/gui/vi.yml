@@ -652,10 +652,8 @@ gui:
     leave-desc: "&7Nh\u1EA5p &f\u0111\u1EC3 r\u1EDDi c\xF4ng h\u1ED9i hi\u1EC7n t\u1EA1i"
     logs: "&6Nh\u1EADt k\xFD c\xF4ng h\u1ED9i"
     logs-desc: "&7Nh\u1EA5p &f\u0111\u1EC3 xem nh\u1EADt k\xFD c\xF4ng h\u1ED9i"
-    member-mgmt: "&aQu\u1EA3n l\xFD th\xE0nh vi\xEAn"
-    member-mgmt-desc-left: "&7Chu\u1ED9t tr\xE1i &f\u0111\u1EC3 m\u1EDDi th\xE0nh vi\xEAn"
-    member-mgmt-desc-right: "&7Chu\u1ED9t ph\u1EA3i &f\u0111\u1EC3 \u0111u\u1ED5i th\xE0nh vi\xEAn"
-    member-mgmt-desc-shift-left: "&7Shift+Chu\u1ED9t tr\xE1i &f\u0111\u1EC3 th\u0103ng/chuy\u1EC3n ch\u1EE9c"
+    transfer-leader: "&cChuyển giao chủ tịch"
+    transfer-leader-desc: "&7Nhấp &fđể chuyển giao chủ tịch cho thành viên"
     overview: "&6T\u1ED5ng quan c\xF4ng h\u1ED9i"
     overview-desc: "&7M\xF4 t\u1EA3: &7{desc}"
     overview-home: "&7Nh\xE0 c\xF4ng h\u1ED9i: {home}"
@@ -1324,6 +1322,43 @@ gui:
     bedrock-content: "&fGuild: &e{guild}\n&fMember: &e{member}\n&fAre you sure you want to kick this member?\n&cThis action cannot be undone!"
     bedrock-confirm: "&cConfirm Kick"
     bedrock-cancel: "&aCancel"
+
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Chuyển giao chủ tịch - Trang {page}"
+    click-transfer: "Nhấp để chuyển giao chủ tịch"
+    bedrock-title: "&6Chuyển giao chủ tịch"
+    bedrock-title-page: "&6Chuyển giao chủ tịch - Trang {page}"
+    bedrock-no-members: "&fKhông có thành viên để chuyển giao chủ tịch"
+    bedrock-content: "&fChọn thành viên nhận chức chủ tịch"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cXác nhận chuyển giao chủ tịch"
+    info-title: "&cXác nhận chuyển giao chủ tịch"
+    guild: "&7Công hội: &e{guild}"
+    member: "&7Chủ tịch mới: &e{member}"
+    confirm-question: "&7Bạn có chắc muốn chuyển giao chủ tịch?"
+    warning-demote: "&cBạn sẽ trở thành thành viên thường!"
+    warning: "&cHành động này không thể hoàn tác!"
+    confirm-button: "&cXác nhận chuyển giao"
+    confirm-lore: "&7Nhấp để xác nhận chuyển giao chủ tịch"
+    cancel-button: "&aHủy"
+    cancel-lore: "&7Nhấp để hủy chuyển giao"
+    transfer-self: "&cKhông thể chuyển giao chủ tịch cho chủ tịch hiện tại"
+    not-member: "&cNgười chơi đó không phải thành viên công hội này!"
+    success: "&aĐã chuyển giao chủ tịch cho &e{name}&a!"
+    failed: "&cChuyển giao chủ tịch thất bại!"
+    notify-new: "&aBạn đã trở thành chủ tịch công hội &e{guild}&a!"
+    notify-old: "&cChủ tịch công hội &e{guild} &cđã được chuyển giao cho &e{name}&c!"
+    bedrock-title: "&cXác nhận chuyển giao chủ tịch"
+    bedrock-content: "&fCông hội: &e{guild}\n&fChủ tịch mới: &e{member}\n&fBạn có chắc muốn chuyển giao chủ tịch?\n&cBạn sẽ trở thành thành viên thường!\n&cHành động này không thể hoàn tác!"
+    bedrock-confirm: "&cXác nhận chuyển giao"
+    bedrock-cancel: "&aHủy"
 
   # ================================================
   # PromoteMemberGUI (5 keys)

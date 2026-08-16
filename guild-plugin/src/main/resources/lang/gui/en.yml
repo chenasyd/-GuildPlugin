@@ -652,10 +652,8 @@ gui:
     leave-desc: "&7Click &fLeave Current Guild"
     logs: "&6Guild Logs"
     logs-desc: "&7Click &fView Guild Logs"
-    member-mgmt: "&aMember Management"
-    member-mgmt-desc-left: "&7Left Click &fInvite Member"
-    member-mgmt-desc-right: "&7Right Click &fKick Member"
-    member-mgmt-desc-shift-left: "&7Shift+Left &fPromote/Demote"
+    transfer-leader: "&cTransfer Leadership"
+    transfer-leader-desc: "&7Click &fTransfer leadership to a member"
     overview: "&6Guild Overview"
     overview-desc: "&7Description: &7{desc}"
     overview-home: "&7Home: {home}"
@@ -1322,6 +1320,43 @@ gui:
     bedrock-title: "&cConfirm Kick Member"
     bedrock-content: "&fGuild: &e{guild}\n&fMember: &e{member}\n&fAre you sure you want to kick this member?\n&cThis action cannot be undone!"
     bedrock-confirm: "&cConfirm Kick"
+    bedrock-cancel: "&aCancel"
+
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Transfer Leadership - Page {page}"
+    click-transfer: "Click to transfer leadership"
+    bedrock-title: "&6Transfer Leadership"
+    bedrock-title-page: "&6Transfer Leadership - Page {page}"
+    bedrock-no-members: "&fNo members available to transfer leadership to"
+    bedrock-content: "&fSelect a member to transfer leadership to"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cConfirm Transfer Leadership"
+    info-title: "&cConfirm Transfer Leadership"
+    guild: "&7Guild: &e{guild}"
+    member: "&7New Leader: &e{member}"
+    confirm-question: "&7Are you sure you want to transfer leadership?"
+    warning-demote: "&cYou will become a regular member!"
+    warning: "&cThis action cannot be undone!"
+    confirm-button: "&cConfirm Transfer"
+    confirm-lore: "&7Click to confirm leadership transfer"
+    cancel-button: "&aCancel"
+    cancel-lore: "&7Click to cancel leadership transfer"
+    transfer-self: "&cCannot transfer leadership to the current leader"
+    not-member: "&cThat player is not a member of this guild!"
+    success: "&aLeadership transferred to &e{name}&a!"
+    failed: "&cLeadership transfer failed!"
+    notify-new: "&aYou are now the leader of guild &e{guild}&a!"
+    notify-old: "&cLeadership of guild &e{guild} &chas been transferred to &e{name}&c!"
+    bedrock-title: "&cConfirm Transfer Leadership"
+    bedrock-content: "&fGuild: &e{guild}\n&fNew Leader: &e{member}\n&fAre you sure you want to transfer leadership?\n&cYou will become a regular member!\n&cThis action cannot be undone!"
+    bedrock-confirm: "&cConfirm Transfer"
     bedrock-cancel: "&aCancel"
 
   # ================================================

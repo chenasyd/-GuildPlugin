@@ -652,10 +652,8 @@ gui:
     leave-desc: "&8클릭 &f하여 현재 길드 탈퇴"
     logs: "&6길드 로그"
     logs-desc: "&8클릭 &f하여 길드 로그 보기"
-    member-mgmt: "&a멤버 관리"
-    member-mgmt-desc-left: "&8좌클릭 &f하여 멤버 초대"
-    member-mgmt-desc-right: "&8우클릭 &f하여 멤버 추방"
-    member-mgmt-desc-shift-left: "&8Shift+좌클릭 &f하여 승진/강등"
+    transfer-leader: "&c마스터 이전"
+    transfer-leader-desc: "&7클릭 &f멤버에게 마스터 이전"
     overview: "&6길드 개요"
     overview-desc: "&8설명: &7{desc}"
     overview-home: "&8홈: {home}"
@@ -1325,6 +1323,43 @@ gui:
     bedrock-content: "&fGuild: &e{guild}\n&fMember: &e{member}\n&fAre you sure you want to kick this member?\n&cThis action cannot be undone!"
     bedrock-confirm: "&cConfirm Kick"
     bedrock-cancel: "&aCancel"
+
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6마스터 이전 - {page}페이지"
+    click-transfer: "클릭하여 마스터 이전"
+    bedrock-title: "&6마스터 이전"
+    bedrock-title-page: "&6마스터 이전 - {page}페이지"
+    bedrock-no-members: "&f이전할 수 있는 멤버가 없습니다"
+    bedrock-content: "&f마스터를 이전할 멤버를 선택하세요"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&c마스터 이전 확인"
+    info-title: "&c마스터 이전 확인"
+    guild: "&7길드: &e{guild}"
+    member: "&7새 마스터: &e{member}"
+    confirm-question: "&7정말 마스터를 이전하시겠습니까?"
+    warning-demote: "&c일반 멤버가 됩니다!"
+    warning: "&c이 작업은 취소할 수 없습니다!"
+    confirm-button: "&c이전 확인"
+    confirm-lore: "&7클릭하여 마스터 이전을 확인"
+    cancel-button: "&a취소"
+    cancel-lore: "&7클릭하여 이전을 취소"
+    transfer-self: "&c현재 마스터에게 이전할 수 없습니다"
+    not-member: "&c해당 플레이어는 이 길드의 멤버가 아닙니다!"
+    success: "&a마스터가 &e{name}&a님에게 이전되었습니다!"
+    failed: "&c마스터 이전에 실패했습니다!"
+    notify-new: "&a이제 길드 &e{guild}&a의 마스터입니다!"
+    notify-old: "&c길드 &e{guild}&c의 마스터가 &e{name}&c님에게 이전되었습니다!"
+    bedrock-title: "&c마스터 이전 확인"
+    bedrock-content: "&f길드: &e{guild}\n&f새 마스터: &e{member}\n&f정말 마스터를 이전하시겠습니까?\n&c일반 멤버가 됩니다!\n&c이 작업은 취소할 수 없습니다!"
+    bedrock-confirm: "&c이전 확인"
+    bedrock-cancel: "&a취소"
 
   # ================================================
   # PromoteMemberGUI (5 keys)

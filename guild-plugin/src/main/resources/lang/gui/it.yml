@@ -652,10 +652,8 @@ gui:
     leave-desc: "&8Clic &fper lasciare la gilda attuale"
     logs: "&6Log della gilda"
     logs-desc: "&8Clic &fper vedere i log della gilda"
-    member-mgmt: "&aGestione membri"
-    member-mgmt-desc-left: "&8Clic sinistro &fper invitare membro"
-    member-mgmt-desc-right: "&8Clic destro &fper espellere membro"
-    member-mgmt-desc-shift-left: "&8Shift+Clic sinistro &fper promuovere/retrocedere"
+    transfer-leader: "&cTrasferisci leadership"
+    transfer-leader-desc: "&7Clic &fper trasferire la leadership a un membro"
     overview: "&6Panoramica gilda"
     overview-desc: "&8Descrizione: &7{desc}"
     overview-home: "&8Casa: {home}"
@@ -1329,6 +1327,43 @@ gui:
     bedrock-title-page: "&6Espelli un membro - Pagina {page}"
     bedrock-no-members: "&fNessun membro disponibile da espellere"
     bedrock-content: "&fSeleziona un membro da espellere"
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Trasferisci leadership - Pagina {page}"
+    click-transfer: "Clic per trasferire la leadership"
+    bedrock-title: "&6Trasferisci leadership"
+    bedrock-title-page: "&6Trasferisci leadership - Pagina {page}"
+    bedrock-no-members: "&fNessun membro disponibile per il trasferimento"
+    bedrock-content: "&fSeleziona un membro a cui trasferire la leadership"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cConferma trasferimento leadership"
+    info-title: "&cConferma trasferimento leadership"
+    guild: "&7Gilda: &e{guild}"
+    member: "&7Nuovo leader: &e{member}"
+    confirm-question: "&7Sei sicuro di voler trasferire la leadership?"
+    warning-demote: "&cDiventerai un membro normale!"
+    warning: "&cQuesta azione non può essere annullata!"
+    confirm-button: "&cConferma trasferimento"
+    confirm-lore: "&7Clic per confermare il trasferimento della leadership"
+    cancel-button: "&aAnnulla"
+    cancel-lore: "&7Clic per annullare il trasferimento"
+    transfer-self: "&cImpossibile trasferire la leadership all'attuale leader"
+    not-member: "&cQuel giocatore non è un membro di questa gilda!"
+    success: "&aLeadership trasferita con successo a &e{name}&a!"
+    failed: "&cTrasferimento della leadership fallito!"
+    notify-new: "&aOra sei il leader della gilda &e{guild}&a!"
+    notify-old: "&cLa leadership della gilda &e{guild} &cè stata trasferita a &e{name}&c!"
+    bedrock-title: "&cConferma trasferimento leadership"
+    bedrock-content: "&fGilda: &e{guild}\n&fNuovo leader: &e{member}\n&fSei sicuro di voler trasferire la leadership?\n&cDiventerai un membro normale!\n&cQuesta azione non può essere annullata!"
+    bedrock-confirm: "&cConferma trasferimento"
+    bedrock-cancel: "&aAnnulla"
+
   promote-member:
     promote.failed: "&cPromozione del membro fallita!"
     promote.promoted: "&aSei stato promosso a ufficiale della gilda &e{guild}&a!"

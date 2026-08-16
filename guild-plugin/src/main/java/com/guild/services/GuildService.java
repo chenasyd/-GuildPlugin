@@ -739,62 +739,111 @@ public class GuildService {
     }
     
     /**
-     * 转移会长职位 (异步，供管理员操作)
+     * 转移会长职位 (异步)
      * 将 guild_id 的会长改为 newLeaderUuid，同时将原会长降为成员。
      */
     public CompletableFuture<Boolean> transferGuildLeadershipAsync(int guildId, UUID newLeaderUuid, String newLeaderName) {
+        return transferGuildLeadershipAsync(guildId, newLeaderUuid, newLeaderName, null);
+    }
+
+    /**
+     * 转移会长职位 (异步，带操作者记录)
+     * <p>服务层校验：目标必须为本公会成员且非当前会长；写库检查影响行数。
+     */
+    public CompletableFuture<Boolean> transferGuildLeadershipAsync(int guildId, UUID newLeaderUuid, String newLeaderName,
+                                                                   UUID requesterUuid) {
+        if (newLeaderUuid == null) {
+            return CompletableFuture.completedFuture(false);
+        }
         return getGuildByIdAsync(guildId).thenCompose(guild -> {
             if (guild == null) {
                 return CompletableFuture.completedFuture(false);
             }
             UUID oldLeaderUuid = guild.getLeaderUuid();
-            return CompletableFuture.supplyAsync(() -> {
-                try (Connection conn = databaseManager.getConnection()) {
-                    conn.setAutoCommit(false);
-                    try {
-                        // 1. 更新 guilds 表新会长
-                        try (PreparedStatement stmt = conn.prepareStatement(
-                                "UPDATE guilds SET leader_uuid = ?, leader_name = ? WHERE id = ?")) {
-                            stmt.setString(1, newLeaderUuid.toString());
-                            stmt.setString(2, newLeaderName);
-                            stmt.setInt(3, guildId);
-                            stmt.executeUpdate();
-                        }
-                        // 2. 原会长降级为成员
-                        try (PreparedStatement stmt = conn.prepareStatement(
-                                "UPDATE guild_members SET role = 'MEMBER' WHERE guild_id = ? AND player_uuid = ? AND role = 'LEADER'")) {
-                            stmt.setInt(1, guildId);
-                            stmt.setString(2, oldLeaderUuid.toString());
-                            stmt.executeUpdate();
-                        }
-                        // 3. 新会长升级
-                        try (PreparedStatement stmt = conn.prepareStatement(
-                                "UPDATE guild_members SET role = 'LEADER' WHERE guild_id = ? AND player_uuid = ?")) {
-                            stmt.setInt(1, guildId);
-                            stmt.setString(2, newLeaderUuid.toString());
-                            stmt.executeUpdate();
-                        }
-                        conn.commit();
+            if (newLeaderUuid.equals(oldLeaderUuid)) {
+                return CompletableFuture.completedFuture(false);
+            }
+            return getGuildMemberAsync(guildId, newLeaderUuid).thenCompose(newMember -> {
+                if (newMember == null) {
+                    return CompletableFuture.completedFuture(false);
+                }
+                String resolvedName = (newLeaderName != null && !newLeaderName.isEmpty())
+                        ? newLeaderName : newMember.getPlayerName();
+                return CompletableFuture.supplyAsync(() -> {
+                    try (Connection conn = databaseManager.getConnection()) {
+                        conn.setAutoCommit(false);
+                        try {
+                            // 1. 更新 guilds 表新会长
+                            int guildUpdated;
+                            try (PreparedStatement stmt = conn.prepareStatement(
+                                    "UPDATE guilds SET leader_uuid = ?, leader_name = ? WHERE id = ?")) {
+                                stmt.setString(1, newLeaderUuid.toString());
+                                stmt.setString(2, resolvedName);
+                                stmt.setInt(3, guildId);
+                                guildUpdated = stmt.executeUpdate();
+                            }
+                            if (guildUpdated <= 0) {
+                                conn.rollback();
+                                return false;
+                            }
+                            // 2. 原会长降级为成员
+                            try (PreparedStatement stmt = conn.prepareStatement(
+                                    "UPDATE guild_members SET role = 'MEMBER' WHERE guild_id = ? AND player_uuid = ? AND role = 'LEADER'")) {
+                                stmt.setInt(1, guildId);
+                                stmt.setString(2, oldLeaderUuid.toString());
+                                stmt.executeUpdate();
+                            }
+                            // 3. 新会长升级
+                            int newLeaderUpdated;
+                            try (PreparedStatement stmt = conn.prepareStatement(
+                                    "UPDATE guild_members SET role = 'LEADER' WHERE guild_id = ? AND player_uuid = ?")) {
+                                stmt.setInt(1, guildId);
+                                stmt.setString(2, newLeaderUuid.toString());
+                                newLeaderUpdated = stmt.executeUpdate();
+                            }
+                            if (newLeaderUpdated <= 0) {
+                                conn.rollback();
+                                return false;
+                            }
+                            conn.commit();
 
-                        // 刷新权限缓存
-                        try { plugin.getPermissionManager().updatePlayerPermissions(oldLeaderUuid); } catch (Exception ignored) {}
-                        try { plugin.getPermissionManager().updatePlayerPermissions(newLeaderUuid); } catch (Exception ignored) {}
+                            // 刷新权限缓存
+                            try { plugin.getPermissionManager().updatePlayerPermissions(oldLeaderUuid); } catch (Exception ignored) {}
+                            try { plugin.getPermissionManager().updatePlayerPermissions(newLeaderUuid); } catch (Exception ignored) {}
 
-                        // 记录日志
-                        String desc = "会长由 " + guild.getLeaderName() + " 转移给 " + newLeaderName;
-                        logGuildActionAsync(guildId, guild.getName(), newLeaderUuid.toString(), newLeaderName,
-                                GuildLog.LogType.LEADER_TRANSFERRED, desc, desc);
+                            // 触发角色变更事件
+                            String oldLeaderName = guild.getLeaderName();
+                            fireMemberRoleChange(guildId, guild.getName(), oldLeaderUuid, oldLeaderName, "LEADER", "MEMBER");
+                            fireMemberRoleChange(guildId, guild.getName(), newLeaderUuid, resolvedName,
+                                    newMember.getRole().name(), "LEADER");
 
-                        return true;
+                            // 记录日志
+                            String actor = newLeaderUuid.toString();
+                            String actorName = resolvedName;
+                            if (requesterUuid != null) {
+                                actor = requesterUuid.toString();
+                                try {
+                                    org.bukkit.OfflinePlayer requester = plugin.getServer().getOfflinePlayer(requesterUuid);
+                                    if (requester.getName() != null) {
+                                        actorName = requester.getName();
+                                    }
+                                } catch (Exception ignored) {}
+                            }
+                            String desc = "会长由 " + oldLeaderName + " 转移给 " + resolvedName;
+                            logGuildActionAsync(guildId, guild.getName(), actor, actorName,
+                                    GuildLog.LogType.LEADER_TRANSFERRED, desc, desc);
+
+                            return true;
+                        } catch (SQLException e) {
+                            conn.rollback();
+                            logger.severe("Error transferring leadership: " + e.getMessage());
+                            return false;
+                        }
                     } catch (SQLException e) {
-                        conn.rollback();
-                        logger.severe("Error transferring leadership: " + e.getMessage());
+                        logger.severe("Database error transferring leadership: " + e.getMessage());
                         return false;
                     }
-                } catch (SQLException e) {
-                    logger.severe("Database error transferring leadership: " + e.getMessage());
-                    return false;
-                }
+                });
             });
         });
     }

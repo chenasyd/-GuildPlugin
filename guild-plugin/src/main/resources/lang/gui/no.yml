@@ -652,10 +652,8 @@ gui:
     leave-desc: "&7Klikk &ffor \u00e5 forlate den n\u00e5v\u00e6rende gjengen"
     logs: "&6Gjenglogger"
     logs-desc: "&7Klikk &ffor \u00e5 se gjenglogger"
-    member-mgmt: "&aMedlemsadministrasjon"
-    member-mgmt-desc-left: "&7Venstreklikk &fInviter medlemmer"
-    member-mgmt-desc-right: "&7H\u00f8yreklikk &fSparker medlemmer"
-    member-mgmt-desc-shift-left: "&7Shift+Venstreklikk &fForfrem/Degrader"
+    transfer-leader: "&cOverfør lederskap"
+    transfer-leader-desc: "&7Klikk &ffor å overføre lederskap til et medlem"
     overview: "&6Gjengeoversikt"
     overview-desc: "&7Beskrivelse: &7{desc}"
     overview-home: "&7Gjengehjem: {home}"
@@ -1328,6 +1326,43 @@ gui:
     bedrock-title-page: "&6Spark medlem - Side {page}"
     bedrock-no-members: "&fIngen medlemmer tilgjengelig å sparke"
     bedrock-content: "&fVelg et medlem å sparke"
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6Overfør lederskap - Side {page}"
+    click-transfer: "Klikk for å overføre lederskap"
+    bedrock-title: "&6Overfør lederskap"
+    bedrock-title-page: "&6Overfør lederskap - Side {page}"
+    bedrock-no-members: "&fIngen medlemmer å overføre lederskap til"
+    bedrock-content: "&fVelg et medlem å overføre lederskap til"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cBekreft overføring av lederskap"
+    info-title: "&cBekreft overføring av lederskap"
+    guild: "&7Laug: &e{guild}"
+    member: "&7Ny leder: &e{member}"
+    confirm-question: "&7Er du sikker på at du vil overføre lederskapet?"
+    warning-demote: "&cDu blir et vanlig medlem!"
+    warning: "&cDenne handlingen kan ikke angres!"
+    confirm-button: "&cBekreft overføring"
+    confirm-lore: "&7Klikk for å bekrefte overføring av lederskap"
+    cancel-button: "&aAvbryt"
+    cancel-lore: "&7Klikk for å avbryte overføringen"
+    transfer-self: "&cKan ikke overføre lederskap til den nåværende lederen"
+    not-member: "&cDen spilleren er ikke medlem av dette lauget!"
+    success: "&aLederskap overført til &e{name}&a!"
+    failed: "&cOverføring av lederskap mislyktes!"
+    notify-new: "&aDu er nå leder for lauget &e{guild}&a!"
+    notify-old: "&cLederskapet til lauget &e{guild} &cher blitt overført til &e{name}&c!"
+    bedrock-title: "&cBekreft overføring av lederskap"
+    bedrock-content: "&fLaug: &e{guild}\n&fNy leder: &e{member}\n&fEr du sikker på at du vil overføre lederskapet?\n&cDu blir et vanlig medlem!\n&cDenne handlingen kan ikke angres!"
+    bedrock-confirm: "&cBekreft overføring"
+    bedrock-cancel: "&aAvbryt"
+
   promote-member:
     promote.failed: "&cKunne ikke forfremme medlemmet!"
     promote.promoted: "&aDu har blitt forfremmet til offiser i gjengen &e{guild} &a!"

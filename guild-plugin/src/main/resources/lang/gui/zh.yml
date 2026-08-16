@@ -652,10 +652,8 @@ gui:
     leave-desc: "&7单击 &f离开当前公会"
     logs: "&6公会日志"
     logs-desc: "&7单击 &f查看公会日志"
-    member-mgmt: "&a成员管理"
-    member-mgmt-desc-left: "&7左键 &f邀请成员"
-    member-mgmt-desc-right: "&7右键 &f踢出成员"
-    member-mgmt-desc-shift-left: "&7Shift+左键 &f提升/降级"
+    transfer-leader: "&c转移会长"
+    transfer-leader-desc: "&7单击 &f将会长职位转移给成员"
     overview: "&6公会概览"
     overview-desc: "&7描述: &7{desc}"
     overview-home: "&7公会家: {home}"
@@ -1323,6 +1321,43 @@ gui:
     bedrock-title: "&c确认踢出成员"
     bedrock-content: "&f公会：&e{guild}\n&f成员：&e{member}\n&f你确定要踢出这个成员吗？\n&c此操作无法撤销！"
     bedrock-confirm: "&c确认踢出"
+    bedrock-cancel: "&a取消"
+
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6转移会长 - 第{page}页"
+    click-transfer: "点击转移会长职位"
+    bedrock-title: "&6转移会长"
+    bedrock-title-page: "&6转移会长 - 第{page}页"
+    bedrock-no-members: "&f没有可转移会长职位的成员"
+    bedrock-content: "&f选择要接收会长职位的成员"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&c确认转移会长"
+    info-title: "&c确认转移会长"
+    guild: "&7公会: &e{guild}"
+    member: "&7新会长: &e{member}"
+    confirm-question: "&7你确定要将会长职位转移给该成员吗？"
+    warning-demote: "&c转移后你将成为普通成员！"
+    warning: "&c此操作不可撤销！"
+    confirm-button: "&c确认转移"
+    confirm-lore: "&7点击确认转移会长职位"
+    cancel-button: "&a取消"
+    cancel-lore: "&7点击取消转移会长"
+    transfer-self: "&c不能将会长职位转移给当前会长"
+    not-member: "&c该玩家不是本公会成员！"
+    success: "&a已成功将会长职位转移给 &e{name}&a！"
+    failed: "&c转移会长失败！"
+    notify-new: "&a你已成为公会 &e{guild} &a的会长！"
+    notify-old: "&c公会 &e{guild} &c的会长职位已转移给 &e{name}&c！"
+    bedrock-title: "&c确认转移会长"
+    bedrock-content: "&f公会: &e{guild}\n&f新会长: &e{member}\n&f你确定要转移会长职位吗？\n&c转移后你将成为普通成员！\n&c此操作不可撤销！"
+    bedrock-confirm: "&c确认转移"
     bedrock-cancel: "&a取消"
 
   # ================================================

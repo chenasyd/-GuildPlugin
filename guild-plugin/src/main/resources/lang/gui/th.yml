@@ -652,10 +652,8 @@ gui:
     leave-desc: "&7คลิก &fออกจากกิลด์ปัจจุบัน"
     logs: "&6บันทึกกิลด์"
     logs-desc: "&7คลิก &fดูบันทึกกิลด์"
-    member-mgmt: "&aจัดการสมาชิก"
-    member-mgmt-desc-left: "&7คลิกซ้าย &fเชิญสมาชิก"
-    member-mgmt-desc-right: "&7คลิกขวา &fเตะสมาชิก"
-    member-mgmt-desc-shift-left: "&7Shift+คลิกซ้าย &fเลื่อนขั้น/ลดขั้น"
+    transfer-leader: "&cโอนย้ายหัวหน้ากิลด์"
+    transfer-leader-desc: "&7คลิก &fเพื่อโอนย้ายหัวหน้าให้สมาชิก"
     overview: "&6ภาพรวมกิลด์"
     overview-desc: "&7คำอธิบาย: &7{desc}"
     overview-home: "&7บ้านกิลด์: {home}"
@@ -1324,6 +1322,43 @@ gui:
     bedrock-content: "&fGuild: &e{guild}\n&fMember: &e{member}\n&fAre you sure you want to kick this member?\n&cThis action cannot be undone!"
     bedrock-confirm: "&cConfirm Kick"
     bedrock-cancel: "&aCancel"
+
+  # ================================================
+  # TransferLeaderGUI
+  # ================================================
+  transfer-leader:
+    title: "&6โอนย้ายหัวหน้า - หน้า {page}"
+    click-transfer: "คลิกเพื่อโอนย้ายหัวหน้า"
+    bedrock-title: "&6โอนย้ายหัวหน้า"
+    bedrock-title-page: "&6โอนย้ายหัวหน้า - หน้า {page}"
+    bedrock-no-members: "&fไม่มีสมาชิกที่สามารถโอนย้ายหัวหน้าได้"
+    bedrock-content: "&fเลือกสมาชิกที่จะรับตำแหน่งหัวหน้า"
+
+  # ================================================
+  # ConfirmTransferLeaderGUI
+  # ================================================
+  confirm-transfer-leader:
+    title: "&cยืนยันการโอนย้ายหัวหน้า"
+    info-title: "&cยืนยันการโอนย้ายหัวหน้า"
+    guild: "&7กิลด์: &e{guild}"
+    member: "&7หัวหน้าใหม่: &e{member}"
+    confirm-question: "&7คุณแน่ใจหรือว่าต้องการโอนย้ายหัวหน้า?"
+    warning-demote: "&cคุณจะกลายเป็นสมาชิกทั่วไป!"
+    warning: "&cการกระทำนี้ไม่สามารถยกเลิกได้!"
+    confirm-button: "&cยืนยันการโอนย้าย"
+    confirm-lore: "&7คลิกเพื่อยืนยันการโอนย้ายหัวหน้า"
+    cancel-button: "&aยกเลิก"
+    cancel-lore: "&7คลิกเพื่อยกเลิกการโอนย้าย"
+    transfer-self: "&cไม่สามารถโอนย้ายหัวหน้าให้หัวหน้าปัจจุบันได้"
+    not-member: "&cผู้เล่นนั้นไม่ใช่สมาชิกของกิลด์นี้!"
+    success: "&aโอนย้ายหัวหน้าให้ &e{name} &aสำเร็จ!"
+    failed: "&cโอนย้ายหัวหน้าล้มเหลว!"
+    notify-new: "&aคุณเป็นหัวหน้ากิลด์ &e{guild} &aแล้ว!"
+    notify-old: "&cหัวหน้ากิลด์ &e{guild} &cถูกโอนย้ายให้ &e{name}&c!"
+    bedrock-title: "&cยืนยันการโอนย้ายหัวหน้า"
+    bedrock-content: "&fกิลด์: &e{guild}\n&fหัวหน้าใหม่: &e{member}\n&fคุณแน่ใจหรือว่าต้องการโอนย้ายหัวหน้า?\n&cคุณจะกลายเป็นสมาชิกทั่วไป!\n&cการกระทำนี้ไม่สามารถยกเลิกได้!"
+    bedrock-confirm: "&cยืนยันการโอนย้าย"
+    bedrock-cancel: "&aยกเลิก"
 
   # ================================================
   # PromoteMemberGUI (5 keys)
