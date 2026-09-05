@@ -1,6 +1,8 @@
 # Maven build output
 /target/
 **/target/
+dependency-reduced-pom.xml
+**/dependency-reduced-pom.xml
 # IDE / OS metadata
 /.idea/
 *.iml

@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.guild</groupId>
             <artifactId>guild-sdk</artifactId>
-            <version>${guild.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 

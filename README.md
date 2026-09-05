@@ -62,18 +62,28 @@ Folia multi-world (`gworld`) whitelist is defined in `ServerUtils.FOLIA_SUPPORTE
 
 **Requirements:** Java 17+, Maven 3.8+
 
+ImagoCore is an optional compile-time dependency resolved from `guild-plugin/libs/` (see [guild-plugin/libs/README.md](guild-plugin/libs/README.md)).
+
 ```bash
 git clone https://github.com/chenasyd/-GuildPlugin.git
 cd -GuildPlugin
-mvn clean package -pl guild-plugin
+mvn clean install -pl guild-plugin -am
 ```
 
-The output JAR will be at `guild-plugin/target/guild-plugin-*.jar`.
+This runs unit tests and builds `guild-sdk`, `guild-comm`, and `guild-plugin`. Output JAR:
 
-To include example modules:
+`guild-plugin/target/guild-plugin-*.jar`
+
+Full multi-module build (includes Bungee bridge):
 
 ```bash
-mvn clean package -pl guild-plugin -Pbuild-announcement-module
+mvn clean install
+```
+
+Example modules (optional):
+
+```bash
+mvn clean package -pl guild-plugin -am -Pbuild-announcement-module
 ```
 
 ## Commands

@@ -85,10 +85,10 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- MySQL Connector -->
+        <!-- MySQL Connector/J -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
         </dependency>
 
         <!-- HikariCP for connection pooling -->

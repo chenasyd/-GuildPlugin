@@ -1,5 +1,5 @@
 name: GuildPlugin
-version: ${guild.version}
+version: ${project.version}
 main: com.guild.GuildPlugin
 api-version: '1.20'
 authors: [chenasyd]

@@ -23,9 +23,9 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mysql.version>8.0.33</mysql.version>
         <spigot.version>1.20.1-R0.1-SNAPSHOT</spigot.version>
         <folia.version>1.20.1-R0.1-SNAPSHOT</folia.version>
-        <guild.version>1.6.7</guild.version>
     </properties>
 
     <repositories>
@@ -97,11 +97,11 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- MySQL Connector -->
+            <!-- MySQL Connector/J (successor to mysql-connector-java) -->
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.33</version>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.version}</version>
             </dependency>
 
             <!-- HikariCP for connection pooling -->
@@ -156,8 +156,16 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.2.5</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
                     <version>3.4.1</version>
+                    <configuration>
+                        <createDependencyReducedPom>false</createDependencyReducedPom>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
