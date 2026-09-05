@@ -115,12 +115,20 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
-        <!-- bStats Metrics -->
-        <dependency>
-            <groupId>org.bstats</groupId>
-            <artifactId>bstats-bukkit</artifactId>
-        </dependency>
-    </dependencies>
+            <!-- bStats Metrics -->
+            <dependency>
+                <groupId>org.bstats</groupId>
+                <artifactId>bstats-bukkit</artifactId>
+            </dependency>
+
+            <!-- JUnit 5 -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>5.10.2</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
 
     <!-- Project-local repository for third-party JARs (e.g. ImagoCore) -->
     <repositories>
@@ -151,6 +159,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

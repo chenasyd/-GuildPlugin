@@ -312,16 +312,7 @@ public class LanguageManager {
         if (existing == null) {
             moduleConfigs.put(lang, config);
         } else {
-            // getKeys(true) 返回递归所有层级键，包括中间 section 节点
-            // 若直接 existing.set("module", newModuleSection)，会把之前已合并的
-            // 模块数据整体替换掉，导致只剩最后一个模块的键。
-            // 因此必须跳过中间 section key，只设置叶子值。
-            for (String key : config.getKeys(true)) {
-                if (config.isConfigurationSection(key)) {
-                    continue; // 跳过中间节点，避免覆盖已有 section
-                }
-                existing.set(key, config.get(key));
-            }
+            LanguageConfigMerge.mergeLeafKeys(existing, config);
         }
     }
 
@@ -858,18 +849,7 @@ public class LanguageManager {
     /** 合并模块配置（同名语言累加）——必须与 mergeModuleConfig 一致，只写叶子键 */
     private static void mergeInto(String lang, FileConfiguration src,
                                    Map<String, FileConfiguration> target) {
-        FileConfiguration existing = target.get(lang);
-        if (existing == null) {
-            target.put(lang, src);
-            return;
-        }
-        // getKeys(true) 含中间 section；set("module", section) 会整棵覆盖其它模块键
-        for (String key : src.getKeys(true)) {
-            if (src.isConfigurationSection(key)) {
-                continue;
-            }
-            existing.set(key, src.get(key));
-        }
+        LanguageConfigMerge.mergeIntoLanguageMap(lang, src, target);
     }
     
     public FileConfiguration getLanguageConfig(String lang) {
