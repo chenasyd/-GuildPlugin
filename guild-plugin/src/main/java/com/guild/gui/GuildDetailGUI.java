@@ -361,8 +361,13 @@ public class GuildDetailGUI implements GUI {
     }
     
     private void toggleGuildFreeze(Player player) {
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.common.no-permission", "&cInsufficient permission")));
+            return;
+        }
         boolean newStatus = !guild.isFrozen();
-        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus).thenAccept(success -> {
+        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus, player.getUniqueId()).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     String message = newStatus ?
@@ -617,8 +622,13 @@ public class GuildDetailGUI implements GUI {
     }
 
     private void bedrockToggleFreeze(Player player) {
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.common.no-permission", "&cInsufficient permission")));
+            return;
+        }
         boolean newStatus = !guild.isFrozen();
-        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus).thenAccept(success -> {
+        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus, player.getUniqueId()).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     String message = newStatus ?

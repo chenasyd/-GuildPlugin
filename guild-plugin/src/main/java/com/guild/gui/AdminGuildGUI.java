@@ -114,6 +114,11 @@ public class AdminGuildGUI implements GUI {
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize(plugin.getLanguageManager().getGuiMessage(player,
+                    "gui.common.no-permission", "&cInsufficient permission")));
+            return;
+        }
         switch (slot) {
             case 20: // 公会列表管理
                 openGuildListManagement(player);

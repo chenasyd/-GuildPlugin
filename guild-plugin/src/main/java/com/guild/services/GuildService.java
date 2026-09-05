@@ -258,6 +258,9 @@ public class GuildService {
      * @param adminUuid 管理员UUID（执行删除的人，非会长）
      */
     public CompletableFuture<Boolean> forceDeleteGuildAsync(int guildId, UUID adminUuid) {
+        if (adminUuid != null && !isGuildAdmin(adminUuid)) {
+            return CompletableFuture.completedFuture(false);
+        }
         return getGuildByIdAsync(guildId).thenCompose(guild -> {
             if (guild == null) {
                 return CompletableFuture.completedFuture(false);
@@ -650,6 +653,9 @@ public class GuildService {
             if (guild == null) {
                 return CompletableFuture.completedFuture(false);
             }
+            if (requesterUuid != null && !canTransferLeadership(guild, requesterUuid)) {
+                return CompletableFuture.completedFuture(false);
+            }
             UUID oldLeaderUuid = guild.getLeaderUuid();
             if (newLeaderUuid.equals(oldLeaderUuid)) {
                 return CompletableFuture.completedFuture(false);
@@ -924,6 +930,32 @@ public class GuildService {
         GuildMember member = getGuildMember(playerUuid);
         return member != null && (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER);
     }
+
+    /** 在线玩家是否拥有 guild.admin */
+    public boolean isGuildAdmin(UUID playerUuid) {
+        if (playerUuid == null) {
+            return false;
+        }
+        Player player = plugin.getServer().getPlayer(playerUuid);
+        if (player == null || !player.isOnline()) {
+            return false;
+        }
+        return plugin.getPermissionManager().hasPermission(player, "guild.admin");
+    }
+
+    private boolean canTransferLeadership(Guild guild, UUID requesterUuid) {
+        if (requesterUuid == null || guild == null) {
+            return false;
+        }
+        if (isGuildAdmin(requesterUuid)) {
+            return true;
+        }
+        GuildMember requester = getGuildMember(requesterUuid);
+        return requester != null
+                && requester.getGuildId() == guild.getId()
+                && requester.getRole() == GuildMember.Role.LEADER
+                && requesterUuid.equals(guild.getLeaderUuid());
+    }
     
     /**
      * 提交申请 (异步)
@@ -1193,7 +1225,11 @@ public class GuildService {
       * 发送邀请 (异步)
       */
      public CompletableFuture<Boolean> sendInvitationAsync(int guildId, UUID inviterUuid, String inviterName, UUID targetUuid, String targetName) {
-         return getPlayerGuildAsync(targetUuid).thenCompose(existingGuild -> {
+         return getGuildMemberAsync(guildId, inviterUuid).thenCompose(inviterMember -> {
+             if (inviterMember == null || !inviterMember.getRole().canInvite()) {
+                 return CompletableFuture.completedFuture(false);
+             }
+             return getPlayerGuildAsync(targetUuid).thenCompose(existingGuild -> {
              if (existingGuild != null) {
                  return CompletableFuture.completedFuture(false);
              }
@@ -1220,6 +1256,7 @@ public class GuildService {
                      });
                  });
              });
+         });
          });
      }
      
@@ -1604,6 +1641,18 @@ public class GuildService {
         return updateGuildBalanceAsync(guildId, balance, null, null);
     }
 
+    /**
+     * 管理员调整公会余额（须 guild.admin；GUI Confirm 与纵深防御入口）
+     */
+    public CompletableFuture<Boolean> updateGuildBalanceByAdminAsync(int guildId, double balance,
+                                                                    UUID adminUuid, String adminName) {
+        if (!isGuildAdmin(adminUuid)) {
+            return CompletableFuture.completedFuture(false);
+        }
+        return updateGuildBalanceAsync(guildId, balance,
+                adminUuid != null ? adminUuid.toString() : null, adminName);
+    }
+
     public CompletableFuture<Boolean> updateGuildBalanceAsync(int guildId, double balance,
                                                                String operatorUuid, String operatorName) {
          return getGuildByIdAsync(guildId).thenCompose(guild -> {
@@ -1659,6 +1708,13 @@ public class GuildService {
      * 更新公会冻结状态 (异步)
      */
     public CompletableFuture<Boolean> updateGuildFrozenStatusAsync(int guildId, boolean frozen) {
+        return updateGuildFrozenStatusAsync(guildId, frozen, null);
+    }
+
+    public CompletableFuture<Boolean> updateGuildFrozenStatusAsync(int guildId, boolean frozen, UUID operatorUuid) {
+        if (operatorUuid != null && !isGuildAdmin(operatorUuid)) {
+            return CompletableFuture.completedFuture(false);
+        }
         return getGuildByIdAsync(guildId).thenCompose(guild -> {
             if (guild == null) {
                 return CompletableFuture.completedFuture(false);
@@ -1666,11 +1722,18 @@ public class GuildService {
             
             return CompletableFuture.supplyAsync(() -> {
                 if (repos.guilds().updateFrozen(guildId, frozen)) {
-                    // 记录冻结状态变更日志
                     GuildLog.LogType logType = frozen ? GuildLog.LogType.GUILD_FROZEN : GuildLog.LogType.GUILD_UNFROZEN;
                     String description = frozen ? "公会冻结" : "公会解冻";
+                    String operatorId = operatorUuid != null ? operatorUuid.toString() : "SYSTEM";
+                    String operatorName = "System";
+                    if (operatorUuid != null) {
+                        Player op = plugin.getServer().getPlayer(operatorUuid);
+                        if (op != null && op.getName() != null) {
+                            operatorName = op.getName();
+                        }
+                    }
 
-                    logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
+                    logGuildActionAsync(guildId, guild.getName(), operatorId, operatorName,
                         logType, description, "操作: " + (frozen ? "冻结" : "解冻"));
 
                     return true;

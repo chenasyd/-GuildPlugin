@@ -122,6 +122,14 @@ public class InviteMemberGUI extends AbstractPagedPlayerGUI {
 
     @Override
     protected void onEntrySelected(Player inviter, Player target) {
+        plugin.getGuildService().getGuildMemberAsync(guild.getId(), inviter.getUniqueId()).thenAccept(inviterMember -> {
+            if (inviterMember == null || !inviterMember.getRole().canInvite()) {
+                CompatibleScheduler.runTask(plugin, inviter, () -> inviter.sendMessage(ColorUtils.colorize(
+                        plugin.getLanguageManager().getGuiMessage(inviter, "gui.common.no-permission",
+                                "&cInsufficient permission"))));
+                return;
+            }
+
         plugin.getGuildService().getGuildMemberAsync(target.getUniqueId()).thenAccept(member -> {
             if (member != null) {
                 CompatibleScheduler.runTask(plugin, inviter, () -> inviter.sendMessage(
@@ -142,6 +150,7 @@ public class InviteMemberGUI extends AbstractPagedPlayerGUI {
                             inviter.sendMessage(InviteMessageUtils.formatInviteFailed(plugin, inviter));
                         }
                     }));
+        });
         });
     }
 

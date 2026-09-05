@@ -13,12 +13,20 @@ import org.bukkit.inventory.ItemStack;
 /** 确认删除公会 GUI */
 public class ConfirmDeleteGuildGUI extends AbstractConfirmGUI {
 
+    private final boolean adminForce;
+
     public ConfirmDeleteGuildGUI(GuildPlugin plugin, Guild guild, Player player) {
-        this(plugin, guild, player, "GuildSettingsGUI");
+        this(plugin, guild, player, "GuildSettingsGUI", false);
     }
 
     public ConfirmDeleteGuildGUI(GuildPlugin plugin, Guild guild, Player player, String sourceGuiType) {
+        this(plugin, guild, player, sourceGuiType, "GuildListManagementGUI".equals(sourceGuiType));
+    }
+
+    public ConfirmDeleteGuildGUI(GuildPlugin plugin, Guild guild, Player player, String sourceGuiType,
+                                 boolean adminForce) {
         super(plugin, guild, player, sourceGuiType != null ? sourceGuiType : "GuildSettingsGUI");
+        this.adminForce = adminForce;
     }
 
     @Override
@@ -154,9 +162,13 @@ public class ConfirmDeleteGuildGUI extends AbstractConfirmGUI {
 
     @Override
     protected void onConfirm(Player player) {
-        boolean isAdminForceDelete = "GuildListManagementGUI".equals(sourceGuiType);
-
-        if (!isAdminForceDelete) {
+        if (adminForce) {
+            if (!player.hasPermission("guild.admin")) {
+                player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                        "gui.common.no-permission", "&cInsufficient permission")));
+                return;
+            }
+        } else {
             GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
             if (member == null || member.getGuildId() != guild.getId() || member.getRole() != GuildMember.Role.LEADER) {
                 player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
@@ -165,7 +177,7 @@ public class ConfirmDeleteGuildGUI extends AbstractConfirmGUI {
             }
         }
 
-        var deleteFuture = isAdminForceDelete
+        var deleteFuture = adminForce
                 ? plugin.getGuildService().forceDeleteGuildAsync(guild.getId(), player.getUniqueId())
                 : plugin.getGuildService().deleteGuildAsync(guild.getId(), player.getUniqueId());
 
@@ -178,7 +190,7 @@ public class ConfirmDeleteGuildGUI extends AbstractConfirmGUI {
                 CompatibleScheduler.runTask(plugin, player, () -> {
                     player.sendMessage(ColorUtils.colorize(message));
                     plugin.getGuiManager().closeGUI(player);
-                    if (isAdminForceDelete) {
+                    if (adminForce) {
                         plugin.getGuiManager().openGUI(player, new GuildListManagementGUI(plugin, player));
                     } else {
                         plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
@@ -194,7 +206,7 @@ public class ConfirmDeleteGuildGUI extends AbstractConfirmGUI {
 
     @Override
     protected void onCancel(Player player) {
-        if ("GuildListManagementGUI".equals(sourceGuiType)) {
+        if (adminForce || "GuildListManagementGUI".equals(sourceGuiType)) {
             plugin.getGuiManager().openGUI(player, new GuildListManagementGUI(plugin, player));
         } else if ("GuildDetailGUI".equals(sourceGuiType)) {
             plugin.getGuiManager().openGUI(player, new GuildDetailGUI(plugin, guild, player));

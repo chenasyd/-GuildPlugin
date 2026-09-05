@@ -320,11 +320,11 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                CompatibleScheduler.runTask(plugin, player, () -> plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player)));
+            if (sender instanceof Player player) {
+                CompatibleScheduler.runTask(plugin, player, () -> plugin.getGuiManager().openGUI(player,
+                        new ConfirmDeleteGuildGUI(plugin, guild, player, "GuildListManagementGUI", true)));
             } else {
-                plugin.getGuildService().deleteGuildAsync(guild.getId(), UUID.randomUUID()).thenAccept(success -> {
+                plugin.getGuildService().forceDeleteGuildAsync(guild.getId(), null).thenAccept(success -> {
                     if (success) {
                         String successMsg = languageManager.getCoreMessage("admin.delete.success", "&aGuild {guild} has been forcibly deleted!")
                             .replace("{guild}", guildName);
@@ -346,6 +346,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         }
 
         String guildName = args[1];
+        UUID operatorUuid = sender instanceof Player p ? p.getUniqueId() : null;
         plugin.getGuildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
             if (guild == null) {
                 String notFound = languageManager.getCoreMessage("admin.freeze.not-found", "&cGuild {guild} does not exist!")
@@ -354,9 +355,16 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            String success = languageManager.getCoreMessage("admin.freeze.success", "&aGuild {guild} has been frozen!")
-                .replace("{guild}", guildName);
-            sendMessage(sender, ColorUtils.colorize(success));
+            plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), true, operatorUuid).thenAccept(success -> {
+                if (success) {
+                    String successMsg = languageManager.getCoreMessage("admin.freeze.success", "&aGuild {guild} has been frozen!")
+                        .replace("{guild}", guildName);
+                    sendMessage(sender, ColorUtils.colorize(successMsg));
+                } else {
+                    String failed = languageManager.getCoreMessage("admin.freeze.failed", "&cFailed to freeze guild!");
+                    sendMessage(sender, ColorUtils.colorize(failed));
+                }
+            });
         });
     }
     
@@ -368,6 +376,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
         }
 
         String guildName = args[1];
+        UUID operatorUuid = sender instanceof Player p ? p.getUniqueId() : null;
         plugin.getGuildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
             if (guild == null) {
                 String notFound = languageManager.getCoreMessage("admin.unfreeze.not-found", "&cGuild {guild} does not exist!")
@@ -376,9 +385,16 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                 return;
             }
 
-            String success = languageManager.getCoreMessage("admin.unfreeze.success", "&aGuild {guild} has been unfrozen!")
-                .replace("{guild}", guildName);
-            sendMessage(sender, ColorUtils.colorize(success));
+            plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), false, operatorUuid).thenAccept(success -> {
+                if (success) {
+                    String successMsg = languageManager.getCoreMessage("admin.unfreeze.success", "&aGuild {guild} has been unfrozen!")
+                        .replace("{guild}", guildName);
+                    sendMessage(sender, ColorUtils.colorize(successMsg));
+                } else {
+                    String failed = languageManager.getCoreMessage("admin.unfreeze.failed", "&cFailed to unfreeze guild!");
+                    sendMessage(sender, ColorUtils.colorize(failed));
+                }
+            });
         });
     }
     
@@ -391,6 +407,7 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
 
         String guildName = args[1];
         String newLeaderName = args[2];
+        UUID requesterUuid = sender instanceof Player p ? p.getUniqueId() : null;
 
         Player newLeader = Bukkit.getPlayer(newLeaderName);
         if (newLeader == null) {
@@ -416,10 +433,19 @@ public class GuildAdminCommand implements CommandExecutor, TabCompleter {
                     return;
                 }
 
-                String success = languageManager.getCoreMessage("admin.transfer.success", "&aGuild {guild} leadership has been transferred to {player}!")
-                    .replace("{guild}", guildName)
-                    .replace("{player}", newLeaderName);
-                sendMessage(sender, ColorUtils.colorize(success));
+                plugin.getGuildService().transferGuildLeadershipAsync(
+                        guild.getId(), newLeader.getUniqueId(), newLeader.getName(), requesterUuid
+                ).thenAccept(success -> {
+                    if (success) {
+                        String successMsg = languageManager.getCoreMessage("admin.transfer.success", "&aGuild {guild} leadership has been transferred to {player}!")
+                            .replace("{guild}", guildName)
+                            .replace("{player}", newLeaderName);
+                        sendMessage(sender, ColorUtils.colorize(successMsg));
+                    } else {
+                        String failed = languageManager.getCoreMessage("admin.transfer.failed", "&cFailed to transfer guild leadership!");
+                        sendMessage(sender, ColorUtils.colorize(failed));
+                    }
+                });
             });
         });
     }

@@ -229,8 +229,13 @@ public class GuildListManagementGUI implements GUI {
     }
     
     private void toggleGuildFreeze(Player player, Guild guild) {
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.common.no-permission", "&cInsufficient permission")));
+            return;
+        }
         boolean newStatus = !guild.isFrozen();
-        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus).thenAccept(success -> {
+        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus, player.getUniqueId()).thenAccept(success -> {
             if (success) {
                 String message = newStatus ?
                         languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&aGuild {guild} has been frozen!", "{guild}", guild.getName()) :
@@ -371,8 +376,13 @@ public class GuildListManagementGUI implements GUI {
     }
 
     private void bedrockToggleFreeze(Player player, Guild guild, int page) {
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.common.no-permission", "&cInsufficient permission")));
+            return;
+        }
         boolean newStatus = !guild.isFrozen();
-        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus).thenAccept(success -> {
+        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus, player.getUniqueId()).thenAccept(success -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
                 if (success) {
                     String message = newStatus ?

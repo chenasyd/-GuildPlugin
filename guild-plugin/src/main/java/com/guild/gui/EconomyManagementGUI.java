@@ -176,6 +176,11 @@ public class EconomyManagementGUI implements GUI {
     
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.common.no-permission", "&cInsufficient permission")));
+            return;
+        }
         if (slot == 46) {
             // 返回
             plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));

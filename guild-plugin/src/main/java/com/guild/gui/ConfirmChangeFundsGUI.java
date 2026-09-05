@@ -209,6 +209,11 @@ public class ConfirmChangeFundsGUI extends AbstractConfirmGUI {
 
     @Override
     protected void onConfirm(Player player) {
+        if (!player.hasPermission("guild.admin")) {
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.common.no-permission", "&cInsufficient permission")));
+            return;
+        }
         executeChange(player);
     }
 
@@ -221,8 +226,8 @@ public class ConfirmChangeFundsGUI extends AbstractConfirmGUI {
         double currentBalance = guild.getBalance();
         double newBalance = calculateNewBalance(currentBalance);
 
-        plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), newBalance,
-                        player.getUniqueId().toString(), player.getName())
+        plugin.getGuildService().updateGuildBalanceByAdminAsync(guild.getId(), newBalance,
+                        player.getUniqueId(), player.getName())
                 .thenAccept(success -> CompatibleScheduler.runTask(plugin, player, () -> {
                     if (success) {
                         String formattedAmount = String.format("%.2f", amount);

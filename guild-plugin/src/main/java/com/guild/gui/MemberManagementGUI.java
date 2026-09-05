@@ -465,6 +465,19 @@ public class MemberManagementGUI implements GUI {
         });
     }
 
+    private void openInviteGuiIfAllowed(Player player) {
+        plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (member == null || !member.getRole().canInvite()) {
+                    player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                            "gui.common.no-permission", "&cInsufficient permission")));
+                    return;
+                }
+                plugin.getGuiManager().openGUI(player, new InviteMemberGUI(plugin, guild, player));
+            });
+        });
+    }
+
     /**
      * 处理踢出成员
      */
@@ -546,7 +559,7 @@ public class MemberManagementGUI implements GUI {
                         .button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&cBack"))
                         .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
                             if (response.clickedButtonId() == 0) {
-                                plugin.getGuiManager().openGUI(player, new InviteMemberGUI(plugin, guild, player));
+                                openInviteGuiIfAllowed(player);
                             } else {
                                 plugin.getGuiManager().openGUI(player, new MainGuildGUI(plugin, player));
                             }
@@ -590,7 +603,7 @@ public class MemberManagementGUI implements GUI {
                         GuildMember m = members.get(startIndex + clicked);
                         sendBedrockMemberActions(player, m);
                     } else if (clicked == memberCount) {
-                        plugin.getGuiManager().openGUI(player, new InviteMemberGUI(plugin, guild, player));
+                        openInviteGuiIfAllowed(player);
                     } else if (clicked == memberCount + 1) {
                         sendBedrockMemberList(player, safePage - 1);
                     } else if (clicked == memberCount + 2) {
