@@ -1,5 +1,6 @@
 package com.guild.commands.handler.admin;
 
+import com.guild.commands.handler.SubCommandErrors;
 import com.guild.core.utils.ColorUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -29,36 +30,53 @@ public class GuildAdminTransferHandler implements GuildAdminSubCommandHandler {
             return;
         }
 
-        ctx.guildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
-            if (guild == null) {
-                String notFound = ctx.languageManager().getCoreMessage("admin.transfer.not-found", "&cGuild {guild} does not exist!")
-                        .replace("{guild}", guildName);
-                ctx.sendMessage(sender, ColorUtils.colorize(notFound));
-                return;
-            }
+        ctx.guildService().getGuildByNameAsync(guildName)
+                .thenAccept(guild -> SubCommandErrors.guardAsync(
+                        ctx.plugin(), ctx.languageManager(), sender,
+                        "admin-transfer", "admin.transfer.error", "&cFailed to transfer guild leadership.", () -> {
+                            if (guild == null) {
+                                String notFound = ctx.languageManager().getCoreMessage("admin.transfer.not-found", "&cGuild {guild} does not exist!")
+                                        .replace("{guild}", guildName);
+                                ctx.sendMessage(sender, ColorUtils.colorize(notFound));
+                                return;
+                            }
 
-            ctx.guildService().getGuildMemberAsync(guild.getId(), newLeader.getUniqueId()).thenAccept(member -> {
-                if (member == null) {
-                    String notMember = ctx.languageManager().getCoreMessage("admin.transfer.not-member", "&cPlayer {player} is not a member of this guild!")
-                            .replace("{player}", newLeaderName);
-                    ctx.sendMessage(sender, ColorUtils.colorize(notMember));
-                    return;
-                }
+                            ctx.guildService().getGuildMemberAsync(guild.getId(), newLeader.getUniqueId())
+                                    .thenAccept(member -> SubCommandErrors.guardAsync(
+                                            ctx.plugin(), ctx.languageManager(), sender,
+                                            "admin-transfer-member", "admin.transfer.error", "&cFailed to transfer guild leadership.", () -> {
+                                                if (member == null) {
+                                                    String notMember = ctx.languageManager().getCoreMessage("admin.transfer.not-member", "&cPlayer {player} is not a member of this guild!")
+                                                            .replace("{player}", newLeaderName);
+                                                    ctx.sendMessage(sender, ColorUtils.colorize(notMember));
+                                                    return;
+                                                }
 
-                ctx.guildService().transferGuildLeadershipAsync(
-                        guild.getId(), newLeader.getUniqueId(), newLeader.getName(), requesterUuid
-                ).thenAccept(success -> {
-                    if (success) {
-                        String successMsg = ctx.languageManager().getCoreMessage("admin.transfer.success", "&aGuild {guild} leadership has been transferred to {player}!")
-                                .replace("{guild}", guildName)
-                                .replace("{player}", newLeaderName);
-                        ctx.sendMessage(sender, ColorUtils.colorize(successMsg));
-                    } else {
-                        String failed = ctx.languageManager().getCoreMessage("admin.transfer.failed", "&cFailed to transfer guild leadership!");
-                        ctx.sendMessage(sender, ColorUtils.colorize(failed));
-                    }
-                });
-            });
-        });
+                                                ctx.guildService().transferGuildLeadershipAsync(
+                                                        guild.getId(), newLeader.getUniqueId(), newLeader.getName(), requesterUuid
+                                                ).thenAccept(success -> SubCommandErrors.guardAsync(
+                                                        ctx.plugin(), ctx.languageManager(), sender,
+                                                        "admin-transfer-update", "admin.transfer.error", "&cFailed to transfer guild leadership.", () -> {
+                                                            if (success) {
+                                                                String successMsg = ctx.languageManager().getCoreMessage("admin.transfer.success", "&aGuild {guild} leadership has been transferred to {player}!")
+                                                                        .replace("{guild}", guildName)
+                                                                        .replace("{player}", newLeaderName);
+                                                                ctx.sendMessage(sender, ColorUtils.colorize(successMsg));
+                                                            } else {
+                                                                String failed = ctx.languageManager().getCoreMessage("admin.transfer.failed", "&cFailed to transfer guild leadership!");
+                                                                ctx.sendMessage(sender, ColorUtils.colorize(failed));
+                                                            }
+                                                        }))
+                                                .exceptionally(SubCommandErrors.handleAsyncFailure(
+                                                        ctx.plugin(), ctx.languageManager(), sender,
+                                                        "admin-transfer-update", "admin.transfer.error", "&cFailed to transfer guild leadership."));
+                                            }))
+                                    .exceptionally(SubCommandErrors.handleAsyncFailure(
+                                            ctx.plugin(), ctx.languageManager(), sender,
+                                            "admin-transfer-member", "admin.transfer.error", "&cFailed to transfer guild leadership."));
+                        }))
+                .exceptionally(SubCommandErrors.handleAsyncFailure(
+                        ctx.plugin(), ctx.languageManager(), sender,
+                        "admin-transfer", "admin.transfer.error", "&cFailed to transfer guild leadership."));
     }
 }

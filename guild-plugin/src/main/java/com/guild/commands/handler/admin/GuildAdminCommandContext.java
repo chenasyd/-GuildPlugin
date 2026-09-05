@@ -4,6 +4,7 @@ import com.guild.GuildPlugin;
 import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.services.GuildService;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -36,7 +37,7 @@ public final class GuildAdminCommandContext {
 
     /** Folia 兼容：Player 在实体线程发消息，控制台直接发送。 */
     public void sendMessage(CommandSender sender, String message) {
-        if (sender instanceof Player player) {
+        if (sender instanceof Player player && Bukkit.getServer() != null) {
             CompatibleScheduler.runTask(plugin, player, () -> sender.sendMessage(message));
         } else {
             sender.sendMessage(message);

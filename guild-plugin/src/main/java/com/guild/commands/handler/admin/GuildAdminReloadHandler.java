@@ -1,5 +1,6 @@
 package com.guild.commands.handler.admin;
 
+import com.guild.commands.handler.SubCommandErrors;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.ColorUtils;
 import org.bukkit.command.CommandSender;
@@ -55,10 +56,8 @@ public class GuildAdminReloadHandler implements GuildAdminSubCommandHandler {
                 }
             });
         } catch (Exception e) {
-            String failed = ctx.languageManager().getCoreMessage("admin.reload.failed",
-                            "&cFailed to reload configuration: {error}")
-                    .replace("{error}", e.getMessage());
-            sender.sendMessage(ColorUtils.colorize(failed));
+            SubCommandErrors.logAndNotifySender(ctx.plugin(), ctx.languageManager(), sender,
+                    "admin-reload", e, "admin.reload.failed", "&cFailed to reload configuration!");
         }
     }
 }

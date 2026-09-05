@@ -1,5 +1,6 @@
 package com.guild.commands.handler.admin;
 
+import com.guild.commands.handler.SubCommandErrors;
 import com.guild.core.utils.ColorUtils;
 import com.guild.gui.RelationManagementGUI;
 import com.guild.models.Guild;
@@ -78,14 +79,14 @@ public class GuildAdminRelationHandler implements GuildAdminSubCommandHandler {
                                     allRelations.addAll(part);
                                 }
                             } catch (Exception e) {
-                                String errorMsg = ctx.languageManager().getCoreMessage("admin.relation.fetch-error", "Error fetching guild relations: {error}")
-                                        .replace("{error}", e.getMessage());
-                                ctx.plugin().getLogger().warning(errorMsg);
+                                SubCommandErrors.logFailure(ctx.plugin(), "admin-relation-list-fetch", e);
                             }
                         }
                         return allRelations;
                     });
-        }).thenAccept(relations -> {
+        }).thenAccept(relations -> SubCommandErrors.guardAsync(
+                ctx.plugin(), ctx.languageManager(), sender,
+                "admin-relation-list", "admin.relation.error", "&cFailed to list guild relations.", () -> {
             if (relations.isEmpty()) {
                 String empty = ctx.languageManager().getCoreMessage("admin.relation.empty", "&cNo guild relations");
                 ctx.sendMessage(sender, ColorUtils.colorize(empty));
@@ -102,7 +103,9 @@ public class GuildAdminRelationHandler implements GuildAdminSubCommandHandler {
                         .replace("{status}", status);
                 ctx.sendMessage(sender, ColorUtils.colorize(format));
             }
-        });
+        })).exceptionally(SubCommandErrors.handleAsyncFailure(
+                ctx.plugin(), ctx.languageManager(), sender,
+                "admin-relation-list", "admin.relation.error", "&cFailed to list guild relations."));
     }
 
     private void handleCreate(GuildAdminCommandContext ctx, CommandSender sender, String[] args) {
@@ -122,53 +125,55 @@ public class GuildAdminRelationHandler implements GuildAdminSubCommandHandler {
         CompletableFuture<Guild> guild1Future = ctx.guildService().getGuildByNameAsync(guild1Name);
         CompletableFuture<Guild> guild2Future = ctx.guildService().getGuildByNameAsync(guild2Name);
 
-        CompletableFuture.allOf(guild1Future, guild2Future).thenAccept(v -> {
-            try {
-                Guild guild1 = guild1Future.join();
-                Guild guild2 = guild2Future.join();
+        CompletableFuture.allOf(guild1Future, guild2Future).thenAccept(v -> SubCommandErrors.guardAsync(
+                ctx.plugin(), ctx.languageManager(), sender,
+                "admin-relation-create", "admin.relation.create-error", "&cError creating relation!", () -> {
+            Guild guild1 = guild1Future.join();
+            Guild guild2 = guild2Future.join();
 
-                if (guild1 == null) {
-                    String notFound = ctx.languageManager().getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
-                            .replace("{guild}", guild1Name);
-                    ctx.sendMessage(sender, ColorUtils.colorize(notFound));
-                    return;
-                }
-                if (guild2 == null) {
-                    String notFound = ctx.languageManager().getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
-                            .replace("{guild}", guild2Name);
-                    ctx.sendMessage(sender, ColorUtils.colorize(notFound));
-                    return;
-                }
-                if (guild1.getId() == guild2.getId()) {
-                    String cantSelf = ctx.languageManager().getCoreMessage("admin.relation.cannot-relation-self", "&cCannot create a relation with the same guild!");
-                    ctx.sendMessage(sender, ColorUtils.colorize(cantSelf));
-                    return;
-                }
-
-                ctx.guildService().createGuildRelationAsync(
-                        guild1.getId(), guild2.getId(),
-                        guild1.getName(), guild2.getName(),
-                        relationType, UUID.randomUUID(), "Admin"
-                ).thenAccept(success -> {
-                    if (success) {
-                        String typeText = AdminRelationFormat.getRelationTypeText(ctx.languageManager(), relationType);
-                        String successMsg = ctx.languageManager().getCoreMessage("admin.relation.create-success", "&aCreated relation: {guild1} ↔ {guild2} ({type})")
-                                .replace("{guild1}", guild1Name)
-                                .replace("{guild2}", guild2Name)
-                                .replace("{type}", typeText);
-                        ctx.sendMessage(sender, ColorUtils.colorize(successMsg));
-                    } else {
-                        String failed = ctx.languageManager().getCoreMessage("admin.relation.create-failed", "&cFailed to create relation!");
-                        ctx.sendMessage(sender, ColorUtils.colorize(failed));
-                    }
-                });
-
-            } catch (Exception e) {
-                String error = ctx.languageManager().getCoreMessage("admin.relation.create-error", "&cError creating relation: {error}")
-                        .replace("{error}", e.getMessage());
-                ctx.sendMessage(sender, ColorUtils.colorize(error));
+            if (guild1 == null) {
+                String notFound = ctx.languageManager().getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
+                        .replace("{guild}", guild1Name);
+                ctx.sendMessage(sender, ColorUtils.colorize(notFound));
+                return;
             }
-        });
+            if (guild2 == null) {
+                String notFound = ctx.languageManager().getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
+                        .replace("{guild}", guild2Name);
+                ctx.sendMessage(sender, ColorUtils.colorize(notFound));
+                return;
+            }
+            if (guild1.getId() == guild2.getId()) {
+                String cantSelf = ctx.languageManager().getCoreMessage("admin.relation.cannot-relation-self", "&cCannot create a relation with the same guild!");
+                ctx.sendMessage(sender, ColorUtils.colorize(cantSelf));
+                return;
+            }
+
+            ctx.guildService().createGuildRelationAsync(
+                    guild1.getId(), guild2.getId(),
+                    guild1.getName(), guild2.getName(),
+                    relationType, UUID.randomUUID(), "Admin"
+            ).thenAccept(success -> SubCommandErrors.guardAsync(
+                    ctx.plugin(), ctx.languageManager(), sender,
+                    "admin-relation-create-save", "admin.relation.create-error", "&cError creating relation!", () -> {
+                        if (success) {
+                            String typeText = AdminRelationFormat.getRelationTypeText(ctx.languageManager(), relationType);
+                            String successMsg = ctx.languageManager().getCoreMessage("admin.relation.create-success", "&aCreated relation: {guild1} ↔ {guild2} ({type})")
+                                    .replace("{guild1}", guild1Name)
+                                    .replace("{guild2}", guild2Name)
+                                    .replace("{type}", typeText);
+                            ctx.sendMessage(sender, ColorUtils.colorize(successMsg));
+                        } else {
+                            String failed = ctx.languageManager().getCoreMessage("admin.relation.create-failed", "&cFailed to create relation!");
+                            ctx.sendMessage(sender, ColorUtils.colorize(failed));
+                        }
+                    }))
+            .exceptionally(SubCommandErrors.handleAsyncFailure(
+                    ctx.plugin(), ctx.languageManager(), sender,
+                    "admin-relation-create-save", "admin.relation.create-error", "&cError creating relation!"));
+        })).exceptionally(SubCommandErrors.handleAsyncFailure(
+                ctx.plugin(), ctx.languageManager(), sender,
+                "admin-relation-create", "admin.relation.create-error", "&cError creating relation!"));
     }
 
     private void handleDelete(GuildAdminCommandContext ctx, CommandSender sender, String[] args) {
@@ -178,54 +183,62 @@ public class GuildAdminRelationHandler implements GuildAdminSubCommandHandler {
         CompletableFuture<Guild> guild1Future = ctx.guildService().getGuildByNameAsync(guild1Name);
         CompletableFuture<Guild> guild2Future = ctx.guildService().getGuildByNameAsync(guild2Name);
 
-        CompletableFuture.allOf(guild1Future, guild2Future).thenAccept(v -> {
-            try {
-                Guild guild1 = guild1Future.join();
-                Guild guild2 = guild2Future.join();
+        CompletableFuture.allOf(guild1Future, guild2Future).thenAccept(v -> SubCommandErrors.guardAsync(
+                ctx.plugin(), ctx.languageManager(), sender,
+                "admin-relation-delete", "admin.relation.delete-error", "&cError deleting relation!", () -> {
+            Guild guild1 = guild1Future.join();
+            Guild guild2 = guild2Future.join();
 
-                if (guild1 == null) {
-                    String notFound = ctx.languageManager().getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
-                            .replace("{guild}", guild1Name);
-                    ctx.sendMessage(sender, ColorUtils.colorize(notFound));
-                    return;
-                }
-                if (guild2 == null) {
-                    String notFound = ctx.languageManager().getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
-                            .replace("{guild}", guild2Name);
-                    ctx.sendMessage(sender, ColorUtils.colorize(notFound));
-                    return;
-                }
-
-                ctx.guildService().getGuildRelationsAsync(guild1.getId()).thenAccept(relations -> {
-                    for (GuildRelation relation : relations) {
-                        if ((relation.getGuild1Id() == guild1.getId() && relation.getGuild2Id() == guild2.getId())
-                                || (relation.getGuild1Id() == guild2.getId() && relation.getGuild2Id() == guild1.getId())) {
-
-                            ctx.guildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
-                                if (success) {
-                                    String successMsg = ctx.languageManager().getCoreMessage("admin.relation.delete-success", "&aDeleted relation: {guild1} ↔ {guild2}")
-                                            .replace("{guild1}", guild1Name)
-                                            .replace("{guild2}", guild2Name);
-                                    ctx.sendMessage(sender, ColorUtils.colorize(successMsg));
-                                } else {
-                                    String failed = ctx.languageManager().getCoreMessage("admin.relation.delete-failed", "&cFailed to delete relation!");
-                                    ctx.sendMessage(sender, ColorUtils.colorize(failed));
-                                }
-                            });
-                            return;
-                        }
-                    }
-                    String notFound = ctx.languageManager().getCoreMessage("admin.relation.not-found", "&cNo relation found between {guild1} and {guild2}!")
-                            .replace("{guild1}", guild1Name)
-                            .replace("{guild2}", guild2Name);
-                    ctx.sendMessage(sender, ColorUtils.colorize(notFound));
-                });
-
-            } catch (Exception e) {
-                String error = ctx.languageManager().getCoreMessage("admin.relation.delete-error", "&cError deleting relation: {error}")
-                        .replace("{error}", e.getMessage());
-                ctx.sendMessage(sender, ColorUtils.colorize(error));
+            if (guild1 == null) {
+                String notFound = ctx.languageManager().getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
+                        .replace("{guild}", guild1Name);
+                ctx.sendMessage(sender, ColorUtils.colorize(notFound));
+                return;
             }
-        });
+            if (guild2 == null) {
+                String notFound = ctx.languageManager().getCoreMessage("admin.relation.not-found-guild", "&cGuild {guild} not found!")
+                        .replace("{guild}", guild2Name);
+                ctx.sendMessage(sender, ColorUtils.colorize(notFound));
+                return;
+            }
+
+            ctx.guildService().getGuildRelationsAsync(guild1.getId()).thenAccept(relations -> SubCommandErrors.guardAsync(
+                    ctx.plugin(), ctx.languageManager(), sender,
+                    "admin-relation-delete-find", "admin.relation.delete-error", "&cError deleting relation!", () -> {
+                        for (GuildRelation relation : relations) {
+                            if ((relation.getGuild1Id() == guild1.getId() && relation.getGuild2Id() == guild2.getId())
+                                    || (relation.getGuild1Id() == guild2.getId() && relation.getGuild2Id() == guild1.getId())) {
+
+                                ctx.guildService().deleteGuildRelationAsync(relation.getId())
+                                        .thenAccept(success -> SubCommandErrors.guardAsync(
+                                                ctx.plugin(), ctx.languageManager(), sender,
+                                                "admin-relation-delete-save", "admin.relation.delete-error", "&cError deleting relation!", () -> {
+                                                    if (success) {
+                                                        String successMsg = ctx.languageManager().getCoreMessage("admin.relation.delete-success", "&aDeleted relation: {guild1} ↔ {guild2}")
+                                                                .replace("{guild1}", guild1Name)
+                                                                .replace("{guild2}", guild2Name);
+                                                        ctx.sendMessage(sender, ColorUtils.colorize(successMsg));
+                                                    } else {
+                                                        String failed = ctx.languageManager().getCoreMessage("admin.relation.delete-failed", "&cFailed to delete relation!");
+                                                        ctx.sendMessage(sender, ColorUtils.colorize(failed));
+                                                    }
+                                                }))
+                                        .exceptionally(SubCommandErrors.handleAsyncFailure(
+                                                ctx.plugin(), ctx.languageManager(), sender,
+                                                "admin-relation-delete-save", "admin.relation.delete-error", "&cError deleting relation!"));
+                                return;
+                            }
+                        }
+                        String notFound = ctx.languageManager().getCoreMessage("admin.relation.not-found", "&cNo relation found between {guild1} and {guild2}!")
+                                .replace("{guild1}", guild1Name)
+                                .replace("{guild2}", guild2Name);
+                        ctx.sendMessage(sender, ColorUtils.colorize(notFound));
+                    }))
+            .exceptionally(SubCommandErrors.handleAsyncFailure(
+                    ctx.plugin(), ctx.languageManager(), sender,
+                    "admin-relation-delete-find", "admin.relation.delete-error", "&cError deleting relation!"));
+        })).exceptionally(SubCommandErrors.handleAsyncFailure(
+                ctx.plugin(), ctx.languageManager(), sender,
+                "admin-relation-delete", "admin.relation.delete-error", "&cError deleting relation!"));
     }
 }

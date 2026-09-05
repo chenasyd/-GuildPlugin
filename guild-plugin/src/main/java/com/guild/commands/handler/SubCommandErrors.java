@@ -7,6 +7,8 @@ import com.guild.core.utils.CompatibleScheduler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.CompletionException;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 /** 子命令 Handler 异步失败时的结构化日志与用户通知。 */
@@ -43,5 +45,29 @@ public final class SubCommandErrors {
         } else {
             sender.sendMessage(ColorUtils.colorize(languageManager.getCoreMessage(messageKey, fallback)));
         }
+    }
+
+    /** 在 CompletableFuture 回调中包裹业务逻辑，失败时结构化日志 + 通知执行者。 */
+    public static void guardAsync(GuildPlugin plugin, LanguageManager languageManager, CommandSender sender,
+                                  String operation, String messageKey, String fallback, Runnable action) {
+        try {
+            action.run();
+        } catch (Exception e) {
+            logAndNotifySender(plugin, languageManager, sender, operation, e, messageKey, fallback);
+        }
+    }
+
+    public static <T> Function<Throwable, T> handleAsyncFailure(GuildPlugin plugin, LanguageManager languageManager,
+                                                                CommandSender sender, String operation,
+                                                                String messageKey, String fallback) {
+        return throwable -> {
+            Throwable cause = throwable;
+            if (throwable instanceof CompletionException && throwable.getCause() != null) {
+                cause = throwable.getCause();
+            }
+            Exception e = cause instanceof Exception ex ? ex : new Exception(String.valueOf(cause), cause);
+            logAndNotifySender(plugin, languageManager, sender, operation, e, messageKey, fallback);
+            return null;
+        };
     }
 }
