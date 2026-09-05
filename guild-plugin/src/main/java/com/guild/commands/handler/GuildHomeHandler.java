@@ -4,7 +4,6 @@ import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
-import java.util.concurrent.CompletableFuture;
 import org.bukkit.entity.Player;
 
 public class GuildHomeHandler implements GuildSubCommandHandler {
@@ -25,8 +24,8 @@ public class GuildHomeHandler implements GuildSubCommandHandler {
                     return;
                 }
         
-                CompletableFuture.runAsync(() -> {
-                    try {
+        SubCommandErrors.runPlayerAsync(ctx.plugin(), ctx.languageManager(), player,
+                "sethome", "guild.sethome.error", "&cAn error occurred while setting the guild home!", () -> {
                         Guild guild = ctx.guildService().getPlayerGuild(player.getUniqueId());
                         if (guild == null) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
@@ -54,11 +53,6 @@ public class GuildHomeHandler implements GuildSubCommandHandler {
                             String message = ctx.languageManager().getCoreMessage(player, "guild.sethome.success", "&aGuild home has been set!");
                             player.sendMessage(ColorUtils.colorize(message));
                         });
-                    } catch (Exception e) {
-                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
-                                "sethome", e, "guild.sethome.error",
-                                "&cAn error occurred while setting the guild home!");
-                    }
                 });
 
     }

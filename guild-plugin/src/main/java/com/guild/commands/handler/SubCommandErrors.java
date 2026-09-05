@@ -79,4 +79,11 @@ public final class SubCommandErrors {
                                                              CompletableFuture<T> future) {
         return future.exceptionally(handleAsyncFailure(plugin, languageManager, player, operation, messageKey, fallback));
     }
+
+    /** 在后台线程执行业务逻辑，同步异常时结构化日志 + 通知玩家。 */
+    public static void runPlayerAsync(GuildPlugin plugin, LanguageManager languageManager, Player player,
+                                      String operation, String messageKey, String fallback, Runnable action) {
+        CompletableFuture.runAsync(() ->
+                guardAsync(plugin, languageManager, player, operation, messageKey, fallback, action));
+    }
 }

@@ -31,7 +31,10 @@ public class GuildAcceptHandler implements GuildSubCommandHandler {
                         return;
                     }
             
-                    ctx.guildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
+                    SubCommandErrors.guardPlayerFuture(ctx.plugin(), ctx.languageManager(), player,
+                            "accept-guild", "guild.accept.error", "&cAn error occurred while accepting the invitation!",
+                            ctx.guildService().getGuildByNameAsync(guildName))
+                            .thenAccept(guild -> {
                         if (guild == null) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.accept.guild-not-found", "&cGuild does not exist!");
@@ -41,7 +44,10 @@ public class GuildAcceptHandler implements GuildSubCommandHandler {
                         }
                 
                         // 检查玩家是否有该公会的有效邀请
-                        ctx.guildService().getPendingInvitationAsync(player.getUniqueId(), guild.getId()).thenAccept(invitation -> {
+                        SubCommandErrors.guardPlayerFuture(ctx.plugin(), ctx.languageManager(), player,
+                                "accept-invitation", "guild.accept.error", "&cAn error occurred while accepting the invitation!",
+                                ctx.guildService().getPendingInvitationAsync(player.getUniqueId(), guild.getId()))
+                                .thenAccept(invitation -> {
                             if (invitation == null) {
                                 ctx.plugin().getLogger().warning("[Accept-Debug] 玩家 " + player.getName() + " 没有来自 " + guild.getName() + " 的邀请");
                                 CompatibleScheduler.runTask(ctx.plugin(), player, () -> {

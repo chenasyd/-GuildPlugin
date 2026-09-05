@@ -124,7 +124,10 @@ public class GuildWarehouseHandler implements GuildSubCommandHandler {
                     return;
                 }
 
-                warehouse.setRoleOpenPermission(guild.getId(), targetRole, enable, player, guild.getName()).thenAccept(ok ->
+                SubCommandErrors.guardPlayerFuture(ctx.plugin(), ctx.languageManager(), player,
+                        "warehouse-perm", "warehouse.perm-failed", "&cFailed to update warehouse permission.",
+                        warehouse.setRoleOpenPermission(guild.getId(), targetRole, enable, player, guild.getName()))
+                        .thenAccept(ok ->
                         CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                             if (!player.isOnline()) {
                                 return;

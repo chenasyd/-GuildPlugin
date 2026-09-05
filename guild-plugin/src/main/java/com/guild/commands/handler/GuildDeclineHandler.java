@@ -30,7 +30,10 @@ public class GuildDeclineHandler implements GuildSubCommandHandler {
                     }
             
                     // 检查玩家是否有该公会的有效邀请
-                    ctx.guildService().getPendingInvitationAsync(player.getUniqueId(), guild.getId()).thenAccept(invitation -> {
+                    SubCommandErrors.guardPlayerFuture(ctx.plugin(), ctx.languageManager(), player,
+                            "decline-invitation", "guild.decline.error", "&cAn error occurred while declining the invitation!",
+                            ctx.guildService().getPendingInvitationAsync(player.getUniqueId(), guild.getId()))
+                            .thenAccept(invitation -> {
                         if (invitation == null) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.decline.no-invitation", "&cYou don't have an invitation from this guild or it has expired!");

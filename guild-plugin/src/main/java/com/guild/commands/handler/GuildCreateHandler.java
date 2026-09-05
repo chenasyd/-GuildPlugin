@@ -5,7 +5,6 @@ import com.guild.core.utils.CompatibleScheduler;
 import com.guild.gui.MainGuildGUI;
 import com.guild.models.Guild;
 import java.util.Arrays;
-import java.util.concurrent.CompletableFuture;
 import org.bukkit.entity.Player;
 
 public class GuildCreateHandler implements GuildSubCommandHandler {
@@ -79,8 +78,8 @@ public class GuildCreateHandler implements GuildSubCommandHandler {
                 final String finalTag = guildTag;
                 final String finalDescription = guildDescription;
         
-                CompletableFuture.runAsync(() -> {
-                    try {
+                SubCommandErrors.runPlayerAsync(ctx.plugin(), ctx.languageManager(), player,
+                        "create", "guild.create.error", "&cAn error occurred while creating the guild!", () -> {
                         // 检查玩家是否已在公会中
                         Guild existingGuild = ctx.guildService().getPlayerGuild(player.getUniqueId());
                         if (existingGuild != null) {
@@ -155,11 +154,6 @@ public class GuildCreateHandler implements GuildSubCommandHandler {
                                 player.sendMessage(ColorUtils.colorize(message));
                             });
                         }
-                    } catch (Exception e) {
-                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
-                                "create", e, "guild.create.error",
-                                "&cAn error occurred while creating the guild!");
-                    }
                 });
 
     }

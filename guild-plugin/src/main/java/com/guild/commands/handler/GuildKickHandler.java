@@ -9,8 +9,6 @@ import com.guild.models.GuildMember.Role;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.CompletableFuture;
-
 public class GuildKickHandler implements GuildSubCommandHandler {
 
     @Override
@@ -31,49 +29,44 @@ public class GuildKickHandler implements GuildSubCommandHandler {
 
         String targetName = args[1];
 
-        CompletableFuture.runAsync(() -> {
-            try {
-                Guild guild = ctx.guildService().getPlayerGuild(player.getUniqueId());
-                if (guild == null) {
-                    CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                        String message = ctx.languageManager().getCoreMessage(player, "guild.kick.not-in-guild",
-                                "&cYou are not in any guild!");
-                        player.sendMessage(ColorUtils.colorize(message));
-                    });
-                    return;
-                }
+        SubCommandErrors.runPlayerAsync(ctx.plugin(), ctx.languageManager(), player,
+                "kick", "guild.kick.error", "&cAn error occurred while kicking the player!", () -> {
+                    Guild guild = ctx.guildService().getPlayerGuild(player.getUniqueId());
+                    if (guild == null) {
+                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
+                            String message = ctx.languageManager().getCoreMessage(player, "guild.kick.not-in-guild",
+                                    "&cYou are not in any guild!");
+                            player.sendMessage(ColorUtils.colorize(message));
+                        });
+                        return;
+                    }
 
-                @SuppressWarnings("deprecation")
-                org.bukkit.OfflinePlayer targetOfflinePlayer = Bukkit.getOfflinePlayer(targetName);
-                GuildMember targetMember = ctx.guildService().getGuildMember(targetOfflinePlayer.getUniqueId());
-                if (targetMember == null || targetMember.getGuildId() != guild.getId()) {
-                    CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                        String message = ctx.languageManager().getCoreMessage(player, "guild.kick.player-not-in-guild",
-                                "&cThat player is not in your guild!");
-                        player.sendMessage(ColorUtils.colorize(message));
-                    });
-                    return;
-                }
+                    @SuppressWarnings("deprecation")
+                    org.bukkit.OfflinePlayer targetOfflinePlayer = Bukkit.getOfflinePlayer(targetName);
+                    GuildMember targetMember = ctx.guildService().getGuildMember(targetOfflinePlayer.getUniqueId());
+                    if (targetMember == null || targetMember.getGuildId() != guild.getId()) {
+                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
+                            String message = ctx.languageManager().getCoreMessage(player, "guild.kick.player-not-in-guild",
+                                    "&cThat player is not in your guild!");
+                            player.sendMessage(ColorUtils.colorize(message));
+                        });
+                        return;
+                    }
 
-                if (targetMember.getRole() == Role.LEADER) {
-                    CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                        String message = ctx.languageManager().getCoreMessage(player, "guild.kick.cannot-kick-master",
-                                "&cYou cannot kick the leader!");
-                        player.sendMessage(ColorUtils.colorize(message));
-                    });
-                    return;
-                }
+                    if (targetMember.getRole() == Role.LEADER) {
+                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
+                            String message = ctx.languageManager().getCoreMessage(player, "guild.kick.cannot-kick-master",
+                                    "&cYou cannot kick the leader!");
+                            player.sendMessage(ColorUtils.colorize(message));
+                        });
+                        return;
+                    }
 
-                CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                    ConfirmKickMemberGUI confirmGui = new ConfirmKickMemberGUI(
-                            ctx.plugin(), guild, targetMember, player, "MemberManagementGUI");
-                    ctx.plugin().getGuiManager().openGUI(player, confirmGui);
+                    CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
+                        ConfirmKickMemberGUI confirmGui = new ConfirmKickMemberGUI(
+                                ctx.plugin(), guild, targetMember, player, "MemberManagementGUI");
+                        ctx.plugin().getGuiManager().openGUI(player, confirmGui);
+                    });
                 });
-            } catch (Exception e) {
-                SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
-                        "kick", e, "guild.kick.error",
-                        "&cAn error occurred while kicking the player!");
-            }
-        });
     }
 }

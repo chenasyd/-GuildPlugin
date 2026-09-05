@@ -3,7 +3,6 @@ package com.guild.commands.handler;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
-import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -90,8 +89,8 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
     }
 
     private void handleEconomyInfo(GuildCommandContext ctx, Player player) {
-                CompletableFuture.runAsync(() -> {
-                    try {
+        SubCommandErrors.runPlayerAsync(ctx.plugin(), ctx.languageManager(), player,
+                "economy-info", "guild.economy.error", "&cAn error occurred while fetching economy info!", () -> {
                         Guild guild = ctx.guildService().getPlayerGuild(player.getUniqueId());
                         if (guild == null) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
@@ -109,12 +108,7 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                         CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                             player.sendMessage(ColorUtils.colorize(finalMessage));
                         });
-                    } catch (Exception e) {
-                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
-                                "economy-info", e, "guild.economy.error",
-                                "&cAn error occurred while fetching economy info!");
-                    }
-                });
+        });
 
     }
 
@@ -144,8 +138,8 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
         
                 final java.util.UUID playerUuid = player.getUniqueId();
                 final String playerName = player.getName();
-                CompletableFuture.runAsync(() -> {
-                    try {
+                SubCommandErrors.runPlayerAsync(ctx.plugin(), ctx.languageManager(), player,
+                        "deposit", "guild.deposit.error", "&cAn error occurred while depositing!", () -> {
                         Guild guild = ctx.guildService().getPlayerGuild(playerUuid);
                         if (guild == null) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
@@ -196,11 +190,6 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             String msg = message.replace("{0}", String.format("%.2f", amount));
                             player.sendMessage(ColorUtils.colorize(msg));
                         });
-                    } catch (Exception e) {
-                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
-                                "deposit", e, "guild.deposit.error",
-                                "&cAn error occurred while depositing!");
-                    }
                 });
 
     }
@@ -228,9 +217,9 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
                 }
-        
-                CompletableFuture.runAsync(() -> {
-                    try {
+
+        SubCommandErrors.runPlayerAsync(ctx.plugin(), ctx.languageManager(), player,
+                "withdraw", "guild.withdraw.error", "&cAn error occurred while withdrawing!", () -> {
                         Guild guild = ctx.guildService().getPlayerGuild(player.getUniqueId());
                         if (guild == null) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
@@ -239,7 +228,7 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             });
                             return;
                         }
-                
+
                         if (!ctx.plugin().getMembershipRules().isLeaderOf(player, guild.getId())) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.withdraw.only-master", "&cOnly the leader can withdraw from the guild account!");
@@ -247,7 +236,7 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             });
                             return;
                         }
-                
+
                         if (guild.getBalance() < amount) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.withdraw.insufficient-funds", "&cInsufficient guild account balance!");
@@ -255,8 +244,7 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             });
                             return;
                         }
-                
-                        // 增加玩家余额
+
                         if (!ctx.plugin().getEconomyManager().deposit(player, amount)) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.withdraw.error", "&cAn error occurred while withdrawing!");
@@ -264,27 +252,19 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             });
                             return;
                         }
-                
-                        // 减少公会余额（传入操作者信息，避免产生 SYSTEM 匿名日志）
+
                         ctx.plugin().getGuildService().updateGuildBalanceAsync(
                                 guild.getId(), guild.getBalance() - amount,
                                 player.getUniqueId().toString(), player.getName()).join();
-                        // 记录取款
                         ctx.plugin().getGuildInvestmentService().recordWithdraw(guild.getId(), player.getUniqueId(), amount);
-                        // 分发取款事件给模块
                         ctx.plugin().getGuildService().notifyEconomyWithdraw(guild.getId(), guild.getName(), player.getUniqueId(), player.getName(), amount);
-                
+
                         CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                             String message = ctx.languageManager().getCoreMessage(player, "guild.withdraw.success", "&aSuccessfully withdrew {0} coins from the guild account!");
                             String msg = message.replace("{0}", String.format("%.2f", amount));
                             player.sendMessage(ColorUtils.colorize(msg));
                         });
-                    } catch (Exception e) {
-                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
-                                "withdraw", e, "guild.withdraw.error",
-                                "&cAn error occurred while withdrawing!");
-                    }
-                });
+        });
 
     }
 
@@ -320,8 +300,8 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                     return;
                 }
         
-                CompletableFuture.runAsync(() -> {
-                    try {
+        SubCommandErrors.runPlayerAsync(ctx.plugin(), ctx.languageManager(), player,
+                "transfer-guild", "guild.transfer.error", "&cAn error occurred while transferring!", () -> {
                         Guild sourceGuild = ctx.guildService().getPlayerGuild(player.getUniqueId());
                         if (sourceGuild == null) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
@@ -376,12 +356,7 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             msg = msg.replace("{1}", targetGuild.getName());
                             player.sendMessage(ColorUtils.colorize(msg));
                         });
-                    } catch (Exception e) {
-                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
-                                "transfer", e, "guild.transfer.error",
-                                "&cAn error occurred while transferring!");
-                    }
-                });
+        });
 
     }
 
@@ -392,8 +367,8 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                     return;
                 }
         
-                CompletableFuture.runAsync(() -> {
-                    try {
+        SubCommandErrors.runPlayerAsync(ctx.plugin(), ctx.languageManager(), player,
+                "transfer-player", "guild.transfer.error", "&cAn error occurred while transferring!", () -> {
                         Guild guild = ctx.guildService().getPlayerGuild(player.getUniqueId());
                         if (guild == null) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
@@ -446,12 +421,7 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             String msg = targetMessage.replace("{0}", String.format("%.2f", amount));
                             targetPlayer.sendMessage(ColorUtils.colorize(msg));
                         });
-                    } catch (Exception e) {
-                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
-                                "transfer", e, "guild.transfer.error",
-                                "&cAn error occurred while transferring!");
-                    }
-                });
+        });
 
     }
 
