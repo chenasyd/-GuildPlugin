@@ -1279,25 +1279,32 @@ gui:
     click-invite: "Kattints a j\u00e1t\u00e9kos megh\u00edv\u00e1s\u00e1hoz"
     join-guild: "Csatlakoz\u00e1s a c\u00e9hhez"
     title: "&6Tag megh\u00edv\u00e1sa - {guild} - {page}. oldal"
-
-  # ================================================
-  # KickMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Tagok meghívása"
     bedrock-title-page: "&6Tagok meghívása - Oldal {page}"
     bedrock-no-players: "&fNincs meghívható elérhető játékos"
     bedrock-player-list: "&fElérhető játékosok (Összesen {count})"
+
+  # ================================================
+  # KickMemberGUI (5 keys)
+  # ================================================
+
+
   kick-member:
     kick.failed: "&cTag kir\u00fang\u00e1sa sikertelen!"
     kick.kicked: "&cKir\u00fangtak a(z) &e{guild} &c c\u00e9hb\u0151l!"
     kick.success: "&aA(z) &e{player} &a tagot kir\u00fangtad!"
     click-kick: "Kattints a tag kir\u00fang\u00e1s\u00e1hoz"
     title: "&6Tag kir\u00fang\u00e1sa - {page}. oldal"
+    bedrock-title: "&6Tag kirúgása"
+    bedrock-title-page: "&6Tag kirúgása - Oldal {page}"
+    bedrock-no-members: "&fNincs kirúgható tag"
+    bedrock-content: "&fVálassz egy tagot a kirúgáshoz"
 
 
   # ================================================
   # ConfirmKickMemberGUI (13 keys)
   # ================================================
+
   confirm-kick-member:
     cancel-button: "&aCancel"
     cancel-lore: "&7Click to cancel kicking member"
@@ -1322,10 +1329,6 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
-    bedrock-title: "&6Tag kirúgása"
-    bedrock-title-page: "&6Tag kirúgása - Oldal {page}"
-    bedrock-no-members: "&fNincs kirúgható tag"
-    bedrock-content: "&fVálassz egy tagot a kirúgáshoz"
   # ================================================
   # ConfirmPromoteMemberGUI
   # ================================================
@@ -1417,14 +1420,16 @@ gui:
     promote.success: "&aA(z) &e{player} &a tagot el\u0151l\u00e9ptetted tisztt\u00e9!"
     click-promote: "Kattints a tisztt\u00e9 val\u00f3 el\u0151l\u00e9ptet\u00e9shez"
     title: "&6Tag el\u0151l\u00e9ptet\u00e9se - {page}. oldal"
-
-  # ================================================
-  # DemoteMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Tag előléptetése"
     bedrock-title-page: "&6Tag előléptetése - Oldal {page}"
     bedrock-no-members: "&fNincs előléptethető tag"
     bedrock-content: "&fVálassz egy tagot a tisztté léptetéshez"
+
+  # ================================================
+  # DemoteMemberGUI (5 keys)
+  # ================================================
+
+
   demote-member:
     demote.demoted: "&aLefokoztak rendes tagnak a(z) &e{guild} &a c\u00e9hben!"
     demote.failed: "&cTag lefokoz\u00e1sa sikertelen!"

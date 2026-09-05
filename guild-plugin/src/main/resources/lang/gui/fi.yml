@@ -1279,25 +1279,32 @@ gui:
     click-invite: "Napsauta kutsuaksesi t\u00e4m\u00e4n pelaajan"
     join-guild: "Liity guildiin"
     title: "&6Kutsu j\u00e4sen - {guild} - Sivu {page}"
-
-  # ================================================
-  # KickMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Kutsu jäseniä"
     bedrock-title-page: "&6Kutsu jäseniä - Sivu {page}"
     bedrock-no-players: "&fEi kutsuttavissa olevia paikalla olevia pelaajia"
     bedrock-player-list: "&fPaikalla olevat pelaajat (Yhteensä {count})"
+
+  # ================================================
+  # KickMemberGUI (5 keys)
+  # ================================================
+
+
   kick-member:
     kick.failed: "&cJ\u00e4senen potkaiseminen ep\u00e4onnistui!"
     kick.kicked: "&cSinut potkittiin ulos guildista &e{guild} &c!"
     kick.success: "&aJ\u00e4sen &e{player} &apotkittiin ulos!"
     click-kick: "Napsauta potkaistaksesi t\u00e4m\u00e4n j\u00e4senen"
     title: "&6Potki j\u00e4sen - Sivu {page}"
+    bedrock-title: "&6Potki jäsen"
+    bedrock-title-page: "&6Potki jäsen - Sivu {page}"
+    bedrock-no-members: "&fEi potkittavissa olevia jäseniä"
+    bedrock-content: "&fValitse potkittava jäsen"
 
 
   # ================================================
   # ConfirmKickMemberGUI (13 keys)
   # ================================================
+
   confirm-kick-member:
     cancel-button: "&aCancel"
     cancel-lore: "&7Click to cancel kicking member"
@@ -1322,10 +1329,6 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
-    bedrock-title: "&6Potki jäsen"
-    bedrock-title-page: "&6Potki jäsen - Sivu {page}"
-    bedrock-no-members: "&fEi potkittavissa olevia jäseniä"
-    bedrock-content: "&fValitse potkittava jäsen"
   # ================================================
   # ConfirmPromoteMemberGUI
   # ================================================
@@ -1417,14 +1420,16 @@ gui:
     promote.success: "&aJ\u00e4sen &e{player} &aylennettiin upseeriksi!"
     click-promote: "Napsauta ylent\u00e4\u00e4ksesi upseeriksi"
     title: "&6Ylenn\u00e4 j\u00e4sen - Sivu {page}"
-
-  # ================================================
-  # DemoteMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Ylennä jäsen"
     bedrock-title-page: "&6Ylennä jäsen - Sivu {page}"
     bedrock-no-members: "&fEi ylennettäviä jäseniä"
     bedrock-content: "&fValitse upseeriksi ylennettävä jäsen"
+
+  # ================================================
+  # DemoteMemberGUI (5 keys)
+  # ================================================
+
+
   demote-member:
     demote.demoted: "&aSinut alennettiin tavalliseksi j\u00e4seneksi guildissa &e{guild} &a!"
     demote.failed: "&cJ\u00e4senen alentaminen ep\u00e4onnistui!"

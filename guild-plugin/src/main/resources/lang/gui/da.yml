@@ -1279,25 +1279,32 @@ gui:
     click-invite: "Klik for at invitere denne spiller"
     join-guild: "Kom ind i guilden"
     title: "&6Invit\u00e9r medlem - {guild} - Side {page}"
-
-  # ================================================
-  # KickMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Inviter medlemmer"
     bedrock-title-page: "&6Inviter medlemmer - Side {page}"
     bedrock-no-players: "&fIngen onlinespillere tilgængelige at invitere"
     bedrock-player-list: "&fOnlinespillere (I alt {count})"
+
+  # ================================================
+  # KickMemberGUI (5 keys)
+  # ================================================
+
+
   kick-member:
     kick.failed: "&cKunne ikke sparke medlemmet!"
     kick.kicked: "&cDu er blevet sparket ud af guilden &e{guild} &c!"
     kick.success: "&aMedlem &e{player} &aer blevet sparket ud!"
     click-kick: "Klik for at sparke dette medlem ud"
     title: "&6Spark medlem - Side {page}"
+    bedrock-title: "&6Spark medlem"
+    bedrock-title-page: "&6Spark medlem - Side {page}"
+    bedrock-no-members: "&fIngen medlemmer tilgængelige at sparke"
+    bedrock-content: "&fVælg et medlem at sparke"
 
 
   # ================================================
   # ConfirmKickMemberGUI (13 keys)
   # ================================================
+
   confirm-kick-member:
     cancel-button: "&aCancel"
     cancel-lore: "&7Click to cancel kicking member"
@@ -1322,10 +1329,6 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
-    bedrock-title: "&6Spark medlem"
-    bedrock-title-page: "&6Spark medlem - Side {page}"
-    bedrock-no-members: "&fIngen medlemmer tilgængelige at sparke"
-    bedrock-content: "&fVælg et medlem at sparke"
   # ================================================
   # ConfirmPromoteMemberGUI
   # ================================================
@@ -1417,14 +1420,16 @@ gui:
     promote.success: "&aMedlem &e{player} &aer blevet forfremmet til officer!"
     click-promote: "Klik for at forfremme til officer"
     title: "&6Forfrem medlem - Side {page}"
-
-  # ================================================
-  # DemoteMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Forfrem medlem"
     bedrock-title-page: "&6Forfrem medlem - Side {page}"
     bedrock-no-members: "&fIngen medlemmer tilgængelige at forfremme"
     bedrock-content: "&fVælg et medlem at forfremme til officer"
+
+  # ================================================
+  # DemoteMemberGUI (5 keys)
+  # ================================================
+
+
   demote-member:
     demote.demoted: "&aDu er blevet degraderet til almindeligt medlem i guilden &e{guild} &a!"
     demote.failed: "&cKunne ikke degradere medlemmet!"

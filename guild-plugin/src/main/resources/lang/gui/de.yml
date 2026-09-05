@@ -1279,25 +1279,32 @@ gui:
     click-invite: "Klicken, um diesen Spieler einzuladen"
     join-guild: "Gilde beitreten"
     title: "&6Mitglieder Einladen - {guild} - Seite {page}"
-
-  # ================================================
-  # KickMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Mitglieder Einladen"
     bedrock-title-page: "&6Mitglieder Einladen - Seite {page}"
     bedrock-no-players: "&fKeine online Spieler zum Einladen verf\u00fcgbar"
     bedrock-player-list: "&fOnline Spieler (Insgesamt {count})"
+
+  # ================================================
+  # KickMemberGUI (5 keys)
+  # ================================================
+
+
   kick-member:
     kick.failed: "&cAusschluss des Mitglieds fehlgeschlagen!"
     kick.kicked: "&cSie wurden aus der Gilde &e{guild} &causgeschlossen!"
     kick.success: "&aMitglied &e{player} &aerfolgreich ausgeschlossen!"
     click-kick: "Klicken, um dieses Mitglied auszuschlie\u00dfen"
     title: "&6Mitglied Ausschlie\u00dfen - Seite {page}"
+    bedrock-title: "&6Mitglied Ausschlie\u00dfen"
+    bedrock-title-page: "&6Mitglied Ausschlie\u00dfen - Seite {page}"
+    bedrock-no-members: "&fKeine Mitglieder zum Ausschlie\u00dfen verf\u00fcgbar"
+    bedrock-content: "&fW\u00e4hlen Sie ein Mitglied zum Ausschlie\u00dfen"
 
 
   # ================================================
   # ConfirmKickMemberGUI (13 keys)
   # ================================================
+
   confirm-kick-member:
     cancel-button: "&aCancel"
     cancel-lore: "&7Click to cancel kicking member"
@@ -1322,10 +1329,6 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
-    bedrock-title: "&6Mitglied Ausschlie\u00dfen"
-    bedrock-title-page: "&6Mitglied Ausschlie\u00dfen - Seite {page}"
-    bedrock-no-members: "&fKeine Mitglieder zum Ausschlie\u00dfen verf\u00fcgbar"
-    bedrock-content: "&fW\u00e4hlen Sie ein Mitglied zum Ausschlie\u00dfen"
   # ================================================
   # ConfirmPromoteMemberGUI
   # ================================================
@@ -1417,14 +1420,16 @@ gui:
     promote.success: "&aMitglied &e{player} &azum Offizier bef\u00f6rdert!"
     click-promote: "Klicken, um zum Offizier zu bef\u00f6rdern"
     title: "&6Mitglied Bef\u00f6rdern - Seite {page}"
-
-  # ================================================
-  # DemoteMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Mitglied Bef\u00f6rdern"
     bedrock-title-page: "&6Mitglied Bef\u00f6rdern - Seite {page}"
     bedrock-no-members: "&fKeine Mitglieder zum Bef\u00f6rdern verf\u00fcgbar"
     bedrock-content: "&fW\u00e4hlen Sie ein Mitglied zum Bef\u00f6rdern zum Offizier"
+
+  # ================================================
+  # DemoteMemberGUI (5 keys)
+  # ================================================
+
+
   demote-member:
     demote.demoted: "&aSie wurden zum regul\u00e4ren Mitglied der Gilde &e{guild} &azur\u00fcckgestuft!"
     demote.failed: "&cZur\u00fcckstufung des Mitglieds fehlgeschlagen!"

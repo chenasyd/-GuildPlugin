@@ -1279,25 +1279,32 @@ gui:
     click-invite: "Face\u021bi clic pentru a invita acest juc\u0103tor"
     join-guild: "Al\u0103tur\u0103-te breslei"
     title: "&6Invit\u0103 membru - {guild} - Pagina {page}"
-
-  # ================================================
-  # KickMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Invită membri"
     bedrock-title-page: "&6Invită membri - Pagina {page}"
     bedrock-no-players: "&fNu există jucători online disponibili pentru invitare"
     bedrock-player-list: "&fJucători online (Total {count})"
+
+  # ================================================
+  # KickMemberGUI (5 keys)
+  # ================================================
+
+
   kick-member:
     kick.failed: "&cDarea afar\u0103 a membrului a e\u0219uat!"
     kick.kicked: "&cA\u021bi fost dat afar\u0103 din breasla &e{guild} &c!"
     kick.success: "&aMembrul &e{player} &a fost dat afar\u0103!"
     click-kick: "Face\u021bi clic pentru a da afar\u0103 acest membru"
     title: "&6D\u0103 afar\u0103 membru - Pagina {page}"
+    bedrock-title: "&6Exclude membru"
+    bedrock-title-page: "&6Exclude membru - Pagina {page}"
+    bedrock-no-members: "&fNu există membri disponibili pentru excludere"
+    bedrock-content: "&fSelectați un membru pentru excludere"
 
 
   # ================================================
   # ConfirmKickMemberGUI (13 keys)
   # ================================================
+
   confirm-kick-member:
     cancel-button: "&aCancel"
     cancel-lore: "&7Click to cancel kicking member"
@@ -1322,10 +1329,6 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
-    bedrock-title: "&6Exclude membru"
-    bedrock-title-page: "&6Exclude membru - Pagina {page}"
-    bedrock-no-members: "&fNu există membri disponibili pentru excludere"
-    bedrock-content: "&fSelectați un membru pentru excludere"
   # ================================================
   # ConfirmPromoteMemberGUI
   # ================================================
@@ -1417,14 +1420,16 @@ gui:
     promote.success: "&aMembrul &e{player} &a fost promovat la ofi\u021ber!"
     click-promote: "Face\u021bi clic pentru a promova la ofi\u021ber"
     title: "&6Promoveaz\u0103 membru - Pagina {page}"
-
-  # ================================================
-  # DemoteMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Promovează membru"
     bedrock-title-page: "&6Promovează membru - Pagina {page}"
     bedrock-no-members: "&fNu există membri disponibili pentru promovare"
     bedrock-content: "&fSelectați un membru pentru promovare la ofițer"
+
+  # ================================================
+  # DemoteMemberGUI (5 keys)
+  # ================================================
+
+
   demote-member:
     demote.demoted: "&aA\u021bi fost retrogradat la membru obi\u0219nuit al breslei &e{guild} &a!"
     demote.failed: "&cRetrogradarea membrului a e\u0219uat!"

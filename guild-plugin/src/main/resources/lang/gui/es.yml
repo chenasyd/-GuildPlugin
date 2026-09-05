@@ -1279,25 +1279,32 @@ gui:
     click-invite: "Haz clic para invitar a este jugador"
     join-guild: "Unirse a la guild"
     title: "&6Invitar miembros - {guild} - P\u00e1gina {page}"
-
-  # ================================================
-  # KickMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Invitar miembros"
     bedrock-title-page: "&6Invitar miembros - P\u00e1gina {page}"
     bedrock-no-players: "&fNo hay jugadores en l\u00ednea disponibles para invitar"
     bedrock-player-list: "&fJugadores en l\u00ednea (Total {count})"
+
+  # ================================================
+  # KickMemberGUI (5 keys)
+  # ================================================
+
+
   kick-member:
     kick.failed: "&c\u00a1Error al expulsar al miembro!"
     kick.kicked: "&c\u00a1Has sido expulsado de la guild &e{guild}&c!"
     kick.success: "&a\u00a1Miembro &e{player} &aexpulsado con \u00e9xito!"
     click-kick: "Haz clic para expulsar a este miembro"
     title: "&6Expulsar miembro - P\u00e1gina {page}"
+    bedrock-title: "&6Expulsar un miembro"
+    bedrock-title-page: "&6Expulsar un miembro - P\u00e1gina {page}"
+    bedrock-no-members: "&fNo hay miembros disponibles para expulsar"
+    bedrock-content: "&fSelecciona un miembro para expulsar"
 
 
   # ================================================
   # ConfirmKickMemberGUI (13 keys)
   # ================================================
+
   confirm-kick-member:
     cancel-button: "&aCancel"
     cancel-lore: "&7Click to cancel kicking member"
@@ -1322,10 +1329,6 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
-    bedrock-title: "&6Expulsar un miembro"
-    bedrock-title-page: "&6Expulsar un miembro - P\u00e1gina {page}"
-    bedrock-no-members: "&fNo hay miembros disponibles para expulsar"
-    bedrock-content: "&fSelecciona un miembro para expulsar"
   # ================================================
   # ConfirmPromoteMemberGUI
   # ================================================
@@ -1417,14 +1420,16 @@ gui:
     promote.success: "&a\u00a1Miembro &e{player} &aascendido a oficial!"
     click-promote: "Haz clic para ascender a oficial"
     title: "&6Ascender miembro - P\u00e1gina {page}"
-
-  # ================================================
-  # DemoteMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Ascender un miembro"
     bedrock-title-page: "&6Ascender un miembro - P\u00e1gina {page}"
     bedrock-no-members: "&fNo hay miembros disponibles para ascender"
     bedrock-content: "&fSelecciona un miembro para ascender a oficial"
+
+  # ================================================
+  # DemoteMemberGUI (5 keys)
+  # ================================================
+
+
   demote-member:
     demote.demoted: "&a\u00a1Has sido degradado a miembro regular de la guild &e{guild}&a!"
     demote.failed: "&c\u00a1Error al degradar al miembro!"

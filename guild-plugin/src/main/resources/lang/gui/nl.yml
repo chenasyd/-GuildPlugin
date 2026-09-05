@@ -1280,25 +1280,32 @@ gui:
     click-invite: "Klik om deze speler uit te nodigen"
     join-guild: "Word lid van gilde"
     title: "&6Nodig leden uit - {guild} - Pagina {page}"
-
-  # ================================================
-  # KickMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Leden uitnodigen"
     bedrock-title-page: "&6Leden uitnodigen - Pagina {page}"
     bedrock-no-players: "&fGeen online spelers beschikbaar om uit te nodigen"
     bedrock-player-list: "&fOnline spelers (Totaal {count})"
+
+  # ================================================
+  # KickMemberGUI (5 keys)
+  # ================================================
+
+
   kick-member:
     kick.failed: "&cSchoppen van lid mislukt!"
     kick.kicked: "&cJe bent uit de gilde &e{guild}&c geschopt!"
     kick.success: "&aLid &e{player} &a succesvol geschopt!"
     click-kick: "Klik om dit lid te schoppen"
     title: "&6Schop lid - Pagina {page}"
+    bedrock-title: "&6Lid schoppen"
+    bedrock-title-page: "&6Lid schoppen - Pagina {page}"
+    bedrock-no-members: "&fGeen leden beschikbaar om te schoppen"
+    bedrock-content: "&fSelecteer een lid om te schoppen"
 
 
   # ================================================
   # ConfirmKickMemberGUI (13 keys)
   # ================================================
+
   confirm-kick-member:
     cancel-button: "&aCancel"
     cancel-lore: "&7Click to cancel kicking member"
@@ -1323,10 +1330,6 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
-    bedrock-title: "&6Lid schoppen"
-    bedrock-title-page: "&6Lid schoppen - Pagina {page}"
-    bedrock-no-members: "&fGeen leden beschikbaar om te schoppen"
-    bedrock-content: "&fSelecteer een lid om te schoppen"
   # ================================================
   # ConfirmPromoteMemberGUI
   # ================================================
@@ -1418,14 +1421,16 @@ gui:
     promote.success: "&aLid &e{player} &a gepromoveerd tot officier!"
     click-promote: "Klik om te promoveren tot officier"
     title: "&6Promoveer lid - Pagina {page}"
-
-  # ================================================
-  # DemoteMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Lid promoveren"
     bedrock-title-page: "&6Lid promoveren - Pagina {page}"
     bedrock-no-members: "&fGeen leden beschikbaar om te promoveren"
     bedrock-content: "&fSelecteer een lid om te promoveren tot officier"
+
+  # ================================================
+  # DemoteMemberGUI (5 keys)
+  # ================================================
+
+
   demote-member:
     demote.demoted: "&aJe bent gedegradeerd tot gewoon lid van de gilde &e{guild}&a!"
     demote.failed: "&cDegraderen van lid mislukt!"

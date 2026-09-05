@@ -1280,25 +1280,32 @@ gui:
     click-invite: "Klicka f\u00f6r att bjuda in denna spelare"
     join-guild: "G\u00e5 med i gille"
     title: "&6Bjud in medlemmar - {guild} - Sida {page}"
-
-  # ================================================
-  # KickMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Bjud in medlemmar"
     bedrock-title-page: "&6Bjud in medlemmar - Sida {page}"
     bedrock-no-players: "&fInga onlinespelare tillgängliga att bjuda in"
     bedrock-player-list: "&fOnlinespelare (Totalt {count})"
+
+  # ================================================
+  # KickMemberGUI (5 keys)
+  # ================================================
+
+
   kick-member:
     kick.failed: "&cMisslyckades med att sparka medlem!"
     kick.kicked: "&cDu har blivit sparkad fr\u00e5n gillet &e{guild}&c!"
     kick.success: "&aMedlem &e{player} &a sparkad!"
     click-kick: "Klicka f\u00f6r att sparka denna medlem"
     title: "&6Sparka medlem - Sida {page}"
+    bedrock-title: "&6Sparka medlem"
+    bedrock-title-page: "&6Sparka medlem - Sida {page}"
+    bedrock-no-members: "&fInga medlemmar tillgängliga att sparka"
+    bedrock-content: "&fVälj en medlem att sparka"
 
 
   # ================================================
   # ConfirmKickMemberGUI (13 keys)
   # ================================================
+
   confirm-kick-member:
     cancel-button: "&aCancel"
     cancel-lore: "&7Click to cancel kicking member"
@@ -1323,10 +1330,6 @@ gui:
   # ================================================
   # PromoteMemberGUI (5 keys)
   # ================================================
-    bedrock-title: "&6Sparka medlem"
-    bedrock-title-page: "&6Sparka medlem - Sida {page}"
-    bedrock-no-members: "&fInga medlemmar tillgängliga att sparka"
-    bedrock-content: "&fVälj en medlem att sparka"
   # ================================================
   # ConfirmPromoteMemberGUI
   # ================================================
@@ -1418,14 +1421,16 @@ gui:
     promote.success: "&aMedlem &e{player} &a befordrad till officer!"
     click-promote: "Klicka f\u00f6r att befordra till officer"
     title: "&6Befordra medlem - Sida {page}"
-
-  # ================================================
-  # DemoteMemberGUI (5 keys)
-  # ================================================
     bedrock-title: "&6Befordra medlem"
     bedrock-title-page: "&6Befordra medlem - Sida {page}"
     bedrock-no-members: "&fInga medlemmar tillgängliga att befordra"
     bedrock-content: "&fVälj en medlem att befordra till officer"
+
+  # ================================================
+  # DemoteMemberGUI (5 keys)
+  # ================================================
+
+
   demote-member:
     demote.demoted: "&aDu har blivit degraderad till vanlig medlem i gillet &e{guild}&a!"
     demote.failed: "&cMisslyckades med att degradera medlem!"
