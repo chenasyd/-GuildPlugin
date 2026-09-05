@@ -35,14 +35,14 @@
  *
  * <h2>与现有系统关系</h2>
  * <ul>
- *   <li>{@code GuildHomeProtectListener}：领地启用且 WG 可用时，建议关闭 home-protect 或合并逻辑</li>
+ *   <li>{@code GuildHomeProtectListener}：{@link TerritoryHomeProtectIntegration} defer/merge（P7-e）</li>
  *   <li>{@code SelectionManager}：可复用 pos1/pos2 选区（需开放给会长而不仅是管理员）</li>
  *   <li>跨服：WG 区域为<strong>单服单世界</strong>数据；公会 DB 存「哪服哪世界有领地」，各子服按需创建</li>
  * </ul>
  *
  * <h2>实现阶段</h2>
  * P7-a 骨架 → P7-b {@link WorldGuardTerritoryBridge} → P7-c {@link TerritoryMemberSync}
- * → P7-d {@link TerritoryCommandHandler}（已完成）→ P7-e home-protect 互斥
+ * → P7-d {@link TerritoryCommandHandler} → P7-e {@link TerritoryHomeProtectIntegration}（已完成）
  *
  * @see TerritoryModule
  * @see WorldGuardProbe

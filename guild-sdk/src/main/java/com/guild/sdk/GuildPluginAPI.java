@@ -16,8 +16,10 @@ import com.guild.sdk.gui.ModuleGUIRegistration;
 import com.guild.sdk.gui.BedrockFormProvider;
 import com.guild.sdk.gui.GUILayoutDefinition;
 import com.guild.sdk.gui.ModuleGUIConfig;
+import com.guild.sdk.home.HomeProtectIntegration;
 import com.guild.sdk.http.HttpClientProvider;
 import com.guild.sdk.placeholder.PlaceholderProvider;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import java.io.File;
@@ -361,6 +363,26 @@ public class GuildPluginAPI {
 
     /** 注销占位符提供者 */
     public void unregisterPlaceholderProvider(String identifier) { }
+
+    // ==================== Home 保护协调（v1.6.7+） ====================
+
+    /** 注册与内置 {@code guild.home-protect} 的协调策略（模块卸载时自动清理）。 */
+    public void registerHomeProtectIntegration(Object moduleInstance, HomeProtectIntegration integration) { }
+
+    /** 是否有模块要求完全禁用内置 home-protect。 */
+    public boolean isHomeProtectFullyDeferred() {
+        return false;
+    }
+
+    /** 是否跳过指定位置的内置 home-protect（merge 模式）。 */
+    public boolean shouldSkipHomeProtectAt(Player player, Location location) {
+        return false;
+    }
+
+    /** 是否跳过指定公会 home 半径的内置保护（merge 模式）。 */
+    public boolean shouldSkipHomeProtectForGuildHome(int guildId, String worldName) {
+        return false;
+    }
 
     // ==================== 模块清理 ====================
 

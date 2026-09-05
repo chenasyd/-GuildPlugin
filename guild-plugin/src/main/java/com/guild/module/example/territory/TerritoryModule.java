@@ -65,7 +65,17 @@ public final class TerritoryModule implements GuildModule {
                 "guild.territory.info"
         );
 
-        // P7-e: coordinate with GuildHomeProtectListener when operational
+        String homeProtectMode = TerritoryHomeProtectIntegration.normalizeMode(
+                context.getConfig().getString("home-protect.mode", TerritoryHomeProtectIntegration.MODE_DEFER));
+        if (!TerritoryHomeProtectIntegration.MODE_OFF.equals(homeProtectMode)) {
+            context.getApi().registerHomeProtectIntegration(
+                    this, new TerritoryHomeProtectIntegration(this, context));
+            if (bridge.isOperational() && TerritoryHomeProtectIntegration.MODE_DEFER.equals(homeProtectMode)) {
+                context.getLogger().info("Deferring guild.home-protect to WorldGuard (home-protect.mode=defer).");
+            } else if (bridge.isOperational()) {
+                context.getLogger().info("Home-protect merge mode active (home-protect.mode=merge).");
+            }
+        }
     }
 
     @Override

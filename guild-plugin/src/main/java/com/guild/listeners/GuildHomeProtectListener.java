@@ -21,8 +21,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Lightweight guild-home protection: non-members cannot break/place within home radius.
  * Config: {@code guild.home-protect.enabled} / {@code guild.home-protect.radius}
  * <p>
- * Home locations are refreshed on a timer (not on every block event) to avoid
- * {@code getAllGuilds()} sync JDBC on the main thread.
+ * When {@code guild-territory} module defers protection ({@code home-protect.mode: defer}),
+ * this listener is effectively disabled while WorldGuard is active.
+ * Merge mode skips overlapping areas / guilds with WG territory claims.
  */
 public final class GuildHomeProtectListener implements Listener {
 
@@ -83,8 +84,11 @@ public final class GuildHomeProtectListener implements Listener {
     }
 
     private boolean enabled() {
-        return plugin.getConfigManager().getMainConfig()
-                .getBoolean("guild.home-protect.enabled", false);
+        if (!plugin.getConfigManager().getMainConfig()
+                .getBoolean("guild.home-protect.enabled", false)) {
+            return false;
+        }
+        return !HomeProtectIntegrationSupport.isFullyDeferred(plugin);
     }
 
     private double radiusSq() {
@@ -114,6 +118,9 @@ public final class GuildHomeProtectListener implements Listener {
         if (player.hasPermission("guild.admin")) {
             return false;
         }
+        if (HomeProtectIntegrationSupport.shouldSkipAt(plugin, player, loc)) {
+            return false;
+        }
         if (homes.isEmpty()) {
             return false;
         }
@@ -127,6 +134,9 @@ public final class GuildHomeProtectListener implements Listener {
 
         for (HomePoint home : homes) {
             if (!world.equals(home.world)) {
+                continue;
+            }
+            if (HomeProtectIntegrationSupport.shouldSkipGuildHome(plugin, home.guildId, world)) {
                 continue;
             }
             double dx = x - home.x;

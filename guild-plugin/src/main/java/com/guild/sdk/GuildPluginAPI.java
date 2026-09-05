@@ -11,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,6 +39,7 @@ import com.guild.sdk.gui.BedrockFormProvider;
 import com.guild.sdk.gui.GUILayoutDefinition;
 import com.guild.sdk.gui.ModuleGUIConfig;
 import com.guild.sdk.gui.AbstractModuleGUI;
+import com.guild.sdk.home.HomeProtectIntegration;
 import com.guild.sdk.http.HttpClientProvider;
 import com.guild.sdk.placeholder.PlaceholderProvider;
 import java.io.File;
@@ -63,6 +65,18 @@ public class GuildPluginAPI {
     private final List<EconomyEventHandler> onEconomyDepositHandlers = new CopyOnWriteArrayList<>();
     private final List<EconomyEventHandler> onEconomyWithdrawHandlers = new CopyOnWriteArrayList<>();
     private final List<MemberRoleChangeEventHandler> onMemberRoleChangeHandlers = new CopyOnWriteArrayList<>();
+
+    private static final class RegisteredHomeProtectIntegration {
+        final Object owner;
+        final HomeProtectIntegration integration;
+
+        RegisteredHomeProtectIntegration(Object owner, HomeProtectIntegration integration) {
+            this.owner = owner;
+            this.integration = integration;
+        }
+    }
+
+    private final List<RegisteredHomeProtectIntegration> homeProtectIntegrations = new CopyOnWriteArrayList<>();
 
     // 占位符提供者注册表
     private final Map<String, PlaceholderProvider> placeholderProviders = new java.util.concurrent.ConcurrentHashMap<>();
@@ -491,6 +505,55 @@ public class GuildPluginAPI {
         onEconomyDepositHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
         onEconomyWithdrawHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
         onMemberRoleChangeHandlers.removeIf(h -> h.getModuleInstance() == moduleInstance);
+        homeProtectIntegrations.removeIf(entry -> entry.owner == moduleInstance);
+    }
+
+    // ==================== Home 保护协调 ====================
+
+    public void registerHomeProtectIntegration(Object moduleInstance, HomeProtectIntegration integration) {
+        if (moduleInstance == null || integration == null) {
+            throw new IllegalArgumentException("moduleInstance and integration cannot be null");
+        }
+        homeProtectIntegrations.add(new RegisteredHomeProtectIntegration(moduleInstance, integration));
+    }
+
+    public boolean isHomeProtectFullyDeferred() {
+        for (RegisteredHomeProtectIntegration entry : homeProtectIntegrations) {
+            try {
+                if (entry.integration.deferAll()) {
+                    return true;
+                }
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "HomeProtectIntegration.deferAll failed", e);
+            }
+        }
+        return false;
+    }
+
+    public boolean shouldSkipHomeProtectAt(Player player, Location location) {
+        for (RegisteredHomeProtectIntegration entry : homeProtectIntegrations) {
+            try {
+                if (entry.integration.skipAt(player, location)) {
+                    return true;
+                }
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "HomeProtectIntegration.skipAt failed", e);
+            }
+        }
+        return false;
+    }
+
+    public boolean shouldSkipHomeProtectForGuildHome(int guildId, String worldName) {
+        for (RegisteredHomeProtectIntegration entry : homeProtectIntegrations) {
+            try {
+                if (entry.integration.skipHomeForGuild(guildId, worldName)) {
+                    return true;
+                }
+            } catch (Exception e) {
+                logger.log(Level.WARNING, "HomeProtectIntegration.skipHomeForGuild failed", e);
+            }
+        }
+        return false;
     }
 
     /**
