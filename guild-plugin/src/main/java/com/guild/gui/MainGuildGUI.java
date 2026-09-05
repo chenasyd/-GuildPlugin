@@ -363,7 +363,7 @@ public class MainGuildGUI implements GUI {
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
                     // 确保在玩家实体线程中执行GUI操作
                     CompatibleScheduler.runTask(plugin, player, () -> {
-                        if (member == null || !member.getRole().canInvite()) {
+                        if (member == null || !plugin.getMembershipRules().canInvite(member)) {
                             String message = languageManager.getGuiMessage(player, "gui.common.no-permission", "&cInsufficient permission");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;

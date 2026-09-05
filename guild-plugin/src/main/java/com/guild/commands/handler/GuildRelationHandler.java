@@ -130,7 +130,7 @@ public class GuildRelationHandler implements GuildSubCommandHandler {
                             return;
                         }
                 
-                        if (!ctx.guildService().hasGuildPermission(player.getUniqueId())) {
+                        if (!ctx.plugin().getMembershipRules().canManageGuild(player)) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.relation.no-permission", "&cYou do not have permission to manage guild relations!");
                                 player.sendMessage(ColorUtils.colorize(message));
@@ -195,7 +195,7 @@ public class GuildRelationHandler implements GuildSubCommandHandler {
                             return;
                         }
                 
-                        if (!ctx.guildService().hasGuildPermission(player.getUniqueId())) {
+                        if (!ctx.plugin().getMembershipRules().canManageGuild(player)) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.relation.no-permission", "&cYou do not have permission to manage guild relations!");
                                 player.sendMessage(ColorUtils.colorize(message));
@@ -252,7 +252,7 @@ public class GuildRelationHandler implements GuildSubCommandHandler {
                             return;
                         }
                 
-                        if (!ctx.guildService().hasGuildPermission(player.getUniqueId())) {
+                        if (!ctx.plugin().getMembershipRules().canManageGuild(player)) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.relation.no-permission", "&cYou do not have permission to manage guild relations!");
                                 player.sendMessage(ColorUtils.colorize(message));
@@ -310,7 +310,7 @@ public class GuildRelationHandler implements GuildSubCommandHandler {
                             return;
                         }
                 
-                        if (!ctx.guildService().hasGuildPermission(player.getUniqueId())) {
+                        if (!ctx.plugin().getMembershipRules().canManageGuild(player)) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.relation.no-permission", "&cYou do not have permission to manage guild relations!");
                                 player.sendMessage(ColorUtils.colorize(message));

@@ -214,7 +214,7 @@ public class ConfirmDemoteMemberGUI extends AbstractConfirmGUI {
     private boolean canDemote(GuildMember executor) {
         return executor != null
                 && executor.getGuildId() == guild.getId()
-                && executor.getRole() == GuildMember.Role.LEADER
+                && plugin.getMembershipRules().canDemote(executor)
                 && viewer.getUniqueId().equals(guild.getLeaderUuid());
     }
 

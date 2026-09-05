@@ -22,7 +22,7 @@ public class GuildPromoteHandler implements GuildSubCommandHandler {
             return;
         }
 
-        if (!ctx.plugin().getPermissionManager().hasPermission(player, "guild.promote")) {
+        if (!ctx.plugin().getMembershipRules().canPromote(player)) {
             String message = ctx.languageManager().getCoreMessage(player, "general.no-permission",
                     "&cYou do not have permission to perform this action!");
             player.sendMessage(ColorUtils.colorize(message));
@@ -43,7 +43,7 @@ public class GuildPromoteHandler implements GuildSubCommandHandler {
                     return;
                 }
 
-                if (!ctx.guildService().isGuildLeader(player.getUniqueId())) {
+                if (!ctx.plugin().getMembershipRules().canPromote(player)) {
                     CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                         String message = ctx.languageManager().getCoreMessage(player, "guild.promote.only-master",
                                 "&cOnly the leader can promote members!");

@@ -162,7 +162,7 @@ public class ConfirmKickMemberGUI extends AbstractConfirmGUI {
     protected void onConfirm(Player player) {
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
-                if (executor == null || !executor.getRole().canKick()) {
+                if (executor == null || !plugin.getMembershipRules().canKick(executor)) {
                     player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
                             "gui.common.no-permission", "&cInsufficient permission")));
                     return;

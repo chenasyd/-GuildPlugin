@@ -18,7 +18,7 @@ public class GuildApplicationsHandler implements GuildSubCommandHandler {
                         // 异步检查角色权限（与 MainGuildGUI.openApplicationManagementGUI 一致）
                         ctx.plugin().getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                                if (member == null || !member.getRole().canInvite()) {
+                                if (member == null || !ctx.plugin().getMembershipRules().canInvite(member)) {
                                     String msg = ctx.languageManager().getCoreMessage(player, "general.no-permission", "&cInsufficient role permission!");
                                     player.sendMessage(ColorUtils.colorize(msg));
                                     return;

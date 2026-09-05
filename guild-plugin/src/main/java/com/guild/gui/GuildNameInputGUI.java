@@ -176,7 +176,7 @@ public class GuildNameInputGUI implements GUI {
      */
     private void handleConfirm(Player player) {
         // 检查权限（只有会长可以修改公会名称）
-        if (!plugin.getGuildService().isGuildLeader(player.getUniqueId(), guild.getId())) {
+        if (!plugin.getMembershipRules().isLeaderOf(player, guild.getId())) {
             String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
             player.sendMessage(ColorUtils.colorize(message));
             return;

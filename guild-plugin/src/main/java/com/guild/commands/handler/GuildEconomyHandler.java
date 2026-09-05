@@ -244,7 +244,7 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             return;
                         }
                 
-                        if (!ctx.guildService().isGuildLeader(player.getUniqueId())) {
+                        if (!ctx.plugin().getMembershipRules().isLeaderOf(player, guild.getId())) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.withdraw.only-master", "&cOnly the leader can withdraw from the guild account!");
                                 player.sendMessage(ColorUtils.colorize(message));
@@ -337,7 +337,7 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             return;
                         }
                 
-                        if (!ctx.guildService().isGuildLeader(player.getUniqueId())) {
+                        if (!ctx.plugin().getMembershipRules().isLeaderOf(player, sourceGuild.getId())) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.transfer.only-master", "&cOnly the leader can transfer between guilds!");
                                 player.sendMessage(ColorUtils.colorize(message));
@@ -411,7 +411,7 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             return;
                         }
                 
-                        if (!ctx.guildService().hasGuildPermission(player.getUniqueId())) {
+                        if (!ctx.plugin().getMembershipRules().canManageGuild(player)) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.transfer.no-permission", "&cYou do not have permission to transfer!");
                                 player.sendMessage(ColorUtils.colorize(message));

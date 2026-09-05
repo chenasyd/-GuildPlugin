@@ -228,6 +228,55 @@ public class PermissionManager {
         return isInGuildCached(player.getUniqueId())
                 && getPlayerPermissions(player.getUniqueId()).canDeleteGuild();
     }
+
+    /**
+     * 检查玩家是否可以提升成员
+     */
+    public boolean canPromoteMembers(Player player) {
+        if (!hasPermission(player, "guild.promote")) {
+            return false;
+        }
+        return isInGuildCached(player.getUniqueId())
+                && getPlayerPermissions(player.getUniqueId()).canPromoteMembers();
+    }
+
+    /**
+     * 检查玩家是否可以降级成员
+     */
+    public boolean canDemoteMembers(Player player) {
+        if (!hasPermission(player, "guild.demote")) {
+            return false;
+        }
+        return isInGuildCached(player.getUniqueId())
+                && getPlayerPermissions(player.getUniqueId()).canDemoteMembers();
+    }
+
+    /**
+     * 官员级公会管理权限（config 中 can-invite 或 can-kick 任一即可）
+     */
+    public boolean hasGuildManagementPermission(Player player) {
+        return canInviteMembers(player) || canKickMembers(player);
+    }
+
+    public boolean roleCanInvite(GuildMember.Role role) {
+        return resolveRolePermissions(role).canInvite;
+    }
+
+    public boolean roleCanKick(GuildMember.Role role) {
+        return resolveRolePermissions(role).canKick;
+    }
+
+    public boolean roleCanPromote(GuildMember.Role role) {
+        return resolveRolePermissions(role).canPromote;
+    }
+
+    public boolean roleCanDemote(GuildMember.Role role) {
+        return resolveRolePermissions(role).canDemote;
+    }
+
+    public boolean roleCanDeleteGuild(GuildMember.Role role) {
+        return resolveRolePermissions(role).canDelete;
+    }
     
     /**
      * 检查玩家是否可以创建公会

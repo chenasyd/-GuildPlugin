@@ -6,6 +6,7 @@ import com.guild.core.database.DatabaseManager;
 import com.guild.core.events.EventBus;
 import com.guild.core.gui.GUIManager;
 import com.guild.core.placeholder.PlaceholderManager;
+import com.guild.core.permissions.GuildMembershipRules;
 import com.guild.core.permissions.PermissionManager;
 import com.guild.core.economy.EconomyManager;
 import com.guild.core.language.LanguageManager;
@@ -66,6 +67,7 @@ public class GuildPlugin extends JavaPlugin {
     private GUIManager guiManager;
     private PlaceholderManager placeholderManager;
     private PermissionManager permissionManager;
+    private GuildMembershipRules membershipRules;
     private EconomyManager economyManager;
     private LanguageManager languageManager;
     private GuildService guildService;
@@ -146,6 +148,7 @@ public class GuildPlugin extends JavaPlugin {
             
             // 初始化权限管理器
             permissionManager = new PermissionManager(this);
+            membershipRules = new GuildMembershipRules(this);
             serviceContainer.register(PermissionManager.class, permissionManager);
             
             // 初始化经济管理器
@@ -505,6 +508,10 @@ public class GuildPlugin extends JavaPlugin {
     
     public PermissionManager getPermissionManager() {
         return permissionManager;
+    }
+
+    public GuildMembershipRules getMembershipRules() {
+        return membershipRules;
     }
     
     public EconomyManager getEconomyManager() {

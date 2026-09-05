@@ -113,7 +113,7 @@ public class PromoteMemberGUI extends AbstractPagedMemberGUI {
     @Override
     protected void onMemberSelected(Player player, GuildMember member) {
         GuildMember executor = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (executor == null || executor.getGuildId() != guild.getId() || executor.getRole() != GuildMember.Role.LEADER) {
+        if (executor == null || executor.getGuildId() != guild.getId() || !plugin.getMembershipRules().canPromote(executor)) {
             player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
                     "gui.common.leader-only", "&cOnly the guild leader can perform this operation")));
             return;

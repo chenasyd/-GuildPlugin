@@ -214,7 +214,7 @@ public class ConfirmPromoteMemberGUI extends AbstractConfirmGUI {
     private boolean canPromote(GuildMember executor) {
         return executor != null
                 && executor.getGuildId() == guild.getId()
-                && executor.getRole() == GuildMember.Role.LEADER
+                && plugin.getMembershipRules().canPromote(executor)
                 && viewer.getUniqueId().equals(guild.getLeaderUuid());
     }
 

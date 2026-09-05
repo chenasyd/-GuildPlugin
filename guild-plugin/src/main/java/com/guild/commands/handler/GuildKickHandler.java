@@ -22,7 +22,7 @@ public class GuildKickHandler implements GuildSubCommandHandler {
             return;
         }
 
-        if (!ctx.plugin().getPermissionManager().hasPermission(player, "guild.kick")) {
+        if (!ctx.plugin().getMembershipRules().canKick(player)) {
             String message = ctx.languageManager().getCoreMessage(player, "general.no-permission",
                     "&cYou do not have permission to perform this action!");
             player.sendMessage(ColorUtils.colorize(message));
@@ -38,15 +38,6 @@ public class GuildKickHandler implements GuildSubCommandHandler {
                     CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                         String message = ctx.languageManager().getCoreMessage(player, "guild.kick.not-in-guild",
                                 "&cYou are not in any guild!");
-                        player.sendMessage(ColorUtils.colorize(message));
-                    });
-                    return;
-                }
-
-                if (!ctx.guildService().hasGuildPermission(player.getUniqueId())) {
-                    CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                        String message = ctx.languageManager().getCoreMessage(player, "guild.kick.no-permission",
-                                "&cYou do not have permission to kick members!");
                         player.sendMessage(ColorUtils.colorize(message));
                     });
                     return;

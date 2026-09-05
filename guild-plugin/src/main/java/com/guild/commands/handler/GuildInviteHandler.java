@@ -20,7 +20,7 @@ public class GuildInviteHandler implements GuildSubCommandHandler {
             return;
         }
 
-        if (!ctx.plugin().getPermissionManager().hasPermission(player, "guild.invite")) {
+        if (!ctx.plugin().getMembershipRules().canInvite(player)) {
             String message = ctx.languageManager().getCoreMessage(player, "general.no-permission",
                     "&cYou do not have permission to perform this action!");
             player.sendMessage(ColorUtils.colorize(message));
@@ -51,15 +51,6 @@ public class GuildInviteHandler implements GuildSubCommandHandler {
                     CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                         String message = ctx.languageManager().getCoreMessage(player, "guild.invite.not-in-guild",
                                 "&cYou are not in any guild!");
-                        player.sendMessage(ColorUtils.colorize(message));
-                    });
-                    return;
-                }
-
-                if (!ctx.guildService().hasGuildPermission(player.getUniqueId())) {
-                    CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                        String message = ctx.languageManager().getCoreMessage(player, "guild.invite.no-permission",
-                                "&cYou do not have permission to invite members!");
                         player.sendMessage(ColorUtils.colorize(message));
                     });
                     return;

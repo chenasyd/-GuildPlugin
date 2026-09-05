@@ -312,7 +312,7 @@ public class MemberDetailsGUI implements GUI {
             }
 
             // 踢出按钮（需要踢出权限）
-            if (viewerMember.getRole().canKick()) {
+            if (plugin.getMembershipRules().canKick(viewerMember)) {
                 ItemStack kickButton = createItem(
                     Material.REDSTONE_BLOCK,
                     ColorUtils.colorize("&c" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.kick-member", "Kick member")),
@@ -322,9 +322,9 @@ public class MemberDetailsGUI implements GUI {
                 inventory.setItem(37, kickButton);
             }
 
-            // 提升/降级按钮（只有会长可以）
-            if (viewerMember.getRole() == GuildMember.Role.LEADER) {
-                if (member.getRole() == GuildMember.Role.OFFICER) {
+            // 提升/降级按钮
+            if (member.getRole() == GuildMember.Role.OFFICER) {
+                if (plugin.getMembershipRules().canDemote(viewerMember)) {
                     // 降级按钮
                     ItemStack demoteButton = createItem(
                         Material.IRON_INGOT,
@@ -333,16 +333,16 @@ public class MemberDetailsGUI implements GUI {
                         ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.click-confirm-demote", "Click to confirm demote"))
                     );
                     inventory.setItem(39, demoteButton);
-                } else {
-                    // 提升按钮
-                    ItemStack promoteButton = createItem(
-                        Material.GOLD_INGOT,
-                        ColorUtils.colorize("&6" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.promote-member", "Promote member")),
-                        ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.promote-member-desc", "Promote member to officer")),
-                        ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.click-confirm-promote", "Click to confirm promote"))
-                    );
-                    inventory.setItem(39, promoteButton);
                 }
+            } else if (plugin.getMembershipRules().canPromote(viewerMember)) {
+                // 提升按钮
+                ItemStack promoteButton = createItem(
+                    Material.GOLD_INGOT,
+                    ColorUtils.colorize("&6" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.promote-member", "Promote member")),
+                    ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.promote-member-desc", "Promote member to officer")),
+                    ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.click-confirm-promote", "Click to confirm promote"))
+                );
+                inventory.setItem(39, promoteButton);
             }
 
             // 发送消息按钮
@@ -399,7 +399,7 @@ public class MemberDetailsGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
-                if (executor == null || !executor.getRole().canKick()) {
+                if (executor == null || !plugin.getMembershipRules().canKick(executor)) {
                     String message = languageManager.getGuiMessage(player, "gui.common.no-permission", "&cNo permission");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
@@ -419,16 +419,20 @@ public class MemberDetailsGUI implements GUI {
         // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
-                if (executor == null || executor.getRole() != GuildMember.Role.LEADER) {
-                    String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can do this");
-                    player.sendMessage(ColorUtils.colorize(message));
-                    return;
-                }
-
                 if (member.getRole() == GuildMember.Role.OFFICER) {
+                    if (executor == null || !plugin.getMembershipRules().canDemote(executor)) {
+                        String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can do this");
+                        player.sendMessage(ColorUtils.colorize(message));
+                        return;
+                    }
                     plugin.getGuiManager().openGUI(player,
                             new ConfirmDemoteMemberGUI(plugin, guild, member, player, "MemberDetailsGUI"));
                 } else if (member.getRole() == GuildMember.Role.MEMBER) {
+                    if (executor == null || !plugin.getMembershipRules().canPromote(executor)) {
+                        String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can do this");
+                        player.sendMessage(ColorUtils.colorize(message));
+                        return;
+                    }
                     plugin.getGuiManager().openGUI(player,
                             new ConfirmPromoteMemberGUI(plugin, guild, member, player, "MemberDetailsGUI"));
                 }

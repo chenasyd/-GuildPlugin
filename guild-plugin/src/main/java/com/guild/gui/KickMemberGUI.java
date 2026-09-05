@@ -105,8 +105,13 @@ public class KickMemberGUI extends AbstractPagedMemberGUI {
     }
 
     @Override
+    protected boolean validateAccess(Player player) {
+        return plugin.getMembershipRules().canKick(player);
+    }
+
+    @Override
     protected void onMemberSelected(Player player, GuildMember member) {
-        if (!player.hasPermission("guild.kick")) {
+        if (!plugin.getMembershipRules().canKick(player)) {
             player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
                     "gui.common.no-permission", "&cInsufficient permission")));
             return;

@@ -25,7 +25,7 @@ public class GuildDeleteHandler implements GuildSubCommandHandler {
     }
 
     private void handleDelete(GuildCommandContext ctx, Player player) {
-                if (!ctx.plugin().getPermissionManager().hasPermission(player, "guild.delete")) {
+                if (!ctx.plugin().getMembershipRules().canDeleteGuild(player)) {
                     String message = ctx.languageManager().getCoreMessage(player, "general.no-permission", "&cYou do not have permission to perform this action!");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
@@ -42,7 +42,7 @@ public class GuildDeleteHandler implements GuildSubCommandHandler {
                             return;
                         }
                 
-                        if (!ctx.guildService().isGuildLeader(player.getUniqueId())) {
+                        if (!ctx.plugin().getMembershipRules().canDeleteGuild(player)) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.delete.only-master", "&cOnly the leader can delete the guild!");
                                 player.sendMessage(ColorUtils.colorize(message));
@@ -67,7 +67,7 @@ public class GuildDeleteHandler implements GuildSubCommandHandler {
     }
 
     private void handleDeleteConfirm(GuildCommandContext ctx, Player player) {
-                if (!ctx.plugin().getPermissionManager().hasPermission(player, "guild.delete")) {
+                if (!ctx.plugin().getMembershipRules().canDeleteGuild(player)) {
                     String message = ctx.languageManager().getCoreMessage(player, "general.no-permission", "&cYou do not have permission to perform this action!");
                     player.sendMessage(ColorUtils.colorize(message));
                     return;
@@ -84,7 +84,7 @@ public class GuildDeleteHandler implements GuildSubCommandHandler {
                             return;
                         }
                 
-                        if (!ctx.guildService().isGuildLeader(player.getUniqueId())) {
+                        if (!ctx.plugin().getMembershipRules().canDeleteGuild(player)) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.delete.only-master", "&cOnly the leader can delete the guild!");
                                 player.sendMessage(ColorUtils.colorize(message));

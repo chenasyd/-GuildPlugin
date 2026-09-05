@@ -924,13 +924,12 @@ public class GuildService {
     }
     
     /**
-     * 检查是否有公会权限
+     * 检查是否有公会管理权限（官员级：config 中 can-invite 或 can-kick）
      */
     public boolean hasGuildPermission(UUID playerUuid) {
-        GuildMember member = getGuildMember(playerUuid);
-        return member != null && (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER);
+        return plugin.getMembershipRules().canManageGuild(playerUuid);
     }
-
+    
     /** 在线玩家是否拥有 guild.admin */
     public boolean isGuildAdmin(UUID playerUuid) {
         if (playerUuid == null) {
@@ -1226,7 +1225,7 @@ public class GuildService {
       */
      public CompletableFuture<Boolean> sendInvitationAsync(int guildId, UUID inviterUuid, String inviterName, UUID targetUuid, String targetName) {
          return getGuildMemberAsync(guildId, inviterUuid).thenCompose(inviterMember -> {
-             if (inviterMember == null || !inviterMember.getRole().canInvite()) {
+             if (inviterMember == null || !plugin.getMembershipRules().canInvite(inviterMember)) {
                  return CompletableFuture.completedFuture(false);
              }
              return getPlayerGuildAsync(targetUuid).thenCompose(existingGuild -> {

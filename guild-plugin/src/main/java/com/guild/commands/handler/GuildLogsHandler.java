@@ -21,7 +21,7 @@ public class GuildLogsHandler implements GuildSubCommandHandler {
                             return;
                         }
                 
-                        if (!ctx.guildService().hasGuildPermission(player.getUniqueId())) {
+                        if (!ctx.plugin().getMembershipRules().canManageGuild(player)) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.logs.no-permission", "&cYou do not have permission to view logs!");
                                 player.sendMessage(ColorUtils.colorize(message));
