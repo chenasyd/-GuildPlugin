@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.geysermc.cumulus.form.SimpleForm;
 
@@ -32,8 +31,8 @@ public abstract class AbstractPagedMemberGUI implements GUI {
     public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
     public static final String FUNC_BACK = "BACK";
 
-    protected static final int MEMBERS_PER_PAGE = 28;
-    protected static final int BEDROCK_ITEMS_PER_PAGE = 10;
+    protected static final int MEMBERS_PER_PAGE = GuiLayoutUtils.ITEMS_PER_PAGE;
+    protected static final int BEDROCK_ITEMS_PER_PAGE = GuiLayoutUtils.BEDROCK_ITEMS_PER_PAGE;
 
     protected final GuildPlugin plugin;
     protected final LanguageManager languageManager;
@@ -138,7 +137,7 @@ public abstract class AbstractPagedMemberGUI implements GUI {
     @Override
     public void setupInventory(Inventory inventory) {
         if (!plugin.getGuiManager().isImageLayoutActive(viewer, getGuiType())) {
-            fillBorder(inventory);
+            GuiLayoutUtils.fillBorder54(inventory);
         }
         displayMembers(inventory);
         setupNavigationButtons(inventory);
@@ -161,9 +160,9 @@ public abstract class AbstractPagedMemberGUI implements GUI {
             }
         }
 
-        int memberIndex = getMemberIndexFromSlot(slot);
-        if (memberIndex >= 0 && memberIndex < members.size()) {
-            onMemberSelected(player, members.get(memberIndex));
+        int entryIndex = GuiLayoutUtils.listIndexFromSlot(slot, currentPage, MEMBERS_PER_PAGE);
+        if (entryIndex >= 0 && entryIndex < members.size()) {
+            onMemberSelected(player, members.get(entryIndex));
             return;
         }
 
@@ -202,50 +201,20 @@ public abstract class AbstractPagedMemberGUI implements GUI {
     }
 
     protected int maxPageIndex() {
-        if (members.isEmpty()) {
-            return 0;
-        }
-        return (members.size() - 1) / MEMBERS_PER_PAGE;
-    }
-
-    protected int getSlotForPageIndex(int pageIndex) {
-        int row = pageIndex / 7;
-        int col = pageIndex % 7;
-        return (row + 1) * 9 + col + 1;
-    }
-
-    protected int getMemberIndexFromSlot(int slot) {
-        int row = slot / 9;
-        int col = slot % 9;
-        if (row < 1 || row > 4 || col < 1 || col > 7) {
-            return -1;
-        }
-        return currentPage * MEMBERS_PER_PAGE + (row - 1) * 7 + (col - 1);
-    }
-
-    protected void fillBorder(Inventory inventory) {
-        ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 45, border);
-        }
-        for (int i = 9; i < 45; i += 9) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 8, border);
-        }
+        return GuiLayoutUtils.maxPageIndex(members.size(), MEMBERS_PER_PAGE);
     }
 
     protected void displayMembers(Inventory inventory) {
         int startIndex = currentPage * MEMBERS_PER_PAGE;
         int endIndex = Math.min(startIndex + MEMBERS_PER_PAGE, members.size());
         for (int i = startIndex; i < endIndex; i++) {
-            inventory.setItem(getSlotForPageIndex(i - startIndex), createMemberHead(members.get(i)));
+            inventory.setItem(GuiLayoutUtils.slotForPageIndex(i - startIndex), createMemberHead(members.get(i)));
         }
     }
 
     protected void setupNavigationButtons(Inventory inventory) {
         if (currentPage > 0) {
-            inventory.setItem(slotForFunction(FUNC_PREV_PAGE, 45), createItem(
+            inventory.setItem(slotForFunction(FUNC_PREV_PAGE, 45), GuiLayoutUtils.createItem(
                     Material.ARROW,
                     ColorUtils.colorize(languageManager.getGuiMessage(viewer,
                             "gui.common.previous-page", "&e&lPrevious Page")),
@@ -254,7 +223,7 @@ public abstract class AbstractPagedMemberGUI implements GUI {
         }
 
         if (currentPage < maxPageIndex()) {
-            inventory.setItem(slotForFunction(FUNC_NEXT_PAGE, 53), createItem(
+            inventory.setItem(slotForFunction(FUNC_NEXT_PAGE, 53), GuiLayoutUtils.createItem(
                     Material.ARROW,
                     ColorUtils.colorize(languageManager.getGuiMessage(viewer,
                             "gui.common.next-page", "&e&lNext Page")),
@@ -262,7 +231,7 @@ public abstract class AbstractPagedMemberGUI implements GUI {
                             "gui.common.view-next", "View next page"))));
         }
 
-        inventory.setItem(slotForFunction(FUNC_BACK, 49), createItem(
+        inventory.setItem(slotForFunction(FUNC_BACK, 49), GuiLayoutUtils.createItem(
                 Material.ARROW,
                 ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.common.back", "Back")),
                 ColorUtils.colorize(languageManager.getGuiMessage(viewer,
@@ -325,7 +294,7 @@ public abstract class AbstractPagedMemberGUI implements GUI {
                     return;
                 }
 
-                int totalPages = (filtered.size() - 1) / BEDROCK_ITEMS_PER_PAGE;
+                int totalPages = GuiLayoutUtils.maxPageIndex(filtered.size(), BEDROCK_ITEMS_PER_PAGE);
                 final int safePage = Math.max(0, Math.min(page, totalPages));
                 final int startIndex = safePage * BEDROCK_ITEMS_PER_PAGE;
                 int endIndex = Math.min(startIndex + BEDROCK_ITEMS_PER_PAGE, filtered.size());
@@ -380,15 +349,6 @@ public abstract class AbstractPagedMemberGUI implements GUI {
     }
 
     protected ItemStack createItem(Material material, String name, String... lore) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            if (lore.length > 0) {
-                meta.setLore(Arrays.asList(lore));
-            }
-            item.setItemMeta(meta);
-        }
-        return item;
+        return GuiLayoutUtils.createItem(material, name, lore);
     }
 }

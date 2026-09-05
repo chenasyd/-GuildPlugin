@@ -18,6 +18,7 @@ import com.guild.core.language.LanguageManager;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.CompatibleScheduler;
+import com.guild.gui.base.GuiLayoutUtils;
 
 import org.geysermc.cumulus.form.SimpleForm;
 
@@ -482,32 +483,10 @@ public class MainGuildGUI implements GUI {
      * 填充边框
      */
     private void fillBorder(Inventory inventory) {
-        ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 45, border);
-        }
-        for (int i = 9; i < 45; i += 9) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 8, border);
-        }
+        GuiLayoutUtils.fillBorder54(inventory);
     }
-    
-    /**
-     * 创建物品
-     */
+
     private ItemStack createItem(Material material, String name, String... lore) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-        
-        if (meta != null) {
-            meta.setDisplayName(name);
-            if (lore.length > 0) {
-                meta.setLore(Arrays.asList(lore));
-            }
-            item.setItemMeta(meta);
-        }
-        
-        return item;
+        return GuiLayoutUtils.createItem(material, name, lore);
     }
 }

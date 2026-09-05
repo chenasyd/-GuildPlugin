@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.geysermc.cumulus.form.SimpleForm;
 
 import java.util.Arrays;
@@ -125,7 +124,7 @@ public abstract class AbstractConfirmGUI implements GUI {
     @Override
     public void setupInventory(Inventory inventory) {
         if (!plugin.getGuiManager().isImageLayoutActive(viewer, getGuiType())) {
-            fillBorder(inventory);
+            GuiLayoutUtils.fillBorder27(inventory);
         }
 
         inventory.setItem(slotForFunction(infoFunctionName(), 13), createInfoItem());
@@ -162,12 +161,12 @@ public abstract class AbstractConfirmGUI implements GUI {
 
     protected void setupConfirmCancelButtons(Inventory inventory) {
         String[] confirmLore = confirmLoreMessages();
-        ItemStack confirm = createItem(confirmMaterial(),
+        ItemStack confirm = GuiLayoutUtils.createItem(confirmMaterial(),
                 ColorUtils.colorize(languageManager.getGuiMessage(viewer, confirmButtonKey(), confirmButtonDefault())),
                 Arrays.stream(confirmLore).map(ColorUtils::colorize).toArray(String[]::new));
         inventory.setItem(slotForFunction(FUNC_CONFIRM, 11), confirm);
 
-        ItemStack cancel = createItem(cancelMaterial(),
+        ItemStack cancel = GuiLayoutUtils.createItem(cancelMaterial(),
                 ColorUtils.colorize(languageManager.getGuiMessage(viewer, cancelButtonKey(), cancelButtonDefault())),
                 ColorUtils.colorize(languageManager.getGuiMessage(viewer, cancelLoreKey(), cancelLoreDefault())));
         inventory.setItem(slotForFunction(FUNC_CANCEL, 15), cancel);
@@ -186,28 +185,7 @@ public abstract class AbstractConfirmGUI implements GUI {
         return Material.EMERALD_BLOCK;
     }
 
-    protected void fillBorder(Inventory inventory) {
-        ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 18, border);
-        }
-        for (int i = 9; i < 18; i += 9) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 8, border);
-        }
-    }
-
     protected ItemStack createItem(Material material, String name, String... lore) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            if (lore.length > 0) {
-                meta.setLore(Arrays.asList(lore));
-            }
-            item.setItemMeta(meta);
-        }
-        return item;
+        return GuiLayoutUtils.createItem(material, name, lore);
     }
 }

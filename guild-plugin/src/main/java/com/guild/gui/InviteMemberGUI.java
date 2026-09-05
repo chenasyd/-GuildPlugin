@@ -1,342 +1,152 @@
 package com.guild.gui;
 
-import java.util.Arrays;
-import java.util.List;
-
+import com.guild.GuildPlugin;
+import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.gui.base.AbstractPagedPlayerGUI;
+import com.guild.models.Guild;
+import com.guild.models.GuildInvitation;
+import com.guild.util.InviteMessageUtils;
+import com.guild.util.NotifyUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.language.LanguageManager;
-import com.guild.core.utils.ColorUtils;
-import com.guild.core.utils.CompatibleScheduler;
-import com.guild.models.Guild;
-import com.guild.models.GuildInvitation;
-import com.guild.core.geyser.BedrockFormSender;
-import com.guild.util.InviteMessageUtils;
-import com.guild.util.NotifyUtils;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import org.geysermc.cumulus.form.SimpleForm;
-
-/**
- * 邀请成员GUI
- */
-public class InviteMemberGUI implements GUI {
-
-    // ── 图像模式功能常量 ──
-    public static final String FUNC_PREV_PAGE = "PREV_PAGE";
-    public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
-    public static final String FUNC_BACK = "BACK";
-
-    private final GuildPlugin plugin;
-    private final Guild guild;
-    private final Player player;
-    private final LanguageManager languageManager;
-    private int currentPage = 0;
-    private List<Player> onlinePlayers;
+/** 邀请成员 GUI */
+public class InviteMemberGUI extends AbstractPagedPlayerGUI {
 
     public InviteMemberGUI(GuildPlugin plugin, Guild guild, Player player) {
-        this.plugin = plugin;
-        this.guild = guild;
-        this.player = player;
-        this.languageManager = plugin.getLanguageManager();
-        this.onlinePlayers = Bukkit.getOnlinePlayers().stream()
-            .filter(p -> !p.getUniqueId().equals(guild.getLeaderUuid()))
-            .collect(java.util.stream.Collectors.toList());
+        super(plugin, guild, player);
     }
 
     @Override
-    public String getTitle() {
-        String defaultTitle = "&6邀请成员 - 第" + (currentPage + 1) + "页";
-        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.invite-member.title",
-                defaultTitle, "{page}", String.valueOf(currentPage + 1), "{guild}", guild.getName()));
-    }
-    
-    @Override
-    public int getSize() {
-        return 54;
-    }
-    
-    @Override
-    public void setupInventory(Inventory inventory) {
-        // 填充边框
-        fillBorder(inventory);
-        
-        // 显示在线玩家
-        displayOnlinePlayers(inventory);
-        
-        // 添加导航按钮
-        setupNavigationButtons(inventory);
-
-        // 应用图像模式
-        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
+    protected List<Player> loadEntries() {
+        return Bukkit.getOnlinePlayers().stream()
+                .filter(p -> !p.getUniqueId().equals(guild.getLeaderUuid()))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 检查是否是玩家槽位
-        int playerIndex = getIndexFromSlot(slot);
-        if (playerIndex >= 0) {
-            if (playerIndex < onlinePlayers.size()) {
-                Player targetPlayer = onlinePlayers.get(playerIndex);
-                handleInvitePlayer(player, targetPlayer);
-            }
-        } else if (slot == 45) {
-            // 上一页
-            if (currentPage > 0) {
-                currentPage--;
-                plugin.getGuiManager().refreshGUI(player);
-            }
-        } else if (slot == 53) {
-            // 下一页
-            int maxPage = (onlinePlayers.size() - 1) / 28;
-            if (currentPage < maxPage) {
-                currentPage++;
-                plugin.getGuiManager().refreshGUI(player);
-            }
-        } else if (slot == 49) {
-            // 返回
-            plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player));
-        }
+    protected String titleKey() {
+        return "gui.invite-member.title";
     }
-    
-    /**
-     * 槽位计算方法
-     */
-    
-    /**
-     * 从页内索引获取inventory槽位
-     * @param index 页内索引 (0-27)
-     * @return inventory槽位 (10-16, 19-25, 28-34, 37-43)
-     */
-    private int getSlotForIndex(int index) {
-        int row = index / 7;      // 行号 (0-3)
-        int col = index % 7;      // 列号 (0-6)
-        return (row + 1) * 9 + col + 1; // 转换为inventory槽位
-    }
-    
-    /**
-     * 从inventory槽位获取页内索引
-     * @param slot inventory槽位
-     * @return 页内索引 (0-27)，或 -1 表示无效槽位
-     */
-    private int getIndexFromSlot(int slot) {
-        int row = slot / 9;      // 行号 (1-4)
-        int col = slot % 9;      // 列号 (0-8)
-        
-        // 检查是否在有效范围内
-        if (row < 1 || row > 4 || col < 1 || col > 7) {
-            return -1;
-        }
-        
-        // 计算页内索引
-        int pageIndex = (row - 1) * 7 + (col - 1);
-        return currentPage * 28 + pageIndex;
-    }
-    
-    /**
-     * 填充边框
-     */
-    private void fillBorder(Inventory inventory) {
-        ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 45, border);
-        }
-        for (int i = 9; i < 45; i += 9) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 8, border);
-        }
-    }
-    
-    /**
-     * 显示在线玩家
-     */
-    private void displayOnlinePlayers(Inventory inventory) {
-        int startIndex = currentPage * 28; // 每页最多28个玩家（4行7列）
-        int endIndex = Math.min(startIndex + 28, onlinePlayers.size());
-        
-        for (int i = startIndex; i < endIndex; i++) {
-            Player targetPlayer = onlinePlayers.get(i);
-            int slot = getSlotForIndex(i - startIndex);
-            
-            ItemStack playerHead = createPlayerHead(targetPlayer);
-            inventory.setItem(slot, playerHead);
-        }
-    }
-    
-    /**
-     * 设置导航按钮
-     */
-    private void setupNavigationButtons(Inventory inventory) {
-        // 上一页按钮
-        if (currentPage > 0) {
-            ItemStack prevPage = createItem(
-                Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&e&lPrevious Page")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-previous", "View previous page"))
-            );
-            inventory.setItem(45, prevPage);
-        }
 
-        // 下一页按钮
-        int maxPage = (onlinePlayers.size() - 1) / 28;
-        if (currentPage < maxPage) {
-            ItemStack nextPage = createItem(
-                Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&e&lNext Page")),
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.view-next", "View next page"))
-            );
-            inventory.setItem(53, nextPage);
-        }
-
-        // 返回按钮
-        ItemStack back = createItem(
-            Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "Back")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.invite-member.back-to-settings", "Return to guild settings"))
-        );
-        inventory.setItem(49, back);
+    @Override
+    protected String titleDefault() {
+        return "&6邀请成员 - 第{page}页";
     }
-    
-    /**
-     * 创建玩家头像
-     */
-    private ItemStack createPlayerHead(Player player) {
+
+    @Override
+    protected String bedrockTitleKey() {
+        return "gui.invite-member.bedrock-title";
+    }
+
+    @Override
+    protected String bedrockTitleDefault() {
+        return "&6Invite Members";
+    }
+
+    @Override
+    protected String bedrockTitlePageKey() {
+        return "gui.invite-member.bedrock-title-page";
+    }
+
+    @Override
+    protected String bedrockTitlePageDefault() {
+        return "&6Invite Members - Page {page}";
+    }
+
+    @Override
+    protected String bedrockContentKey() {
+        return "gui.invite-member.bedrock-player-list";
+    }
+
+    @Override
+    protected String bedrockContentDefault() {
+        return "&fOnline Players (Total {count})";
+    }
+
+    @Override
+    protected String bedrockEmptyKey() {
+        return "gui.invite-member.bedrock-no-players";
+    }
+
+    @Override
+    protected String bedrockEmptyDefault() {
+        return "&fNo online players available to invite";
+    }
+
+    @Override
+    protected String bedrockMemberButtonPrefix() {
+        return "§a";
+    }
+
+    @Override
+    protected String backLoreKey() {
+        return "gui.invite-member.back-to-settings";
+    }
+
+    @Override
+    protected String backLoreDefault() {
+        return "Return to guild settings";
+    }
+
+    @Override
+    protected String[] bedrockContentPlaceholders() {
+        return new String[]{"{count}", String.valueOf(entries.size())};
+    }
+
+    @Override
+    protected ItemStack createEntryItem(Player target) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
-
         if (meta != null) {
-            meta.setOwningPlayer(player);
-            meta.setDisplayName(ColorUtils.colorize("&a" + player.getName()));
+            meta.setOwningPlayer(target);
+            meta.setDisplayName(ColorUtils.colorize("&a" + target.getName()));
             meta.setLore(Arrays.asList(
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(this.player, "gui.invite-member.click-invite", "Click to invite this player")),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(this.player, "gui.invite-member.join-guild", "Join guild"))
+                    ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                            "gui.invite-member.click-invite", "Click to invite this player")),
+                    ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                            "gui.invite-member.join-guild", "Join guild"))
             ));
             head.setItemMeta(meta);
         }
-
         return head;
     }
-    
-    /**
-     * 处理邀请玩家
-     */
-    private void handleInvitePlayer(Player inviter, Player target) {
-        // 检查目标玩家是否已经在公会中
+
+    @Override
+    protected void onEntrySelected(Player inviter, Player target) {
         plugin.getGuildService().getGuildMemberAsync(target.getUniqueId()).thenAccept(member -> {
             if (member != null) {
-                CompatibleScheduler.runTask(plugin, inviter, () -> inviter.sendMessage(InviteMessageUtils.formatAlreadyInGuild(plugin, inviter, target.getName())));
+                CompatibleScheduler.runTask(plugin, inviter, () -> inviter.sendMessage(
+                        InviteMessageUtils.formatAlreadyInGuild(plugin, inviter, target.getName())));
                 return;
             }
 
-            // 发送邀请
-            plugin.getGuildService().sendInvitationAsync(guild.getId(), inviter.getUniqueId(), inviter.getName(), target.getUniqueId(), target.getName())
-                .thenAccept(success -> {
-                    // 确保在主线程发送消息
-                    CompatibleScheduler.runTask(plugin, inviter, () -> {
+            plugin.getGuildService().sendInvitationAsync(guild.getId(), inviter.getUniqueId(), inviter.getName(),
+                            target.getUniqueId(), target.getName())
+                    .thenAccept(success -> CompatibleScheduler.runTask(plugin, inviter, () -> {
                         if (success) {
                             inviter.sendMessage(InviteMessageUtils.formatInviteSent(plugin, inviter, target));
 
-                            // 创建邀请对象用于发送带点击事件的通知
-                            GuildInvitation invitation = new GuildInvitation(guild.getId(), inviter.getUniqueId(), 
-                                inviter.getName(), target.getUniqueId(), target.getName());
-                            
-                            // 给被邀请者发送带点击事件的邀请通知
+                            GuildInvitation invitation = new GuildInvitation(guild.getId(), inviter.getUniqueId(),
+                                    inviter.getName(), target.getUniqueId(), target.getName());
                             NotifyUtils.sendInviteWithClickableAction(plugin, target, inviter, guild, invitation);
                         } else {
                             inviter.sendMessage(InviteMessageUtils.formatInviteFailed(plugin, inviter));
                         }
-                    });
-                });
+                    }));
         });
     }
 
-    // ── 基岩版表单 ──
-
     @Override
-    public boolean openBedrockForm(Player player) {
-        if (!BedrockFormSender.isAvailable()) return false;
-        sendBedrockInviteList(player, 0);
-        return true;
-    }
-
-    private void sendBedrockInviteList(Player player, int page) {
-        if (onlinePlayers.isEmpty()) {
-            SimpleForm form = SimpleForm.builder()
-                .title(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-title", "&6Invite Members"))
-                .content(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-no-players", "&fNo online players available to invite"))
-                .button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&cBack"))
-                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
-                    plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))))
-                .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
-                    plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))))
-                .build();
-            BedrockFormSender.sendForm(player.getUniqueId(), form);
-            return;
-        }
-
-        final int itemsPerPage = 10;
-        int totalPages = (onlinePlayers.size() - 1) / itemsPerPage;
-        final int safePage = Math.max(0, Math.min(page, totalPages));
-        final int startIndex = safePage * itemsPerPage;
-        int endIndex = Math.min(startIndex + itemsPerPage, onlinePlayers.size());
-        final int playerCount = endIndex - startIndex;
-
-        SimpleForm.Builder builder = SimpleForm.builder()
-            .title(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-title-page", "&6Invite Members - Page {page}", "{page}", String.valueOf(safePage + 1)))
-            .content(languageManager.getGuiColoredMessage(player, "gui.invite-member.bedrock-player-list", "&fOnline Players (Total {count})", "{count}", String.valueOf(onlinePlayers.size())));
-
-        for (int i = startIndex; i < endIndex; i++) {
-            builder.button("§a" + onlinePlayers.get(i).getName());
-        }
-
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-prev-page", "&ePrevious Page"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-next-page", "&eNext Page"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.common.bedrock-back", "&cBack"));
-
-        builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
-            int clicked = response.clickedButtonId();
-            if (clicked < playerCount) {
-                Player target = onlinePlayers.get(startIndex + clicked);
-                handleInvitePlayer(player, target);
-            } else if (clicked == playerCount) {
-                sendBedrockInviteList(player, safePage - 1);
-            } else if (clicked == playerCount + 1) {
-                sendBedrockInviteList(player, safePage + 1);
-            } else {
-                plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player));
-            }
-        }));
-
-        builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
-            plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player))));
-
-        BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
-    }
-
-    /**
-     * 创建物品
-     */
-    private ItemStack createItem(Material material, String name, String... lore) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-        
-        if (meta != null) {
-            meta.setDisplayName(name);
-            if (lore.length > 0) {
-                meta.setLore(Arrays.asList(lore));
-            }
-            item.setItemMeta(meta);
-        }
-        
-        return item;
+    protected void openBackGui(Player player) {
+        plugin.getGuiManager().openGUI(player, new MemberManagementGUI(plugin, guild, player));
     }
 }

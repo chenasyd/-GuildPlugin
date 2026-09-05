@@ -22,6 +22,7 @@ import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.PlaceholderUtils;
 import com.guild.core.language.LanguageManager;
+import com.guild.gui.base.GuiLayoutUtils;
 
 import org.geysermc.cumulus.form.SimpleForm;
 import com.guild.models.Guild;
@@ -456,15 +457,7 @@ public class GuildInfoGUI implements GUI {
     // ==================== 共用UI组件 ====================
 
     private void fillBorder(Inventory inventory) {
-        ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 45, border);
-        }
-        for (int i = 9; i < 45; i += 9) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 8, border);
-        }
+        GuiLayoutUtils.fillBorder54(inventory);
     }
 
     private void fillInteriorSlots(Inventory inventory) {
