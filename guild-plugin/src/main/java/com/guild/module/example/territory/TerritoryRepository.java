@@ -10,11 +10,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * 公会领地映射本地存储（{@code modules/guild-territory/data/territories.json}）。
@@ -80,6 +82,16 @@ public final class TerritoryRepository {
 
     public void remove(int guildId, String worldName) {
         index.remove(key(guildId, worldName));
+    }
+
+    public List<TerritoryRecord> findByGuildId(int guildId) {
+        return index.values().stream()
+                .filter(record -> record.getGuildId() == guildId)
+                .collect(Collectors.toList());
+    }
+
+    public void removeAllForGuild(int guildId) {
+        index.entrySet().removeIf(entry -> entry.getValue().getGuildId() == guildId);
     }
 
     static String key(int guildId, String worldName) {

@@ -22,6 +22,7 @@ public final class TerritoryModule implements GuildModule {
     private TerritoryRepository repository;
     private TerritoryBridge bridge;
     private WorldGuardProbe.Availability availability;
+    private TerritoryMemberSync memberSync;
 
     @Override
     public void onEnable(ModuleContext context) throws Exception {
@@ -42,7 +43,10 @@ public final class TerritoryModule implements GuildModule {
                     + ". Install WorldGuard + WorldEdit to enable territory features.");
         }
 
-        // P7-c: register MemberEventHandler for syncMembers
+        this.memberSync = new TerritoryMemberSync(context, bridge, repository, this);
+        memberSync.register(context.getApi());
+        memberSync.repairAllOnLoad();
+
         // P7-d: registerSubCommand / GUI for claim & info
         // P7-e: coordinate with GuildHomeProtectListener when operational
     }
@@ -86,6 +90,10 @@ public final class TerritoryModule implements GuildModule {
 
     public WorldGuardProbe.Availability getAvailability() {
         return availability;
+    }
+
+    public TerritoryMemberSync getMemberSync() {
+        return memberSync;
     }
 
     public boolean isWorldGuardReady() {

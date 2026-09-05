@@ -41,7 +41,8 @@
  * </ul>
  *
  * <h2>实现阶段</h2>
- * P7-a 骨架 → P7-b {@link WorldGuardTerritoryBridge}（已完成）→ P7-c 成员同步 → P7-d 命令/GUI → P7-e home-protect 互斥
+ * P7-a 骨架 → P7-b {@link WorldGuardTerritoryBridge} → P7-c {@link TerritoryMemberSync}（已完成）
+ * → P7-d 命令/GUI → P7-e home-protect 互斥
  *
  * @see TerritoryModule
  * @see WorldGuardProbe
