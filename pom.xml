@@ -26,6 +26,8 @@
         <mysql.version>8.0.33</mysql.version>
         <spigot.version>1.20.1-R0.1-SNAPSHOT</spigot.version>
         <folia.version>1.20.1-R0.1-SNAPSHOT</folia.version>
+        <worldedit.version>7.2.15</worldedit.version>
+        <worldguard.version>7.0.9</worldguard.version>
     </properties>
 
     <repositories>
@@ -60,6 +62,10 @@
         <repository>
             <id>codemc-repo</id>
             <url>https://repo.codemc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>enginehub</id>
+            <url>https://maven.enginehub.org/repo/</url>
         </repository>
     </repositories>
 
@@ -138,6 +144,20 @@
                 <artifactId>bstats-bukkit</artifactId>
                 <version>3.2.1</version>
                 <scope>compile</scope>
+            </dependency>
+
+            <!-- WorldEdit / WorldGuard (soft runtime — compile against API only) -->
+            <dependency>
+                <groupId>com.sk89q.worldedit</groupId>
+                <artifactId>worldedit-bukkit</artifactId>
+                <version>${worldedit.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sk89q.worldguard</groupId>
+                <artifactId>worldguard-bukkit</artifactId>
+                <version>${worldguard.version}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

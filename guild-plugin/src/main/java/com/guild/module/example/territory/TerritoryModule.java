@@ -9,10 +9,9 @@ import com.guild.core.module.ModuleState;
 import java.io.File;
 
 /**
- * 公会领地模块（WorldGuard 软依赖骨架）。
+ * 公会领地模块（WorldGuard 软依赖）。
  * <p>
- * 当前阶段：探测 WG/WE、初始化本地映射存储、注册 No-Op 桥接器。
- * 具体 claim/sync/命令 见 {@code package-info.java} 设计说明。
+ * P7-b：WG 可用时使用 {@link WorldGuardTerritoryBridge}；否则降级为 No-Op。
  */
 public final class TerritoryModule implements GuildModule {
 
@@ -34,14 +33,13 @@ public final class TerritoryModule implements GuildModule {
         repository.load();
 
         this.availability = WorldGuardProbe.probe();
-        if (availability.fullyReady()) {
-            context.getLogger().info("WorldGuard + WorldEdit detected; territory bridge pending implementation (P7-b).");
-            this.bridge = new NoOpTerritoryBridge(context.getLogger(), "P7-b not implemented");
+        this.bridge = TerritoryBridgeFactory.create(availability, repository, context.getLogger());
+        if (bridge.isOperational()) {
+            context.getLogger().info("WorldGuard territory bridge active (P7-b).");
         } else {
             context.getLogger().warning("Guild territory module loaded in degraded mode; missing: "
                     + availability.describeMissing()
                     + ". Install WorldGuard + WorldEdit to enable territory features.");
-            this.bridge = new NoOpTerritoryBridge(context.getLogger(), "missing " + availability.describeMissing());
         }
 
         // P7-c: register MemberEventHandler for syncMembers
@@ -91,6 +89,6 @@ public final class TerritoryModule implements GuildModule {
     }
 
     public boolean isWorldGuardReady() {
-        return availability != null && availability.fullyReady();
+        return bridge != null && bridge.isOperational();
     }
 }

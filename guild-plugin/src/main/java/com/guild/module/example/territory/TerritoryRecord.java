@@ -33,6 +33,12 @@ public final class TerritoryRecord {
         this.claimedAtEpochMs = claimedAtEpochMs;
     }
 
+    /** Gson 反序列化用。 */
+    @SuppressWarnings("unused")
+    private TerritoryRecord() {
+        this(0, "", "", "", 0, 0, 0, 0, 0, 0, 0L);
+    }
+
     public static String defaultRegionId(int guildId) {
         return "guild_" + guildId;
     }

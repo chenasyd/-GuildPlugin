@@ -40,8 +40,8 @@
  *   <li>跨服：WG 区域为<strong>单服单世界</strong>数据；公会 DB 存「哪服哪世界有领地」，各子服按需创建</li>
  * </ul>
  *
- * <h2>实现阶段（当前为 P7-a 骨架）</h2>
- * P7-b {@link TerritoryBridge} WG 适配 → P7-c 成员同步 → P7-d 命令/GUI → P7-e 与 home-protect 互斥
+ * <h2>实现阶段</h2>
+ * P7-a 骨架 → P7-b {@link WorldGuardTerritoryBridge}（已完成）→ P7-c 成员同步 → P7-d 命令/GUI → P7-e home-protect 互斥
  *
  * @see TerritoryModule
  * @see WorldGuardProbe
