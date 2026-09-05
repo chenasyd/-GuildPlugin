@@ -23,11 +23,8 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Run tests
-      run: mvn -B test -pl guild-sdk,guild-comm,guild-plugin,guild-bungee -am
-
-    - name: Build with Maven
-      run: mvn -B package -pl guild-sdk,guild-comm,guild-plugin,guild-bungee -am
+    - name: Verify (tests + enforcer + package)
+      run: mvn -B verify -pl guild-sdk,guild-comm,guild-plugin,guild-bungee -am
 
     - name: Build Announcement Module
       run: mvn -B package -DskipTests -Pbuild-announcement-module

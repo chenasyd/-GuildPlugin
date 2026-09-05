@@ -15,6 +15,9 @@
 |:----:|:----:|
 | Spigot / Paper / Purpur | 1.20.1+ |
 | Folia | 核心可运行；`/guildworld` 仅白名单版本（**不含 1.20.1**，见 `ServerUtils.FOLIA_SUPPORTED_VERSIONS`） |
+| 混合核心（仅 Bukkit API） | **官方支持目标**；编译期仅依赖 `spigot-api` |
+
+详细功能矩阵、CI 门禁与开发者约束见 **[平台兼容矩阵](./Platform-Compatibility_CN.md)**。
 
 ## 安装
 

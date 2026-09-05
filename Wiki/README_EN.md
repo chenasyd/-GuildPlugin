@@ -17,6 +17,9 @@ A feature-complete Minecraft guild/faction system. Supports Spigot, Paper, Purpu
 | Paper | 1.20.1+ |
 | Purpur | 1.20.1+ |
 | Folia | Core OK; `/guildworld` only on whitelist (not 1.20.1) |
+| Hybrid cores (Bukkit API only) | **Supported target**; compile-time `spigot-api` only |
+
+See **[Platform Compatibility Matrix](./Platform-Compatibility_EN.md)** for feature matrix, CI gates, and developer rules.
 
 ## Installation
 
