@@ -105,14 +105,14 @@ public class GuildInvestmentService {
             stmt.setDouble(4, amount);
             stmt.setDouble(5, amount);
             stmt.setDouble(6, amount);
-            stmt.setString(7, playerName);
+            stmt.setDouble(7, amount);
+            stmt.setString(8, playerName);
             stmt.executeUpdate();
+            String key = guildId + "_" + playerUuid;
+            balanceCache.compute(key, (k, v) -> (v == null ? 0.0 : v) + amount);
         } catch (SQLException e) {
             logger.warning("[Investment] Failed to record deposit: " + e.getMessage());
         }
-        // 更新缓存
-        String key = guildId + "_" + playerUuid.toString();
-        balanceCache.compute(key, (k, v) -> (v == null ? 0.0 : v) + amount);
     }
 
     /** 记录取款（不影响投资总额，仅跟踪取款统计） */

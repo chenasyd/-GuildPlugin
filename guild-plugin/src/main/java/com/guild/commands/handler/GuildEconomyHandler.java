@@ -144,9 +144,11 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                     return;
                 }
         
+                final java.util.UUID playerUuid = player.getUniqueId();
+                final String playerName = player.getName();
                 CompletableFuture.runAsync(() -> {
                     try {
-                        Guild guild = ctx.guildService().getPlayerGuild(player.getUniqueId());
+                        Guild guild = ctx.guildService().getPlayerGuild(playerUuid);
                         if (guild == null) {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 String message = ctx.languageManager().getCoreMessage(player, "guild.deposit.not-in-guild", "&cYou are not in any guild!");
@@ -175,20 +177,20 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                         // 增加公会余额（传入操作者信息，避免 updateGuildBalanceAsync 内部产生 SYSTEM 匿名日志）
                         boolean success = ctx.plugin().getGuildService().updateGuildBalanceAsync(
                                 guild.getId(), guild.getBalance() + amount,
-                                player.getUniqueId().toString(), player.getName()).join();
+                                playerUuid.toString(), playerName).join();
                         if (success) {
                             // 记录投资
-                            ctx.plugin().getGuildInvestmentService().recordDeposit(guild.getId(), player.getUniqueId(), player.getName(), amount);
+                            ctx.plugin().getGuildInvestmentService().recordDeposit(guild.getId(), playerUuid, playerName, amount);
                             // 写入 guild_contributions 表（供 GuildFundsGUI 展示）
-                            ctx.plugin().getGuildService().addGuildContributionAsync(guild.getId(), player.getUniqueId(),
-                                    player.getName(), amount,
+                            ctx.plugin().getGuildService().addGuildContributionAsync(guild.getId(), playerUuid,
+                                    playerName, amount,
                                     com.guild.models.GuildContribution.ContributionType.DEPOSIT,
                                     ctx.languageManager().getCoreMessage(player, "deposit.contribution-desc",
                                             "{player} deposited {amount}")
-                                            .replace("{player}", player.getName())
+                                            .replace("{player}", playerName)
                                             .replace("{amount}", String.format("%.2f", amount)));
                             // 分发存款事件给模块
-                            ctx.plugin().getGuildService().notifyEconomyDeposit(guild.getId(), guild.getName(), player.getUniqueId(), player.getName(), amount);
+                            ctx.plugin().getGuildService().notifyEconomyDeposit(guild.getId(), guild.getName(), playerUuid, playerName, amount);
                         }
                 
                         CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
