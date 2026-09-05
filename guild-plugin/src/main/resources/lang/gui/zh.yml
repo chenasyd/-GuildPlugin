@@ -1324,6 +1324,54 @@ gui:
     bedrock-cancel: "&a取消"
 
   # ================================================
+  # ConfirmPromoteMemberGUI
+  # ================================================
+  confirm-promote-member:
+    title: "&6确认提升成员"
+    info-title: "&6确认提升成员"
+    guild: "&7公会: &e{guild}"
+    member: "&7成员: &e{member}"
+    confirm-question: "&7确定将该成员提升为副会长吗？"
+    confirm-button: "&6确认提升"
+    confirm-lore: "&7点击确认提升为副会长"
+    cancel-button: "&a取消"
+    cancel-lore: "&7点击取消提升"
+    cannot-promote-leader: "&c无法提升公会会长！"
+    already-officer: "&c该成员已是副会长！"
+    member-left: "&c该成员已不在公会中！"
+    promote.failed: "&c提升成员失败！"
+    promote.promoted: "&a你已被提升为公会 &e{guild} &a的副会长！"
+    promote.success: "&a已提升 &e{member} &a为副会长！"
+    bedrock-title: "&6确认提升成员"
+    bedrock-content: "&f公会: &e{guild}\n&f成员: &e{member}\n&f确定将该成员提升为副会长吗？"
+    bedrock-confirm: "&6确认提升"
+    bedrock-cancel: "&a取消"
+
+  # ================================================
+  # ConfirmDemoteMemberGUI
+  # ================================================
+  confirm-demote-member:
+    title: "&7确认降级成员"
+    info-title: "&7确认降级成员"
+    guild: "&7公会: &e{guild}"
+    member: "&7成员: &e{member}"
+    confirm-question: "&7确定将该副会长降级为普通成员吗？"
+    confirm-button: "&7确认降级"
+    confirm-lore: "&7点击确认降级为普通成员"
+    cancel-button: "&a取消"
+    cancel-lore: "&7点击取消降级"
+    cannot-demote-leader: "&c无法降级公会会长！"
+    not-officer: "&c该成员不是副会长！"
+    member-left: "&c该成员已不在公会中！"
+    demote.failed: "&c降级成员失败！"
+    demote.demoted: "&a你已被降级为公会 &e{guild} &a的普通成员！"
+    demote.success: "&a已降级 &e{member} &a为普通成员！"
+    bedrock-title: "&7确认降级成员"
+    bedrock-content: "&f公会: &e{guild}\n&f成员: &e{member}\n&f确定将该副会长降级为普通成员吗？"
+    bedrock-confirm: "&7确认降级"
+    bedrock-cancel: "&a取消"
+
+  # ================================================
   # TransferLeaderGUI
   # ================================================
   transfer-leader:

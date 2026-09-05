@@ -422,30 +422,28 @@ public class MemberManagementGUI implements GUI {
      * 提升/降级成员
      */
     private void handlePromoteDemoteMember(Player player, GuildMember member) {
-        // 检查权限
         plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(executor -> {
-            if (executor == null || executor.getRole() != GuildMember.Role.LEADER) {
-                String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
-                player.sendMessage(ColorUtils.colorize(message));
-                return;
-            }
-            
-            // 不能操作会长
-            if (member.getRole() == GuildMember.Role.LEADER) {
-                String message = languageManager.getGuiMessage(player, "gui.common.cannot-modify-leader", "&cCannot modify the guild leader's position");
-                player.sendMessage(ColorUtils.colorize(message));
-                return;
-            }
-            
-            if (member.getRole() == GuildMember.Role.OFFICER) {
-                // 降级为普通成员
-                String message = languageManager.getGuiMessage(player, "gui.common.confirm-demote", "&cAre you sure you want to demote member {member}? Type &f/guild demote {member} confirm &cto confirm", "{member}", member.getPlayerName());
-                player.sendMessage(ColorUtils.colorize(message));
-            } else {
-                // 提升为官员
-                String message = languageManager.getGuiMessage(player, "gui.common.confirm-promote", "&aAre you sure you want to promote member {member} to officer? Type &f/guild promote {member} confirm &ato confirm", "{member}", member.getPlayerName());
-                player.sendMessage(ColorUtils.colorize(message));
-            }
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (executor == null || executor.getRole() != GuildMember.Role.LEADER) {
+                    String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
+                    player.sendMessage(ColorUtils.colorize(message));
+                    return;
+                }
+
+                if (member.getRole() == GuildMember.Role.LEADER) {
+                    String message = languageManager.getGuiMessage(player, "gui.common.cannot-modify-leader", "&cCannot modify the guild leader's position");
+                    player.sendMessage(ColorUtils.colorize(message));
+                    return;
+                }
+
+                if (member.getRole() == GuildMember.Role.OFFICER) {
+                    plugin.getGuiManager().openGUI(player,
+                            new ConfirmDemoteMemberGUI(plugin, guild, member, player, "MemberManagementGUI"));
+                } else if (member.getRole() == GuildMember.Role.MEMBER) {
+                    plugin.getGuiManager().openGUI(player,
+                            new ConfirmPromoteMemberGUI(plugin, guild, member, player, "MemberManagementGUI"));
+                }
+            });
         });
     }
     

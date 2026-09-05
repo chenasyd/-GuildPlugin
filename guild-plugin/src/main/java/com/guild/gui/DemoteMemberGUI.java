@@ -55,6 +55,11 @@ public class DemoteMemberGUI implements GUI {
                 .filter(member -> !member.getPlayerUuid().equals(guild.getLeaderUuid()))
                 .filter(member -> member.getRole().equals(GuildMember.Role.OFFICER)) // 只显示官员
                 .collect(java.util.stream.Collectors.toList());
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (player.isOnline()) {
+                    plugin.getGuiManager().refreshGUI(player);
+                }
+            });
         });
     }
 
@@ -236,33 +241,15 @@ public class DemoteMemberGUI implements GUI {
      * 处理降级成员
      */
     private void handleDemoteMember(Player demoter, GuildMember member) {
-        // 检查权限
-        if (!demoter.hasPermission("guild.demote")) {
-            String message = languageManager.getGuiMessage(demoter, "gui.common.no-permission", "&cInsufficient permission");
-            demoter.sendMessage(ColorUtils.colorize(message));
+        GuildMember executor = plugin.getGuildService().getGuildMember(demoter.getUniqueId());
+        if (executor == null || executor.getGuildId() != guild.getId() || executor.getRole() != GuildMember.Role.LEADER) {
+            demoter.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(demoter,
+                    "gui.common.leader-only", "&cOnly the guild leader can perform this operation")));
             return;
         }
 
-        // 降级成员
-        plugin.getGuildService().updateMemberRoleAsync(member.getPlayerUuid(), GuildMember.Role.MEMBER, demoter.getUniqueId()).thenAccept(success -> {
-            if (success) {
-                String demoterMessage = languageManager.getGuiMessage(demoter, "gui.demote-member.demote.success", "&aDemoted &e{player} &a to regular member!", "{player}", member.getPlayerName());
-                demoter.sendMessage(ColorUtils.colorize(demoterMessage));
-
-                // 通知被降级的玩家
-                Player demotedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
-                if (demotedPlayer != null) {
-                    String demotedMessage = languageManager.getGuiMessage(demotedPlayer, "gui.demote-member.demote.demoted", "&aYou have been demoted to regular member of guild &e{guild} &a!", "{guild}", guild.getName());
-                    demotedPlayer.sendMessage(ColorUtils.colorize(demotedMessage));
-                }
-
-                // 刷新GUI
-                plugin.getGuiManager().openGUI(demoter, new DemoteMemberGUI(plugin, guild, demoter));
-            } else {
-                String message = languageManager.getGuiMessage(demoter, "gui.demote-member.demote.failed", "&cFailed to demote member!");
-                demoter.sendMessage(ColorUtils.colorize(message));
-            }
-        });
+        plugin.getGuiManager().openGUI(demoter,
+                new ConfirmDemoteMemberGUI(plugin, guild, member, demoter, "DemoteMemberGUI"));
     }
 
     // ── 基岩版表单 ──

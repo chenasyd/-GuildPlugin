@@ -1327,6 +1327,54 @@ gui:
     bedrock-no-members: "&fNenhum membro disponível para expulsar"
     bedrock-content: "&fSelecione um membro para expulsar"
   # ================================================
+  # ConfirmPromoteMemberGUI
+  # ================================================
+  confirm-promote-member:
+    title: "&6Confirm Promote Member"
+    info-title: "&6Confirm Promote Member"
+    guild: "&7Guild: &e{guild}"
+    member: "&7Member: &e{member}"
+    confirm-question: "&7Promote this member to officer?"
+    confirm-button: "&6Confirm Promote"
+    confirm-lore: "&7Click to confirm promotion"
+    cancel-button: "&aCancel"
+    cancel-lore: "&7Click to cancel"
+    cannot-promote-leader: "&cCannot promote the guild leader!"
+    already-officer: "&cThat member is already an officer!"
+    member-left: "&cThat member is no longer in the guild!"
+    promote.failed: "&cFailed to promote member!"
+    promote.promoted: "&aYou have been promoted to officer of guild &e{guild}&a!"
+    promote.success: "&aPromoted &e{member} &ato officer!"
+    bedrock-title: "&6Confirm Promote Member"
+    bedrock-content: "&fGuild: &e{guild}\n&fMember: &e{member}\n&fPromote this member to officer?"
+    bedrock-confirm: "&6Confirm Promote"
+    bedrock-cancel: "&aCancel"
+
+  # ================================================
+  # ConfirmDemoteMemberGUI
+  # ================================================
+  confirm-demote-member:
+    title: "&7Confirm Demote Member"
+    info-title: "&7Confirm Demote Member"
+    guild: "&7Guild: &e{guild}"
+    member: "&7Member: &e{member}"
+    confirm-question: "&7Demote this officer to member?"
+    confirm-button: "&7Confirm Demote"
+    confirm-lore: "&7Click to confirm demotion"
+    cancel-button: "&aCancel"
+    cancel-lore: "&7Click to cancel"
+    cannot-demote-leader: "&cCannot demote the guild leader!"
+    not-officer: "&cThat member is not an officer!"
+    member-left: "&cThat member is no longer in the guild!"
+    demote.failed: "&cFailed to demote member!"
+    demote.demoted: "&aYou have been demoted to member of guild &e{guild}&a!"
+    demote.success: "&aDemoted &e{member} &ato member!"
+    bedrock-title: "&7Confirm Demote Member"
+    bedrock-content: "&fGuild: &e{guild}\n&fMember: &e{member}\n&fDemote this officer to member?"
+    bedrock-confirm: "&7Confirm Demote"
+    bedrock-cancel: "&aCancel"
+
+  # ================================================
   # TransferLeaderGUI
   # ================================================
   transfer-leader:

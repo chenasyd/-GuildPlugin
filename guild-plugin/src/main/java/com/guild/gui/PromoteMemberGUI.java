@@ -55,6 +55,11 @@ public class PromoteMemberGUI implements GUI {
                 .filter(member -> !member.getPlayerUuid().equals(guild.getLeaderUuid()))
                 .filter(member -> !member.getRole().equals(GuildMember.Role.OFFICER)) // 只显示可以提升的成员
                 .collect(java.util.stream.Collectors.toList());
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (player.isOnline()) {
+                    plugin.getGuiManager().refreshGUI(player);
+                }
+            });
         });
     }
 
@@ -236,33 +241,15 @@ public class PromoteMemberGUI implements GUI {
      * 处理提升成员
      */
     private void handlePromoteMember(Player promoter, GuildMember member) {
-        // 检查权限
-        if (!promoter.hasPermission("guild.promote")) {
-            String message = languageManager.getGuiMessage(promoter, "gui.common.no-permission", "&cInsufficient permission");
-            promoter.sendMessage(ColorUtils.colorize(message));
+        GuildMember executor = plugin.getGuildService().getGuildMember(promoter.getUniqueId());
+        if (executor == null || executor.getGuildId() != guild.getId() || executor.getRole() != GuildMember.Role.LEADER) {
+            promoter.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(promoter,
+                    "gui.common.leader-only", "&cOnly the guild leader can perform this operation")));
             return;
         }
 
-        // 提升成员
-        plugin.getGuildService().updateMemberRoleAsync(member.getPlayerUuid(), GuildMember.Role.OFFICER, promoter.getUniqueId()).thenAccept(success -> {
-            if (success) {
-                String promoterMessage = languageManager.getGuiMessage(promoter, "gui.promote-member.promote.success", "&aPromoted &e{player} &a to officer!", "{player}", member.getPlayerName());
-                promoter.sendMessage(ColorUtils.colorize(promoterMessage));
-
-                // 通知被提升的玩家
-                Player promotedPlayer = plugin.getServer().getPlayer(member.getPlayerUuid());
-                if (promotedPlayer != null) {
-                    String promotedMessage = languageManager.getGuiMessage(promotedPlayer, "gui.promote-member.promote.promoted", "&aYou have been promoted to officer of guild &e{guild} &a!", "{guild}", guild.getName());
-                    promotedPlayer.sendMessage(ColorUtils.colorize(promotedMessage));
-                }
-
-                // 刷新GUI
-                plugin.getGuiManager().openGUI(promoter, new PromoteMemberGUI(plugin, guild, promoter));
-            } else {
-                String message = languageManager.getGuiMessage(promoter, "gui.promote-member.promote.failed", "&cFailed to promote member!");
-                promoter.sendMessage(ColorUtils.colorize(message));
-            }
-        });
+        plugin.getGuiManager().openGUI(promoter,
+                new ConfirmPromoteMemberGUI(plugin, guild, member, promoter, "PromoteMemberGUI"));
     }
 
     // ── 基岩版表单 ──

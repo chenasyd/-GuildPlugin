@@ -385,6 +385,16 @@ layouts:
     INFO: [13]
     CANCEL: [15]
 
+  ConfirmPromoteMemberGUI:
+    CONFIRM: [11]
+    INFO: [13]
+    CANCEL: [15]
+
+  ConfirmDemoteMemberGUI:
+    CONFIRM: [11]
+    INFO: [13]
+    CANCEL: [15]
+
   # ── 成员操作（列表内容区 10-43 不配置） ──
   DemoteMemberGUI:
     PREV_PAGE: [45]

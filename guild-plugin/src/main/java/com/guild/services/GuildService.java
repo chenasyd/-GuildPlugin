@@ -593,47 +593,65 @@ public class GuildService {
             if (member == null) {
                 return CompletableFuture.completedFuture(false);
             }
-            
+
+            if (newRole == GuildMember.Role.LEADER) {
+                return CompletableFuture.completedFuture(false);
+            }
+            if (member.getRole() == newRole) {
+                return CompletableFuture.completedFuture(false);
+            }
+            if (member.getRole() == GuildMember.Role.LEADER) {
+                return CompletableFuture.completedFuture(false);
+            }
+            if (newRole == GuildMember.Role.OFFICER && member.getRole() != GuildMember.Role.MEMBER) {
+                return CompletableFuture.completedFuture(false);
+            }
+            if (newRole == GuildMember.Role.MEMBER && member.getRole() != GuildMember.Role.OFFICER) {
+                return CompletableFuture.completedFuture(false);
+            }
+
             return getGuildMemberAsync(requesterUuid).thenCompose(requester -> {
-                // 检查权限 - 只有会长可以更改角色
-                if (requester == null || requester.getGuildId() != member.getGuildId() || 
-                    requester.getRole() != GuildMember.Role.LEADER) {
+                if (requester == null || requester.getGuildId() != member.getGuildId()
+                        || requester.getRole() != GuildMember.Role.LEADER) {
                     return CompletableFuture.completedFuture(false);
                 }
-                
+
+                String oldRole = member.getRole().name();
+                int guildId = member.getGuildId();
+
                 return CompletableFuture.supplyAsync(() -> {
                     try {
-                        String sql = "UPDATE guild_members SET role = ? WHERE player_uuid = ?";
-                        
+                        String sql = "UPDATE guild_members SET role = ? WHERE player_uuid = ? AND guild_id = ?";
+
                         try (Connection conn = databaseManager.getConnection();
                              PreparedStatement stmt = conn.prepareStatement(sql)) {
-                            
+
                             stmt.setString(1, newRole.name());
                             stmt.setString(2, playerUuid.toString());
-                            
+                            stmt.setInt(3, guildId);
+
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
                                 QuietLog.system("Player " + member.getPlayerName() + " role updated to: " + newRole.name());
-                                // 更新内置权限缓存
                                 try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
-                                
-                                // 记录角色变更日志
-                                getGuildByIdAsync(member.getGuildId()).thenAccept(guild -> {
+
+                                getGuildByIdAsync(guildId).thenAccept(guild -> {
                                     if (guild != null) {
-                                        GuildLog.LogType logType = newRole == GuildMember.Role.LEADER ? 
-                                            GuildLog.LogType.LEADER_TRANSFERRED : 
-                                            (newRole == GuildMember.Role.OFFICER ? GuildLog.LogType.MEMBER_PROMOTED : GuildLog.LogType.MEMBER_DEMOTED);
-                                        String description = newRole == GuildMember.Role.LEADER ? "会长转让" : 
-                                            (newRole == GuildMember.Role.OFFICER ? "成员升职" : "成员降职");
-                                        String details = "玩家: " + member.getPlayerName() + ", 新职位: " + newRole.getDisplayName() + 
-                                            ", 操作者: " + requester.getPlayerName();
-                                        
-                                        logGuildActionAsync(member.getGuildId(), guild.getName(), 
-                                            requesterUuid.toString(), requester.getPlayerName(),
-                                            logType, description, details);
+                                        GuildLog.LogType logType = newRole == GuildMember.Role.OFFICER
+                                                ? GuildLog.LogType.MEMBER_PROMOTED
+                                                : GuildLog.LogType.MEMBER_DEMOTED;
+                                        String description = newRole == GuildMember.Role.OFFICER ? "成员升职" : "成员降职";
+                                        String details = "玩家: " + member.getPlayerName() + ", 新职位: " + newRole.getDisplayName()
+                                                + ", 操作者: " + requester.getPlayerName();
+
+                                        logGuildActionAsync(guildId, guild.getName(),
+                                                requesterUuid.toString(), requester.getPlayerName(),
+                                                logType, description, details);
+                                        fireMemberRoleChange(guildId, guild.getName(), playerUuid, member.getPlayerName(),
+                                                oldRole, newRole.name());
                                     }
                                 });
-                                
+
                                 return true;
                             }
                         }

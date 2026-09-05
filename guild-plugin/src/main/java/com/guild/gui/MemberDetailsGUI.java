@@ -426,15 +426,12 @@ public class MemberDetailsGUI implements GUI {
                 }
 
                 if (member.getRole() == GuildMember.Role.OFFICER) {
-                    // 降级
-                    String message = languageManager.getGuiMessage(player, "gui.common.confirm-demote", "&cDemote {member}? Type &f/guild demote {member} confirm &cto confirm", "{member}", member.getPlayerName());
-                    player.sendMessage(ColorUtils.colorize(message));
-                } else {
-                    // 提升
-                    String message = languageManager.getGuiMessage(player, "gui.common.confirm-promote", "&aPromote {member} to officer? Type &f/guild promote {member} confirm &ato confirm", "{member}", member.getPlayerName());
-                    player.sendMessage(ColorUtils.colorize(message));
+                    plugin.getGuiManager().openGUI(player,
+                            new ConfirmDemoteMemberGUI(plugin, guild, member, player, "MemberDetailsGUI"));
+                } else if (member.getRole() == GuildMember.Role.MEMBER) {
+                    plugin.getGuiManager().openGUI(player,
+                            new ConfirmPromoteMemberGUI(plugin, guild, member, player, "MemberDetailsGUI"));
                 }
-                player.closeInventory();
             });
         });
     }

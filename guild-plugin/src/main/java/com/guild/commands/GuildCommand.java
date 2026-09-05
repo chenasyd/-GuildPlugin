@@ -21,6 +21,8 @@ import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.DebugLog;
 import com.guild.core.utils.QuietLog;
 import com.guild.gui.ConfirmDeleteGuildGUI;
+import com.guild.gui.ConfirmDemoteMemberGUI;
+import com.guild.gui.ConfirmPromoteMemberGUI;
 import com.guild.gui.MainGuildGUI;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
@@ -686,24 +688,26 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         if (!plugin.getPermissionManager().hasPermission(player, "guild.promote")) {
             String message = languageManager.getCoreMessage(player, "general.no-permission", "&cYou do not have permission to perform this action!");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         String targetName = args[1];
-        Player targetPlayer = Bukkit.getPlayer(targetName);
-        
-        if (targetPlayer == null) {
-            String message = languageManager.getCoreMessage(player, "guild.promote.player-not-found", "&cPlayer is not online!");
-            player.sendMessage(ColorUtils.colorize(message));
-            return;
-        }
-        
+
         CompletableFuture.runAsync(() -> {
             try {
+                Guild guild = guildService.getPlayerGuild(player.getUniqueId());
+                if (guild == null) {
+                    CompatibleScheduler.runTask(plugin, player, () -> {
+                        String message = languageManager.getCoreMessage(player, "guild.promote.not-in-guild", "&cYou are not in any guild!");
+                        player.sendMessage(ColorUtils.colorize(message));
+                    });
+                    return;
+                }
+
                 if (!guildService.isGuildLeader(player.getUniqueId())) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
                         String message = languageManager.getCoreMessage(player, "guild.promote.only-master", "&cOnly the leader can promote members!");
@@ -711,16 +715,19 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     });
                     return;
                 }
-                
-                GuildMember targetMember = guildService.getGuildMember(targetPlayer.getUniqueId());
-                if (targetMember == null) {
+
+                @SuppressWarnings("deprecation")
+                org.bukkit.OfflinePlayer targetOfflinePlayer = Bukkit.getOfflinePlayer(targetName);
+                GuildMember targetMember = guildService.getGuildMember(targetOfflinePlayer.getUniqueId());
+                if (targetMember == null || targetMember.getGuildId() != guild.getId()) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
-                        String message = languageManager.getCoreMessage(player, "guild.promote.player-not-found", "&cPlayer is not online!");
+                        String message = languageManager.getCoreMessage(player, "guild.promote.not-in-guild-target",
+                                "&cThat player is not in your guild!");
                         player.sendMessage(ColorUtils.colorize(message));
                     });
                     return;
                 }
-                
+
                 if (targetMember.getRole() == Role.LEADER) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
                         String message = languageManager.getCoreMessage(player, "guild.promote.already-master", "&cThat player is already the leader!");
@@ -728,26 +735,21 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     });
                     return;
                 }
-                
-                // 提升为副会长
-                boolean success = guildService.updateMemberRole(targetPlayer.getUniqueId(), Role.OFFICER, player.getUniqueId());
-                if (success) {
+
+                if (targetMember.getRole() == Role.OFFICER) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
-                        String message = languageManager.getCoreMessage(player, "guild.promote.success", "&aSuccessfully promoted player to officer!");
+                        String message = languageManager.getCoreMessage(player, "guild.promote.already-officer",
+                                "&cThat player is already an officer!");
                         player.sendMessage(ColorUtils.colorize(message));
                     });
-                    
-                    // 通知被提升的玩家
-                    CompatibleScheduler.runTask(plugin, targetPlayer, () -> {
-                        String promoteMessage = languageManager.getCoreMessage(targetPlayer, "guild.promote.promoted", "&aYou have been promoted to officer!");
-                        targetPlayer.sendMessage(ColorUtils.colorize(promoteMessage));
-                    });
-                } else {
-                    CompatibleScheduler.runTask(plugin, player, () -> {
-                        String message = languageManager.getCoreMessage(player, "guild.promote.error", "&cAn error occurred while promoting the player!");
-                        player.sendMessage(ColorUtils.colorize(message));
-                    });
+                    return;
                 }
+
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    ConfirmPromoteMemberGUI confirmGui = new ConfirmPromoteMemberGUI(
+                            plugin, guild, targetMember, player, "GuildCommand");
+                    plugin.getGuiManager().openGUI(player, confirmGui);
+                });
             } catch (Exception e) {
                 e.printStackTrace();
                 CompatibleScheduler.runTask(plugin, player, () -> {
@@ -757,31 +759,33 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
             }
         });
     }
-    
+
     private void handleDemote(Player player, String[] args) {
         if (args.length < 2) {
             String message = languageManager.getCoreMessage(player, "guild.demote.usage", "&cUsage: /guild demote <player name>");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         if (!plugin.getPermissionManager().hasPermission(player, "guild.demote")) {
             String message = languageManager.getCoreMessage(player, "general.no-permission", "&cYou do not have permission to perform this action!");
             player.sendMessage(ColorUtils.colorize(message));
             return;
         }
-        
+
         String targetName = args[1];
-        Player targetPlayer = Bukkit.getPlayer(targetName);
-        
-        if (targetPlayer == null) {
-            String message = languageManager.getCoreMessage(player, "guild.demote.player-not-found", "&cPlayer is not online!");
-            player.sendMessage(ColorUtils.colorize(message));
-            return;
-        }
-        
+
         CompletableFuture.runAsync(() -> {
             try {
+                Guild guild = guildService.getPlayerGuild(player.getUniqueId());
+                if (guild == null) {
+                    CompatibleScheduler.runTask(plugin, player, () -> {
+                        String message = languageManager.getCoreMessage(player, "guild.demote.not-in-guild", "&cYou are not in any guild!");
+                        player.sendMessage(ColorUtils.colorize(message));
+                    });
+                    return;
+                }
+
                 if (!guildService.isGuildLeader(player.getUniqueId())) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
                         String message = languageManager.getCoreMessage(player, "guild.demote.only-master", "&cOnly the leader can demote members!");
@@ -789,16 +793,19 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     });
                     return;
                 }
-                
-                GuildMember targetMember = guildService.getGuildMember(targetPlayer.getUniqueId());
-                if (targetMember == null) {
+
+                @SuppressWarnings("deprecation")
+                org.bukkit.OfflinePlayer targetOfflinePlayer = Bukkit.getOfflinePlayer(targetName);
+                GuildMember targetMember = guildService.getGuildMember(targetOfflinePlayer.getUniqueId());
+                if (targetMember == null || targetMember.getGuildId() != guild.getId()) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
-                        String message = languageManager.getCoreMessage(player, "guild.demote.player-not-found", "&cPlayer is not online!");
+                        String message = languageManager.getCoreMessage(player, "guild.demote.not-in-guild-target",
+                                "&cThat player is not in your guild!");
                         player.sendMessage(ColorUtils.colorize(message));
                     });
                     return;
                 }
-                
+
                 if (targetMember.getRole() == Role.LEADER) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
                         String message = languageManager.getCoreMessage(player, "guild.demote.cannot-demote-master", "&cYou cannot demote the leader!");
@@ -806,26 +813,21 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                     });
                     return;
                 }
-                
-                // 降级为普通成员
-                boolean success = guildService.updateMemberRole(targetPlayer.getUniqueId(), Role.MEMBER, player.getUniqueId());
-                if (success) {
+
+                if (targetMember.getRole() != Role.OFFICER) {
                     CompatibleScheduler.runTask(plugin, player, () -> {
-                        String message = languageManager.getCoreMessage(player, "guild.demote.success", "&aSuccessfully demoted player to member!");
+                        String message = languageManager.getCoreMessage(player, "guild.demote.not-officer",
+                                "&cThat player is not an officer!");
                         player.sendMessage(ColorUtils.colorize(message));
                     });
-                    
-                    // 通知被降级的玩家
-                    CompatibleScheduler.runTask(plugin, targetPlayer, () -> {
-                        String demoteMessage = languageManager.getCoreMessage(targetPlayer, "guild.demote.demoted", "&cYou have been demoted to member!");
-                        targetPlayer.sendMessage(ColorUtils.colorize(demoteMessage));
-                    });
-                } else {
-                    CompatibleScheduler.runTask(plugin, player, () -> {
-                        String message = languageManager.getCoreMessage(player, "guild.demote.error", "&cAn error occurred while demoting the player!");
-                        player.sendMessage(ColorUtils.colorize(message));
-                    });
+                    return;
                 }
+
+                CompatibleScheduler.runTask(plugin, player, () -> {
+                    ConfirmDemoteMemberGUI confirmGui = new ConfirmDemoteMemberGUI(
+                            plugin, guild, targetMember, player, "GuildCommand");
+                    plugin.getGuiManager().openGUI(player, confirmGui);
+                });
             } catch (Exception e) {
                 e.printStackTrace();
                 CompatibleScheduler.runTask(plugin, player, () -> {
