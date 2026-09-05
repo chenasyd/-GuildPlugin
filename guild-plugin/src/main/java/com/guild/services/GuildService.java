@@ -11,6 +11,7 @@ import com.guild.models.GuildEconomy;
 import com.guild.models.GuildContribution;
 import com.guild.models.GuildLog;
 import com.guild.services.repository.GuildMemberRepository;
+import com.guild.services.repository.GuildRelationRepository;
 import com.guild.services.repository.GuildRepository;
 import com.guild.util.NotifyUtils;
 import org.bukkit.Bukkit;
@@ -42,6 +43,7 @@ public class GuildService {
     private final DatabaseManager databaseManager;
     private final GuildMemberRepository memberRepository;
     private final GuildRepository guildRepository;
+    private final GuildRelationRepository relationRepository;
     private final Logger logger;
     
     public GuildService(GuildPlugin plugin) {
@@ -50,6 +52,7 @@ public class GuildService {
         this.logger = plugin.getLogger();
         this.memberRepository = new GuildMemberRepository(databaseManager, logger);
         this.guildRepository = new GuildRepository(databaseManager, logger);
+        this.relationRepository = new GuildRelationRepository(databaseManager, logger);
     }
 
     // ==================== 模块事件分发辅助 ====================
@@ -1804,30 +1807,8 @@ public class GuildService {
       */
      public CompletableFuture<Boolean> createGuildRelationAsync(int guild1Id, int guild2Id, String guild1Name, String guild2Name,
                                                               GuildRelation.RelationType type, UUID initiatorUuid, String initiatorName) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "INSERT INTO guild_relations (guild1_id, guild2_id, guild1_name, guild2_name, relation_type, initiator_uuid, initiator_name, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                 
-                     stmt.setInt(1, guild1Id);
-                     stmt.setInt(2, guild2Id);
-                     stmt.setString(3, guild1Name);
-                     stmt.setString(4, guild2Name);
-                     stmt.setString(5, type.name());
-                     stmt.setString(6, initiatorUuid.toString());
-                     stmt.setString(7, initiatorName);
-                     stmt.setString(8, plusDaysString(7));
-                     
-                     int rowsAffected = stmt.executeUpdate();
-                     return rowsAffected > 0;
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error creating guild relation: " + e.getMessage());
-                 return false;
-             }
-         }).thenCompose(ok -> {
+         return relationRepository.insertAsync(guild1Id, guild2Id, guild1Name, guild2Name, type,
+                 initiatorUuid, initiatorName, plusDaysString(7)).thenCompose(ok -> {
              if (!Boolean.TRUE.equals(ok)) {
                  return CompletableFuture.completedFuture(false);
              }
@@ -1851,21 +1832,7 @@ public class GuildService {
              if (relation == null) {
                  return CompletableFuture.completedFuture(false);
              }
-             return CompletableFuture.supplyAsync(() -> {
-                 try {
-                     String sql = "UPDATE guild_relations SET status = ?, updated_at = ? WHERE id = ?";
-                     try (Connection conn = databaseManager.getConnection();
-                          PreparedStatement stmt = conn.prepareStatement(sql)) {
-                         stmt.setString(1, status.name());
-                         stmt.setString(2, nowString());
-                         stmt.setInt(3, relationId);
-                         return stmt.executeUpdate() > 0;
-                     }
-                 } catch (SQLException e) {
-                     logger.severe("Error updating guild relation status: " + e.getMessage());
-                     return false;
-                 }
-             }).thenCompose(ok -> {
+             return relationRepository.updateStatusAsync(relationId, status, nowString()).thenCompose(ok -> {
                  if (!Boolean.TRUE.equals(ok)) {
                      return CompletableFuture.completedFuture(false);
                  }
@@ -1891,80 +1858,21 @@ public class GuildService {
       * 获取公会关系 (异步)
       */
      public CompletableFuture<GuildRelation> getGuildRelationAsync(int guild1Id, int guild2Id) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "SELECT * FROM guild_relations WHERE (guild1_id = ? AND guild2_id = ?) OR (guild1_id = ? AND guild2_id = ?)";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setInt(1, guild1Id);
-                     stmt.setInt(2, guild2Id);
-                     stmt.setInt(3, guild2Id);
-                     stmt.setInt(4, guild1Id);
-                     
-                     try (ResultSet rs = stmt.executeQuery()) {
-                         if (rs.next()) {
-                             return createGuildRelationFromResultSet(rs);
-                         }
-                     }
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error fetching guild relation: " + e.getMessage());
-             }
-             return null;
-         });
+         return relationRepository.findByGuildPairAsync(guild1Id, guild2Id);
      }
      
      /**
       * 获取公会的所有关系 (异步)
       */
      public CompletableFuture<List<GuildRelation>> getGuildRelationsAsync(int guildId) {
-         return CompletableFuture.supplyAsync(() -> {
-             List<GuildRelation> relations = new ArrayList<>();
-             try {
-                 String sql = "SELECT * FROM guild_relations WHERE guild1_id = ? OR guild2_id = ? ORDER BY created_at DESC";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setInt(1, guildId);
-                     stmt.setInt(2, guildId);
-                     
-                     try (ResultSet rs = stmt.executeQuery()) {
-                         while (rs.next()) {
-                             relations.add(createGuildRelationFromResultSet(rs));
-                         }
-                     }
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error fetching guild relation list: " + e.getMessage());
-             }
-             return relations;
-         });
+         return relationRepository.findAllByGuildIdAsync(guildId);
      }
      
      /**
       * 按 ID 获取公会关系 (异步)
       */
      public CompletableFuture<GuildRelation> getGuildRelationByIdAsync(int relationId) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "SELECT * FROM guild_relations WHERE id = ?";
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     stmt.setInt(1, relationId);
-                     try (ResultSet rs = stmt.executeQuery()) {
-                         if (rs.next()) {
-                             return createGuildRelationFromResultSet(rs);
-                         }
-                     }
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error fetching guild relation by id: " + e.getMessage());
-             }
-             return null;
-         });
+         return relationRepository.findByIdAsync(relationId);
      }
 
      /**
@@ -1975,19 +1883,7 @@ public class GuildService {
              if (relation == null) {
                  return CompletableFuture.completedFuture(false);
              }
-             return CompletableFuture.supplyAsync(() -> {
-                 try {
-                     String sql = "DELETE FROM guild_relations WHERE id = ?";
-                     try (Connection conn = databaseManager.getConnection();
-                          PreparedStatement stmt = conn.prepareStatement(sql)) {
-                         stmt.setInt(1, relationId);
-                         return stmt.executeUpdate() > 0;
-                     }
-                 } catch (SQLException e) {
-                     logger.severe("Error deleting guild relation: " + e.getMessage());
-                     return false;
-                 }
-             }).thenCompose(ok -> {
+             return relationRepository.deleteByIdAsync(relationId).thenCompose(ok -> {
                  if (!Boolean.TRUE.equals(ok)) {
                      return CompletableFuture.completedFuture(false);
                  }
@@ -2244,28 +2140,6 @@ public class GuildService {
     }
     
     // ==================== 辅助方法 ====================
-     
-     private GuildRelation createGuildRelationFromResultSet(ResultSet rs) throws SQLException {
-         GuildRelation relation = new GuildRelation();
-         relation.setId(rs.getInt("id"));
-         relation.setGuild1Id(rs.getInt("guild1_id"));
-         relation.setGuild2Id(rs.getInt("guild2_id"));
-         relation.setGuild1Name(rs.getString("guild1_name"));
-         relation.setGuild2Name(rs.getString("guild2_name"));
-         relation.setType(GuildRelation.RelationType.valueOf(rs.getString("relation_type")));
-         relation.setStatus(GuildRelation.RelationStatus.valueOf(rs.getString("status")));
-         relation.setInitiatorUuid(UUID.fromString(rs.getString("initiator_uuid")));
-         relation.setInitiatorName(rs.getString("initiator_name"));
-         relation.setCreatedAt(parseTimestamp(rs, "created_at"));
-         relation.setUpdatedAt(parseTimestamp(rs, "updated_at"));
-         
-         String expiresAt = rs.getString("expires_at");
-         if (expiresAt != null) {
-             relation.setExpiresAt(parseTimestamp(rs, "expires_at"));
-         }
-         
-         return relation;
-     }
      
      private GuildEconomy createGuildEconomyFromResultSet(ResultSet rs) throws SQLException {
          GuildEconomy economy = new GuildEconomy();
