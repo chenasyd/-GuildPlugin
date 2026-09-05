@@ -169,8 +169,7 @@ public class ConfirmDeleteGuildGUI extends AbstractConfirmGUI {
                 return;
             }
         } else {
-            GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-            if (member == null || member.getGuildId() != guild.getId() || member.getRole() != GuildMember.Role.LEADER) {
+            if (!plugin.getMembershipRules().canDeleteGuild(player)) {
                 player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
                         "gui.common.leader-only", "&cOnly the guild leader can perform this operation")));
                 return;

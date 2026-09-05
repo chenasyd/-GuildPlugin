@@ -177,11 +177,7 @@ public class ConfirmTransferLeaderGUI extends AbstractConfirmGUI {
                 return;
             }
         } else {
-            GuildMember executor = plugin.getGuildService().getGuildMember(player.getUniqueId());
-            if (executor == null
-                    || executor.getGuildId() != guild.getId()
-                    || executor.getRole() != GuildMember.Role.LEADER
-                    || !player.getUniqueId().equals(guild.getLeaderUuid())) {
+            if (!plugin.getMembershipRules().isLeaderOf(player, guild.getId())) {
                 player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
                         "gui.common.leader-only", "&cOnly the guild leader can perform this operation")));
                 return;

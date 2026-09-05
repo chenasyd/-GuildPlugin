@@ -509,33 +509,30 @@ public class MemberDetailsGUI implements GUI {
      */
     private List<String> getRolePermissions(GuildMember.Role role) {
         List<String> permissions = new ArrayList<>();
+        var rules = plugin.getMembershipRules();
 
-        switch (role) {
-            case LEADER:
-                permissions.add(ColorUtils.colorize("&7✓ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.all-permissions", "All permissions")));
-                permissions.add(ColorUtils.colorize("&7✓ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.invite-member", "Invite members")));
-                permissions.add(ColorUtils.colorize("&7✓ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.kick-member", "Kick member")));
-                permissions.add(ColorUtils.colorize("&7✓ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.promote-demote", "Promote/Demote")));
-                permissions.add(ColorUtils.colorize("&7✓ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.manage-guild", "Manage guild")));
-                permissions.add(ColorUtils.colorize("&7✓ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.disband-guild", "Disband guild")));
-                break;
-            case OFFICER:
-                permissions.add(ColorUtils.colorize("&7✓ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.invite-member", "Invite members")));
-                permissions.add(ColorUtils.colorize("&7✓ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.kick-member", "Kick member")));
-                permissions.add(ColorUtils.colorize("&7✗ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.promote-demote", "Promote/Demote")));
-                permissions.add(ColorUtils.colorize("&7✗ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.manage-guild", "Manage guild")));
-                permissions.add(ColorUtils.colorize("&7✗ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.disband-guild", "Disband guild")));
-                break;
-            default:
-                permissions.add(ColorUtils.colorize("&7✗ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.invite-member", "Invite members")));
-                permissions.add(ColorUtils.colorize("&7✗ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.kick-member", "Kick member")));
-                permissions.add(ColorUtils.colorize("&7✗ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.promote-demote", "Promote/Demote")));
-                permissions.add(ColorUtils.colorize("&7✗ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.manage-guild", "Manage guild")));
-                permissions.add(ColorUtils.colorize("&7✗ " + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.disband-guild", "Disband guild")));
-                break;
+        addRolePermissionLine(permissions, rules.roleMatrixCanInvite(role),
+                languageManager.getGuiMessage(viewer, "gui.member-management.member-details.invite-member", "Invite members"));
+        addRolePermissionLine(permissions, rules.roleMatrixCanKick(role),
+                languageManager.getGuiMessage(viewer, "gui.member-management.member-details.kick-member", "Kick member"));
+        addRolePermissionLine(permissions, rules.roleMatrixCanPromote(role) || rules.roleMatrixCanDemote(role),
+                languageManager.getGuiMessage(viewer, "gui.member-management.member-details.promote-demote", "Promote/Demote"));
+        addRolePermissionLine(permissions, rules.roleMatrixCanManage(role),
+                languageManager.getGuiMessage(viewer, "gui.member-management.member-details.manage-guild", "Manage guild"));
+        addRolePermissionLine(permissions, rules.roleMatrixCanDeleteGuild(role),
+                languageManager.getGuiMessage(viewer, "gui.member-management.member-details.disband-guild", "Disband guild"));
+
+        if (rules.roleMatrixCanInvite(role) && rules.roleMatrixCanKick(role)
+                && rules.roleMatrixCanPromote(role) && rules.roleMatrixCanDeleteGuild(role)) {
+            permissions.add(0, ColorUtils.colorize("&7✓ "
+                    + languageManager.getGuiMessage(viewer, "gui.member-management.member-details.all-permissions", "All permissions")));
         }
 
         return permissions;
+    }
+
+    private void addRolePermissionLine(List<String> permissions, boolean allowed, String label) {
+        permissions.add(ColorUtils.colorize((allowed ? "&7✓ " : "&7✗ ") + label));
     }
 
     /**
@@ -556,14 +553,18 @@ public class MemberDetailsGUI implements GUI {
      * 获取可执行操作
      */
     private String getExecutableActions(GuildMember.Role role) {
-        switch (role) {
-            case LEADER:
-                return languageManager.getGuiMessage(viewer, "gui.member-management.member-details.all-actions", "All actions");
-            case OFFICER:
-                return languageManager.getGuiMessage(viewer, "gui.member-management.member-details.invite-kick-actions", "Invite, kick");
-            default:
-                return languageManager.getGuiMessage(viewer, "gui.member-management.member-details.basic-actions", "Basic actions");
+        var rules = plugin.getMembershipRules();
+        if (rules.roleMatrixCanInvite(role) && rules.roleMatrixCanKick(role)
+                && rules.roleMatrixCanPromote(role) && rules.roleMatrixCanDeleteGuild(role)) {
+            return languageManager.getGuiMessage(viewer, "gui.member-management.member-details.all-actions", "All actions");
         }
+        if (rules.roleMatrixCanInvite(role) && rules.roleMatrixCanKick(role)) {
+            return languageManager.getGuiMessage(viewer, "gui.member-management.member-details.invite-kick-actions", "Invite, kick");
+        }
+        if (rules.roleMatrixCanInvite(role) || rules.roleMatrixCanKick(role) || rules.roleMatrixCanManage(role)) {
+            return languageManager.getGuiMessage(viewer, "gui.member-management.member-details.invite-kick-actions", "Invite, kick");
+        }
+        return languageManager.getGuiMessage(viewer, "gui.member-management.member-details.basic-actions", "Basic actions");
     }
 
     // ── 基岩版表单 ──

@@ -101,11 +101,7 @@ public class TransferLeaderGUI extends AbstractPagedMemberGUI {
 
     @Override
     protected boolean validateAccess(Player player) {
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        return member != null
-                && member.getGuildId() == guild.getId()
-                && member.getRole() == GuildMember.Role.LEADER
-                && player.getUniqueId().equals(guild.getLeaderUuid());
+        return plugin.getMembershipRules().isLeaderOf(player, guild.getId());
     }
 
     @Override

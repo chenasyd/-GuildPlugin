@@ -396,12 +396,12 @@ public class MainGuildGUI implements GUI {
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
                     CompatibleScheduler.runTask(plugin, player, () -> {
                         if (member == null) {
-                            String message = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
+                            String message = languageManager.getGuiMessage(player, "gui.common.no-guild", "&cYou do not have a guild yet");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;
                         }
 
-                        if (member.getRole() == com.guild.models.GuildMember.Role.LEADER) {
+                        if (plugin.getMembershipRules().isLeaderOf(player, guild.getId())) {
                             // 打开公会设置GUI（完整版）
                             GuildSettingsGUI guildSettingsGUI = new GuildSettingsGUI(plugin, guild, player);
                             plugin.getGuiManager().openGUI(player, guildSettingsGUI);
@@ -443,7 +443,7 @@ public class MainGuildGUI implements GUI {
                 plugin.getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
                     // 确保在玩家实体线程中执行GUI操作
                     CompatibleScheduler.runTask(plugin, player, () -> {
-                        if (member == null || member.getRole() != com.guild.models.GuildMember.Role.LEADER) {
+                        if (member == null || !plugin.getMembershipRules().canManageGuild(player)) {
                             String message = languageManager.getGuiMessage(player, "gui.common.manage-relations-leader-only", "&cOnly the guild leader can manage relations");
                             player.sendMessage(ColorUtils.colorize(message));
                             return;

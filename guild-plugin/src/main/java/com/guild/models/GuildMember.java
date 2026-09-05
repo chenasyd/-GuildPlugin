@@ -123,46 +123,6 @@ public class GuildMember {
         public String getDisplayName() {
             return getDisplayName("en");
         }
-
-        public boolean canInvite() {
-            GuildPlugin inst = GuildPlugin.getInstance();
-            if (inst != null && inst.getPermissionManager() != null) {
-                return inst.getPermissionManager().roleCanInvite(this);
-            }
-            return this == LEADER || this == OFFICER;
-        }
-
-        public boolean canKick() {
-            GuildPlugin inst = GuildPlugin.getInstance();
-            if (inst != null && inst.getPermissionManager() != null) {
-                return inst.getPermissionManager().roleCanKick(this);
-            }
-            return this == LEADER || this == OFFICER;
-        }
-
-        public boolean canPromote() {
-            GuildPlugin inst = GuildPlugin.getInstance();
-            if (inst != null && inst.getPermissionManager() != null) {
-                return inst.getPermissionManager().roleCanPromote(this);
-            }
-            return this == LEADER;
-        }
-
-        public boolean canDemote() {
-            GuildPlugin inst = GuildPlugin.getInstance();
-            if (inst != null && inst.getPermissionManager() != null) {
-                return inst.getPermissionManager().roleCanDemote(this);
-            }
-            return this == LEADER;
-        }
-
-        public boolean canDeleteGuild() {
-            GuildPlugin inst = GuildPlugin.getInstance();
-            if (inst != null && inst.getPermissionManager() != null) {
-                return inst.getPermissionManager().roleCanDeleteGuild(this);
-            }
-            return this == LEADER;
-        }
     }
     
     @Override

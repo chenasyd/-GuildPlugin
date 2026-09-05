@@ -272,14 +272,15 @@ public class MemberManagementGUI implements GUI {
      * 获取角色权限描述
      */
     private String getRolePermissions(GuildMember.Role role) {
-        switch (role) {
-            case LEADER:
-                return languageManager.getGuiMessage(player, "gui.member-management.member-mgmt.role.leader-perms", "All Permissions");
-            case OFFICER:
-                return languageManager.getGuiMessage(player, "gui.member-management.member-mgmt.role.officer-perms", "Invite, Kick");
-            default:
-                return languageManager.getGuiMessage(player, "gui.member-management.member-mgmt.role.member-perms", "Basic Permissions");
+        var rules = plugin.getMembershipRules();
+        if (rules.roleMatrixCanInvite(role) && rules.roleMatrixCanKick(role)
+                && rules.roleMatrixCanPromote(role) && rules.roleMatrixCanDeleteGuild(role)) {
+            return languageManager.getGuiMessage(player, "gui.member-management.member-mgmt.role.leader-perms", "All Permissions");
         }
+        if (rules.roleMatrixCanInvite(role) || rules.roleMatrixCanKick(role)) {
+            return languageManager.getGuiMessage(player, "gui.member-management.member-mgmt.role.officer-perms", "Invite, Kick");
+        }
+        return languageManager.getGuiMessage(player, "gui.member-management.member-mgmt.role.member-perms", "Basic Permissions");
     }
     
     /**

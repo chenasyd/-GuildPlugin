@@ -130,7 +130,7 @@ public class GuildWarehouseService {
             if (override != null) {
                 return override;
             }
-            return plugin.getPermissionManager().getDefaultCanWarehouse(role);
+            return plugin.getMembershipRules().roleMatrixCanWarehouse(role);
         }
         return false;
     }

@@ -56,10 +56,10 @@ public class GuildWarehouseHandler implements GuildSubCommandHandler {
                 Boolean memberOverride = warehouse.getRoleOpenOverrideSync(guild.getId(), Role.MEMBER);
                 boolean officer = officerOverride != null
                         ? officerOverride
-                        : ctx.plugin().getPermissionManager().getDefaultCanWarehouse(Role.OFFICER);
+                        : ctx.plugin().getMembershipRules().roleMatrixCanWarehouse(Role.OFFICER);
                 boolean member = memberOverride != null
                         ? memberOverride
-                        : ctx.plugin().getPermissionManager().getDefaultCanWarehouse(Role.MEMBER);
+                        : ctx.plugin().getMembershipRules().roleMatrixCanWarehouse(Role.MEMBER);
 
                 String on = ctx.languageManager().getCoreMessage(player, "warehouse.state-on", "&aON");
                 String off = ctx.languageManager().getCoreMessage(player, "warehouse.state-off", "&cOFF");
@@ -89,8 +89,7 @@ public class GuildWarehouseHandler implements GuildSubCommandHandler {
 
     private void handleWarehousePerm(GuildCommandContext ctx, Player player, Guild guild,
                                      com.guild.warehouse.GuildWarehouseService warehouse, String[] args) {
-                GuildMember member = ctx.guildService().getGuildMember(player.getUniqueId());
-                boolean isLeader = member != null && member.getRole() == Role.LEADER;
+                boolean isLeader = ctx.plugin().getMembershipRules().isLeaderOf(player, guild.getId());
                 boolean isAdmin = ctx.plugin().getPermissionManager().hasPermission(player, "guild.admin");
                 if (!isLeader && !isAdmin) {
                     player.sendMessage(ColorUtils.colorize(ctx.languageManager().getCoreMessage(player, "warehouse.perm-leader-only",

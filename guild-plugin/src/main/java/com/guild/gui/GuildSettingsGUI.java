@@ -467,8 +467,7 @@ public class GuildSettingsGUI implements GUI {
     // ==================== 业务处理方法（原有逻辑不变） ====================
 
     private void handleChangeName(Player player) {
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
+        if (!plugin.getMembershipRules().isLeaderOf(player, guild.getId())) {
             String msg = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
@@ -477,8 +476,7 @@ public class GuildSettingsGUI implements GUI {
     }
 
     private void handleChangeDescription(Player player) {
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
+        if (!plugin.getMembershipRules().isLeaderOf(player, guild.getId())) {
             String msg = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
@@ -487,8 +485,7 @@ public class GuildSettingsGUI implements GUI {
     }
 
     private void handleChangeTag(Player player) {
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
+        if (!plugin.getMembershipRules().isLeaderOf(player, guild.getId())) {
             String msg = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
@@ -497,8 +494,7 @@ public class GuildSettingsGUI implements GUI {
     }
 
     private void handleInviteMember(Player player) {
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
+        if (!plugin.getMembershipRules().canInvite(player)) {
             String msg = languageManager.getGuiMessage(player, "gui.common.officer-or-higher", "&cOnly officers and above can perform this operation");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
@@ -507,8 +503,7 @@ public class GuildSettingsGUI implements GUI {
     }
 
     private void handleKickMember(Player player) {
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || (member.getRole() != GuildMember.Role.LEADER && member.getRole() != GuildMember.Role.OFFICER)) {
+        if (!plugin.getMembershipRules().canKick(player)) {
             String msg = languageManager.getGuiMessage(player, "gui.common.officer-or-higher", "&cOnly officers and above can perform this operation");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
@@ -517,9 +512,8 @@ public class GuildSettingsGUI implements GUI {
     }
 
     private void handleSetHome(Player player) {
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
-            String msg = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
+        if (!plugin.getMembershipRules().canManageGuild(player)) {
+            String msg = languageManager.getGuiMessage(player, "gui.common.no-permission", "&cInsufficient permission");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
         }
@@ -551,8 +545,7 @@ public class GuildSettingsGUI implements GUI {
     }
 
     private void handleGuildLogs(Player player) {
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null) {
+        if (!plugin.getMembershipRules().canManageGuild(player)) {
             String msg = languageManager.getGuiMessage(player, "gui.common.no-permission", "&cInsufficient permission");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
@@ -593,8 +586,7 @@ public class GuildSettingsGUI implements GUI {
     }
 
     private void handleDeleteGuild(Player player) {
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null || member.getRole() != GuildMember.Role.LEADER) {
+        if (!plugin.getMembershipRules().canDeleteGuild(player)) {
             String msg = languageManager.getGuiMessage(player, "gui.common.leader-only", "&cOnly the guild leader can perform this operation");
             player.sendMessage(ColorUtils.colorize(msg));
             return;
@@ -603,11 +595,7 @@ public class GuildSettingsGUI implements GUI {
     }
 
     private void handleTransferLeader(Player player) {
-        GuildMember member = plugin.getGuildService().getGuildMember(player.getUniqueId());
-        if (member == null
-                || member.getGuildId() != guild.getId()
-                || member.getRole() != GuildMember.Role.LEADER
-                || !player.getUniqueId().equals(guild.getLeaderUuid())) {
+        if (!plugin.getMembershipRules().isLeaderOf(player, guild.getId())) {
             String msg = languageManager.getGuiMessage(player, "gui.common.leader-only",
                     "&cOnly the guild leader can perform this operation");
             player.sendMessage(ColorUtils.colorize(msg));
