@@ -16,7 +16,7 @@ class GuildHomeService extends GuildServiceSupport {
       * 设置公会家 (异步)
       */
      public CompletableFuture<Boolean> setGuildHomeAsync(int guildId, org.bukkit.Location location, UUID requesterUuid) {
-         return ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
+         return guardServiceFutureBoolean("setGuildHome", ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
              if (guild == null) {
                  return CompletableFuture.completedFuture(false);
              }
@@ -37,7 +37,7 @@ class GuildHomeService extends GuildServiceSupport {
                      return false;
                  });
              });
-         });
+         }));
      }
      
      /**
@@ -56,7 +56,7 @@ class GuildHomeService extends GuildServiceSupport {
       * 获取公会家位置 (异步)
       */
      public CompletableFuture<org.bukkit.Location> getGuildHomeAsync(int guildId) {
-         return ctx.serviceRef.getGuildByIdAsync(guildId).thenApply(guild -> {
+         return guardServiceFutureNullable("getGuildHome", ctx.serviceRef.getGuildByIdAsync(guildId).thenApply(guild -> {
              if (guild == null || !guild.hasHome()) {
                  return null;
              }
@@ -68,7 +68,7 @@ class GuildHomeService extends GuildServiceSupport {
              }
              
              return guild.getHomeLocation(world);
-         });
+         }));
      }
      
      /**

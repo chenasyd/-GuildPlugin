@@ -11,6 +11,7 @@ import com.guild.models.GuildMember;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -28,21 +29,21 @@ class GuildEconomyService extends GuildServiceSupport {
       * 初始化公会经济 (异步)
       */
      public CompletableFuture<Boolean> initializeGuildEconomyAsync(int guildId) {
-         return ctx.repos.economy().insertAsync(guildId);
+         return guardServiceFutureBoolean("initializeGuildEconomy", ctx.repos.economy().insertAsync(guildId));
      }
      
      /**
       * 获取公会经济信息 (异步)
       */
      public CompletableFuture<GuildEconomy> getGuildEconomyAsync(int guildId) {
-         return ctx.repos.economy().findByGuildIdAsync(guildId);
+         return guardServiceFutureNullable("getGuildEconomy", ctx.repos.economy().findByGuildIdAsync(guildId));
      }
      
      /**
       * 更新公会经济 (异步)
       */
      public CompletableFuture<Boolean> updateGuildEconomyAsync(int guildId, double balance, int level, double experience, double maxExperience, int maxMembers) {
-         return ctx.repos.economy().updateAsync(guildId, balance, level, experience, maxExperience, maxMembers, nowString());
+         return guardServiceFutureBoolean("updateGuildEconomy", ctx.repos.economy().updateAsync(guildId, balance, level, experience, maxExperience, maxMembers, nowString()));
      }
      
      /**
@@ -50,21 +51,21 @@ class GuildEconomyService extends GuildServiceSupport {
       */
      public CompletableFuture<Boolean> addGuildContributionAsync(int guildId, UUID playerUuid, String playerName,
                                                                double amount, GuildContribution.ContributionType type, String description) {
-         return ctx.repos.contributions().insertAsync(guildId, playerUuid, playerName, amount, type, description);
+         return guardServiceFutureBoolean("addGuildContribution", ctx.repos.contributions().insertAsync(guildId, playerUuid, playerName, amount, type, description));
      }
      
      /**
       * 获取公会贡献记录 (异步)
       */
      public CompletableFuture<List<GuildContribution>> getGuildContributionsAsync(int guildId) {
-         return ctx.repos.contributions().findAllByGuildIdAsync(guildId);
+         return guardServiceFutureList("getGuildContributions", ctx.repos.contributions().findAllByGuildIdAsync(guildId));
      }
      
      /**
       * 获取玩家贡献记录 (异步)
       */
      public CompletableFuture<List<GuildContribution>> getPlayerContributionsAsync(UUID playerUuid) {
-         return ctx.repos.contributions().findAllByPlayerUuidAsync(playerUuid);
+         return guardServiceFutureList("getPlayerContributions", ctx.repos.contributions().findAllByPlayerUuidAsync(playerUuid));
      }
 
     /**
@@ -72,7 +73,7 @@ class GuildEconomyService extends GuildServiceSupport {
      * 返回 Map&lt;playerUuid, netAmount&gt;。
      */
     public CompletableFuture<Map<UUID, Double>> getGuildContributionNetByPlayerAsync(int guildId) {
-        return ctx.repos.contributions().computeNetByPlayerAsync(guildId);
+        return guardServiceFuture("getGuildContributionNetByPlayer", ctx.repos.contributions().computeNetByPlayerAsync(guildId), Collections.emptyMap());
     }
 
     /**
@@ -80,7 +81,7 @@ class GuildEconomyService extends GuildServiceSupport {
      * 返回 List<GuildContribution>，每个玩家一条，amount 为累计存款总额。
      */
     public CompletableFuture<List<GuildContribution>> getGuildContributionTotalsAsync(int guildId) {
-        return ctx.repos.contributions().computeDepositTotalsAsync(guildId);
+        return guardServiceFutureList("getGuildContributionTotals", ctx.repos.contributions().computeDepositTotalsAsync(guildId));
     }
     
      // ==================== 公会经济管理方法 ====================
@@ -89,7 +90,7 @@ class GuildEconomyService extends GuildServiceSupport {
       * 更新公会余额 (异步)
       */
      public CompletableFuture<Boolean> updateGuildBalanceAsync(int guildId, double balance) {
-        return updateGuildBalanceAsync(guildId, balance, null, null);
+        return guardServiceFutureBoolean("updateGuildBalance", updateGuildBalanceAsync(guildId, balance, null, null));
     }
 
     /**
@@ -100,13 +101,13 @@ class GuildEconomyService extends GuildServiceSupport {
         if (!isGuildAdmin(adminUuid)) {
             return CompletableFuture.completedFuture(false);
         }
-        return updateGuildBalanceAsync(guildId, balance,
-                adminUuid != null ? adminUuid.toString() : null, adminName);
+        return guardServiceFutureBoolean("updateGuildBalanceByAdmin", updateGuildBalanceAsync(guildId, balance,
+                adminUuid != null ? adminUuid.toString() : null, adminName));
     }
 
     public CompletableFuture<Boolean> updateGuildBalanceAsync(int guildId, double balance,
                                                                String operatorUuid, String operatorName) {
-         return ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
+         return guardServiceFutureBoolean("updateGuildBalance", ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
              if (guild == null) {
                  return CompletableFuture.completedFuture(false);
              }
@@ -138,35 +139,35 @@ class GuildEconomyService extends GuildServiceSupport {
                  }
                  return false;
              });
-         });
+         }));
      }
     
     /**
      * 更新公会等级 (异步)
      */
     public CompletableFuture<Boolean> updateGuildLevelAsync(int guildId, int level) {
-        return CompletableFuture.supplyAsync(() -> ctx.repos.guilds().updateLevel(guildId, level));
+        return guardServiceFutureBoolean("updateGuildLevel", CompletableFuture.supplyAsync(() -> ctx.repos.guilds().updateLevel(guildId, level)));
     }
     
     /**
      * 更新公会最大成员数 (异步)
      */
     public CompletableFuture<Boolean> updateGuildMaxMembersAsync(int guildId, int maxMembers) {
-        return CompletableFuture.supplyAsync(() -> ctx.repos.guilds().updateMaxMembers(guildId, maxMembers));
+        return guardServiceFutureBoolean("updateGuildMaxMembers", CompletableFuture.supplyAsync(() -> ctx.repos.guilds().updateMaxMembers(guildId, maxMembers)));
     }
     
     /**
      * 更新公会冻结状态 (异步)
      */
     public CompletableFuture<Boolean> updateGuildFrozenStatusAsync(int guildId, boolean frozen) {
-        return updateGuildFrozenStatusAsync(guildId, frozen, null);
+        return guardServiceFutureBoolean("updateGuildFrozenStatus", updateGuildFrozenStatusAsync(guildId, frozen, null));
     }
 
     public CompletableFuture<Boolean> updateGuildFrozenStatusAsync(int guildId, boolean frozen, UUID operatorUuid) {
         if (operatorUuid != null && !isGuildAdmin(operatorUuid)) {
             return CompletableFuture.completedFuture(false);
         }
-        return ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
+        return guardServiceFutureBoolean("updateGuildFrozenStatus", ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
             if (guild == null) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -191,7 +192,7 @@ class GuildEconomyService extends GuildServiceSupport {
                 }
                 return false;
             });
-        });
+        }));
     }
 
     /**
@@ -212,7 +213,7 @@ class GuildEconomyService extends GuildServiceSupport {
      * 检查并自动升级公会等级
      */
     private void checkAndUpgradeGuildLevel(int guildId, double currentBalance) {
-        ctx.serviceRef.getGuildByIdAsync(guildId).thenAccept(guild -> {
+        guardServiceFutureNullable("checkAndUpgradeGuildLevel", ctx.serviceRef.getGuildByIdAsync(guildId).thenAccept(guild -> {
             if (guild == null) return;
             
             int currentLevel = guild.getLevel();
@@ -238,7 +239,7 @@ class GuildEconomyService extends GuildServiceSupport {
                     return false;
                 });
             }
-        }).exceptionally(logAsyncFailure("checkAndUpgradeGuildLevel"));
+        }));
     }
     
     /**
@@ -306,19 +307,19 @@ class GuildEconomyService extends GuildServiceSupport {
      * 用于在审批申请/接受邀请前预检查，避免状态已更新但成员无法加入的情况。
      */
     public CompletableFuture<Boolean> isGuildFullAsync(int guildId) {
-        return ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
+        return guardServiceFuture("isGuildFull", ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
             if (guild == null) {
                 return CompletableFuture.completedFuture(true);
             }
             return ctx.serviceRef.getGuildMemberCountAsync(guildId).thenApply(count -> count >= getEffectiveMaxMembers(guild));
-        });
+        }), true);
     }
     
     /**
      * 通知公会成员升级成功
      */
     private void notifyGuildMembersOfUpgrade(int guildId, int newLevel, int newMaxMembers) {
-        ctx.serviceRef.getGuildMembersAsync(guildId).thenAccept(members -> {
+        guardServiceFutureNullable("notifyGuildMembersOfUpgrade", ctx.serviceRef.getGuildMembersAsync(guildId).thenAccept(members -> {
             // 在每位成员所在区域线程中发送消息（Folia 实体调度）
             for (GuildMember member : members) {
                 Player player = Bukkit.getPlayer(member.getPlayerUuid());
@@ -329,7 +330,7 @@ class GuildEconomyService extends GuildServiceSupport {
                     });
                 }
             }
-        }).exceptionally(logAsyncFailure("notifyGuildMembersOfUpgrade"));
+        }));
     }
 
 }

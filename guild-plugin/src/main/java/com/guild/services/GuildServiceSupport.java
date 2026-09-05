@@ -10,7 +10,10 @@ import org.bukkit.entity.Player;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -123,15 +126,46 @@ abstract class GuildServiceSupport {
     }
 
     /** Service 层 CompletableFuture 失败时的结构化日志（不通知玩家）。 */
+    protected void logAsyncError(String operation, Throwable throwable) {
+        Throwable cause = throwable;
+        if (throwable instanceof CompletionException && throwable.getCause() != null) {
+            cause = throwable.getCause();
+        }
+        ctx.logger.log(Level.SEVERE, "Guild service failed: " + operation, cause);
+    }
+
     protected <T> Function<Throwable, T> logAsyncFailure(String operation) {
         return throwable -> {
-            Throwable cause = throwable;
-            if (throwable instanceof CompletionException && throwable.getCause() != null) {
-                cause = throwable.getCause();
-            }
-            ctx.logger.log(Level.SEVERE, "Guild service failed: " + operation, cause);
+            logAsyncError(operation, throwable);
             return null;
         };
+    }
+
+    protected <T> Function<Throwable, T> logAsyncFailure(String operation, T fallback) {
+        return throwable -> {
+            logAsyncError(operation, throwable);
+            return fallback;
+        };
+    }
+
+    protected <T> CompletableFuture<T> guardServiceFuture(String operation, CompletableFuture<T> future, T fallback) {
+        return future.exceptionally(logAsyncFailure(operation, fallback));
+    }
+
+    protected CompletableFuture<Boolean> guardServiceFutureBoolean(String operation, CompletableFuture<Boolean> future) {
+        return guardServiceFuture(operation, future, false);
+    }
+
+    protected CompletableFuture<Integer> guardServiceFutureInt(String operation, CompletableFuture<Integer> future) {
+        return guardServiceFuture(operation, future, 0);
+    }
+
+    protected <T> CompletableFuture<T> guardServiceFutureNullable(String operation, CompletableFuture<T> future) {
+        return future.exceptionally(logAsyncFailure(operation));
+    }
+
+    protected <T> CompletableFuture<List<T>> guardServiceFutureList(String operation, CompletableFuture<List<T>> future) {
+        return guardServiceFuture(operation, future, Collections.emptyList());
     }
 
 }

@@ -22,7 +22,7 @@ class GuildLogService extends GuildServiceSupport {
     public CompletableFuture<Boolean> logGuildActionAsync(int guildId, String guildName, String playerUuid, 
                                                         String playerName, GuildLog.LogType logType, 
                                                         String description, String details) {
-        return ctx.repos.logs().insertAsync(guildId, guildName, playerUuid, playerName, logType, description, details, nowString());
+        return guardServiceFutureBoolean("logGuildAction", ctx.repos.logs().insertAsync(guildId, guildName, playerUuid, playerName, logType, description, details, nowString()));
     }
     
     /**
@@ -42,7 +42,7 @@ class GuildLogService extends GuildServiceSupport {
      * 获取公会日志列表 (异步)
      */
     public CompletableFuture<List<GuildLog>> getGuildLogsAsync(int guildId, int limit, int offset) {
-        return ctx.repos.logs().findByGuildIdAsync(guildId, limit, offset);
+        return guardServiceFutureList("getGuildLogs", ctx.repos.logs().findByGuildIdAsync(guildId, limit, offset));
     }
     
     /**
@@ -61,7 +61,7 @@ class GuildLogService extends GuildServiceSupport {
      * 获取公会日志总数 (异步)
      */
     public CompletableFuture<Integer> getGuildLogsCountAsync(int guildId) {
-        return ctx.repos.logs().countByGuildIdAsync(guildId);
+        return guardServiceFutureInt("getGuildLogsCount", ctx.repos.logs().countByGuildIdAsync(guildId));
     }
     
     /**
@@ -82,10 +82,10 @@ class GuildLogService extends GuildServiceSupport {
     public CompletableFuture<Integer> cleanOldLogsAsync(int daysToKeep) {
         String threshold = TimeProvider.nowLocalDateTime().minusDays(daysToKeep)
                 .format(TimeProvider.FULL_FORMATTER);
-        return ctx.repos.logs().deleteOlderThanAsync(threshold).thenApply(affectedRows -> {
+        return guardServiceFutureInt("cleanOldLogs", ctx.repos.logs().deleteOlderThanAsync(threshold).thenApply(affectedRows -> {
             QuietLog.system("Cleaned up " + affectedRows + " old log records");
             return affectedRows;
-        });
+        }));
     }
     
     /**

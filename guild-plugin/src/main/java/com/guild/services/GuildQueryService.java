@@ -21,7 +21,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 获取玩家公会 (异步)
      */
     public CompletableFuture<Guild> getPlayerGuildAsync(UUID playerUuid) {
-        return ctx.repos.guilds().findByPlayerUuidAsync(playerUuid);
+        return guardServiceFutureNullable("getPlayerGuild", ctx.repos.guilds().findByPlayerUuidAsync(playerUuid));
     }
     
     /**
@@ -49,7 +49,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 获取公会成员 (异步)
      */
     public CompletableFuture<GuildMember> getGuildMemberAsync(UUID playerUuid) {
-        return ctx.repos.members().findByPlayerUuidAsync(playerUuid);
+        return guardServiceFutureNullable("getGuildMember", ctx.repos.members().findByPlayerUuidAsync(playerUuid));
     }
     
     /**
@@ -76,7 +76,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 获取公会成员数量 (异步)
      */
     public CompletableFuture<Integer> getGuildMemberCountAsync(int guildId) {
-        return ctx.repos.members().countByGuildIdAsync(guildId);
+        return guardServiceFutureInt("getGuildMemberCount", ctx.repos.members().countByGuildIdAsync(guildId));
     }
     
     /**
@@ -95,7 +95,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 获取公会所有成员 (异步)
      */
     public CompletableFuture<List<GuildMember>> getGuildMembersAsync(int guildId) {
-        return ctx.repos.members().findAllByGuildIdAsync(guildId);
+        return guardServiceFutureList("getGuildMembers", ctx.repos.members().findAllByGuildIdAsync(guildId));
     }
     
     /**
@@ -114,7 +114,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 根据ID获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByIdAsync(int guildId) {
-        return ctx.repos.guilds().findByIdAsync(guildId);
+        return guardServiceFutureNullable("getGuildById", ctx.repos.guilds().findByIdAsync(guildId));
     }
     
     /**
@@ -133,7 +133,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 根据名称获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByNameAsync(String name) {
-        return ctx.repos.guilds().findByNameAsync(name);
+        return guardServiceFutureNullable("getGuildByName", ctx.repos.guilds().findByNameAsync(name));
     }
     
     /**
@@ -152,7 +152,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 根据标签获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByTagAsync(String tag) {
-        return ctx.repos.guilds().findByTagAsync(tag);
+        return guardServiceFutureNullable("getGuildByTag", ctx.repos.guilds().findByTagAsync(tag));
     }
     
     /**
@@ -171,7 +171,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 获取所有公会 (异步)
      */
     public CompletableFuture<List<Guild>> getAllGuildsAsync() {
-        return ctx.repos.guilds().findAllAsync();
+        return guardServiceFutureList("getAllGuilds", ctx.repos.guilds().findAllAsync());
     }
     
     /**
@@ -220,7 +220,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 检查是否有待处理的申请 (异步)
      */
     public CompletableFuture<Boolean> hasPendingApplicationAsync(UUID playerUuid, int guildId) {
-        return ctx.repos.applications().hasPendingAsync(playerUuid, guildId);
+        return guardServiceFutureBoolean("hasPendingApplication", ctx.repos.applications().hasPendingAsync(playerUuid, guildId));
     }
     
     /**
@@ -239,7 +239,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 获取公会申请列表 (异步)
      */
     public CompletableFuture<List<GuildApplication>> getGuildApplicationsAsync(int guildId) {
-        return ctx.repos.applications().findAllByGuildIdAsync(guildId);
+        return guardServiceFutureList("getGuildApplications", ctx.repos.applications().findAllByGuildIdAsync(guildId));
     }
     
     /**
@@ -258,7 +258,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 获取玩家申请列表 (异步)
      */
     public CompletableFuture<List<GuildApplication>> getPlayerApplicationsAsync(UUID playerUuid) {
-        return ctx.repos.applications().findAllByPlayerUuidAsync(playerUuid);
+        return guardServiceFutureList("getPlayerApplications", ctx.repos.applications().findAllByPlayerUuidAsync(playerUuid));
     }
     
     /**
@@ -277,7 +277,7 @@ class GuildQueryService extends GuildServiceSupport {
      * 根据ID获取申请 (异步)
      */
     public CompletableFuture<GuildApplication> getApplicationByIdAsync(int applicationId) {
-        return ctx.repos.applications().findByIdAsync(applicationId);
+        return guardServiceFutureNullable("getApplicationById", ctx.repos.applications().findByIdAsync(applicationId));
     }
     
     /**
@@ -295,7 +295,7 @@ class GuildQueryService extends GuildServiceSupport {
       * 获取待处理邀请 (异步)
       */
      public CompletableFuture<GuildInvitation> getPendingInvitationAsync(UUID targetUuid, UUID inviterUuid) {
-         return ctx.repos.invitations().findPendingByTargetAndInviterAsync(targetUuid, inviterUuid, nowString());
+         return guardServiceFutureNullable("getPendingInvitation", ctx.repos.invitations().findPendingByTargetAndInviterAsync(targetUuid, inviterUuid, nowString()));
      }
      
      /**
@@ -314,7 +314,7 @@ class GuildQueryService extends GuildServiceSupport {
       * 获取玩家的待处理邀请 (异步)
       */
     public CompletableFuture<GuildInvitation> getPendingInvitationAsync(UUID targetUuid, int guildId) {
-        return ctx.repos.invitations().findPendingByTargetAndGuildAsync(targetUuid, guildId, nowString());
+        return guardServiceFutureNullable("getPendingInvitation", ctx.repos.invitations().findPendingByTargetAndGuildAsync(targetUuid, guildId, nowString()));
     }
      
      /**
@@ -333,49 +333,49 @@ class GuildQueryService extends GuildServiceSupport {
       * 获取待处理申请 (异步)
       */
      public CompletableFuture<List<GuildApplication>> getPendingApplicationsAsync(int guildId) {
-         return ctx.repos.applications().findPendingByGuildIdAsync(guildId);
+         return guardServiceFutureList("getPendingApplications", ctx.repos.applications().findPendingByGuildIdAsync(guildId));
      }
      
      /**
       * 获取申请历史 (异步)
       */
      public CompletableFuture<List<GuildApplication>> getApplicationHistoryAsync(int guildId) {
-         return ctx.repos.applications().findHistoryByGuildIdAsync(guildId);
+         return guardServiceFutureList("getApplicationHistory", ctx.repos.applications().findHistoryByGuildIdAsync(guildId));
      }
     
     /**
      * 获取玩家所有待处理的邀请 (异步)
      */
     public CompletableFuture<List<GuildInvitation>> getPendingInvitationsAsync(UUID playerUuid) {
-        return ctx.repos.invitations().findAllPendingByPlayerAsync(playerUuid, nowString());
+        return guardServiceFutureList("getPendingInvitations", ctx.repos.invitations().findAllPendingByPlayerAsync(playerUuid, nowString()));
     }
 
     /**
      * 获取公会关系 (异步)
      */
     public CompletableFuture<GuildRelation> getGuildRelationAsync(int guild1Id, int guild2Id) {
-        return ctx.repos.relations().findByGuildPairAsync(guild1Id, guild2Id);
+        return guardServiceFutureNullable("getGuildRelation", ctx.repos.relations().findByGuildPairAsync(guild1Id, guild2Id));
     }
 
     /**
      * 获取公会的所有关系 (异步)
      */
     public CompletableFuture<List<GuildRelation>> getGuildRelationsAsync(int guildId) {
-        return ctx.repos.relations().findAllByGuildIdAsync(guildId);
+        return guardServiceFutureList("getGuildRelations", ctx.repos.relations().findAllByGuildIdAsync(guildId));
     }
 
     /**
      * 按 ID 获取公会关系 (异步)
      */
     public CompletableFuture<GuildRelation> getGuildRelationByIdAsync(int relationId) {
-        return ctx.repos.relations().findByIdAsync(relationId);
+        return guardServiceFutureNullable("getGuildRelationById", ctx.repos.relations().findByIdAsync(relationId));
     }
 
     /**
      * 获取公会成员 (异步) - 重载方法，接受guildId参数
      */
     public CompletableFuture<GuildMember> getGuildMemberAsync(int guildId, UUID playerUuid) {
-         return ctx.repos.members().findByGuildAndPlayerUuidAsync(guildId, playerUuid);
+         return guardServiceFutureNullable("getGuildMember", ctx.repos.members().findByGuildAndPlayerUuidAsync(guildId, playerUuid));
      }
 
 }

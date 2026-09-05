@@ -19,7 +19,7 @@ class GuildLifecycleService extends GuildServiceSupport {
      * 创建公会 (异步)
      */
     public CompletableFuture<Boolean> createGuildAsync(String name, String tag, String description, UUID leaderUuid, String leaderName) {
-        return ctx.serviceRef.getGuildByNameAsync(name).thenCompose(existingGuildByName -> {
+        return guardServiceFutureBoolean("createGuild", ctx.serviceRef.getGuildByNameAsync(name).thenCompose(existingGuildByName -> {
             if (existingGuildByName != null) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -53,7 +53,7 @@ class GuildLifecycleService extends GuildServiceSupport {
                     return CompletableFuture.completedFuture(false);
                 });
             });
-        });
+        }));
     }
     
     /**
@@ -72,7 +72,7 @@ class GuildLifecycleService extends GuildServiceSupport {
      * 删除公会 (异步)
      */
     public CompletableFuture<Boolean> deleteGuildAsync(int guildId, UUID requesterUuid) {
-        return ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
+        return guardServiceFutureBoolean("deleteGuild", ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
             if (guild == null) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -127,7 +127,7 @@ class GuildLifecycleService extends GuildServiceSupport {
                     return false;
                 });
             });
-        });
+        }));
     }
     
     /**
@@ -151,7 +151,7 @@ class GuildLifecycleService extends GuildServiceSupport {
         if (adminUuid != null && !isGuildAdmin(adminUuid)) {
             return CompletableFuture.completedFuture(false);
         }
-        return ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
+        return guardServiceFutureBoolean("forceDeleteGuild", ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
             if (guild == null) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -200,14 +200,14 @@ class GuildLifecycleService extends GuildServiceSupport {
                 }
                 return false;
             });
-        });
+        }));
     }
 
     /**
      * 更新公会信息 (异步)
      */
     public CompletableFuture<Boolean> updateGuildAsync(int guildId, String name, String tag, String description, UUID requesterUuid) {
-        return ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
+        return guardServiceFutureBoolean("updateGuild", ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
             if (guild == null) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -245,7 +245,7 @@ class GuildLifecycleService extends GuildServiceSupport {
                         });
                     });
             });
-        });
+        }));
     }
     
     /**
@@ -261,7 +261,7 @@ class GuildLifecycleService extends GuildServiceSupport {
     }
 
      public CompletableFuture<Boolean> updateGuildDescriptionAsync(int guildId, String description) {
-         return CompletableFuture.supplyAsync(() -> ctx.repos.guilds().updateDescription(guildId, description));
+         return guardServiceFutureBoolean("updateGuildDescription", CompletableFuture.supplyAsync(() -> ctx.repos.guilds().updateDescription(guildId, description)));
      }
 
 }

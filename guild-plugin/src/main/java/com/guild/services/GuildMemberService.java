@@ -28,7 +28,7 @@ class GuildMemberService extends GuildServiceSupport {
     public CompletableFuture<Boolean> addGuildMemberAsync(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
         DebugLog.info(ctx.logger, "[AddMember-Debug] Starting member add: guildId=" + guildId + ", player=" + playerName + ", uuid=" + playerUuid);
         
-        return ctx.serviceRef.getPlayerGuildAsync(playerUuid).thenCompose(existingGuild -> {
+        return guardServiceFutureBoolean("addGuildMember", ctx.serviceRef.getPlayerGuildAsync(playerUuid).thenCompose(existingGuild -> {
             if (existingGuild != null) {
                 ctx.logger.warning("[AddMember-Debug] Player " + playerName + " is already in guild " + existingGuild.getName());
                 return CompletableFuture.completedFuture(false);
@@ -67,7 +67,7 @@ class GuildMemberService extends GuildServiceSupport {
                     });
                 });
             });
-        });
+        }));
     }
     
     /**
@@ -86,7 +86,7 @@ class GuildMemberService extends GuildServiceSupport {
      * 移除公会成员 (异步)
      */
     public CompletableFuture<Boolean> removeGuildMemberAsync(UUID playerUuid, UUID requesterUuid) {
-        return ctx.serviceRef.getGuildMemberAsync(playerUuid).thenCompose(member -> {
+        return guardServiceFutureBoolean("removeGuildMember", ctx.serviceRef.getGuildMemberAsync(playerUuid).thenCompose(member -> {
             if (member == null) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -135,7 +135,7 @@ class GuildMemberService extends GuildServiceSupport {
                     return false;
                 });
             });
-        });
+        }));
     }
     
     /**
@@ -154,7 +154,7 @@ class GuildMemberService extends GuildServiceSupport {
      * 更新成员角色 (异步)
      */
     public CompletableFuture<Boolean> updateMemberRoleAsync(UUID playerUuid, GuildMember.Role newRole, UUID requesterUuid) {
-        return ctx.serviceRef.getGuildMemberAsync(playerUuid).thenCompose(member -> {
+        return guardServiceFutureBoolean("updateMemberRole", ctx.serviceRef.getGuildMemberAsync(playerUuid).thenCompose(member -> {
             if (member == null) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -209,7 +209,7 @@ class GuildMemberService extends GuildServiceSupport {
                     return false;
                 });
             });
-        });
+        }));
     }
     
     /**
@@ -231,7 +231,7 @@ class GuildMemberService extends GuildServiceSupport {
      * 不影响现有的 removeGuildMemberAsync(playerUuid, requesterUuid) 方法。
      */
     public CompletableFuture<Boolean> removeGuildMemberDirectAsync(int guildId, UUID playerUuid) {
-        return ctx.serviceRef.getGuildMemberAsync(playerUuid).thenCompose(member -> {
+        return guardServiceFutureBoolean("removeGuildMemberDirect", ctx.serviceRef.getGuildMemberAsync(playerUuid).thenCompose(member -> {
             if (member == null || member.getGuildId() != guildId) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -249,7 +249,7 @@ class GuildMemberService extends GuildServiceSupport {
                 }
                 return false;
             });
-        });
+        }));
     }
 
     /**
@@ -257,7 +257,7 @@ class GuildMemberService extends GuildServiceSupport {
      * 不影响现有的 updateMemberRoleAsync(playerUuid, newRole, requesterUuid) 方法。
      */
     public CompletableFuture<Boolean> updateMemberRoleDirectAsync(int guildId, UUID playerUuid, String roleName) {
-        return ctx.serviceRef.getGuildMemberAsync(playerUuid).thenCompose(member -> {
+        return guardServiceFutureBoolean("updateMemberRoleDirect", ctx.serviceRef.getGuildMemberAsync(playerUuid).thenCompose(member -> {
             if (member == null || member.getGuildId() != guildId) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -280,7 +280,7 @@ class GuildMemberService extends GuildServiceSupport {
                 }
                 return false;
             });
-        });
+        }));
     }
     
     /**
@@ -288,7 +288,7 @@ class GuildMemberService extends GuildServiceSupport {
      * 将 guild_id 的会长改为 newLeaderUuid，同时将原会长降为成员。
      */
     public CompletableFuture<Boolean> transferGuildLeadershipAsync(int guildId, UUID newLeaderUuid, String newLeaderName) {
-        return transferGuildLeadershipAsync(guildId, newLeaderUuid, newLeaderName, null);
+        return guardServiceFutureBoolean("transferGuildLeadership", transferGuildLeadershipAsync(guildId, newLeaderUuid, newLeaderName, null));
     }
 
     /**
@@ -300,7 +300,7 @@ class GuildMemberService extends GuildServiceSupport {
         if (newLeaderUuid == null) {
             return CompletableFuture.completedFuture(false);
         }
-        return ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
+        return guardServiceFutureBoolean("transferGuildLeadership", ctx.serviceRef.getGuildByIdAsync(guildId).thenCompose(guild -> {
             if (guild == null) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -378,13 +378,13 @@ class GuildMemberService extends GuildServiceSupport {
                     }
                 });
             });
-        });
+        }));
     }
     /**
      * 提交申请 (异步)
      */
     public CompletableFuture<Boolean> submitApplicationAsync(int guildId, UUID playerUuid, String playerName, String message) {
-        return ctx.repos.applications().hasPendingAsync(playerUuid, guildId).thenCompose(hasPending -> {
+        return guardServiceFutureBoolean("submitApplication", ctx.repos.applications().hasPendingAsync(playerUuid, guildId).thenCompose(hasPending -> {
             if (hasPending) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -403,7 +403,7 @@ class GuildMemberService extends GuildServiceSupport {
                 }
                 return inserted;
             });
-        });
+        }));
     }
     
     /**
@@ -423,7 +423,7 @@ class GuildMemberService extends GuildServiceSupport {
      * 审批通过前先检查公会是否满员，避免申请状态已更新但成员无法加入的情况。
      */
     public CompletableFuture<Boolean> processApplicationAsync(int applicationId, GuildApplication.ApplicationStatus status, UUID processorUuid) {
-        return ctx.serviceRef.getApplicationByIdAsync(applicationId).thenCompose(application -> {
+        return guardServiceFutureBoolean("processApplication", ctx.serviceRef.getApplicationByIdAsync(applicationId).thenCompose(application -> {
             if (application == null) {
                 return CompletableFuture.completedFuture(false);
             }
@@ -449,7 +449,7 @@ class GuildMemberService extends GuildServiceSupport {
                 
                 return doProcessApplication(applicationId, application, status, processor, processorUuid);
             });
-        });
+        }));
     }
     
     /**
@@ -500,7 +500,7 @@ class GuildMemberService extends GuildServiceSupport {
       * 发送邀请 (异步)
       */
      public CompletableFuture<Boolean> sendInvitationAsync(int guildId, UUID inviterUuid, String inviterName, UUID targetUuid, String targetName) {
-         return ctx.serviceRef.getGuildMemberAsync(guildId, inviterUuid).thenCompose(inviterMember -> {
+         return guardServiceFutureBoolean("sendInvitation", ctx.serviceRef.getGuildMemberAsync(guildId, inviterUuid).thenCompose(inviterMember -> {
              if (inviterMember == null || !ctx.plugin.getMembershipRules().canInvite(inviterMember)) {
                  return CompletableFuture.completedFuture(false);
              }
@@ -532,7 +532,7 @@ class GuildMemberService extends GuildServiceSupport {
                  });
              });
          });
-         });
+         }));
      }
      
      /**
@@ -551,12 +551,12 @@ class GuildMemberService extends GuildServiceSupport {
      * 处理邀请 (异步) - 通过inviterUuid查找
      */
     public CompletableFuture<Boolean> processInvitationAsync(UUID targetUuid, UUID inviterUuid, boolean accept) {
-        return ctx.serviceRef.getPendingInvitationAsync(targetUuid, inviterUuid).thenCompose(invitation -> {
+        return guardServiceFutureBoolean("processInvitation", ctx.serviceRef.getPendingInvitationAsync(targetUuid, inviterUuid).thenCompose(invitation -> {
             if (invitation == null) {
                 return CompletableFuture.completedFuture(false);
             }
             return processInvitationDirectAsync(invitation, accept);
-        });
+        }));
     }
     
     /**
@@ -568,17 +568,17 @@ class GuildMemberService extends GuildServiceSupport {
         
         // 接受邀请前预检查公会人数上限
         if (accept) {
-            return ctx.serviceRef.isGuildFullAsync(invitation.getGuildId()).thenCompose(isFull -> {
+            return guardServiceFutureBoolean("processInvitationDirect", ctx.serviceRef.isGuildFullAsync(invitation.getGuildId()).thenCompose(isFull -> {
                 if (isFull) {
                     DebugLog.info(ctx.logger, "[Process-Debug] Invitation accept rejected: guild " + invitation.getGuildId() 
                         + " is at member capacity, target=" + invitation.getTargetUuid());
                     return CompletableFuture.completedFuture(false);
                 }
                 return doProcessInvitation(invitation, accept);
-            });
+            }));
         }
         
-        return doProcessInvitation(invitation, accept);
+        return guardServiceFutureBoolean("processInvitationDirect", doProcessInvitation(invitation, accept));
     }
     
     /**
@@ -650,12 +650,12 @@ class GuildMemberService extends GuildServiceSupport {
      * 建议定时调用，避免数据库中积累过多过期邀请
      */
     public CompletableFuture<Integer> cleanupExpiredInvitationsAsync() {
-        return ctx.repos.invitations().markExpiredBeforeAsync(nowString()).thenApply(affectedRows -> {
+        return guardServiceFutureInt("cleanupExpiredInvitations", ctx.repos.invitations().markExpiredBeforeAsync(nowString()).thenApply(affectedRows -> {
             if (affectedRows > 0) {
                 QuietLog.system("Cleaned up " + affectedRows + " expired guild invitations");
             }
             return affectedRows;
-        });
+        }));
     }
     
     /**
@@ -663,12 +663,12 @@ class GuildMemberService extends GuildServiceSupport {
      * @param days 保留天数，超过此天数的已处理邀请（ACCEPTED/DECLINED/EXPIRED）将被删除
      */
     public CompletableFuture<Integer> cleanupOldProcessedInvitationsAsync(int days) {
-        return ctx.repos.invitations().deleteOldProcessedAsync(days).thenApply(affectedRows -> {
+        return guardServiceFutureInt("cleanupOldProcessedInvitations", ctx.repos.invitations().deleteOldProcessedAsync(days).thenApply(affectedRows -> {
             if (affectedRows > 0) {
                 QuietLog.system("Cleaned up " + affectedRows + " old processed invitation records");
             }
             return affectedRows;
-        });
+        }));
     }
     CompletableFuture<Boolean> addGuildMemberDirectAsync(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
         return ctx.repos.members().insertAsync(guildId, playerUuid, playerName, role, nowString())

@@ -19,7 +19,7 @@ class GuildRelationService extends GuildServiceSupport {
       */
      public CompletableFuture<Boolean> createGuildRelationAsync(int guild1Id, int guild2Id, String guild1Name, String guild2Name,
                                                               GuildRelation.RelationType type, UUID initiatorUuid, String initiatorName) {
-         return ctx.repos.relations().insertAsync(guild1Id, guild2Id, guild1Name, guild2Name, type,
+         return guardServiceFutureBoolean("createGuildRelation", ctx.repos.relations().insertAsync(guild1Id, guild2Id, guild1Name, guild2Name, type,
                  initiatorUuid, initiatorName, plusDaysString(7)).thenCompose(ok -> {
              if (!Boolean.TRUE.equals(ok)) {
                  return CompletableFuture.completedFuture(false);
@@ -33,14 +33,14 @@ class GuildRelationService extends GuildServiceSupport {
                      initiatorUuid.toString(), initiatorName,
                      GuildLog.LogType.RELATION_CREATED, "Relation request received", detailsPeer);
              return a.thenCombine(b, (x, y) -> true);
-         });
+         }));
      }
      
      /**
       * 更新公会关系状态 (异步)
       */
      public CompletableFuture<Boolean> updateGuildRelationStatusAsync(int relationId, GuildRelation.RelationStatus status) {
-         return ctx.serviceRef.getGuildRelationByIdAsync(relationId).thenCompose(relation -> {
+         return guardServiceFutureBoolean("updateGuildRelationStatus", ctx.serviceRef.getGuildRelationByIdAsync(relationId).thenCompose(relation -> {
              if (relation == null) {
                  return CompletableFuture.completedFuture(false);
              }
@@ -63,14 +63,14 @@ class GuildRelationService extends GuildServiceSupport {
                          actor, actorName, logType, "Relation status updated", details);
                  return a.thenCombine(b, (x, y) -> true);
              });
-         });
+         }));
      }
      
      /**
       * 删除公会关系 (异步)
       */
      public CompletableFuture<Boolean> deleteGuildRelationAsync(int relationId) {
-         return ctx.serviceRef.getGuildRelationByIdAsync(relationId).thenCompose(relation -> {
+         return guardServiceFutureBoolean("deleteGuildRelation", ctx.serviceRef.getGuildRelationByIdAsync(relationId).thenCompose(relation -> {
              if (relation == null) {
                  return CompletableFuture.completedFuture(false);
              }
@@ -90,7 +90,7 @@ class GuildRelationService extends GuildServiceSupport {
                          actor, actorName, GuildLog.LogType.RELATION_DELETED, "Relation deleted", details);
                  return a.thenCombine(b, (x, y) -> true);
              });
-         });
+         }));
      }
 
 }
