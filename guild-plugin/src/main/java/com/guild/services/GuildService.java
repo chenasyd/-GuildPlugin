@@ -10,6 +10,7 @@ import com.guild.models.GuildRelation;
 import com.guild.models.GuildEconomy;
 import com.guild.models.GuildContribution;
 import com.guild.models.GuildLog;
+import com.guild.services.repository.GuildMemberRepository;
 import com.guild.util.NotifyUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -38,12 +39,14 @@ public class GuildService {
     
     private final GuildPlugin plugin;
     private final DatabaseManager databaseManager;
+    private final GuildMemberRepository memberRepository;
     private final Logger logger;
     
     public GuildService(GuildPlugin plugin) {
         this.plugin = plugin;
         this.databaseManager = plugin.getDatabaseManager();
         this.logger = plugin.getLogger();
+        this.memberRepository = new GuildMemberRepository(databaseManager, logger);
     }
 
     // ==================== 模块事件分发辅助 ====================
@@ -206,11 +209,8 @@ public class GuildService {
                         double guildBalance = guild.getBalance();
                         
                         // 删除公会成员
-                        String deleteMembersSql = "DELETE FROM guild_members WHERE guild_id = ?";
-                        try (Connection conn = databaseManager.getConnection();
-                             PreparedStatement stmt = conn.prepareStatement(deleteMembersSql)) {
-                            stmt.setInt(1, guildId);
-                            stmt.executeUpdate();
+                        try (Connection conn = databaseManager.getConnection()) {
+                            memberRepository.deleteAllByGuildId(conn, guildId);
                         }
 
                         deleteWarehouseData(guildId);
@@ -299,11 +299,8 @@ public class GuildService {
                     double guildBalance = guild.getBalance();
                     
                     // 删除所有公会成员
-                    String deleteMembersSql = "DELETE FROM guild_members WHERE guild_id = ?";
-                    try (Connection conn = databaseManager.getConnection();
-                         PreparedStatement stmt = conn.prepareStatement(deleteMembersSql)) {
-                        stmt.setInt(1, guildId);
-                        stmt.executeUpdate();
+                    try (Connection conn = databaseManager.getConnection()) {
+                        memberRepository.deleteAllByGuildId(conn, guildId);
                     }
 
                     deleteWarehouseData(guildId);
@@ -456,43 +453,17 @@ public class GuildService {
                     DebugLog.info(logger, "[AddMember-Debug] Capacity OK (" + memberCount + "/" + effectiveMax + "), preparing database insert");
                     
                     return CompletableFuture.supplyAsync(() -> {
-                        try {
-                        
-                        String sql = "INSERT INTO guild_members (guild_id, player_uuid, player_name, role, joined_at) VALUES (?, ?, ?, ?, ?)";
-                        
-                        try (Connection conn = databaseManager.getConnection();
-                             PreparedStatement stmt = conn.prepareStatement(sql)) {
-                            
-                            stmt.setInt(1, guildId);
-                            stmt.setString(2, playerUuid.toString());
-                            stmt.setString(3, playerName);
-                            stmt.setString(4, role.name());
-                            stmt.setString(5, nowString());
-                            
-                            DebugLog.info(logger, "[AddMember-Debug] Executing INSERT: guildId=" + guildId + ", uuid=" + playerUuid + ", name=" + playerName + ", role=" + role.name());
-                            
-                            int affectedRows = stmt.executeUpdate();
-                            if (affectedRows > 0) {
+                        if (memberRepository.insert(guildId, playerUuid, playerName, role, nowString())) {
                                 DebugLog.info(logger, "[AddMember-Debug] Player " + playerName + " successfully joined guild (ID: " + guildId + ")");
-                                // 更新内置权限缓存
                                 refreshPlayerPermissions(playerUuid);
-                                
-                                // 记录成员加入日志
                                 logGuildActionAsync(guildId, targetGuild.getName(), playerUuid.toString(), playerName,
                                     GuildLog.LogType.MEMBER_JOINED, "成员加入", "玩家: " + playerName + ", 职位: " + role.getDisplayName());
-                                // 分发成员加入事件给模块
                                 fireMemberJoin(targetGuild.getId(), targetGuild.getName(), playerUuid, playerName);
-                                
                                 return true;
-                            } else {
-                                logger.warning("[AddMember-Debug] INSERT did not affect any rows");
-                            }
                         }
-                    } catch (SQLException e) {
-                        logger.severe("[AddMember-Debug] Error adding guild member: " + e.getMessage());
-                    }
-                    return false;
-                });
+                        logger.warning("[AddMember-Debug] INSERT did not affect any rows");
+                        return false;
+                    });
                 });
             });
         });
@@ -538,21 +509,9 @@ public class GuildService {
                 }
                 
                 return CompletableFuture.supplyAsync(() -> {
-                    try {
-                        String sql = "DELETE FROM guild_members WHERE player_uuid = ?";
-                        
-                        try (Connection conn = databaseManager.getConnection();
-                             PreparedStatement stmt = conn.prepareStatement(sql)) {
-                            
-                            stmt.setString(1, playerUuid.toString());
-                            
-                            int affectedRows = stmt.executeUpdate();
-                            if (affectedRows > 0) {
+                    if (memberRepository.deleteByPlayerUuid(playerUuid)) {
                                 QuietLog.system("Player " + member.getPlayerName() + " left guild (ID: " + member.getGuildId() + ")");
-                                // 更新内置权限缓存
                                 refreshPlayerPermissions(playerUuid);
-                                
-                                // 记录成员离开日志
                                 getGuildByIdAsync(member.getGuildId()).thenAccept(guild -> {
                                     if (guild != null) {
                                         GuildLog.LogType logType = playerUuid.equals(requesterUuid) ? 
@@ -570,12 +529,7 @@ public class GuildService {
                                         fireMemberLeave(guild.getId(), guild.getName(), playerUuid, member.getPlayerName(), eventType);
                                     }
                                 });
-                                
                                 return true;
-                            }
-                        }
-                    } catch (SQLException e) {
-                        logger.severe("Error removing guild member: " + e.getMessage());
                     }
                     return false;
                 });
@@ -630,21 +584,9 @@ public class GuildService {
                 int guildId = member.getGuildId();
 
                 return CompletableFuture.supplyAsync(() -> {
-                    try {
-                        String sql = "UPDATE guild_members SET role = ? WHERE player_uuid = ? AND guild_id = ?";
-
-                        try (Connection conn = databaseManager.getConnection();
-                             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-                            stmt.setString(1, newRole.name());
-                            stmt.setString(2, playerUuid.toString());
-                            stmt.setInt(3, guildId);
-
-                            int affectedRows = stmt.executeUpdate();
-                            if (affectedRows > 0) {
+                    if (memberRepository.updateRole(playerUuid, guildId, newRole)) {
                                 QuietLog.system("Player " + member.getPlayerName() + " role updated to: " + newRole.name());
                                 refreshPlayerPermissions(playerUuid);
-
                                 getGuildByIdAsync(guildId).thenAccept(guild -> {
                                     if (guild != null) {
                                         GuildLog.LogType logType = newRole == GuildMember.Role.OFFICER
@@ -661,12 +603,7 @@ public class GuildService {
                                                 oldRole, newRole.name());
                                     }
                                 });
-
                                 return true;
-                            }
-                        }
-                    } catch (SQLException e) {
-                        logger.severe("Error updating member role: " + e.getMessage());
                     }
                     return false;
                 });
@@ -698,13 +635,7 @@ public class GuildService {
                 return CompletableFuture.completedFuture(false);
             }
             return CompletableFuture.supplyAsync(() -> {
-                try {
-                    String sql = "DELETE FROM guild_members WHERE player_uuid = ?";
-                    try (Connection conn = databaseManager.getConnection();
-                         PreparedStatement stmt = conn.prepareStatement(sql)) {
-                        stmt.setString(1, playerUuid.toString());
-                        int affectedRows = stmt.executeUpdate();
-                        if (affectedRows > 0) {
+                if (memberRepository.deleteByPlayerUuid(playerUuid)) {
                             refreshPlayerPermissions(playerUuid);
                             getGuildByIdAsync(guildId).thenAccept(guild -> {
                                 if (guild != null) {
@@ -714,10 +645,6 @@ public class GuildService {
                                 }
                             });
                             return true;
-                        }
-                    }
-                } catch (SQLException e) {
-                    logger.severe("Error directly removing member: " + e.getMessage());
                 }
                 return false;
             });
@@ -741,14 +668,7 @@ public class GuildService {
             }
             String oldRole = member.getRole().name();
             return CompletableFuture.supplyAsync(() -> {
-                try {
-                    String sql = "UPDATE guild_members SET role = ? WHERE player_uuid = ?";
-                    try (Connection conn = databaseManager.getConnection();
-                         PreparedStatement stmt = conn.prepareStatement(sql)) {
-                        stmt.setString(1, newRole.name());
-                        stmt.setString(2, playerUuid.toString());
-                        int affectedRows = stmt.executeUpdate();
-                        if (affectedRows > 0) {
+                if (memberRepository.updateRoleByPlayerUuid(playerUuid, newRole)) {
                             refreshPlayerPermissions(playerUuid);
                             getGuildByIdAsync(guildId).thenAccept(guild -> {
                                 if (guild != null) {
@@ -756,10 +676,6 @@ public class GuildService {
                                 }
                             });
                             return true;
-                        }
-                    }
-                } catch (SQLException e) {
-                    logger.severe("Error directly modifying role: " + e.getMessage());
                 }
                 return false;
             });
@@ -815,20 +731,9 @@ public class GuildService {
                                 return false;
                             }
                             // 2. 原会长降级为成员
-                            try (PreparedStatement stmt = conn.prepareStatement(
-                                    "UPDATE guild_members SET role = 'MEMBER' WHERE guild_id = ? AND player_uuid = ? AND role = 'LEADER'")) {
-                                stmt.setInt(1, guildId);
-                                stmt.setString(2, oldLeaderUuid.toString());
-                                stmt.executeUpdate();
-                            }
+                            memberRepository.demoteLeaderToMember(conn, guildId, oldLeaderUuid);
                             // 3. 新会长升级
-                            int newLeaderUpdated;
-                            try (PreparedStatement stmt = conn.prepareStatement(
-                                    "UPDATE guild_members SET role = 'LEADER' WHERE guild_id = ? AND player_uuid = ?")) {
-                                stmt.setInt(1, guildId);
-                                stmt.setString(2, newLeaderUuid.toString());
-                                newLeaderUpdated = stmt.executeUpdate();
-                            }
+                            int newLeaderUpdated = memberRepository.promoteMemberToLeader(conn, guildId, newLeaderUuid);
                             if (newLeaderUpdated <= 0) {
                                 conn.rollback();
                                 return false;
@@ -932,26 +837,7 @@ public class GuildService {
      * 获取公会成员 (异步)
      */
     public CompletableFuture<GuildMember> getGuildMemberAsync(UUID playerUuid) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "SELECT * FROM guild_members WHERE player_uuid = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setString(1, playerUuid.toString());
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            return createGuildMemberFromResultSet(rs);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching guild members: " + e.getMessage());
-            }
-            return null;
-        });
+        return memberRepository.findByPlayerUuidAsync(playerUuid);
     }
     
     /**
@@ -978,26 +864,7 @@ public class GuildService {
      * 获取公会成员数量 (异步)
      */
     public CompletableFuture<Integer> getGuildMemberCountAsync(int guildId) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "SELECT COUNT(*) FROM guild_members WHERE guild_id = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, guildId);
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            return rs.getInt(1);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching guild member count: " + e.getMessage());
-            }
-            return 0;
-        });
+        return memberRepository.countByGuildIdAsync(guildId);
     }
     
     /**
@@ -1016,27 +883,7 @@ public class GuildService {
      * 获取公会所有成员 (异步)
      */
     public CompletableFuture<List<GuildMember>> getGuildMembersAsync(int guildId) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<GuildMember> members = new ArrayList<>();
-            try {
-                String sql = "SELECT * FROM guild_members WHERE guild_id = ? ORDER BY role ASC, joined_at ASC";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, guildId);
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            members.add(createGuildMemberFromResultSet(rs));
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching guild member list: " + e.getMessage());
-            }
-            return members;
-        });
+        return memberRepository.findAllByGuildIdAsync(guildId);
     }
     
     /**
@@ -1303,20 +1150,6 @@ public class GuildService {
         }
         
         return guild;
-    }
-    
-    /**
-     * 从ResultSet创建GuildMember对象
-     */
-    private GuildMember createGuildMemberFromResultSet(ResultSet rs) throws SQLException {
-        GuildMember member = new GuildMember();
-        member.setId(rs.getInt("id"));
-        member.setGuildId(rs.getInt("guild_id"));
-        member.setPlayerUuid(UUID.fromString(rs.getString("player_uuid")));
-        member.setPlayerName(rs.getString("player_name"));
-        member.setRole(GuildMember.Role.valueOf(rs.getString("role")));
-        member.setJoinedAt(parseTimestamp(rs, "joined_at"));
-        return member;
     }
     
     /**
@@ -2197,27 +2030,7 @@ public class GuildService {
      * 获取公会成员 (异步) - 重载方法，接受guildId参数
      */
     public CompletableFuture<GuildMember> getGuildMemberAsync(int guildId, UUID playerUuid) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "SELECT * FROM guild_members WHERE guild_id = ? AND player_uuid = ?";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setInt(1, guildId);
-                     stmt.setString(2, playerUuid.toString());
-                     
-                     try (ResultSet rs = stmt.executeQuery()) {
-                         if (rs.next()) {
-                             return createGuildMemberFromResultSet(rs);
-                         }
-                     }
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error fetching guild members: " + e.getMessage());
-             }
-             return null;
-         });
+         return memberRepository.findByGuildAndPlayerUuidAsync(guildId, playerUuid);
      }
      
      /**
@@ -2896,27 +2709,13 @@ public class GuildService {
      * 仅用于建会后插入会长，以避免额外读库造成的连接争用。
      */
     private CompletableFuture<Boolean> addGuildMemberDirectAsync(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "INSERT INTO guild_members (guild_id, player_uuid, player_name, role, joined_at) VALUES (?, ?, ?, ?, ?)";
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    stmt.setInt(1, guildId);
-                    stmt.setString(2, playerUuid.toString());
-                    stmt.setString(3, playerName);
-                    stmt.setString(4, role.name());
-                    stmt.setString(5, nowString());
-                    int affectedRows = stmt.executeUpdate();
-                    if (affectedRows > 0) {
+        return memberRepository.insertAsync(guildId, playerUuid, playerName, role, nowString())
+                .thenApply(success -> {
+                    if (success) {
                         refreshPlayerPermissions(playerUuid);
-                        return true;
                     }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error directly adding guild member: " + e.getMessage());
-            }
-            return false;
-        });
+                    return success;
+                });
     }
 
     /**

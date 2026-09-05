@@ -128,6 +128,22 @@
                 <version>5.10.2</version>
                 <scope>test</scope>
             </dependency>
+
+            <!-- H2 in-memory DB for repository tests -->
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>2.2.224</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Mockito for mocking DatabaseManager in tests -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>5.11.0</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
 
     <!-- Project-local repository for third-party JARs (e.g. ImagoCore) -->
