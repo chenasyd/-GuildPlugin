@@ -55,6 +55,7 @@ class GuildServiceAuthorizationTest {
         when(plugin.getServer()).thenReturn(server);
 
         service = spy(new GuildService(plugin));
+        service.ctx.serviceRef = service;
     }
 
     @Test

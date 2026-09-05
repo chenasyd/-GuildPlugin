@@ -8,7 +8,10 @@ public class GuildApplicationsHandler implements GuildSubCommandHandler {
 
     @Override
     public void handle(GuildCommandContext ctx, Player player, String[] args) {
-                ctx.plugin().getGuildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(guild -> {
+                SubCommandErrors.guardPlayerFuture(ctx.plugin(), ctx.languageManager(), player,
+                        "applications", "general.error", "&cAn error occurred while opening applications!",
+                        ctx.plugin().getGuildService().getPlayerGuildAsync(player.getUniqueId()))
+                        .thenAccept(guild -> {
                     CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                         if (guild == null) {
                             String msg = ctx.languageManager().getCoreMessage(player, "general.no-guild", "&cYou are not in any guild!");
@@ -16,7 +19,10 @@ public class GuildApplicationsHandler implements GuildSubCommandHandler {
                             return;
                         }
                         // 异步检查角色权限（与 MainGuildGUI.openApplicationManagementGUI 一致）
-                        ctx.plugin().getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()).thenAccept(member -> {
+                        SubCommandErrors.guardPlayerFuture(ctx.plugin(), ctx.languageManager(), player,
+                                "applications-member", "general.error", "&cAn error occurred while opening applications!",
+                                ctx.plugin().getGuildService().getGuildMemberAsync(guild.getId(), player.getUniqueId()))
+                                .thenAccept(member -> {
                             CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                 if (member == null || !ctx.plugin().getMembershipRules().canInvite(member)) {
                                     String msg = ctx.languageManager().getCoreMessage(player, "general.no-permission", "&cInsufficient role permission!");

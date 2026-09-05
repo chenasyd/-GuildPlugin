@@ -20,7 +20,9 @@ public class GuildAcceptHandler implements GuildSubCommandHandler {
         
                 String guildName = String.join(" ", Arrays.copyOfRange(args, 1, args.length)).replaceAll("[\"']", "").trim();
         
-                ctx.guildService().getPlayerGuildAsync(player.getUniqueId()).thenAccept(existingGuild -> {
+                SubCommandErrors.guardPlayerFuture(ctx.plugin(), ctx.languageManager(), player,
+                        "accept", "guild.accept.error", "&cAn error occurred while accepting the invitation!",
+                        ctx.guildService().getPlayerGuildAsync(player.getUniqueId())).thenAccept(existingGuild -> {
                     if (existingGuild != null) {
                         CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                             String message = ctx.languageManager().getCoreMessage(player, "guild.accept.already-in-guild", "&cYou are already in a guild!");
@@ -52,7 +54,10 @@ public class GuildAcceptHandler implements GuildSubCommandHandler {
                             DebugLog.info(ctx.plugin().getLogger(), "[Accept-Debug] 找到邀请 ID=" + invitation.getId() + " 从 " + invitation.getInviterName() + " 到 " + invitation.getTargetName());
                     
                             // 处理邀请接受
-                            ctx.guildService().processInvitationDirectAsync(invitation, true).thenAccept(success -> {
+                            SubCommandErrors.guardPlayerFuture(ctx.plugin(), ctx.languageManager(), player,
+                                    "accept-process", "guild.accept.error", "&cError joining the guild!",
+                                    ctx.guildService().processInvitationDirectAsync(invitation, true))
+                                    .thenAccept(success -> {
                                 if (success) {
                                     DebugLog.info(ctx.plugin().getLogger(), "[Accept-Debug] 邀请处理成功，玩家 " + player.getName() + " 已加入 " + guild.getName());
                                     QuietLog.system("Player " + player.getName() + " accepted invitation and joined " + guild.getName());

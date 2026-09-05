@@ -7,6 +7,7 @@ import com.guild.core.utils.CompatibleScheduler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -69,5 +70,13 @@ public final class SubCommandErrors {
             logAndNotifySender(plugin, languageManager, sender, operation, e, messageKey, fallback);
             return null;
         };
+    }
+
+    /** 在 CompletableFuture 链末尾挂载玩家侧失败处理。 */
+    public static <T> CompletableFuture<T> guardPlayerFuture(GuildPlugin plugin, LanguageManager languageManager,
+                                                             Player player, String operation,
+                                                             String messageKey, String fallback,
+                                                             CompletableFuture<T> future) {
+        return future.exceptionally(handleAsyncFailure(plugin, languageManager, player, operation, messageKey, fallback));
     }
 }

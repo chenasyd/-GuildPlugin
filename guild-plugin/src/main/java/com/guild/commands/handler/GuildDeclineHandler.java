@@ -18,7 +18,9 @@ public class GuildDeclineHandler implements GuildSubCommandHandler {
         
                 String guildName = String.join(" ", Arrays.copyOfRange(args, 1, args.length)).replaceAll("[\"']", "").trim();
         
-                ctx.guildService().getGuildByNameAsync(guildName).thenAccept(guild -> {
+                SubCommandErrors.guardPlayerFuture(ctx.plugin(), ctx.languageManager(), player,
+                        "decline", "guild.decline.error", "&cAn error occurred while declining the invitation!",
+                        ctx.guildService().getGuildByNameAsync(guildName)).thenAccept(guild -> {
                     if (guild == null) {
                         CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                             String message = ctx.languageManager().getCoreMessage(player, "guild.decline.guild-not-found", "&cGuild does not exist!");
@@ -38,7 +40,10 @@ public class GuildDeclineHandler implements GuildSubCommandHandler {
                         }
                 
                         // 处理邀请拒绝
-                        ctx.guildService().processInvitationDirectAsync(invitation, false).thenAccept(success -> {
+                        SubCommandErrors.guardPlayerFuture(ctx.plugin(), ctx.languageManager(), player,
+                                "decline-process", "guild.decline.error", "&cError declining the invitation!",
+                                ctx.guildService().processInvitationDirectAsync(invitation, false))
+                                .thenAccept(success -> {
                             if (success) {
                                 CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                                     String message = ctx.languageManager().getCoreMessage(player, "guild.decline.success", "&aYou have declined the invitation!");

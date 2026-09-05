@@ -85,7 +85,10 @@ public class GuildHomeHandler implements GuildSubCommandHandler {
                     return;
                 }
 
-                ctx.plugin().getGuildService().getGuildHomeAsync(guild.getId()).thenAccept(location -> {
+                SubCommandErrors.guardPlayerFuture(ctx.plugin(), ctx.languageManager(), player,
+                        "home", "guild.home.error", "&cAn error occurred while teleporting to guild home!",
+                        ctx.plugin().getGuildService().getGuildHomeAsync(guild.getId()))
+                        .thenAccept(location -> {
                     CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
                         if (location != null) {
                             startHomeTeleportDelay(ctx, player, location);
