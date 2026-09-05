@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  * Version naming convention:
  * <ul>
  *   <li>Official release: {@code 1.6.5} or {@code v1.6.5}</li>
- *   <li>Official pre-release: {@code 1.6.6-snapshot.2} or {@code v1.6.6-snapshot.2}</li>
+ *   <li>Official pre-release: {@code 1.6.7-snapshot.2} or {@code v1.6.7-snapshot.2}</li>
  *   <li>Third-party fork: {@code 1.6.4-elaria.1} (not officially maintained)</li>
  * </ul>
  */
@@ -159,7 +159,7 @@ public class UpdateManager {
      * Parse a version string into a PluginVersion object.
      * Handles optional v/V prefix and various suffix formats.
      *
-     * @param versionStr the version string (e.g. "v1.6.5", "1.6.6-snapshot.2", "1.6.4-elaria.1")
+     * @param versionStr the version string (e.g. "v1.6.5", "1.6.7-snapshot.2", "1.6.4-elaria.1")
      * @return parsed PluginVersion, or null if completely unparseable
      */
     public static PluginVersion parseVersion(String versionStr) {
@@ -206,7 +206,7 @@ public class UpdateManager {
             logger.warning("[UpdateManager] Current plugin version \"" + localVersion
                     + "\" does not match any recognized version format.");
             logger.warning("[UpdateManager] Expected format: [v]x.x.x or [v]x.x.x-snapshot.N "
-                    + "(e.g. 1.6.5, v1.6.5, 1.6.6-snapshot.2)");
+                    + "(e.g. 1.6.5, v1.6.5, 1.6.7-snapshot.2)");
             logger.warning("[UpdateManager] This may be a modified third-party version not officially maintained.");
         }
         return false;
@@ -390,7 +390,7 @@ public class UpdateManager {
             for (int i = 0; i < versions.size(); i++) {
                 JsonObject v = versions.get(i).getAsJsonObject();
 
-                // version_number has no "v" prefix, e.g. "1.6.5" or "1.6.6-snapshot.2"
+                // version_number has no "v" prefix, e.g. "1.6.5" or "1.6.7-snapshot.2"
                 String version = v.get("version_number").getAsString();
                 PluginVersion parsed = parseVersion(version);
                 if (parsed == null) continue;

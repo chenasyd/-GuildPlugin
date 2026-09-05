@@ -1,7 +1,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Minecraft-1.20.1+-green?style=for-the-badge&logo=minecraft" alt="Minecraft 1.20.1+"/>
   <img src="https://img.shields.io/badge/API-Spigot%20%7C%20Folia-orange?style=for-the-badge" alt="Spigot | Folia"/>
-  <img src="https://img.shields.io/badge/Version-1.6.6--snapshot.5-blue?style=for-the-badge" alt="Version 1.6.6"/>
+  <img src="https://img.shields.io/badge/Version-1.6.7--snapshot.5-blue?style=for-the-badge" alt="Version 1.6.7"/>
   <img src="https://img.shields.io/badge/License-GPL%20v3-red?style=for-the-badge" alt="GPL v3"/>
   <img src="https://img.shields.io/badge/Java-17%2B-brightgreen?style=for-the-badge" alt="Java 17+"/>
 </p>
@@ -195,7 +195,7 @@ Relation types: `neutral`, `ally`, `enemy`, `war`, `truce`
 | Type | Format | Example |
 |:----:|:------:|:-------:|
 | Official release | `x.x.x` | `1.6.5` |
-| Official pre-release | `x.x.x-snapshot.N` | `1.6.6-snapshot.2` |
+| Official pre-release | `x.x.x-snapshot.N` | `1.6.7-snapshot.2` |
 | Third-party fork | `x.x.x-forkname.N` | `1.6.4-elaria.1` |
 
 The `v` prefix is optional and auto-recognized (`v1.6.5` = `1.6.5`). Third-party forks MUST use a custom suffix (`x.x.x-yourname.N`) to distinguish from official releases. The update checker queries GitHub and Modrinth simultaneously and warns if the local version is not officially maintained.

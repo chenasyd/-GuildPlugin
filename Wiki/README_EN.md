@@ -319,7 +319,7 @@ GuildPlugin uses the following version naming rules:
 | Type | Format | Example | Description |
 |:----:|:------:|:-------:|:-----------:|
 | Official release | `x.x.x` | `1.6.5` | Stable release |
-| Official pre-release | `x.x.x-snapshot.N` | `1.6.6-snapshot.2` | Development build, N increments per snapshot |
+| Official pre-release | `x.x.x-snapshot.N` | `1.6.7-snapshot.2` | Development build, N increments per snapshot |
 | Third-party fork | `x.x.x-forkname.N` | `1.6.4-elaria.1` | Modified version, NOT officially maintained |
 
 The `v` prefix (e.g. `v1.6.5`) is optional and automatically recognized — both `1.6.5` and `v1.6.5` are treated identically.

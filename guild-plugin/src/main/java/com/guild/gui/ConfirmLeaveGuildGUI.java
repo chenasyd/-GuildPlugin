@@ -1,46 +1,19 @@
 package com.guild.gui;
 
 import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.language.LanguageManager;
-import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
-
-import org.geysermc.cumulus.form.SimpleForm;
+import com.guild.gui.base.AbstractConfirmGUI;
 import com.guild.models.Guild;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Arrays;
-
-/**
- * 确认离开公会GUI
- */
-public class ConfirmLeaveGuildGUI implements GUI {
-
-    // ── 图像模式功能常量 ──
-    public static final String FUNC_CONFIRM = "CONFIRM";
-    public static final String FUNC_INFO = "INFO";
-    public static final String FUNC_CANCEL = "CANCEL";
-
-    private final GuildPlugin plugin;
-    private final LanguageManager languageManager;
-    private final Guild guild;
-    private final Player player;
-    /** 记录打开本 GUI 的来源，取消时返回对应的 GUI。可选值: "GuildSettingsGUI", "MemberGuildGUI" */
-    private final String sourceGuiType;
+/** 确认离开公会 GUI */
+public class ConfirmLeaveGuildGUI extends AbstractConfirmGUI {
 
     public ConfirmLeaveGuildGUI(GuildPlugin plugin, Guild guild, Player player, String sourceGuiType) {
-        this.plugin = plugin;
-        this.languageManager = plugin.getLanguageManager();
-        this.guild = guild;
-        this.player = player;
-        this.sourceGuiType = sourceGuiType != null ? sourceGuiType : "GuildSettingsGUI";
+        super(plugin, guild, player, sourceGuiType != null ? sourceGuiType : "GuildSettingsGUI");
     }
 
     /**
@@ -52,175 +25,152 @@ public class ConfirmLeaveGuildGUI implements GUI {
     }
 
     @Override
-    public String getTitle() {
-        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.title",
-                "&cConfirm Leave Guild"));
-    }
-    
-    @Override
-    public int getSize() {
-        return 27;
+    protected String titleKey() {
+        return "gui.confirm-leave-guild.title";
     }
 
     @Override
-    public boolean openBedrockForm(Player player) {
-        if (!BedrockFormSender.isAvailable()) return false;
+    protected String titleDefault() {
+        return "&cConfirm Leave Guild";
+    }
 
+    @Override
+    protected String bedrockTitleKey() {
+        return "gui.confirm-leave-guild.bedrock-title";
+    }
+
+    @Override
+    protected String bedrockTitleDefault() {
+        return "&cConfirm Leave Guild";
+    }
+
+    @Override
+    protected String bedrockContentKey() {
+        return "gui.confirm-leave-guild.bedrock-content";
+    }
+
+    @Override
+    protected String bedrockContentDefault() {
+        return "&fGuild: &e{guild}\n&fAre you sure you want to leave this guild?\n&cThis action cannot be undone!";
+    }
+
+    @Override
+    protected String bedrockConfirmKey() {
+        return "gui.confirm-leave-guild.bedrock-confirm";
+    }
+
+    @Override
+    protected String bedrockConfirmDefault() {
+        return "&cConfirm Leave";
+    }
+
+    @Override
+    protected String bedrockCancelKey() {
+        return "gui.confirm-leave-guild.bedrock-cancel";
+    }
+
+    @Override
+    protected String bedrockCancelDefault() {
+        return "&aCancel";
+    }
+
+    @Override
+    protected Material confirmMaterial() {
+        return Material.REDSTONE_BLOCK;
+    }
+
+    @Override
+    protected String confirmButtonKey() {
+        return "gui.confirm-leave-guild.confirm-button";
+    }
+
+    @Override
+    protected String confirmButtonDefault() {
+        return "&cConfirm Leave";
+    }
+
+    @Override
+    protected String confirmLoreKey() {
+        return "gui.confirm-leave-guild.confirm-lore";
+    }
+
+    @Override
+    protected String confirmLoreDefault() {
+        return "&7Click to confirm leaving guild";
+    }
+
+    @Override
+    protected String cancelButtonKey() {
+        return "gui.confirm-leave-guild.cancel-button";
+    }
+
+    @Override
+    protected String cancelButtonDefault() {
+        return "&aCancel";
+    }
+
+    @Override
+    protected String cancelLoreKey() {
+        return "gui.confirm-leave-guild.cancel-lore";
+    }
+
+    @Override
+    protected String cancelLoreDefault() {
+        return "&7Cancel leaving guild";
+    }
+
+    @Override
+    protected ItemStack createInfoItem() {
         String guildName = ColorUtils.stripColor(guild.getName());
-        String content = languageManager.getGuiColoredMessage(player, "gui.confirm-leave-guild.bedrock-content",
-                "&fGuild: &e{guild}\n&fAre you sure you want to leave this guild?\n&cThis action cannot be undone!",
-                "{guild}", guildName);
-
-        SimpleForm form = SimpleForm.builder()
-                .title(languageManager.getGuiColoredMessage(player, "gui.confirm-leave-guild.bedrock-title", "&cConfirm Leave Guild"))
-                .content(content)
-                .button(languageManager.getGuiColoredMessage(player, "gui.confirm-leave-guild.bedrock-confirm", "&cConfirm Leave"))
-                .button(languageManager.getGuiColoredMessage(player, "gui.confirm-leave-guild.bedrock-cancel", "&aCancel"))
-                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
-                    if (response.clickedButtonId() == 0) {
-                        handleConfirmLeave(player);
-                    } else {
-                        handleCancel(player);
-                    }
-                }))
-                .closedResultHandler(() -> CompatibleScheduler.runTask(plugin, player, () ->
-                        handleCancel(player)))
-                .build();
-
-        return BedrockFormSender.sendForm(player.getUniqueId(), form);
+        return createItem(
+                Material.BOOK,
+                ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                        "gui.confirm-leave-guild.info-title", "&cConfirm Leave Guild")),
+                ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                        "gui.confirm-leave-guild.guild", "&7Guild: &e{guild}", "{guild}", guildName)),
+                ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                        "gui.confirm-leave-guild.confirm-question",
+                        "&7Are you sure you want to leave this guild?")),
+                ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                        "gui.confirm-leave-guild.warning", "&cThis action cannot be undone!"))
+        );
     }
 
     @Override
-    public void setupInventory(Inventory inventory) {
-        // 填充边框
-        fillBorder(inventory);
-        
-        // 显示确认信息
-        displayConfirmInfo(inventory);
-        
-        // 添加确认和取消按钮
-        setupButtons(inventory);
+    protected String[] bedrockContentPlaceholders() {
+        return new String[]{"{guild}", ColorUtils.stripColor(guild.getName())};
+    }
 
-        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
-    }
-    
     @Override
-    public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        switch (slot) {
-            case 11: // 确认离开
-                handleConfirmLeave(player);
-                break;
-            case 15: // 取消
-                handleCancel(player);
-                break;
-        }
-    }
-    
-    /**
-     * 填充边框
-     */
-    private void fillBorder(Inventory inventory) {
-        ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 18, border);
-        }
-        for (int i = 9; i < 18; i += 9) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 8, border);
-        }
-    }
-    
-    /**
-     * 显示确认信息
-     */
-    private void displayConfirmInfo(Inventory inventory) {
-        String guildName = ColorUtils.stripColor(guild.getName());
-        ItemStack info = createItem(
-            Material.BOOK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.info-title", "&cConfirm Leave Guild")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.guild", "&7Guild: &e{guild}", "{guild}", guildName)),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.confirm-question", "&7Are you sure you want to leave this guild?")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.warning", "&cThis action cannot be undone!"))
-        );
-        inventory.setItem(13, info);
-    }
-    
-    /**
-     * 设置按钮
-     */
-    private void setupButtons(Inventory inventory) {
-        // 确认离开按钮
-        ItemStack confirm = createItem(
-            Material.REDSTONE_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.confirm-button", "&cConfirm Leave")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.confirm-lore", "&7Click to confirm leaving guild"))
-        );
-        inventory.setItem(11, confirm);
-        
-        // 取消按钮
-        ItemStack cancel = createItem(
-            Material.EMERALD_BLOCK,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.cancel-button", "&aCancel")),
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.confirm-leave-guild.cancel-lore", "&7Cancel leaving guild"))
-        );
-        inventory.setItem(15, cancel);
-    }
-    
-    /**
-     * 处理确认离开
-     */
-    private void handleConfirmLeave(Player player) {
-        // 检查是否是会长
+    protected void onConfirm(Player player) {
         if (player.getUniqueId().equals(guild.getLeaderUuid())) {
-            String message = languageManager.getGuiMessage(player, "gui.confirm-leave-guild.leave.leader-cannot-leave", "&cGuild leader cannot leave the guild!");
-            player.sendMessage(ColorUtils.colorize(message));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                    "gui.confirm-leave-guild.leave.leader-cannot-leave",
+                    "&cGuild leader cannot leave the guild!")));
             return;
         }
 
-        // 离开公会
-        plugin.getGuildService().removeGuildMemberAsync(player.getUniqueId(), player.getUniqueId()).thenAccept(success -> {
-            CompatibleScheduler.runTask(plugin, player, () -> {
-                if (success) {
-                    String message = languageManager.getGuiMessage(player, "gui.confirm-leave-guild.leave.success", "&aYou have successfully left the guild: {guild}", "{guild}", guild.getName());
-                    player.sendMessage(ColorUtils.colorize(message));
-
-                    // 关闭GUI
-                    player.closeInventory();
-                } else {
-                    String message = languageManager.getGuiMessage(player, "gui.confirm-leave-guild.leave.failed", "&cFailed to leave the guild!");
-                    player.sendMessage(ColorUtils.colorize(message));
-                }
-            });
-        });
+        plugin.getGuildService().removeGuildMemberAsync(player.getUniqueId(), player.getUniqueId())
+                .thenAccept(success -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (success) {
+                        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                                "gui.confirm-leave-guild.leave.success",
+                                "&aYou have successfully left the guild: {guild}",
+                                "{guild}", guild.getName())));
+                        player.closeInventory();
+                    } else {
+                        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                                "gui.confirm-leave-guild.leave.failed", "&cFailed to leave the guild!")));
+                    }
+                }));
     }
-    
-    /**
-     * 处理取消
-     */
-    private void handleCancel(Player player) {
+
+    @Override
+    protected void onCancel(Player player) {
         if ("MemberGuildGUI".equals(sourceGuiType)) {
             plugin.getGuiManager().openGUI(player, new MemberGuildGUI(plugin, guild, player));
         } else {
             plugin.getGuiManager().openGUI(player, new GuildSettingsGUI(plugin, guild, player));
         }
-    }
-    
-    /**
-     * 创建物品
-     */
-    private ItemStack createItem(Material material, String name, String... lore) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-        
-        if (meta != null) {
-            meta.setDisplayName(name);
-            if (lore.length > 0) {
-                meta.setLore(Arrays.asList(lore));
-            }
-            item.setItemMeta(meta);
-        }
-        
-        return item;
     }
 }

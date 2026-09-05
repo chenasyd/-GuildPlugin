@@ -1,5 +1,5 @@
 /**
- * Built-in example modules demonstrating the Guild SDK (API 1.6.6+).
+ * Built-in example modules demonstrating the Guild SDK (API 1.6.7+).
  *
  * <p><b>Expected patterns (aligned with SDK Developer Guide):</b>
  * <ul>

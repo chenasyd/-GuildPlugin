@@ -4,7 +4,7 @@ version: 1.0.0
 author: "GuildPlugin Team"
 description: "Diagnostic module for testing the multi-language system"
 type: utility
-api-version: 1.6.6
+api-version: 1.6.7
 main: com.guild.module.example.testlang.LanguageTestModule
 folia-compatible: true
 depends: []

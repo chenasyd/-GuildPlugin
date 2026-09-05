@@ -4,7 +4,7 @@ version: 1.0.0
 author: "GuildPlugin Team"
 description: "Guild overview stats + server ranking (example module)"
 type: mixed
-api-version: 1.6.6
+api-version: 1.6.7
 main: com.guild.module.example.stats.GuildStatsModule
 folia-compatible: true
 depends: []

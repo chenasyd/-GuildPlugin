@@ -1,343 +1,359 @@
 package com.guild.gui;
 
 import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.language.LanguageManager;
+import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.CompatibleScheduler;
-import com.guild.core.geyser.BedrockFormSender;
+import com.guild.gui.base.AbstractConfirmGUI;
 import com.guild.models.Guild;
 import com.guild.models.GuildContribution;
 import com.guild.models.GuildLog;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.geysermc.cumulus.form.SimpleForm;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-/**
- * 确认变更公会资金 GUI
- * <p>
- * 显示：公会名称、当前资金、操作类型、变更金额、新资金
- * 操作类型：set（设置）、add（增加）、remove（减少）
- */
-public class ConfirmChangeFundsGUI implements GUI {
+/** 确认变更公会资金 GUI */
+public class ConfirmChangeFundsGUI extends AbstractConfirmGUI {
 
-    // ── 图像模式功能常量 ──
-    public static final String FUNC_CONFIRM = "CONFIRM";
-    public static final String FUNC_DETAILS = "DETAILS";
-    public static final String FUNC_CANCEL = "CANCEL";
-
-    private final GuildPlugin plugin;
-    private final Guild guild;
-    private final Player player;
-    private final LanguageManager languageManager;
-    private final String operationType; // "set", "add", "remove"
+    private final String operationType;
     private final double amount;
 
     public ConfirmChangeFundsGUI(GuildPlugin plugin, Guild guild, Player player,
                                  String operationType, double amount) {
-        this.plugin = plugin;
-        this.guild = guild;
-        this.player = player;
-        this.languageManager = plugin.getLanguageManager();
+        super(plugin, guild, player, "EconomyManagementGUI");
         this.operationType = operationType;
         this.amount = amount;
     }
 
     @Override
-    public String getTitle() {
-        return ColorUtils.colorize(languageManager.getGuiMessage(player,
-                "gui.confirm-funds.title", "&6Confirm Fund Change"));
+    protected String infoFunctionName() {
+        return FUNC_DETAILS;
     }
 
     @Override
-    public int getSize() {
-        return 27;
+    protected String titleKey() {
+        return "gui.confirm-funds.title";
     }
 
     @Override
-    public void setupInventory(Inventory inventory) {
-        // 边框
-        ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 18, border);
-        }
-        for (int i = 9; i < 18; i += 9) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 8, border);
-        }
+    protected String titleDefault() {
+        return "&6Confirm Fund Change";
+    }
 
-        // 公会信息
+    @Override
+    protected String bedrockTitleKey() {
+        return "gui.confirm-funds.bedrock-title";
+    }
+
+    @Override
+    protected String bedrockTitleDefault() {
+        return "&6Confirm Fund Change";
+    }
+
+    @Override
+    protected String bedrockContentKey() {
+        return "gui.confirm-funds.bedrock-content";
+    }
+
+    @Override
+    protected String bedrockContentDefault() {
+        return "";
+    }
+
+    @Override
+    protected String bedrockConfirmKey() {
+        return "gui.confirm-funds.bedrock-confirm";
+    }
+
+    @Override
+    protected String bedrockConfirmDefault() {
+        return "&aConfirm Change";
+    }
+
+    @Override
+    protected String bedrockCancelKey() {
+        return "gui.confirm-funds.bedrock-cancel";
+    }
+
+    @Override
+    protected String bedrockCancelDefault() {
+        return "&cCancel";
+    }
+
+    @Override
+    protected Material confirmMaterial() {
+        return Material.EMERALD_BLOCK;
+    }
+
+    @Override
+    protected Material cancelMaterial() {
+        return Material.REDSTONE_BLOCK;
+    }
+
+    @Override
+    protected String confirmButtonKey() {
+        return "gui.confirm-funds.confirm";
+    }
+
+    @Override
+    protected String confirmButtonDefault() {
+        return "&aConfirm";
+    }
+
+    @Override
+    protected String confirmLoreKey() {
+        return "gui.confirm-funds.confirm-desc";
+    }
+
+    @Override
+    protected String confirmLoreDefault() {
+        return "Execute balance change";
+    }
+
+    @Override
+    protected String cancelButtonKey() {
+        return "gui.confirm-funds.cancel";
+    }
+
+    @Override
+    protected String cancelButtonDefault() {
+        return "&cCancel";
+    }
+
+    @Override
+    protected String cancelLoreKey() {
+        return "gui.confirm-funds.cancel-desc";
+    }
+
+    @Override
+    protected String cancelLoreDefault() {
+        return "Cancel change";
+    }
+
+    @Override
+    protected ItemStack createInfoItem() {
         double currentBalance = guild.getBalance();
         double newBalance = calculateNewBalance(currentBalance);
         String operationName = getOperationName();
-        Material operationMaterial = getOperationMaterial();
 
         List<String> infoLore = new ArrayList<>();
-        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
+        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
                 "gui.confirm-funds.guild", "Guild") + ": &e" + guild.getName()));
-        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
+        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
                 "gui.confirm-funds.operation", "Operation") + ": " + operationName));
-        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                "gui.confirm-funds.current-balance", "Current Balance") + ": &6" + plugin.getEconomyManager().format(currentBalance)));
-        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                "gui.confirm-funds.amount", "Amount") + ": &f" + plugin.getEconomyManager().format(amount)));
-        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                "gui.confirm-funds.new-balance", "New Balance") + ": &a" + plugin.getEconomyManager().format(newBalance)));
+        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                "gui.confirm-funds.current-balance", "Current Balance") + ": &6"
+                + plugin.getEconomyManager().format(currentBalance)));
+        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                "gui.confirm-funds.amount", "Amount") + ": &f"
+                + plugin.getEconomyManager().format(amount)));
+        infoLore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                "gui.confirm-funds.new-balance", "New Balance") + ": &a"
+                + plugin.getEconomyManager().format(newBalance)));
 
-        inventory.setItem(13, createItem(operationMaterial,
-                ColorUtils.colorize(languageManager.getGuiMessage(player,
+        return createItem(getOperationMaterial(),
+                ColorUtils.colorize(languageManager.getGuiMessage(viewer,
                         "gui.confirm-funds.info-title", "&6Change Details")),
-                infoLore.toArray(new String[0])));
-
-        // 确认按钮 (slot 11)
-        inventory.setItem(11, createItem(Material.EMERALD_BLOCK,
-                ColorUtils.colorize("&a" + languageManager.getGuiMessage(player,
-                        "gui.confirm-funds.confirm", "&aConfirm")),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                        "gui.confirm-funds.confirm-desc", "Execute balance change"))));
-
-        // 取消按钮 (slot 15)
-        inventory.setItem(15, createItem(Material.REDSTONE_BLOCK,
-                ColorUtils.colorize("&c" + languageManager.getGuiMessage(player,
-                        "gui.confirm-funds.cancel", "&cCancel")),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player,
-                        "gui.confirm-funds.cancel-desc", "Cancel change"))));
-
-        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
+                infoLore.toArray(new String[0]));
     }
 
     @Override
-    public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        if (clickedItem == null || !clickedItem.hasItemMeta()) return;
+    protected String[] bedrockContentPlaceholders() {
+        return new String[0];
+    }
 
-        if (slot == 11) {
-            // 确认变更
-            executeChange(player);
-        } else if (slot == 15) {
-            // 取消，返回经济管理
-            returnToEconomyManagement(player);
+    @Override
+    public boolean openBedrockForm(Player player) {
+        if (!BedrockFormSender.isAvailable()) {
+            return false;
         }
+
+        double currentBalance = guild.getBalance();
+        double newBalance = calculateNewBalance(currentBalance);
+        String operationName = ColorUtils.colorize(getOperationName());
+
+        String content = languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-guild",
+                "&fGuild: &e{guild_name}", "{guild_name}", guild.getName()) + "\n"
+                + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-operation",
+                "&fOperation: {operation}", "{operation}", operationName) + "\n"
+                + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-current-balance",
+                "&fCurrent Balance: &6{balance}", "{balance}",
+                plugin.getEconomyManager().format(currentBalance)) + "\n"
+                + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-amount",
+                "&fAmount: &f{amount}", "{amount}", plugin.getEconomyManager().format(amount)) + "\n"
+                + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-new-balance",
+                "&fNew Balance: &a{balance}", "{balance}",
+                plugin.getEconomyManager().format(newBalance));
+
+        SimpleForm form = SimpleForm.builder()
+                .title(languageManager.getGuiColoredMessage(player, bedrockTitleKey(), bedrockTitleDefault()))
+                .content(content)
+                .button(languageManager.getGuiColoredMessage(player, bedrockConfirmKey(), bedrockConfirmDefault()))
+                .button(languageManager.getGuiColoredMessage(player, bedrockCancelKey(), bedrockCancelDefault()))
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (response.clickedButtonId() == 0) {
+                        onConfirm(player);
+                    } else {
+                        onCancel(player);
+                    }
+                }))
+                .closedResultHandler(() -> CompatibleScheduler.runTask(plugin, player, () -> onCancel(player)))
+                .build();
+
+        return BedrockFormSender.sendForm(player.getUniqueId(), form);
+    }
+
+    @Override
+    protected void onConfirm(Player player) {
+        executeChange(player);
+    }
+
+    @Override
+    protected void onCancel(Player player) {
+        returnToEconomyManagement(player);
     }
 
     private void executeChange(Player player) {
         double currentBalance = guild.getBalance();
         double newBalance = calculateNewBalance(currentBalance);
 
-        // 执行资金变更
         plugin.getGuildService().updateGuildBalanceAsync(guild.getId(), newBalance,
-                player.getUniqueId().toString(), player.getName())
-                .thenAccept(success -> {
-                    CompatibleScheduler.runTask(plugin, player, () -> {
-                        if (success) {
-                            String formattedAmount = String.format("%.2f", amount);
-                            String playerName = player.getName();
-                            String guildName = guild.getName();
+                        player.getUniqueId().toString(), player.getName())
+                .thenAccept(success -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (success) {
+                        String formattedAmount = String.format("%.2f", amount);
+                        String playerName = player.getName();
+                        String guildName = guild.getName();
 
-                            // 写入 guild_contributions 表
-                            GuildContribution.ContributionType contribType;
-                            String contribDesc;
-                            GuildLog.LogType logType;
-                            String logDesc;
+                        GuildContribution.ContributionType contribType;
+                        String contribDesc;
+                        GuildLog.LogType logType;
+                        String logDesc;
 
-                            switch (operationType) {
-                                case "add":
-                                    contribType = GuildContribution.ContributionType.DEPOSIT;
+                        switch (operationType) {
+                            case "add":
+                                contribType = GuildContribution.ContributionType.DEPOSIT;
+                                contribDesc = languageManager.getGuiMessage(player,
+                                                "gui.confirm-funds.funds.change.add-contrib",
+                                                "{player} added {amount}")
+                                        .replace("{player}", playerName)
+                                        .replace("{amount}", formattedAmount);
+                                logType = GuildLog.LogType.FUND_DEPOSITED;
+                                logDesc = languageManager.getGuiMessage(player,
+                                                "gui.confirm-funds.funds.change.add-log",
+                                                "{player} added {amount} to {guild}")
+                                        .replace("{player}", playerName)
+                                        .replace("{guild}", guildName)
+                                        .replace("{amount}", formattedAmount);
+                                break;
+                            case "remove":
+                                contribType = GuildContribution.ContributionType.WITHDRAW;
+                                contribDesc = languageManager.getGuiMessage(player,
+                                                "gui.confirm-funds.funds.change.remove-contrib",
+                                                "{player} removed {amount}")
+                                        .replace("{player}", playerName)
+                                        .replace("{amount}", formattedAmount);
+                                logType = GuildLog.LogType.FUND_WITHDRAWN;
+                                logDesc = languageManager.getGuiMessage(player,
+                                                "gui.confirm-funds.funds.change.remove-log",
+                                                "{player} removed {amount} from {guild}")
+                                        .replace("{player}", playerName)
+                                        .replace("{guild}", guildName)
+                                        .replace("{amount}", formattedAmount);
+                                break;
+                            default:
+                                double diff = newBalance - currentBalance;
+                                String diffStr = String.format("%.2f", Math.abs(diff));
+                                contribType = GuildContribution.ContributionType.ADMIN;
+                                logType = diff >= 0 ? GuildLog.LogType.FUND_DEPOSITED : GuildLog.LogType.FUND_WITHDRAWN;
+                                String newBalanceStr = String.format("%.2f", newBalance);
+
+                                if (diff >= 0) {
                                     contribDesc = languageManager.getGuiMessage(player,
-                                            "gui.confirm-funds.funds.change.add-contrib",
-                                            "{player} added {amount}")
+                                                    "gui.confirm-funds.funds.change.set-contrib-increase",
+                                                    "{player} set funds to {new}(+{diff})")
                                             .replace("{player}", playerName)
-                                            .replace("{amount}", formattedAmount);
-                                    logType = GuildLog.LogType.FUND_DEPOSITED;
+                                            .replace("{new}", newBalanceStr)
+                                            .replace("{diff}", diffStr);
                                     logDesc = languageManager.getGuiMessage(player,
-                                            "gui.confirm-funds.funds.change.add-log",
-                                            "{player} added {amount} to {guild}")
+                                                    "gui.confirm-funds.funds.change.set-log-increase",
+                                                    "{player} set {guild} funds to {new}")
                                             .replace("{player}", playerName)
                                             .replace("{guild}", guildName)
-                                            .replace("{amount}", formattedAmount);
-                                    break;
-                                case "remove":
-                                    contribType = GuildContribution.ContributionType.WITHDRAW;
+                                            .replace("{new}", newBalanceStr);
+                                } else {
                                     contribDesc = languageManager.getGuiMessage(player,
-                                            "gui.confirm-funds.funds.change.remove-contrib",
-                                            "{player} removed {amount}")
+                                                    "gui.confirm-funds.funds.change.set-contrib-decrease",
+                                                    "{player} set funds to {new}(-{diff})")
                                             .replace("{player}", playerName)
-                                            .replace("{amount}", formattedAmount);
-                                    logType = GuildLog.LogType.FUND_WITHDRAWN;
+                                            .replace("{new}", newBalanceStr)
+                                            .replace("{diff}", diffStr);
                                     logDesc = languageManager.getGuiMessage(player,
-                                            "gui.confirm-funds.funds.change.remove-log",
-                                            "{player} removed {amount} from {guild}")
+                                                    "gui.confirm-funds.funds.change.set-log-decrease",
+                                                    "{player} set {guild} funds to {new}")
                                             .replace("{player}", playerName)
                                             .replace("{guild}", guildName)
-                                            .replace("{amount}", formattedAmount);
-                                    break;
-                                default: // set
-                                    double diff = newBalance - currentBalance;
-                                    String diffStr = String.format("%.2f", Math.abs(diff));
-                                    contribType = GuildContribution.ContributionType.ADMIN;
-                                    logType = diff >= 0 ? GuildLog.LogType.FUND_DEPOSITED : GuildLog.LogType.FUND_WITHDRAWN;
-                                    String newBalanceStr = String.format("%.2f", newBalance);
-
-                                    if (diff >= 0) {
-                                        contribDesc = languageManager.getGuiMessage(player,
-                                                "gui.confirm-funds.funds.change.set-contrib-increase",
-                                                "{player} set funds to {new}(+{diff})")
-                                                .replace("{player}", playerName)
-                                                .replace("{new}", newBalanceStr)
-                                                .replace("{diff}", diffStr);
-                                        logDesc = languageManager.getGuiMessage(player,
-                                                "gui.confirm-funds.funds.change.set-log-increase",
-                                                "{player} set {guild} funds to {new}")
-                                                .replace("{player}", playerName)
-                                                .replace("{guild}", guildName)
-                                                .replace("{new}", newBalanceStr);
-                                    } else {
-                                        contribDesc = languageManager.getGuiMessage(player,
-                                                "gui.confirm-funds.funds.change.set-contrib-decrease",
-                                                "{player} set funds to {new}(-{diff})")
-                                                .replace("{player}", playerName)
-                                                .replace("{new}", newBalanceStr)
-                                                .replace("{diff}", diffStr);
-                                        logDesc = languageManager.getGuiMessage(player,
-                                                "gui.confirm-funds.funds.change.set-log-decrease",
-                                                "{player} set {guild} funds to {new}")
-                                                .replace("{player}", playerName)
-                                                .replace("{guild}", guildName)
-                                                .replace("{new}", newBalanceStr);
-                                    }
-                                    break;
-                            }
-
-                            // 记录贡献
-                            plugin.getGuildService().addGuildContributionAsync(
-                                    guild.getId(), player.getUniqueId(), player.getName(),
-                                    amount, contribType, contribDesc);
-
-                            // 记录日志
-                            plugin.getGuildService().logGuildActionAsync(
-                                    guild.getId(), guild.getName(),
-                                    player.getUniqueId().toString(), player.getName(),
-                                    logType, logDesc,
-                                    languageManager.getGuiMessage(player,
-                                            "gui.confirm-funds.funds.change.log-details",
-                                            "Amount:{amount}")
-                                            .replace("{amount}", formattedAmount));
-
-                            player.sendMessage(ColorUtils.colorize(
-                                    "&a" + languageManager.getGuiMessage(player,
-                                            "gui.confirm-funds.success", "&aFund change successful!")));
-                        } else {
-                            player.sendMessage(ColorUtils.colorize(
-                                    "&c" + languageManager.getGuiMessage(player,
-                                            "gui.confirm-funds.failed", "&cFund change failed!")));
+                                            .replace("{new}", newBalanceStr);
+                                }
+                                break;
                         }
-                        returnToEconomyManagement(player);
-                    });
-                });
-    }
 
-    @Override
-    public boolean openBedrockForm(Player player) {
-        if (!BedrockFormSender.isAvailable()) return false;
+                        plugin.getGuildService().addGuildContributionAsync(
+                                guild.getId(), player.getUniqueId(), player.getName(),
+                                amount, contribType, contribDesc);
 
-        double currentBalance = guild.getBalance();
-        double newBalance = calculateNewBalance(currentBalance);
-        String operationName = ColorUtils.colorize(getOperationName());
+                        plugin.getGuildService().logGuildActionAsync(
+                                guild.getId(), guild.getName(),
+                                player.getUniqueId().toString(), player.getName(),
+                                logType, logDesc,
+                                languageManager.getGuiMessage(player,
+                                                "gui.confirm-funds.funds.change.log-details",
+                                                "Amount:{amount}")
+                                        .replace("{amount}", formattedAmount));
 
-        String content = languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-guild", "&fGuild: &e{guild_name}",
-                "{guild_name}", guild.getName()) + "\n"
-            + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-operation", "&fOperation: {operation}",
-                "{operation}", operationName) + "\n"
-            + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-current-balance", "&fCurrent Balance: &6{balance}",
-                "{balance}", plugin.getEconomyManager().format(currentBalance)) + "\n"
-            + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-amount", "&fAmount: &f{amount}",
-                "{amount}", plugin.getEconomyManager().format(amount)) + "\n"
-            + languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-new-balance", "&fNew Balance: &a{balance}",
-                "{balance}", plugin.getEconomyManager().format(newBalance));
-
-        SimpleForm form = SimpleForm.builder()
-            .title(languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-title", "&6Confirm Fund Change"))
-            .content(content)
-            .button(languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-confirm", "&aConfirm Change"))
-            .button(languageManager.getGuiColoredMessage(player, "gui.confirm-funds.bedrock-cancel", "&cCancel"))
-            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
-                if (response.clickedButtonId() == 0) {
-                    executeChange(player);
-                } else {
+                        player.sendMessage(ColorUtils.colorize("&a" + languageManager.getGuiMessage(player,
+                                "gui.confirm-funds.success", "&aFund change successful!")));
+                    } else {
+                        player.sendMessage(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player,
+                                "gui.confirm-funds.failed", "&cFund change failed!")));
+                    }
                     returnToEconomyManagement(player);
-                }
-            }))
-            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
-                returnToEconomyManagement(player)))
-            .build();
-
-        BedrockFormSender.sendForm(player.getUniqueId(), form);
-        return true;
+                }));
     }
 
     private void returnToEconomyManagement(Player player) {
-        EconomyManagementGUI ecoGUI = new EconomyManagementGUI(plugin, player);
-        plugin.getGuiManager().openGUI(player, ecoGUI);
+        plugin.getGuiManager().openGUI(player, new EconomyManagementGUI(plugin, player));
     }
 
     private double calculateNewBalance(double currentBalance) {
-        switch (operationType) {
-            case "set":
-                return amount;
-            case "add":
-                return currentBalance + amount;
-            case "remove":
-                return Math.max(0, currentBalance - amount);
-            default:
-                return currentBalance;
-        }
+        return switch (operationType) {
+            case "set" -> amount;
+            case "add" -> currentBalance + amount;
+            case "remove" -> Math.max(0, currentBalance - amount);
+            default -> currentBalance;
+        };
     }
 
     private String getOperationName() {
         String key = "gui.confirm-funds.operation-" + operationType;
-        switch (operationType) {
-            case "set":
-                return languageManager.getGuiMessage(player, key, "&eSet funds");
-            case "add":
-                return languageManager.getGuiMessage(player, key, "&aAdd funds");
-            case "remove":
-                return languageManager.getGuiMessage(player, key, "&cDeduct funds");
-            default:
-                return operationType;
-        }
+        return switch (operationType) {
+            case "set" -> languageManager.getGuiMessage(viewer, key, "&eSet funds");
+            case "add" -> languageManager.getGuiMessage(viewer, key, "&aAdd funds");
+            case "remove" -> languageManager.getGuiMessage(viewer, key, "&cDeduct funds");
+            default -> operationType;
+        };
     }
 
     private Material getOperationMaterial() {
-        switch (operationType) {
-            case "set":
-                return Material.GOLD_BLOCK;
-            case "add":
-                return Material.EMERALD_BLOCK;
-            case "remove":
-                return Material.LAVA_BUCKET;
-            default:
-                return Material.PAPER;
-        }
-    }
-
-    private ItemStack createItem(Material material, String name, String... lore) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            if (lore.length > 0) {
-                meta.setLore(Arrays.asList(lore));
-            }
-            item.setItemMeta(meta);
-        }
-        return item;
+        return switch (operationType) {
+            case "set" -> Material.GOLD_BLOCK;
+            case "add" -> Material.EMERALD_BLOCK;
+            case "remove" -> Material.LAVA_BUCKET;
+            default -> Material.PAPER;
+        };
     }
 }
