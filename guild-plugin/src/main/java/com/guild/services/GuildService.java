@@ -28,6 +28,11 @@ import java.util.logging.Logger;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.DebugLog;
 import com.guild.core.utils.QuietLog;
+import com.guild.core.module.ModuleManager;
+import com.guild.sdk.GuildPluginAPI;
+
+import java.util.function.Consumer;
+import java.util.logging.Level;
 
 public class GuildService {
     
@@ -43,54 +48,59 @@ public class GuildService {
 
     // ==================== 模块事件分发辅助 ====================
 
-    private void fireGuildCreate(int guildId, String guildName, String leaderName) {
+    private void fireModuleEvent(String eventName, Consumer<GuildPluginAPI> action) {
         try {
-            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
-            if (mm != null) mm.getSharedApi().fireGuildCreate(guildId, guildName, leaderName);
-        } catch (Exception ignored) {}
+            ModuleManager moduleManager = plugin.getServiceContainer().get(ModuleManager.class);
+            if (moduleManager == null) {
+                return;
+            }
+            action.accept(moduleManager.getSharedApi());
+        } catch (Exception e) {
+            logger.log(Level.WARNING,
+                    "Failed to dispatch module event '" + eventName + "': " + e.getMessage(), e);
+        }
+    }
+
+    private void refreshPlayerPermissions(UUID playerUuid) {
+        try {
+            plugin.getPermissionManager().updatePlayerPermissions(playerUuid);
+        } catch (Exception e) {
+            logger.log(Level.FINE,
+                    "Failed to refresh permissions for " + playerUuid + ": " + e.getMessage());
+        }
+    }
+
+    private void fireGuildCreate(int guildId, String guildName, String leaderName) {
+        fireModuleEvent("GuildCreate", api -> api.fireGuildCreate(guildId, guildName, leaderName));
     }
 
     private void fireGuildDelete(int guildId, String guildName, String leaderName) {
-        try {
-            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
-            if (mm != null) mm.getSharedApi().fireGuildDelete(guildId, guildName, leaderName);
-        } catch (Exception ignored) {}
+        fireModuleEvent("GuildDelete", api -> api.fireGuildDelete(guildId, guildName, leaderName));
     }
 
     private void fireMemberJoin(int guildId, String guildName, UUID playerUuid, String playerName) {
-        try {
-            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
-            if (mm != null) mm.getSharedApi().fireMemberJoin(guildId, guildName, playerUuid, playerName);
-        } catch (Exception ignored) {}
+        fireModuleEvent("MemberJoin", api -> api.fireMemberJoin(guildId, guildName, playerUuid, playerName));
     }
 
     private void fireMemberLeave(int guildId, String guildName, UUID playerUuid, String playerName, String eventType) {
-        try {
-            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
-            if (mm != null) mm.getSharedApi().fireMemberLeave(guildId, guildName, playerUuid, playerName, eventType);
-        } catch (Exception ignored) {}
+        fireModuleEvent("MemberLeave",
+                api -> api.fireMemberLeave(guildId, guildName, playerUuid, playerName, eventType));
     }
 
     public void notifyEconomyDeposit(int guildId, String guildName, UUID playerUuid, String playerName, double amount) {
-        try {
-            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
-            if (mm != null) mm.getSharedApi().fireEconomyDeposit(guildId, guildName, playerUuid, playerName, amount);
-        } catch (Exception ignored) {}
+        fireModuleEvent("EconomyDeposit",
+                api -> api.fireEconomyDeposit(guildId, guildName, playerUuid, playerName, amount));
     }
 
     public void notifyEconomyWithdraw(int guildId, String guildName, UUID playerUuid, String playerName, double amount) {
-        try {
-            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
-            if (mm != null) mm.getSharedApi().fireEconomyWithdraw(guildId, guildName, playerUuid, playerName, amount);
-        } catch (Exception ignored) {}
+        fireModuleEvent("EconomyWithdraw",
+                api -> api.fireEconomyWithdraw(guildId, guildName, playerUuid, playerName, amount));
     }
 
     private void fireMemberRoleChange(int guildId, String guildName, UUID playerUuid, String playerName,
-                                       String oldRole, String newRole) {
-        try {
-            com.guild.core.module.ModuleManager mm = plugin.getServiceContainer().get(com.guild.core.module.ModuleManager.class);
-            if (mm != null) mm.getSharedApi().fireMemberRoleChange(guildId, guildName, playerUuid, playerName, oldRole, newRole);
-        } catch (Exception ignored) {}
+                                      String oldRole, String newRole) {
+        fireModuleEvent("MemberRoleChange", api -> api.fireMemberRoleChange(guildId, guildName, playerUuid,
+                playerName, oldRole, newRole));
     }
     
     // 时间工具：统一使用操作系统本地时间字符串（yyyy-MM-dd HH:mm:ss）
@@ -465,7 +475,7 @@ public class GuildService {
                             if (affectedRows > 0) {
                                 DebugLog.info(logger, "[AddMember-Debug] Player " + playerName + " successfully joined guild (ID: " + guildId + ")");
                                 // 更新内置权限缓存
-                                try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                                refreshPlayerPermissions(playerUuid);
                                 
                                 // 记录成员加入日志
                                 logGuildActionAsync(guildId, targetGuild.getName(), playerUuid.toString(), playerName,
@@ -540,7 +550,7 @@ public class GuildService {
                             if (affectedRows > 0) {
                                 QuietLog.system("Player " + member.getPlayerName() + " left guild (ID: " + member.getGuildId() + ")");
                                 // 更新内置权限缓存
-                                try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                                refreshPlayerPermissions(playerUuid);
                                 
                                 // 记录成员离开日志
                                 getGuildByIdAsync(member.getGuildId()).thenAccept(guild -> {
@@ -633,7 +643,7 @@ public class GuildService {
                             int affectedRows = stmt.executeUpdate();
                             if (affectedRows > 0) {
                                 QuietLog.system("Player " + member.getPlayerName() + " role updated to: " + newRole.name());
-                                try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                                refreshPlayerPermissions(playerUuid);
 
                                 getGuildByIdAsync(guildId).thenAccept(guild -> {
                                     if (guild != null) {
@@ -695,7 +705,7 @@ public class GuildService {
                         stmt.setString(1, playerUuid.toString());
                         int affectedRows = stmt.executeUpdate();
                         if (affectedRows > 0) {
-                            try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                            refreshPlayerPermissions(playerUuid);
                             getGuildByIdAsync(guildId).thenAccept(guild -> {
                                 if (guild != null) {
                                     logGuildActionAsync(guildId, guild.getName(), playerUuid.toString(), member.getPlayerName(),
@@ -739,7 +749,7 @@ public class GuildService {
                         stmt.setString(2, playerUuid.toString());
                         int affectedRows = stmt.executeUpdate();
                         if (affectedRows > 0) {
-                            try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                            refreshPlayerPermissions(playerUuid);
                             getGuildByIdAsync(guildId).thenAccept(guild -> {
                                 if (guild != null) {
                                     fireMemberRoleChange(guildId, guild.getName(), playerUuid, member.getPlayerName(), oldRole, newRole.name());
@@ -826,8 +836,8 @@ public class GuildService {
                             conn.commit();
 
                             // 刷新权限缓存
-                            try { plugin.getPermissionManager().updatePlayerPermissions(oldLeaderUuid); } catch (Exception ignored) {}
-                            try { plugin.getPermissionManager().updatePlayerPermissions(newLeaderUuid); } catch (Exception ignored) {}
+                            refreshPlayerPermissions(oldLeaderUuid);
+                            refreshPlayerPermissions(newLeaderUuid);
 
                             // 触发角色变更事件
                             String oldLeaderName = guild.getLeaderName();
@@ -845,7 +855,10 @@ public class GuildService {
                                     if (requester.getName() != null) {
                                         actorName = requester.getName();
                                     }
-                                } catch (Exception ignored) {}
+                                } catch (Exception e) {
+                                    logger.log(Level.FINE,
+                                            "Could not resolve requester name for " + requesterUuid + ": " + e.getMessage());
+                                }
                             }
                             String desc = "会长由 " + oldLeaderName + " 转移给 " + resolvedName;
                             logGuildActionAsync(guildId, guild.getName(), actor, actorName,
@@ -2895,7 +2908,7 @@ public class GuildService {
                     stmt.setString(5, nowString());
                     int affectedRows = stmt.executeUpdate();
                     if (affectedRows > 0) {
-                        try { plugin.getPermissionManager().updatePlayerPermissions(playerUuid); } catch (Exception ignored) {}
+                        refreshPlayerPermissions(playerUuid);
                         return true;
                     }
                 }

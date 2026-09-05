@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class LanguageManager {
@@ -811,7 +812,9 @@ public class LanguageManager {
                 target.put(lang, cfg);
                 langs.add(lang);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            logger.log(Level.FINE, "Could not read bundled core language '" + lang + "': " + e.getMessage());
+        }
     }
 
     /** 从 JAR 读取内置 GUI 语言 */
@@ -828,7 +831,9 @@ public class LanguageManager {
                 target.put(lang, cfg);
                 langs.add(lang);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            logger.log(Level.FINE, "Could not read bundled GUI language '" + lang + "': " + e.getMessage());
+        }
     }
 
     /** 从 JAR 读取内置模块语言 */
@@ -844,7 +849,10 @@ public class LanguageManager {
                 mergeInto(lang, cfg, target);
                 langs.add(lang);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            logger.log(Level.FINE,
+                    "Could not read bundled module language '" + moduleDir + "/" + lang + "': " + e.getMessage());
+        }
     }
 
     /** 合并模块配置（同名语言累加）——必须与 mergeModuleConfig 一致，只写叶子键 */

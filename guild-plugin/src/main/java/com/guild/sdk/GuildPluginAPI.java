@@ -892,12 +892,17 @@ public class GuildPluginAPI {
                 createTimeMillis = createdAt.atZone(java.time.ZoneId.systemDefault())
                         .toInstant().toEpochMilli();
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.FINE,
+                    "Could not convert guild createTime for guild " + guild.getId() + ": " + e.getMessage());
+        }
 
         int memberCount;
         try {
             memberCount = plugin.getGuildService().getGuildMemberCount(guild.getId());
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.FINE,
+                    "Could not load member count for guild " + guild.getId() + ": " + e.getMessage());
             memberCount = 0;
         }
 
@@ -929,9 +934,10 @@ public class GuildPluginAPI {
                 joinTimeMillis = joinedAt.atZone(java.time.ZoneId.systemDefault())
                         .toInstant().toEpochMilli();
             }
-        } catch (Exception ignored) {}
-
-        boolean online = org.bukkit.Bukkit.getPlayer(member.getPlayerUuid()) != null;
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.FINE,
+                    "Could not convert member joinTime for " + member.getPlayerUuid() + ": " + e.getMessage());
+        }
 
         // 查询投入资金
         double investedBalance = 0.0;
@@ -941,9 +947,10 @@ public class GuildPluginAPI {
             if (invSvc != null) {
                 investedBalance = invSvc.getInvestedBalance(member.getGuildId(), member.getPlayerUuid());
             }
-        } catch (Exception ignored) {}
-
-        // 净贡献：优先短缓存；未命中时保持 0，避免 SDK 转换路径同步打库
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.FINE,
+                    "Could not load invested balance for " + member.getPlayerUuid() + ": " + e.getMessage());
+        }
         double contribution = 0.0;
         try {
             var cache = plugin.getGuildPlayerDataCache();
@@ -953,7 +960,12 @@ public class GuildPluginAPI {
                     contribution = snap.contributionNet;
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.FINE,
+                    "Could not load contribution cache for " + member.getPlayerUuid() + ": " + e.getMessage());
+        }
+
+        boolean online = org.bukkit.Bukkit.getPlayer(member.getPlayerUuid()) != null;
 
         return new MemberData(
                 member.getPlayerUuid(),
