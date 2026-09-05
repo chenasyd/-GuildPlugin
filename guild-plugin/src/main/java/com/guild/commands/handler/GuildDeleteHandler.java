@@ -56,11 +56,9 @@ public class GuildDeleteHandler implements GuildSubCommandHandler {
                             ctx.plugin().getGuiManager().openGUI(player, confirmGUI);
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.delete.error", "&cAn error occurred while deleting the guild!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "delete", e, "guild.delete.error",
+                                "&cAn error occurred while deleting the guild!");
                     }
                 });
 
@@ -105,11 +103,9 @@ public class GuildDeleteHandler implements GuildSubCommandHandler {
                             });
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.delete.error", "&cAn error occurred while deleting the guild!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "delete", e, "guild.delete.error",
+                                "&cAn error occurred while deleting the guild!");
                     }
                 });
 

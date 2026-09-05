@@ -110,11 +110,9 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             player.sendMessage(ColorUtils.colorize(finalMessage));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.economy.error", "&cAn error occurred while fetching economy info!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "economy-info", e, "guild.economy.error",
+                                "&cAn error occurred while fetching economy info!");
                     }
                 });
 
@@ -199,11 +197,9 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             player.sendMessage(ColorUtils.colorize(msg));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.deposit.error", "&cAn error occurred while depositing!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "deposit", e, "guild.deposit.error",
+                                "&cAn error occurred while depositing!");
                     }
                 });
 
@@ -284,11 +280,9 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             player.sendMessage(ColorUtils.colorize(msg));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.withdraw.error", "&cAn error occurred while withdrawing!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "withdraw", e, "guild.withdraw.error",
+                                "&cAn error occurred while withdrawing!");
                     }
                 });
 
@@ -383,11 +377,9 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             player.sendMessage(ColorUtils.colorize(msg));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.transfer.error", "&cAn error occurred while transferring!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "transfer", e, "guild.transfer.error",
+                                "&cAn error occurred while transferring!");
                     }
                 });
 
@@ -455,11 +447,9 @@ public class GuildEconomyHandler implements GuildSubCommandHandler {
                             targetPlayer.sendMessage(ColorUtils.colorize(msg));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.transfer.error", "&cAn error occurred while transferring!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "transfer", e, "guild.transfer.error",
+                                "&cAn error occurred while transferring!");
                     }
                 });
 

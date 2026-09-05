@@ -132,8 +132,7 @@ public class PlayerListener implements Listener {
                 try {
                     guiManager.handleInput(player, input);
                 } catch (Exception e) {
-                    plugin.getLogger().severe("Error handling GUI input: " + e.getMessage());
-                    e.printStackTrace();
+                    plugin.getLogger().log(java.util.logging.Level.SEVERE, "Error handling GUI input", e);
                     guiManager.clearInputMode(player);
                 }
             });

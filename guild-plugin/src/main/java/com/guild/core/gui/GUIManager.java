@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.function.Function;
 
@@ -379,8 +380,7 @@ public class GUIManager implements Listener {
                 logger.info("Player " + player.getName() + " opened GUI: " + gui.getClass().getSimpleName());
             }
         } catch (Exception e) {
-            logger.severe("Error opening GUI: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error opening GUI", e);
         }
     }
 
@@ -476,8 +476,7 @@ public class GUIManager implements Listener {
                 }
             }
         } catch (Exception e) {
-            logger.severe("Error closing GUI: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error closing GUI", e);
         }
     }
     
@@ -542,8 +541,7 @@ public class GUIManager implements Listener {
             ClickType adaptedClick = PlayerConnectionService.adaptClick(player, event.getClick());
             gui.onClick(player, slot, clickedItem, adaptedClick);
         } catch (Exception e) {
-            logger.severe("Error handling GUI click: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error handling GUI click", e);
             // 发生错误时关闭GUI
             closeGUI(player);
         }
@@ -572,8 +570,7 @@ public class GUIManager implements Listener {
                 }
             }
         } catch (Exception e) {
-            logger.severe("Error processing GUI close: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error processing GUI close", e);
         }
     }
     
@@ -601,8 +598,7 @@ public class GUIManager implements Listener {
                 }
             }
         } catch (Exception e) {
-            logger.severe("Error refreshing GUI: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error refreshing GUI", e);
         }
     }
 
@@ -670,8 +666,7 @@ public class GUIManager implements Listener {
                 logger.info("Closed all GUIs");
             }
         } catch (Exception e) {
-            logger.severe("Error closing all GUIs: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error closing all GUIs", e);
         }
     }
     
@@ -698,8 +693,7 @@ public class GUIManager implements Listener {
                 logger.info("Player " + player.getName() + " entered input mode");
             }
         } catch (Exception e) {
-            logger.severe("Error setting input mode: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error setting input mode", e);
         }
     }
     
@@ -733,8 +727,7 @@ public class GUIManager implements Listener {
                 logger.warning("Unknown input mode: " + mode);
             }
         } catch (Exception e) {
-            logger.severe("Error setting input mode: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error setting input mode", e);
         }
     }
     
@@ -754,8 +747,7 @@ public class GUIManager implements Listener {
                 logger.info("Player " + player.getName() + " exited input mode");
             }
         } catch (Exception e) {
-            logger.severe("Error clearing input mode: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error clearing input mode", e);
         }
     }
     
@@ -781,8 +773,7 @@ public class GUIManager implements Listener {
             }
             return false;
         } catch (Exception e) {
-            logger.severe("Error handling player input: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error handling player input", e);
             // 发生错误时清除输入模式
             clearInputMode(player);
             return false;

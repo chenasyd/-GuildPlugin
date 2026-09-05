@@ -86,12 +86,9 @@ public class GuildInviteHandler implements GuildSubCommandHandler {
                     player.sendMessage(ColorUtils.colorize(message));
                 });
             } catch (Exception e) {
-                e.printStackTrace();
-                CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                    String message = ctx.languageManager().getCoreMessage(player, "guild.invite.error",
-                            "&cAn error occurred while sending invitation!");
-                    player.sendMessage(ColorUtils.colorize(message));
-                });
+                SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                        "invite", e, "guild.invite.error",
+                        "&cAn error occurred while sending invitation!");
             }
         });
     }

@@ -144,6 +144,14 @@
                 <version>5.11.0</version>
                 <scope>test</scope>
             </dependency>
+
+            <!-- MockBukkit for command/GUI integration tests -->
+            <dependency>
+                <groupId>com.github.seeseemelk</groupId>
+                <artifactId>MockBukkit-v1.20</artifactId>
+                <version>3.32.1</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
 
     <!-- Project-local repository for third-party JARs (e.g. ImagoCore) -->

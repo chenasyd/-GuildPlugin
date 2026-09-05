@@ -88,12 +88,9 @@ public class GuildPromoteHandler implements GuildSubCommandHandler {
                     ctx.plugin().getGuiManager().openGUI(player, confirmGui);
                 });
             } catch (Exception e) {
-                e.printStackTrace();
-                CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                    String message = ctx.languageManager().getCoreMessage(player, "guild.promote.error",
-                            "&cAn error occurred while promoting the player!");
-                    player.sendMessage(ColorUtils.colorize(message));
-                });
+                SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                        "promote", e, "guild.promote.error",
+                        "&cAn error occurred while promoting the player!");
             }
         });
     }

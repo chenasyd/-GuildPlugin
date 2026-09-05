@@ -156,11 +156,9 @@ public class GuildCreateHandler implements GuildSubCommandHandler {
                             });
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.create.error", "&cAn error occurred while creating the guild!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "create", e, "guild.create.error",
+                                "&cAn error occurred while creating the guild!");
                     }
                 });
 

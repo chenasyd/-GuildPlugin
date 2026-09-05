@@ -37,11 +37,9 @@ public class GuildLogsHandler implements GuildSubCommandHandler {
                             player.sendMessage(ColorUtils.colorize("&b- 日志功能正在开发中..."));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.logs.error", "&cAn error occurred while fetching guild logs!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "logs", e, "guild.logs.error",
+                                "&cAn error occurred while fetching guild logs!");
                     }
                 });
 

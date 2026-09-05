@@ -45,11 +45,9 @@ public class GuildMembersHandler implements GuildSubCommandHandler {
                             }
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.members.error", "&cAn error occurred while fetching member list!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "members", e, "guild.members.error",
+                                "&cAn error occurred while fetching member list!");
                     }
                 });
 

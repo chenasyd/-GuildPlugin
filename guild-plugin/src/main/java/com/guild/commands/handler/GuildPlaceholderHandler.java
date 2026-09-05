@@ -71,11 +71,9 @@ public class GuildPlaceholderHandler implements GuildSubCommandHandler {
                                 break;
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.placeholder.error", "&cAn error occurred while getting placeholders!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "placeholder", e, "guild.placeholder.error",
+                                "&cAn error occurred while getting placeholders!");
                     }
                 });
 

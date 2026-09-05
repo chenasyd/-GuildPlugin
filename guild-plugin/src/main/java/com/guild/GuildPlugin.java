@@ -53,6 +53,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.Map;
 import java.util.HashMap;
@@ -336,8 +337,7 @@ public class GuildPlugin extends JavaPlugin {
             }
             
         } catch (Throwable e) {
-            logger.severe("Guild Plugin failed to start: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Guild Plugin failed to start: " + e.getMessage(), e);
             getServer().getPluginManager().disablePlugin(this);
         }
     }
@@ -394,8 +394,7 @@ public class GuildPlugin extends JavaPlugin {
             logger.info("Guild Plugin has been shut down");
             
         } catch (Exception e) {
-            logger.severe("Error shutting down Guild Plugin: " + e.getMessage());
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error shutting down Guild Plugin: " + e.getMessage(), e);
         }
     }
     

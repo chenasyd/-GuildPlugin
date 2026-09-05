@@ -35,11 +35,9 @@ public class GuildTimeHandler implements GuildSubCommandHandler {
                             player.sendMessage(ColorUtils.colorize(finalMessage));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.time.error", "&cAn error occurred while fetching guild time info!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "time", e, "guild.time.error",
+                                "&cAn error occurred while fetching guild time info!");
                     }
                 });
 

@@ -434,7 +434,7 @@ public class GuildStatsModule implements GuildModule {
                 } catch (Exception e) {
                     context.sendMessage(player, "stats.error.gui-fail",
                         "&c[Stats] 打开界面失败: " + e.getMessage());
-                    e.printStackTrace();
+                    context.getLogger().log(java.util.logging.Level.SEVERE, "[Stats] Failed to open overview GUI", e);
                 }
             } else {
                 GuildStatistics fallback = dataCache.getCachedStats(guild.getId());

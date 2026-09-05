@@ -43,11 +43,9 @@ public class GuildLeaveHandler implements GuildSubCommandHandler {
                             });
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.leave.error", "&cAn error occurred while leaving the guild!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "leave", e, "guild.leave.error",
+                                "&cAn error occurred while leaving the guild!");
                     }
                 });
 

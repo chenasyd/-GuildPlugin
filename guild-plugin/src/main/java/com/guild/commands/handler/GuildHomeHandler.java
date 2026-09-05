@@ -55,11 +55,9 @@ public class GuildHomeHandler implements GuildSubCommandHandler {
                             player.sendMessage(ColorUtils.colorize(message));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.sethome.error", "&cAn error occurred while setting the guild home!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "sethome", e, "guild.sethome.error",
+                                "&cAn error occurred while setting the guild home!");
                     }
                 });
 

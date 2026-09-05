@@ -108,11 +108,9 @@ public class GuildRelationHandler implements GuildSubCommandHandler {
                             }
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.relation.error", "&cAn error occurred while managing relations!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "relation", e, "guild.relation.error",
+                                "&cAn error occurred while managing relations!");
                     }
                 });
 
@@ -173,11 +171,9 @@ public class GuildRelationHandler implements GuildSubCommandHandler {
                             player.sendMessage(ColorUtils.colorize(message));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.relation.error", "&cAn error occurred while managing relations!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "relation", e, "guild.relation.error",
+                                "&cAn error occurred while managing relations!");
                     }
                 });
 
@@ -230,11 +226,9 @@ public class GuildRelationHandler implements GuildSubCommandHandler {
                             player.sendMessage(ColorUtils.colorize(message));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.relation.error", "&cAn error occurred while managing relations!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "relation", e, "guild.relation.error",
+                                "&cAn error occurred while managing relations!");
                     }
                 });
 
@@ -288,11 +282,9 @@ public class GuildRelationHandler implements GuildSubCommandHandler {
                             player.sendMessage(ColorUtils.colorize(message));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.relation.error", "&cAn error occurred while managing relations!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "relation", e, "guild.relation.error",
+                                "&cAn error occurred while managing relations!");
                     }
                 });
 
@@ -345,11 +337,9 @@ public class GuildRelationHandler implements GuildSubCommandHandler {
                             player.sendMessage(ColorUtils.colorize(message));
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        CompatibleScheduler.runTask(ctx.plugin(), player, () -> {
-                            String message = ctx.languageManager().getCoreMessage(player, "guild.relation.error", "&cAn error occurred while managing relations!");
-                            player.sendMessage(ColorUtils.colorize(message));
-                        });
+                        SubCommandErrors.logAndNotifyPlayer(ctx.plugin(), ctx.languageManager(), player,
+                                "relation", e, "guild.relation.error",
+                                "&cAn error occurred while managing relations!");
                     }
                 });
 
