@@ -10,18 +10,14 @@ import com.guild.models.GuildRelation;
 import com.guild.models.GuildEconomy;
 import com.guild.models.GuildContribution;
 import com.guild.models.GuildLog;
-import com.guild.services.repository.GuildMemberRepository;
-import com.guild.services.repository.GuildRelationRepository;
-import com.guild.services.repository.GuildRepository;
+import com.guild.services.repository.GuildRepositories;
 import com.guild.util.NotifyUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import com.guild.core.time.TimeProvider;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -37,22 +33,21 @@ import com.guild.sdk.GuildPluginAPI;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
+/**
+ * 公会业务门面：编排鉴权、事件、日志与通知，数据访问委托 {@link GuildRepositories}。
+ */
 public class GuildService {
     
     private final GuildPlugin plugin;
     private final DatabaseManager databaseManager;
-    private final GuildMemberRepository memberRepository;
-    private final GuildRepository guildRepository;
-    private final GuildRelationRepository relationRepository;
+    private final GuildRepositories repos;
     private final Logger logger;
     
     public GuildService(GuildPlugin plugin) {
         this.plugin = plugin;
         this.databaseManager = plugin.getDatabaseManager();
         this.logger = plugin.getLogger();
-        this.memberRepository = new GuildMemberRepository(databaseManager, logger);
-        this.guildRepository = new GuildRepository(databaseManager, logger);
-        this.relationRepository = new GuildRelationRepository(databaseManager, logger);
+        this.repos = new GuildRepositories(databaseManager, logger);
     }
 
     // ==================== 模块事件分发辅助 ====================
@@ -131,7 +126,7 @@ public class GuildService {
                     return CompletableFuture.completedFuture(false);
                 }
                 
-                return guildRepository.insertAsync(name, tag, description, leaderUuid, leaderName,
+                return repos.guilds().insertAsync(name, tag, description, leaderUuid, leaderName,
                         nowString(), nowString()).thenApply(guildId -> {
                     if (guildId > 0) {
                         QuietLog.system("Guild created successfully: " + name + " (ID: " + guildId + ")");
@@ -192,12 +187,12 @@ public class GuildService {
                         
                         // 删除公会成员
                         try (Connection conn = databaseManager.getConnection()) {
-                            memberRepository.deleteAllByGuildId(conn, guildId);
+                            repos.members().deleteAllByGuildId(conn, guildId);
                         }
 
                         deleteWarehouseData(guildId);
 
-                        if (guildRepository.deleteById(guildId)) {
+                        if (repos.guilds().deleteById(guildId)) {
                             QuietLog.system("Guild deleted successfully: " + guild.getName() + " (ID: " + guildId + ")");
 
                             // 退款给会长（如果经济系统可用）
@@ -275,12 +270,12 @@ public class GuildService {
                     
                     // 删除所有公会成员
                     try (Connection conn = databaseManager.getConnection()) {
-                        memberRepository.deleteAllByGuildId(conn, guildId);
+                        repos.members().deleteAllByGuildId(conn, guildId);
                     }
 
                     deleteWarehouseData(guildId);
 
-                    if (guildRepository.deleteById(guildId)) {
+                    if (repos.guilds().deleteById(guildId)) {
                         QuietLog.system("Admin force-deleted guild: " + guild.getName() + " (ID: " + guildId + ", by: " + adminUuid + ")");
 
                         // 退款给会长（如果经济系统可用）— 注意：退款给会长而非管理员
@@ -349,7 +344,7 @@ public class GuildService {
                         }
                         
                         return CompletableFuture.supplyAsync(() -> {
-                            if (guildRepository.updateInfo(guildId, name, tag, description, nowString())) {
+                            if (repos.guilds().updateInfo(guildId, name, tag, description, nowString())) {
                                 QuietLog.system("Guild info updated successfully: " + guild.getName() + " (ID: " + guildId + ")");
                                 return true;
                             }
@@ -405,7 +400,7 @@ public class GuildService {
                     DebugLog.info(logger, "[AddMember-Debug] Capacity OK (" + memberCount + "/" + effectiveMax + "), preparing database insert");
                     
                     return CompletableFuture.supplyAsync(() -> {
-                        if (memberRepository.insert(guildId, playerUuid, playerName, role, nowString())) {
+                        if (repos.members().insert(guildId, playerUuid, playerName, role, nowString())) {
                                 DebugLog.info(logger, "[AddMember-Debug] Player " + playerName + " successfully joined guild (ID: " + guildId + ")");
                                 refreshPlayerPermissions(playerUuid);
                                 logGuildActionAsync(guildId, targetGuild.getName(), playerUuid.toString(), playerName,
@@ -461,7 +456,7 @@ public class GuildService {
                 }
                 
                 return CompletableFuture.supplyAsync(() -> {
-                    if (memberRepository.deleteByPlayerUuid(playerUuid)) {
+                    if (repos.members().deleteByPlayerUuid(playerUuid)) {
                                 QuietLog.system("Player " + member.getPlayerName() + " left guild (ID: " + member.getGuildId() + ")");
                                 refreshPlayerPermissions(playerUuid);
                                 getGuildByIdAsync(member.getGuildId()).thenAccept(guild -> {
@@ -536,7 +531,7 @@ public class GuildService {
                 int guildId = member.getGuildId();
 
                 return CompletableFuture.supplyAsync(() -> {
-                    if (memberRepository.updateRole(playerUuid, guildId, newRole)) {
+                    if (repos.members().updateRole(playerUuid, guildId, newRole)) {
                                 QuietLog.system("Player " + member.getPlayerName() + " role updated to: " + newRole.name());
                                 refreshPlayerPermissions(playerUuid);
                                 getGuildByIdAsync(guildId).thenAccept(guild -> {
@@ -587,7 +582,7 @@ public class GuildService {
                 return CompletableFuture.completedFuture(false);
             }
             return CompletableFuture.supplyAsync(() -> {
-                if (memberRepository.deleteByPlayerUuid(playerUuid)) {
+                if (repos.members().deleteByPlayerUuid(playerUuid)) {
                             refreshPlayerPermissions(playerUuid);
                             getGuildByIdAsync(guildId).thenAccept(guild -> {
                                 if (guild != null) {
@@ -620,7 +615,7 @@ public class GuildService {
             }
             String oldRole = member.getRole().name();
             return CompletableFuture.supplyAsync(() -> {
-                if (memberRepository.updateRoleByPlayerUuid(playerUuid, newRole)) {
+                if (repos.members().updateRoleByPlayerUuid(playerUuid, newRole)) {
                             refreshPlayerPermissions(playerUuid);
                             getGuildByIdAsync(guildId).thenAccept(guild -> {
                                 if (guild != null) {
@@ -670,15 +665,15 @@ public class GuildService {
                         conn.setAutoCommit(false);
                         try {
                             // 1. 更新 guilds 表新会长
-                            int guildUpdated = guildRepository.updateLeader(conn, guildId, newLeaderUuid, resolvedName);
+                            int guildUpdated = repos.guilds().updateLeader(conn, guildId, newLeaderUuid, resolvedName);
                             if (guildUpdated <= 0) {
                                 conn.rollback();
                                 return false;
                             }
                             // 2. 原会长降级为成员
-                            memberRepository.demoteLeaderToMember(conn, guildId, oldLeaderUuid);
+                            repos.members().demoteLeaderToMember(conn, guildId, oldLeaderUuid);
                             // 3. 新会长升级
-                            int newLeaderUpdated = memberRepository.promoteMemberToLeader(conn, guildId, newLeaderUuid);
+                            int newLeaderUpdated = repos.members().promoteMemberToLeader(conn, guildId, newLeaderUuid);
                             if (newLeaderUpdated <= 0) {
                                 conn.rollback();
                                 return false;
@@ -733,7 +728,7 @@ public class GuildService {
      * 获取玩家公会 (异步)
      */
     public CompletableFuture<Guild> getPlayerGuildAsync(UUID playerUuid) {
-        return guildRepository.findByPlayerUuidAsync(playerUuid);
+        return repos.guilds().findByPlayerUuidAsync(playerUuid);
     }
     
     /**
@@ -761,7 +756,7 @@ public class GuildService {
      * 获取公会成员 (异步)
      */
     public CompletableFuture<GuildMember> getGuildMemberAsync(UUID playerUuid) {
-        return memberRepository.findByPlayerUuidAsync(playerUuid);
+        return repos.members().findByPlayerUuidAsync(playerUuid);
     }
     
     /**
@@ -788,7 +783,7 @@ public class GuildService {
      * 获取公会成员数量 (异步)
      */
     public CompletableFuture<Integer> getGuildMemberCountAsync(int guildId) {
-        return memberRepository.countByGuildIdAsync(guildId);
+        return repos.members().countByGuildIdAsync(guildId);
     }
     
     /**
@@ -807,7 +802,7 @@ public class GuildService {
      * 获取公会所有成员 (异步)
      */
     public CompletableFuture<List<GuildMember>> getGuildMembersAsync(int guildId) {
-        return memberRepository.findAllByGuildIdAsync(guildId);
+        return repos.members().findAllByGuildIdAsync(guildId);
     }
     
     /**
@@ -826,7 +821,7 @@ public class GuildService {
      * 根据ID获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByIdAsync(int guildId) {
-        return guildRepository.findByIdAsync(guildId);
+        return repos.guilds().findByIdAsync(guildId);
     }
     
     /**
@@ -845,7 +840,7 @@ public class GuildService {
      * 根据名称获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByNameAsync(String name) {
-        return guildRepository.findByNameAsync(name);
+        return repos.guilds().findByNameAsync(name);
     }
     
     /**
@@ -864,7 +859,7 @@ public class GuildService {
      * 根据标签获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByTagAsync(String tag) {
-        return guildRepository.findByTagAsync(tag);
+        return repos.guilds().findByTagAsync(tag);
     }
     
     /**
@@ -883,7 +878,7 @@ public class GuildService {
      * 获取所有公会 (异步)
      */
     public CompletableFuture<List<Guild>> getAllGuildsAsync() {
-        return guildRepository.findAllAsync();
+        return repos.guilds().findAllAsync();
     }
     
     /**
@@ -931,80 +926,28 @@ public class GuildService {
     }
     
     /**
-     * 解析时间戳
-     */
-    private java.time.LocalDateTime parseTimestamp(ResultSet rs, String columnName) throws SQLException {
-        // 优先以字符串按统一格式解析，避免驱动按时区转换导致偏差
-        String s = rs.getString(columnName);
-        if (s != null && !s.isEmpty()) {
-            try {
-                return LocalDateTime.parse(s, com.guild.core.time.TimeProvider.FULL_FORMATTER);
-            } catch (Exception ignore) {
-                try {
-                    return LocalDateTime.parse(s.replace(" ", "T"));
-                } catch (Exception ex) {
-                    logger.warning("Failed to parse timestamp: " + s);
-                }
-            }
-        }
-        // 回退：使用驱动时间戳
-        try {
-            Timestamp ts = rs.getTimestamp(columnName);
-            if (ts != null) return ts.toLocalDateTime();
-        } catch (SQLException ignore) {}
-        return LocalDateTime.now();
-    }
-
-    
-    
-    /**
      * 提交申请 (异步)
      */
     public CompletableFuture<Boolean> submitApplicationAsync(int guildId, UUID playerUuid, String playerName, String message) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                // 检查是否已有待处理的申请
-                if (hasPendingApplication(playerUuid, guildId)) {
-                    return false;
-                }
-                
-                String sql = "INSERT INTO guild_applications (guild_id, player_uuid, player_name, message, status, created_at) VALUES (?, ?, ?, ?, ?, ?)";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, guildId);
-                    stmt.setString(2, playerUuid.toString());
-                    stmt.setString(3, playerName);
-                    stmt.setString(4, message);
-                    stmt.setString(5, GuildApplication.ApplicationStatus.PENDING.name());
-                    stmt.setString(6, nowString());
-                    
-                    int affectedRows = stmt.executeUpdate();
-                    if (affectedRows > 0) {
-                        QuietLog.system("Player " + playerName + " submitted a join application (guild ID: " + guildId + ")");
-                        
-                        // 记录申请提交日志
-                        getGuildByIdAsync(guildId).thenAccept(guild -> {
-                            if (guild != null) {
-                                logGuildActionAsync(guildId, guild.getName(), playerUuid.toString(), playerName,
-                                    GuildLog.LogType.APPLICATION_SUBMITTED, "申请提交", "申请消息: " + message);
-                                
-                                // 创建申请对象用于通知
-                                GuildApplication application = new GuildApplication(guildId, playerUuid, playerName, message);
-                                
-                                // 实时通知公会会长
-                                NotifyUtils.notifyLeaderNewApplication(plugin, guild, application);
-                            }
-                        });
-                        
-                        return true;
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error submitting application: " + e.getMessage());
+        return repos.applications().hasPendingAsync(playerUuid, guildId).thenCompose(hasPending -> {
+            if (hasPending) {
+                return CompletableFuture.completedFuture(false);
             }
-            return false;
+            return repos.applications().insertAsync(guildId, playerUuid, playerName, message,
+                    GuildApplication.ApplicationStatus.PENDING, nowString()).thenApply(inserted -> {
+                if (inserted) {
+                    QuietLog.system("Player " + playerName + " submitted a join application (guild ID: " + guildId + ")");
+                    getGuildByIdAsync(guildId).thenAccept(guild -> {
+                        if (guild != null) {
+                            logGuildActionAsync(guildId, guild.getName(), playerUuid.toString(), playerName,
+                                    GuildLog.LogType.APPLICATION_SUBMITTED, "申请提交", "申请消息: " + message);
+                            GuildApplication application = new GuildApplication(guildId, playerUuid, playerName, message);
+                            NotifyUtils.notifyLeaderNewApplication(plugin, guild, application);
+                        }
+                    });
+                }
+                return inserted;
+            });
         });
     }
     
@@ -1059,41 +1002,22 @@ public class GuildService {
      */
     private CompletableFuture<Boolean> doProcessApplication(int applicationId, GuildApplication application,
             GuildApplication.ApplicationStatus status, GuildMember processor, UUID processorUuid) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "UPDATE guild_applications SET status = ? WHERE id = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setString(1, status.name());
-                    stmt.setInt(2, applicationId);
-                    
-                    int affectedRows = stmt.executeUpdate();
-                    if (affectedRows > 0) {
-                        QuietLog.system("Application processed: " + application.getPlayerName() + " -> " + status.name());
-                        
-                        // 记录申请处理日志
-                        getGuildByIdAsync(application.getGuildId()).thenAccept(guild -> {
-                            if (guild != null) {
-                                GuildLog.LogType logType = status == GuildApplication.ApplicationStatus.APPROVED ? 
-                                    GuildLog.LogType.APPLICATION_ACCEPTED : GuildLog.LogType.APPLICATION_REJECTED;
-                                String description = status == GuildApplication.ApplicationStatus.APPROVED ? "申请接受" : "申请拒绝";
-                                String details = "申请人: " + application.getPlayerName() + ", 处理者: " + processor.getPlayerName();
-                                
-                                logGuildActionAsync(application.getGuildId(), guild.getName(), 
-                                    processorUuid.toString(), processor.getPlayerName(),
-                                    logType, description, details);
-                            }
-                        });
-                        
-                        return true;
+        return repos.applications().updateStatusAsync(applicationId, status).thenApply(updated -> {
+            if (updated) {
+                QuietLog.system("Application processed: " + application.getPlayerName() + " -> " + status.name());
+                getGuildByIdAsync(application.getGuildId()).thenAccept(guild -> {
+                    if (guild != null) {
+                        GuildLog.LogType logType = status == GuildApplication.ApplicationStatus.APPROVED ?
+                                GuildLog.LogType.APPLICATION_ACCEPTED : GuildLog.LogType.APPLICATION_REJECTED;
+                        String description = status == GuildApplication.ApplicationStatus.APPROVED ? "申请接受" : "申请拒绝";
+                        String details = "申请人: " + application.getPlayerName() + ", 处理者: " + processor.getPlayerName();
+                        logGuildActionAsync(application.getGuildId(), guild.getName(),
+                                processorUuid.toString(), processor.getPlayerName(),
+                                logType, description, details);
                     }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error processing application: " + e.getMessage());
+                });
             }
-            return false;
+            return updated;
         }).thenCompose(success -> {
             if (success && status == GuildApplication.ApplicationStatus.APPROVED) {
                 // 如果申请被通过，自动添加成员（addGuildMemberAsync 内部有二次容量校验）
@@ -1120,28 +1044,7 @@ public class GuildService {
      * 检查是否有待处理的申请 (异步)
      */
     public CompletableFuture<Boolean> hasPendingApplicationAsync(UUID playerUuid, int guildId) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "SELECT COUNT(*) FROM guild_applications WHERE player_uuid = ? AND guild_id = ? AND status = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setString(1, playerUuid.toString());
-                    stmt.setInt(2, guildId);
-                    stmt.setString(3, GuildApplication.ApplicationStatus.PENDING.name());
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            return rs.getInt(1) > 0;
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error checking pending applications: " + e.getMessage());
-            }
-            return false;
-        });
+        return repos.applications().hasPendingAsync(playerUuid, guildId);
     }
     
     /**
@@ -1160,27 +1063,7 @@ public class GuildService {
      * 获取公会申请列表 (异步)
      */
     public CompletableFuture<List<GuildApplication>> getGuildApplicationsAsync(int guildId) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<GuildApplication> applications = new ArrayList<>();
-            try {
-                String sql = "SELECT * FROM guild_applications WHERE guild_id = ? ORDER BY created_at DESC";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, guildId);
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            applications.add(createGuildApplicationFromResultSet(rs));
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching guild application list: " + e.getMessage());
-            }
-            return applications;
-        });
+        return repos.applications().findAllByGuildIdAsync(guildId);
     }
     
     /**
@@ -1199,27 +1082,7 @@ public class GuildService {
      * 获取玩家申请列表 (异步)
      */
     public CompletableFuture<List<GuildApplication>> getPlayerApplicationsAsync(UUID playerUuid) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<GuildApplication> applications = new ArrayList<>();
-            try {
-                String sql = "SELECT * FROM guild_applications WHERE player_uuid = ? ORDER BY created_at DESC";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setString(1, playerUuid.toString());
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            applications.add(createGuildApplicationFromResultSet(rs));
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching player application list: " + e.getMessage());
-            }
-            return applications;
-        });
+        return repos.applications().findAllByPlayerUuidAsync(playerUuid);
     }
     
     /**
@@ -1238,26 +1101,7 @@ public class GuildService {
      * 根据ID获取申请 (异步)
      */
     public CompletableFuture<GuildApplication> getApplicationByIdAsync(int applicationId) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "SELECT * FROM guild_applications WHERE id = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, applicationId);
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            return createGuildApplicationFromResultSet(rs);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching application by ID: " + e.getMessage());
-            }
-            return null;
-        });
+        return repos.applications().findByIdAsync(applicationId);
     }
     
     /**
@@ -1272,22 +1116,6 @@ public class GuildService {
         }
     }
     
-        /**
-     * 从ResultSet创建GuildApplication对象
-     */
-    private GuildApplication createGuildApplicationFromResultSet(ResultSet rs) throws SQLException {
-        GuildApplication application = new GuildApplication();
-        application.setId(rs.getInt("id"));
-        application.setGuildId(rs.getInt("guild_id"));
-        application.setPlayerUuid(UUID.fromString(rs.getString("player_uuid")));
-        application.setPlayerName(rs.getString("player_name"));
-        application.setMessage(rs.getString("message"));
-                 application.setStatus(GuildApplication.ApplicationStatus.valueOf(rs.getString("status")));
-         application.setCreatedAt(parseTimestamp(rs, "created_at"));
-         
-         return application;
-     }
-     
      /**
       * 设置公会家 (异步)
       */
@@ -1304,7 +1132,7 @@ public class GuildService {
                  }
                  
                  return CompletableFuture.supplyAsync(() -> {
-                     if (guildRepository.updateHome(guildId, location.getWorld().getName(),
+                     if (repos.guilds().updateHome(guildId, location.getWorld().getName(),
                              location.getX(), location.getY(), location.getZ(),
                              location.getYaw(), location.getPitch(), nowString())) {
                          QuietLog.system("Guild home set successfully: " + guild.getName() + " (ID: " + guildId + ")");
@@ -1375,36 +1203,12 @@ public class GuildService {
                      return CompletableFuture.completedFuture(false);
                  }
                  
-                 return CompletableFuture.supplyAsync(() -> {
-                     try {
-                         String sql = "INSERT INTO guild_invites (guild_id, player_uuid, player_name, inviter_uuid, inviter_name, status, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                         
-                         try (Connection conn = databaseManager.getConnection();
-                              PreparedStatement stmt = conn.prepareStatement(sql)) {
-                         
-                             stmt.setInt(1, guildId);
-                             stmt.setString(2, targetUuid.toString());
-                             stmt.setString(3, targetName);
-                             stmt.setString(4, inviterUuid.toString());
-                             stmt.setString(5, inviterName);
-                             stmt.setString(6, "PENDING");
-                             stmt.setString(7, plusMinutesString(30));
-                             stmt.setString(8, nowString());
-                         
-                             int affectedRows = stmt.executeUpdate();
-                             if (affectedRows > 0) {
-                                 QuietLog.system("Invitation sent successfully: " + inviterName + " -> " + targetName + " (guild ID: " + guildId + ")");
-                                 return true;
-                             }
-                         }
-                     } catch (SQLException e) {
-                         logger.severe("Error sending invitation: " + e.getMessage());
-                     }
-                     return false;
-                 }).thenCompose(ok -> {
+                 return repos.invitations().insertAsync(guildId, targetUuid, targetName, inviterUuid, inviterName,
+                         "PENDING", plusMinutesString(30), nowString()).thenCompose(ok -> {
                      if (!Boolean.TRUE.equals(ok)) {
                          return CompletableFuture.completedFuture(false);
                      }
+                     QuietLog.system("Invitation sent successfully: " + inviterName + " -> " + targetName + " (guild ID: " + guildId + ")");
                      return getGuildByIdAsync(guildId).thenCompose(g -> {
                          String guildName = g != null ? g.getName() : ("#" + guildId);
                          return logGuildActionAsync(guildId, guildName,
@@ -1469,32 +1273,14 @@ public class GuildService {
      * 执行邀请处理的数据库操作（内部方法）
      */
     private CompletableFuture<Boolean> doProcessInvitation(GuildInvitation invitation, boolean accept) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String status = accept ? "ACCEPTED" : "DECLINED";
-                String sql = "UPDATE guild_invites SET status = ? WHERE id = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setString(1, status);
-                    stmt.setInt(2, invitation.getId());
-                    
-                    DebugLog.info(logger, "[Process-Debug] Executing update: status=" + status + ", id=" + invitation.getId());
-                    
-                    int affectedRows = stmt.executeUpdate();
-                    if (affectedRows > 0) {
-                        DebugLog.info(logger, "[Process-Debug] Invitation status updated: " + invitation.getTargetUuid() + " -> " + status);
-                        return true;
-                    } else {
-                        logger.warning("[Process-Debug] Invitation status update failed, no rows affected: id=" + invitation.getId());
-                    }
-                    return false;
-                }
-            } catch (SQLException e) {
-                logger.severe("[Process-Debug] Error processing invitation: " + e.getMessage());
+        String status = accept ? "ACCEPTED" : "DECLINED";
+        return repos.invitations().updateStatusAsync(invitation.getId(), status).thenApply(updated -> {
+            if (updated) {
+                DebugLog.info(logger, "[Process-Debug] Invitation status updated: " + invitation.getTargetUuid() + " -> " + status);
+            } else {
+                logger.warning("[Process-Debug] Invitation status update failed, no rows affected: id=" + invitation.getId());
             }
-            return false;
+            return updated;
         }).thenCompose(success -> {
             if (!Boolean.TRUE.equals(success)) {
                 return CompletableFuture.completedFuture(false);
@@ -1551,28 +1337,7 @@ public class GuildService {
       * 获取待处理邀请 (异步)
       */
      public CompletableFuture<GuildInvitation> getPendingInvitationAsync(UUID targetUuid, UUID inviterUuid) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "SELECT * FROM guild_invites WHERE player_uuid = ? AND inviter_uuid = ? AND status = 'PENDING' AND expires_at > ? ORDER BY created_at DESC LIMIT 1";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                 
-                     stmt.setString(1, targetUuid.toString());
-                     stmt.setString(2, inviterUuid.toString());
-                     stmt.setString(3, nowString());
-                 
-                     try (ResultSet rs = stmt.executeQuery()) {
-                         if (rs.next()) {
-                             return createGuildInvitationFromResultSet(rs);
-                         }
-                     }
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error fetching pending invitations: " + e.getMessage());
-             }
-             return null;
-         });
+         return repos.invitations().findPendingByTargetAndInviterAsync(targetUuid, inviterUuid, nowString());
      }
      
      /**
@@ -1591,34 +1356,7 @@ public class GuildService {
       * 获取玩家的待处理邀请 (异步)
       */
     public CompletableFuture<GuildInvitation> getPendingInvitationAsync(UUID targetUuid, int guildId) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "SELECT * FROM guild_invites WHERE player_uuid = ? AND guild_id = ? AND status = 'PENDING' AND expires_at > ? ORDER BY created_at DESC LIMIT 1";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                
-                    stmt.setString(1, targetUuid.toString());
-                    stmt.setInt(2, guildId);
-                    stmt.setString(3, nowString());
-                    
-                    DebugLog.info(logger, "[Invite-Debug] Querying invitation: player=" + targetUuid + ", guildId=" + guildId + ", now=" + nowString());
-                
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            GuildInvitation invitation = createGuildInvitationFromResultSet(rs);
-                            DebugLog.info(logger, "[Invite-Debug] Found invitation: id=" + invitation.getId() + ", status=" + invitation.getStatus() + ", expires=" + invitation.getExpiresAt());
-                            return invitation;
-                        } else {
-                            DebugLog.info(logger, "[Invite-Debug] No invitation found, checking expiry: " + nowString());
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching invitation: " + e.getMessage());
-            }
-            return null;
-        });
+        return repos.invitations().findPendingByTargetAndGuildAsync(targetUuid, guildId, nowString());
     }
      
      /**
@@ -1634,102 +1372,24 @@ public class GuildService {
      }
      
      /**
-      * 从ResultSet创建GuildInvitation对象
-      */
-     private GuildInvitation createGuildInvitationFromResultSet(ResultSet rs) throws SQLException {
-         GuildInvitation invitation = new GuildInvitation();
-         invitation.setId(rs.getInt("id"));
-         invitation.setGuildId(rs.getInt("guild_id"));
-         invitation.setTargetUuid(UUID.fromString(rs.getString("player_uuid")));
-         invitation.setTargetName(rs.getString("player_name"));
-         invitation.setInviterUuid(UUID.fromString(rs.getString("inviter_uuid")));
-         invitation.setInviterName(rs.getString("inviter_name"));
-         invitation.setStatus(GuildInvitation.InvitationStatus.valueOf(rs.getString("status")));
-         invitation.setInvitedAt(parseTimestamp(rs, "created_at"));
-         invitation.setExpiresAt(parseTimestamp(rs, "expires_at"));
-         return invitation;
-     }
-     
-     /**
       * 获取待处理申请 (异步)
       */
      public CompletableFuture<List<GuildApplication>> getPendingApplicationsAsync(int guildId) {
-         return CompletableFuture.supplyAsync(() -> {
-             List<GuildApplication> applications = new ArrayList<>();
-             try {
-                 String sql = "SELECT * FROM guild_applications WHERE guild_id = ? AND status = 'PENDING' ORDER BY created_at DESC";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setInt(1, guildId);
-                     
-                     try (ResultSet rs = stmt.executeQuery()) {
-                         while (rs.next()) {
-                             applications.add(createGuildApplicationFromResultSet(rs));
-                         }
-                     }
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error fetching pending applications: " + e.getMessage());
-             }
-             return applications;
-         });
+         return repos.applications().findPendingByGuildIdAsync(guildId);
      }
      
      /**
       * 获取申请历史 (异步)
       */
      public CompletableFuture<List<GuildApplication>> getApplicationHistoryAsync(int guildId) {
-         return CompletableFuture.supplyAsync(() -> {
-             List<GuildApplication> applications = new ArrayList<>();
-             try {
-                 String sql = "SELECT * FROM guild_applications WHERE guild_id = ? AND status != 'PENDING' ORDER BY created_at DESC";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setInt(1, guildId);
-                     
-                     try (ResultSet rs = stmt.executeQuery()) {
-                         while (rs.next()) {
-                             applications.add(createGuildApplicationFromResultSet(rs));
-                         }
-                     }
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error fetching application history: " + e.getMessage());
-             }
-            return applications;
-        });
-    }
+         return repos.applications().findHistoryByGuildIdAsync(guildId);
+     }
     
     /**
      * 获取玩家所有待处理的邀请 (异步)
      */
     public CompletableFuture<List<GuildInvitation>> getPendingInvitationsAsync(UUID playerUuid) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<GuildInvitation> invitations = new ArrayList<>();
-            try {
-                String sql = "SELECT * FROM guild_invites WHERE player_uuid = ? AND status = 'PENDING' AND expires_at > ? ORDER BY created_at DESC";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setString(1, playerUuid.toString());
-                    stmt.setString(2, nowString());
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            invitations.add(createGuildInvitationFromResultSet(rs));
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching pending invitations: " + e.getMessage());
-            }
-            return invitations;
-        });
+        return repos.invitations().findAllPendingByPlayerAsync(playerUuid, nowString());
     }
     
     /**
@@ -1737,25 +1397,11 @@ public class GuildService {
      * 建议定时调用，避免数据库中积累过多过期邀请
      */
     public CompletableFuture<Integer> cleanupExpiredInvitationsAsync() {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "UPDATE guild_invites SET status = 'EXPIRED' WHERE status = 'PENDING' AND expires_at < ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setString(1, nowString());
-                    
-                    int affectedRows = stmt.executeUpdate();
-                    if (affectedRows > 0) {
-                        QuietLog.system("Cleaned up " + affectedRows + " expired guild invitations");
-                    }
-                    return affectedRows;
-                }
-            } catch (SQLException e) {
-                logger.severe("Error cleaning up expired invitations: " + e.getMessage());
+        return repos.invitations().markExpiredBeforeAsync(nowString()).thenApply(affectedRows -> {
+            if (affectedRows > 0) {
+                QuietLog.system("Cleaned up " + affectedRows + " expired guild invitations");
             }
-            return 0;
+            return affectedRows;
         });
     }
     
@@ -1764,25 +1410,11 @@ public class GuildService {
      * @param days 保留天数，超过此天数的已处理邀请（ACCEPTED/DECLINED/EXPIRED）将被删除
      */
     public CompletableFuture<Integer> cleanupOldProcessedInvitationsAsync(int days) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "DELETE FROM guild_invites WHERE status != 'PENDING' AND created_at < DATE_SUB(NOW(), INTERVAL ? DAY)";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, days);
-                    
-                    int affectedRows = stmt.executeUpdate();
-                    if (affectedRows > 0) {
-                        QuietLog.system("Cleaned up " + affectedRows + " old processed invitation records");
-                    }
-                    return affectedRows;
-                }
-            } catch (SQLException e) {
-                logger.severe("Error cleaning up old invitation records: " + e.getMessage());
+        return repos.invitations().deleteOldProcessedAsync(days).thenApply(affectedRows -> {
+            if (affectedRows > 0) {
+                QuietLog.system("Cleaned up " + affectedRows + " old processed invitation records");
             }
-            return 0;
+            return affectedRows;
         });
     }
     
@@ -1790,14 +1422,14 @@ public class GuildService {
      * 获取公会成员 (异步) - 重载方法，接受guildId参数
      */
     public CompletableFuture<GuildMember> getGuildMemberAsync(int guildId, UUID playerUuid) {
-         return memberRepository.findByGuildAndPlayerUuidAsync(guildId, playerUuid);
+         return repos.members().findByGuildAndPlayerUuidAsync(guildId, playerUuid);
      }
      
      /**
       * 更新公会描述 (异步)
       */
      public CompletableFuture<Boolean> updateGuildDescriptionAsync(int guildId, String description) {
-         return CompletableFuture.supplyAsync(() -> guildRepository.updateDescription(guildId, description));
+         return CompletableFuture.supplyAsync(() -> repos.guilds().updateDescription(guildId, description));
      }
      
      // ==================== 公会关系系统 ====================
@@ -1807,7 +1439,7 @@ public class GuildService {
       */
      public CompletableFuture<Boolean> createGuildRelationAsync(int guild1Id, int guild2Id, String guild1Name, String guild2Name,
                                                               GuildRelation.RelationType type, UUID initiatorUuid, String initiatorName) {
-         return relationRepository.insertAsync(guild1Id, guild2Id, guild1Name, guild2Name, type,
+         return repos.relations().insertAsync(guild1Id, guild2Id, guild1Name, guild2Name, type,
                  initiatorUuid, initiatorName, plusDaysString(7)).thenCompose(ok -> {
              if (!Boolean.TRUE.equals(ok)) {
                  return CompletableFuture.completedFuture(false);
@@ -1832,7 +1464,7 @@ public class GuildService {
              if (relation == null) {
                  return CompletableFuture.completedFuture(false);
              }
-             return relationRepository.updateStatusAsync(relationId, status, nowString()).thenCompose(ok -> {
+             return repos.relations().updateStatusAsync(relationId, status, nowString()).thenCompose(ok -> {
                  if (!Boolean.TRUE.equals(ok)) {
                      return CompletableFuture.completedFuture(false);
                  }
@@ -1858,21 +1490,21 @@ public class GuildService {
       * 获取公会关系 (异步)
       */
      public CompletableFuture<GuildRelation> getGuildRelationAsync(int guild1Id, int guild2Id) {
-         return relationRepository.findByGuildPairAsync(guild1Id, guild2Id);
+         return repos.relations().findByGuildPairAsync(guild1Id, guild2Id);
      }
      
      /**
       * 获取公会的所有关系 (异步)
       */
      public CompletableFuture<List<GuildRelation>> getGuildRelationsAsync(int guildId) {
-         return relationRepository.findAllByGuildIdAsync(guildId);
+         return repos.relations().findAllByGuildIdAsync(guildId);
      }
      
      /**
       * 按 ID 获取公会关系 (异步)
       */
      public CompletableFuture<GuildRelation> getGuildRelationByIdAsync(int relationId) {
-         return relationRepository.findByIdAsync(relationId);
+         return repos.relations().findByIdAsync(relationId);
      }
 
      /**
@@ -1883,7 +1515,7 @@ public class GuildService {
              if (relation == null) {
                  return CompletableFuture.completedFuture(false);
              }
-             return relationRepository.deleteByIdAsync(relationId).thenCompose(ok -> {
+             return repos.relations().deleteByIdAsync(relationId).thenCompose(ok -> {
                  if (!Boolean.TRUE.equals(ok)) {
                      return CompletableFuture.completedFuture(false);
                  }
@@ -1908,79 +1540,21 @@ public class GuildService {
       * 初始化公会经济 (异步)
       */
      public CompletableFuture<Boolean> initializeGuildEconomyAsync(int guildId) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "INSERT INTO guild_economy (guild_id, balance, level, experience, max_experience, max_members) " +
-                             "VALUES (?, 0.0, 1, 0.0, 5000.0, 6)";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setInt(1, guildId);
-                     
-                     int rowsAffected = stmt.executeUpdate();
-                     return rowsAffected > 0;
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error initializing guild economy: " + e.getMessage());
-                 return false;
-             }
-         });
+         return repos.economy().insertAsync(guildId);
      }
      
      /**
       * 获取公会经济信息 (异步)
       */
      public CompletableFuture<GuildEconomy> getGuildEconomyAsync(int guildId) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "SELECT * FROM guild_economy WHERE guild_id = ?";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setInt(1, guildId);
-                     
-                     try (ResultSet rs = stmt.executeQuery()) {
-                         if (rs.next()) {
-                             return createGuildEconomyFromResultSet(rs);
-                         }
-                     }
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error fetching guild economy info: " + e.getMessage());
-             }
-             return null;
-         });
+         return repos.economy().findByGuildIdAsync(guildId);
      }
      
      /**
       * 更新公会经济 (异步)
       */
      public CompletableFuture<Boolean> updateGuildEconomyAsync(int guildId, double balance, int level, double experience, double maxExperience, int maxMembers) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "UPDATE guild_economy SET balance = ?, level = ?, experience = ?, max_experience = ?, max_members = ?, last_updated = ? WHERE guild_id = ?";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                 
-                     stmt.setDouble(1, balance);
-                     stmt.setInt(2, level);
-                     stmt.setDouble(3, experience);
-                     stmt.setDouble(4, maxExperience);
-                     stmt.setInt(5, maxMembers);
-                     stmt.setString(6, nowString());
-                     stmt.setInt(7, guildId);
-                 
-                     int rowsAffected = stmt.executeUpdate();
-                     return rowsAffected > 0;
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error updating guild economy: " + e.getMessage());
-                 return false;
-             }
-         });
+         return repos.economy().updateAsync(guildId, balance, level, experience, maxExperience, maxMembers, nowString());
      }
      
      /**
@@ -1988,118 +1562,29 @@ public class GuildService {
       */
      public CompletableFuture<Boolean> addGuildContributionAsync(int guildId, UUID playerUuid, String playerName,
                                                                double amount, GuildContribution.ContributionType type, String description) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "INSERT INTO guild_contributions (guild_id, player_uuid, player_name, amount, contribution_type, description) " +
-                             "VALUES (?, ?, ?, ?, ?, ?)";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setInt(1, guildId);
-                     stmt.setString(2, playerUuid.toString());
-                     stmt.setString(3, playerName);
-                     stmt.setDouble(4, amount);
-                     stmt.setString(5, type.name());
-                     stmt.setString(6, description);
-                     
-                     int rowsAffected = stmt.executeUpdate();
-                     return rowsAffected > 0;
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error adding guild contribution record: " + e.getMessage());
-                 return false;
-             }
-         });
+         return repos.contributions().insertAsync(guildId, playerUuid, playerName, amount, type, description);
      }
      
      /**
       * 获取公会贡献记录 (异步)
       */
      public CompletableFuture<List<GuildContribution>> getGuildContributionsAsync(int guildId) {
-         return CompletableFuture.supplyAsync(() -> {
-             List<GuildContribution> contributions = new ArrayList<>();
-             try {
-                 String sql = "SELECT * FROM guild_contributions WHERE guild_id = ? ORDER BY created_at DESC";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setInt(1, guildId);
-                     
-                     try (ResultSet rs = stmt.executeQuery()) {
-                         while (rs.next()) {
-                             contributions.add(createGuildContributionFromResultSet(rs));
-                         }
-                     }
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error fetching guild contribution records: " + e.getMessage());
-             }
-             return contributions;
-         });
+         return repos.contributions().findAllByGuildIdAsync(guildId);
      }
      
      /**
       * 获取玩家贡献记录 (异步)
       */
      public CompletableFuture<List<GuildContribution>> getPlayerContributionsAsync(UUID playerUuid) {
-         return CompletableFuture.supplyAsync(() -> {
-             List<GuildContribution> contributions = new ArrayList<>();
-             try {
-                 String sql = "SELECT * FROM guild_contributions WHERE player_uuid = ? ORDER BY created_at DESC";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setString(1, playerUuid.toString());
-                     
-                     try (ResultSet rs = stmt.executeQuery()) {
-                         while (rs.next()) {
-                             contributions.add(createGuildContributionFromResultSet(rs));
-                         }
-                     }
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error fetching player contribution records: " + e.getMessage());
-             }
-            return contributions;
-        });
-    }
+         return repos.contributions().findAllByPlayerUuidAsync(playerUuid);
+     }
 
     /**
      * 按玩家聚合公会净贡献（WITHDRAW 为负，其余为正）。
      * 返回 Map&lt;playerUuid, netAmount&gt;。
      */
     public CompletableFuture<Map<UUID, Double>> getGuildContributionNetByPlayerAsync(int guildId) {
-        return CompletableFuture.supplyAsync(() -> {
-            Map<UUID, Double> nets = new HashMap<>();
-            try {
-                String sql = "SELECT player_uuid, contribution_type, amount FROM guild_contributions WHERE guild_id = ?";
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    stmt.setInt(1, guildId);
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            UUID uuid = UUID.fromString(rs.getString("player_uuid"));
-                            String typeName = rs.getString("contribution_type");
-                            double amount = rs.getDouble("amount");
-                            GuildContribution.ContributionType type;
-                            try {
-                                type = GuildContribution.ContributionType.valueOf(typeName);
-                            } catch (IllegalArgumentException ex) {
-                                type = GuildContribution.ContributionType.ADMIN;
-                            }
-                            double net = (type == GuildContribution.ContributionType.WITHDRAW) ? -amount : amount;
-                            nets.merge(uuid, net, Double::sum);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error aggregating guild net contributions: " + e.getMessage());
-            }
-            return nets;
-        });
+        return repos.contributions().computeNetByPlayerAsync(guildId);
     }
 
     /**
@@ -2107,66 +1592,9 @@ public class GuildService {
      * 返回 List<GuildContribution>，每个玩家一条，amount 为累计存款总额。
      */
     public CompletableFuture<List<GuildContribution>> getGuildContributionTotalsAsync(int guildId) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<GuildContribution> totals = new ArrayList<>();
-            try {
-                String sql = "SELECT player_uuid, player_name, SUM(amount) AS total_amount " +
-                             "FROM guild_contributions " +
-                             "WHERE guild_id = ? AND contribution_type = 'DEPOSIT' " +
-                             "GROUP BY player_uuid, player_name " +
-                             "ORDER BY total_amount DESC";
-
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-                    stmt.setInt(1, guildId);
-
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            GuildContribution c = new GuildContribution();
-                            c.setPlayerUuid(UUID.fromString(rs.getString("player_uuid")));
-                            c.setPlayerName(rs.getString("player_name"));
-                            c.setAmount(rs.getDouble("total_amount"));
-                            c.setType(GuildContribution.ContributionType.DEPOSIT);
-                            totals.add(c);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching guild deposit summary: " + e.getMessage());
-            }
-            return totals;
-        });
+        return repos.contributions().computeDepositTotalsAsync(guildId);
     }
     
-    // ==================== 辅助方法 ====================
-     
-     private GuildEconomy createGuildEconomyFromResultSet(ResultSet rs) throws SQLException {
-         GuildEconomy economy = new GuildEconomy();
-         economy.setId(rs.getInt("id"));
-         economy.setGuildId(rs.getInt("guild_id"));
-         economy.setBalance(rs.getDouble("balance"));
-         economy.setLevel(rs.getInt("level"));
-         economy.setExperience(rs.getDouble("experience"));
-         economy.setMaxExperience(rs.getDouble("max_experience"));
-         economy.setMaxMembers(rs.getInt("max_members"));
-         economy.setLastUpdated(parseTimestamp(rs, "last_updated"));
-         return economy;
-     }
-     
-     private GuildContribution createGuildContributionFromResultSet(ResultSet rs) throws SQLException {
-         GuildContribution contribution = new GuildContribution();
-         contribution.setId(rs.getInt("id"));
-         contribution.setGuildId(rs.getInt("guild_id"));
-         contribution.setPlayerUuid(UUID.fromString(rs.getString("player_uuid")));
-         contribution.setPlayerName(rs.getString("player_name"));
-         contribution.setAmount(rs.getDouble("amount"));
-         contribution.setType(GuildContribution.ContributionType.valueOf(rs.getString("contribution_type")));
-         contribution.setDescription(rs.getString("description"));
-         contribution.setCreatedAt(parseTimestamp(rs, "created_at"));
-         return contribution;
-     }
-     
      // ==================== 公会经济管理方法 ====================
      
      /**
@@ -2184,7 +1612,7 @@ public class GuildService {
              }
              
              return CompletableFuture.supplyAsync(() -> {
-                 if (guildRepository.updateBalance(guildId, balance, nowString())) {
+                 if (repos.guilds().updateBalance(guildId, balance, nowString())) {
                      QuietLog.system("Guild balance updated: " + guild.getName() + " (ID: " + guildId + ") new balance: " + balance);
 
                      // 异步检查是否需要自动升级，不阻塞当前操作
@@ -2217,14 +1645,14 @@ public class GuildService {
      * 更新公会等级 (异步)
      */
     public CompletableFuture<Boolean> updateGuildLevelAsync(int guildId, int level) {
-        return CompletableFuture.supplyAsync(() -> guildRepository.updateLevel(guildId, level));
+        return CompletableFuture.supplyAsync(() -> repos.guilds().updateLevel(guildId, level));
     }
     
     /**
      * 更新公会最大成员数 (异步)
      */
     public CompletableFuture<Boolean> updateGuildMaxMembersAsync(int guildId, int maxMembers) {
-        return CompletableFuture.supplyAsync(() -> guildRepository.updateMaxMembers(guildId, maxMembers));
+        return CompletableFuture.supplyAsync(() -> repos.guilds().updateMaxMembers(guildId, maxMembers));
     }
     
     /**
@@ -2237,7 +1665,7 @@ public class GuildService {
             }
             
             return CompletableFuture.supplyAsync(() -> {
-                if (guildRepository.updateFrozen(guildId, frozen)) {
+                if (repos.guilds().updateFrozen(guildId, frozen)) {
                     // 记录冻结状态变更日志
                     GuildLog.LogType logType = frozen ? GuildLog.LogType.GUILD_FROZEN : GuildLog.LogType.GUILD_UNFROZEN;
                     String description = frozen ? "公会冻结" : "公会解冻";
@@ -2257,7 +1685,7 @@ public class GuildService {
      * 仅用于建会后插入会长，以避免额外读库造成的连接争用。
      */
     private CompletableFuture<Boolean> addGuildMemberDirectAsync(int guildId, UUID playerUuid, String playerName, GuildMember.Role role) {
-        return memberRepository.insertAsync(guildId, playerUuid, playerName, role, nowString())
+        return repos.members().insertAsync(guildId, playerUuid, playerName, role, nowString())
                 .thenApply(success -> {
                     if (success) {
                         refreshPlayerPermissions(playerUuid);
@@ -2284,7 +1712,7 @@ public class GuildService {
                 int newMaxMembers = getMaxMembersForLevel(newLevel);
                 
                 CompletableFuture.supplyAsync(() -> {
-                    if (guildRepository.updateLevelMaxMembersAndPeak(guildId, newLevel, newMaxMembers, nowString())) {
+                    if (repos.guilds().updateLevelMaxMembersAndPeak(guildId, newLevel, newMaxMembers, nowString())) {
                         QuietLog.system("Guild auto-upgraded successfully: " + guild.getName() + " (ID: " + guildId + ") level: " + currentLevel + " -> " + newLevel);
 
                         // 记录升级日志
@@ -2404,30 +1832,7 @@ public class GuildService {
     public CompletableFuture<Boolean> logGuildActionAsync(int guildId, String guildName, String playerUuid, 
                                                         String playerName, GuildLog.LogType logType, 
                                                         String description, String details) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "INSERT INTO guild_logs (guild_id, guild_name, player_uuid, player_name, log_type, description, details, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                 
-                     stmt.setInt(1, guildId);
-                     stmt.setString(2, guildName);
-                     stmt.setString(3, playerUuid);
-                     stmt.setString(4, playerName);
-                     stmt.setString(5, logType.name());
-                     stmt.setString(6, description);
-                     stmt.setString(7, details);
-                     stmt.setString(8, nowString());
-                 
-                     int affectedRows = stmt.executeUpdate();
-                     return affectedRows > 0;
-                 }
-            } catch (SQLException e) {
-                logger.severe("Error recording guild log: " + e.getMessage());
-                return false;
-            }
-        });
+        return repos.logs().insertAsync(guildId, guildName, playerUuid, playerName, logType, description, details, nowString());
     }
     
     /**
@@ -2447,30 +1852,7 @@ public class GuildService {
      * 获取公会日志列表 (异步)
      */
     public CompletableFuture<List<GuildLog>> getGuildLogsAsync(int guildId, int limit, int offset) {
-        return CompletableFuture.supplyAsync(() -> {
-            List<GuildLog> logs = new ArrayList<>();
-            try {
-                String sql = "SELECT * FROM guild_logs WHERE guild_id = ? ORDER BY created_at DESC LIMIT ? OFFSET ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, guildId);
-                    stmt.setInt(2, limit);
-                    stmt.setInt(3, offset);
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        while (rs.next()) {
-                            GuildLog log = createGuildLogFromResultSet(rs);
-                            logs.add(log);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching guild logs: " + e.getMessage());
-            }
-            return logs;
-        });
+        return repos.logs().findByGuildIdAsync(guildId, limit, offset);
     }
     
     /**
@@ -2489,26 +1871,7 @@ public class GuildService {
      * 获取公会日志总数 (异步)
      */
     public CompletableFuture<Integer> getGuildLogsCountAsync(int guildId) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "SELECT COUNT(*) FROM guild_logs WHERE guild_id = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, guildId);
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            return rs.getInt(1);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching guild log count: " + e.getMessage());
-            }
-            return 0;
-        });
+        return repos.logs().countByGuildIdAsync(guildId);
     }
     
     /**
@@ -2524,62 +1887,14 @@ public class GuildService {
     }
     
     /**
-     * 从ResultSet创建GuildLog对象
-     */
-    private GuildLog createGuildLogFromResultSet(ResultSet rs) throws SQLException {
-        GuildLog log = new GuildLog();
-        log.setId(rs.getInt("id"));
-        log.setGuildId(rs.getInt("guild_id"));
-        log.setGuildName(rs.getString("guild_name"));
-        log.setPlayerUuid(rs.getString("player_uuid"));
-        log.setPlayerName(rs.getString("player_name"));
-        log.setLogType(GuildLog.LogType.valueOf(rs.getString("log_type")));
-        log.setDescription(rs.getString("description"));
-        log.setDetails(rs.getString("details"));
-        
-        String createdAtStr = rs.getString("created_at");
-        if (createdAtStr != null && !createdAtStr.isEmpty()) {
-            try {
-                log.setCreatedAt(LocalDateTime.parse(createdAtStr, com.guild.core.time.TimeProvider.FULL_FORMATTER));
-            } catch (Exception e1) {
-                try {
-                    log.setCreatedAt(LocalDateTime.parse(createdAtStr.replace(" ", "T")));
-                } catch (Exception e2) {
-                    logger.warning("Failed to parse log creation time: " + createdAtStr);
-                    log.setCreatedAt(com.guild.core.time.TimeProvider.nowLocalDateTime());
-                }
-            }
-        } else {
-            log.setCreatedAt(com.guild.core.time.TimeProvider.nowLocalDateTime());
-        }
-        
-        return log;
-    }
-    
-    /**
      * 清理旧日志 (异步)
      */
     public CompletableFuture<Integer> cleanOldLogsAsync(int daysToKeep) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                // 统一使用参数绑定的阈值时间（字符串），避免数据库侧时区差异
-                String sql = "DELETE FROM guild_logs WHERE created_at < ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    // 计算阈值字符串：当前系统时间减去 daysToKeep 天，格式 yyyy-MM-dd HH:mm:ss
-                    String threshold = com.guild.core.time.TimeProvider.nowLocalDateTime().minusDays(daysToKeep)
-                        .format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
-                    stmt.setString(1, threshold);
-                    int affectedRows = stmt.executeUpdate();
-                    QuietLog.system("Cleaned up " + affectedRows + " old log records");
-                    return affectedRows;
-                }
-            } catch (SQLException e) {
-                logger.severe("Error cleaning up old logs: " + e.getMessage());
-                return 0;
-            }
+        String threshold = TimeProvider.nowLocalDateTime().minusDays(daysToKeep)
+                .format(TimeProvider.FULL_FORMATTER);
+        return repos.logs().deleteOlderThanAsync(threshold).thenApply(affectedRows -> {
+            QuietLog.system("Cleaned up " + affectedRows + " old log records");
+            return affectedRows;
         });
     }
     
