@@ -252,6 +252,13 @@ public class GuildCommand implements CommandExecutor, TabCompleter {
                         }
                     }
                     break;
+                case "territory":
+                    for (String cmd : Arrays.asList("claim", "unclaim", "info", "wand", "pos1", "pos2", "help")) {
+                        if (cmd.toLowerCase().startsWith(args[1].toLowerCase())) {
+                            completions.add(cmd);
+                        }
+                    }
+                    break;
             }
         } else if (args.length == 3) {
             String subCommand = args[0].toLowerCase();

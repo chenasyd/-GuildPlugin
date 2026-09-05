@@ -8,6 +8,8 @@ import com.guild.core.module.ModuleState;
 
 import java.io.File;
 
+import org.bukkit.Material;
+
 /**
  * 公会领地模块（WorldGuard 软依赖）。
  * <p>
@@ -23,6 +25,8 @@ public final class TerritoryModule implements GuildModule {
     private TerritoryBridge bridge;
     private WorldGuardProbe.Availability availability;
     private TerritoryMemberSync memberSync;
+    private TerritorySelectionManager selectionManager;
+    private TerritoryCommandHandler commandHandler;
 
     @Override
     public void onEnable(ModuleContext context) throws Exception {
@@ -47,7 +51,20 @@ public final class TerritoryModule implements GuildModule {
         memberSync.register(context.getApi());
         memberSync.repairAllOnLoad();
 
-        // P7-d: registerSubCommand / GUI for claim & info
+        this.selectionManager = new TerritorySelectionManager();
+        Material wand = TerritoryCommandHandler.parseMaterialPublic(
+                context.getConfig().getString("claim.wand-material", "WOODEN_AXE"));
+        context.registerEvents(new TerritorySelectionListener(context, selectionManager, wand));
+
+        this.commandHandler = new TerritoryCommandHandler(this, context, selectionManager);
+        context.getApi().registerSubCommand(
+                "guild-territory",
+                "guild",
+                "territory",
+                (sender, args) -> commandHandler.handle(sender, args),
+                "guild.territory.info"
+        );
+
         // P7-e: coordinate with GuildHomeProtectListener when operational
     }
 
@@ -94,6 +111,10 @@ public final class TerritoryModule implements GuildModule {
 
     public TerritoryMemberSync getMemberSync() {
         return memberSync;
+    }
+
+    public TerritoryCommandHandler getCommandHandler() {
+        return commandHandler;
     }
 
     public boolean isWorldGuardReady() {
