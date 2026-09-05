@@ -60,7 +60,7 @@ public class LanguageManager {
     };
 
     private static final String[] MODULE_DIRS = {
-        "announcement", "apitest", "builtin-activity", "member-rank", "quest", "stats", "testlang"
+        "announcement", "apitest", "builtin-activity", "member-rank", "quest", "stats", "territory", "testlang"
     };
 
     /**

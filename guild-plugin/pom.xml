@@ -65,6 +65,16 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- WorldEdit / WorldGuard (softdepend — guild territory module) -->
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sk89q.worldguard</groupId>
+            <artifactId>worldguard-bukkit</artifactId>
+        </dependency>
+
         <!-- Cumulus Form Library — shaded+relocated into plugin JAR.
              In single-server mode with Geyser, forms are serialized to JSON and
              re-deserialized via Geyser's ClassLoader (avoids ClassLoader mismatch).
@@ -447,6 +457,35 @@
                         <executions>
                             <execution>
                                 <id>make-testlang-module</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>build-territory-module</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/territory-module.xml</descriptor>
+                            </descriptors>
+                            <finalName>guild-territory</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <attach>false</attach>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-territory-module</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>single</goal>

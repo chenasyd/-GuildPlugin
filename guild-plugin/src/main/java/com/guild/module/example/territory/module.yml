@@ -1,0 +1,17 @@
+id: guild-territory
+name: "Guild Territory"
+version: 0.1.0
+author: "GuildPlugin Team"
+description: "Guild territory claims via WorldGuard (soft runtime dependency on WorldGuard + WorldEdit)"
+type: mixed
+api-version: 1.6.7
+main: com.guild.module.example.territory.TerritoryModule
+folia-compatible: true
+depends: []
+# 框架 soft-depends 仅检查其他 Guild 模块 ID；WorldGuard 在模块内运行时探测（WorldGuardProbe）。
+soft-depends: []
+permissions:
+  - guild.territory.claim
+  - guild.territory.unclaim
+  - guild.territory.info
+  - guild.territory.admin

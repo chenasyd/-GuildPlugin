@@ -1,0 +1,3 @@
+module.territory.status-ready: "&aTerritory module loaded (WorldGuard present; features pending)"
+module.territory.status-degraded: "&eTerritory module degraded: missing {0}"
+module.territory.status-disabled: "&7Territory module running without WorldGuard integration"

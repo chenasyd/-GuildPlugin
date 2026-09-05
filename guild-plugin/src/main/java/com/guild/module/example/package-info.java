@@ -14,6 +14,6 @@
  *   <li>Data under {@code ModuleDataDirectory} ({@code modules/{id}/data/})</li>
  * </ul>
  *
- * <p><b>Modules:</b> announcement, guild-stats, guild-quest, member-rank, api-test, testlang.
+ * <p><b>Modules:</b> announcement, guild-stats, guild-quest, member-rank, guild-territory, api-test, testlang.
  */
 package com.guild.module.example;

@@ -1,0 +1,3 @@
+module.territory.status-ready: "&a领地模块已加载（WorldGuard 可用，功能待实现）"
+module.territory.status-degraded: "&e领地模块已降级加载：缺少 {0}"
+module.territory.status-disabled: "&7领地模块未启用 WorldGuard 集成"
