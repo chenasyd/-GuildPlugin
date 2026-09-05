@@ -11,6 +11,7 @@ import com.guild.models.GuildEconomy;
 import com.guild.models.GuildContribution;
 import com.guild.models.GuildLog;
 import com.guild.services.repository.GuildMemberRepository;
+import com.guild.services.repository.GuildRepository;
 import com.guild.util.NotifyUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -40,6 +41,7 @@ public class GuildService {
     private final GuildPlugin plugin;
     private final DatabaseManager databaseManager;
     private final GuildMemberRepository memberRepository;
+    private final GuildRepository guildRepository;
     private final Logger logger;
     
     public GuildService(GuildPlugin plugin) {
@@ -47,6 +49,7 @@ public class GuildService {
         this.databaseManager = plugin.getDatabaseManager();
         this.logger = plugin.getLogger();
         this.memberRepository = new GuildMemberRepository(databaseManager, logger);
+        this.guildRepository = new GuildRepository(databaseManager, logger);
     }
 
     // ==================== 模块事件分发辅助 ====================
@@ -125,36 +128,12 @@ public class GuildService {
                     return CompletableFuture.completedFuture(false);
                 }
                 
-                return CompletableFuture.supplyAsync(() -> {
-                    try {
-                        String sql = "INSERT INTO guilds (name, tag, description, leader_uuid, leader_name, balance, level, peak_level, max_members, frozen, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 0.0, 1, 1, 6, 0, ?, ?)";
-                        
-                        try (Connection conn = databaseManager.getConnection();
-                             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-                            
-                            stmt.setString(1, name);
-                            stmt.setString(2, tag);
-                            stmt.setString(3, description);
-                            stmt.setString(4, leaderUuid.toString());
-                            stmt.setString(5, leaderName);
-                            
-                            stmt.setString(6, nowString());
-                            stmt.setString(7, nowString());
-                            int affectedRows = stmt.executeUpdate();
-                            if (affectedRows > 0) {
-                                try (ResultSet rs = stmt.getGeneratedKeys()) {
-                                    if (rs.next()) {
-                                        int guildId = rs.getInt(1);
-                                        QuietLog.system("Guild created successfully: " + name + " (ID: " + guildId + ")");
-                                        return guildId;
-                                    }
-                                }
-                            }
-                        }
-                    } catch (SQLException e) {
-                        logger.severe("Error creating guild: " + e.getMessage());
+                return guildRepository.insertAsync(name, tag, description, leaderUuid, leaderName,
+                        nowString(), nowString()).thenApply(guildId -> {
+                    if (guildId > 0) {
+                        QuietLog.system("Guild created successfully: " + name + " (ID: " + guildId + ")");
                     }
-                    return -1;
+                    return guildId;
                 }).thenCompose(guildId -> {
                     if ((Integer) guildId > 0) {
                         // 添加会长为公会成员（避免重复查询）
@@ -214,39 +193,32 @@ public class GuildService {
                         }
 
                         deleteWarehouseData(guildId);
-                        
-                        // 删除公会
-                        String deleteGuildSql = "DELETE FROM guilds WHERE id = ?";
-                        try (Connection conn = databaseManager.getConnection();
-                             PreparedStatement stmt = conn.prepareStatement(deleteGuildSql)) {
-                            stmt.setInt(1, guildId);
-                            int affectedRows = stmt.executeUpdate();
-                            if (affectedRows > 0) {
-                                QuietLog.system("Guild deleted successfully: " + guild.getName() + " (ID: " + guildId + ")");
-                                
-                                // 退款给会长（如果经济系统可用）
-                                if (guildBalance > 0 && plugin.getEconomyManager().isVaultAvailable()) {
-                                    try {
-                                        org.bukkit.entity.Player leaderPlayer = org.bukkit.Bukkit.getPlayer(guild.getLeaderUuid());
-                                        if (leaderPlayer != null && leaderPlayer.isOnline()) {
-                                            plugin.getEconomyManager().deposit(leaderPlayer, guildBalance);
-                                            String message = plugin.getLanguageManager().getCoreMessage(leaderPlayer, "economy.disband-compensation", "&a公会解散，您获得了 {amount} 金币补偿！", "{amount}", plugin.getEconomyManager().format(guildBalance));
-                                            leaderPlayer.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
-                                        }
-                                    } catch (Exception e) {
-                                        logger.warning("Error refunding leader: " + e.getMessage());
+
+                        if (guildRepository.deleteById(guildId)) {
+                            QuietLog.system("Guild deleted successfully: " + guild.getName() + " (ID: " + guildId + ")");
+
+                            // 退款给会长（如果经济系统可用）
+                            if (guildBalance > 0 && plugin.getEconomyManager().isVaultAvailable()) {
+                                try {
+                                    org.bukkit.entity.Player leaderPlayer = org.bukkit.Bukkit.getPlayer(guild.getLeaderUuid());
+                                    if (leaderPlayer != null && leaderPlayer.isOnline()) {
+                                        plugin.getEconomyManager().deposit(leaderPlayer, guildBalance);
+                                        String message = plugin.getLanguageManager().getCoreMessage(leaderPlayer, "economy.disband-compensation", "&a公会解散，您获得了 {amount} 金币补偿！", "{amount}", plugin.getEconomyManager().format(guildBalance));
+                                        leaderPlayer.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                                     }
+                                } catch (Exception e) {
+                                    logger.warning("Error refunding leader: " + e.getMessage());
                                 }
-                                
-                                // 记录公会解散日志
-                                logGuildActionAsync(guildId, guild.getName(), guild.getLeaderUuid().toString(), guild.getLeaderName(),
-                                    GuildLog.LogType.GUILD_DISSOLVED, "公会解散", "公会余额: " + guildBalance + " 金币");
-                                
-                                // 分发公会解散事件给模块
-                                fireGuildDelete(guildId, guild.getName(), guild.getLeaderName());
-                                
-                                return true;
                             }
+
+                            // 记录公会解散日志
+                            logGuildActionAsync(guildId, guild.getName(), guild.getLeaderUuid().toString(), guild.getLeaderName(),
+                                GuildLog.LogType.GUILD_DISSOLVED, "公会解散", "公会余额: " + guildBalance + " 金币");
+
+                            // 分发公会解散事件给模块
+                            fireGuildDelete(guildId, guild.getName(), guild.getLeaderName());
+
+                            return true;
                         }
                     } catch (SQLException e) {
                         logger.severe("Error deleting guild: " + e.getMessage());
@@ -304,39 +276,33 @@ public class GuildService {
                     }
 
                     deleteWarehouseData(guildId);
-                    // 删除公会
-                    String deleteGuildSql = "DELETE FROM guilds WHERE id = ?";
-                    try (Connection conn = databaseManager.getConnection();
-                         PreparedStatement stmt = conn.prepareStatement(deleteGuildSql)) {
-                        stmt.setInt(1, guildId);
-                        int affectedRows = stmt.executeUpdate();
-                        if (affectedRows > 0) {
-                            QuietLog.system("Admin force-deleted guild: " + guild.getName() + " (ID: " + guildId + ", by: " + adminUuid + ")");
-                            
-                            // 退款给会长（如果经济系统可用）— 注意：退款给会长而非管理员
-                            if (guildBalance > 0 && plugin.getEconomyManager().isVaultAvailable()) {
-                                try {
-                                    org.bukkit.entity.Player leaderPlayer = org.bukkit.Bukkit.getPlayer(guild.getLeaderUuid());
-                                    if (leaderPlayer != null && leaderPlayer.isOnline()) {
-                                        plugin.getEconomyManager().deposit(leaderPlayer, guildBalance);
-                                        String message = plugin.getLanguageManager().getCoreMessage(leaderPlayer, "economy.disband-compensation", "&a公会解散，您获得了 {amount} 金币补偿！", "{amount}", plugin.getEconomyManager().format(guildBalance));
-                                        leaderPlayer.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
-                                    }
-                                } catch (Exception e) {
-                                    logger.warning("Error refunding to guild leader: " + e.getMessage());
+
+                    if (guildRepository.deleteById(guildId)) {
+                        QuietLog.system("Admin force-deleted guild: " + guild.getName() + " (ID: " + guildId + ", by: " + adminUuid + ")");
+
+                        // 退款给会长（如果经济系统可用）— 注意：退款给会长而非管理员
+                        if (guildBalance > 0 && plugin.getEconomyManager().isVaultAvailable()) {
+                            try {
+                                org.bukkit.entity.Player leaderPlayer = org.bukkit.Bukkit.getPlayer(guild.getLeaderUuid());
+                                if (leaderPlayer != null && leaderPlayer.isOnline()) {
+                                    plugin.getEconomyManager().deposit(leaderPlayer, guildBalance);
+                                    String message = plugin.getLanguageManager().getCoreMessage(leaderPlayer, "economy.disband-compensation", "&a公会解散，您获得了 {amount} 金币补偿！", "{amount}", plugin.getEconomyManager().format(guildBalance));
+                                    leaderPlayer.sendMessage(com.guild.core.utils.ColorUtils.colorize(message));
                                 }
+                            } catch (Exception e) {
+                                logger.warning("Error refunding to guild leader: " + e.getMessage());
                             }
-                            
-                            // 记录公会强制解散日志
-                            logGuildActionAsync(guildId, guild.getName(), guild.getLeaderUuid().toString(), guild.getLeaderName(),
-                                GuildLog.LogType.GUILD_DISSOLVED, "Admin force deleted",
-                                "By: " + adminUuid + ", balance: " + guildBalance + " coins");
-                            
-                            // 分发公会解散事件给模块
-                            fireGuildDelete(guildId, guild.getName(), guild.getLeaderName());
-                            
-                            return true;
                         }
+
+                        // 记录公会强制解散日志
+                        logGuildActionAsync(guildId, guild.getName(), guild.getLeaderUuid().toString(), guild.getLeaderName(),
+                            GuildLog.LogType.GUILD_DISSOLVED, "Admin force deleted",
+                            "By: " + adminUuid + ", balance: " + guildBalance + " coins");
+
+                        // 分发公会解散事件给模块
+                        fireGuildDelete(guildId, guild.getName(), guild.getLeaderName());
+
+                        return true;
                     }
                 } catch (SQLException e) {
                     logger.severe("Error during admin force-delete: " + e.getMessage());
@@ -380,26 +346,9 @@ public class GuildService {
                         }
                         
                         return CompletableFuture.supplyAsync(() -> {
-                            try {
-                                String sql = "UPDATE guilds SET name = COALESCE(?, name), tag = COALESCE(?, tag), description = COALESCE(?, description), updated_at = ? WHERE id = ?";
-                                
-                                try (Connection conn = databaseManager.getConnection();
-                                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                                    
-                                    stmt.setString(1, name);
-                                    stmt.setString(2, tag);
-                                    stmt.setString(3, description);
-                                    stmt.setString(4, nowString());
-                                    stmt.setInt(5, guildId);
-                                    
-                                    int affectedRows = stmt.executeUpdate();
-                                    if (affectedRows > 0) {
-                                        QuietLog.system("Guild info updated successfully: " + guild.getName() + " (ID: " + guildId + ")");
-                                        return true;
-                                    }
-                                }
-                            } catch (SQLException e) {
-                                logger.severe("Error updating guild info: " + e.getMessage());
+                            if (guildRepository.updateInfo(guildId, name, tag, description, nowString())) {
+                                QuietLog.system("Guild info updated successfully: " + guild.getName() + " (ID: " + guildId + ")");
+                                return true;
                             }
                             return false;
                         });
@@ -718,14 +667,7 @@ public class GuildService {
                         conn.setAutoCommit(false);
                         try {
                             // 1. 更新 guilds 表新会长
-                            int guildUpdated;
-                            try (PreparedStatement stmt = conn.prepareStatement(
-                                    "UPDATE guilds SET leader_uuid = ?, leader_name = ? WHERE id = ?")) {
-                                stmt.setString(1, newLeaderUuid.toString());
-                                stmt.setString(2, resolvedName);
-                                stmt.setInt(3, guildId);
-                                guildUpdated = stmt.executeUpdate();
-                            }
+                            int guildUpdated = guildRepository.updateLeader(conn, guildId, newLeaderUuid, resolvedName);
                             if (guildUpdated <= 0) {
                                 conn.rollback();
                                 return false;
@@ -788,28 +730,7 @@ public class GuildService {
      * 获取玩家公会 (异步)
      */
     public CompletableFuture<Guild> getPlayerGuildAsync(UUID playerUuid) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "SELECT g.* FROM guilds g " +
-                            "INNER JOIN guild_members gm ON g.id = gm.guild_id " +
-                            "WHERE gm.player_uuid = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setString(1, playerUuid.toString());
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            return createGuildFromResultSet(rs);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching player guild: " + e.getMessage());
-            }
-            return null;
-        });
+        return guildRepository.findByPlayerUuidAsync(playerUuid);
     }
     
     /**
@@ -902,26 +823,7 @@ public class GuildService {
      * 根据ID获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByIdAsync(int guildId) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "SELECT * FROM guilds WHERE id = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, guildId);
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            return createGuildFromResultSet(rs);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching guild by ID: " + e.getMessage());
-            }
-            return null;
-        });
+        return guildRepository.findByIdAsync(guildId);
     }
     
     /**
@@ -940,26 +842,7 @@ public class GuildService {
      * 根据名称获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByNameAsync(String name) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "SELECT * FROM guilds WHERE name = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setString(1, name);
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            return createGuildFromResultSet(rs);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching guild by name: " + e.getMessage());
-            }
-            return null;
-        });
+        return guildRepository.findByNameAsync(name);
     }
     
     /**
@@ -978,26 +861,7 @@ public class GuildService {
      * 根据标签获取公会 (异步)
      */
     public CompletableFuture<Guild> getGuildByTagAsync(String tag) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "SELECT * FROM guilds WHERE tag = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setString(1, tag);
-                    
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        if (rs.next()) {
-                            return createGuildFromResultSet(rs);
-                        }
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching guild by tag: " + e.getMessage());
-            }
-            return null;
-        });
+        return guildRepository.findByTagAsync(tag);
     }
     
     /**
@@ -1016,24 +880,7 @@ public class GuildService {
      * 获取所有公会 (异步)
      */
     public CompletableFuture<List<Guild>> getAllGuildsAsync() {
-        return CompletableFuture.supplyAsync(() -> {
-            List<Guild> guilds = new ArrayList<>();
-            try {
-                String sql = "SELECT * FROM guilds ORDER BY created_at DESC";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql);
-                     ResultSet rs = stmt.executeQuery()) {
-                    
-                    while (rs.next()) {
-                        guilds.add(createGuildFromResultSet(rs));
-                    }
-                }
-            } catch (SQLException e) {
-                logger.severe("Error fetching all guilds: " + e.getMessage());
-            }
-            return guilds;
-        });
+        return guildRepository.findAllAsync();
     }
     
     /**
@@ -1078,78 +925,6 @@ public class GuildService {
     public boolean hasGuildPermission(UUID playerUuid) {
         GuildMember member = getGuildMember(playerUuid);
         return member != null && (member.getRole() == GuildMember.Role.LEADER || member.getRole() == GuildMember.Role.OFFICER);
-    }
-    
-    /**
-     * 从ResultSet创建Guild对象
-     */
-    private Guild createGuildFromResultSet(ResultSet rs) throws SQLException {
-        Guild guild = new Guild();
-        guild.setId(rs.getInt("id"));
-        guild.setName(rs.getString("name"));
-        guild.setTag(rs.getString("tag"));
-        guild.setDescription(rs.getString("description"));
-        guild.setLeaderUuid(UUID.fromString(rs.getString("leader_uuid")));
-        guild.setLeaderName(rs.getString("leader_name"));
-        
-        // 家的位置信息（安全处理空值）
-        String homeWorld = rs.getString("home_world");
-        guild.setHomeWorld(homeWorld);
-        
-        if (homeWorld != null) {
-            guild.setHomeX(rs.getDouble("home_x"));
-            guild.setHomeY(rs.getDouble("home_y"));
-            guild.setHomeZ(rs.getDouble("home_z"));
-            guild.setHomeYaw(rs.getFloat("home_yaw"));
-            guild.setHomePitch(rs.getFloat("home_pitch"));
-        } else {
-            // 如果home_world为null，设置默认值
-            guild.setHomeX(0.0);
-            guild.setHomeY(0.0);
-            guild.setHomeZ(0.0);
-            guild.setHomeYaw(0.0f);
-            guild.setHomePitch(0.0f);
-        }
-        
-        guild.setCreatedAt(parseTimestamp(rs, "created_at"));
-        guild.setUpdatedAt(parseTimestamp(rs, "updated_at"));
-        
-        // 读取economy相关列（安全处理，如果列不存在则使用默认值）
-        try {
-            guild.setBalance(rs.getDouble("balance"));
-        } catch (SQLException e) {
-            guild.setBalance(0.0);
-        }
-        
-        try {
-            guild.setLevel(rs.getInt("level"));
-        } catch (SQLException e) {
-            guild.setLevel(1);
-        }
-
-        try {
-            int peak = rs.getInt("peak_level");
-            if (rs.wasNull() || peak < guild.getLevel()) {
-                peak = guild.getLevel();
-            }
-            guild.setPeakLevel(peak);
-        } catch (SQLException e) {
-            guild.setPeakLevel(guild.getLevel());
-        }
-        
-        try {
-            guild.setMaxMembers(rs.getInt("max_members"));
-        } catch (SQLException e) {
-            guild.setMaxMembers(6);
-        }
-        
-        try {
-            guild.setFrozen(rs.getBoolean("frozen"));
-        } catch (SQLException e) {
-            guild.setFrozen(false);
-        }
-        
-        return guild;
     }
     
     /**
@@ -1526,29 +1301,11 @@ public class GuildService {
                  }
                  
                  return CompletableFuture.supplyAsync(() -> {
-                     try {
-                         String sql = "UPDATE guilds SET home_world = ?, home_x = ?, home_y = ?, home_z = ?, home_yaw = ?, home_pitch = ?, updated_at = ? WHERE id = ?";
-                         
-                         try (Connection conn = databaseManager.getConnection();
-                              PreparedStatement stmt = conn.prepareStatement(sql)) {
-                             
-                             stmt.setString(1, location.getWorld().getName());
-                             stmt.setDouble(2, location.getX());
-                             stmt.setDouble(3, location.getY());
-                             stmt.setDouble(4, location.getZ());
-                             stmt.setFloat(5, location.getYaw());
-                             stmt.setFloat(6, location.getPitch());
-                             stmt.setString(7, nowString());
-                             stmt.setInt(8, guildId);
-                             
-                             int affectedRows = stmt.executeUpdate();
-                             if (affectedRows > 0) {
-                                 QuietLog.system("Guild home set successfully: " + guild.getName() + " (ID: " + guildId + ")");
-                                 return true;
-                             }
-                         }
-                     } catch (SQLException e) {
-                         logger.severe("Error setting guild home: " + e.getMessage());
+                     if (guildRepository.updateHome(guildId, location.getWorld().getName(),
+                             location.getX(), location.getY(), location.getZ(),
+                             location.getYaw(), location.getPitch(), nowString())) {
+                         QuietLog.system("Guild home set successfully: " + guild.getName() + " (ID: " + guildId + ")");
+                         return true;
                      }
                      return false;
                  });
@@ -2037,24 +1794,7 @@ public class GuildService {
       * 更新公会描述 (异步)
       */
      public CompletableFuture<Boolean> updateGuildDescriptionAsync(int guildId, String description) {
-         return CompletableFuture.supplyAsync(() -> {
-             try {
-                 String sql = "UPDATE guilds SET description = ? WHERE id = ?";
-                 
-                 try (Connection conn = databaseManager.getConnection();
-                      PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                     stmt.setString(1, description);
-                     stmt.setInt(2, guildId);
-                     
-                     int rowsAffected = stmt.executeUpdate();
-                     return rowsAffected > 0;
-                 }
-             } catch (SQLException e) {
-                 logger.severe("Error updating guild description: " + e.getMessage());
-                 return false;
-             }
-         });
+         return CompletableFuture.supplyAsync(() -> guildRepository.updateDescription(guildId, description));
      }
      
      // ==================== 公会关系系统 ====================
@@ -2570,44 +2310,29 @@ public class GuildService {
              }
              
              return CompletableFuture.supplyAsync(() -> {
-                 try {
-                     String sql = "UPDATE guilds SET balance = ?, updated_at = ? WHERE id = ?";
-                     
-                     try (Connection conn = databaseManager.getConnection();
-                          PreparedStatement stmt = conn.prepareStatement(sql)) {
-                     
-                         stmt.setDouble(1, balance);
-                         stmt.setString(2, nowString());
-                         stmt.setInt(3, guildId);
-                     
-                         int affectedRows = stmt.executeUpdate();
-                         if (affectedRows > 0) {
-                             QuietLog.system("Guild balance updated: " + guild.getName() + " (ID: " + guildId + ") new balance: " + balance);
-                             
-                             // 异步检查是否需要自动升级，不阻塞当前操作
-                             CompletableFuture.runAsync(() -> {
-                                 checkAndUpgradeGuildLevel(guildId, balance);
-                             });
-                             
-                             // 记录资金变更日志
-                             double oldBalance = guild.getBalance();
-                            double change = balance - oldBalance;
-                            if (change != 0) {
-                                GuildLog.LogType logType = change > 0 ? GuildLog.LogType.FUND_DEPOSITED : GuildLog.LogType.FUND_WITHDRAWN;
-                                String description = change > 0 ? "Fund deposited" : "Fund withdrawn";
-                                String details = "Change: " + (change > 0 ? "+" : "") + change + " coins, New balance: " + balance + " coins";
+                 if (guildRepository.updateBalance(guildId, balance, nowString())) {
+                     QuietLog.system("Guild balance updated: " + guild.getName() + " (ID: " + guildId + ") new balance: " + balance);
 
-                                String logUuid = (operatorUuid != null && !operatorUuid.isEmpty()) ? operatorUuid : "SYSTEM";
-                                String logName = (operatorName != null && !operatorName.isEmpty()) ? operatorName : "System";
-                                logGuildActionAsync(guildId, guild.getName(), logUuid, logName,
-                                    logType, description, details);
-                            }
-                             
-                             return true;
-                         }
-                     }
-                 } catch (SQLException e) {
-                     logger.severe("An error occurred while updating the guild balance: " + e.getMessage());
+                     // 异步检查是否需要自动升级，不阻塞当前操作
+                     CompletableFuture.runAsync(() -> {
+                         checkAndUpgradeGuildLevel(guildId, balance);
+                     });
+
+                     // 记录资金变更日志
+                     double oldBalance = guild.getBalance();
+                    double change = balance - oldBalance;
+                    if (change != 0) {
+                        GuildLog.LogType logType = change > 0 ? GuildLog.LogType.FUND_DEPOSITED : GuildLog.LogType.FUND_WITHDRAWN;
+                        String description = change > 0 ? "Fund deposited" : "Fund withdrawn";
+                        String details = "Change: " + (change > 0 ? "+" : "") + change + " coins, New balance: " + balance + " coins";
+
+                        String logUuid = (operatorUuid != null && !operatorUuid.isEmpty()) ? operatorUuid : "SYSTEM";
+                        String logName = (operatorName != null && !operatorName.isEmpty()) ? operatorName : "System";
+                        logGuildActionAsync(guildId, guild.getName(), logUuid, logName,
+                            logType, description, details);
+                    }
+
+                     return true;
                  }
                  return false;
              });
@@ -2618,51 +2343,14 @@ public class GuildService {
      * 更新公会等级 (异步)
      */
     public CompletableFuture<Boolean> updateGuildLevelAsync(int guildId, int level) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                // peak_level 只升不降：降级只改 level
-                String sql = "UPDATE guilds SET level = ?, peak_level = CASE WHEN peak_level IS NULL OR peak_level < ? THEN ? ELSE peak_level END WHERE id = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, level);
-                    stmt.setInt(2, level);
-                    stmt.setInt(3, level);
-                    stmt.setInt(4, guildId);
-                    
-                    int affectedRows = stmt.executeUpdate();
-                    return affectedRows > 0;
-                }
-            } catch (SQLException e) {
-                logger.severe("Error updating guild level: " + e.getMessage());
-                return false;
-            }
-        });
+        return CompletableFuture.supplyAsync(() -> guildRepository.updateLevel(guildId, level));
     }
     
     /**
      * 更新公会最大成员数 (异步)
      */
     public CompletableFuture<Boolean> updateGuildMaxMembersAsync(int guildId, int maxMembers) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String sql = "UPDATE guilds SET max_members = ? WHERE id = ?";
-                
-                try (Connection conn = databaseManager.getConnection();
-                     PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    
-                    stmt.setInt(1, maxMembers);
-                    stmt.setInt(2, guildId);
-                    
-                    int affectedRows = stmt.executeUpdate();
-                    return affectedRows > 0;
-                }
-            } catch (SQLException e) {
-                logger.severe("Error updating guild max members: " + e.getMessage());
-                return false;
-            }
-        });
+        return CompletableFuture.supplyAsync(() -> guildRepository.updateMaxMembers(guildId, maxMembers));
     }
     
     /**
@@ -2675,29 +2363,15 @@ public class GuildService {
             }
             
             return CompletableFuture.supplyAsync(() -> {
-                try {
-                    String sql = "UPDATE guilds SET frozen = ? WHERE id = ?";
-                    
-                    try (Connection conn = databaseManager.getConnection();
-                         PreparedStatement stmt = conn.prepareStatement(sql)) {
-                        
-                        stmt.setBoolean(1, frozen);
-                        stmt.setInt(2, guildId);
-                        
-                        int affectedRows = stmt.executeUpdate();
-                        if (affectedRows > 0) {
-                            // 记录冻结状态变更日志
-                            GuildLog.LogType logType = frozen ? GuildLog.LogType.GUILD_FROZEN : GuildLog.LogType.GUILD_UNFROZEN;
-                            String description = frozen ? "公会冻结" : "公会解冻";
-                            
-                            logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
-                                logType, description, "操作: " + (frozen ? "冻结" : "解冻"));
-                            
-                            return true;
-                        }
-                    }
-                } catch (SQLException e) {
-                    logger.severe("Error updating guild frozen status: " + e.getMessage());
+                if (guildRepository.updateFrozen(guildId, frozen)) {
+                    // 记录冻结状态变更日志
+                    GuildLog.LogType logType = frozen ? GuildLog.LogType.GUILD_FROZEN : GuildLog.LogType.GUILD_UNFROZEN;
+                    String description = frozen ? "公会冻结" : "公会解冻";
+
+                    logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
+                        logType, description, "操作: " + (frozen ? "冻结" : "解冻"));
+
+                    return true;
                 }
                 return false;
             });
@@ -2736,32 +2410,14 @@ public class GuildService {
                 int newMaxMembers = getMaxMembersForLevel(newLevel);
                 
                 CompletableFuture.supplyAsync(() -> {
-                    try {
-                        String sql = "UPDATE guilds SET level = ?, max_members = ?, peak_level = CASE WHEN peak_level IS NULL OR peak_level < ? THEN ? ELSE peak_level END, updated_at = ? WHERE id = ?";
-                        
-                        try (Connection conn = databaseManager.getConnection();
-                             PreparedStatement stmt = conn.prepareStatement(sql)) {
-                            
-                            stmt.setInt(1, newLevel);
-                            stmt.setInt(2, newMaxMembers);
-                            stmt.setInt(3, newLevel);
-                            stmt.setInt(4, newLevel);
-                            stmt.setString(5, nowString());
-                            stmt.setInt(6, guildId);
-                            
-                            int affectedRows = stmt.executeUpdate();
-                            if (affectedRows > 0) {
-                                QuietLog.system("Guild auto-upgraded successfully: " + guild.getName() + " (ID: " + guildId + ") level: " + currentLevel + " -> " + newLevel);
-                                
-                                // 记录升级日志
-                                logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
-                                    GuildLog.LogType.GUILD_LEVEL_UP, "公会升级", "新等级: " + newLevel + ", 新最大成员数: " + newMaxMembers);
-                                
-                                return true;
-                            }
-                        }
-                    } catch (SQLException e) {
-                        logger.severe("Error auto-upgrading guild: " + e.getMessage());
+                    if (guildRepository.updateLevelMaxMembersAndPeak(guildId, newLevel, newMaxMembers, nowString())) {
+                        QuietLog.system("Guild auto-upgraded successfully: " + guild.getName() + " (ID: " + guildId + ") level: " + currentLevel + " -> " + newLevel);
+
+                        // 记录升级日志
+                        logGuildActionAsync(guildId, guild.getName(), "SYSTEM", "系统",
+                            GuildLog.LogType.GUILD_LEVEL_UP, "公会升级", "新等级: " + newLevel + ", 新最大成员数: " + newMaxMembers);
+
+                        return true;
                     }
                     return false;
                 });
