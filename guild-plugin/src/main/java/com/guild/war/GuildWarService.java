@@ -4,7 +4,6 @@ import com.guild.GuildPlugin;
 import com.guild.core.language.CoreMsg;
 import com.guild.core.language.LocalizedException;
 import com.guild.core.utils.CompatibleScheduler;
-import com.guild.core.utils.ScheduledTaskHandle;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.services.GuildService;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 /**
@@ -44,9 +42,8 @@ public final class GuildWarService {
     private final WarReportRepository reportRepository;
     private final WarMatchRegistry registry = new WarMatchRegistry();
     private final WarBroadcastHelper broadcast;
+    private final WarMatchScheduler scheduler;
     private WarSettings settings;
-
-    private final Map<Integer, ScheduledTaskHandle> timers = new ConcurrentHashMap<>();
 
     public GuildWarService(GuildPlugin plugin, GuildService guildService, GuildWorldService worldService) {
         this.plugin = plugin;
@@ -54,6 +51,7 @@ public final class GuildWarService {
         this.worldService = worldService;
         this.reportRepository = new WarReportRepository(plugin);
         this.broadcast = new WarBroadcastHelper(plugin, guildService);
+        this.scheduler = new WarMatchScheduler(plugin);
         reloadSettings();
     }
 
@@ -209,7 +207,7 @@ public final class GuildWarService {
                 if (match.guildBId() != guild.getId()) {
                     return failed("war.error.accept-not-defender", "&c只有被挑战方可以接受");
                 }
-                cancelTimer(match.id());
+                scheduler.cancel(match.id());
                 match.setPhase(WarPhase.SIGNUP);
                 broadcast.broadcastMatch(match, "war.broadcast.accepted",
                         "&a挑战已接受！请双方成员 &e/guildwar join &a报名（{seconds} 秒，或双方官员 /guildwar ready）",
@@ -539,37 +537,29 @@ public final class GuildWarService {
     /* ── Internals ───────────────────────────────────────── */
 
     private void scheduleChallengeTimeout(WarMatch match) {
-        cancelTimer(match.id());
-        ScheduledTaskHandle handle = CompatibleScheduler.runTaskLater(plugin, () -> {
-            if (match.phase() == WarPhase.PENDING) {
-                broadcast.broadcastMatch(match, "war.broadcast.challenge-timeout", "&c挑战已超时");
-                cleanupMatch(match, false);
-            }
-        }, settings.challengeTimeoutSeconds * 20L);
-        timers.put(match.id(), handle);
+        scheduler.scheduleChallengeTimeout(match, settings.challengeTimeoutSeconds * 20L, () -> {
+            broadcast.broadcastMatch(match, "war.broadcast.challenge-timeout", "&c挑战已超时");
+            cleanupMatch(match, false);
+        });
     }
 
     private void scheduleSignupTimeout(WarMatch match) {
-        cancelTimer(match.id());
-        ScheduledTaskHandle handle = CompatibleScheduler.runTaskLater(plugin, () -> {
-            if (match.phase() == WarPhase.SIGNUP) {
-                if (!match.bothTeamsHavePlayers()) {
-                    broadcast.broadcastMatch(match, "war.broadcast.signup-timeout",
-                            "&c报名超时：双方人数不足，对局取消");
-                    cleanupMatch(match, false);
-                } else {
-                    beginPreparing(match);
-                }
+        scheduler.scheduleSignupTimeout(match, settings.signupSeconds * 20L, () -> {
+            if (!match.bothTeamsHavePlayers()) {
+                broadcast.broadcastMatch(match, "war.broadcast.signup-timeout",
+                        "&c报名超时：双方人数不足，对局取消");
+                cleanupMatch(match, false);
+            } else {
+                beginPreparing(match);
             }
-        }, settings.signupSeconds * 20L);
-        timers.put(match.id(), handle);
+        });
     }
 
     private synchronized void beginPreparing(WarMatch match) {
         if (match.phase() != WarPhase.SIGNUP) {
             return;
         }
-        cancelTimer(match.id());
+        scheduler.cancel(match.id());
         match.setPhase(WarPhase.PREPARING);
         broadcast.broadcastMatch(match, "war.broadcast.preparing", "&a报名结束，正在创建战场…");
 
@@ -616,49 +606,31 @@ public final class GuildWarService {
     }
 
     private void startCountdown(WarMatch match) {
-        match.setPhase(WarPhase.COUNTDOWN);
-        final int[] left = {settings.countdownSeconds};
-        cancelTimer(match.id());
-        ScheduledTaskHandle handle = CompatibleScheduler.runTaskTimer(plugin, () -> {
-            if (match.phase() != WarPhase.COUNTDOWN) {
-                cancelTimer(match.id());
-                return;
-            }
-            if (left[0] <= 0) {
-                cancelTimer(match.id());
-                match.setPhase(WarPhase.ACTIVE);
-                match.setStartedAt(System.currentTimeMillis());
-                broadcast.broadcastMatch(match, "war.broadcast.fight", "&c&l开战！");
-                Bukkit.getPluginManager().callEvent(new WarMatchStartEvent(match));
-                scheduleMatchDuration(match);
-                return;
-            }
-            if (left[0] <= 5 || left[0] % 5 == 0) {
-                broadcast.broadcastMatch(match, "war.broadcast.countdown",
-                        "&e开战倒计时: &c{seconds}",
-                        "{seconds}", String.valueOf(left[0]));
-            }
-            left[0]--;
-        }, 0L, 20L);
-        timers.put(match.id(), handle);
+        scheduler.startCountdown(match, settings.countdownSeconds,
+                secondsLeft -> {
+                    if (secondsLeft <= 5 || secondsLeft % 5 == 0) {
+                        broadcast.broadcastMatch(match, "war.broadcast.countdown",
+                                "&e开战倒计时: &c{seconds}",
+                                "{seconds}", String.valueOf(secondsLeft));
+                    }
+                },
+                () -> {
+                    match.setPhase(WarPhase.ACTIVE);
+                    match.setStartedAt(System.currentTimeMillis());
+                    broadcast.broadcastMatch(match, "war.broadcast.fight", "&c&l开战！");
+                    Bukkit.getPluginManager().callEvent(new WarMatchStartEvent(match));
+                    scheduleMatchDuration(match);
+                });
     }
 
     private void scheduleMatchDuration(WarMatch match) {
-        if (match.mode() == VictoryMode.FIRST_TO_SCORE) {
-            return; // 无时限
-        }
-        cancelTimer(match.id());
-        ScheduledTaskHandle handle = CompatibleScheduler.runTaskLater(plugin, () -> {
-            if (match.phase() != WarPhase.ACTIVE) {
-                return;
-            }
+        scheduler.scheduleMatchDuration(match, match.durationSeconds() * 20L, () -> {
             if (match.mode() == VictoryMode.TIMED_SCORE) {
                 resolveTimedScore(match);
             } else {
                 resolveSurviveTimeout(match);
             }
-        }, match.durationSeconds() * 20L);
-        timers.put(match.id(), handle);
+        });
     }
 
     private void resolveTimedScore(WarMatch match) {
@@ -725,7 +697,7 @@ public final class GuildWarService {
         if (match.phase() == WarPhase.ENDED) {
             return;
         }
-        cancelTimer(match.id());
+        scheduler.cancel(match.id());
         match.setPhase(WarPhase.ENDED);
         match.setWinnerGuildId(winnerGuildId);
         match.setEndReason(reasonKey);
@@ -793,7 +765,7 @@ public final class GuildWarService {
     }
 
     private void cleanupMatch(WarMatch match, boolean destroyWorld) {
-        cancelTimer(match.id());
+        scheduler.cancel(match.id());
         match.setPhase(WarPhase.ENDED);
         for (UUID uuid : new ArrayList<>(match.participants().keySet())) {
             registry.unlinkPlayer(uuid);
@@ -810,15 +782,8 @@ public final class GuildWarService {
     }
 
     private void unregisterMatch(WarMatch match) {
-        cancelTimer(match.id());
+        scheduler.cancel(match.id());
         registry.unregister(match);
-    }
-
-    private void cancelTimer(int matchId) {
-        ScheduledTaskHandle handle = timers.remove(matchId);
-        if (handle != null) {
-            handle.cancel();
-        }
     }
 
     private int resolveDuration(VictoryMode mode, Integer override) {
@@ -863,7 +828,6 @@ public final class GuildWarService {
                 plugin.getLogger().log(Level.WARNING, "[GuildWar] shutdown match " + match.id(), e);
             }
         }
-        timers.values().forEach(ScheduledTaskHandle::cancel);
-        timers.clear();
+        scheduler.cancelAll();
     }
 }
