@@ -69,6 +69,20 @@ public final class TerritorySettings {
         return context.getConfig().getBoolean("member-sync.repair-on-load", false);
     }
 
+    public boolean isGuiEnabled() {
+        return context.getConfig().getBoolean("gui.enabled", true);
+    }
+
+    public boolean isRegisterSettingsButton() {
+        return isGuiEnabled()
+                && context.getConfig().getBoolean("gui.register-settings-button", true);
+    }
+
+    public boolean isRegisterInfoButton() {
+        return isGuiEnabled()
+                && context.getConfig().getBoolean("gui.register-info-button", true);
+    }
+
     /** WG StateFlag 配置值：allow / deny / none（不设置）。 */
     public String getFlag(String key, String defaultValue) {
         String raw = context.getConfig().getString("flags." + key, defaultValue);

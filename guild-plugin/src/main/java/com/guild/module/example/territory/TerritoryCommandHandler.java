@@ -60,6 +60,7 @@ public final class TerritoryCommandHandler {
             case "pos1" -> handlePos(player, true);
             case "pos2" -> handlePos(player, false);
             case "help" -> sendHelp(player);
+            case "gui" -> handleGui(player);
             default -> sendHelp(player);
         }
     }
@@ -334,10 +335,46 @@ public final class TerritoryCommandHandler {
         texts.send(player, "module.territory.help-info", "&einfo &7- 查看当前世界领地");
         texts.send(player, "module.territory.help-wand", "&ewand &7- 获取选区斧");
         texts.send(player, "module.territory.help-pos", "&epos1|pos2 &7- 以当前位置设角点");
+        texts.send(player, "module.territory.help-gui", "&egui &7- 打开领地管理界面");
         if (context.getPlugin().getPermissionManager().hasPermission(player, "guild.territory.admin")) {
             texts.send(player, "module.territory.help-admin",
                     "&eadmin &7- 管理员工具（list/force-unclaim/repair-sync）");
         }
+    }
+
+    /** GUI / 命令共用：给予选区斧。 */
+    public void giveWand(Player player) {
+        handleWand(player);
+    }
+
+    /** GUI / 命令共用：设置 Pos1 或 Pos2。 */
+    public void setCorner(Player player, boolean pos1) {
+        handlePos(player, pos1);
+    }
+
+    /** GUI / 命令共用：声明领地。 */
+    public void claim(Player player) {
+        handleClaim(player);
+    }
+
+    /** GUI / 命令共用：放弃领地。 */
+    public void unclaim(Player player) {
+        handleUnclaim(player);
+    }
+
+    private void handleGui(Player player) {
+        if (!checkPermission(player, "guild.territory.info")) {
+            return;
+        }
+        Guild guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
+        if (guild == null) {
+            texts.send(player, "module.territory.not-in-guild",
+                    "&c你不在任何公会中。");
+            return;
+        }
+        boolean manage = context.getPlugin().getMembershipRules().canManageGuild(player)
+                && context.getPlugin().getPermissionManager().hasPermission(player, "guild.territory.claim");
+        module.openTerritoryGui(player, guild, manage);
     }
 
     private boolean checkPermission(Player player, String permission) {

@@ -23,11 +23,23 @@ WorldGuard-based guild land claims: officers/leaders select a cuboid, claim it a
 
 ## Commands
 
-See the [Chinese doc](./GuildTerritory.md#命令) for the full command table (same subcommands).
+| Command | Description |
+|---------|-------------|
+| `/guild territory gui` | Open territory management GUI |
+| `/guild territory claim\|unclaim\|info\|wand\|pos1\|pos2` | Same as command table in [Chinese doc](./GuildTerritory.md#命令) |
+| `/guild territory admin ...` | Admin tools |
 
 ## Configuration
 
-See `modules.guild-territory` in `config.yml` — `claim.*`, `flags.*`, `home-protect.mode`, `member-sync.*`.
+See `modules.guild-territory` in `config.yml` — `claim.*`, `flags.*`, `home-protect.mode`, `member-sync.*`, `gui.*`.
+
+### GUI
+
+- **Guild Settings** → “Guild Territory” (managers + `guild.territory.claim`)
+- **Guild Info** → “Territory” (`guild.territory.info`)
+- **Command** → `/guild territory gui`
+
+Set `gui.enabled: false` to disable all GUI entry points.
 
 ## Build
 

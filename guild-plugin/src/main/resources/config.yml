@@ -125,6 +125,10 @@ modules:
     member-sync:
       enabled: true
       repair-on-load: false
+    gui:
+      enabled: true
+      register-settings-button: true
+      register-info-button: true
 
 # Database backup (plugins/GuildPlugin/backup/)
 backup:

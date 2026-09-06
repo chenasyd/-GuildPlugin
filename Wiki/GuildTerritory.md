@@ -33,6 +33,7 @@
 | `/guild territory claim` | 将选区声明为本公会领地（当前世界） |
 | `/guild territory unclaim` | 放弃当前世界领地 |
 | `/guild territory info` | 查看当前世界领地信息 |
+| `/guild territory gui` | 打开领地管理 GUI |
 | `/guild territory admin list` | 列出全部领地（管理员） |
 | `/guild territory admin force-unclaim <公会\|ID> [世界]` | 强制放弃 |
 | `/guild territory admin repair-sync [公会\|ID]` | 修复 WG 成员同步 |
@@ -54,6 +55,17 @@
 | `home-protect.mode` | `defer` | `defer` / `merge` / `off` |
 | `member-sync.enabled` | `true` | 成员变更同步 WG |
 | `member-sync.repair-on-load` | `false` | 启动时全量修复 |
+| `gui.enabled` | `true` | 启用领地 GUI |
+| `gui.register-settings-button` | `true` | 在公会设置 GUI 注入管理按钮（官员/会长） |
+| `gui.register-info-button` | `true` | 在公会信息 GUI 注入查看按钮（全体成员） |
+
+### GUI 入口
+
+- **公会设置** → 「公会领地」（需官员/会长 + `guild.territory.claim`）
+- **公会信息** → 「领地信息」（需 `guild.territory.info`，管理操作仍受角色限制）
+- **命令** → `/guild territory gui`
+
+管理面板支持：查看当前世界与其它世界领地、选区状态、WorldGuard 就绪状态；管理模式下可获取选区斧、设 Pos1/Pos2、声明/放弃（含确认对话框）。
 
 ### 与 `guild.home-protect` 的关系
 
