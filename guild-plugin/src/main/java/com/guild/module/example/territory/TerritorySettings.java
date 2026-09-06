@@ -130,6 +130,14 @@ public final class TerritorySettings {
         return context.getConfig().getBoolean("cross-server.materialize-retry-failed", true);
     }
 
+    /** SDK EventBus 事件总开关。 */
+    public boolean isEventsEnabled() {
+        if (context == null) {
+            return true;
+        }
+        return context.getConfig().getBoolean("events.enabled", true);
+    }
+
     /** WG StateFlag 配置值：allow / deny / none（不设置）。 */
     public String getFlag(String key, String defaultValue) {
         String raw = context.getConfig().getString("flags." + key, defaultValue);

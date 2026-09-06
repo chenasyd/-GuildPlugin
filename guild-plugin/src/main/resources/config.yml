@@ -139,6 +139,8 @@ modules:
       materialize-on-load: true
       materialize-on-world-load: true
       materialize-retry-failed: true
+    events:
+      enabled: true
 
 # Database backup (plugins/GuildPlugin/backup/)
 backup:

@@ -175,6 +175,8 @@ public final class TerritoryCommandHandler {
                 Optional<TerritoryRecord> created = module.getBridge().claimTerritory(request);
                 if (created.isPresent()) {
                     TerritoryRecord record = created.get();
+                    module.getEventEmitter().fireClaimed(record, player.getUniqueId(),
+                            com.guild.sdk.territory.TerritoryEventSource.PLAYER, claimCost);
                     if (claimCost > 0) {
                         texts.send(player, "module.territory.claim-success-paid",
                                 "&a已声明领地 &f{0}&a（{1}），区域 ID: &f{2}&a，已扣除 &f{3}",
@@ -234,7 +236,15 @@ public final class TerritoryCommandHandler {
         }
 
         CompatibleScheduler.runTask(context.getPlugin(), player, () -> {
+            Optional<TerritoryRecord> existing = module.getRepository().get(guild.getId(), worldName);
+            if (existing.isEmpty() && module.getBridge().isOperational()) {
+                existing = module.getBridge().findTerritory(guild.getId(), worldName);
+            }
             boolean removed = module.getBridge().unclaimTerritory(guild.getId(), worldName);
+            if (removed && existing.isPresent()) {
+                module.getEventEmitter().fireUnclaimed(existing.get(), player.getUniqueId(),
+                        com.guild.sdk.territory.TerritoryEventSource.PLAYER);
+            }
             if (removed) {
                 texts.send(player, "module.territory.unclaim-success",
                         "&a已放弃领地（{0}）。", worldName);

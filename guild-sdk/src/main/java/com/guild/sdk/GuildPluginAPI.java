@@ -19,6 +19,7 @@ import com.guild.sdk.gui.ModuleGUIConfig;
 import com.guild.sdk.home.HomeProtectIntegration;
 import com.guild.sdk.http.HttpClientProvider;
 import com.guild.sdk.placeholder.PlaceholderProvider;
+import com.guild.sdk.territory.TerritoryAPI;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -382,6 +383,15 @@ public class GuildPluginAPI {
     /** 是否跳过指定公会 home 半径的内置保护（merge 模式）。 */
     public boolean shouldSkipHomeProtectForGuildHome(int guildId, String worldName) {
         return false;
+    }
+
+    // ==================== 领地模块 API（guild-territory 加载后可用） ====================
+
+    /**
+     * 只读领地 API；模块未加载或未注册时返回 {@code null}。
+     */
+    public TerritoryAPI getTerritoryAPI() {
+        return null;
     }
 
     // ==================== 模块清理 ====================

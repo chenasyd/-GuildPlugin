@@ -92,6 +92,28 @@
 - 配置：`cross-server.materialize-on-load` / `materialize-on-world-load` / `materialize-retry-failed`（默认均 `true`）
 - **管理命令**：`/guild territory admin materialize [公会] [世界] [--force]` — 手动触发，不受 `materialize-on-load` 开关限制；`--force` 可重试 `sync_state=FAILED` 记录
 
+### SDK 事件与只读 API（v1.0+）
+
+事件 Data 类位于 `com.guild.sdk.event.territory.*`（编译期仅依赖 `guild-sdk`）。模块通过 **EventBus** 发布；配置 `events.enabled: false` 可关闭。
+
+| 事件类 | 触发时机 |
+|--------|----------|
+| `TerritoryClaimedEventData` | 本机 claim 成功 |
+| `TerritoryUnclaimedEventData` | 本机 unclaim / admin force-unclaim |
+| `TerritoryMaterializedEventData` | materialize 完成（启动 / admin） |
+| `TerritorySyncStateChangedEventData` | `sync_state` 变更 |
+| `TerritoryGuildClearedEventData` | 公会解散清空领地 |
+
+**订阅示例**（其它 Guild 模块，`module.yml` 建议 `soft-depends: [guild-territory]`）：
+
+```java
+context.getEventBus().subscribe("my-module", TerritoryClaimedEventData.class, event -> {
+    // 成就、任务等
+});
+```
+
+**只读 API**：`context.getApi().getTerritoryAPI()` → `TerritoryAPI`（`listByGuild`、`findAt` 等）；模块未加载时返回 `null`。
+
 ### PlaceholderAPI（v0.7+）
 
 需安装 PlaceholderAPI；模块加载后自动注册 identifier `territory`。

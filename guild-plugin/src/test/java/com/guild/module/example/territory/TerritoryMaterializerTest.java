@@ -38,7 +38,8 @@ class TerritoryMaterializerTest {
                 new File(System.getProperty("java.io.tmpdir")),
                 Logger.getAnonymousLogger());
         bridge = new RecordingBridge();
-        materializer = new TerritoryMaterializer(null, repository, bridge, settings(true, true, true));
+        materializer = new TerritoryMaterializer(null, repository, bridge, settings(true, true, true),
+                null);
     }
 
     @AfterEach
@@ -68,7 +69,7 @@ class TerritoryMaterializerTest {
     @Test
     void needsMaterialization_skipsFailedWhenRetryDisabled() {
         TerritoryMaterializer noRetry = new TerritoryMaterializer(
-                null, repository, bridge, settings(true, true, false));
+                null, repository, bridge, settings(true, true, false), null);
         TerritoryRecord record = localRecord(3, TerritorySyncState.FAILED);
         repository.put(record);
 
@@ -78,7 +79,7 @@ class TerritoryMaterializerTest {
     @Test
     void needsMaterialization_forceFailed_retriesFailedRecord() {
         TerritoryMaterializer noRetry = new TerritoryMaterializer(
-                null, repository, bridge, settings(true, true, false));
+                null, repository, bridge, settings(true, true, false), null);
         TerritoryRecord record = localRecord(5, TerritorySyncState.FAILED);
         repository.put(record);
 
@@ -89,7 +90,7 @@ class TerritoryMaterializerTest {
     @Test
     void countAdminTargets_filtersByGuildAndForce() {
         TerritoryMaterializer counter = new TerritoryMaterializer(
-                null, repository, bridge, settings(true, true, false));
+                null, repository, bridge, settings(true, true, false), null);
         repository.put(localRecord(10, TerritorySyncState.PENDING));
         repository.put(localRecord(11, TerritorySyncState.FAILED));
 

@@ -109,10 +109,14 @@ public final class TerritoryAdminHandler {
             int removed = 0;
             for (TerritoryRecord record : targets) {
                 if (module.getRepository().isLocalRecord(record)) {
+                    module.getEventEmitter().fireUnclaimed(record, null,
+                            com.guild.sdk.territory.TerritoryEventSource.ADMIN);
                     if (module.getBridge().unclaimTerritory(guildId, record.getWorldName())) {
                         removed++;
                     }
                 } else {
+                    module.getEventEmitter().fireUnclaimed(record, null,
+                            com.guild.sdk.territory.TerritoryEventSource.ADMIN);
                     long revision = System.currentTimeMillis();
                     module.getRepository().remove(record.getGuildId(), record.getServerId(), record.getWorldName());
                     if (module.getCrossServerSync() != null) {

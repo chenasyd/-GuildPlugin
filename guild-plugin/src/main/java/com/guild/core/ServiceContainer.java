@@ -32,6 +32,15 @@ public class ServiceContainer {
     }
     
     /**
+     * 取消注册服务（模块卸载时使用）。
+     */
+    public void unregister(Class<?> serviceClass) {
+        services.remove(serviceClass);
+        lifecycles.remove(serviceClass);
+        logger.info("Unregistered service: " + serviceClass.getSimpleName());
+    }
+
+    /**
      * 获取服务
      */
     @SuppressWarnings("unchecked")

@@ -42,7 +42,7 @@ See `modules.guild-territory` in `config.yml` — `claim.*`, `flags.*`, `home-pr
 - WG regions are still created only on the owning backend server
 - **Materialize-on-load** (`cross-server.materialize-on-load`): on startup/world load, local DB records without a matching WG region are materialized into WorldGuard (members fetched async); does not broadcast
 - **Admin materialize** (v0.9+): `/guild territory admin materialize [guild] [world] [--force]` — manual trigger, ignores `materialize-on-load`; `--force` retries `FAILED` records
-- **PlaceholderAPI** (v0.7+): `%guild_module_territory_*` — see [PLACEHOLDER_API.md](./PLACEHOLDER_API.md#guild-territory-module-guild-territory-loaded)
+- **SDK events & read API** (v1.0+): EventBus types in `com.guild.sdk.event.territory.*`; `getTerritoryAPI()` for queries; `events.enabled` config toggle
 
 ### GUI
 

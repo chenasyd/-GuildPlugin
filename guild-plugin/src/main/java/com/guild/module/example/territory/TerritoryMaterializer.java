@@ -22,14 +22,17 @@ public final class TerritoryMaterializer {
     private final TerritoryRepository repository;
     private final TerritoryBridge bridge;
     private final TerritorySettings settings;
+    private final TerritoryEventEmitter eventEmitter;
     private final Logger logger;
 
     public TerritoryMaterializer(ModuleContext context, TerritoryRepository repository,
-                                 TerritoryBridge bridge, TerritorySettings settings) {
+                                 TerritoryBridge bridge, TerritorySettings settings,
+                                 TerritoryEventEmitter eventEmitter) {
         this.context = context;
         this.repository = repository;
         this.bridge = bridge;
         this.settings = settings;
+        this.eventEmitter = eventEmitter;
         this.logger = context != null ? context.getLogger() : Logger.getAnonymousLogger();
     }
 
@@ -65,6 +68,22 @@ public final class TerritoryMaterializer {
             return TerritoryMaterializeOutcome.WORLD_NOT_LOADED;
         }
         return bridge.materializeFromRecord(record, leaderUuid, memberUuids);
+    }
+
+    private TerritoryMaterializeOutcome materializeAndPublish(TerritoryRecord record,
+                                                              UUID leaderUuid,
+                                                              List<UUID> memberUuids,
+                                                              com.guild.sdk.territory.TerritoryEventSource source) {
+        TerritoryMaterializeOutcome outcome = materializeRecordNow(record, leaderUuid, memberUuids);
+        publishMaterialized(record, outcome, source);
+        return outcome;
+    }
+
+    private void publishMaterialized(TerritoryRecord record, TerritoryMaterializeOutcome outcome,
+                                     com.guild.sdk.territory.TerritoryEventSource source) {
+        if (eventEmitter != null && outcome != null) {
+            eventEmitter.fireMaterialized(record, outcome, source);
+        }
     }
 
     /**
@@ -117,7 +136,8 @@ public final class TerritoryMaterializer {
                         if (!needsMaterialization(record, forceFailed)) {
                             continue;
                         }
-                        summary.record(materializeRecordNow(record, leaderUuid, memberUuids));
+                        summary.record(materializeAndPublish(record, leaderUuid, memberUuids,
+                                com.guild.sdk.territory.TerritoryEventSource.ADMIN));
                     }
                     if (pendingGuilds.decrementAndGet() == 0) {
                         deliverSummary(onComplete, summary);
@@ -271,6 +291,8 @@ public final class TerritoryMaterializer {
                         }
                         TerritoryMaterializeOutcome outcome = bridge.materializeFromRecord(
                                 record, leaderUuid, memberUuids);
+                        publishMaterialized(record, outcome,
+                                com.guild.sdk.territory.TerritoryEventSource.SYSTEM);
                         logger.fine(() -> "Territory materialize guild=" + record.getGuildId()
                                 + " world=" + record.getWorldName() + " -> " + outcome);
                     }

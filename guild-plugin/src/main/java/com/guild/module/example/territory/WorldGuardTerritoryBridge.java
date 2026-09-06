@@ -32,14 +32,17 @@ public final class WorldGuardTerritoryBridge implements TerritoryBridge {
     private final Logger logger;
     private final TerritorySettings settings;
     private final TerritoryCrossServerSync crossServerSync;
+    private final TerritoryEventEmitter eventEmitter;
 
     public WorldGuardTerritoryBridge(TerritoryRepository repository, Logger logger,
                                      TerritorySettings settings,
-                                     TerritoryCrossServerSync crossServerSync) {
+                                     TerritoryCrossServerSync crossServerSync,
+                                     TerritoryEventEmitter eventEmitter) {
         this.repository = repository;
         this.logger = logger;
         this.settings = settings;
         this.crossServerSync = crossServerSync;
+        this.eventEmitter = eventEmitter;
     }
 
     @Override
@@ -282,13 +285,25 @@ public final class WorldGuardTerritoryBridge implements TerritoryBridge {
         if (record.getSyncState() == TerritorySyncState.MATERIALIZED) {
             return;
         }
+        TerritoryRecord before = record;
         long now = System.currentTimeMillis();
-        repository.put(record.withSyncState(TerritorySyncState.MATERIALIZED, now));
+        TerritoryRecord after = record.withSyncState(TerritorySyncState.MATERIALIZED, now);
+        repository.put(after);
+        if (eventEmitter != null) {
+            eventEmitter.fireSyncStateChanged(before, after,
+                    com.guild.sdk.territory.TerritoryEventSource.SYSTEM);
+        }
     }
 
     private void markFailed(TerritoryRecord record) {
+        TerritoryRecord before = record;
         long now = System.currentTimeMillis();
-        repository.put(record.withSyncState(TerritorySyncState.FAILED, now));
+        TerritoryRecord after = record.withSyncState(TerritorySyncState.FAILED, now);
+        repository.put(after);
+        if (eventEmitter != null && before.getSyncState() != TerritorySyncState.FAILED) {
+            eventEmitter.fireSyncStateChanged(before, after,
+                    com.guild.sdk.territory.TerritoryEventSource.SYSTEM);
+        }
     }
 
     private static String resolveRegionId(TerritoryRecord record) {

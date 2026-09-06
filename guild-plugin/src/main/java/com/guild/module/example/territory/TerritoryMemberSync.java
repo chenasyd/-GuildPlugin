@@ -24,16 +24,19 @@ public final class TerritoryMemberSync {
     private final TerritoryRepository repository;
     private final TerritoryCrossServerSync crossServerSync;
     private final Object moduleInstance;
+    private final TerritoryEventEmitter eventEmitter;
 
     public TerritoryMemberSync(ModuleContext context, TerritoryBridge bridge,
                                TerritoryRepository repository,
                                TerritoryCrossServerSync crossServerSync,
-                               Object moduleInstance) {
+                               Object moduleInstance,
+                               TerritoryEventEmitter eventEmitter) {
         this.context = context;
         this.bridge = bridge;
         this.repository = repository;
         this.crossServerSync = crossServerSync;
         this.moduleInstance = moduleInstance;
+        this.eventEmitter = eventEmitter;
     }
 
     public void register(GuildPluginAPI api) {
@@ -166,14 +169,18 @@ public final class TerritoryMemberSync {
     }
 
     private void scheduleUnclaimAll(int guildId, String reason) {
+        List<TerritoryRecord> territories = new ArrayList<>(repository.findByGuildId(guildId));
+        int removedCount = territories.size();
+        String guildName = removedCount > 0 ? territories.get(0).getGuildName() : "";
+
         if (!bridge.isOperational()) {
             repository.removeAllForGuild(guildId);
             repository.save();
             publishGuildClear(guildId);
+            fireGuildCleared(guildId, guildName, removedCount);
             return;
         }
 
-        List<TerritoryRecord> territories = new ArrayList<>(repository.findByGuildId(guildId));
         if (territories.isEmpty()) {
             return;
         }
@@ -187,6 +194,7 @@ public final class TerritoryMemberSync {
                 }
                 repository.removeAllForGuild(guildId);
                 logger().info("Territory unclaimed for dissolved guild " + guildId + " (" + reason + ")");
+                fireGuildCleared(guildId, guildName, removedCount);
             };
             if (crossServerSync != null) {
                 crossServerSync.runWithoutPublishing(cleanup);
@@ -195,6 +203,13 @@ public final class TerritoryMemberSync {
                 cleanup.run();
             }
         });
+    }
+
+    private void fireGuildCleared(int guildId, String guildName, int removedCount) {
+        if (eventEmitter != null) {
+            eventEmitter.fireGuildCleared(guildId, guildName, removedCount,
+                    com.guild.sdk.territory.TerritoryEventSource.GUILD_DELETE);
+        }
     }
 
     private void publishGuildClear(int guildId) {

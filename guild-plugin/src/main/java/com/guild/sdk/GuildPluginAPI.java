@@ -565,6 +565,16 @@ public class GuildPluginAPI {
     }
 
     /**
+     * 只读领地 API；{@code guild-territory} 模块未加载时返回 {@code null}。
+     */
+    public com.guild.sdk.territory.TerritoryAPI getTerritoryAPI() {
+        if (plugin.getServiceContainer().has(com.guild.sdk.territory.TerritoryAPI.class)) {
+            return plugin.getServiceContainer().get(com.guild.sdk.territory.TerritoryAPI.class);
+        }
+        return null;
+    }
+
+    /**
      * 移除指定模块注册的所有资源（占位符、子命令、自定义 GUI）。
      * 由 ModuleManager 在模块卸载时调用，配合 clearModuleHandlers 使用。
      */

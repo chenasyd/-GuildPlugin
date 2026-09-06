@@ -46,6 +46,8 @@ public final class TerritoryModule implements GuildModule {
     private TerritoryCommandHandler commandHandler;
     private TerritoryTexts texts;
     private TerritoryHomeProtectIntegration homeProtectIntegration;
+    private TerritoryEventEmitter eventEmitter;
+    private TerritoryAPIImpl territoryApi;
 
     @Override
     public void onEnable(ModuleContext context) throws Exception {
@@ -64,17 +66,24 @@ public final class TerritoryModule implements GuildModule {
                 serverIdentity);
         repository.load();
 
+        this.eventEmitter = new TerritoryEventEmitter(context, repository, settings);
+        this.territoryApi = new TerritoryAPIImpl(this);
+        context.getPlugin().getServiceContainer().register(
+                com.guild.sdk.territory.TerritoryAPI.class, territoryApi);
+
         this.crossServerSync = new TerritoryCrossServerSync(repository, settings, context.getLogger());
         crossServerSync.register();
 
         refreshBridgeAndAvailability();
         logLoadStatus();
 
-        this.materializer = new TerritoryMaterializer(context, repository, bridge, settings);
+        this.materializer = new TerritoryMaterializer(context, repository, bridge, settings,
+                eventEmitter);
         materializer.scheduleMaterializeOnLoad();
         context.registerEvents(new TerritoryWorldLoadListener(materializer));
 
-        this.memberSync = new TerritoryMemberSync(context, bridge, repository, crossServerSync, this);
+        this.memberSync = new TerritoryMemberSync(context, bridge, repository, crossServerSync,
+                this, eventEmitter);
         memberSync.register(context.getApi());
         memberSync.repairAllOnLoad();
 
@@ -108,6 +117,11 @@ public final class TerritoryModule implements GuildModule {
         if (homeProtectIntegration != null && context != null) {
             context.getApi().unregisterHomeProtectIntegration(this);
         }
+        if (context != null && context.getPlugin().getServiceContainer()
+                .has(com.guild.sdk.territory.TerritoryAPI.class)) {
+            context.getPlugin().getServiceContainer()
+                    .unregister(com.guild.sdk.territory.TerritoryAPI.class);
+        }
         state = ModuleState.UNLOADED;
     }
 
@@ -120,7 +134,8 @@ public final class TerritoryModule implements GuildModule {
         refreshBridgeAndAvailability();
         logLoadStatus();
         if (materializer != null) {
-            this.materializer = new TerritoryMaterializer(context, repository, bridge, settings);
+            this.materializer = new TerritoryMaterializer(context, repository, bridge, settings,
+                    eventEmitter);
             materializer.scheduleMaterializeOnLoad();
         }
         registerHomeProtectIntegration();
@@ -129,7 +144,8 @@ public final class TerritoryModule implements GuildModule {
     private void refreshBridgeAndAvailability() {
         this.availability = WorldGuardProbe.probe();
         this.bridge = TerritoryBridgeFactory.create(
-                availability, repository, context.getLogger(), settings, crossServerSync);
+                availability, repository, context.getLogger(), settings, crossServerSync,
+                eventEmitter);
     }
 
     private void registerTerritoryGui(GuildPluginAPI api) {
@@ -391,6 +407,10 @@ public final class TerritoryModule implements GuildModule {
 
     public TerritoryMaterializer getMaterializer() {
         return materializer;
+    }
+
+    public TerritoryEventEmitter getEventEmitter() {
+        return eventEmitter;
     }
 
     public boolean isWorldGuardReady() {

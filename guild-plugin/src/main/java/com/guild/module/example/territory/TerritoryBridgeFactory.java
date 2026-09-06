@@ -12,9 +12,11 @@ public final class TerritoryBridgeFactory {
                                          TerritoryRepository repository,
                                          Logger logger,
                                          TerritorySettings settings,
-                                         TerritoryCrossServerSync crossServerSync) {
+                                         TerritoryCrossServerSync crossServerSync,
+                                         TerritoryEventEmitter eventEmitter) {
         if (availability.fullyReady()) {
-            return new WorldGuardTerritoryBridge(repository, logger, settings, crossServerSync);
+            return new WorldGuardTerritoryBridge(repository, logger, settings, crossServerSync,
+                    eventEmitter);
         }
         return new NoOpTerritoryBridge(logger, "missing " + availability.describeMissing());
     }
