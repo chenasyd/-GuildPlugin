@@ -5,6 +5,10 @@ import com.guild.core.geyser.PlayerConnectionService;
 import com.guild.core.hook.ImagoCoreHook;
 import com.guild.core.hook.ImagoGuiConfig;
 import com.guild.core.gui.layout.GuiImageLayoutConfig;
+import com.guild.core.gui.session.GuiClickDebouncer;
+import com.guild.core.gui.session.GuiInputModeController;
+import com.guild.core.gui.session.GuiNavigationStack;
+import com.guild.core.gui.session.GuiSessionManager;
 import com.guild.gui.GuildNameInputGUI;
 import com.guild.sdk.gui.BedrockFormProvider;
 import com.guild.sdk.gui.GUILayoutDefinition;
@@ -21,10 +25,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,10 +44,10 @@ public class GUIManager implements Listener {
     
     private final GuildPlugin plugin;
     private final Logger logger;
-    private final Map<UUID, GUI> openGuis = new HashMap<>();
-    private final Map<UUID, Function<String, Boolean>> inputModes = new HashMap<>();
-    private final Map<UUID, Long> lastClickTime = new HashMap<>();
-    private final Map<UUID, Deque<GUI>> navigationStacks = new HashMap<>();
+    private final GuiSessionManager sessions = new GuiSessionManager();
+    private final GuiNavigationStack navigation = new GuiNavigationStack();
+    private final GuiInputModeController inputModes = new GuiInputModeController();
+    private final GuiClickDebouncer clickDebouncer = new GuiClickDebouncer();
 
     // ImagoCore integration (null if not available)
     private ImagoCoreHook imagoHook;
@@ -332,7 +333,7 @@ public class GUIManager implements Listener {
             
             // 基岩版玩家：优先尝试原生 Cumulus 表单
             if (PlayerConnectionService.isBedrockPlayer(player) && gui.openBedrockForm(player)) {
-                openGuis.put(player.getUniqueId(), gui);
+                sessions.track(player, gui);
                 if (plugin.getFileLogger() != null) {
                     plugin.getFileLogger().logGui(player.getName(),
                             "Opened " + gui.getGuiType() + " (Bedrock Form)");
@@ -350,7 +351,7 @@ public class GUIManager implements Listener {
                 BedrockFormProvider provider = plugin.getModuleManager().getSharedApi().getBedrockFormProvider(guiType);
                 if (provider != null) {
                     provider.sendForm(player, java.util.Map.of());
-                    openGuis.put(player.getUniqueId(), gui);
+                    sessions.track(player, gui);
                     if (isDebugEnabled()) {
                         logger.info("Player " + player.getName() + " opened module Bedrock form: " + guiType);
                     }
@@ -368,7 +369,7 @@ public class GUIManager implements Listener {
             player.openInventory(inventory);
             
             // 记录打开的GUI
-            openGuis.put(player.getUniqueId(), gui);
+            sessions.track(player, gui);
 
             // 文件日志：记录 GUI 打开操作
             if (plugin.getFileLogger() != null) {
@@ -461,16 +462,12 @@ public class GUIManager implements Listener {
         }
         
         try {
-            GUI gui = openGuis.get(player.getUniqueId());
+            GUI gui = sessions.remove(player);
             if (gui != null) {
-                // 从记录中移除
-                openGuis.remove(player.getUniqueId());
-
-                // 关闭库存
                 if (player.getOpenInventory() != null && player.getOpenInventory().getTopInventory() != null) {
                     player.closeInventory();
                 }
-                
+
                 if (isDebugEnabled()) {
                     logger.info("Player " + player.getName() + " closed GUI: " + gui.getClass().getSimpleName());
                 }
@@ -484,14 +481,14 @@ public class GUIManager implements Listener {
      * 获取玩家当前打开的GUI
      */
     public GUI getOpenGUI(Player player) {
-        return openGuis.get(player.getUniqueId());
+        return sessions.get(player);
     }
     
     /**
      * 检查玩家是否打开了GUI
      */
     public boolean hasOpenGUI(Player player) {
-        return openGuis.containsKey(player.getUniqueId());
+        return sessions.isOpen(player);
     }
     
     /**
@@ -503,20 +500,15 @@ public class GUIManager implements Listener {
             return;
         }
         
-        GUI gui = openGuis.get(player.getUniqueId());
+        GUI gui = sessions.get(player);
         if (gui == null) {
             return;
         }
-        
-        // 防止快速点击
-        long currentTime = System.currentTimeMillis();
-        Long lastClick = lastClickTime.get(player.getUniqueId());
-        if (lastClick != null && currentTime - lastClick < 200) { // 200ms防抖
+
+        if (clickDebouncer.shouldIgnore(player)) {
             event.setCancelled(true);
             return;
         }
-        lastClickTime.put(player.getUniqueId(), currentTime);
-        
         try {
             // 阻止玩家移动物品
             event.setCancelled(true);
@@ -557,10 +549,9 @@ public class GUIManager implements Listener {
         }
         
         try {
-            GUI gui = openGuis.remove(player.getUniqueId());
+            GUI gui = sessions.remove(player);
             if (gui != null) {
-                // 只有在玩家确实在输入模式时才清理
-                if (inputModes.containsKey(player.getUniqueId())) {
+                if (inputModes.isActive(player)) {
                     clearInputMode(player);
                 }
                 
@@ -585,7 +576,7 @@ public class GUIManager implements Listener {
         }
         
         try {
-            GUI gui = openGuis.get(player.getUniqueId());
+            GUI gui = sessions.get(player);
             if (gui != null) {
                 // 关闭当前GUI
                 closeGUI(player);
@@ -608,9 +599,9 @@ public class GUIManager implements Listener {
      * 打开 GUI 并将当前 GUI 压入导航栈
      */
     public void pushAndOpen(Player player, GUI newGui) {
-        GUI current = openGuis.get(player.getUniqueId());
+        GUI current = sessions.get(player);
         if (current != null) {
-            getNavStack(player).push(current);
+            navigation.push(player, current);
         }
         openGUI(player, newGui);
     }
@@ -620,25 +611,19 @@ public class GUIManager implements Listener {
      * @return 是否成功导航回上一页
      */
     public boolean popAndOpen(Player player) {
-        Deque<GUI> stack = navigationStacks.remove(player.getUniqueId());
-        if (stack == null || stack.isEmpty()) return false;
-        GUI previous = stack.pop();
-        if (!stack.isEmpty()) {
-            navigationStacks.put(player.getUniqueId(), stack);
+        GUI previous = navigation.pop(player);
+        if (previous == null) {
+            return false;
         }
         openGUI(player, previous);
         return true;
-    }
-
-    private Deque<GUI> getNavStack(Player player) {
-        return navigationStacks.computeIfAbsent(player.getUniqueId(), k -> new ArrayDeque<>());
     }
 
     /**
      * 清除玩家的导航栈
      */
     public void clearNavigation(Player player) {
-        navigationStacks.remove(player.getUniqueId());
+        navigation.clear(player);
     }
 
     /**
@@ -648,20 +633,19 @@ public class GUIManager implements Listener {
         // 如果插件已禁用，直接清理记录，不尝试调度任务
         if (!plugin.isEnabled()) {
             logger.warning("Plugin disabled, skipping GUI close task scheduling");
-            openGuis.clear();
+            sessions.clear();
             return;
         }
 
         try {
-            // 快照避免 ConcurrentModificationException（closeGUI 会修改 openGuis）
-            for (UUID playerUuid : new java.util.ArrayList<>(openGuis.keySet())) {
+            for (UUID playerUuid : sessions.snapshotPlayerIds()) {
                 Player player = Bukkit.getPlayer(playerUuid);
                 if (player != null && player.isOnline()) {
                     // closeGUI 内部会检查 isEntityThread 并调度到正确的区域线程
                     closeGUI(player);
                 }
             }
-            openGuis.clear();
+            sessions.clear();
             if (isDebugEnabled()) {
                 logger.info("Closed all GUIs");
             }
@@ -674,7 +658,7 @@ public class GUIManager implements Listener {
      * 获取打开的GUI数量
      */
     public int getOpenGUICount() {
-        return openGuis.size();
+        return sessions.count();
     }
     
     /**
@@ -688,7 +672,7 @@ public class GUIManager implements Listener {
         }
         
         try {
-            inputModes.put(player.getUniqueId(), inputHandler);
+            inputModes.set(player, inputHandler);
             if (isDebugEnabled()) {
                 logger.info("Player " + player.getName() + " entered input mode");
             }
@@ -711,7 +695,7 @@ public class GUIManager implements Listener {
             // 为公会名称输入创建特殊的输入处理器
             if ("guild_name_input".equals(mode) && gui instanceof GuildNameInputGUI) {
                 GuildNameInputGUI nameInputGUI = (GuildNameInputGUI) gui;
-                inputModes.put(player.getUniqueId(), input -> {
+                inputModes.set(player, input -> {
                     String trimmed = input.trim();
                     if ("取消".equals(trimmed) || "Cancel".equalsIgnoreCase(trimmed)) {
                         nameInputGUI.handleCancel(player);
@@ -742,7 +726,7 @@ public class GUIManager implements Listener {
         }
         
         try {
-            inputModes.remove(player.getUniqueId());
+            inputModes.clear(player);
             if (isDebugEnabled()) {
                 logger.info("Player " + player.getName() + " exited input mode");
             }
@@ -755,7 +739,7 @@ public class GUIManager implements Listener {
      * 检查玩家是否在输入模式
      */
     public boolean isInInputMode(Player player) {
-        return inputModes.containsKey(player.getUniqueId());
+        return inputModes.isActive(player);
     }
     
     /**
@@ -763,18 +747,9 @@ public class GUIManager implements Listener {
      */
     public boolean handleInput(Player player, String input) {
         try {
-            Function<String, Boolean> handler = inputModes.get(player.getUniqueId());
-            if (handler != null) {
-                boolean result = handler.apply(input);
-                if (result) {
-                    inputModes.remove(player.getUniqueId());
-                }
-                return result;
-            }
-            return false;
+            return inputModes.handle(player, input);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error handling player input", e);
-            // 发生错误时清除输入模式
             clearInputMode(player);
             return false;
         }
