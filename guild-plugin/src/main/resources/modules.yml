@@ -9,7 +9,7 @@
 # Both are loaded independently at startup and reload, without affecting each other.
 #
 # Bundled core/GUI languages (26): en, zh, pl, br, de, fr, ru, zh_tw, ms, ja, ko, es, pt, it, nl, sv, tr, vi, th, cs, uk, ro, hu, da, fi, no
-# Module packs: announcement / apitest / builtin-activity / member-rank / quest / stats / testlang (subset of langs per module).
+# Module packs: announcement / apitest / builtin-activity / member-rank / quest / stats / testlang / guild-territory (subset of langs per module).
 # ============================================================
 
 language:
