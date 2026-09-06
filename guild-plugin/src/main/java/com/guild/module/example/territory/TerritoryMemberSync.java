@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * P7-c：监听公会成员变更，将 WG 区域 members/owners 与数据库成员列表保持同步。
+ * 监听公会成员变更，将 WG 区域 members/owners 与数据库成员列表保持同步。
  */
 public final class TerritoryMemberSync {
 

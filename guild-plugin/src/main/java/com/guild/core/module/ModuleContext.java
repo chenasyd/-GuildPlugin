@@ -115,7 +115,7 @@ public class ModuleContext {
      * @param args   占位符参数（{0}, {1}, {2} ...），第一个参数同时作为 key 不存在时的 fallback
      */
     public void sendMessage(Player player, String key, Object... args) {
-        String message = formatMessage(key, args);
+        String message = getMessage(player, key, args);
         if (message != null && !message.isEmpty()) {
             player.sendMessage(message);
         }
@@ -145,35 +145,48 @@ public class ModuleContext {
      * @param args   占位符参数（第一个参数同时作为 fallback）
      */
     public String getMessage(Player player, String key, Object... args) {
-        String[] strArgs = null;
-        String fallback = "";
-        if (args != null && args.length > 0) {
-            strArgs = new String[args.length];
-            for (int i = 0; i < args.length; i++) {
-                strArgs[i] = args[i] != null ? args[i].toString() : "";
-            }
-            fallback = strArgs[0];
-        }
-        return ColorUtils.colorize(plugin.getLanguageManager().getModuleIndexedMessage(player, key, fallback, strArgs));
+        IndexedMessageArgs parsed = parseIndexedMessageArgs(args);
+        return ColorUtils.colorize(
+                plugin.getLanguageManager().getModuleIndexedMessage(
+                        player, key, parsed.fallback, parsed.replaceArgs));
     }
 
     /**
      * 格式化消息（使用索引占位符 {0}, {1}, {2} ...）
      * <p>
-     * 首个参数同时用作 getIndexedMessage 的 defaultValue，
-     * 确保 key 不存在时返回有意义的文本而非空字符串。
+     * 首个参数为 key 不存在时的 fallback 模板；其后参数依次替换 {0}、{1}…
      */
     private String formatMessage(String key, Object[] args) {
-        String[] strArgs = null;
-        String fallback = "";
-        if (args != null && args.length > 0) {
-            strArgs = new String[args.length];
-            for (int i = 0; i < args.length; i++) {
-                strArgs[i] = args[i] != null ? args[i].toString() : "";
-            }
-            fallback = strArgs[0];
+        IndexedMessageArgs parsed = parseIndexedMessageArgs(args);
+        return ColorUtils.colorize(
+                plugin.getLanguageManager().getModuleIndexedMessage(
+                        key, parsed.fallback, parsed.replaceArgs));
+    }
+
+    /** args[0] = fallback；args[1..] → {0}、{1}… */
+    private static IndexedMessageArgs parseIndexedMessageArgs(Object[] args) {
+        if (args == null || args.length == 0) {
+            return new IndexedMessageArgs("", null);
         }
-        return ColorUtils.colorize(plugin.getLanguageManager().getModuleIndexedMessage(key, fallback, strArgs));
+        String fallback = args[0] != null ? args[0].toString() : "";
+        if (args.length == 1) {
+            return new IndexedMessageArgs(fallback, null);
+        }
+        String[] replaceArgs = new String[args.length - 1];
+        for (int i = 1; i < args.length; i++) {
+            replaceArgs[i - 1] = args[i] != null ? args[i].toString() : "";
+        }
+        return new IndexedMessageArgs(fallback, replaceArgs);
+    }
+
+    private static final class IndexedMessageArgs {
+        final String fallback;
+        final String[] replaceArgs;
+
+        IndexedMessageArgs(String fallback, String[] replaceArgs) {
+            this.fallback = fallback;
+            this.replaceArgs = replaceArgs;
+        }
     }
 
     // ==================== 线程调度 ====================

@@ -3,7 +3,7 @@ package com.guild.module.example.territory;
 import java.util.Collection;
 import java.util.UUID;
 
-/** 创建领地时的输入参数（设计占位，P7-d 由命令/GUI 填充）。 */
+/** 创建领地时的输入参数。 */
 public final class TerritoryClaimRequest {
 
     private final int guildId;

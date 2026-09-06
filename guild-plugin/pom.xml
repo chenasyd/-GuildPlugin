@@ -261,6 +261,8 @@
                                     <artifact>com.guild:guild-sdk</artifact>
                                     <excludes>
                                         <exclude>com/guild/comm/**</exclude>
+                                        <!-- 运行时使用 guild-plugin 完整实现，避免 SDK 编译期 stub 覆盖 -->
+                                        <exclude>com/guild/core/module/ModuleContext.class</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

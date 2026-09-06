@@ -18,11 +18,14 @@ public final class TerritorySelectionListener implements Listener {
 
     private final ModuleContext context;
     private final TerritorySelectionManager selections;
+    private final TerritoryTexts texts;
     private final Material wandMaterial;
 
-    public TerritorySelectionListener(ModuleContext context, TerritorySelectionManager selections, Material wandMaterial) {
+    public TerritorySelectionListener(ModuleContext context, TerritorySelectionManager selections,
+                                      Material wandMaterial, TerritoryTexts texts) {
         this.context = context;
         this.selections = selections;
+        this.texts = texts;
         this.wandMaterial = wandMaterial == null ? Material.WOODEN_AXE : wandMaterial;
     }
 
@@ -55,18 +58,18 @@ public final class TerritorySelectionListener implements Listener {
         CompatibleScheduler.runTask(context.getPlugin(), player, () -> {
             if (action == Action.LEFT_CLICK_BLOCK) {
                 session.pos1 = block.getLocation();
-                context.sendMessage(player, "module.territory.pos1",
+                texts.send(player, "module.territory.pos1",
                         "&a[领地] Pos1: &f{0},{1},{2}",
                         session.pos1.getBlockX(), session.pos1.getBlockY(), session.pos1.getBlockZ());
             } else {
                 session.pos2 = block.getLocation();
-                context.sendMessage(player, "module.territory.pos2",
+                texts.send(player, "module.territory.pos2",
                         "&a[领地] Pos2: &f{0},{1},{2}",
                         session.pos2.getBlockX(), session.pos2.getBlockY(), session.pos2.getBlockZ());
             }
             if (selections.hasCompleteSelection(player)) {
                 long volume = selections.selectionVolume(player);
-                context.sendMessage(player, "module.territory.selection-volume",
+                texts.send(player, "module.territory.selection-volume",
                         "&7选区体积: &f{0} &7方块", volume);
             }
         });

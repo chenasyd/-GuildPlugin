@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 /**
- * WorldGuard 操作抽象层（P7-b 实现）。
+ * WorldGuard 操作抽象层。
  * <p>
  * 本接口隔离 WG API，便于单测 mock 与无 WG 环境下的 No-Op 实现。
  */

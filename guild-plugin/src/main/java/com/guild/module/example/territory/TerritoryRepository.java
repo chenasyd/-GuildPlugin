@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * 公会领地映射本地存储（{@code modules/guild-territory/data/territories.json}）。
  * <p>
- * P7-b 之前仅负责目录初始化与空表加载；WG 区域真源仍在 WorldGuard 区域文件。
+ * 本地 {@code territories.json} 映射；WG 区域真源在 WorldGuard 区域文件。
  */
 public final class TerritoryRepository {
 

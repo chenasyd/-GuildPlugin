@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * P7-b：基于 WorldGuard API 的公会领地桥接实现。
+ * 基于 WorldGuard API 的公会领地桥接实现。
  * <p>
  * 所有公开方法应在 Bukkit 主线程调用（读写 WG 区域存储）。
  */

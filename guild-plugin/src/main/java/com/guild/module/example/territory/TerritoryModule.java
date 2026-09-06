@@ -13,7 +13,7 @@ import org.bukkit.Material;
 /**
  * 公会领地模块（WorldGuard 软依赖）。
  * <p>
- * P7-b：WG 可用时使用 {@link WorldGuardTerritoryBridge}；否则降级为 No-Op。
+ * WorldGuard 可用时使用 {@link WorldGuardTerritoryBridge}；否则降级为 No-Op。
  */
 public final class TerritoryModule implements GuildModule {
 
@@ -27,11 +27,14 @@ public final class TerritoryModule implements GuildModule {
     private TerritoryMemberSync memberSync;
     private TerritorySelectionManager selectionManager;
     private TerritoryCommandHandler commandHandler;
+    private TerritoryTexts texts;
 
     @Override
     public void onEnable(ModuleContext context) throws Exception {
         this.context = context;
         this.state = ModuleState.ACTIVE;
+
+        this.texts = new TerritoryTexts(context);
 
         File dataDir = ModuleDataDirectory.getModuleDataRoot(context);
         this.repository = new TerritoryRepository(dataDir, context.getLogger());
@@ -40,7 +43,7 @@ public final class TerritoryModule implements GuildModule {
         this.availability = WorldGuardProbe.probe();
         this.bridge = TerritoryBridgeFactory.create(availability, repository, context.getLogger());
         if (bridge.isOperational()) {
-            context.getLogger().info("WorldGuard territory bridge active (P7-b).");
+            context.getLogger().info("WorldGuard territory bridge active.");
         } else {
             context.getLogger().warning("Guild territory module loaded in degraded mode; missing: "
                     + availability.describeMissing()
@@ -54,9 +57,9 @@ public final class TerritoryModule implements GuildModule {
         this.selectionManager = new TerritorySelectionManager();
         Material wand = TerritoryCommandHandler.parseMaterialPublic(
                 context.getConfig().getString("claim.wand-material", "WOODEN_AXE"));
-        context.registerEvents(new TerritorySelectionListener(context, selectionManager, wand));
+        context.registerEvents(new TerritorySelectionListener(context, selectionManager, wand, texts));
 
-        this.commandHandler = new TerritoryCommandHandler(this, context, selectionManager);
+        this.commandHandler = new TerritoryCommandHandler(this, context, selectionManager, texts);
         context.getApi().registerSubCommand(
                 "guild-territory",
                 "guild",
@@ -88,7 +91,7 @@ public final class TerritoryModule implements GuildModule {
 
     @Override
     public void onConfigReload(ModuleContext context) {
-        // P7-b: reload flag defaults from modules.guild-territory.*
+        // 配置热重载时保留运行时状态；claim/home-protect 相关项在下次操作前读取最新配置。
     }
 
     @Override
