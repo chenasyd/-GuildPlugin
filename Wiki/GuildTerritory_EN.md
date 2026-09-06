@@ -19,7 +19,7 @@ WorldGuard-based guild land claims: officers/leaders select a cuboid, claim it a
 | `guild.territory.info` | true | View territory in current world (must be in guild) |
 | `guild.territory.claim` | true | Claim (still requires manager role) |
 | `guild.territory.unclaim` | true | Unclaim |
-| `guild.territory.admin` | op | `admin list/force-unclaim/repair-sync` |
+| `guild.territory.admin` | op | `admin list/force-unclaim/repair-sync/materialize` |
 
 ## Commands
 
@@ -41,6 +41,7 @@ See `modules.guild-territory` in `config.yml` — `claim.*`, `flags.*`, `home-pr
 - **Revision**: `updatedAtEpochMs`; stale messages are dropped
 - WG regions are still created only on the owning backend server
 - **Materialize-on-load** (`cross-server.materialize-on-load`): on startup/world load, local DB records without a matching WG region are materialized into WorldGuard (members fetched async); does not broadcast
+- **Admin materialize** (v0.9+): `/guild territory admin materialize [guild] [world] [--force]` — manual trigger, ignores `materialize-on-load`; `--force` retries `FAILED` records
 - **PlaceholderAPI** (v0.7+): `%guild_module_territory_*` — see [PLACEHOLDER_API.md](./PLACEHOLDER_API.md#guild-territory-module-guild-territory-loaded)
 
 ### GUI

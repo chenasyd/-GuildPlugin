@@ -1,6 +1,6 @@
 id: guild-territory
 name: "Guild Territory"
-version: 0.8.0
+version: 0.9.0
 author: "GuildPlugin Team"
 description: "Guild territory claims via WorldGuard (soft runtime dependency on WorldGuard + WorldEdit)"
 type: mixed

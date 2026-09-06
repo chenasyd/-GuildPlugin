@@ -76,6 +76,31 @@ class TerritoryMaterializerTest {
     }
 
     @Test
+    void needsMaterialization_forceFailed_retriesFailedRecord() {
+        TerritoryMaterializer noRetry = new TerritoryMaterializer(
+                null, repository, bridge, settings(true, true, false));
+        TerritoryRecord record = localRecord(5, TerritorySyncState.FAILED);
+        repository.put(record);
+
+        assertFalse(noRetry.needsMaterialization(record));
+        assertTrue(noRetry.needsMaterialization(record, true));
+    }
+
+    @Test
+    void countAdminTargets_filtersByGuildAndForce() {
+        TerritoryMaterializer counter = new TerritoryMaterializer(
+                null, repository, bridge, settings(true, true, false));
+        repository.put(localRecord(10, TerritorySyncState.PENDING));
+        repository.put(localRecord(11, TerritorySyncState.FAILED));
+
+        assertEquals(1, counter.countAdminTargets(10, null, false));
+        assertEquals(1, counter.countAdminTargets(null, null, false));
+        assertEquals(0, counter.countAdminTargets(10, "world_nether", false));
+        assertEquals(1, counter.countAdminTargets(11, null, true));
+        assertEquals(0, counter.countAdminTargets(11, null, false));
+    }
+
+    @Test
     void materializeRecordNow_invokesBridge() {
         TerritoryRecord record = localRecord(4, TerritorySyncState.PENDING);
         repository.put(record);

@@ -20,7 +20,7 @@
 | `guild.territory.info` | true | 查看当前世界领地（需在公会中） |
 | `guild.territory.claim` | true | 声明领地（仍需官员/会长） |
 | `guild.territory.unclaim` | true | 放弃领地 |
-| `guild.territory.admin` | op | `admin list/force-unclaim/repair-sync` |
+| `guild.territory.admin` | op | `admin list/force-unclaim/repair-sync/materialize` |
 
 内置权限矩阵：在公会内的玩家可使用 `info`；`claim/unclaim` 额外要求 `canManageGuild`（官员/会长）。
 
@@ -37,6 +37,7 @@
 | `/guild territory admin list` | 列出全部领地（管理员） |
 | `/guild territory admin force-unclaim <公会\|ID> [世界]` | 强制放弃 |
 | `/guild territory admin repair-sync [公会\|ID]` | 修复 WG 成员同步 |
+| `/guild territory admin materialize [公会\|ID] [世界] [--force]` | 手动将本机 DB 记录补建为 WG 区域（不广播） |
 
 每公会每世界 **一块** 领地；区域 ID 固定为 `guild_{guildId}`。
 
@@ -89,6 +90,7 @@
 - **流程**：读取 DB 边界 → 创建 `ProtectedCuboidRegion` + 默认 flags → 异步拉取公会成员写入 owners/members → 标记 `MATERIALIZED`
 - **不广播**：materialize 为本地修复，不发送 `territory.push`
 - 配置：`cross-server.materialize-on-load` / `materialize-on-world-load` / `materialize-retry-failed`（默认均 `true`）
+- **管理命令**：`/guild territory admin materialize [公会] [世界] [--force]` — 手动触发，不受 `materialize-on-load` 开关限制；`--force` 可重试 `sync_state=FAILED` 记录
 
 ### PlaceholderAPI（v0.7+）
 

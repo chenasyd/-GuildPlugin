@@ -39,6 +39,7 @@ public final class TerritoryAdminHandler {
             case "list" -> handleList(sender);
             case "force-unclaim" -> handleForceUnclaim(sender, args);
             case "repair-sync" -> handleRepairSync(sender, args);
+            case "materialize" -> handleMaterialize(sender, args);
             case "help" -> sendAdminHelp(sender);
             default -> sendAdminHelp(sender);
         }
@@ -162,6 +163,83 @@ public final class TerritoryAdminHandler {
                 "&a已开始修复 &f{0} &a个公会的 WG 成员同步。", guildCount);
     }
 
+    private void handleMaterialize(CommandSender sender, String[] args) {
+        if (!module.getBridge().isOperational()) {
+            texts.send(sender, "module.territory.wg-missing",
+                    "&c未检测到 WorldGuard/WorldEdit。");
+            return;
+        }
+        TerritoryMaterializer materializer = module.getMaterializer();
+        if (materializer == null) {
+            texts.send(sender, "module.territory.admin-materialize-unavailable",
+                    "&cMaterializer 未初始化。");
+            return;
+        }
+
+        boolean forceFailed = false;
+        List<String> tokens = new ArrayList<>();
+        for (String arg : args) {
+            if ("--force".equalsIgnoreCase(arg)) {
+                forceFailed = true;
+            } else {
+                tokens.add(arg);
+            }
+        }
+        if (tokens.size() > 2) {
+            texts.send(sender, "module.territory.admin-materialize-usage",
+                    "&c用法: /guild territory admin materialize [公会名|ID] [世界] [--force]");
+            return;
+        }
+
+        Integer guildId = null;
+        String worldName = null;
+        if (!tokens.isEmpty()) {
+            Guild guild = resolveGuild(tokens.get(0));
+            if (guild == null) {
+                texts.send(sender, "module.territory.admin-guild-not-found",
+                        "&c找不到公会: &f{0}", tokens.get(0));
+                return;
+            }
+            guildId = guild.getId();
+        }
+        if (tokens.size() >= 2) {
+            worldName = tokens.get(1);
+        }
+
+        boolean finalForceFailed = forceFailed;
+        Integer finalGuildId = guildId;
+        String finalWorldName = worldName;
+
+        Runnable start = () -> {
+            int targetCount = materializer.countAdminTargets(finalGuildId, finalWorldName, finalForceFailed);
+            if (targetCount == 0) {
+                texts.send(sender, "module.territory.admin-materialize-none",
+                        "&7没有需要 materialize 的本机领地记录。");
+                return;
+            }
+
+            texts.send(sender, "module.territory.admin-materialize-started",
+                    "&a已开始 materialize &f{0} &a条本机记录…", targetCount);
+
+            materializer.materializeAdmin(finalGuildId, finalWorldName, finalForceFailed, summary ->
+                    texts.send(sender, "module.territory.admin-materialize-done",
+                            "&aMaterialize 完成：创建 &f{0}&a，已存在 &f{1}&a，跳过 &f{2}&a，"
+                                    + "世界未加载 &f{3}&a，冲突 &f{4}&a，失败 &f{5}&a",
+                            summary.getCreated(),
+                            summary.getAlreadyPresent(),
+                            summary.getSkipped(),
+                            summary.getWorldNotLoaded(),
+                            summary.getConflict(),
+                            summary.getFailed()));
+        };
+
+        if (sender instanceof Player player) {
+            CompatibleScheduler.runTask(context.getPlugin(), player, start);
+        } else {
+            CompatibleScheduler.runTask(context.getPlugin(), start);
+        }
+    }
+
     private Guild resolveGuild(String token) {
         if (token == null || token.isBlank()) {
             return null;
@@ -185,6 +263,8 @@ public final class TerritoryAdminHandler {
                 "&eforce-unclaim <公会> [世界] &7- 强制放弃领地");
         texts.send(sender, "module.territory.admin-help-repair-sync",
                 "&erepair-sync [公会] &7- 修复 WG 成员同步");
+        texts.send(sender, "module.territory.admin-help-materialize",
+                "&ematerialize [公会] [世界] [--force] &7- 手动补建 WG 区域");
     }
 
     private boolean checkAdmin(CommandSender sender) {
