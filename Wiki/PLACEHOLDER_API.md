@@ -36,3 +36,22 @@ GuildPlugin provides full PlaceholderAPI support, allowing other plugins and cha
 | `%guild_candemote%` | Can demote members (Yes / No) |
 | `%guild_cansethome%` | Can set guild home (Yes / No) |
 | `%guild_canmanageeconomy%` | Can manage guild economy (Yes / No) |
+
+## Guild Territory Module (`guild-territory` loaded)
+
+Requires PlaceholderAPI + `plugins/GuildPlugin/modules/guild-territory.jar`.
+
+| Placeholder | Description |
+|:-----------:|:-----------:|
+| `%guild_module_territory_has%` | Player's guild has a **local** territory in the current world (`True` / `False`) |
+| `%guild_module_territory_has_any%` | Player's guild has any territory across all servers (`True` / `False`) |
+| `%guild_module_territory_count%` | Total territory count for the guild (cross-server metadata) |
+| `%guild_module_territory_count_local%` | Territory count on **this** backend server |
+| `%guild_module_territory_world%` | World name of local territory in current world (empty if none) |
+| `%guild_module_territory_region%` | WG region ID in current world (e.g. `guild_42`) |
+| `%guild_module_territory_sync%` | Sync state: `materialized` / `pending` / `failed` / `none` |
+| `%guild_module_territory_volume%` | Claim volume (blocks) in current world |
+| `%guild_module_territory_server%` | This backend's persistent `server-id` |
+| `%guild_module_territory_wg_ready%` | WorldGuard bridge operational (`True` / `False`) |
+| `%guild_module_territory_inside%` | Player standing inside any guild WG territory |
+| `%guild_module_territory_inside_own%` | Player standing inside **their guild's** territory |

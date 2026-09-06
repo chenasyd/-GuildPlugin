@@ -92,6 +92,8 @@ public final class TerritoryModule implements GuildModule {
 
         registerTerritoryGui(context.getApi());
         registerHomeProtectIntegration();
+        context.getApi().registerPlaceholderProvider("guild-territory",
+                new TerritoryPlaceholderProvider(this));
         broadcastStatusToAdmins();
     }
 

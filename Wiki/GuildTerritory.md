@@ -90,6 +90,20 @@
 - **不广播**：materialize 为本地修复，不发送 `territory.push`
 - 配置：`cross-server.materialize-on-load` / `materialize-on-world-load` / `materialize-retry-failed`（默认均 `true`）
 
+### PlaceholderAPI（v0.7+）
+
+需安装 PlaceholderAPI；模块加载后自动注册 identifier `territory`。
+
+| 占位符 | 说明 |
+|--------|------|
+| `%guild_module_territory_has%` | 本公会当前世界是否有**本机**领地 |
+| `%guild_module_territory_has_any%` | 本公会是否有任意领地（含跨服元数据） |
+| `%guild_module_territory_count%` / `count_local` | 全网 / 本机领地数量 |
+| `%guild_module_territory_region%` / `world%` / `volume%` | 当前世界领地信息 |
+| `%guild_module_territory_inside%` / `inside_own%` | 玩家是否站在 WG 领地内 |
+
+完整列表见 [PlaceholderAPI 参考](./PLACEHOLDER_API.md#guild-territory-module-guild-territory-loaded)。
+
 ### GUI 入口
 
 - **公会设置** → 「公会领地」（需官员/会长 + `guild.territory.claim`）
