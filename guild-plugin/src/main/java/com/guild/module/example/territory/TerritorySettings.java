@@ -106,6 +106,30 @@ public final class TerritorySettings {
         return context.getConfig().getBoolean("cross-server.broadcast-events", true);
     }
 
+    /** 启动时根据 DB 元数据在本机补建缺失的 WG 区域。 */
+    public boolean isMaterializeOnLoad() {
+        if (context == null) {
+            return false;
+        }
+        return context.getConfig().getBoolean("cross-server.materialize-on-load", true);
+    }
+
+    /** 世界延迟加载时再次尝试 materialize。 */
+    public boolean isMaterializeOnWorldLoad() {
+        if (context == null) {
+            return false;
+        }
+        return context.getConfig().getBoolean("cross-server.materialize-on-world-load", true);
+    }
+
+    /** 是否重试上次标记为 FAILED 的 materialize。 */
+    public boolean isMaterializeRetryFailed() {
+        if (context == null) {
+            return false;
+        }
+        return context.getConfig().getBoolean("cross-server.materialize-retry-failed", true);
+    }
+
     /** WG StateFlag 配置值：allow / deny / none（不设置）。 */
     public String getFlag(String key, String defaultValue) {
         String raw = context.getConfig().getString("flags." + key, defaultValue);

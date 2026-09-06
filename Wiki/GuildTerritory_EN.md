@@ -40,6 +40,7 @@ See `modules.guild-territory` in `config.yml` — `claim.*`, `flags.*`, `home-pr
 - **Broadcast** (`cross-server.broadcast-events`, default `true`): after claim/unclaim, pushes `territory.push` → Bungee → `territory.broadcast` so other backends refresh in-memory cache (DB remains source of truth; Bungee is best-effort)
 - **Revision**: `updatedAtEpochMs`; stale messages are dropped
 - WG regions are still created only on the owning backend server
+- **Materialize-on-load** (`cross-server.materialize-on-load`): on startup/world load, local DB records without a matching WG region are materialized into WorldGuard (members fetched async); does not broadcast
 
 ### GUI
 

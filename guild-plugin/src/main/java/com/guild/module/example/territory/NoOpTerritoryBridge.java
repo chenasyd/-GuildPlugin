@@ -49,4 +49,17 @@ public final class NoOpTerritoryBridge implements TerritoryBridge {
     public Optional<TerritoryRecord> findTerritoryAt(String worldName, int x, int y, int z) {
         return Optional.empty();
     }
+
+    @Override
+    public boolean hasRegionForRecord(TerritoryRecord record) {
+        return false;
+    }
+
+    @Override
+    public TerritoryMaterializeOutcome materializeFromRecord(TerritoryRecord record,
+                                                             UUID leaderUuid,
+                                                             Collection<UUID> memberUuids) {
+        logger.fine(() -> "Territory materialize skipped (no-op): " + reason);
+        return TerritoryMaterializeOutcome.SKIPPED;
+    }
 }

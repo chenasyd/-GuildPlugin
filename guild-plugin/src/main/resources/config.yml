@@ -135,6 +135,10 @@ modules:
       server-id: ""
       # claim/unclaim 后通过 Bungee 广播，加速其它子服内存缓存更新（DB 仍为权威源）
       broadcast-events: true
+      # 启动/世界加载时，将本机 DB 元数据补建为 WG 区域
+      materialize-on-load: true
+      materialize-on-world-load: true
+      materialize-retry-failed: true
 
 # Database backup (plugins/GuildPlugin/backup/)
 backup:

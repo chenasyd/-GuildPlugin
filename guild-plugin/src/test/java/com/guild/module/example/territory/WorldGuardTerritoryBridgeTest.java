@@ -29,4 +29,19 @@ class WorldGuardTerritoryBridgeTest {
         assertEquals(8, n.maxY());
         assertEquals(7, n.maxZ());
     }
+
+    @Test
+    void fromRecord() {
+        TerritoryRecord record = new TerritoryRecord(
+                1, "A", "guild_1", "srv", "world",
+                10, 5, 3, 1, 8, 7,
+                0L, TerritorySyncState.MATERIALIZED, 0L);
+        TerritoryBounds.Normalized n = TerritoryBounds.fromRecord(record);
+        assertEquals(1, n.minX());
+        assertEquals(5, n.minY());
+        assertEquals(3, n.minZ());
+        assertEquals(10, n.maxX());
+        assertEquals(8, n.maxY());
+        assertEquals(7, n.maxZ());
+    }
 }

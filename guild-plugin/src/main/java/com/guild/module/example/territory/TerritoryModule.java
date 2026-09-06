@@ -38,6 +38,7 @@ public final class TerritoryModule implements GuildModule {
     private TerritoryServerIdentity serverIdentity;
     private TerritoryRepository repository;
     private TerritoryCrossServerSync crossServerSync;
+    private TerritoryMaterializer materializer;
     private TerritoryBridge bridge;
     private WorldGuardProbe.Availability availability;
     private TerritoryMemberSync memberSync;
@@ -68,6 +69,10 @@ public final class TerritoryModule implements GuildModule {
 
         refreshBridgeAndAvailability();
         logLoadStatus();
+
+        this.materializer = new TerritoryMaterializer(context, repository, bridge, settings);
+        materializer.scheduleMaterializeOnLoad();
+        context.registerEvents(new TerritoryWorldLoadListener(materializer));
 
         this.memberSync = new TerritoryMemberSync(context, bridge, repository, crossServerSync, this);
         memberSync.register(context.getApi());
@@ -112,6 +117,10 @@ public final class TerritoryModule implements GuildModule {
         }
         refreshBridgeAndAvailability();
         logLoadStatus();
+        if (materializer != null) {
+            this.materializer = new TerritoryMaterializer(context, repository, bridge, settings);
+            materializer.scheduleMaterializeOnLoad();
+        }
         registerHomeProtectIntegration();
     }
 
@@ -376,6 +385,10 @@ public final class TerritoryModule implements GuildModule {
 
     public TerritoryCrossServerSync getCrossServerSync() {
         return crossServerSync;
+    }
+
+    public TerritoryMaterializer getMaterializer() {
+        return materializer;
     }
 
     public boolean isWorldGuardReady() {

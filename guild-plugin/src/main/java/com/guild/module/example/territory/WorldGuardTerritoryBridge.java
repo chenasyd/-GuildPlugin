@@ -215,6 +215,90 @@ public final class WorldGuardTerritoryBridge implements TerritoryBridge {
         return Optional.empty();
     }
 
+    @Override
+    public boolean hasRegionForRecord(TerritoryRecord record) {
+        if (record == null) {
+            return false;
+        }
+        RegionManager manager = resolveManager(record.getWorldName());
+        if (manager == null) {
+            return false;
+        }
+        return manager.hasRegion(resolveRegionId(record));
+    }
+
+    @Override
+    public TerritoryMaterializeOutcome materializeFromRecord(TerritoryRecord record,
+                                                           UUID leaderUuid,
+                                                           Collection<UUID> memberUuids) {
+        if (record == null) {
+            return TerritoryMaterializeOutcome.SKIPPED;
+        }
+
+        RegionManager manager = resolveManager(record.getWorldName());
+        if (manager == null) {
+            return TerritoryMaterializeOutcome.WORLD_NOT_LOADED;
+        }
+
+        String regionId = resolveRegionId(record);
+        if (manager.hasRegion(regionId)) {
+            markMaterialized(record);
+            return TerritoryMaterializeOutcome.ALREADY_PRESENT;
+        }
+
+        TerritoryBounds.Normalized bounds = TerritoryBounds.fromRecord(record);
+        ProtectedCuboidRegion candidate = new ProtectedCuboidRegion(
+                regionId, bounds.minVector(), bounds.maxVector());
+
+        if (hasConflictingRegion(manager, candidate, regionId)) {
+            logger.warning("Territory materialize rejected: overlap for guild "
+                    + record.getGuildId() + " in " + record.getWorldName());
+            markFailed(record);
+            return TerritoryMaterializeOutcome.CONFLICT;
+        }
+
+        applyMembership(candidate, leaderUuid, memberUuids);
+        TerritoryFlagDefaults.apply(candidate, settings);
+
+        manager.addRegion(candidate);
+        try {
+            if (!manager.saveChanges()) {
+                manager.save();
+            }
+        } catch (StorageException e) {
+            manager.removeRegion(regionId);
+            logger.log(Level.SEVERE, "Failed to materialize WG region " + regionId, e);
+            markFailed(record);
+            return TerritoryMaterializeOutcome.FAILED;
+        }
+
+        markMaterialized(record);
+        logger.info("Materialized WG territory for guild " + record.getGuildId()
+                + " in " + record.getWorldName() + " (" + regionId + ")");
+        return TerritoryMaterializeOutcome.CREATED;
+    }
+
+    private void markMaterialized(TerritoryRecord record) {
+        if (record.getSyncState() == TerritorySyncState.MATERIALIZED) {
+            return;
+        }
+        long now = System.currentTimeMillis();
+        repository.put(record.withSyncState(TerritorySyncState.MATERIALIZED, now));
+    }
+
+    private void markFailed(TerritoryRecord record) {
+        long now = System.currentTimeMillis();
+        repository.put(record.withSyncState(TerritorySyncState.FAILED, now));
+    }
+
+    private static String resolveRegionId(TerritoryRecord record) {
+        String regionId = record.getRegionId();
+        if (regionId == null || regionId.isBlank()) {
+            return TerritoryRecord.defaultRegionId(record.getGuildId());
+        }
+        return regionId;
+    }
+
     static Integer parseGuildId(String regionId) {
         if (regionId == null || !regionId.startsWith(REGION_PREFIX)) {
             return null;

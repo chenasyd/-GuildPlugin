@@ -62,6 +62,9 @@
 | `cross-server.enabled` | `true` | 使用共享 DB 表 `guild_territories`（关闭则回退 `territories.json`） |
 | `cross-server.server-id` | `""` | 留空则**首次启动随机生成**并写入 `modules/guild-territory/data/server-id.txt`，重启复用 |
 | `cross-server.broadcast-events` | `true` | claim/unclaim 后通过 Bungee 广播，加速其它子服内存缓存更新 |
+| `cross-server.materialize-on-load` | `true` | 启动时为本机 DB 记录补建 WG 区域 |
+| `cross-server.materialize-on-world-load` | `true` | 世界延迟加载时再次尝试 materialize |
+| `cross-server.materialize-retry-failed` | `true` | 是否重试上次 `sync_state=FAILED` 的记录 |
 
 ### 跨服元数据（C-CS-A）
 
@@ -77,6 +80,15 @@
 - **接收方**：优先从 DB 单条校验后再更新内存索引；不重复写 DB / 不触发远端 WG materialize
 - **限制**：Bungee Plugin Messaging 需在线玩家作载波，无玩家时广播可能发不出 → **不能依赖 Bungee 必达**，重启全量 `load()` DB 可自愈
 - 公会解散时发送 `guild-clear` 单条广播（避免 N 次 unclaim 风暴）
+
+### 跨服 WG materialize-on-load（C-CS-C）
+
+- **仅本机** `server-id` 记录：其它子服的元数据只读，不会在本地创建 WG
+- **触发时机**：模块启用后、以及 `WorldLoadEvent`（世界延迟加载）
+- **条件**：DB 有记录但 WG 区域缺失，或 `sync_state` 为 `PENDING` / `FAILED`（可配置是否重试 FAILED）
+- **流程**：读取 DB 边界 → 创建 `ProtectedCuboidRegion` + 默认 flags → 异步拉取公会成员写入 owners/members → 标记 `MATERIALIZED`
+- **不广播**：materialize 为本地修复，不发送 `territory.push`
+- 配置：`cross-server.materialize-on-load` / `materialize-on-world-load` / `materialize-retry-failed`（默认均 `true`）
 
 ### GUI 入口
 

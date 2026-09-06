@@ -32,4 +32,16 @@ public interface TerritoryBridge {
 
     /** 查询某点落入的公会领地（若有）。 */
     Optional<TerritoryRecord> findTerritoryAt(String worldName, int x, int y, int z);
+
+    /**
+     * 本机是否已有与记录对应的 WG 区域（世界未加载时返回 {@code false}）。
+     */
+    boolean hasRegionForRecord(TerritoryRecord record);
+
+    /**
+     * 从 DB 元数据在本机创建/修复 WG 区域（主线程调用）。
+     */
+    TerritoryMaterializeOutcome materializeFromRecord(TerritoryRecord record,
+                                                      UUID leaderUuid,
+                                                      Collection<UUID> memberUuids);
 }

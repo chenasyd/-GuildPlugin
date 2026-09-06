@@ -36,4 +36,11 @@ public final class TerritoryBounds {
                 request.getMaxX(), request.getMaxY(), request.getMaxZ()
         );
     }
+
+    public static Normalized fromRecord(TerritoryRecord record) {
+        return normalize(
+                record.getMinX(), record.getMinY(), record.getMinZ(),
+                record.getMaxX(), record.getMaxY(), record.getMaxZ()
+        );
+    }
 }
