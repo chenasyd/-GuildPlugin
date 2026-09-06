@@ -29,6 +29,8 @@ import java.util.logging.Logger;
  *       <td>Broadcast cross-server guild chat to all servers</td></tr>
  *   <tr><td>{@code guild.event.*}</td><td>Server → Bungee → All</td>
  *       <td>Broadcast guild events to all servers (except source)</td></tr>
+ *   <tr><td>{@code territory.push}</td><td>Server → Bungee</td>
+ *       <td>Forward territory metadata changes to other servers</td></tr>
  * </table>
  */
 public final class CrossServerBridge {
@@ -126,6 +128,8 @@ public final class CrossServerBridge {
                 } else {
                     logger.fine("[Bridge] War message dropped (orchestrator null): " + type);
                 }
+            } else if (com.guild.bungee.territory.TerritoryMessageTypes.isTerritoryType(type)) {
+                handleTerritoryPush(message, sourceServer);
             } else {
                 logger.fine("[Bridge] Unrecognized message type: " + type
                         + " from " + sourceServer.getName());
@@ -197,6 +201,20 @@ public final class CrossServerBridge {
 
         // Broadcast to all servers including source (for chat display)
         broadcastToAll(forward);
+    }
+
+    /**
+     * Handle territory metadata push: forward to all servers except source.
+     */
+    private void handleTerritoryPush(BungeeMessage message, ServerInfo sourceServer) {
+        logger.fine("[Bridge] Territory push from '" + sourceServer.getName() + "'");
+
+        BungeeMessage forward = BungeeMessage.create(
+                        com.guild.bungee.territory.TerritoryMessageTypes.BROADCAST, "guild-bungee")
+                .payload(message.getPayload())
+                .build();
+
+        broadcastToAllExcept(sourceServer, forward);
     }
 
     /**

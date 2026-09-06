@@ -182,6 +182,97 @@ public final class TerritoryRepository {
         }
     }
 
+    /**
+     * 应用远端 claim 广播：仅更新内存索引，不重复写 DB（来源服已写入）。
+     *
+     * @return {@code true} 若缓存已更新
+     */
+    public boolean applyRemoteClaim(TerritoryRecord incoming, long revision) {
+        if (incoming == null || revision <= 0) {
+            return false;
+        }
+        TerritoryRecord normalized = normalizeServerId(incoming);
+        String key = storageKey(normalized);
+        TerritoryRecord cached = index.get(key);
+        if (cached != null && cached.getUpdatedAtEpochMs() >= revision) {
+            return false;
+        }
+
+        if (useDatabase) {
+            Optional<TerritoryRecord> dbRecord = databaseStore.findOne(
+                    normalized.getGuildId(), normalized.getServerId(), normalized.getWorldName());
+            if (dbRecord.isEmpty()) {
+                index.remove(key);
+                return false;
+            }
+            index.put(key, dbRecord.get());
+            return true;
+        }
+
+        index.put(key, normalized);
+        return true;
+    }
+
+    /**
+     * 应用远端 unclaim 广播：仅从内存索引移除，不重复删 DB。
+     */
+    public boolean applyRemoteUnclaim(int guildId, String serverId, String worldName, long revision) {
+        if (revision <= 0 || worldName == null || worldName.isBlank()) {
+            return false;
+        }
+        String resolvedServer = serverId != null && !serverId.isBlank()
+                ? serverId
+                : serverIdentity.getServerId();
+        String key = storageKey(guildId, resolvedServer, worldName);
+        TerritoryRecord cached = index.get(key);
+        if (cached != null && cached.getUpdatedAtEpochMs() > revision) {
+            return false;
+        }
+
+        if (useDatabase) {
+            Optional<TerritoryRecord> dbRecord = databaseStore.findOne(guildId, resolvedServer, worldName);
+            if (dbRecord.isPresent() && dbRecord.get().getUpdatedAtEpochMs() > revision) {
+                return false;
+            }
+        }
+
+        index.remove(key);
+        return true;
+    }
+
+    /**
+     * 应用远端公会解散广播：清除该公会在内存中的全部领地条目。
+     */
+    public boolean applyRemoteGuildClear(int guildId, long revision) {
+        if (guildId <= 0 || revision <= 0) {
+            return false;
+        }
+
+        if (useDatabase) {
+            List<TerritoryRecord> remaining = databaseStore.findByGuildId(guildId);
+            if (!remaining.isEmpty()) {
+                boolean anyNewer = remaining.stream()
+                        .anyMatch(record -> record.getUpdatedAtEpochMs() >= revision);
+                if (anyNewer) {
+                    for (TerritoryRecord record : remaining) {
+                        index.put(storageKey(record), record);
+                    }
+                    return false;
+                }
+            }
+        } else {
+            boolean anyNewer = index.values().stream()
+                    .filter(record -> record.getGuildId() == guildId)
+                    .anyMatch(record -> record.getUpdatedAtEpochMs() >= revision);
+            if (anyNewer) {
+                return false;
+            }
+        }
+
+        index.entrySet().removeIf(entry -> entry.getValue().getGuildId() == guildId);
+        return true;
+    }
+
     static String storageKey(TerritoryRecord record) {
         return storageKey(record.getGuildId(), record.getServerId(), record.getWorldName());
     }

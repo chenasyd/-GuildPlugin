@@ -133,6 +133,8 @@ modules:
       enabled: true
       # 留空则在首次启动时随机生成并写入 modules/guild-territory/data/server-id.txt
       server-id: ""
+      # claim/unclaim 后通过 Bungee 广播，加速其它子服内存缓存更新（DB 仍为权威源）
+      broadcast-events: true
 
 # Database backup (plugins/GuildPlugin/backup/)
 backup:

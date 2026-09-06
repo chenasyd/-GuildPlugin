@@ -13,6 +13,7 @@ import java.util.logging.Logger;
  * <ul>
  *   <li>{@code gui.image.*} — GUI image display operations</li>
  *   <li>{@code guild.sync.*} — Guild data synchronization</li>
+ *   <li>{@code territory.*} — Cross-server territory cache sync</li>
  *   <li>{@code cross.server.*} — BungeeCord cross-server messages</li>
  * </ul>
  */

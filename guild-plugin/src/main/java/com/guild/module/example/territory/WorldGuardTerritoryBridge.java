@@ -31,11 +31,15 @@ public final class WorldGuardTerritoryBridge implements TerritoryBridge {
     private final TerritoryRepository repository;
     private final Logger logger;
     private final TerritorySettings settings;
+    private final TerritoryCrossServerSync crossServerSync;
 
-    public WorldGuardTerritoryBridge(TerritoryRepository repository, Logger logger, TerritorySettings settings) {
+    public WorldGuardTerritoryBridge(TerritoryRepository repository, Logger logger,
+                                     TerritorySettings settings,
+                                     TerritoryCrossServerSync crossServerSync) {
         this.repository = repository;
         this.logger = logger;
         this.settings = settings;
+        this.crossServerSync = crossServerSync;
     }
 
     @Override
@@ -85,6 +89,7 @@ public final class WorldGuardTerritoryBridge implements TerritoryBridge {
         TerritoryRecord record = toRecord(request, bounds, System.currentTimeMillis());
         repository.put(record);
         repository.save();
+        publishClaim(record);
         return Optional.of(record);
     }
 
@@ -96,9 +101,12 @@ public final class WorldGuardTerritoryBridge implements TerritoryBridge {
         }
 
         String regionId = TerritoryRecord.defaultRegionId(guildId);
+        Optional<TerritoryRecord> existing = repository.getLocal(guildId, worldName);
+        long revision = System.currentTimeMillis();
         if (!manager.hasRegion(regionId)) {
             repository.remove(guildId, worldName);
             repository.save();
+            publishUnclaim(guildId, existing, worldName, revision);
             return false;
         }
 
@@ -114,7 +122,25 @@ public final class WorldGuardTerritoryBridge implements TerritoryBridge {
 
         repository.remove(guildId, worldName);
         repository.save();
+        publishUnclaim(guildId, existing, worldName, revision);
         return true;
+    }
+
+    private void publishClaim(TerritoryRecord record) {
+        if (crossServerSync != null) {
+            crossServerSync.publishClaim(record);
+        }
+    }
+
+    private void publishUnclaim(int guildId, Optional<TerritoryRecord> existing,
+                                String worldName, long revision) {
+        if (crossServerSync == null) {
+            return;
+        }
+        String serverId = existing.map(TerritoryRecord::getServerId)
+                .filter(id -> id != null && !id.isBlank())
+                .orElseGet(repository::getLocalServerId);
+        crossServerSync.publishUnclaim(guildId, serverId, worldName, revision);
     }
 
     @Override

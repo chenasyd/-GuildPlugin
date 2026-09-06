@@ -22,13 +22,17 @@ public final class TerritoryMemberSync {
     private final ModuleContext context;
     private final TerritoryBridge bridge;
     private final TerritoryRepository repository;
+    private final TerritoryCrossServerSync crossServerSync;
     private final Object moduleInstance;
 
     public TerritoryMemberSync(ModuleContext context, TerritoryBridge bridge,
-                               TerritoryRepository repository, Object moduleInstance) {
+                               TerritoryRepository repository,
+                               TerritoryCrossServerSync crossServerSync,
+                               Object moduleInstance) {
         this.context = context;
         this.bridge = bridge;
         this.repository = repository;
+        this.crossServerSync = crossServerSync;
         this.moduleInstance = moduleInstance;
     }
 
@@ -165,6 +169,7 @@ public final class TerritoryMemberSync {
         if (!bridge.isOperational()) {
             repository.removeAllForGuild(guildId);
             repository.save();
+            publishGuildClear(guildId);
             return;
         }
 
@@ -174,14 +179,28 @@ public final class TerritoryMemberSync {
         }
 
         CompatibleScheduler.runTask(context.getPlugin(), () -> {
-            for (TerritoryRecord territory : territories) {
-                if (repository.isLocalRecord(territory)) {
-                    bridge.unclaimTerritory(guildId, territory.getWorldName());
+            Runnable cleanup = () -> {
+                for (TerritoryRecord territory : territories) {
+                    if (repository.isLocalRecord(territory)) {
+                        bridge.unclaimTerritory(guildId, territory.getWorldName());
+                    }
                 }
+                repository.removeAllForGuild(guildId);
+                logger().info("Territory unclaimed for dissolved guild " + guildId + " (" + reason + ")");
+            };
+            if (crossServerSync != null) {
+                crossServerSync.runWithoutPublishing(cleanup);
+                publishGuildClear(guildId);
+            } else {
+                cleanup.run();
             }
-            repository.removeAllForGuild(guildId);
-            logger().info("Territory unclaimed for dissolved guild " + guildId + " (" + reason + ")");
         });
+    }
+
+    private void publishGuildClear(int guildId) {
+        if (crossServerSync != null) {
+            crossServerSync.publishGuildClear(guildId, System.currentTimeMillis());
+        }
     }
 
     static UUID findLeaderUuid(List<MemberData> members) {

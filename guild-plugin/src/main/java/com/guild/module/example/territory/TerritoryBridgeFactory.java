@@ -11,9 +11,10 @@ public final class TerritoryBridgeFactory {
     public static TerritoryBridge create(WorldGuardProbe.Availability availability,
                                          TerritoryRepository repository,
                                          Logger logger,
-                                         TerritorySettings settings) {
+                                         TerritorySettings settings,
+                                         TerritoryCrossServerSync crossServerSync) {
         if (availability.fullyReady()) {
-            return new WorldGuardTerritoryBridge(repository, logger, settings);
+            return new WorldGuardTerritoryBridge(repository, logger, settings, crossServerSync);
         }
         return new NoOpTerritoryBridge(logger, "missing " + availability.describeMissing());
     }

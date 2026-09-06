@@ -37,6 +37,7 @@ public final class TerritoryModule implements GuildModule {
     private TerritorySettings settings;
     private TerritoryServerIdentity serverIdentity;
     private TerritoryRepository repository;
+    private TerritoryCrossServerSync crossServerSync;
     private TerritoryBridge bridge;
     private WorldGuardProbe.Availability availability;
     private TerritoryMemberSync memberSync;
@@ -62,10 +63,13 @@ public final class TerritoryModule implements GuildModule {
                 serverIdentity);
         repository.load();
 
+        this.crossServerSync = new TerritoryCrossServerSync(repository, settings, context.getLogger());
+        crossServerSync.register();
+
         refreshBridgeAndAvailability();
         logLoadStatus();
 
-        this.memberSync = new TerritoryMemberSync(context, bridge, repository, this);
+        this.memberSync = new TerritoryMemberSync(context, bridge, repository, crossServerSync, this);
         memberSync.register(context.getApi());
         memberSync.repairAllOnLoad();
 
@@ -88,6 +92,9 @@ public final class TerritoryModule implements GuildModule {
 
     @Override
     public void onDisable() {
+        if (crossServerSync != null) {
+            crossServerSync.unregister();
+        }
         if (repository != null) {
             repository.save();
         }
@@ -110,7 +117,8 @@ public final class TerritoryModule implements GuildModule {
 
     private void refreshBridgeAndAvailability() {
         this.availability = WorldGuardProbe.probe();
-        this.bridge = TerritoryBridgeFactory.create(availability, repository, context.getLogger(), settings);
+        this.bridge = TerritoryBridgeFactory.create(
+                availability, repository, context.getLogger(), settings, crossServerSync);
     }
 
     private void registerTerritoryGui(GuildPluginAPI api) {
@@ -364,6 +372,10 @@ public final class TerritoryModule implements GuildModule {
 
     public TerritoryServerIdentity getServerIdentity() {
         return serverIdentity;
+    }
+
+    public TerritoryCrossServerSync getCrossServerSync() {
+        return crossServerSync;
     }
 
     public boolean isWorldGuardReady() {

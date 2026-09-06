@@ -112,7 +112,12 @@ public final class TerritoryAdminHandler {
                         removed++;
                     }
                 } else {
+                    long revision = System.currentTimeMillis();
                     module.getRepository().remove(record.getGuildId(), record.getServerId(), record.getWorldName());
+                    if (module.getCrossServerSync() != null) {
+                        module.getCrossServerSync().publishUnclaim(
+                                record.getGuildId(), record.getServerId(), record.getWorldName(), revision);
+                    }
                     removed++;
                 }
             }

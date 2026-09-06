@@ -29,6 +29,7 @@ public class BungeeClientAPI {
     public static void requestGuildData(int guildId, String targetServer) {}
     public static void sendCrossChat(int guildId, String playerName, String message) {}
     public static void broadcastEvent(String eventType, String eventDataJson) {}
+    public static void pushTerritoryUpdate(String payloadJson) {}
 
     public static boolean isBedrockPlayer(UUID uuid) { return false; }
     public static PlayerConnectionInfo getConnectionInfo(UUID uuid) { return null; }

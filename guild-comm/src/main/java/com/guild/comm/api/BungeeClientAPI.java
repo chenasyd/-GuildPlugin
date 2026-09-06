@@ -45,6 +45,7 @@ import java.util.logging.Logger;
  *   <tr><td>{@code guild.sync.broadcast}</td><td>Guild data sync broadcast</td></tr>
  *   <tr><td>{@code guild.chat.cross}</td><td>Cross-server guild chat</td></tr>
  *   <tr><td>{@code guild.event.*}</td><td>Guild event propagation</td></tr>
+ *   <tr><td>{@code territory.broadcast}</td><td>Cross-server territory cache invalidation</td></tr>
  * </table>
  */
 public final class BungeeClientAPI implements PluginMessageListener {
@@ -404,6 +405,14 @@ public final class BungeeClientAPI implements PluginMessageListener {
         sendToBungee("guild.event.broadcast",
                 "{\"eventType\":\"" + escapeJson(eventType)
                 + "\",\"data\":" + eventDataJson + "}");
+    }
+
+    /**
+     * Push a territory metadata change to Bungee for cross-server cache sync.
+     * Payload is JSON with {@code action}, {@code revision}, and action-specific fields.
+     */
+    public static void pushTerritoryUpdate(String payloadJson) {
+        sendToBungee("territory.push", payloadJson);
     }
 
     // ── Helpers ──────────────────────────────────────────────────

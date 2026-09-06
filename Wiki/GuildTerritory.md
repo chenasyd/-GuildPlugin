@@ -61,6 +61,7 @@
 
 | `cross-server.enabled` | `true` | 使用共享 DB 表 `guild_territories`（关闭则回退 `territories.json`） |
 | `cross-server.server-id` | `""` | 留空则**首次启动随机生成**并写入 `modules/guild-territory/data/server-id.txt`，重启复用 |
+| `cross-server.broadcast-events` | `true` | claim/unclaim 后通过 Bungee 广播，加速其它子服内存缓存更新 |
 
 ### 跨服元数据（C-CS-A）
 
@@ -68,6 +69,14 @@
 - 本机 `server-id`：默认 `terr` + 12 位随机 hex，持久化在模块 data 目录，避免与子服显示名冲突
 - WG 区域仍只在本机创建；其它子服仅只读元数据（GUI / `/guild territory info` 可查看全网领地）
 - 已有 `territories.json` 会在首次启用 DB 时自动迁移到本机 `server-id`
+
+### 跨服缓存广播（C-CS-B）
+
+- **DB 先写、Bungee 后通知**：本机 claim/unclaim 仍先写入共享 DB，再经 `territory.push` → Bungee → `territory.broadcast` 通知其它子服
+- **revision**：使用 `updatedAtEpochMs`（或 unclaim/clear 时的事件时间戳）；接收方若本地 revision ≥ 入站则丢弃（防乱序）
+- **接收方**：优先从 DB 单条校验后再更新内存索引；不重复写 DB / 不触发远端 WG materialize
+- **限制**：Bungee Plugin Messaging 需在线玩家作载波，无玩家时广播可能发不出 → **不能依赖 Bungee 必达**，重启全量 `load()` DB 可自愈
+- 公会解散时发送 `guild-clear` 单条广播（避免 N 次 unclaim 风暴）
 
 ### GUI 入口
 
@@ -87,7 +96,7 @@
 
 ## 数据与生命周期
 
-1. 声明 → 创建 WG `ProtectedCuboidRegion` + 写入 `modules/guild-territory/data/territories.json`
+1. 声明 → 创建 WG `ProtectedCuboidRegion` + 写入共享 DB（或 JSON 单服模式）
 2. 成员入会/退会/升降职 → 异步同步 WG `owners` / `members`
 3. 公会解散 → 删除所有世界领地
 4. 放弃 → 删除 WG 区域与本地记录

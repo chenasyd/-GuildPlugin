@@ -31,7 +31,15 @@ WorldGuard-based guild land claims: officers/leaders select a cuboid, claim it a
 
 ## Configuration
 
-See `modules.guild-territory` in `config.yml` — `claim.*`, `flags.*`, `home-protect.mode`, `member-sync.*`, `gui.*`.
+See `modules.guild-territory` in `config.yml` — `claim.*`, `flags.*`, `home-protect.mode`, `member-sync.*`, `gui.*`, `cross-server.*`.
+
+### Cross-server (C-CS-A / C-CS-B)
+
+- **Authoritative store**: shared `guild_territories` table (`guild_id + server_id + world_name`)
+- **Server ID**: auto-generated `terr` + 12 hex chars, persisted under module data dir
+- **Broadcast** (`cross-server.broadcast-events`, default `true`): after claim/unclaim, pushes `territory.push` → Bungee → `territory.broadcast` so other backends refresh in-memory cache (DB remains source of truth; Bungee is best-effort)
+- **Revision**: `updatedAtEpochMs`; stale messages are dropped
+- WG regions are still created only on the owning backend server
 
 ### GUI
 

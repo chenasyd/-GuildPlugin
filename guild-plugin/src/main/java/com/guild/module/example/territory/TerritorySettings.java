@@ -98,6 +98,14 @@ public final class TerritorySettings {
         return context.getConfig().getString("cross-server.server-id", "");
     }
 
+    /** 是否在 claim/unclaim 后通过 Bungee 广播缓存失效（需 cross-server.enabled）。 */
+    public boolean isBroadcastEventsEnabled() {
+        if (context == null) {
+            return false;
+        }
+        return context.getConfig().getBoolean("cross-server.broadcast-events", true);
+    }
+
     /** WG StateFlag 配置值：allow / deny / none（不设置）。 */
     public String getFlag(String key, String defaultValue) {
         String raw = context.getConfig().getString("flags." + key, defaultValue);
