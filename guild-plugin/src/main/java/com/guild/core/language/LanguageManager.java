@@ -547,7 +547,7 @@ public class LanguageManager {
         playerLanguages.put(uuid, lang.toLowerCase());
     }
     
-    public String getMessage(String lang, String path, String defaultValue) {
+    private FileConfiguration getLegacyLanguageConfig(String lang) {
         if (lang != null) {
             lang = lang.toLowerCase();
         }
@@ -555,71 +555,39 @@ public class LanguageManager {
         if (config == null) {
             config = languageConfigs.get(defaultLanguage);
         }
-        
-        if (config == null) {
-            return defaultValue;
-        }
-        
-        String message = config.getString(path, defaultValue);
-        return message != null ? message : defaultValue;
+        return config;
     }
-    
+
+    public String getMessage(String lang, String path, String defaultValue) {
+        return MessageResolver.resolve(getLegacyLanguageConfig(lang), path, defaultValue);
+    }
+
     public String getMessage(String path, String defaultValue) {
         return getMessage(defaultLanguage, path, defaultValue);
     }
-    
+
     public String getMessage(Player player, String path, String defaultValue) {
-        String lang = getPlayerLanguage(player);
-        return getMessage(lang, path, defaultValue);
+        return getMessage(getPlayerLanguage(player), path, defaultValue);
     }
-    
+
     public String getMessage(String lang, String path, String defaultValue, String... placeholders) {
-        String message = getMessage(lang, path, defaultValue);
-        
-        for (int i = 0; i < placeholders.length; i += 2) {
-            if (i + 1 < placeholders.length) {
-                String placeholder = placeholders[i];
-                String value = placeholders[i + 1];
-                message = message.replace(placeholder, value != null ? value : "");
-            }
-        }
-        
-        return message;
+        return MessageResolver.resolveWithPlaceholders(getLegacyLanguageConfig(lang), path, defaultValue, placeholders);
     }
-    
+
     public String getMessage(Player player, String path, String defaultValue, String... placeholders) {
-        String lang = getPlayerLanguage(player);
-        return getMessage(lang, path, defaultValue, placeholders);
+        return getMessage(getPlayerLanguage(player), path, defaultValue, placeholders);
     }
-    
+
     public String getIndexedMessage(String lang, String path, String defaultValue, String[] args) {
-        String message = getMessage(lang, path, defaultValue);
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                message = message.replace("{" + i + "}", args[i] != null ? args[i] : "");
-            }
-        }
-        return message;
+        return MessageResolver.resolveWithIndexedArgs(getLegacyLanguageConfig(lang), path, defaultValue, args);
     }
 
     public String getIndexedMessage(String path, String defaultValue, String... args) {
-        String message = getMessage(defaultLanguage, path, defaultValue);
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                message = message.replace("{" + i + "}", args[i] != null ? args[i] : "");
-            }
-        }
-        return message;
+        return MessageResolver.resolveWithIndexedArgs(getLegacyLanguageConfig(defaultLanguage), path, defaultValue, args);
     }
 
     public String getIndexedMessage(Player player, String path, String defaultValue, String... args) {
-        String message = getMessage(getPlayerLanguage(player), path, defaultValue);
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                message = message.replace("{" + i + "}", args[i] != null ? args[i] : "");
-            }
-        }
-        return message;
+        return MessageResolver.resolveWithIndexedArgs(getLegacyLanguageConfig(getPlayerLanguage(player)), path, defaultValue, args);
     }
     
     public String getDefaultLanguage() {
@@ -862,14 +830,7 @@ public class LanguageManager {
     }
 
     public String getGuiMessage(String lang, String path, String defaultValue) {
-        FileConfiguration config = getGuiConfig(lang);
-
-        if (config == null) {
-            return defaultValue;
-        }
-
-        String message = config.getString(path, defaultValue);
-        return message != null ? message : defaultValue;
+        return MessageResolver.resolve(getGuiConfig(lang), path, defaultValue);
     }
 
     public String getGuiMessage(String path, String defaultValue) {
@@ -877,47 +838,31 @@ public class LanguageManager {
     }
 
     public String getGuiMessage(Player player, String path, String defaultValue) {
-        String lang = getPlayerLanguage(player);
-        return getGuiMessage(lang, path, defaultValue);
+        return getGuiMessage(getPlayerLanguage(player), path, defaultValue);
     }
 
     public String getGuiMessage(String lang, String path, String defaultValue, String... placeholders) {
-        String message = getGuiMessage(lang, path, defaultValue);
-
-        for (int i = 0; i < placeholders.length; i += 2) {
-            if (i + 1 < placeholders.length) {
-                String placeholder = placeholders[i];
-                String value = placeholders[i + 1];
-                message = message.replace(placeholder, value != null ? value : "");
-            }
-        }
-
-        return message;
+        return MessageResolver.resolveWithPlaceholders(getGuiConfig(lang), path, defaultValue, placeholders);
     }
 
     public String getGuiMessage(Player player, String path, String defaultValue, String... placeholders) {
-        String lang = getPlayerLanguage(player);
-        return getGuiMessage(lang, path, defaultValue, placeholders);
+        return getGuiMessage(getPlayerLanguage(player), path, defaultValue, placeholders);
     }
 
     public String getGuiColoredMessage(String lang, String path, String defaultValue) {
-        String message = getGuiMessage(lang, path, defaultValue);
-        return message.replace("&", "\u00a7");
+        return MessageResolver.colorize(getGuiMessage(lang, path, defaultValue));
     }
 
     public String getGuiColoredMessage(Player player, String path, String defaultValue) {
-        String message = getGuiMessage(player, path, defaultValue);
-        return message.replace("&", "\u00a7");
+        return MessageResolver.colorize(getGuiMessage(player, path, defaultValue));
     }
 
     public String getGuiColoredMessage(String lang, String path, String defaultValue, String... placeholders) {
-        String message = getGuiMessage(lang, path, defaultValue, placeholders);
-        return message.replace("&", "\u00a7");
+        return MessageResolver.colorize(getGuiMessage(lang, path, defaultValue, placeholders));
     }
 
     public String getGuiColoredMessage(Player player, String path, String defaultValue, String... placeholders) {
-        String message = getGuiMessage(player, path, defaultValue, placeholders);
-        return message.replace("&", "\u00a7");
+        return MessageResolver.colorize(getGuiMessage(player, path, defaultValue, placeholders));
     }
 
     // ==================== Module 消息（lang/modules/）====================
@@ -1009,12 +954,7 @@ public class LanguageManager {
     }
 
     public String getModuleMessage(String lang, String path, String defaultValue) {
-        FileConfiguration config = getModuleConfig(lang);
-        if (config == null) {
-            return defaultValue;
-        }
-        String message = config.getString(path, defaultValue);
-        return message != null ? message : defaultValue;
+        return MessageResolver.resolve(getModuleConfig(lang), path, defaultValue);
     }
 
     public String getModuleMessage(String path, String defaultValue) {
@@ -1022,43 +962,19 @@ public class LanguageManager {
     }
 
     public String getModuleMessage(Player player, String path, String defaultValue) {
-        String lang = getPlayerLanguage(player);
-        return getModuleMessage(lang, path, defaultValue);
+        return getModuleMessage(getPlayerLanguage(player), path, defaultValue);
     }
 
     public String getModuleMessage(String lang, String path, String defaultValue, String... placeholders) {
-        String message = getModuleMessage(lang, path, defaultValue);
-        for (int i = 0; i < placeholders.length; i += 2) {
-            if (i + 1 < placeholders.length) {
-                String placeholder = placeholders[i];
-                String value = placeholders[i + 1];
-                message = message.replace(placeholder, value != null ? value : "");
-            }
-        }
-        return message;
+        return MessageResolver.resolveWithPlaceholders(getModuleConfig(lang), path, defaultValue, placeholders);
     }
 
     public String getModuleMessage(Player player, String path, String defaultValue, String... placeholders) {
-        String lang = getPlayerLanguage(player);
-        String message = getModuleMessage(lang, path, defaultValue);
-        for (int i = 0; i < placeholders.length; i += 2) {
-            if (i + 1 < placeholders.length) {
-                String placeholder = placeholders[i];
-                String value = placeholders[i + 1];
-                message = message.replace(placeholder, value != null ? value : "");
-            }
-        }
-        return message;
+        return getModuleMessage(getPlayerLanguage(player), path, defaultValue, placeholders);
     }
 
     public String getModuleIndexedMessage(String lang, String path, String defaultValue, String[] args) {
-        String message = getModuleMessage(lang, path, defaultValue);
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                message = message.replace("{" + i + "}", args[i] != null ? args[i] : "");
-            }
-        }
-        return message;
+        return MessageResolver.resolveWithIndexedArgs(getModuleConfig(lang), path, defaultValue, args);
     }
 
     public String getModuleIndexedMessage(String path, String defaultValue, String... args) {
@@ -1066,8 +982,7 @@ public class LanguageManager {
     }
 
     public String getModuleIndexedMessage(Player player, String path, String defaultValue, String... args) {
-        String lang = getPlayerLanguage(player);
-        return getModuleIndexedMessage(lang, path, defaultValue, args);
+        return getModuleIndexedMessage(getPlayerLanguage(player), path, defaultValue, args);
     }
 
     // ==================== Core 消息（lang/core/）====================
@@ -1077,12 +992,7 @@ public class LanguageManager {
     }
 
     public String getCoreMessage(String lang, String path, String defaultValue) {
-        FileConfiguration config = getCoreConfig(lang);
-        if (config == null) {
-            return defaultValue;
-        }
-        String message = config.getString(path, defaultValue);
-        return message != null ? message : defaultValue;
+        return MessageResolver.resolve(getCoreConfig(lang), path, defaultValue);
     }
 
     public String getCoreMessage(String path, String defaultValue) {
@@ -1090,35 +1000,19 @@ public class LanguageManager {
     }
 
     public String getCoreMessage(Player player, String path, String defaultValue) {
-        String lang = getPlayerLanguage(player);
-        return getCoreMessage(lang, path, defaultValue);
+        return getCoreMessage(getPlayerLanguage(player), path, defaultValue);
     }
 
     public String getCoreMessage(String lang, String path, String defaultValue, String... placeholders) {
-        String message = getCoreMessage(lang, path, defaultValue);
-        for (int i = 0; i < placeholders.length; i += 2) {
-            if (i + 1 < placeholders.length) {
-                String placeholder = placeholders[i];
-                String value = placeholders[i + 1];
-                message = message.replace(placeholder, value != null ? value : "");
-            }
-        }
-        return message;
+        return MessageResolver.resolveWithPlaceholders(getCoreConfig(lang), path, defaultValue, placeholders);
     }
 
     public String getCoreMessage(Player player, String path, String defaultValue, String... placeholders) {
-        String lang = getPlayerLanguage(player);
-        return getCoreMessage(lang, path, defaultValue, placeholders);
+        return getCoreMessage(getPlayerLanguage(player), path, defaultValue, placeholders);
     }
 
     public String getCoreIndexedMessage(String lang, String path, String defaultValue, String[] args) {
-        String message = getCoreMessage(lang, path, defaultValue);
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                message = message.replace("{" + i + "}", args[i] != null ? args[i] : "");
-            }
-        }
-        return message;
+        return MessageResolver.resolveWithIndexedArgs(getCoreConfig(lang), path, defaultValue, args);
     }
 
     public String getCoreIndexedMessage(String path, String defaultValue, String... args) {
@@ -1126,20 +1020,13 @@ public class LanguageManager {
     }
 
     public String getCoreIndexedMessage(Player player, String path, String defaultValue, String... args) {
-        String lang = getPlayerLanguage(player);
-        return getCoreIndexedMessage(lang, path, defaultValue, args);
+        return getCoreIndexedMessage(getPlayerLanguage(player), path, defaultValue, args);
     }
 
     // ==================== GUI Indexed 消息（lang/gui/，支持 {0}{1} 索引占位符）====================
 
     public String getGuiIndexedMessage(String lang, String path, String defaultValue, String[] args) {
-        String message = getGuiMessage(lang, path, defaultValue);
-        if (args != null) {
-            for (int i = 0; i < args.length; i++) {
-                message = message.replace("{" + i + "}", args[i] != null ? args[i] : "");
-            }
-        }
-        return message;
+        return MessageResolver.resolveWithIndexedArgs(getGuiConfig(lang), path, defaultValue, args);
     }
 
     public String getGuiIndexedMessage(String path, String defaultValue, String... args) {
@@ -1147,7 +1034,6 @@ public class LanguageManager {
     }
 
     public String getGuiIndexedMessage(Player player, String path, String defaultValue, String... args) {
-        String lang = getPlayerLanguage(player);
-        return getGuiIndexedMessage(lang, path, defaultValue, args);
+        return getGuiIndexedMessage(getPlayerLanguage(player), path, defaultValue, args);
     }
 }
