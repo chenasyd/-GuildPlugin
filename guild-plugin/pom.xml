@@ -147,6 +147,14 @@
                 <scope>test</scope>
             </dependency>
 
+            <!-- SQLite JDBC for schema initializer tests -->
+            <dependency>
+                <groupId>org.xerial</groupId>
+                <artifactId>sqlite-jdbc</artifactId>
+                <version>3.45.3.0</version>
+                <scope>test</scope>
+            </dependency>
+
             <!-- Mockito for mocking DatabaseManager in tests -->
             <dependency>
                 <groupId>org.mockito</groupId>
