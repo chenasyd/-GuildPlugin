@@ -3,567 +3,80 @@ package com.guild.core.language;
 import com.guild.GuildPlugin;
 import com.guild.core.utils.CompatibleScheduler;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * 语言系统门面：对外 API 不变，加载/索引/玩家偏好委托给 PR4 拆分子组件。
+ */
 public class LanguageManager {
-    
+
+    public static final String LANG_EN = LanguageConstants.LANG_EN;
+    public static final String LANG_ZH = LanguageConstants.LANG_ZH;
+    public static final String LANG_PL = LanguageConstants.LANG_PL;
+    public static final String LANG_BR = LanguageConstants.LANG_BR;
+
     private final GuildPlugin plugin;
     private final Logger logger;
-    private final Map<String, FileConfiguration> languageConfigs = new HashMap<>();
-    private final Map<String, FileConfiguration> guiConfigs = new HashMap<>();
-    /** lang/core/ 目录下的核心（非GUI）消息配置 */
-    private final Map<String, FileConfiguration> coreConfigs = new HashMap<>();
-    /** lang/modules/ 目录下的模块消息配置（合并存储，按语言索引） */
-    private final Map<String, FileConfiguration> moduleConfigs = new HashMap<>();
-    private final Set<String> supportedLanguages = new HashSet<>();
-    private final Set<String> loadedModuleLanguages = new HashSet<>();
-    private final Map<UUID, String> playerLanguages = new HashMap<>();
-    private String defaultLanguage = "en";
-
-    /** 模块语言系统独立字段 — 与插件本体完全隔离 */
-    private String moduleDefaultLanguage = "en";
-    private final Set<String> moduleSupportedLanguages = new HashSet<>();
-    
-    public static final String LANG_EN = "en";
-    public static final String LANG_ZH = "zh";
-    public static final String LANG_PL = "pl";
-    public static final String LANG_BR = "br";
-    
-    private static final String GUI_LANG_PATH = "lang/gui/";
-    private static final String CORE_LANG_PATH = "lang/core/";
-    private static final String MODULES_LANG_PATH = "lang/modules/";
-    private static final String LANG_FILE_SUFFIX = ".yml";
-    private static final String[] KNOWN_LANGS = {
-        "en", "zh", "pl", "br",
-        // 欧洲语系 & 服务器常见
-        "de", "fr", "ru", "zh_tw", "ms",
-        // 常见 Minecraft 用户语言
-        "ja", "ko", "es", "pt", "it", "nl", "sv", "tr",
-        "vi", "th", "cs", "uk", "ro", "hu", "da", "fi", "no"
-    };
-
-    private static final String[] MODULE_DIRS = {
-        "announcement", "apitest", "builtin-activity", "member-rank", "quest", "stats", "territory", "testlang"
-    };
-
-    /**
-     * 模块注册 ID → 语言目录名（当 id 与 lang/modules/{dir} 不一致时）。
-     * 例：guild-quest 模块语言在 lang/modules/quest/。
-     */
-    private static String resolveModuleLangDir(String moduleId) {
-        if (moduleId == null || moduleId.isBlank()) {
-            return moduleId;
-        }
-        String id = moduleId.trim().toLowerCase();
-        return switch (id) {
-            case "guild-quest" -> "quest";
-            case "guild-territory" -> "territory";
-            default -> id;
-        };
-    }
-
-    /** 已知模块语言目录（含内置非 GuildModule 的 builtin-activity）。 */
-    public String[] getKnownModuleLangDirs() {
-        return MODULE_DIRS.clone();
-    }
-    
-    /** 插件本体语言（core + gui）加载快照，供同步/异步 reload 共用 */
-    private static final class LanguageResourceSnapshot {
-        private final Map<String, FileConfiguration> core = new HashMap<>();
-        private final Map<String, FileConfiguration> gui = new HashMap<>();
-        private final Set<String> languages = new HashSet<>();
-        private String defaultLanguage = LANG_EN;
-    }
+    private final LanguageCatalog catalog;
+    private final LanguageResourceLoader loader;
+    private final ModuleLanguageRegistry moduleRegistry;
+    private final PlayerLanguageStore playerLanguages;
 
     public LanguageManager(GuildPlugin plugin) {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
-        releaseBundledLanguageFiles();
-        applyPluginLanguageSnapshot(readPluginLanguageResourcesSnapshot());
-        loadModuleLanguages();
-        logger.info("Language system loaded, default language: " + defaultLanguage
-                + ", loaded languages: " + String.join(", ", getLoadedLanguages()));
-    }
-    
-    private void releaseBundledLanguageFiles() {
-        prepareLanguageFolders();
+        this.catalog = new LanguageCatalog();
+        this.loader = new LanguageResourceLoader(plugin);
+        this.moduleRegistry = new ModuleLanguageRegistry(plugin, catalog, loader);
+        this.playerLanguages = new PlayerLanguageStore(catalog::getDefaultLanguage, catalog::isLanguageSupported);
 
-        for (String lang : KNOWN_LANGS) {
-            saveBundledLanguageResource(CORE_LANG_PATH + lang + LANG_FILE_SUFFIX);
-            saveBundledLanguageResource(GUI_LANG_PATH + lang + LANG_FILE_SUFFIX);
-        }
-        for (String md : MODULE_DIRS) {
-            for (String lang : KNOWN_LANGS) {
-                saveBundledLanguageResource(MODULES_LANG_PATH + md + "/" + lang + LANG_FILE_SUFFIX);
-            }
-        }
-    }
-    
-    private void prepareLanguageFolders() {
-        File dataFolder = plugin.getDataFolder();
-        if (!dataFolder.exists()) {
-            dataFolder.mkdirs();
-        }
-        createDirectory(CORE_LANG_PATH);
-        createDirectory(GUI_LANG_PATH);
-        createDirectory(MODULES_LANG_PATH);
-        for (String md : MODULE_DIRS) {
-            createDirectory(MODULES_LANG_PATH + md + "/");
-        }
-    }
-    
-    private void createDirectory(String relativePath) {
-        File dir = new File(plugin.getDataFolder(), relativePath);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-    }
-    
-    private void saveBundledLanguageResource(String resourcePath) {
-        if (plugin.getResource(resourcePath) == null) {
-            return;
-        }
+        loader.releaseBundledLanguageFiles();
+        catalog.applyPluginSnapshot(loader.readPluginLanguageResourcesSnapshot());
+        moduleRegistry.loadAllModuleLanguages();
 
-        File file = new File(plugin.getDataFolder(), resourcePath);
-        if (file.exists()) {
-            return;
-        }
-
-        try {
-            plugin.saveResource(resourcePath, false);
-            logger.info("Extracted bundled language file: " + resourcePath);
-        } catch (IllegalArgumentException e) {
-            logger.warning("Bundled language resource not found: " + resourcePath);
-        } catch (Exception e) {
-            logger.warning("Failed to extract bundled language file " + resourcePath + ": " + e.getMessage());
-        }
-    }
-    
-    /**
-     * 统一加载插件本体语言：磁盘优先，JAR 仅补缺失；default 校验在全部加载完成后执行。
-     */
-    private LanguageResourceSnapshot readPluginLanguageResourcesSnapshot() {
-        LanguageResourceSnapshot snapshot = new LanguageResourceSnapshot();
-        populatePluginLanguageResources(snapshot.core, snapshot.gui, snapshot.languages);
-
-        String requestedDefault = loadDefaultLanguageFromConfig();
-        snapshot.defaultLanguage = resolveDefaultLanguage(requestedDefault, snapshot.languages);
-        return snapshot;
+        logger.info("Language system loaded, default language: " + catalog.getDefaultLanguage()
+                + ", loaded languages: " + String.join(", ", catalog.getLoadedLanguages()));
     }
 
-    private void applyPluginLanguageSnapshot(LanguageResourceSnapshot snapshot) {
-        languageConfigs.clear();
-        coreConfigs.clear();
-        guiConfigs.clear();
-        supportedLanguages.clear();
-
-        coreConfigs.putAll(snapshot.core);
-        languageConfigs.putAll(snapshot.core);
-        guiConfigs.putAll(snapshot.gui);
-        supportedLanguages.addAll(snapshot.languages);
-        defaultLanguage = snapshot.defaultLanguage;
+    public String[] getKnownModuleLangDirs() {
+        return LanguageConstants.MODULE_DIRS.clone();
     }
 
-    private void populatePluginLanguageResources(Map<String, FileConfiguration> coreTarget,
-                                                 Map<String, FileConfiguration> guiTarget,
-                                                 Set<String> langsTarget) {
-        readExternalLangFiles(CORE_LANG_PATH, coreTarget, langsTarget);
-        readExternalLangFiles(GUI_LANG_PATH, guiTarget, langsTarget);
-
-        Set<String> bundleCandidates = new LinkedHashSet<>();
-        bundleCandidates.addAll(Arrays.asList(KNOWN_LANGS));
-        bundleCandidates.addAll(discoverLanguageCodesFromDisk());
-        bundleCandidates.addAll(collectConfigLanguageCodes());
-
-        for (String lang : bundleCandidates) {
-            readBundledCoreLang(lang, coreTarget, langsTarget);
-            readBundledGuiLang(lang, guiTarget, langsTarget);
-        }
-    }
-
-    private Set<String> collectConfigLanguageCodes() {
-        Set<String> codes = new LinkedHashSet<>();
-        FileConfiguration mainConfig = plugin.getConfigManager().getMainConfig();
-        String configuredDefault = mainConfig.getString("language.default", LANG_EN);
-        if (configuredDefault != null && !configuredDefault.trim().isEmpty()) {
-            codes.add(configuredDefault.trim().toLowerCase());
-        }
-        for (String lang : mainConfig.getStringList("language.additional-languages")) {
-            if (lang != null && !lang.trim().isEmpty()) {
-                codes.add(lang.trim().toLowerCase());
-            }
-        }
-        return codes;
-    }
-
-    private Set<String> discoverLanguageCodesFromDisk() {
-        Set<String> codes = new LinkedHashSet<>();
-        collectLanguageCodesFromDirectory(CORE_LANG_PATH, codes);
-        collectLanguageCodesFromDirectory(GUI_LANG_PATH, codes);
-        return codes;
-    }
-
-    private void collectLanguageCodesFromDirectory(String dirPath, Set<String> target) {
-        File dir = new File(plugin.getDataFolder(), dirPath);
-        if (!dir.exists() || !dir.isDirectory()) {
-            return;
-        }
-        File[] files = dir.listFiles((d, name) -> name.endsWith(LANG_FILE_SUFFIX));
-        if (files == null) {
-            return;
-        }
-        for (File file : files) {
-            target.add(file.getName()
-                    .substring(0, file.getName().length() - LANG_FILE_SUFFIX.length())
-                    .toLowerCase());
-        }
-    }
-
-    private String resolveDefaultLanguage(String requested, Set<String> loadedLangs) {
-        String lang = requested != null ? requested.trim().toLowerCase() : LANG_EN;
-        if (loadedLangs.contains(lang)) {
-            return lang;
-        }
-
-        logger.warning("language.default is set to '" + lang + "' but the corresponding language data was not loaded.");
-        if (loadedLangs.contains(LANG_EN)) {
-            logger.warning("Falling back to default language: en");
-            return LANG_EN;
-        }
-        if (!loadedLangs.isEmpty()) {
-            String fallback = loadedLangs.iterator().next();
-            logger.warning("Falling back to available language: " + fallback);
-            return fallback;
-        }
-
-        logger.severe("No language files loaded, plugin will use hardcoded defaults.");
-        return LANG_EN;
-    }
-
-    /**
-     * 从插件数据目录和 JAR 内的 lang/modules/{module_name}/{lang}.yml 加载模块语言文件
-     */
-    private void loadModuleLanguages() {
-        loadModuleLanguageConfig();
-        loadExternalModuleLanguages();
-
-        // Ensure bundled module languages are loaded on first startup, even if the
-        // external language files have not been extracted yet.
-        for (String moduleId : MODULE_DIRS) {
-            if (!loadedModuleLanguages.contains(moduleId)) {
-                if (loadBundledModuleLanguagesForModule(moduleId)) {
-                    loadedModuleLanguages.add(moduleId);
-                }
-            }
-        }
-    }
-
-    /** 从 modules.yml 读取模块专用默认语言配置 */
-    private void loadModuleLanguageConfig() {
-        FileConfiguration modulesConfig = plugin.getConfigManager().getModulesConfig();
-        if (modulesConfig != null) {
-            String lang = modulesConfig.getString("language.default", LANG_EN);
-            if (lang != null) {
-                lang = lang.trim().toLowerCase();
-                if (!lang.isEmpty()) {
-                    moduleDefaultLanguage = lang;
-                }
-            }
-        }
-        logger.info("Module language default: " + moduleDefaultLanguage);
-    }
-
-    private void loadExternalModuleLanguages() {
-        File modulesRoot = new File(plugin.getDataFolder(), MODULES_LANG_PATH);
-        if (!modulesRoot.exists() || !modulesRoot.isDirectory()) {
-            return;
-        }
-
-        File[] moduleDirs = modulesRoot.listFiles(File::isDirectory);
-        if (moduleDirs == null) {
-            return;
-        }
-        // 对模块目录进行排序，确保输出顺序一致
-        java.util.Arrays.sort(moduleDirs, java.util.Comparator.comparing(File::getName));
-
-        for (File moduleDir : moduleDirs) {
-            loadExternalModuleLanguageDirectory(moduleDir);
-        }
-    }
-
-    private void mergeModuleConfig(String lang, FileConfiguration config) {
-        FileConfiguration existing = moduleConfigs.get(lang);
-        if (existing == null) {
-            moduleConfigs.put(lang, config);
-        } else {
-            LanguageConfigMerge.mergeLeafKeys(existing, config);
-        }
-    }
-
-    public boolean loadModuleLanguageResourcesForModule(String moduleId) {
-        if (moduleId == null || moduleId.trim().isEmpty()) {
-            return false;
-        }
-        String moduleDirName = resolveModuleLangDir(moduleId);
-        if (loadedModuleLanguages.contains(moduleDirName)) {
-            return true;
-        }
-
-        File moduleDir = new File(plugin.getDataFolder(), MODULES_LANG_PATH + moduleDirName);
-
-        boolean loaded = false;
-        if (moduleDir.exists() && moduleDir.isDirectory()) {
-            loaded = loadExternalModuleLanguageDirectory(moduleDir);
-        }
-
-        if (!loaded) {
-            loaded = loadBundledModuleLanguagesForModule(moduleDirName);
-        }
-
-        if (loaded) {
-            loadedModuleLanguages.add(moduleDirName);
-        }
-        return loaded;
-    }
-
-    public boolean loadModuleLanguageResourcesForModule(String moduleId, String lang) {
-        if (moduleId == null || moduleId.trim().isEmpty() || lang == null || lang.trim().isEmpty()) {
-            return false;
-        }
-        return loadModuleLanguageResourcesForModule(moduleId);
-    }
-
-    public boolean releaseModuleLanguageResourcesForModule(String moduleId) {
-        if (moduleId == null || moduleId.trim().isEmpty()) {
-            return false;
-        }
-
-        String moduleDirName = resolveModuleLangDir(moduleId);
-        File moduleDir = new File(plugin.getDataFolder(), MODULES_LANG_PATH + moduleDirName);
-        if (!moduleDir.exists()) {
-            moduleDir.mkdirs();
-        }
-
-        boolean extracted = false;
-        for (String lang : KNOWN_LANGS) {
-            String resourcePath = MODULES_LANG_PATH + moduleDirName + "/" + lang + LANG_FILE_SUFFIX;
-            if (plugin.getResource(resourcePath) != null) {
-                File file = new File(plugin.getDataFolder(), resourcePath);
-                if (!file.exists()) {
-                    try {
-                        plugin.saveResource(resourcePath, false);
-                        extracted = true;
-                        logger.info("Extracted bundled module language file: " + resourcePath);
-                    } catch (IllegalArgumentException e) {
-                        // no bundled resource for this path
-                    } catch (Exception e) {
-                        logger.warning("Failed to extract bundled module language file " + resourcePath + ": " + e.getMessage());
-                    }
-                }
-            }
-        }
-
-        if (extracted) {
-            logger.info("Released bundled module language resources for module '" + moduleDirName + "'.");
-        }
-        return extracted;
-    }
-
-    private boolean loadExternalModuleLanguageDirectory(File moduleDir) {
-        File[] langFiles = moduleDir.listFiles((dir, name) -> name.endsWith(LANG_FILE_SUFFIX));
-        if (langFiles == null || langFiles.length == 0) {
-            return false;
-        }
-
-        java.util.Arrays.sort(langFiles, java.util.Comparator.comparing(File::getName));
-        java.util.List<String> loadedLangs = new java.util.ArrayList<>();
-
-        for (File langFile : langFiles) {
-            String fileName = langFile.getName();
-            String lang = fileName.substring(0, fileName.length() - LANG_FILE_SUFFIX.length()).toLowerCase();
-            try {
-                FileConfiguration config = YamlConfiguration.loadConfiguration(langFile);
-                if (!config.getKeys(false).isEmpty()) {
-                    mergeModuleConfig(lang, config);
-                    moduleSupportedLanguages.add(lang);
-                    loadedLangs.add(lang);
-                }
-            } catch (Exception e) {
-                logger.warning("Failed to load external module language file " + langFile.getPath() + ": " + e.getMessage());
-            }
-        }
-
-        if (!loadedLangs.isEmpty()) {
-            loadedModuleLanguages.add(moduleDir.getName().toLowerCase());
-            return true;
-        }
-        return false;
-    }
-
-    private boolean loadBundledModuleLanguagesForModule(String moduleDirName) {
-        boolean anyLoaded = false;
-        java.util.List<String> loadedLangs = new java.util.ArrayList<>();
-
-        for (String lang : KNOWN_LANGS) {
-            String resourcePath = MODULES_LANG_PATH + moduleDirName + "/" + lang + LANG_FILE_SUFFIX;
-            File moduleLangFile = new File(plugin.getDataFolder(), resourcePath);
-
-            if (!moduleLangFile.exists()) {
-                saveBundledLanguageResource(resourcePath);
-            }
-
-            if (!moduleLangFile.exists()) {
-                continue;
-            }
-
-            try {
-                FileConfiguration config = YamlConfiguration.loadConfiguration(moduleLangFile);
-                if (!config.getKeys(false).isEmpty()) {
-                    mergeModuleConfig(lang, config);
-                    moduleSupportedLanguages.add(lang);
-                    loadedLangs.add(lang);
-                    anyLoaded = true;
-                }
-            } catch (Exception e) {
-                logger.warning("Failed to load bundled module language file " + moduleLangFile.getPath() + ": " + e.getMessage());
-            }
-        }
-
-        if (anyLoaded) {
-            logger.info("Loaded bundled module languages for module '" + moduleDirName + "'.");
-        }
-
-        return anyLoaded;
-    }
-    
     public boolean isLanguageSupported(String lang) {
-        return lang != null && supportedLanguages.contains(lang.toLowerCase());
+        return catalog.isLanguageSupported(lang);
     }
-    
+
     public List<String> getLoadedLanguages() {
-        List<String> languages = new ArrayList<>(supportedLanguages);
-        Collections.sort(languages);
-        return languages;
-    }
-    
-    private String resolveLanguage(String lang) {
-        if (lang != null) {
-            lang = lang.toLowerCase();
-        }
-        if (lang != null && supportedLanguages.contains(lang)) {
-            return lang;
-        }
-        if (supportedLanguages.contains(defaultLanguage)) {
-            return defaultLanguage;
-        }
-        if (supportedLanguages.contains(LANG_EN)) {
-            return LANG_EN;
-        }
-        return supportedLanguages.stream().findFirst().orElse(LANG_EN);
+        return catalog.getLoadedLanguages();
     }
 
-    private FileConfiguration getConfig(Map<String, FileConfiguration> configs, String lang) {
-        String resolved = resolveLanguage(lang);
-        FileConfiguration config = configs.get(resolved);
-        if (config == null && !LANG_EN.equals(resolved)) {
-            config = configs.get(LANG_EN);
-        }
-        return config;
-    }
-    
     public List<String> getAvailableLanguageNames() {
-        List<String> names = new ArrayList<>();
-        Map<String, String> codeToName = new HashMap<>();
-        codeToName.put("en", "English"); // 英语
-        codeToName.put("zh", "\u4e2d\u6587"); // 中文
-        codeToName.put("pl", "Polski"); // 波兰语
-        codeToName.put("br", "Portugu\u00eas (BR)"); // 葡萄牙语（巴西）
-        codeToName.put("de", "Deutsch"); // 德语
-        codeToName.put("fr", "Fran\u00e7ais"); // 法语
-        codeToName.put("es", "Espa\u00f1ol"); // 西班牙语
-        codeToName.put("ja", "\u65e5\u672c\u8a9e"); // 日语
-        codeToName.put("ko", "\ud55c\uad6d\uc5b4"); // 韩语
-        codeToName.put("ru", "\u0420\u0443\u0441\u0441\u043a\u0438\u0439"); // 俄语
-        codeToName.put("zh_tw", "\u7e41\u9ad4\u4e2d\u6587"); // 繁體中文
-        codeToName.put("ms", "Bahasa Melayu"); // 马来语
-        codeToName.put("it", "Italiano"); // 意大利语
-        codeToName.put("nl", "Nederlands"); // 荷兰语
-        codeToName.put("sv", "Svenska"); // 瑞典语
-        codeToName.put("tr", "T\u00fcrk\u00e7e"); // 土耳其语
-        codeToName.put("vi", "Ti\u1ebfng Vi\u1ec7t"); // 越南语
-        codeToName.put("th", "\u0e44\u0e17\u0e22"); // 泰语
-        codeToName.put("cs", "\u010ce\u0161tina"); // 捷克语
-        codeToName.put("pt", "Portugu\u00eas"); // 葡萄牙语
-        codeToName.put("uk", "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430"); // 乌克兰语
-        codeToName.put("ro", "Rom\u00e2n\u0103"); // 罗马尼亚语
-        codeToName.put("hu", "Magyar"); // 匈牙利语
-        codeToName.put("da", "Dansk"); // 丹麦语
-        codeToName.put("fi", "Suomi"); // 芬兰语
-        codeToName.put("no", "Norsk"); // 挪威语
+        return LanguageDisplayNames.formatSupportedLanguages(
+                new java.util.LinkedHashSet<>(catalog.getLoadedLanguages()));
+    }
 
-        for (String code : supportedLanguages) {
-            String displayName = codeToName.getOrDefault(code, code.toUpperCase());
-            names.add(code + " (" + displayName + ")");
-        }
-        Collections.sort(names);
-        return names;
-    }
-    
     public String getPlayerLanguage(Player player) {
-        if (player == null) {
-            return defaultLanguage;
-        }
-        return playerLanguages.getOrDefault(player.getUniqueId(), defaultLanguage);
+        return playerLanguages.get(player);
     }
-    
+
     public void setPlayerLanguage(Player player, String lang) {
-        if (player == null || !isLanguageSupported(lang)) {
-            return;
-        }
-        playerLanguages.put(player.getUniqueId(), lang.toLowerCase());
+        playerLanguages.set(player, lang);
     }
-    
-    public void setPlayerLanguage(UUID uuid, String lang) {
-        if (uuid == null || !isLanguageSupported(lang)) {
-            return;
-        }
-        playerLanguages.put(uuid, lang.toLowerCase());
-    }
-    
-    private FileConfiguration getLegacyLanguageConfig(String lang) {
-        if (lang != null) {
-            lang = lang.toLowerCase();
-        }
-        FileConfiguration config = languageConfigs.get(lang);
-        if (config == null) {
-            config = languageConfigs.get(defaultLanguage);
-        }
-        return config;
+
+    public void setPlayerLanguage(java.util.UUID uuid, String lang) {
+        playerLanguages.set(uuid, lang);
     }
 
     public String getMessage(String lang, String path, String defaultValue) {
-        return MessageResolver.resolve(getLegacyLanguageConfig(lang), path, defaultValue);
+        return MessageResolver.resolve(catalog.getLegacyConfig(lang), path, defaultValue);
     }
 
     public String getMessage(String path, String defaultValue) {
-        return getMessage(defaultLanguage, path, defaultValue);
+        return getMessage(catalog.getDefaultLanguage(), path, defaultValue);
     }
 
     public String getMessage(Player player, String path, String defaultValue) {
@@ -571,7 +84,7 @@ public class LanguageManager {
     }
 
     public String getMessage(String lang, String path, String defaultValue, String... placeholders) {
-        return MessageResolver.resolveWithPlaceholders(getLegacyLanguageConfig(lang), path, defaultValue, placeholders);
+        return MessageResolver.resolveWithPlaceholders(catalog.getLegacyConfig(lang), path, defaultValue, placeholders);
     }
 
     public String getMessage(Player player, String path, String defaultValue, String... placeholders) {
@@ -579,58 +92,49 @@ public class LanguageManager {
     }
 
     public String getIndexedMessage(String lang, String path, String defaultValue, String[] args) {
-        return MessageResolver.resolveWithIndexedArgs(getLegacyLanguageConfig(lang), path, defaultValue, args);
+        return MessageResolver.resolveWithIndexedArgs(catalog.getLegacyConfig(lang), path, defaultValue, args);
     }
 
     public String getIndexedMessage(String path, String defaultValue, String... args) {
-        return MessageResolver.resolveWithIndexedArgs(getLegacyLanguageConfig(defaultLanguage), path, defaultValue, args);
+        return MessageResolver.resolveWithIndexedArgs(
+                catalog.getLegacyConfig(catalog.getDefaultLanguage()), path, defaultValue, args);
     }
 
     public String getIndexedMessage(Player player, String path, String defaultValue, String... args) {
-        return MessageResolver.resolveWithIndexedArgs(getLegacyLanguageConfig(getPlayerLanguage(player)), path, defaultValue, args);
+        return MessageResolver.resolveWithIndexedArgs(
+                catalog.getLegacyConfig(getPlayerLanguage(player)), path, defaultValue, args);
     }
-    
+
     public String getDefaultLanguage() {
-        return defaultLanguage;
+        return catalog.getDefaultLanguage();
     }
-    
+
     public void setDefaultLanguage(String lang) {
-        if (isLanguageSupported(lang)) {
-            this.defaultLanguage = lang.toLowerCase();
-        }
+        catalog.setDefaultLanguage(lang);
     }
-    
+
     public void reloadLanguages() {
-        applyPluginLanguageSnapshot(readPluginLanguageResourcesSnapshot());
+        catalog.applyPluginSnapshot(loader.readPluginLanguageResourcesSnapshot());
         logger.info("Reloaded plugin language files (main + core + gui), default language: "
-                + defaultLanguage + ", loaded languages: " + String.join(", ", getLoadedLanguages()));
+                + catalog.getDefaultLanguage() + ", loaded languages: "
+                + String.join(", ", catalog.getLoadedLanguages()));
     }
 
-    /** 同步重载模块语言文件（仅 modules，与插件本体独立） */
     public void reloadModuleLanguages() {
-        moduleConfigs.clear();
-        loadedModuleLanguages.clear();
-        moduleSupportedLanguages.clear();
-        loadModuleLanguages();
-        logger.info("Reloaded module language files");
+        moduleRegistry.reloadModuleLanguages();
     }
 
-    /**
-     * 异步重载所有语言文件 — 磁盘 I/O 在异步线程执行，缓存更新在主线程，不卡服。
-     *
-     * @param callback 缓存更新完成后的回调（在主线程执行），可为 null
-     */
     public void reloadLanguagesAsync(Runnable callback) {
         CompatibleScheduler.runTaskAsync(plugin, () -> {
-            LanguageResourceSnapshot snapshot = readPluginLanguageResourcesSnapshot();
+            LanguageResourceSnapshot snapshot = loader.readPluginLanguageResourcesSnapshot();
 
             CompatibleScheduler.runTask(plugin, () -> {
-                applyPluginLanguageSnapshot(snapshot);
+                catalog.applyPluginSnapshot(snapshot);
 
                 logger.info("Reloaded plugin language files asynchronously"
-                        + " (core: " + snapshot.core.size()
-                        + ", gui: " + snapshot.gui.size()
-                        + ", default: " + defaultLanguage + ")");
+                        + " (core: " + snapshot.getCore().size()
+                        + ", gui: " + snapshot.getGui().size()
+                        + ", default: " + catalog.getDefaultLanguage() + ")");
 
                 if (callback != null) {
                     callback.run();
@@ -639,202 +143,24 @@ public class LanguageManager {
         });
     }
 
-    /**
-     * 异步重载模块语言文件 — 与插件本体语言完全独立执行。
-     * 磁盘 I/O 在异步线程执行，缓存更新在主线程，不卡服。
-     *
-     * @param callback 缓存更新完成后的回调（在主线程执行），可为 null
-     */
     public void reloadModuleLanguagesAsync(Runnable callback) {
-        CompatibleScheduler.runTaskAsync(plugin, () -> {
-            // ========== 异步线程：读取模块语言文件 ==========
-            String newModuleDefault = loadModuleDefaultLanguageFromConfig();
-
-            Map<String, FileConfiguration> newModule = new HashMap<>();
-            Set<String> newModuleLangs = new HashSet<>();
-
-            // 外部磁盘模块语言文件
-            readExternalModuleFiles(newModule, newModuleLangs);
-
-            // JAR 内置模块语言（仅补缺失）
-            for (String md : MODULE_DIRS) {
-                for (String lang : KNOWN_LANGS) {
-                    readBundledModuleLang(md, lang, newModule, newModuleLangs);
-                }
-            }
-
-            final String finalModuleDefault = newModuleDefault;
-
-            // ========== 主线程：原子切换缓存 ==========
-            CompatibleScheduler.runTask(plugin, () -> {
-                moduleConfigs.clear();
-                loadedModuleLanguages.clear();
-                moduleSupportedLanguages.clear();
-
-                moduleConfigs.putAll(newModule);
-                moduleSupportedLanguages.addAll(newModuleLangs);
-                moduleDefaultLanguage = finalModuleDefault;
-
-                // 异步路径已合并全部 MODULE_DIRS；回填已加载标记，避免后续误判未加载
-                for (String md : MODULE_DIRS) {
-                    loadedModuleLanguages.add(md);
-                }
-
-                logger.info("Reloaded module language files asynchronously"
-                        + " (modules: " + newModule.size() + ")");
-
-                if (callback != null) {
-                    callback.run();
-                }
-            });
-        });
+        moduleRegistry.reloadModuleLanguagesAsync(callback);
     }
 
-    // ==================== 异步读取工具方法 ====================
-
-    /** 从 config.yml 读取默认语言 */
-    private String loadDefaultLanguageFromConfig() {
-        FileConfiguration cfg = plugin.getConfigManager().getMainConfig();
-        String lang = cfg.getString("language.default", LANG_EN);
-        return (lang != null ? lang.trim().toLowerCase() : LANG_EN);
-    }
-
-    /** 从 modules.yml 读取模块默认语言 */
-    private String loadModuleDefaultLanguageFromConfig() {
-        FileConfiguration cfg = plugin.getConfigManager().getModulesConfig();
-        if (cfg == null) {
-            return LANG_EN;
-        }
-        String lang = cfg.getString("language.default", LANG_EN);
-        return (lang != null ? lang.trim().toLowerCase() : LANG_EN);
-    }
-
-    /** 读取外部目录下所有 .yml 文件到指定 map（磁盘内容覆盖已有条目） */
-    private void readExternalLangFiles(String dirPath,
-                                        Map<String, FileConfiguration> target,
-                                        Set<String> langs) {
-        File dir = new File(plugin.getDataFolder(), dirPath);
-        if (!dir.exists() || !dir.isDirectory()) return;
-        File[] files = dir.listFiles((d, n) -> n.endsWith(LANG_FILE_SUFFIX));
-        if (files == null || files.length == 0) return;
-        java.util.Arrays.sort(files, java.util.Comparator.comparing(File::getName));
-        for (File f : files) {
-            String lang = f.getName().substring(0,
-                    f.getName().length() - LANG_FILE_SUFFIX.length()).toLowerCase();
-            try {
-                FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
-                if (!cfg.getKeys(false).isEmpty()) {
-                    target.put(lang, cfg);
-                    langs.add(lang);
-                }
-            } catch (Exception e) {
-                logger.warning("Failed to read " + f.getPath() + ": " + e.getMessage());
-            }
-        }
-    }
-
-    /** 读取外部模块语言文件 */
-    private void readExternalModuleFiles(Map<String, FileConfiguration> target, Set<String> langs) {
-        File root = new File(plugin.getDataFolder(), MODULES_LANG_PATH);
-        if (!root.exists() || !root.isDirectory()) return;
-        File[] dirs = root.listFiles(File::isDirectory);
-        if (dirs == null) return;
-        for (File md : dirs) {
-            File[] files = md.listFiles((d, n) -> n.endsWith(LANG_FILE_SUFFIX));
-            if (files == null) continue;
-            for (File f : files) {
-                String lang = f.getName().substring(0,
-                        f.getName().length() - LANG_FILE_SUFFIX.length()).toLowerCase();
-                try {
-                    FileConfiguration cfg = YamlConfiguration.loadConfiguration(f);
-                    if (!cfg.getKeys(false).isEmpty()) {
-                        mergeInto(lang, cfg, target);
-                        langs.add(lang);
-                    }
-                } catch (Exception e) {
-                    logger.warning("Failed to read " + f.getPath() + ": " + e.getMessage());
-                }
-            }
-        }
-    }
-
-    /** 从 JAR 读取内置 core 语言（仅当目标 map 中没有该语言时） */
-    private void readBundledCoreLang(String lang,
-                                      Map<String, FileConfiguration> target,
-                                      Set<String> langs) {
-        if (target.containsKey(lang)) return;
-        String path = CORE_LANG_PATH + lang + LANG_FILE_SUFFIX;
-        try (InputStream in = plugin.getResource(path)) {
-            if (in == null) return;
-            String yaml = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-            FileConfiguration cfg = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
-            if (!cfg.getKeys(false).isEmpty()) {
-                target.put(lang, cfg);
-                langs.add(lang);
-            }
-        } catch (Exception e) {
-            logger.log(Level.FINE, "Could not read bundled core language '" + lang + "': " + e.getMessage());
-        }
-    }
-
-    /** 从 JAR 读取内置 GUI 语言 */
-    private void readBundledGuiLang(String lang,
-                                     Map<String, FileConfiguration> target,
-                                     Set<String> langs) {
-        if (target.containsKey(lang)) return;
-        String path = GUI_LANG_PATH + lang + LANG_FILE_SUFFIX;
-        try (InputStream in = plugin.getResource(path)) {
-            if (in == null) return;
-            String yaml = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-            FileConfiguration cfg = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
-            if (!cfg.getKeys(false).isEmpty()) {
-                target.put(lang, cfg);
-                langs.add(lang);
-            }
-        } catch (Exception e) {
-            logger.log(Level.FINE, "Could not read bundled GUI language '" + lang + "': " + e.getMessage());
-        }
-    }
-
-    /** 从 JAR 读取内置模块语言 */
-    private void readBundledModuleLang(String moduleDir, String lang,
-                                        Map<String, FileConfiguration> target,
-                                        Set<String> langs) {
-        String path = MODULES_LANG_PATH + moduleDir + "/" + lang + LANG_FILE_SUFFIX;
-        try (InputStream in = plugin.getResource(path)) {
-            if (in == null) return;
-            String yaml = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
-            FileConfiguration cfg = YamlConfiguration.loadConfiguration(new java.io.StringReader(yaml));
-            if (!cfg.getKeys(false).isEmpty()) {
-                mergeInto(lang, cfg, target);
-                langs.add(lang);
-            }
-        } catch (Exception e) {
-            logger.log(Level.FINE,
-                    "Could not read bundled module language '" + moduleDir + "/" + lang + "': " + e.getMessage());
-        }
-    }
-
-    /** 合并模块配置（同名语言累加）——必须与 mergeModuleConfig 一致，只写叶子键 */
-    private static void mergeInto(String lang, FileConfiguration src,
-                                   Map<String, FileConfiguration> target) {
-        LanguageConfigMerge.mergeIntoLanguageMap(lang, src, target);
-    }
-    
     public FileConfiguration getLanguageConfig(String lang) {
-        return languageConfigs.get(lang != null ? lang.toLowerCase() : null);
+        return catalog.getRawLanguageConfig(lang);
     }
 
     public FileConfiguration getGuiConfig(String lang) {
-        return getConfig(guiConfigs, lang);
+        return catalog.getGuiConfig(lang);
     }
 
     public String getGuiMessage(String lang, String path, String defaultValue) {
-        return MessageResolver.resolve(getGuiConfig(lang), path, defaultValue);
+        return MessageResolver.resolve(catalog.getGuiConfig(lang), path, defaultValue);
     }
 
     public String getGuiMessage(String path, String defaultValue) {
-        return getGuiMessage(defaultLanguage, path, defaultValue);
+        return getGuiMessage(catalog.getDefaultLanguage(), path, defaultValue);
     }
 
     public String getGuiMessage(Player player, String path, String defaultValue) {
@@ -842,7 +168,7 @@ public class LanguageManager {
     }
 
     public String getGuiMessage(String lang, String path, String defaultValue, String... placeholders) {
-        return MessageResolver.resolveWithPlaceholders(getGuiConfig(lang), path, defaultValue, placeholders);
+        return MessageResolver.resolveWithPlaceholders(catalog.getGuiConfig(lang), path, defaultValue, placeholders);
     }
 
     public String getGuiMessage(Player player, String path, String defaultValue, String... placeholders) {
@@ -865,100 +191,36 @@ public class LanguageManager {
         return MessageResolver.colorize(getGuiMessage(player, path, defaultValue, placeholders));
     }
 
-    // ==================== Module 消息（lang/modules/）====================
-
-    /** 模块专用语言解析 — 使用 moduleSupportedLanguages 和 moduleDefaultLanguage */
-    private String resolveModuleLanguage(String lang) {
-        if (lang != null) {
-            lang = lang.toLowerCase();
-        }
-        if (lang != null && moduleSupportedLanguages.contains(lang)) {
-            return lang;
-        }
-        if (moduleSupportedLanguages.contains(moduleDefaultLanguage)) {
-            return moduleDefaultLanguage;
-        }
-        if (moduleSupportedLanguages.contains(LANG_EN)) {
-            return LANG_EN;
-        }
-        return moduleSupportedLanguages.stream().findFirst().orElse(LANG_EN);
-    }
-
-    /** 模块专用配置查找 — 不依赖通用的 getConfig/resolveLanguage */
-    private FileConfiguration getModuleConfig(String lang) {
-        String resolved = resolveModuleLanguage(lang);
-        FileConfiguration config = moduleConfigs.get(resolved);
-        if (config == null && !LANG_EN.equals(resolved)) {
-            config = moduleConfigs.get(LANG_EN);
-        }
-        return config;
-    }
-
-    /** 获取模块默认语言 */
     public String getModuleDefaultLanguage() {
-        return moduleDefaultLanguage;
+        return catalog.getModuleDefaultLanguage();
     }
 
-    /** 诊断：已加载的模块语言配置数量（moduleConfigs.size） */
     public int getModuleConfigCount() {
-        return moduleConfigs.size();
+        return catalog.getModuleConfigCount();
     }
 
-    /** 诊断：模块支持的语言代码集合 */
-    public java.util.Set<String> getModuleSupportedLanguages() {
-        return new java.util.LinkedHashSet<>(moduleSupportedLanguages);
+    public Set<String> getModuleSupportedLanguages() {
+        return catalog.getModuleSupportedLanguages();
     }
 
-    /** 诊断：已标记为加载的模块 ID 集合 */
-    public java.util.Set<String> getLoadedModuleIds() {
-        return new java.util.LinkedHashSet<>(loadedModuleLanguages);
+    public Set<String> getLoadedModuleIds() {
+        return catalog.getLoadedModuleIds();
     }
 
-    /** 诊断：尝试为指定模块加载内置语言文件（不依赖磁盘已有文件，直接从 JAR 流式读取） */
     public boolean forceLoadBundledModule(String moduleId) {
-        if (moduleId == null || moduleId.trim().isEmpty()) return false;
-        return loadBundledModuleLanguagesForModule(moduleId.toLowerCase());
+        return moduleRegistry.forceLoadBundledModule(moduleId);
     }
 
-    /** 诊断：dump 指定语言的 moduleConfig 顶层键和前 20 个键值对 */
     public String dumpModuleConfig(String lang) {
-        FileConfiguration config = moduleConfigs.get(lang != null ? lang.toLowerCase() : "en");
-        if (config == null) {
-            return "&cmoduleConfigs.get(\"" + lang + "\") == null";
-        }
-        java.util.Set<String> topKeys = config.getKeys(false);
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("&7moduleConfigs[\"%s\"] 顶层键(&f%d&7): &f", lang, topKeys.size()));
-        sb.append(topKeys.toString());
-        
-        // 同时检查具体路径是否存在
-        sb.append("\n&7路径逐层检查:");
-        String[] testPaths = {
-            "module",
-            "module.announcement",
-            "module.announcement.button-name",
-            "module.quest",
-            "module.quest.button-name",
-            "module.stats",
-            "module.stats.button-name"
-        };
-        for (String path : testPaths) {
-            boolean exists = config.contains(path);
-            Object val = config.get(path);
-            sb.append(String.format("\n  &7%s → %s → &f%s",
-                path,
-                exists ? "&a存在" : "&c不存在",
-                val != null ? val.toString() : "&cnull"));
-        }
-        return sb.toString();
+        return moduleRegistry.dumpModuleConfig(lang);
     }
 
     public String getModuleMessage(String lang, String path, String defaultValue) {
-        return MessageResolver.resolve(getModuleConfig(lang), path, defaultValue);
+        return MessageResolver.resolve(catalog.getModuleConfig(lang), path, defaultValue);
     }
 
     public String getModuleMessage(String path, String defaultValue) {
-        return getModuleMessage(moduleDefaultLanguage, path, defaultValue);
+        return getModuleMessage(catalog.getModuleDefaultLanguage(), path, defaultValue);
     }
 
     public String getModuleMessage(Player player, String path, String defaultValue) {
@@ -966,7 +228,7 @@ public class LanguageManager {
     }
 
     public String getModuleMessage(String lang, String path, String defaultValue, String... placeholders) {
-        return MessageResolver.resolveWithPlaceholders(getModuleConfig(lang), path, defaultValue, placeholders);
+        return MessageResolver.resolveWithPlaceholders(catalog.getModuleConfig(lang), path, defaultValue, placeholders);
     }
 
     public String getModuleMessage(Player player, String path, String defaultValue, String... placeholders) {
@@ -974,29 +236,27 @@ public class LanguageManager {
     }
 
     public String getModuleIndexedMessage(String lang, String path, String defaultValue, String[] args) {
-        return MessageResolver.resolveWithIndexedArgs(getModuleConfig(lang), path, defaultValue, args);
+        return MessageResolver.resolveWithIndexedArgs(catalog.getModuleConfig(lang), path, defaultValue, args);
     }
 
     public String getModuleIndexedMessage(String path, String defaultValue, String... args) {
-        return getModuleIndexedMessage(moduleDefaultLanguage, path, defaultValue, args);
+        return getModuleIndexedMessage(catalog.getModuleDefaultLanguage(), path, defaultValue, args);
     }
 
     public String getModuleIndexedMessage(Player player, String path, String defaultValue, String... args) {
         return getModuleIndexedMessage(getPlayerLanguage(player), path, defaultValue, args);
     }
 
-    // ==================== Core 消息（lang/core/）====================
-
     public FileConfiguration getCoreConfig(String lang) {
-        return getConfig(coreConfigs, lang);
+        return catalog.getCoreConfig(lang);
     }
 
     public String getCoreMessage(String lang, String path, String defaultValue) {
-        return MessageResolver.resolve(getCoreConfig(lang), path, defaultValue);
+        return MessageResolver.resolve(catalog.getCoreConfig(lang), path, defaultValue);
     }
 
     public String getCoreMessage(String path, String defaultValue) {
-        return getCoreMessage(defaultLanguage, path, defaultValue);
+        return getCoreMessage(catalog.getDefaultLanguage(), path, defaultValue);
     }
 
     public String getCoreMessage(Player player, String path, String defaultValue) {
@@ -1004,7 +264,7 @@ public class LanguageManager {
     }
 
     public String getCoreMessage(String lang, String path, String defaultValue, String... placeholders) {
-        return MessageResolver.resolveWithPlaceholders(getCoreConfig(lang), path, defaultValue, placeholders);
+        return MessageResolver.resolveWithPlaceholders(catalog.getCoreConfig(lang), path, defaultValue, placeholders);
     }
 
     public String getCoreMessage(Player player, String path, String defaultValue, String... placeholders) {
@@ -1012,28 +272,38 @@ public class LanguageManager {
     }
 
     public String getCoreIndexedMessage(String lang, String path, String defaultValue, String[] args) {
-        return MessageResolver.resolveWithIndexedArgs(getCoreConfig(lang), path, defaultValue, args);
+        return MessageResolver.resolveWithIndexedArgs(catalog.getCoreConfig(lang), path, defaultValue, args);
     }
 
     public String getCoreIndexedMessage(String path, String defaultValue, String... args) {
-        return getCoreIndexedMessage(defaultLanguage, path, defaultValue, args);
+        return getCoreIndexedMessage(catalog.getDefaultLanguage(), path, defaultValue, args);
     }
 
     public String getCoreIndexedMessage(Player player, String path, String defaultValue, String... args) {
         return getCoreIndexedMessage(getPlayerLanguage(player), path, defaultValue, args);
     }
 
-    // ==================== GUI Indexed 消息（lang/gui/，支持 {0}{1} 索引占位符）====================
-
     public String getGuiIndexedMessage(String lang, String path, String defaultValue, String[] args) {
-        return MessageResolver.resolveWithIndexedArgs(getGuiConfig(lang), path, defaultValue, args);
+        return MessageResolver.resolveWithIndexedArgs(catalog.getGuiConfig(lang), path, defaultValue, args);
     }
 
     public String getGuiIndexedMessage(String path, String defaultValue, String... args) {
-        return getGuiIndexedMessage(defaultLanguage, path, defaultValue, args);
+        return getGuiIndexedMessage(catalog.getDefaultLanguage(), path, defaultValue, args);
     }
 
     public String getGuiIndexedMessage(Player player, String path, String defaultValue, String... args) {
         return getGuiIndexedMessage(getPlayerLanguage(player), path, defaultValue, args);
+    }
+
+    public boolean loadModuleLanguageResourcesForModule(String moduleId) {
+        return moduleRegistry.loadModuleLanguageResourcesForModule(moduleId);
+    }
+
+    public boolean loadModuleLanguageResourcesForModule(String moduleId, String lang) {
+        return moduleRegistry.loadModuleLanguageResourcesForModule(moduleId, lang);
+    }
+
+    public boolean releaseModuleLanguageResourcesForModule(String moduleId) {
+        return moduleRegistry.releaseModuleLanguageResourcesForModule(moduleId);
     }
 }
