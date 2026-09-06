@@ -7,17 +7,14 @@ import com.guild.core.utils.CompatibleScheduler;
 import com.guild.models.Guild;
 import com.guild.models.GuildMember;
 import com.guild.services.GuildService;
-import com.guild.war.event.WarMatchEndEvent;
 import com.guild.war.event.WarMatchStartEvent;
 import com.guild.war.model.VictoryMode;
 import com.guild.war.model.WarMatch;
 import com.guild.war.model.WarParticipant;
 import com.guild.war.model.WarPhase;
-import com.guild.war.model.WarReportSnapshot;
 import com.guild.war.model.WarTeamSide;
 import com.guild.war.report.WarReportRepository;
 import com.guild.world.GuildWorldService;
-import com.guildplugin.util.FoliaTeleportUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -25,8 +22,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
@@ -43,6 +38,7 @@ public final class GuildWarService {
     private final WarMatchRegistry registry = new WarMatchRegistry();
     private final WarBroadcastHelper broadcast;
     private final WarMatchScheduler scheduler;
+    private final WarMatchLifecycle lifecycle;
     private WarSettings settings;
 
     public GuildWarService(GuildPlugin plugin, GuildService guildService, GuildWorldService worldService) {
@@ -52,6 +48,8 @@ public final class GuildWarService {
         this.reportRepository = new WarReportRepository(plugin);
         this.broadcast = new WarBroadcastHelper(plugin, guildService);
         this.scheduler = new WarMatchScheduler(plugin);
+        this.lifecycle = new WarMatchLifecycle(
+                plugin, worldService, registry, broadcast, scheduler, reportRepository, () -> settings);
         reloadSettings();
     }
 
@@ -237,7 +235,7 @@ public final class GuildWarService {
                 broadcast.broadcastMatch(match, "war.broadcast.denied",
                         "&c{guild} 拒绝了公会战挑战",
                         "{guild}", guild.getName());
-                cleanupMatch(match, false);
+                lifecycle.cleanupMatch(match, false);
                 return CompletableFuture.completedFuture(null);
             });
         });
@@ -262,7 +260,7 @@ public final class GuildWarService {
                             "&c战斗已开始，无法取消（可用管理员强制结束）");
                 }
                 broadcast.broadcastMatch(match, "war.broadcast.cancelled", "&e公会战已被取消");
-                cleanupMatch(match, false);
+                lifecycle.cleanupMatch(match, false);
                 return CompletableFuture.completedFuture(null);
             });
         });
@@ -345,7 +343,7 @@ public final class GuildWarService {
                         "&a{guild} &7已准备就绪",
                         "{guild}", guild.getName());
                 if (match.isTeamAReady() && match.isTeamBReady() && match.bothTeamsHavePlayers()) {
-                    beginPreparing(match);
+                    lifecycle.beginPreparing(match, () -> startCountdown(match));
                 }
                 return CompletableFuture.completedFuture(null);
             });
@@ -358,7 +356,7 @@ public final class GuildWarService {
             return failed("war.error.match-missing", "&c对局不存在");
         }
         String reasonKey = (reason != null && !reason.isBlank()) ? reason : "war.reason.admin-end";
-        endMatch(match, null, reasonKey);
+        lifecycle.endMatch(match, null, reasonKey);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -450,9 +448,9 @@ public final class GuildWarService {
 
         if (match.mode() == VictoryMode.FIRST_TO_SCORE) {
             if (match.scoreA() >= match.scoreToWin()) {
-                endMatch(match, match.guildAId(), "war.reason.first-score");
+                lifecycle.endMatch(match, match.guildAId(), "war.reason.first-score");
             } else if (match.scoreB() >= match.scoreToWin()) {
-                endMatch(match, match.guildBId(), "war.reason.first-score");
+                lifecycle.endMatch(match, match.guildBId(), "war.reason.first-score");
             }
         }
     }
@@ -539,7 +537,7 @@ public final class GuildWarService {
     private void scheduleChallengeTimeout(WarMatch match) {
         scheduler.scheduleChallengeTimeout(match, settings.challengeTimeoutSeconds * 20L, () -> {
             broadcast.broadcastMatch(match, "war.broadcast.challenge-timeout", "&c挑战已超时");
-            cleanupMatch(match, false);
+            lifecycle.cleanupMatch(match, false);
         });
     }
 
@@ -548,61 +546,11 @@ public final class GuildWarService {
             if (!match.bothTeamsHavePlayers()) {
                 broadcast.broadcastMatch(match, "war.broadcast.signup-timeout",
                         "&c报名超时：双方人数不足，对局取消");
-                cleanupMatch(match, false);
+                lifecycle.cleanupMatch(match, false);
             } else {
-                beginPreparing(match);
+                lifecycle.beginPreparing(match, () -> startCountdown(match));
             }
         });
-    }
-
-    private synchronized void beginPreparing(WarMatch match) {
-        if (match.phase() != WarPhase.SIGNUP) {
-            return;
-        }
-        scheduler.cancel(match.id());
-        match.setPhase(WarPhase.PREPARING);
-        broadcast.broadcastMatch(match, "war.broadcast.preparing", "&a报名结束，正在创建战场…");
-
-        String worldKey = "war" + match.id() + "_" + System.currentTimeMillis() % 100000;
-        worldService.createArenaFromPreset(worldKey, match.presetName())
-                .whenComplete((result, err) -> CompatibleScheduler.runTask(plugin, () -> {
-                    if (err != null) {
-                        plugin.getLogger().log(Level.SEVERE, "[GuildWar] Failed to create arena", err);
-                        String errMsg = err.getMessage() != null ? err.getMessage() : err.toString();
-                        broadcast.broadcastMatch(match, "war.broadcast.arena-fail",
-                                "&c创建战场失败: {error}",
-                                "{error}", errMsg);
-                        cleanupMatch(match, false);
-                        return;
-                    }
-                    match.setWorldName(result.world().getWorldName());
-                    match.setSpawnA(result.spawns().spawnA());
-                    match.setSpawnB(result.spawns().spawnB());
-                    match.setSpectatorSpawn(result.spawns().spectator());
-                    teleportParticipants(match).thenRun(() -> startCountdown(match));
-                }));
-    }
-
-    private CompletableFuture<Void> teleportParticipants(WarMatch match) {
-        List<CompletableFuture<Boolean>> futures = new ArrayList<>();
-        for (WarParticipant p : match.participantList()) {
-            Player player = Bukkit.getPlayer(p.uuid());
-            if (player == null || !player.isOnline()) {
-                continue;
-            }
-            Location dest = p.side() == WarTeamSide.A ? match.spawnA() : match.spawnB();
-            if (dest == null) {
-                continue;
-            }
-            CompatibleScheduler.runTask(plugin, player, () -> {
-                player.setGameMode(GameMode.SURVIVAL);
-                player.setHealth(player.getMaxHealth());
-                player.setFoodLevel(20);
-                player.setFireTicks(0);
-            });
-            futures.add(FoliaTeleportUtils.safeTeleport(plugin, player, dest.clone()));
-        }
-        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
     }
 
     private void startCountdown(WarMatch match) {
@@ -635,11 +583,11 @@ public final class GuildWarService {
 
     private void resolveTimedScore(WarMatch match) {
         if (match.scoreA() > match.scoreB()) {
-            endMatch(match, match.guildAId(), "war.reason.timed-win");
+            lifecycle.endMatch(match, match.guildAId(), "war.reason.timed-win");
         } else if (match.scoreB() > match.scoreA()) {
-            endMatch(match, match.guildBId(), "war.reason.timed-win");
+            lifecycle.endMatch(match, match.guildBId(), "war.reason.timed-win");
         } else {
-            endMatch(match, null, "war.reason.timed-draw");
+            lifecycle.endMatch(match, null, "war.reason.timed-draw");
         }
     }
 
@@ -647,15 +595,15 @@ public final class GuildWarService {
         int a = match.aliveCount(WarTeamSide.A);
         int b = match.aliveCount(WarTeamSide.B);
         if (a > b) {
-            endMatch(match, match.guildAId(), "war.reason.survive-alive");
+            lifecycle.endMatch(match, match.guildAId(), "war.reason.survive-alive");
         } else if (b > a) {
-            endMatch(match, match.guildBId(), "war.reason.survive-alive");
+            lifecycle.endMatch(match, match.guildBId(), "war.reason.survive-alive");
         } else if (match.scoreA() > match.scoreB()) {
-            endMatch(match, match.guildAId(), "war.reason.survive-kills");
+            lifecycle.endMatch(match, match.guildAId(), "war.reason.survive-kills");
         } else if (match.scoreB() > match.scoreA()) {
-            endMatch(match, match.guildBId(), "war.reason.survive-kills");
+            lifecycle.endMatch(match, match.guildBId(), "war.reason.survive-kills");
         } else {
-            endMatch(match, null, "war.reason.survive-draw");
+            lifecycle.endMatch(match, null, "war.reason.survive-draw");
         }
     }
 
@@ -666,11 +614,11 @@ public final class GuildWarService {
         int a = match.aliveCount(WarTeamSide.A);
         int b = match.aliveCount(WarTeamSide.B);
         if (a == 0 && b == 0) {
-            endMatch(match, null, "war.reason.both-eliminated");
+            lifecycle.endMatch(match, null, "war.reason.both-eliminated");
         } else if (a == 0) {
-            endMatch(match, match.guildBId(), "war.reason.wipe");
+            lifecycle.endMatch(match, match.guildBId(), "war.reason.wipe");
         } else if (b == 0) {
-            endMatch(match, match.guildAId(), "war.reason.wipe");
+            lifecycle.endMatch(match, match.guildAId(), "war.reason.wipe");
         }
     }
 
@@ -691,99 +639,6 @@ public final class GuildWarService {
         } else {
             broadcast.msg(player, "war.eliminate.spectator", "&7你已被淘汰，重生后进入旁观");
         }
-    }
-
-    private synchronized void endMatch(WarMatch match, Integer winnerGuildId, String reasonKey) {
-        if (match.phase() == WarPhase.ENDED) {
-            return;
-        }
-        scheduler.cancel(match.id());
-        match.setPhase(WarPhase.ENDED);
-        match.setWinnerGuildId(winnerGuildId);
-        match.setEndReason(reasonKey);
-
-        WarReportSnapshot snapshot = WarReportSnapshot.fromMatch(match, settings.seasonId);
-        try {
-            Bukkit.getPluginManager().callEvent(new WarMatchEndEvent(snapshot));
-        } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "[GuildWar] WarMatchEndEvent listener error", e);
-        }
-        reportRepository.saveAsync(snapshot).whenComplete((saved, err) -> {
-            if (err != null) {
-                plugin.getLogger().log(Level.WARNING, "[GuildWar] Report save failed", err);
-            }
-            if (settings.broadcastReport) {
-                CompatibleScheduler.runTask(plugin, () -> broadcast.broadcastReportLines(saved != null ? saved : snapshot));
-            }
-        });
-
-        String winnerPh = winnerGuildId == null
-                ? "war.draw"
-                : (winnerGuildId == match.guildAId() ? match.guildAName() : match.guildBName());
-        broadcast.broadcastMatch(match, "war.broadcast.ended",
-                "&6对局结束！&e{winner} &7（{reason}） | 比分 &a{sa} &7: &c{sb}",
-                "{winner}", winnerPh,
-                "{reason}", reasonKey != null ? reasonKey : "",
-                "{score}", String.valueOf(match.scoreToWin()),
-                "{sa}", String.valueOf(match.scoreA()),
-                "{sb}", String.valueOf(match.scoreB()));
-
-        // 先送回，再销毁世界
-        List<CompletableFuture<Boolean>> tps = new ArrayList<>();
-        for (WarParticipant p : match.participantList()) {
-            Player player = Bukkit.getPlayer(p.uuid());
-            if (player != null && player.isOnline()) {
-                CompatibleScheduler.runTask(plugin, player, () -> {
-                    if (player.getGameMode() == GameMode.SPECTATOR) {
-                        player.setGameMode(GameMode.SURVIVAL);
-                    }
-                });
-                tps.add(worldService.teleportToFallbackWorld(player));
-            }
-            registry.unlinkPlayer(p.uuid());
-        }
-        CompletableFuture.allOf(tps.toArray(new CompletableFuture[0]))
-                .whenComplete((v, e) -> CompatibleScheduler.runTaskLater(plugin, () -> {
-                    destroyArena(match);
-                    unregisterMatch(match);
-                }, 40L));
-    }
-
-    private void destroyArena(WarMatch match) {
-        String world = match.worldName();
-        if (world == null) {
-            return;
-        }
-        String policy = worldService.getPostMatchPolicy();
-        // reset 本期等同 destroy（下次开战会重新 create+paste）
-        worldService.deleteWorld(world, true).whenComplete((v, err) -> {
-            if (err != null) {
-                plugin.getLogger().log(Level.WARNING, "[GuildWar] Failed to delete arena " + world
-                        + " (policy=" + policy + ")", err);
-            }
-        });
-    }
-
-    private void cleanupMatch(WarMatch match, boolean destroyWorld) {
-        scheduler.cancel(match.id());
-        match.setPhase(WarPhase.ENDED);
-        for (UUID uuid : new ArrayList<>(match.participants().keySet())) {
-            registry.unlinkPlayer(uuid);
-            Player player = Bukkit.getPlayer(uuid);
-            if (player != null && player.isOnline() && match.worldName() != null
-                    && player.getWorld().getName().equals(match.worldName())) {
-                worldService.teleportToFallbackWorld(player);
-            }
-        }
-        if (destroyWorld) {
-            destroyArena(match);
-        }
-        unregisterMatch(match);
-    }
-
-    private void unregisterMatch(WarMatch match) {
-        scheduler.cancel(match.id());
-        registry.unregister(match);
     }
 
     private int resolveDuration(VictoryMode mode, Integer override) {
@@ -822,7 +677,7 @@ public final class GuildWarService {
             try {
                 if (match.phase() != WarPhase.ENDED) {
                     broadcast.broadcastMatch(match, "war.broadcast.plugin-shutdown", "&c插件关闭，对局中止");
-                    endMatch(match, null, "war.reason.plugin-shutdown");
+                    lifecycle.endMatch(match, null, "war.reason.plugin-shutdown");
                 }
             } catch (Exception e) {
                 plugin.getLogger().log(Level.WARNING, "[GuildWar] shutdown match " + match.id(), e);
