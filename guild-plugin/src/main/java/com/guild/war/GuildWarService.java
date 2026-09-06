@@ -2,17 +2,12 @@ package com.guild.war;
 
 import com.guild.GuildPlugin;
 import com.guild.core.language.CoreMsg;
-import com.guild.core.language.LocalizedException;
-import com.guild.models.Guild;
 import com.guild.services.GuildService;
-import com.guild.war.event.WarMatchStartEvent;
 import com.guild.war.model.VictoryMode;
 import com.guild.war.model.WarMatch;
 import com.guild.war.model.WarPhase;
-import com.guild.war.model.WarTeamSide;
 import com.guild.war.report.WarReportRepository;
 import com.guild.world.GuildWorldService;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -23,56 +18,38 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 /**
- * 公会战核心服务：对外 Facade，委托命令、编排、战斗与生命周期子模块。
+ * 公会战对外 Facade：配置、查询与命令/战斗委托。
  */
 public final class GuildWarService {
 
     private final GuildPlugin plugin;
-    private final GuildService guildService;
     private final GuildWorldService worldService;
     private final WarReportRepository reportRepository;
     private final WarMatchRegistry registry = new WarMatchRegistry();
     private final WarBroadcastHelper broadcast;
     private final WarMatchScheduler scheduler;
     private final WarMatchLifecycle lifecycle;
+    private final WarMatchOrchestrator orchestrator;
     private final WarCombatRules combat;
     private final WarChallengeCommands commands;
     private WarSettings settings;
 
     public GuildWarService(GuildPlugin plugin, GuildService guildService, GuildWorldService worldService) {
         this.plugin = plugin;
-        this.guildService = guildService;
         this.worldService = worldService;
         this.reportRepository = new WarReportRepository(plugin);
         this.broadcast = new WarBroadcastHelper(plugin, guildService);
         this.scheduler = new WarMatchScheduler(plugin);
         this.lifecycle = new WarMatchLifecycle(
                 plugin, worldService, registry, broadcast, scheduler, reportRepository, () -> settings);
+        this.orchestrator = new WarMatchOrchestrator(
+                plugin, scheduler, broadcast, lifecycle, () -> settings);
         this.combat = new WarCombatRules(
                 plugin, worldService, registry, broadcast, lifecycle, () -> settings);
         reloadSettings();
         this.commands = new WarChallengeCommands(
                 guildService, worldService, registry, broadcast, scheduler, lifecycle, () -> settings,
-                this::isEnabled, this::unavailableReason, signupFlow());
-    }
-
-    private WarMatchSignupFlow signupFlow() {
-        return new WarMatchSignupFlow() {
-            @Override
-            public void scheduleChallengeTimeout(WarMatch match) {
-                GuildWarService.this.scheduleChallengeTimeout(match);
-            }
-
-            @Override
-            public void scheduleSignupTimeout(WarMatch match) {
-                GuildWarService.this.scheduleSignupTimeout(match);
-            }
-
-            @Override
-            public void beginPreparing(WarMatch match) {
-                lifecycle.beginPreparing(match, () -> GuildWarService.this.startCountdown(match));
-            }
-        };
+                this::isEnabled, this::unavailableReason, orchestrator);
     }
 
     public WarReportRepository reports() {
@@ -197,79 +174,6 @@ public final class GuildWarService {
 
     public void handleQuit(Player player) {
         combat.handleQuit(player);
-    }
-
-    private void scheduleChallengeTimeout(WarMatch match) {
-        scheduler.scheduleChallengeTimeout(match, settings.challengeTimeoutSeconds * 20L, () -> {
-            broadcast.broadcastMatch(match, "war.broadcast.challenge-timeout", "&c挑战已超时");
-            lifecycle.cleanupMatch(match, false);
-        });
-    }
-
-    private void scheduleSignupTimeout(WarMatch match) {
-        scheduler.scheduleSignupTimeout(match, settings.signupSeconds * 20L, () -> {
-            if (!match.bothTeamsHavePlayers()) {
-                broadcast.broadcastMatch(match, "war.broadcast.signup-timeout",
-                        "&c报名超时：双方人数不足，对局取消");
-                lifecycle.cleanupMatch(match, false);
-            } else {
-                lifecycle.beginPreparing(match, () -> startCountdown(match));
-            }
-        });
-    }
-
-    private void startCountdown(WarMatch match) {
-        scheduler.startCountdown(match, settings.countdownSeconds,
-                secondsLeft -> {
-                    if (secondsLeft <= 5 || secondsLeft % 5 == 0) {
-                        broadcast.broadcastMatch(match, "war.broadcast.countdown",
-                                "&e开战倒计时: &c{seconds}",
-                                "{seconds}", String.valueOf(secondsLeft));
-                    }
-                },
-                () -> {
-                    match.setPhase(WarPhase.ACTIVE);
-                    match.setStartedAt(System.currentTimeMillis());
-                    broadcast.broadcastMatch(match, "war.broadcast.fight", "&c&l开战！");
-                    Bukkit.getPluginManager().callEvent(new WarMatchStartEvent(match));
-                    scheduleMatchDuration(match);
-                });
-    }
-
-    private void scheduleMatchDuration(WarMatch match) {
-        scheduler.scheduleMatchDuration(match, match.durationSeconds() * 20L, () -> {
-            if (match.mode() == VictoryMode.TIMED_SCORE) {
-                resolveTimedScore(match);
-            } else {
-                resolveSurviveTimeout(match);
-            }
-        });
-    }
-
-    private void resolveTimedScore(WarMatch match) {
-        if (match.scoreA() > match.scoreB()) {
-            lifecycle.endMatch(match, match.guildAId(), "war.reason.timed-win");
-        } else if (match.scoreB() > match.scoreA()) {
-            lifecycle.endMatch(match, match.guildBId(), "war.reason.timed-win");
-        } else {
-            lifecycle.endMatch(match, null, "war.reason.timed-draw");
-        }
-    }
-
-    private void resolveSurviveTimeout(WarMatch match) {
-        int a = match.aliveCount(WarTeamSide.A);
-        int b = match.aliveCount(WarTeamSide.B);
-        if (a > b) {
-            lifecycle.endMatch(match, match.guildAId(), "war.reason.survive-alive");
-        } else if (b > a) {
-            lifecycle.endMatch(match, match.guildBId(), "war.reason.survive-alive");
-        } else if (match.scoreA() > match.scoreB()) {
-            lifecycle.endMatch(match, match.guildAId(), "war.reason.survive-kills");
-        } else if (match.scoreB() > match.scoreA()) {
-            lifecycle.endMatch(match, match.guildBId(), "war.reason.survive-kills");
-        } else {
-            lifecycle.endMatch(match, null, "war.reason.survive-draw");
-        }
     }
 
     public void broadcastMatch(WarMatch match, String key, String def, String... ph) {
