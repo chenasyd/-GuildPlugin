@@ -50,6 +50,16 @@ public final class TerritoryManagementGUI extends AbstractModuleGUI {
     }
 
     @Override
+    public String getGuiType() {
+        return GUI_ID;
+    }
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        return TerritoryBedrockForms.openManagement(module, guild, player, manageMode);
+    }
+
+    @Override
     public String getTitle() {
         return texts().format(viewer, "module.territory.gui.title",
                 "&6&l公会领地 &7- {0}", guild.getName());

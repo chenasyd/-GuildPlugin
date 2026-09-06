@@ -101,3 +101,7 @@ module.territory.gui.confirm-claim-warning: "&cThis cannot be undone — verify 
 module.territory.gui.confirm-unclaim-info: "&cUnclaim warning"
 module.territory.gui.confirm-unclaim-none: "&7No territory in this world"
 module.territory.gui.confirm-unclaim-warning: "&cProtection will be removed after unclaim"
+module.territory.gui.bedrock-manage-title: "&6Guild Territory - {0}"
+module.territory.gui.bedrock-list-header: "&7All territories (&f{0}&7):"
+module.territory.gui.bedrock-list-empty: "&8No records"
+module.territory.gui.bedrock-list-more: "&8… and {0} more"

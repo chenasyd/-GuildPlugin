@@ -112,6 +112,8 @@
 
 管理面板支持：查看当前世界与其它世界领地、选区状态、WorldGuard 就绪状态；管理模式下可获取选区斧、设 Pos1/Pos2、声明/放弃（含确认对话框）。
 
+**Bedrock 原生表单（v0.8+）**：基岩玩家打开上述入口时，优先发送 Cumulus `SimpleForm`（非 Geyser 箱子翻译）。需本机 Geyser 或 Bungee 表单转发可用；选区斧 / Pos1 / Pos2 操作后会自动刷新表单。
+
 ### 与 `guild.home-protect` 的关系
 
 主配置 `guild.home-protect`（半径保护）在领地模块启用且 WG 就绪时：

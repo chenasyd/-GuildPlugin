@@ -34,6 +34,16 @@ public final class ConfirmTerritoryUnclaimGUI extends AbstractModuleGUI {
     }
 
     @Override
+    public String getGuiType() {
+        return GUI_ID;
+    }
+
+    @Override
+    public boolean openBedrockForm(Player player) {
+        return TerritoryBedrockForms.openUnclaimConfirm(module, guild, player);
+    }
+
+    @Override
     public String getTitle() {
         return texts().format(viewer, "module.territory.gui.confirm-unclaim-title", "&c确认放弃领地");
     }

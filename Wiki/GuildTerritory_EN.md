@@ -51,6 +51,8 @@ See `modules.guild-territory` in `config.yml` — `claim.*`, `flags.*`, `home-pr
 
 Set `gui.enabled: false` to disable all GUI entry points.
 
+**Bedrock native forms (v0.8+)**: Bedrock players get Cumulus `SimpleForm` menus instead of translated chest GUIs. Requires local Geyser or Bungee form relay; wand/Pos1/Pos2 actions reopen the form with updated state.
+
 ## Build
 
 ```bash

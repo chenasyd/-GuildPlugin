@@ -100,3 +100,7 @@ module.territory.gui.confirm-claim-warning: "&c此操作不可撤销，请确认
 module.territory.gui.confirm-unclaim-info: "&c放弃警告"
 module.territory.gui.confirm-unclaim-none: "&7当前世界无领地"
 module.territory.gui.confirm-unclaim-warning: "&c放弃后该区域将不再受 WorldGuard 保护"
+module.territory.gui.bedrock-manage-title: "&6公会领地 - {0}"
+module.territory.gui.bedrock-list-header: "&7全部领地 (&f{0}&7):"
+module.territory.gui.bedrock-list-empty: "&8暂无记录"
+module.territory.gui.bedrock-list-more: "&8… 另有 {0} 处"
