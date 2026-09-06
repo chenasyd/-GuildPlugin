@@ -49,8 +49,10 @@ One territory per guild per world; region ID is always `guild_{guildId}`.
 | `claim.min-volume` | `1` | Minimum selection volume (blocks) |
 | `claim.max-volume` | `50000` | Maximum selection volume |
 | `claim.cost` | `0` | Deducted from **guild treasury** on claim; `0` = free |
-| `claim.allowed-worlds` | `[]` | Whitelist when non-empty |
-| `claim.denied-worlds` | `[]` | Blacklist |
+| `claim.worlds.mode` | `all` | Claim scope: `all` / `whitelist` / `blacklist` |
+| `claim.worlds.list` | `[]` | World names used with `mode` (case-insensitive) |
+| `claim.allowed-worlds` | `[]` | **Legacy**: when `worlds.mode` is unset and non-empty, treated as whitelist |
+| `claim.denied-worlds` | `[]` | **Legacy**: when `worlds.mode` is unset, whitelist empty, and this is non-empty → blacklist |
 | `region.priority` | `10` | WG region priority |
 | `flags.*` | see default config | `allow` / `deny` / `none` (leave unset) |
 | `home-protect.mode` | `defer` | `defer` / `merge` / `off` |
@@ -66,6 +68,39 @@ One territory per guild per world; region ID is always `guild_{guildId}`.
 | `cross-server.materialize-on-world-load` | `true` | Retry materialize when a world loads lazily |
 | `cross-server.materialize-retry-failed` | `true` | Retry records with `sync_state=FAILED` |
 | `events.enabled` | `true` | Publish SDK territory events via EventBus |
+
+### World claim scope
+
+Use `claim.worlds.mode` to control where officers/leaders may claim territory (**does not affect** viewing, unclaiming, or admin tools for existing claims):
+
+| mode | Behavior |
+|------|----------|
+| `all` | All worlds (default) |
+| `whitelist` | Only worlds listed in `claim.worlds.list` |
+| `blacklist` | Worlds in `claim.worlds.list` are blocked |
+
+Example (main + resource worlds only):
+
+```yaml
+modules:
+  guild-territory:
+    claim:
+      worlds:
+        mode: whitelist
+        list:
+          - world
+          - resource
+```
+
+Example (block hub/creative):
+
+```yaml
+      worlds:
+        mode: blacklist
+        list:
+          - lobby
+          - creative
+```
 
 ### Cross-server metadata
 

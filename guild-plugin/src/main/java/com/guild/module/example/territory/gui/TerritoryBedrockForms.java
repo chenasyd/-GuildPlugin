@@ -9,6 +9,7 @@ import com.guild.module.example.territory.TerritoryRecord;
 import com.guild.module.example.territory.TerritorySelectionManager;
 import com.guild.module.example.territory.TerritorySettings;
 import com.guild.module.example.territory.TerritoryTexts;
+import com.guild.module.example.territory.TerritoryWorldClaimPolicy;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.SimpleForm;
@@ -77,8 +78,15 @@ final class TerritoryBedrockForms {
                                 handler.setCorner(player, false);
                                 openManagement(module, guild, player, true);
                             }
-                            case BTN_CLAIM -> module.getContext().openGUI(player,
-                                    new ConfirmTerritoryClaimGUI(module, guild, player));
+                            case BTN_CLAIM -> {
+                                if (!isClaimAllowed(module, player)) {
+                                    sendWorldBlocked(module, player);
+                                    openManagement(module, guild, player, true);
+                                    return;
+                                }
+                                module.getContext().openGUI(player,
+                                        new ConfirmTerritoryClaimGUI(module, guild, player));
+                            }
                             case BTN_UNCLAIM -> module.getContext().openGUI(player,
                                     new ConfirmTerritoryUnclaimGUI(module, guild, player));
                             default -> {
@@ -173,6 +181,10 @@ final class TerritoryBedrockForms {
                     ? module.getAvailability().describeMissing()
                     : "WorldGuard";
             sb.append(texts.format(player, "module.territory.gui.wg-degraded-lore", "&7缺少: &f{0}", missing));
+        }
+        if (!isClaimAllowed(module, player)) {
+            sb.append('\n').append(texts.format(player, "module.territory.gui.world-blocked",
+                    "&c此世界不可声明领地"));
         }
         sb.append("\n\n");
 
@@ -308,5 +320,21 @@ final class TerritoryBedrockForms {
             return module.getContext().getPlugin().getEconomyManager().format(amount);
         }
         return String.format(Locale.ROOT, "%.2f", amount);
+    }
+
+    private static boolean isClaimAllowed(TerritoryModule module, Player player) {
+        TerritorySettings settings = module.getSettings();
+        return settings == null || settings.isWorldAllowed(player.getWorld().getName());
+    }
+
+    private static void sendWorldBlocked(TerritoryModule module, Player player) {
+        TerritorySettings settings = module.getSettings();
+        TerritoryTexts texts = module.getTexts();
+        if (settings == null) {
+            texts.send(player, "module.territory.world-blocked", "&c此世界不允许声明公会领地。");
+            return;
+        }
+        TerritoryWorldClaimPolicy policy = settings.getWorldClaimPolicy();
+        texts.send(player, policy.blockedMessageKey(), "&c此世界不允许声明公会领地。");
     }
 }

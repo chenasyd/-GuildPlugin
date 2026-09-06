@@ -49,8 +49,10 @@
 | `claim.min-volume` | `1` | 最小选区体积（方块） |
 | `claim.max-volume` | `50000` | 最大选区体积 |
 | `claim.cost` | `0` | 声明时从**公会金库**扣除；0 为免费 |
-| `claim.allowed-worlds` | `[]` | 非空时为白名单 |
-| `claim.denied-worlds` | `[]` | 黑名单 |
+| `claim.worlds.mode` | `all` | 声明范围：`all`（全部）/ `whitelist`（白名单）/ `blacklist`（黑名单） |
+| `claim.worlds.list` | `[]` | 与 mode 配合的世界名列表（大小写不敏感） |
+| `claim.allowed-worlds` | `[]` | **旧版兼容**：未设置 `worlds.mode` 且非空时等同白名单 |
+| `claim.denied-worlds` | `[]` | **旧版兼容**：未设置 `worlds.mode` 且白名单为空、本项非空时等同黑名单 |
 | `region.priority` | `10` | WG 区域优先级 |
 | `flags.*` | 见默认 config | `allow` / `deny` / `none`（不设置） |
 | `home-protect.mode` | `defer` | `defer` / `merge` / `off` |
@@ -66,6 +68,39 @@
 | `cross-server.materialize-on-world-load` | `true` | 世界延迟加载时再次尝试 materialize |
 | `cross-server.materialize-retry-failed` | `true` | 是否重试上次 `sync_state=FAILED` 的记录 |
 | `events.enabled` | `true` | 是否通过 EventBus 发布 SDK 领地事件 |
+
+### 世界声明范围
+
+通过 `claim.worlds.mode` 控制哪些世界允许官员/会长声明领地（**不影响**已有领地的查看、放弃或 admin 操作）：
+
+| mode | 行为 |
+|------|------|
+| `all` | 全部世界可声明（默认） |
+| `whitelist` | 仅 `claim.worlds.list` 中的世界可声明 |
+| `blacklist` | `claim.worlds.list` 中的世界不可声明 |
+
+示例（仅主世界与资源世界可声明）：
+
+```yaml
+modules:
+  guild-territory:
+    claim:
+      worlds:
+        mode: whitelist
+        list:
+          - world
+          - resource
+```
+
+示例（禁止大厅/创造世界）：
+
+```yaml
+      worlds:
+        mode: blacklist
+        list:
+          - lobby
+          - creative
+```
 
 ### 跨服元数据
 

@@ -6,6 +6,7 @@ import com.guild.module.example.territory.TerritoryModule;
 import com.guild.module.example.territory.TerritoryRecord;
 import com.guild.module.example.territory.TerritorySelectionManager;
 import com.guild.module.example.territory.TerritorySettings;
+import com.guild.module.example.territory.TerritoryWorldClaimPolicy;
 import com.guild.module.example.territory.TerritoryTexts;
 import com.guild.sdk.gui.AbstractModuleGUI;
 import org.bukkit.Material;
@@ -94,9 +95,7 @@ public final class TerritoryManagementGUI extends AbstractModuleGUI {
             inv.setItem(SLOT_POS2, createItem(Material.YELLOW_CONCRETE,
                     texts().format(viewer, "module.territory.gui.pos2", "&ePos2"),
                     texts().format(viewer, "module.territory.gui.pos2-lore", "&7以当前位置设为 Pos2")));
-            inv.setItem(SLOT_CLAIM, createItem(Material.EMERALD_BLOCK,
-                    texts().format(viewer, "module.territory.gui.claim", "&a声明领地"),
-                    claimButtonLore()));
+            inv.setItem(SLOT_CLAIM, buildClaimButton());
             inv.setItem(SLOT_UNCLAIM, createItem(Material.REDSTONE_BLOCK,
                     texts().format(viewer, "module.territory.gui.unclaim", "&c放弃领地"),
                     texts().format(viewer, "module.territory.gui.unclaim-lore", "&7放弃当前世界领地")));
@@ -140,6 +139,10 @@ public final class TerritoryManagementGUI extends AbstractModuleGUI {
             return;
         }
         if (slot == SLOT_CLAIM) {
+            if (!isClaimAllowedInCurrentWorld()) {
+                sendWorldBlockedMessage(player);
+                return;
+            }
             module.getContext().openGUI(player, new ConfirmTerritoryClaimGUI(module, guild, player));
             return;
         }
@@ -226,7 +229,37 @@ public final class TerritoryManagementGUI extends AbstractModuleGUI {
         }
     }
 
-    private String[] claimButtonLore() {
+    private ItemStack buildClaimButton() {
+        boolean allowed = isClaimAllowedInCurrentWorld();
+        Material material = allowed ? Material.EMERALD_BLOCK : Material.GRAY_STAINED_GLASS;
+        String titleKey = allowed ? "module.territory.gui.claim" : "module.territory.gui.claim-disabled";
+        String defaultTitle = allowed ? "&a声明领地" : "&8声明不可用";
+        return createItem(material,
+                texts().format(viewer, titleKey, defaultTitle),
+                claimButtonLore(allowed));
+    }
+
+    private boolean isClaimAllowedInCurrentWorld() {
+        TerritorySettings settings = module.getSettings();
+        return settings == null || settings.isWorldAllowed(viewer.getWorld().getName());
+    }
+
+    private void sendWorldBlockedMessage(Player player) {
+        TerritorySettings settings = module.getSettings();
+        if (settings == null) {
+            texts().send(player, "module.territory.world-blocked", "&c此世界不允许声明公会领地。");
+            return;
+        }
+        TerritoryWorldClaimPolicy policy = settings.getWorldClaimPolicy();
+        texts().send(player, policy.blockedMessageKey(), "&c此世界不允许声明公会领地。");
+    }
+
+    private String[] claimButtonLore(boolean allowed) {
+        if (!allowed) {
+            return new String[]{
+                    texts().format(viewer, "module.territory.gui.world-blocked", "&c此世界不可声明领地")
+            };
+        }
         TerritorySettings settings = module.getSettings();
         double cost = settings != null ? settings.getClaimCost() : 0;
         if (cost > 0) {

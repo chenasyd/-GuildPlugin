@@ -93,7 +93,8 @@ public final class TerritoryCommandHandler {
         TerritorySettings settings = module.getSettings();
 
         if (!settings.isWorldAllowed(worldName)) {
-            texts.send(player, "module.territory.world-blocked",
+            TerritoryWorldClaimPolicy policy = settings.getWorldClaimPolicy();
+            texts.send(player, policy.blockedMessageKey(),
                     "&c此世界不允许声明公会领地。");
             return;
         }

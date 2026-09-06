@@ -43,16 +43,13 @@ public final class TerritorySettings {
         return context.getConfig().getInt("region.priority", 10);
     }
 
+    /** 当前世界是否允许声明领地。 */
     public boolean isWorldAllowed(String worldName) {
-        List<String> allowList = context.getConfig().getStringList("claim.allowed-worlds");
-        if (allowList != null && !allowList.isEmpty()) {
-            return allowList.stream().anyMatch(w -> w.equalsIgnoreCase(worldName));
-        }
-        List<String> denyList = context.getConfig().getStringList("claim.denied-worlds");
-        if (denyList == null || denyList.isEmpty()) {
-            return true;
-        }
-        return denyList.stream().noneMatch(w -> w.equalsIgnoreCase(worldName));
+        return getWorldClaimPolicy().isAllowed(worldName);
+    }
+
+    public TerritoryWorldClaimPolicy getWorldClaimPolicy() {
+        return TerritoryWorldClaimPolicy.from(context.getConfig());
     }
 
     public String getHomeProtectMode() {
