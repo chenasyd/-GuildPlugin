@@ -59,6 +59,16 @@
 | `gui.register-settings-button` | `true` | 在公会设置 GUI 注入管理按钮（官员/会长） |
 | `gui.register-info-button` | `true` | 在公会信息 GUI 注入查看按钮（全体成员） |
 
+| `cross-server.enabled` | `true` | 使用共享 DB 表 `guild_territories`（关闭则回退 `territories.json`） |
+| `cross-server.server-id` | `""` | 留空则**首次启动随机生成**并写入 `modules/guild-territory/data/server-id.txt`，重启复用 |
+
+### 跨服元数据（C-CS-A）
+
+- 权威存储：`guild_territories`（主键 `guild_id + server_id + world_name`）
+- 本机 `server-id`：默认 `terr` + 12 位随机 hex，持久化在模块 data 目录，避免与子服显示名冲突
+- WG 区域仍只在本机创建；其它子服仅只读元数据（GUI / `/guild territory info` 可查看全网领地）
+- 已有 `territories.json` 会在首次启用 DB 时自动迁移到本机 `server-id`
+
 ### GUI 入口
 
 - **公会设置** → 「公会领地」（需官员/会长 + `guild.territory.claim`）

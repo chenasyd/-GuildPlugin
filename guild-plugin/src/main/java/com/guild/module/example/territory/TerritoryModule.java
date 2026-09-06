@@ -35,6 +35,7 @@ public final class TerritoryModule implements GuildModule {
     private ModuleState state = ModuleState.UNLOADED;
 
     private TerritorySettings settings;
+    private TerritoryServerIdentity serverIdentity;
     private TerritoryRepository repository;
     private TerritoryBridge bridge;
     private WorldGuardProbe.Availability availability;
@@ -52,7 +53,13 @@ public final class TerritoryModule implements GuildModule {
         this.settings = new TerritorySettings(context);
 
         File dataDir = ModuleDataDirectory.getModuleDataRoot(context);
-        this.repository = new TerritoryRepository(dataDir, context.getLogger());
+        this.serverIdentity = TerritoryServerIdentity.resolve(dataDir, settings, context.getLogger());
+        this.repository = new TerritoryRepository(
+                dataDir,
+                context.getLogger(),
+                context.getPlugin().getDatabaseManager(),
+                settings,
+                serverIdentity);
         repository.load();
 
         refreshBridgeAndAvailability();
@@ -353,6 +360,10 @@ public final class TerritoryModule implements GuildModule {
 
     public ModuleContext getContext() {
         return context;
+    }
+
+    public TerritoryServerIdentity getServerIdentity() {
+        return serverIdentity;
     }
 
     public boolean isWorldGuardReady() {

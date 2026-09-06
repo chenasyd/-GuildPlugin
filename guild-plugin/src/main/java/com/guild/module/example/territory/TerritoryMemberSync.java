@@ -111,7 +111,7 @@ public final class TerritoryMemberSync {
         if (!isSyncEnabled() || !bridge.isOperational()) {
             return 0;
         }
-        int[] guildIds = repository.viewAll().values().stream()
+        int[] guildIds = repository.viewLocal().values().stream()
                 .mapToInt(TerritoryRecord::getGuildId)
                 .distinct()
                 .toArray();
@@ -126,7 +126,7 @@ public final class TerritoryMemberSync {
             return;
         }
 
-        List<TerritoryRecord> territories = repository.findByGuildId(guildId);
+        List<TerritoryRecord> territories = repository.findByGuildIdLocal(guildId);
         if (territories.isEmpty()) {
             return;
         }
@@ -175,8 +175,11 @@ public final class TerritoryMemberSync {
 
         CompatibleScheduler.runTask(context.getPlugin(), () -> {
             for (TerritoryRecord territory : territories) {
-                bridge.unclaimTerritory(guildId, territory.getWorldName());
+                if (repository.isLocalRecord(territory)) {
+                    bridge.unclaimTerritory(guildId, territory.getWorldName());
+                }
             }
+            repository.removeAllForGuild(guildId);
             logger().info("Territory unclaimed for dissolved guild " + guildId + " (" + reason + ")");
         });
     }

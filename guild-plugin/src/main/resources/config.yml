@@ -129,6 +129,10 @@ modules:
       enabled: true
       register-settings-button: true
       register-info-button: true
+    cross-server:
+      enabled: true
+      # 留空则在首次启动时随机生成并写入 modules/guild-territory/data/server-id.txt
+      server-id: ""
 
 # Database backup (plugins/GuildPlugin/backup/)
 backup:

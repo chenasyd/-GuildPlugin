@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -155,7 +156,8 @@ public final class TerritoryCommandHandler {
                     pos1.getBlockX(), pos1.getBlockY(), pos1.getBlockZ(),
                     pos2.getBlockX(), pos2.getBlockY(), pos2.getBlockZ(),
                     leaderUuid,
-                    memberUuids
+                    memberUuids,
+                    module.getRepository().getLocalServerId()
             );
 
             CompatibleScheduler.runTask(context.getPlugin(), player, () -> {
@@ -264,8 +266,20 @@ public final class TerritoryCommandHandler {
         }
 
         if (record.isEmpty()) {
-            texts.send(player, "module.territory.not-found",
-                    "&7当前世界（{0}）暂无公会领地。", worldName);
+            List<TerritoryRecord> network = module.getRepository().findByGuildId(guildId);
+            if (network.isEmpty()) {
+                texts.send(player, "module.territory.not-found",
+                        "&7当前世界（{0}）暂无公会领地。", worldName);
+                return;
+            }
+            texts.send(player, "module.territory.info-header", "&6—— 公会领地 ——");
+            texts.send(player, "module.territory.not-found-local",
+                    "&7当前世界（{0}）暂无本机领地。", worldName);
+            for (TerritoryRecord other : network) {
+                texts.send(player, "module.territory.info-line-remote",
+                        "&7• &f{0}&7 / &f{1} &8({2})",
+                        other.getServerId(), other.getWorldName(), other.getRegionId());
+            }
             return;
         }
 

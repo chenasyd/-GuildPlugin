@@ -61,9 +61,10 @@ public final class TerritoryAdminHandler {
 
         for (TerritoryRecord record : sorted) {
             texts.send(sender, "module.territory.admin-list-line",
-                    "&7#{0} &f{1} &7@ &f{2} &8({3})",
+                    "&7#{0} &f{1} &7@ &f{2}&8/&f{3} &8({4})",
                     record.getGuildId(),
                     record.getGuildName(),
+                    record.getServerId(),
                     record.getWorldName(),
                     record.getRegionId());
         }
@@ -106,7 +107,12 @@ public final class TerritoryAdminHandler {
         Runnable task = () -> {
             int removed = 0;
             for (TerritoryRecord record : targets) {
-                if (module.getBridge().unclaimTerritory(guildId, record.getWorldName())) {
+                if (module.getRepository().isLocalRecord(record)) {
+                    if (module.getBridge().unclaimTerritory(guildId, record.getWorldName())) {
+                        removed++;
+                    }
+                } else {
+                    module.getRepository().remove(record.getGuildId(), record.getServerId(), record.getWorldName());
                     removed++;
                 }
             }

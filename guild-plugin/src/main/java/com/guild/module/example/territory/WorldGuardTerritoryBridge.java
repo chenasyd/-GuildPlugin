@@ -233,31 +233,38 @@ public final class WorldGuardTerritoryBridge implements TerritoryBridge {
         return false;
     }
 
-    private static TerritoryRecord toRecord(TerritoryClaimRequest request,
-                                            TerritoryBounds.Normalized bounds,
-                                            long claimedAt) {
+    private TerritoryRecord toRecord(TerritoryClaimRequest request,
+                                     TerritoryBounds.Normalized bounds,
+                                     long claimedAt) {
         return new TerritoryRecord(
                 request.getGuildId(),
                 request.getGuildName(),
                 request.regionId(),
+                request.getServerId().isBlank() ? repository.getLocalServerId() : request.getServerId(),
                 request.getWorldName(),
                 bounds.minX(), bounds.minY(), bounds.minZ(),
                 bounds.maxX(), bounds.maxY(), bounds.maxZ(),
+                claimedAt,
+                TerritorySyncState.MATERIALIZED,
                 claimedAt
         );
     }
 
-    private static TerritoryRecord fromRegion(ProtectedRegion region, int guildId, String worldName, String guildName) {
+    private TerritoryRecord fromRegion(ProtectedRegion region, int guildId, String worldName, String guildName) {
         BlockVector3 min = region.getMinimumPoint();
         BlockVector3 max = region.getMaximumPoint();
+        long now = System.currentTimeMillis();
         return new TerritoryRecord(
                 guildId,
                 guildName != null ? guildName : ("guild-" + guildId),
                 region.getId(),
+                repository.getLocalServerId(),
                 worldName,
                 min.getBlockX(), min.getBlockY(), min.getBlockZ(),
                 max.getBlockX(), max.getBlockY(), max.getBlockZ(),
-                System.currentTimeMillis()
+                now,
+                TerritorySyncState.MATERIALIZED,
+                now
         );
     }
 

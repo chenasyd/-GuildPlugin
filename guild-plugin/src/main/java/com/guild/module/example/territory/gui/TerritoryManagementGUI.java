@@ -63,6 +63,8 @@ public final class TerritoryManagementGUI extends AbstractModuleGUI {
         inv.setItem(SLOT_HEADER, createItem(Material.GRASS_BLOCK,
                 texts().format(viewer, "module.territory.gui.header", "&6&l公会领地"),
                 texts().format(viewer, "module.territory.gui.header-guild", "&7公会: &f{0}", guild.getName()),
+                texts().format(viewer, "module.territory.gui.header-server", "&7本机 ID: &f{0}",
+                        module.getRepository().getLocalServerId()),
                 texts().format(viewer, "module.territory.gui.header-world", "&7当前世界: &f{0}",
                         viewer.getWorld().getName())));
 
@@ -201,10 +203,12 @@ public final class TerritoryManagementGUI extends AbstractModuleGUI {
             }
             TerritoryRecord record = territories.get(i);
             Material icon = record.getWorldName().equalsIgnoreCase(viewer.getWorld().getName())
+                    && module.getRepository().isLocalRecord(record)
                     ? Material.GREEN_BANNER
                     : Material.WHITE_BANNER;
             inv.setItem(LIST_SLOTS[i], createItem(icon,
-                    texts().format(viewer, "module.territory.gui.list-item", "&f{0}", record.getWorldName()),
+                    texts().format(viewer, "module.territory.gui.list-item", "&f{0} @ {1}",
+                            record.getServerId(), record.getWorldName()),
                     texts().format(viewer, "module.territory.info-line-region", "&7区域: &f{0}",
                             record.getRegionId()),
                     texts().format(viewer, "module.territory.gui.volume-line", "&7体积: &f{0} 方块",

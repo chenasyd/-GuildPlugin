@@ -83,6 +83,21 @@ public final class TerritorySettings {
                 && context.getConfig().getBoolean("gui.register-info-button", true);
     }
 
+    public boolean isCrossServerEnabled() {
+        if (context == null) {
+            return false;
+        }
+        return context.getConfig().getBoolean("cross-server.enabled", true);
+    }
+
+    /** 非空时覆盖随机 server-id。 */
+    public String getConfiguredServerId() {
+        if (context == null) {
+            return "";
+        }
+        return context.getConfig().getString("cross-server.server-id", "");
+    }
+
     /** WG StateFlag 配置值：allow / deny / none（不设置）。 */
     public String getFlag(String key, String defaultValue) {
         String raw = context.getConfig().getString("flags." + key, defaultValue);

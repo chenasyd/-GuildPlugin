@@ -17,10 +17,11 @@ public final class TerritoryClaimRequest {
     private final int maxZ;
     private final UUID leaderUuid;
     private final Collection<UUID> memberUuids;
+    private final String serverId;
 
     public TerritoryClaimRequest(int guildId, String guildName, String worldName,
                                  int minX, int minY, int minZ, int maxX, int maxY, int maxZ,
-                                 UUID leaderUuid, Collection<UUID> memberUuids) {
+                                 UUID leaderUuid, Collection<UUID> memberUuids, String serverId) {
         this.guildId = guildId;
         this.guildName = guildName;
         this.worldName = worldName;
@@ -32,6 +33,13 @@ public final class TerritoryClaimRequest {
         this.maxZ = maxZ;
         this.leaderUuid = leaderUuid;
         this.memberUuids = memberUuids;
+        this.serverId = serverId != null ? serverId : "";
+    }
+
+    public TerritoryClaimRequest(int guildId, String guildName, String worldName,
+                                 int minX, int minY, int minZ, int maxX, int maxY, int maxZ,
+                                 UUID leaderUuid, Collection<UUID> memberUuids) {
+        this(guildId, guildName, worldName, minX, minY, minZ, maxX, maxY, maxZ, leaderUuid, memberUuids, "");
     }
 
     public int getGuildId() {
@@ -76,6 +84,10 @@ public final class TerritoryClaimRequest {
 
     public Collection<UUID> getMemberUuids() {
         return memberUuids;
+    }
+
+    public String getServerId() {
+        return serverId;
     }
 
     public String regionId() {
