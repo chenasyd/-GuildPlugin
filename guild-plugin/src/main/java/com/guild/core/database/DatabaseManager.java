@@ -29,9 +29,12 @@ public class DatabaseManager {
     private String mysqlUsername = "root";
     private String mysqlPassword = "";
     
+    private final DatabaseMigrationService migrationService;
+
     public DatabaseManager(GuildPlugin plugin) {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
+        this.migrationService = new DatabaseMigrationService(logger);
     }
     
     /**
@@ -76,7 +79,7 @@ public class DatabaseManager {
         CompletableFuture.runAsync(() -> {
             try {
                 Thread.sleep(1000); // 等待1秒确保数据库连接稳定
-                checkAndAddMissingColumns();
+                migrationService.checkAndAddMissingColumns(databaseType, this::getConnection);
             } catch (Exception e) {
                 logger.warning("Error during async database column check: " + e.getMessage());
             }
@@ -172,170 +175,7 @@ public class DatabaseManager {
     public String getMysqlDatabase() { return mysqlDatabase; }
     public String getMysqlUsername() { return mysqlUsername; }
     public String getMysqlPassword() { return mysqlPassword; }
-    
-    /**
-     * 数据库类型枚举
-     */
-    /**
-     * 检查并添加缺失的列
-     */
-    private void checkAndAddMissingColumns() {
-        try {
-            if (databaseType == DatabaseType.SQLITE) {
-                checkAndAddSQLiteColumns();
-            } else {
-                checkAndAddMySQLColumns();
-            }
-            logger.info("Database column check completed");
-        } catch (Exception e) {
-            logger.warning("Error checking database columns: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * 检查并添加SQLite缺失的列
-     */
-    private void checkAndAddSQLiteColumns() {
-        try (Connection conn = getConnection()) {
-            conn.setAutoCommit(false); // 开启事务以提高性能
-            
-            // 检查guilds表是否有home相关列
-            try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "home_world")) {
-                if (!rs.next()) {
-                    // 添加home相关列
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_world TEXT")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_x REAL")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_y REAL")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_z REAL")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_yaw REAL")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_pitch REAL")) {
-                        stmt.executeUpdate();
-                    }
-                    logger.info("Added home columns to guilds table");
-                }
-            }
-            
-            // 检查guilds表是否有economy相关列
-            try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "balance")) {
-                if (!rs.next()) {
-                    // 添加economy相关列
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN balance REAL DEFAULT 0.0")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN level INTEGER DEFAULT 1")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN max_members INTEGER DEFAULT 6")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN frozen INTEGER DEFAULT 0")) {
-                        stmt.executeUpdate();
-                    }
-                    logger.info("Added economy columns to guilds table");
-                }
-            }
 
-            try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "peak_level")) {
-                if (!rs.next()) {
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN peak_level INTEGER DEFAULT 1")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement(
-                            "UPDATE guilds SET peak_level = level WHERE peak_level IS NULL OR peak_level < level")) {
-                        stmt.executeUpdate();
-                    }
-                    logger.info("Added peak_level column to guilds table");
-                }
-            }
-            
-            conn.commit(); // 提交事务
-        } catch (SQLException e) {
-            logger.warning("Error checking SQLite columns: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * 检查并添加MySQL缺失的列
-     */
-    private void checkAndAddMySQLColumns() {
-        try (Connection conn = getConnection()) {
-            conn.setAutoCommit(false); // 开启事务以提高性能
-            
-            // 检查guilds表是否有home相关列
-            try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "home_world")) {
-                if (!rs.next()) {
-                    // 添加home相关列
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_world VARCHAR(100)")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_x DOUBLE")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_y DOUBLE")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_z DOUBLE")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_yaw FLOAT")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN home_pitch FLOAT")) {
-                        stmt.executeUpdate();
-                    }
-                    logger.info("Added home columns to guilds table");
-                }
-            }
-            
-            // 检查guilds表是否有economy相关列
-            try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "balance")) {
-                if (!rs.next()) {
-                    // 添加economy相关列
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN balance DOUBLE DEFAULT 0.0")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN level INT DEFAULT 1")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN max_members INT DEFAULT 6")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN frozen BOOLEAN DEFAULT FALSE")) {
-                        stmt.executeUpdate();
-                    }
-                    logger.info("Added economy columns to guilds table");
-                }
-            }
-
-            try (ResultSet rs = conn.getMetaData().getColumns(null, null, "guilds", "peak_level")) {
-                if (!rs.next()) {
-                    try (PreparedStatement stmt = conn.prepareStatement("ALTER TABLE guilds ADD COLUMN peak_level INT DEFAULT 1")) {
-                        stmt.executeUpdate();
-                    }
-                    try (PreparedStatement stmt = conn.prepareStatement(
-                            "UPDATE guilds SET peak_level = level WHERE peak_level IS NULL OR peak_level < level")) {
-                        stmt.executeUpdate();
-                    }
-                    logger.info("Added peak_level column to guilds table");
-                }
-            }
-            
-            conn.commit(); // 提交事务
-        } catch (SQLException e) {
-            logger.warning("Error checking MySQL columns: " + e.getMessage());
-        }
-    }
-    
     public enum DatabaseType {
         MYSQL, SQLITE
     }
