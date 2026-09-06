@@ -59,22 +59,22 @@
 | `gui.enabled` | `true` | 启用领地 GUI |
 | `gui.register-settings-button` | `true` | 在公会设置 GUI 注入管理按钮（官员/会长） |
 | `gui.register-info-button` | `true` | 在公会信息 GUI 注入查看按钮（全体成员） |
-
 | `cross-server.enabled` | `true` | 使用共享 DB 表 `guild_territories`（关闭则回退 `territories.json`） |
 | `cross-server.server-id` | `""` | 留空则**首次启动随机生成**并写入 `modules/guild-territory/data/server-id.txt`，重启复用 |
 | `cross-server.broadcast-events` | `true` | claim/unclaim 后通过 Bungee 广播，加速其它子服内存缓存更新 |
 | `cross-server.materialize-on-load` | `true` | 启动时为本机 DB 记录补建 WG 区域 |
 | `cross-server.materialize-on-world-load` | `true` | 世界延迟加载时再次尝试 materialize |
 | `cross-server.materialize-retry-failed` | `true` | 是否重试上次 `sync_state=FAILED` 的记录 |
+| `events.enabled` | `true` | 是否通过 EventBus 发布 SDK 领地事件 |
 
-### 跨服元数据（C-CS-A）
+### 跨服元数据
 
 - 权威存储：`guild_territories`（主键 `guild_id + server_id + world_name`）
 - 本机 `server-id`：默认 `terr` + 12 位随机 hex，持久化在模块 data 目录，避免与子服显示名冲突
 - WG 区域仍只在本机创建；其它子服仅只读元数据（GUI / `/guild territory info` 可查看全网领地）
 - 已有 `territories.json` 会在首次启用 DB 时自动迁移到本机 `server-id`
 
-### 跨服缓存广播（C-CS-B）
+### 跨服缓存广播
 
 - **DB 先写、Bungee 后通知**：本机 claim/unclaim 仍先写入共享 DB，再经 `territory.push` → Bungee → `territory.broadcast` 通知其它子服
 - **revision**：使用 `updatedAtEpochMs`（或 unclaim/clear 时的事件时间戳）；接收方若本地 revision ≥ 入站则丢弃（防乱序）
@@ -82,7 +82,7 @@
 - **限制**：Bungee Plugin Messaging 需在线玩家作载波，无玩家时广播可能发不出 → **不能依赖 Bungee 必达**，重启全量 `load()` DB 可自愈
 - 公会解散时发送 `guild-clear` 单条广播（避免 N 次 unclaim 风暴）
 
-### 跨服 WG materialize-on-load（C-CS-C）
+### 跨服 WG 补建（materialize-on-load）
 
 - **仅本机** `server-id` 记录：其它子服的元数据只读，不会在本地创建 WG
 - **触发时机**：模块启用后、以及 `WorldLoadEvent`（世界延迟加载）
@@ -92,7 +92,7 @@
 - 配置：`cross-server.materialize-on-load` / `materialize-on-world-load` / `materialize-retry-failed`（默认均 `true`）
 - **管理命令**：`/guild territory admin materialize [公会] [世界] [--force]` — 手动触发，不受 `materialize-on-load` 开关限制；`--force` 可重试 `sync_state=FAILED` 记录
 
-### SDK 事件与只读 API（v1.0+）
+### SDK 事件与只读 API
 
 事件 Data 类位于 `com.guild.sdk.event.territory.*`（编译期仅依赖 `guild-sdk`）。模块通过 **EventBus** 发布；配置 `events.enabled: false` 可关闭。
 
@@ -114,7 +114,9 @@ context.getEventBus().subscribe("my-module", TerritoryClaimedEventData.class, ev
 
 **只读 API**：`context.getApi().getTerritoryAPI()` → `TerritoryAPI`（`listByGuild`、`findAt` 等）；模块未加载时返回 `null`。
 
-### PlaceholderAPI（v0.7+）
+> 跨服 Bungee 缓存同步**不会**对外发布 SDK 事件；事件仅在本机业务操作（claim/unclaim/materialize/解散等）时触发。
+
+### PlaceholderAPI
 
 需安装 PlaceholderAPI；模块加载后自动注册 identifier `territory`。
 
@@ -136,7 +138,7 @@ context.getEventBus().subscribe("my-module", TerritoryClaimedEventData.class, ev
 
 管理面板支持：查看当前世界与其它世界领地、选区状态、WorldGuard 就绪状态；管理模式下可获取选区斧、设 Pos1/Pos2、声明/放弃（含确认对话框）。
 
-**Bedrock 原生表单（v0.8+）**：基岩玩家打开上述入口时，优先发送 Cumulus `SimpleForm`（非 Geyser 箱子翻译）。需本机 Geyser 或 Bungee 表单转发可用；选区斧 / Pos1 / Pos2 操作后会自动刷新表单。
+**Bedrock 原生表单**：基岩玩家打开上述入口时，优先发送 Cumulus `SimpleForm`（非 Geyser 箱子翻译）。需本机 Geyser 或 Bungee 表单转发可用；选区斧 / Pos1 / Pos2 操作后会自动刷新表单。
 
 ### 与 `guild.home-protect` 的关系
 

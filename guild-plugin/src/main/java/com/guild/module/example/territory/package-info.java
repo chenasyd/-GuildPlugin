@@ -1,9 +1,11 @@
 /**
- * 公会领地模块（WorldGuard 集成）— 单服 claim + 跨服元数据同步 + PlaceholderAPI + Bedrock GUI。
+ * 公会领地模块（WorldGuard 集成）— 选区 claim、跨服元数据同步、WG 补建、PlaceholderAPI、
+ * Bedrock 表单 GUI，以及对外 SDK 事件与 {@link com.guild.sdk.territory.TerritoryAPI}。
  *
  * <h2>主要组件</h2>
  * {@link TerritoryModule}、{@link WorldGuardTerritoryBridge}、{@link TerritoryMemberSync}、
- * {@link TerritoryCrossServerSync}、{@link TerritoryMaterializer}、{@link TerritoryPlaceholderProvider}
+ * {@link TerritoryCrossServerSync}、{@link TerritoryMaterializer}、{@link TerritoryEventEmitter}、
+ * {@link TerritoryAPIImpl}、{@link TerritoryPlaceholderProvider}
  *
  * @see TerritoryModule
  * @see WorldGuardProbe
