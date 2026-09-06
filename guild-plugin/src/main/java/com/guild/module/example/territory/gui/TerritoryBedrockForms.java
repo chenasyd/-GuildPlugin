@@ -58,7 +58,7 @@ final class TerritoryBedrockForms {
                     int id = response.clickedButtonId();
                     if (manageMode) {
                         if (id == BTN_BACK_MANAGE) {
-                            module.getContext().navigateBack(player);
+                            TerritoryGuiNavigation.backFromManagement(module, player);
                             return;
                         }
                         TerritoryCommandHandler handler = module.getCommandHandler();
@@ -93,7 +93,7 @@ final class TerritoryBedrockForms {
                             }
                         }
                     } else if (id == 0) {
-                        module.getContext().navigateBack(player);
+                        TerritoryGuiNavigation.backFromManagement(module, player);
                     }
                 }));
 
@@ -119,13 +119,11 @@ final class TerritoryBedrockForms {
                                     handler.claim(player);
                                 }
                             }
-                            module.getContext().openGUI(player,
-                                    new TerritoryManagementGUI(module, guild, player, true));
+                            TerritoryGuiNavigation.backToManagement(module, player);
                         }))
                 .closedResultHandler(() -> CompatibleScheduler.runTask(
                         module.getContext().getPlugin(), player, () ->
-                                module.getContext().openGUI(player,
-                                        new TerritoryManagementGUI(module, guild, player, true))))
+                                TerritoryGuiNavigation.backToManagement(module, player)))
                 .build();
 
         return BedrockFormSender.sendForm(player.getUniqueId(), form);
@@ -150,13 +148,11 @@ final class TerritoryBedrockForms {
                                     handler.unclaim(player);
                                 }
                             }
-                            module.getContext().openGUI(player,
-                                    new TerritoryManagementGUI(module, guild, player, true));
+                            TerritoryGuiNavigation.backToManagement(module, player);
                         }))
                 .closedResultHandler(() -> CompatibleScheduler.runTask(
                         module.getContext().getPlugin(), player, () ->
-                                module.getContext().openGUI(player,
-                                        new TerritoryManagementGUI(module, guild, player, true))))
+                                TerritoryGuiNavigation.backToManagement(module, player)))
                 .build();
 
         return BedrockFormSender.sendForm(player.getUniqueId(), form);

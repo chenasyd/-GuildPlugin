@@ -113,7 +113,7 @@ public final class TerritoryManagementGUI extends AbstractModuleGUI {
             return;
         }
         if (slot == SLOT_BACK) {
-            module.getContext().navigateBack(player);
+            TerritoryGuiNavigation.backFromManagement(module, player);
             return;
         }
         if (!manageMode) {

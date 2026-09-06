@@ -81,13 +81,11 @@ public final class ConfirmTerritoryClaimGUI extends AbstractModuleGUI {
             if (handler != null) {
                 handler.claim(player);
             }
-            module.getContext().openGUI(player,
-                    new TerritoryManagementGUI(module, guild, player, true));
+            TerritoryGuiNavigation.backToManagement(module, player);
             return;
         }
         if (slot == SLOT_CANCEL) {
-            module.getContext().openGUI(player,
-                    new TerritoryManagementGUI(module, guild, player, true));
+            TerritoryGuiNavigation.backToManagement(module, player);
         }
     }
 
