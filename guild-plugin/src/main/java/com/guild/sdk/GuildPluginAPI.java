@@ -514,7 +514,15 @@ public class GuildPluginAPI {
         if (moduleInstance == null || integration == null) {
             throw new IllegalArgumentException("moduleInstance and integration cannot be null");
         }
+        homeProtectIntegrations.removeIf(entry -> entry.owner == moduleInstance);
         homeProtectIntegrations.add(new RegisteredHomeProtectIntegration(moduleInstance, integration));
+    }
+
+    public void unregisterHomeProtectIntegration(Object moduleInstance) {
+        if (moduleInstance == null) {
+            return;
+        }
+        homeProtectIntegrations.removeIf(entry -> entry.owner == moduleInstance);
     }
 
     public boolean isHomeProtectFullyDeferred() {

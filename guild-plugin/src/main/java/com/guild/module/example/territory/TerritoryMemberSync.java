@@ -95,12 +95,30 @@ public final class TerritoryMemberSync {
         if (!context.getConfig().getBoolean("member-sync.repair-on-load", false)) {
             return;
         }
-        for (int guildId : repository.viewAll().values().stream()
+        repairSyncAll();
+    }
+
+    /** 管理命令：修复指定公会在所有世界的 WG 成员列表。 */
+    public void repairSync(int guildId) {
+        if (!isSyncEnabled() || !bridge.isOperational() || guildId <= 0) {
+            return;
+        }
+        scheduleResync(guildId, "admin-repair");
+    }
+
+    /** 管理命令：修复所有已登记领地的公会；返回触发的公会数量。 */
+    public int repairSyncAll() {
+        if (!isSyncEnabled() || !bridge.isOperational()) {
+            return 0;
+        }
+        int[] guildIds = repository.viewAll().values().stream()
                 .mapToInt(TerritoryRecord::getGuildId)
                 .distinct()
-                .toArray()) {
-            scheduleResync(guildId, "repair-on-load");
+                .toArray();
+        for (int guildId : guildIds) {
+            scheduleResync(guildId, "admin-repair-all");
         }
+        return guildIds.length;
     }
 
     void scheduleResync(int guildId, String reason) {

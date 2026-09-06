@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
- * P7-e：领地模块与 {@code guild.home-protect} 互斥/合并策略。
+ * 领地模块与 {@code guild.home-protect} 互斥/合并策略。
  */
 public final class TerritoryHomeProtectIntegration implements HomeProtectIntegration {
 

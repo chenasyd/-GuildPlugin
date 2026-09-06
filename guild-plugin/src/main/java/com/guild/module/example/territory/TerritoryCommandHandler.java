@@ -12,7 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,6 +25,7 @@ public final class TerritoryCommandHandler {
     private final ModuleContext context;
     private final TerritorySelectionManager selections;
     private final TerritoryTexts texts;
+    private final TerritoryAdminHandler adminHandler;
 
     public TerritoryCommandHandler(TerritoryModule module, ModuleContext context,
                                    TerritorySelectionManager selections, TerritoryTexts texts) {
@@ -30,9 +33,15 @@ public final class TerritoryCommandHandler {
         this.context = context;
         this.selections = selections;
         this.texts = texts;
+        this.adminHandler = new TerritoryAdminHandler(module, context, texts);
     }
 
     public void handle(CommandSender sender, String[] args) {
+        if (args.length > 0 && "admin".equalsIgnoreCase(args[0])) {
+            adminHandler.handle(sender, Arrays.copyOfRange(args, 1, args.length));
+            return;
+        }
+
         if (!(sender instanceof Player player)) {
             texts.send(sender, "module.territory.player-only", "&c仅玩家可执行此命令。");
             return;
@@ -43,7 +52,7 @@ public final class TerritoryCommandHandler {
             return;
         }
 
-        switch (args[0].toLowerCase()) {
+        switch (args[0].toLowerCase(Locale.ROOT)) {
             case "claim" -> handleClaim(player);
             case "unclaim" -> handleUnclaim(player);
             case "info" -> handleInfo(player);
@@ -79,18 +88,23 @@ public final class TerritoryCommandHandler {
         Location pos1 = session.pos1;
         Location pos2 = session.pos2;
         String worldName = pos1.getWorld().getName();
+        TerritorySettings settings = module.getSettings();
 
-        if (!isWorldAllowed(worldName)) {
+        if (!settings.isWorldAllowed(worldName)) {
             texts.send(player, "module.territory.world-blocked",
                     "&c此世界不允许声明公会领地。");
             return;
         }
 
         long volume = selections.selectionVolume(player);
-        long maxVolume = context.getConfig().getInt("claim.max-volume", 50_000);
-        if (volume > maxVolume) {
+        if (volume < settings.getMinVolume()) {
+            texts.send(player, "module.territory.volume-too-small",
+                    "&c选区过小（{0} < {1} 方块）。", volume, settings.getMinVolume());
+            return;
+        }
+        if (volume > settings.getMaxVolume()) {
             texts.send(player, "module.territory.volume-too-large",
-                    "&c选区过大（{0} > {1}）。", volume, maxVolume);
+                    "&c选区过大（{0} > {1} 方块）。", volume, settings.getMaxVolume());
             return;
         }
 
@@ -107,8 +121,15 @@ public final class TerritoryCommandHandler {
             return;
         }
 
-        texts.send(player, "module.territory.claiming",
-                "&e正在声明领地…");
+        double claimCost = settings.getClaimCost();
+        if (claimCost > 0 && guild.getBalance() < claimCost) {
+            texts.send(player, "module.territory.insufficient-guild-funds",
+                    "&c公会金库不足（需要 {0}，当前 {1}）。",
+                    formatMoney(claimCost), formatMoney(guild.getBalance()));
+            return;
+        }
+
+        texts.send(player, "module.territory.claiming", "&e正在声明领地…");
 
         context.getApi().getGuildMembers(guild.getId()).thenAccept(members -> {
             if (members == null || members.isEmpty()) {
@@ -137,14 +158,36 @@ public final class TerritoryCommandHandler {
             );
 
             CompatibleScheduler.runTask(context.getPlugin(), player, () -> {
+                if (claimCost > 0) {
+                    boolean paid = context.getPlugin().getGuildService()
+                            .updateGuildBalanceAsync(guild.getId(), guild.getBalance() - claimCost)
+                            .join();
+                    if (!paid) {
+                        texts.send(player, "module.territory.claim-failed",
+                                "&c声明失败：无法扣除公会金库。");
+                        return;
+                    }
+                }
+
                 Optional<TerritoryRecord> created = module.getBridge().claimTerritory(request);
                 if (created.isPresent()) {
                     TerritoryRecord record = created.get();
-                    texts.send(player, "module.territory.claim-success",
-                            "&a已声明领地 &f{0}&a（{1}），区域 ID: &f{2}",
-                            guild.getName(), worldName, record.getRegionId());
+                    if (claimCost > 0) {
+                        texts.send(player, "module.territory.claim-success-paid",
+                                "&a已声明领地 &f{0}&a（{1}），区域 ID: &f{2}&a，已扣除 &f{3}",
+                                guild.getName(), worldName, record.getRegionId(), formatMoney(claimCost));
+                    } else {
+                        texts.send(player, "module.territory.claim-success",
+                                "&a已声明领地 &f{0}&a（{1}），区域 ID: &f{2}",
+                                guild.getName(), worldName, record.getRegionId());
+                    }
                     session.wandMode = false;
                 } else {
+                    if (claimCost > 0) {
+                        context.getPlugin().getGuildService()
+                                .updateGuildBalanceAsync(guild.getId(), guild.getBalance())
+                                .join();
+                    }
                     texts.send(player, "module.territory.claim-failed",
                             "&c声明失败：区域重叠或 WorldGuard 保存失败。");
                 }
@@ -226,8 +269,7 @@ public final class TerritoryCommandHandler {
         }
 
         TerritoryRecord territory = record.get();
-        texts.send(player, "module.territory.info-header",
-                "&6—— 公会领地 ——");
+        texts.send(player, "module.territory.info-header", "&6—— 公会领地 ——");
         texts.send(player, "module.territory.info-line-region",
                 "&7区域: &f{0}", territory.getRegionId());
         texts.send(player, "module.territory.info-line-world",
@@ -248,7 +290,7 @@ public final class TerritoryCommandHandler {
             return;
         }
 
-        Material wand = parseMaterial(context.getConfig().getString("claim.wand-material", "WOODEN_AXE"));
+        Material wand = module.getSettings().getWandMaterial();
         TerritorySelectionManager.Session session = selections.of(player);
         session.wandMode = true;
         player.getInventory().addItem(new ItemStack(wand, 1));
@@ -292,18 +334,10 @@ public final class TerritoryCommandHandler {
         texts.send(player, "module.territory.help-info", "&einfo &7- 查看当前世界领地");
         texts.send(player, "module.territory.help-wand", "&ewand &7- 获取选区斧");
         texts.send(player, "module.territory.help-pos", "&epos1|pos2 &7- 以当前位置设角点");
-    }
-
-    private boolean isWorldAllowed(String worldName) {
-        List<String> allowList = context.getConfig().getStringList("claim.allowed-worlds");
-        if (allowList != null && !allowList.isEmpty()) {
-            return allowList.stream().anyMatch(w -> w.equalsIgnoreCase(worldName));
+        if (context.getPlugin().getPermissionManager().hasPermission(player, "guild.territory.admin")) {
+            texts.send(player, "module.territory.help-admin",
+                    "&eadmin &7- 管理员工具（list/force-unclaim/repair-sync）");
         }
-        List<String> denyList = context.getConfig().getStringList("claim.denied-worlds");
-        if (denyList == null || denyList.isEmpty()) {
-            return true;
-        }
-        return denyList.stream().noneMatch(w -> w.equalsIgnoreCase(worldName));
     }
 
     private boolean checkPermission(Player player, String permission) {
@@ -315,16 +349,18 @@ public final class TerritoryCommandHandler {
         return false;
     }
 
-    private static Material parseMaterial(String name) {
+    private String formatMoney(double amount) {
+        if (context.getPlugin().getEconomyManager().isVaultAvailable()) {
+            return context.getPlugin().getEconomyManager().format(amount);
+        }
+        return String.format(Locale.ROOT, "%.2f", amount);
+    }
+
+    public static Material parseMaterialPublic(String name) {
         if (name == null || name.isBlank()) {
             return Material.WOODEN_AXE;
         }
-        Material material = Material.matchMaterial(name.trim().toUpperCase());
+        Material material = Material.matchMaterial(name.trim().toUpperCase(Locale.ROOT));
         return material != null ? material : Material.WOODEN_AXE;
-    }
-
-    /** {@link TerritoryModule} 读取配置时复用。 */
-    public static Material parseMaterialPublic(String name) {
-        return parseMaterial(name);
     }
 }

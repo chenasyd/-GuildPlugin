@@ -18,15 +18,15 @@ public final class TerritorySelectionListener implements Listener {
 
     private final ModuleContext context;
     private final TerritorySelectionManager selections;
+    private final TerritoryModule module;
     private final TerritoryTexts texts;
-    private final Material wandMaterial;
 
     public TerritorySelectionListener(ModuleContext context, TerritorySelectionManager selections,
-                                      Material wandMaterial, TerritoryTexts texts) {
+                                      TerritoryModule module, TerritoryTexts texts) {
         this.context = context;
         this.selections = selections;
+        this.module = module;
         this.texts = texts;
-        this.wandMaterial = wandMaterial == null ? Material.WOODEN_AXE : wandMaterial;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
@@ -42,6 +42,7 @@ public final class TerritorySelectionListener implements Listener {
         if (!session.wandMode) {
             return;
         }
+        Material wandMaterial = module.getSettings().getWandMaterial();
         ItemStack item = player.getInventory().getItemInMainHand();
         if (item.getType() != wandMaterial) {
             return;

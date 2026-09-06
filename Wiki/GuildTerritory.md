@@ -1,0 +1,84 @@
+# 公会领地（Guild Territory）
+
+> 语言: **中文** | [English](./GuildTerritory_EN.md)
+
+基于 **WorldGuard + WorldEdit** 的公会领地方案：官员/会长选区声明 WG 区域，成员自动写入区域 members，与内置 `guild.home-protect` 可协调。
+
+## 前置
+
+| 项 | 说明 |
+|----|------|
+| 插件 | GuildPlugin 主插件 + `plugins/GuildPlugin/modules/guild-territory.jar` |
+| 软依赖 | 服务端安装 **WorldGuard**、**WorldEdit**（运行时探测，非 Maven 硬依赖） |
+| 权限 | 见下表 |
+| 角色 | `claim` / `unclaim` / `wand` 需官员或会长 |
+
+## 权限
+
+| 节点 | 默认 | 说明 |
+|------|------|------|
+| `guild.territory.info` | true | 查看当前世界领地（需在公会中） |
+| `guild.territory.claim` | true | 声明领地（仍需官员/会长） |
+| `guild.territory.unclaim` | true | 放弃领地 |
+| `guild.territory.admin` | op | `admin list/force-unclaim/repair-sync` |
+
+内置权限矩阵：在公会内的玩家可使用 `info`；`claim/unclaim` 额外要求 `canManageGuild`（官员/会长）。
+
+## 命令
+
+| 命令 | 说明 |
+|------|------|
+| `/guild territory wand` | 获取选区斧，左键 Pos1 / 右键 Pos2 |
+| `/guild territory pos1` / `pos2` | 以当前位置设角点 |
+| `/guild territory claim` | 将选区声明为本公会领地（当前世界） |
+| `/guild territory unclaim` | 放弃当前世界领地 |
+| `/guild territory info` | 查看当前世界领地信息 |
+| `/guild territory admin list` | 列出全部领地（管理员） |
+| `/guild territory admin force-unclaim <公会\|ID> [世界]` | 强制放弃 |
+| `/guild territory admin repair-sync [公会\|ID]` | 修复 WG 成员同步 |
+
+每公会每世界 **一块** 领地；区域 ID 固定为 `guild_{guildId}`。
+
+## 配置（`config.yml` → `modules.guild-territory`）
+
+| 键 | 默认 | 说明 |
+|----|------|------|
+| `claim.wand-material` | `WOODEN_AXE` | 选区工具材质 |
+| `claim.min-volume` | `1` | 最小选区体积（方块） |
+| `claim.max-volume` | `50000` | 最大选区体积 |
+| `claim.cost` | `0` | 声明时从**公会金库**扣除；0 为免费 |
+| `claim.allowed-worlds` | `[]` | 非空时为白名单 |
+| `claim.denied-worlds` | `[]` | 黑名单 |
+| `region.priority` | `10` | WG 区域优先级 |
+| `flags.*` | 见默认 config | `allow` / `deny` / `none`（不设置） |
+| `home-protect.mode` | `defer` | `defer` / `merge` / `off` |
+| `member-sync.enabled` | `true` | 成员变更同步 WG |
+| `member-sync.repair-on-load` | `false` | 启动时全量修复 |
+
+### 与 `guild.home-protect` 的关系
+
+主配置 `guild.home-protect`（半径保护）在领地模块启用且 WG 就绪时：
+
+- **`defer`**（默认）：完全交由 WorldGuard，内置 home 半径保护不生效
+- **`merge`**：仅在 WG 领地内或已有领地的 home 坐标跳过内置保护
+- **`off`**：领地模块不干预 home 保护
+
+## 数据与生命周期
+
+1. 声明 → 创建 WG `ProtectedCuboidRegion` + 写入 `modules/guild-territory/data/territories.json`
+2. 成员入会/退会/升降职 → 异步同步 WG `owners` / `members`
+3. 公会解散 → 删除所有世界领地
+4. 放弃 → 删除 WG 区域与本地记录
+
+## 构建模块 JAR
+
+```bash
+mvn -B package -DskipTests -Pbuild-territory-module -pl guild-plugin -am
+```
+
+输出：`guild-plugin/target/modules/guild-territory.jar`
+
+## 相关文档
+
+- [GuildWar](./GuildWar.md) — 固定地图公会战（**不涉及**领地 claim）
+- [SDK 模块开发](./SDK%20Developer-Guide.md)

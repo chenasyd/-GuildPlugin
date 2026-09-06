@@ -103,12 +103,24 @@ modules:
   guild-territory:
     claim:
       wand-material: WOODEN_AXE
+      min-volume: 1
       max-volume: 50000
-      # Non-empty = whitelist only; empty = all worlds except denied-worlds
+      cost: 0
       allowed-worlds: []
       denied-worlds: []
+    region:
+      priority: 10
+    flags:
+      build: deny
+      pvp: deny
+      mob-damage: deny
+      tnt: deny
+      chest-access: deny
+      use: deny
+      interact: deny
+      entry: allow
+      exit: allow
     home-protect:
-      # defer = disable builtin home-protect when WG ready; merge = skip overlap; off = no integration
       mode: defer
     member-sync:
       enabled: true

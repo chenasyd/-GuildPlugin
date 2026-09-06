@@ -30,10 +30,12 @@ public final class WorldGuardTerritoryBridge implements TerritoryBridge {
 
     private final TerritoryRepository repository;
     private final Logger logger;
+    private final TerritorySettings settings;
 
-    public WorldGuardTerritoryBridge(TerritoryRepository repository, Logger logger) {
+    public WorldGuardTerritoryBridge(TerritoryRepository repository, Logger logger, TerritorySettings settings) {
         this.repository = repository;
         this.logger = logger;
+        this.settings = settings;
     }
 
     @Override
@@ -67,7 +69,7 @@ public final class WorldGuardTerritoryBridge implements TerritoryBridge {
         }
 
         applyMembership(candidate, request.getLeaderUuid(), request.getMemberUuids());
-        TerritoryFlagDefaults.apply(candidate);
+        TerritoryFlagDefaults.apply(candidate, settings);
 
         manager.addRegion(candidate);
         try {

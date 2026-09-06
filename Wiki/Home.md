@@ -13,6 +13,7 @@ GuildPlugin is a Minecraft guild system plugin providing complete guild manageme
 
 - [GuildWorld — Void worlds & presets](./GuildWorld.md) ([EN](./GuildWorld_EN.md))
 - [GuildWar — Fixed-map guild PVP](./GuildWar.md) ([EN](./GuildWar_EN.md))
+- [Guild Territory — WorldGuard land claims](./GuildTerritory.md) ([EN](./GuildTerritory_EN.md))
 - [Guild War walkthrough](./GuildWar-Walkthrough.md) ([EN](./GuildWar-Walkthrough_EN.md))
 - [Guild Warehouse (NBTAPI)](./GuildWarehouse.md) ([EN](./GuildWarehouse_EN.md))
 - [Builtin Activity / Contribution](./Guild-Activity.md) ([EN](./Guild-Activity_EN.md))

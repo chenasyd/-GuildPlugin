@@ -10,9 +10,10 @@ public final class TerritoryBridgeFactory {
 
     public static TerritoryBridge create(WorldGuardProbe.Availability availability,
                                          TerritoryRepository repository,
-                                         Logger logger) {
+                                         Logger logger,
+                                         TerritorySettings settings) {
         if (availability.fullyReady()) {
-            return new WorldGuardTerritoryBridge(repository, logger);
+            return new WorldGuardTerritoryBridge(repository, logger, settings);
         }
         return new NoOpTerritoryBridge(logger, "missing " + availability.describeMissing());
     }
