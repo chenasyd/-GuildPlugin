@@ -7,6 +7,7 @@ type: mixed
 api-version: 1.6.7
 main: com.guild.module.example.territory.TerritoryModule
 folia-compatible: true
+config-prefix: territory
 depends: []
 # 框架 soft-depends 仅检查其他 Guild 模块 ID；WorldGuard 在模块内运行时探测（WorldGuardProbe）。
 soft-depends: []

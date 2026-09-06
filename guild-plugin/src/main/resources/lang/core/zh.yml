@@ -417,6 +417,7 @@ help.time: "&e/guild time &7- 查看公会时间信息"
 help.applications: "&e/guild applications &7- 管理公会申请"
 help.chat: "&e/guild chat &7- 切换公会聊天模式 | &e/guild chat <消息> &7- 发送公会消息"
 help.warehouse: "&e/guild warehouse [页码|perm|info] &7- 打开公会仓库 / 权限 / 信息"
+help.territory: "&e/guild territory &7- 公会领地（声明/放弃/info/选区斧）"
 help.help: "&e/guild help &7- 显示此帮助"
 
 # ============ 管理员命令 ============

@@ -98,6 +98,22 @@ permissions:
     can-delete: false
     can-warehouse: false
 
+# Guild territory module (WorldGuard + WorldEdit; jar: plugins/GuildPlugin/modules/guild-territory.jar)
+modules:
+  guild-territory:
+    claim:
+      wand-material: WOODEN_AXE
+      max-volume: 50000
+      # Non-empty = whitelist only; empty = all worlds except denied-worlds
+      allowed-worlds: []
+      denied-worlds: []
+    home-protect:
+      # defer = disable builtin home-protect when WG ready; merge = skip overlap; off = no integration
+      mode: defer
+    member-sync:
+      enabled: true
+      repair-on-load: false
+
 # Database backup (plugins/GuildPlugin/backup/)
 backup:
   enabled: true

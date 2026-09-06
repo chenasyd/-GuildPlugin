@@ -35,6 +35,10 @@ public class GuildHelpHandler implements GuildSubCommandHandler {
                 player.sendMessage(ColorUtils.colorize(ctx.languageManager().getCoreMessage(player, "help.applications", "&e/guild applications &7- Manage guild applications")));
                 player.sendMessage(ColorUtils.colorize(ctx.languageManager().getCoreMessage(player, "help.chat", "&e/guild chat &7- Toggle guild chat mode &7| &e/guild chat <msg> &7- Send guild message")));
                 player.sendMessage(ColorUtils.colorize(ctx.languageManager().getCoreMessage(player, "help.warehouse", "&e/guild warehouse [page|perm|info] &7- Open guild warehouse / permissions / info")));
+                if (ctx.plugin().getModuleManager().getRegistry().isLoaded("guild-territory")) {
+                    player.sendMessage(ColorUtils.colorize(ctx.languageManager().getCoreMessage(player, "help.territory",
+                            "&e/guild territory &7- Guild territory (claim/unclaim/info/wand)")));
+                }
                 player.sendMessage(ColorUtils.colorize(ctx.languageManager().getCoreMessage(player, "help.help", "&e/guild help &7- Show this help")));
 
     }

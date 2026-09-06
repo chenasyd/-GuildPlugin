@@ -5,7 +5,9 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 /**
- * 公会领地 WG 区域默认 Flag：非会员受限，会员通过成员域 + BUILD 联动自由操作。
+ * 公会领地 WG 区域默认 Flag：非会员受限，会员通过 WG 成员域（owners/members）获得 BUILD 等权限。
+ * <p>
+ * 部署后请在测试服验证：会员可建/拆/交互，非会员被拒绝；必要时在 WG 全局或父区域调整优先级。
  */
 public final class TerritoryFlagDefaults {
 

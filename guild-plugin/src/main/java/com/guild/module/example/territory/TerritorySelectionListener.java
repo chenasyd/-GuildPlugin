@@ -35,7 +35,7 @@ public final class TerritorySelectionListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        if (!player.hasPermission("guild.territory.claim")) {
+        if (!context.getPlugin().getPermissionManager().hasPermission(player, "guild.territory.claim")) {
             return;
         }
         TerritorySelectionManager.Session session = selections.of(player);

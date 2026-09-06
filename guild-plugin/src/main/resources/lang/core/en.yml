@@ -417,6 +417,7 @@ help.time: "&e/guild time &7- View guild time info"
 help.applications: "&e/guild applications &7- Manage guild applications"
 help.chat: "&e/guild chat &7- Toggle guild chat mode | Send guild message"
 help.warehouse: "&e/guild warehouse [page|perm|info] &7- Open guild warehouse / permissions / info"
+help.territory: "&e/guild territory &7- Guild territory (claim/unclaim/info/wand)"
 help.help: "&e/guild help &7- Show this help"
 
 # ============ Admin Commands ============

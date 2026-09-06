@@ -74,6 +74,7 @@ public class LanguageManager {
         String id = moduleId.trim().toLowerCase();
         return switch (id) {
             case "guild-quest" -> "quest";
+            case "guild-territory" -> "territory";
             default -> id;
         };
     }

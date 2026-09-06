@@ -84,6 +84,16 @@ public class PermissionManager {
             case "guild.admin":
                 return permissions.isAdmin();
                 
+            case "guild.territory.info":
+                return isInGuildCached(playerUuid);
+                
+            case "guild.territory.claim":
+            case "guild.territory.unclaim":
+                return plugin.getMembershipRules().canManageGuild(player);
+                
+            case "guild.territory.admin":
+                return false;
+                
             default:
                 return false;
         }

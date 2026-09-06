@@ -105,3 +105,19 @@ permissions:
   guild.war.admin:
     description: Allows force-ending guild wars
     default: op
+  guild.territory.info:
+    description: View guild territory in the current world
+    default: true
+  guild.territory.claim:
+    description: Claim guild territory (officers/leaders; requires WorldGuard)
+    default: true
+  guild.territory.unclaim:
+    description: Unclaim guild territory in the current world
+    default: true
+  guild.territory.admin:
+    description: Territory module administration
+    default: op
+    children:
+      guild.territory.info: true
+      guild.territory.claim: true
+      guild.territory.unclaim: true
