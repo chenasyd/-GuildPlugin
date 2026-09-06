@@ -2,8 +2,8 @@ package com.guild.core.gui;
 
 import com.guild.GuildPlugin;
 import com.guild.core.geyser.PlayerConnectionService;
-import com.guild.core.hook.ImagoCoreHook;
-import com.guild.core.hook.ImagoGuiConfig;
+import com.guild.core.gui.imago.GuiImageLayoutApplier;
+import com.guild.core.gui.imago.ImagoGuiIntegration;
 import com.guild.core.gui.layout.GuiImageLayoutConfig;
 import com.guild.core.gui.session.GuiClickDebouncer;
 import com.guild.core.gui.session.GuiInputModeController;
@@ -11,11 +11,7 @@ import com.guild.core.gui.session.GuiNavigationStack;
 import com.guild.core.gui.session.GuiSessionManager;
 import com.guild.gui.GuildNameInputGUI;
 import com.guild.sdk.gui.BedrockFormProvider;
-import com.guild.sdk.gui.GUILayoutDefinition;
-import com.guild.sdk.gui.ModuleGUIRegistration;
-import org.a.imagoCore.image.display.gui.GuiTitleRenderer;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,11 +21,6 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,24 +32,21 @@ import com.guild.core.utils.CompatibleScheduler;
  * GUI管理器 - 管理所有GUI界面
  */
 public class GUIManager implements Listener {
-    
+
     private final GuildPlugin plugin;
     private final Logger logger;
     private final GuiSessionManager sessions = new GuiSessionManager();
     private final GuiNavigationStack navigation = new GuiNavigationStack();
     private final GuiInputModeController inputModes = new GuiInputModeController();
     private final GuiClickDebouncer clickDebouncer = new GuiClickDebouncer();
+    private final ImagoGuiIntegration imagoIntegration;
+    private final GuiImageLayoutApplier imageLayoutApplier;
 
-    // ImagoCore integration (null if not available)
-    private ImagoCoreHook imagoHook;
-    private ImagoGuiConfig imagoConfig;
-    private GuiImageLayoutConfig imageLayoutConfig;
-    /** True only when ImagoCore plugin is detected AND enabled — skips all per-open checks. */
-    private boolean imagoAvailable;
-    
     public GUIManager(GuildPlugin plugin) {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
+        this.imagoIntegration = new ImagoGuiIntegration(plugin, logger);
+        this.imageLayoutApplier = new GuiImageLayoutApplier(plugin, imagoIntegration);
     }
 
     /**
@@ -66,36 +54,7 @@ public class GUIManager implements Listener {
      * 在 plugin onEnable 中调用，ImagoCore 不存在时静默跳过
      */
     public void initializeImagoHook() {
-        // 始终先清除旧 hook，防止 enabled:false 时残留
-        this.imagoHook = null;
-        this.imagoAvailable = false;
-
-        this.imagoConfig = new ImagoGuiConfig(plugin.getDataFolder(), logger);
-        this.imagoConfig.load();
-
-        // 图像布局配置（独立于 ImagoCore 是否存在）
-        this.imageLayoutConfig = new GuiImageLayoutConfig(plugin.getDataFolder(), logger);
-        this.imageLayoutConfig.load();
-
-        if (!imagoConfig.isEnabled()) {
-            logger.info("[ImagoCore] Integration disabled in imago-gui.yml");
-            return;
-        }
-
-        this.imagoHook = ImagoCoreHook.detect(logger);
-        if (imagoHook == null) {
-            logger.info("[ImagoCore] Plugin not found, GUI image integration skipped.");
-            return;
-        }
-
-        // Register bindings from config (skip explicitly disabled GUIs)
-        for (Map.Entry<String, String> entry : imagoConfig.getAllBindings().entrySet()) {
-            if ("false".equalsIgnoreCase(entry.getValue())) continue;
-            imagoHook.bind(entry.getKey(), entry.getValue());
-        }
-
-        this.imagoAvailable = true;
-        logger.info("[ImagoCore] Integration active — image titles and layouts enabled.");
+        imagoIntegration.initialize();
     }
 
     /**
@@ -103,210 +62,42 @@ public class GUIManager implements Listener {
      * 处理 enabled 状态切换：true→false 时清除 hook，false→true 时重新检测。
      */
     public void reloadImagoConfig() {
-        // 完整重新初始化（内部会先清除旧 hook）
-        initializeImagoHook();
+        imagoIntegration.reload();
     }
 
-    /**
-     * 检查指定 GUI 是否处于图像布局模式。
-     * 条件：ImagoCore 已连接 + enabled + 有绑定 + 有布局配置。
-     *
-     * @param guiType GUI 类型名（如 "MainGuildGUI"）
-     * @return true 表示该 GUI 应使用图像布局（透明载体 + 多槽位）
-     */
     public boolean isImageLayoutActive(String guiType) {
-        return imagoAvailable
-                && imagoConfig.hasConfig(guiType)
-                && imageLayoutConfig != null
-                && imageLayoutConfig.hasLayout(guiType);
+        return imagoIntegration.isImageLayoutActive(guiType);
     }
 
-    /**
-     * 玩家感知的图像布局检查。
-     * 基岩版玩家始终返回 false，确保其看到纯净 GUI。
-     *
-     * @param player  当前玩家（用于基岩版检测）
-     * @param guiType GUI 类型名
-     * @return true 仅当图像布局启用且玩家为 Java 版时
-     */
     public boolean isImageLayoutActive(Player player, String guiType) {
-        if (player != null && PlayerConnectionService.isBedrockPlayer(player)) return false;
-        return isImageLayoutActive(guiType);
+        return imagoIntegration.isImageLayoutActive(player, guiType);
     }
 
-    /**
-     * 获取图像布局配置实例。
-     *
-     * @return 布局配置，若未初始化则返回 null
-     */
     public GuiImageLayoutConfig getImageLayoutConfig() {
-        return imageLayoutConfig;
+        return imagoIntegration.getImageLayoutConfig();
     }
 
-    /**
-     * 检查指定 GUI 是否启用了图像模式（不要求有布局配置）。
-     * 条件：ImagoCore 已连接 + enabled + 有绑定。
-     * 用于不需要多槽位布局、只需透明化物品的 GUI。
-     */
     public boolean isImageGuiActive(String guiType) {
-        return imagoAvailable
-                && imagoConfig.hasConfig(guiType);
+        return imagoIntegration.isImageGuiActive(guiType);
     }
 
-    /**
-     * 玩家感知的图像模式检查。
-     * 基岩版玩家始终返回 false，确保其看到纯净 GUI。
-     *
-     * @param player  当前玩家（用于基岩版检测）
-     * @param guiType GUI 类型名
-     * @return true 仅当图像模式启用且玩家为 Java 版时
-     */
     public boolean isImageGuiActive(Player player, String guiType) {
-        if (player != null && PlayerConnectionService.isBedrockPlayer(player)) return false;
-        return isImageGuiActive(guiType);
+        return imagoIntegration.isImageGuiActive(player, guiType);
     }
 
     /**
      * 对已填充好的 Inventory 应用图像模式后处理。
      *
-     * <p>操作：
-     * <ol>
-     *   <li>移除所有玻璃板 / 填充物（视觉由背景图替代）</li>
-     *   <li>将剩余非空物品转换为透明载体（保留名称和 lore，
-     *       替换材质为配置的透明物品 + CustomModelData）</li>
-     * </ol>
-     *
-     * <p>基岩版玩家不受此方法影响——始终保留原始 GUI 布局。
-     *
-     * <p>在 GUI 的 {@code setupInventory()} 末尾调用即可：
-     * <pre>{@code
-     * plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
-     * }</pre>
-     *
-     * @param player    当前查看 GUI 的玩家（用于基岩版检测）
-     * @param inventory 已设置好内容的 inventory
-     * @param guiType   GUI 类型名
+     * @see GuiImageLayoutApplier#applyIfNeeded(Player, Inventory, String)
      */
     public void applyImageModeIfNeeded(Player player, Inventory inventory, String guiType) {
-        // ImagoCore 未安装时直接跳过所有图像处理
-        if (!imagoAvailable) return;
-        // 基岩版玩家始终使用纯净 GUI，不应用自定义图像配置
-        if (player != null && PlayerConnectionService.isBedrockPlayer(player)) return;
-        if (!isImageGuiActive(guiType)) return;
-
-        // Module GUI layout — apply module-defined layout instead of plugin-body layout
-        ModuleGUIRegistration moduleReg = plugin.getModuleManager().getRegistry().getCustomGUIRegistration(guiType);
-        if (moduleReg != null && moduleReg.getLayout() != null) {
-            applyModuleLayout(inventory, moduleReg.getLayout());
-            return;
-        }
-
-        Material transMat = imageLayoutConfig != null
-                ? imageLayoutConfig.getTransparentMaterial() : Material.BARRIER;
-        int modelData = imageLayoutConfig != null
-                ? imageLayoutConfig.getTransparentModelData() : 10001;
-
-        // 有布局配置时：精确转换配置中的槽位，保留动态内容
-        if (imageLayoutConfig != null && imageLayoutConfig.hasLayout(guiType)) {
-            // 收集布局中所有功能槽位
-            Set<Integer> layoutSlots = new HashSet<>();
-            for (List<Integer> slots : imageLayoutConfig.getLayout(guiType).values()) {
-                layoutSlots.addAll(slots);
-            }
-
-            for (int i = 0; i < inventory.getSize(); i++) {
-                ItemStack item = inventory.getItem(i);
-                if (item == null || item.getType() == Material.AIR) continue;
-
-                // 移除所有填充物（玻璃板类）
-                if (isFillerItem(item.getType())) {
-                    inventory.setItem(i, null);
-                    continue;
-                }
-
-                // 仅转换布局配置中的功能槽位为透明载体
-                if (layoutSlots.contains(i)) {
-                    inventory.setItem(i, toTransparentCarrier(item, transMat, modelData));
-                }
-                // 其余槽位（动态查询内容）保持原样
-            }
-            return;
-        }
-
-        // 无布局配置时的回退行为：转换所有非填充物品
-        for (int i = 0; i < inventory.getSize(); i++) {
-            ItemStack item = inventory.getItem(i);
-            if (item == null || item.getType() == Material.AIR) continue;
-
-            if (isFillerItem(item.getType())) {
-                inventory.setItem(i, null);
-                continue;
-            }
-
-            inventory.setItem(i, toTransparentCarrier(item, transMat, modelData));
-        }
+        imageLayoutApplier.applyIfNeeded(player, inventory, guiType);
     }
 
-    /**
-     * 将物品转换为透明载体（保留名称和 lore）。
-     */
-    private ItemStack toTransparentCarrier(ItemStack original, Material transMat, int modelData) {
-        ItemStack transparent = new ItemStack(transMat);
-        org.bukkit.inventory.meta.ItemMeta oldMeta = original.getItemMeta();
-        org.bukkit.inventory.meta.ItemMeta newMeta = transparent.getItemMeta();
-        if (oldMeta != null && newMeta != null) {
-            if (oldMeta.hasDisplayName()) {
-                newMeta.setDisplayName(oldMeta.getDisplayName());
-            }
-            if (oldMeta.hasLore()) {
-                newMeta.setLore(oldMeta.getLore());
-            }
-            newMeta.setCustomModelData(modelData);
-            transparent.setItemMeta(newMeta);
-        }
-        return transparent;
-    }
-
-    /**
-     * 判断是否为填充/边框物品（玻璃板类）。
-     */
-    private boolean isFillerItem(Material mat) {
-        return mat == Material.BLACK_STAINED_GLASS_PANE
-                || mat == Material.GRAY_STAINED_GLASS_PANE
-                || mat == Material.WHITE_STAINED_GLASS_PANE
-                || mat == Material.GLASS_PANE
-                || mat.name().endsWith("_STAINED_GLASS_PANE");
-    }
-
-    /**
-     * 对模块注册的 GUI 应用模块定义的布局。
-     * 遍历布局中所有功能槽位，移除填充物并将其余物品转换为透明载体。
-     */
-    private void applyModuleLayout(Inventory inventory, GUILayoutDefinition layout) {
-        Material transMat = imageLayoutConfig != null ? imageLayoutConfig.getTransparentMaterial() : Material.BARRIER;
-        int modelData = imageLayoutConfig != null ? imageLayoutConfig.getTransparentModelData() : 10001;
-
-        for (Map.Entry<String, int[]> entry : layout.getFunctions().entrySet()) {
-            for (int slot : entry.getValue()) {
-                if (slot < 0 || slot >= inventory.getSize()) continue;
-                ItemStack item = inventory.getItem(slot);
-                if (item == null || item.getType() == Material.AIR) continue;
-                if (isFillerItem(item.getType())) {
-                    inventory.setItem(slot, null);
-                    continue;
-                }
-                inventory.setItem(slot, toTransparentCarrier(item, transMat, modelData));
-            }
-        }
-    }
-
-    /**
-     * 检查是否启用了详细调试日志
-     */
     private boolean isDebugEnabled() {
         return plugin.getConfigManager().getMainConfig().getBoolean("debug.enabled", false);
     }
-    
+
     /**
      * 初始化GUI管理器
      */
@@ -316,22 +107,19 @@ public class GUIManager implements Listener {
             logger.info("GUI manager initialized");
         }
     }
-    
+
     /**
      * 打开GUI
      */
     public void openGUI(Player player, GUI gui) {
-        // Folia: 玩家 API 必须在实体所属的区域线程执行，而非全局区域线程
         if (!CompatibleScheduler.isEntityThread(player)) {
             CompatibleScheduler.runTask(plugin, player, () -> openGUI(player, gui));
             return;
         }
-        
+
         try {
-            // 关闭玩家当前打开的GUI
             closeGUI(player);
-            
-            // 基岩版玩家：优先尝试原生 Cumulus 表单
+
             if (PlayerConnectionService.isBedrockPlayer(player) && gui.openBedrockForm(player)) {
                 sessions.track(player, gui);
                 if (plugin.getFileLogger() != null) {
@@ -345,7 +133,6 @@ public class GUIManager implements Listener {
                 return;
             }
 
-            // 基岩版玩家 — 尝试模块注册的 BedrockFormProvider
             if (PlayerConnectionService.isBedrockPlayer(player)) {
                 String guiType = gui.getGuiType();
                 BedrockFormProvider provider = plugin.getModuleManager().getSharedApi().getBedrockFormProvider(guiType);
@@ -358,25 +145,20 @@ public class GUIManager implements Listener {
                     return;
                 }
             }
-            
-            // 创建新的GUI — 优先使用 ImagoCore 图片标题（基岩版玩家跳过）
-            Inventory inventory = createInventoryForGui(player, gui);
-            
-            // 设置GUI内容
+
+            Inventory inventory = imagoIntegration.createInventory(player, gui, isDebugEnabled());
+
             gui.setupInventory(inventory);
-            
-            // 打开GUI
+
             player.openInventory(inventory);
-            
-            // 记录打开的GUI
+
             sessions.track(player, gui);
 
-            // 文件日志：记录 GUI 打开操作
             if (plugin.getFileLogger() != null) {
                 plugin.getFileLogger().logGui(player.getName(),
                         "Opened " + gui.getGuiType());
             }
-            
+
             if (isDebugEnabled()) {
                 logger.info("Player " + player.getName() + " opened GUI: " + gui.getClass().getSimpleName());
             }
@@ -386,81 +168,14 @@ public class GUIManager implements Listener {
     }
 
     /**
-     * 创建 GUI 的 Inventory 实例。
-     * 如果 ImagoCore 可用且该 GUI 类型有绑定，则使用图片标题；
-     * 否则使用原始字符串标题（完全兼容无 ImagoCore 环境）。
-     * <p>
-     * 基岩版玩家始终使用原始字符串标题，不启用 ImagoCore 图像标题。
-     */
-    private Inventory createInventoryForGui(Player player, GUI gui) {
-        // ImagoCore 未安装或基岩版玩家：直接创建标准字符串标题 Inventory，跳过所有图像逻辑
-        boolean bedrockPlayer = player != null && PlayerConnectionService.isBedrockPlayer(player);
-        if (!imagoAvailable || bedrockPlayer) {
-            return Bukkit.createInventory(null, gui.getSize(), gui.getTitle());
-        }
-
-        // ImagoCore 可用：尝试使用图片标题
-        String guiType = gui.getGuiType();
-        if (imagoConfig.hasConfig(guiType)) {
-            // 构建叠加层（如果有配置）
-            List<ImagoGuiConfig.OverlayConfig> overlayConfigs = imagoConfig.getOverlays(guiType);
-            if (!overlayConfigs.isEmpty()) {
-                List<GuiTitleRenderer.OverlaySpec> specs = new ArrayList<>();
-                for (ImagoGuiConfig.OverlayConfig oc : overlayConfigs) {
-                    GuiTitleRenderer.OverlaySpec spec = imagoHook.buildOverlay(
-                            oc.getCharName(), oc.getX(), oc.getAscent());
-                    if (spec != null) {
-                        specs.add(spec);
-                    }
-                }
-                if (!specs.isEmpty()) {
-                    Inventory inv = imagoHook.createTitledInventory(gui.getSize(), guiType, specs);
-                    if (inv != null) {
-                        if (isDebugEnabled()) {
-                            logger.info("[ImagoCore] " + guiType + ": image title + "
-                                    + specs.size() + " overlay(s)");
-                        }
-                        return inv;
-                    }
-                }
-            }
-
-            // 纯背景（无叠加层）
-            Inventory inv = imagoHook.createTitledInventory(gui.getSize(), guiType);
-            if (inv != null) {
-                if (isDebugEnabled()) {
-                    logger.info("[ImagoCore] " + guiType + ": image title (background only)");
-                }
-                return inv;
-            }
-        }
-
-        // Check module GUI image binding
-        ModuleGUIRegistration moduleReg = plugin.getModuleManager().getRegistry().getCustomGUIRegistration(guiType);
-        if (moduleReg != null && moduleReg.getImageEntryId() != null) {
-            Inventory inv = imagoHook.createTitledInventoryByEntry(gui.getSize(), moduleReg.getImageEntryId());
-            if (inv != null) {
-                if (isDebugEnabled()) {
-                    logger.info("[ImagoCore] Module GUI " + guiType + ": image title via entry '" + moduleReg.getImageEntryId() + "'");
-                }
-                return inv;
-            }
-        }
-
-        // 该 GUI 类型无绑定时回退到字符串标题
-        return Bukkit.createInventory(null, gui.getSize(), gui.getTitle());
-    }
-    
-    /**
      * 关闭GUI
      */
     public void closeGUI(Player player) {
-        // Folia: 玩家 API 必须在实体所属的区域线程执行
         if (!CompatibleScheduler.isEntityThread(player)) {
             CompatibleScheduler.runTask(plugin, player, () -> closeGUI(player));
             return;
         }
-        
+
         try {
             GUI gui = sessions.remove(player);
             if (gui != null) {
@@ -476,30 +191,21 @@ public class GUIManager implements Listener {
             logger.log(Level.SEVERE, "Error closing GUI", e);
         }
     }
-    
-    /**
-     * 获取玩家当前打开的GUI
-     */
+
     public GUI getOpenGUI(Player player) {
         return sessions.get(player);
     }
-    
-    /**
-     * 检查玩家是否打开了GUI
-     */
+
     public boolean hasOpenGUI(Player player) {
         return sessions.isOpen(player);
     }
-    
-    /**
-     * 处理GUI点击事件
-     */
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) {
             return;
         }
-        
+
         GUI gui = sessions.get(player);
         if (gui == null) {
             return;
@@ -510,51 +216,42 @@ public class GUIManager implements Listener {
             return;
         }
         try {
-            // 阻止玩家移动物品
             event.setCancelled(true);
-            
-            // 处理GUI点击
+
             int slot = event.getRawSlot();
             ItemStack clickedItem = event.getCurrentItem();
-            
-            // 添加调试日志
-                if (isDebugEnabled()) {
-                    logger.info("Player " + player.getName() + " clicked GUI: " + gui.getClass().getSimpleName() + " slot: " + slot);
-                }
 
-            // 文件日志：记录 GUI 点击操作
+            if (isDebugEnabled()) {
+                logger.info("Player " + player.getName() + " clicked GUI: " + gui.getClass().getSimpleName()
+                        + " slot: " + slot);
+            }
+
             if (plugin.getFileLogger() != null) {
                 plugin.getFileLogger().logGui(player.getName(),
                         "Clicked " + gui.getGuiType() + " slot=" + slot);
             }
-            
-            // 处理所有点击，包括空物品的点击
-            // 基岩版玩家的右键点击不可靠，统一映射为左键
+
             ClickType adaptedClick = PlayerConnectionService.adaptClick(player, event.getClick());
             gui.onClick(player, slot, clickedItem, adaptedClick);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error handling GUI click", e);
-            // 发生错误时关闭GUI
             closeGUI(player);
         }
     }
-    
-    /**
-     * 处理GUI关闭事件
-     */
+
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player player)) {
             return;
         }
-        
+
         try {
             GUI gui = sessions.remove(player);
             if (gui != null) {
                 if (inputModes.isActive(player)) {
                     clearInputMode(player);
                 }
-                
+
                 gui.onClose(player);
                 if (isDebugEnabled()) {
                     logger.info("Player " + player.getName() + " closed GUI: " + gui.getClass().getSimpleName());
@@ -564,26 +261,19 @@ public class GUIManager implements Listener {
             logger.log(Level.SEVERE, "Error processing GUI close", e);
         }
     }
-    
-    /**
-     * 刷新GUI
-     */
+
     public void refreshGUI(Player player) {
-        // Folia: 玩家 API 必须在实体所属的区域线程执行
         if (!CompatibleScheduler.isEntityThread(player)) {
             CompatibleScheduler.runTask(plugin, player, () -> refreshGUI(player));
             return;
         }
-        
+
         try {
             GUI gui = sessions.get(player);
             if (gui != null) {
-                // 关闭当前GUI
                 closeGUI(player);
-                
-                // 重新打开GUI
                 openGUI(player, gui);
-                
+
                 if (isDebugEnabled()) {
                     logger.info("Player " + player.getName() + "'s GUI refreshed: " + gui.getClass().getSimpleName());
                 }
@@ -593,11 +283,6 @@ public class GUIManager implements Listener {
         }
     }
 
-    // ==================== GUI 导航栈 ====================
-
-    /**
-     * 打开 GUI 并将当前 GUI 压入导航栈
-     */
     public void pushAndOpen(Player player, GUI newGui) {
         GUI current = sessions.get(player);
         if (current != null) {
@@ -606,10 +291,6 @@ public class GUIManager implements Listener {
         openGUI(player, newGui);
     }
 
-    /**
-     * 弹出导航栈顶部并打开
-     * @return 是否成功导航回上一页
-     */
     public boolean popAndOpen(Player player) {
         GUI previous = navigation.pop(player);
         if (previous == null) {
@@ -619,18 +300,11 @@ public class GUIManager implements Listener {
         return true;
     }
 
-    /**
-     * 清除玩家的导航栈
-     */
     public void clearNavigation(Player player) {
         navigation.clear(player);
     }
 
-    /**
-     * 关闭所有GUI
-     */
     public void closeAllGUIs() {
-        // 如果插件已禁用，直接清理记录，不尝试调度任务
         if (!plugin.isEnabled()) {
             logger.warning("Plugin disabled, skipping GUI close task scheduling");
             sessions.clear();
@@ -641,7 +315,6 @@ public class GUIManager implements Listener {
             for (UUID playerUuid : sessions.snapshotPlayerIds()) {
                 Player player = Bukkit.getPlayer(playerUuid);
                 if (player != null && player.isOnline()) {
-                    // closeGUI 内部会检查 isEntityThread 并调度到正确的区域线程
                     closeGUI(player);
                 }
             }
@@ -653,24 +326,17 @@ public class GUIManager implements Listener {
             logger.log(Level.SEVERE, "Error closing all GUIs", e);
         }
     }
-    
-    /**
-     * 获取打开的GUI数量
-     */
+
     public int getOpenGUICount() {
         return sessions.count();
     }
-    
-    /**
-     * 设置玩家输入模式
-     */
+
     public void setInputMode(Player player, Function<String, Boolean> inputHandler) {
-        // 确保在主线程中执行
         if (!CompatibleScheduler.isPrimaryThread()) {
             CompatibleScheduler.runTask(plugin, () -> setInputMode(player, inputHandler));
             return;
         }
-        
+
         try {
             inputModes.set(player, inputHandler);
             if (isDebugEnabled()) {
@@ -680,21 +346,15 @@ public class GUIManager implements Listener {
             logger.log(Level.SEVERE, "Error setting input mode", e);
         }
     }
-    
-    /**
-     * 设置玩家输入模式（带GUI对象）
-     */
+
     public void setInputMode(Player player, String mode, GUI gui) {
-        // 确保在主线程中执行
         if (!CompatibleScheduler.isPrimaryThread()) {
             CompatibleScheduler.runTask(plugin, () -> setInputMode(player, mode, gui));
             return;
         }
-        
+
         try {
-            // 为公会名称输入创建特殊的输入处理器
-            if ("guild_name_input".equals(mode) && gui instanceof GuildNameInputGUI) {
-                GuildNameInputGUI nameInputGUI = (GuildNameInputGUI) gui;
+            if ("guild_name_input".equals(mode) && gui instanceof GuildNameInputGUI nameInputGUI) {
                 inputModes.set(player, input -> {
                     String trimmed = input.trim();
                     if ("取消".equals(trimmed) || "Cancel".equalsIgnoreCase(trimmed)) {
@@ -714,17 +374,13 @@ public class GUIManager implements Listener {
             logger.log(Level.SEVERE, "Error setting input mode", e);
         }
     }
-    
-    /**
-     * 清除玩家输入模式
-     */
+
     public void clearInputMode(Player player) {
-        // 确保在主线程中执行
         if (!CompatibleScheduler.isPrimaryThread()) {
             CompatibleScheduler.runTask(plugin, () -> clearInputMode(player));
             return;
         }
-        
+
         try {
             inputModes.clear(player);
             if (isDebugEnabled()) {
@@ -734,17 +390,11 @@ public class GUIManager implements Listener {
             logger.log(Level.SEVERE, "Error clearing input mode", e);
         }
     }
-    
-    /**
-     * 检查玩家是否在输入模式
-     */
+
     public boolean isInInputMode(Player player) {
         return inputModes.isActive(player);
     }
-    
-    /**
-     * 处理玩家输入
-     */
+
     public boolean handleInput(Player player, String input) {
         try {
             return inputModes.handle(player, input);
