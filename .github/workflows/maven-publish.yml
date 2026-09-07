@@ -26,6 +26,14 @@ jobs:
     - name: Verify (tests + enforcer + package)
       run: mvn -B verify -pl guild-sdk,guild-comm,guild-plugin,guild-bungee -am
 
+    - name: Upload JaCoCo coverage report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: jacoco-report-${{ github.sha }}
+        path: guild-plugin/target/site/jacoco/
+        retention-days: 14
+
     - name: Build Announcement Module
       run: mvn -B package -DskipTests -Pbuild-announcement-module
 
