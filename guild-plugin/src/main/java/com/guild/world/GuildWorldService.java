@@ -12,12 +12,9 @@ import com.guild.world.recovery.WorldRecoveryService;
 import com.guild.world.registry.WorldJournal;
 import com.guild.world.registry.WorldRegistry;
 import com.guild.world.selection.SelectionManager;
-import com.guildplugin.util.FoliaTeleportUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -65,6 +62,7 @@ public class GuildWorldService {
     private final SelectionManager selections = new SelectionManager();
     private final WorldLifecycle lifecycle;
     private final WorldPresetOps presetOps;
+    private final WorldTeleport teleport;
     /** 自动触发恢复自检的一次性去重标志（玩家加入 / 延迟兜底二选一）。 */
     private final AtomicBoolean recoveryTriggered = new AtomicBoolean(false);
 
@@ -102,10 +100,19 @@ public class GuildWorldService {
         this.lifecycle = new WorldLifecycle(
                 plugin, registry, journal,
                 () -> enabled, this::unsupportedMessage, this::buildWorldName,
-                this::teleportToFallback);
+                this::teleportToFallbackForLifecycle);
         this.presetOps = new WorldPresetOps(
                 plugin, registry, presets, selections, lifecycle,
                 () -> enabled, this::unsupportedMessage, this::schematicSettings);
+        this.teleport = new WorldTeleport(
+                plugin, registry, lifecycle,
+                () -> enabled, this::unsupportedMessage, this::buildWorldName,
+                () -> fallbackWorldName);
+    }
+
+    /** 供 {@link WorldLifecycle} 回调（lifecycle 先于 {@link #teleport} 字段赋值）。 */
+    private void teleportToFallbackForLifecycle(Player player) {
+        teleport.teleportToFallback(player);
     }
 
     private WorldPresetOps.SchematicSettings schematicSettings() {
@@ -240,154 +247,12 @@ public class GuildWorldService {
 
     /* ── 传送（Folia 安全）────────────────────────────────── */
 
-    /**
-     * 将玩家传送到受管世界出生点（必要时先加载；虚空世界自动铺落地平台）。
-     */
     public CompletableFuture<Boolean> teleportToWorld(Player player, String worldName) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        if (!enabled) {
-            future.completeExceptionally(new IllegalStateException(unsupportedMessage()));
-            return future;
-        }
-        if (player == null || !player.isOnline()) {
-            future.complete(false);
-            return future;
-        }
-        String name = buildWorldName(worldName);
-        GuildWorld gw = registry.get(name);
-        if (gw == null) {
-            future.completeExceptionally(new IllegalArgumentException("World is not managed: " + name));
-            return future;
-        }
-
-        Runnable afterLoaded = () -> {
-            World world = Bukkit.getWorld(name);
-            if (world == null) {
-                future.completeExceptionally(new IllegalStateException("World not loaded: " + name));
-                return;
-            }
-            Location dest = resolveTeleportLocation(gw, world);
-            ensureVoidPlatform(dest).thenCompose(ok ->
-                    FoliaTeleportUtils.safeTeleport(plugin, player, dest)
-            ).whenComplete((success, err) -> {
-                if (err != null) {
-                    future.completeExceptionally(err);
-                    return;
-                }
-                if (Boolean.TRUE.equals(success)) {
-                    gw.touch();
-                    registry.save();
-                }
-                future.complete(Boolean.TRUE.equals(success));
-            });
-        };
-
-        if (Bukkit.getWorld(name) != null) {
-            CompatibleScheduler.runTask(plugin, afterLoaded);
-            return future;
-        }
-
-        loadWorld(name).whenComplete((loaded, err) -> {
-            if (err != null) {
-                future.completeExceptionally(err);
-                return;
-            }
-            CompatibleScheduler.runTask(plugin, afterLoaded);
-        });
-        return future;
+        return teleport.teleportToWorld(player, worldName);
     }
 
-    /**
-     * 传送到安全回退世界（配置 {@code world.safety.fallback-world}）。
-     */
     public CompletableFuture<Boolean> teleportToFallbackWorld(Player player) {
-        Location fallback = fallbackLocation();
-        if (fallback == null) {
-            return CompletableFuture.completedFuture(false);
-        }
-        return FoliaTeleportUtils.safeTeleport(plugin, player, fallback);
-    }
-
-    private Location resolveTeleportLocation(GuildWorld gw, World world) {
-        Location spawn = gw.parseSpawnLocation();
-        if (spawn != null && spawn.getWorld() != null) {
-            return spawn;
-        }
-        Location fixed = world.getSpawnLocation();
-        // 虚空世界默认出生点可能在半空，抬高到平台上方
-        if (fixed.getBlockY() < world.getMinHeight() + 2) {
-            fixed.setY(64);
-        }
-        return fixed;
-    }
-
-    /**
-     * 在目标位置下方铺 3x3 平台（仅当脚下为空气时），避免虚空坠落。
-     * 方块修改在目标区域线程执行（Folia）。
-     */
-    private CompletableFuture<Boolean> ensureVoidPlatform(Location dest) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        CompatibleScheduler.runTask(plugin, dest, () -> {
-            try {
-                World world = dest.getWorld();
-                if (world == null) {
-                    future.complete(false);
-                    return;
-                }
-                int baseY = dest.getBlockY() - 1;
-                if (baseY < world.getMinHeight()) {
-                    baseY = Math.min(63, world.getMaxHeight() - 2);
-                    dest.setY(baseY + 1);
-                }
-                int cx = dest.getBlockX();
-                int cz = dest.getBlockZ();
-                boolean placed = false;
-                for (int dx = -1; dx <= 1; dx++) {
-                    for (int dz = -1; dz <= 1; dz++) {
-                        Block block = world.getBlockAt(cx + dx, baseY, cz + dz);
-                        if (block.getType().isAir() || !block.getType().isSolid()) {
-                            block.setType(Material.STONE, false);
-                            placed = true;
-                        }
-                    }
-                }
-                // 清理脚下到头上的障碍，保证站立空间
-                for (int dy = 0; dy <= 1; dy++) {
-                    Block air = world.getBlockAt(cx, baseY + 1 + dy, cz);
-                    if (!air.getType().isAir() && air.getType().isSolid()) {
-                        air.setType(Material.AIR, false);
-                    }
-                }
-                dest.setX(cx + 0.5);
-                dest.setY(baseY + 1);
-                dest.setZ(cz + 0.5);
-                if (placed) {
-                    plugin.getLogger().info("[World] Spawn platform ensured at "
-                            + world.getName() + " " + cx + "," + baseY + "," + cz);
-                }
-                future.complete(true);
-            } catch (Throwable t) {
-                future.completeExceptionally(t);
-            }
-        });
-        return future;
-    }
-
-    /* ── 内部工具 ────────────────────────────────────────── */
-
-    private void teleportToFallback(Player player) {
-        Location fallback = fallbackLocation();
-        if (fallback != null) {
-            FoliaTeleportUtils.safeTeleport(plugin, player, fallback);
-        }
-    }
-
-    private Location fallbackLocation() {
-        World world = Bukkit.getWorld(fallbackWorldName);
-        if (world == null && !Bukkit.getWorlds().isEmpty()) {
-            world = Bukkit.getWorlds().get(0);
-        }
-        return world == null ? null : world.getSpawnLocation();
+        return teleport.teleportToFallbackWorld(player);
     }
 
     /**
@@ -455,7 +320,7 @@ public class GuildWorldService {
     }
 
     public Location getFallbackLocation() {
-        return fallbackLocation();
+        return teleport.getFallbackLocation();
     }
 
     public SelectionManager getSelections() {
