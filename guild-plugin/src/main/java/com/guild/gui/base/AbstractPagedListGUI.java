@@ -217,7 +217,7 @@ public abstract class AbstractPagedListGUI<T> implements GUI {
             return;
         }
 
-        int entryIndex = GuiLayoutUtils.listIndexFromSlot(slot, currentPage, itemsPerPage);
+        int entryIndex = listIndexFromSlot(slot);
         if (entryIndex >= 0 && entryIndex < entries.size()) {
             onEntryClick(player, entries.get(entryIndex), clickType);
             return;
@@ -283,8 +283,18 @@ public abstract class AbstractPagedListGUI<T> implements GUI {
         int startIndex = currentPage * itemsPerPage;
         int endIndex = Math.min(startIndex + itemsPerPage, entries.size());
         for (int i = startIndex; i < endIndex; i++) {
-            inventory.setItem(GuiLayoutUtils.slotForPageIndex(i - startIndex), createEntryItem(entries.get(i)));
+            inventory.setItem(slotForEntryIndex(i - startIndex), createEntryItem(entries.get(i)));
         }
+    }
+
+    /** 页内条目索引 → inventory 槽位；子类可覆盖以使用紧凑网格等布局 */
+    protected int slotForEntryIndex(int pageIndex) {
+        return GuiLayoutUtils.slotForPageIndex(pageIndex);
+    }
+
+    /** inventory 槽位 → 全局列表索引；无效返回 -1 */
+    protected int listIndexFromSlot(int slot) {
+        return GuiLayoutUtils.listIndexFromSlot(slot, currentPage, itemsPerPage);
     }
 
     protected void setupNavigationButtons(Inventory inventory) {

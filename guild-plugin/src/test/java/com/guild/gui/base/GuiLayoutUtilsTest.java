@@ -62,4 +62,24 @@ class GuiLayoutUtilsTest {
         assertFalse(GuiLayoutUtils.isPageContentSlot(9));
         assertFalse(GuiLayoutUtils.isPageContentSlot(45));
     }
+
+    @Test
+    void adminGridLayout_roundTripsOnFirstPage() {
+        for (int pageIndex = 0; pageIndex < GuiLayoutUtils.ADMIN_GRID_ITEMS_PER_PAGE; pageIndex++) {
+            int slot = GuiLayoutUtils.slotForGridPageIndex(pageIndex,
+                    GuiLayoutUtils.ADMIN_GRID_COLS, GuiLayoutUtils.ADMIN_GRID_START_COL);
+            assertEquals(pageIndex, GuiLayoutUtils.listIndexFromGridSlot(slot, 0,
+                    GuiLayoutUtils.ADMIN_GRID_ITEMS_PER_PAGE,
+                    GuiLayoutUtils.ADMIN_GRID_ROWS, GuiLayoutUtils.ADMIN_GRID_COLS,
+                    GuiLayoutUtils.ADMIN_GRID_START_COL));
+        }
+    }
+
+    @Test
+    void adminGridLayout_rejectsOutsideColumns() {
+        assertEquals(-1, GuiLayoutUtils.listIndexFromGridSlot(13, 0,
+                GuiLayoutUtils.ADMIN_GRID_ITEMS_PER_PAGE,
+                GuiLayoutUtils.ADMIN_GRID_ROWS, GuiLayoutUtils.ADMIN_GRID_COLS,
+                GuiLayoutUtils.ADMIN_GRID_START_COL));
+    }
 }

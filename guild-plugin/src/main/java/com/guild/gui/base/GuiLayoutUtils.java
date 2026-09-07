@@ -15,6 +15,12 @@ public final class GuiLayoutUtils {
     public static final int ITEMS_PER_PAGE = PAGE_CONTENT_ROWS * PAGE_CONTENT_COLS;
     public static final int BEDROCK_ITEMS_PER_PAGE = 10;
 
+    /** 管理员 3 列紧凑网格：4 行 × 3 列，起始列 1（槽 10/11/12…） */
+    public static final int ADMIN_GRID_COLS = 3;
+    public static final int ADMIN_GRID_ROWS = 4;
+    public static final int ADMIN_GRID_START_COL = 1;
+    public static final int ADMIN_GRID_ITEMS_PER_PAGE = ADMIN_GRID_COLS * ADMIN_GRID_ROWS;
+
     private GuiLayoutUtils() {
     }
 
@@ -79,6 +85,24 @@ public final class GuiLayoutUtils {
             return 0;
         }
         return (listSize - 1) / itemsPerPage;
+    }
+
+    /** 紧凑网格：页内索引 → 槽位（3 列布局等） */
+    public static int slotForGridPageIndex(int pageIndex, int cols, int startCol) {
+        int row = pageIndex / cols;
+        int col = pageIndex % cols;
+        return (row + 1) * 9 + startCol + col;
+    }
+
+    /** 紧凑网格：槽位 → 全局列表索引；无效槽位返回 -1 */
+    public static int listIndexFromGridSlot(int slot, int currentPage, int itemsPerPage,
+                                            int rows, int cols, int startCol) {
+        int row = slot / 9;
+        int col = slot % 9;
+        if (row < 1 || row > rows || col < startCol || col >= startCol + cols) {
+            return -1;
+        }
+        return currentPage * itemsPerPage + (row - 1) * cols + (col - startCol);
     }
 
     public static boolean isPageContentSlot(int slot) {

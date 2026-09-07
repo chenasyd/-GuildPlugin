@@ -1,233 +1,165 @@
 package com.guild.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.guild.core.utils.CompatibleScheduler;
+import com.guild.GuildPlugin;
 import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.geyser.PlayerConnectionService;
+import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.gui.base.AbstractPagedListGUI;
+import com.guild.gui.base.GuiLayoutUtils;
+import com.guild.models.Guild;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.geysermc.cumulus.form.SimpleForm;
 
-import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.language.LanguageManager;
-import com.guild.core.utils.ColorUtils;
-import com.guild.models.Guild;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 公会列表管理GUI
+ * 公会列表管理 GUI（管理员）：3 列紧凑网格 + 分页。
  */
-public class GuildListManagementGUI implements GUI {
+public class GuildListManagementGUI extends AbstractPagedListGUI<Guild> {
 
-    // ── 图像模式功能常量 ──
-    public static final String FUNC_PAGE_INFO = "PAGE_INFO";
-    public static final String FUNC_PREV_PAGE = "PREV_PAGE";
-    public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
     public static final String FUNC_REFRESH = "REFRESH";
-    public static final String FUNC_BACK = "BACK";
 
-    private final GuildPlugin plugin;
-    private final Player player;
-    private final LanguageManager languageManager;
-    private int currentPage = 0;
-    private final int itemsPerPage = 12; // 从 28 减少到 12，界面更简洁
-    private static final int PREVIOUS_PAGE_SLOT = 48;
-    private static final int NEXT_PAGE_SLOT = 50;
-    private static final int PAGE_INFO_SLOT = 49;
-    private static final int BACK_SLOT = 46;
-    private static final int REFRESH_SLOT = 52;
-    private List<Guild> allGuilds = new ArrayList<>();
+    private static final int TOOLBAR_BACK = 46;
+    private static final int SLOT_PAGE_INFO = 49;
+    private static final int TOOLBAR_REFRESH = 52;
 
     public GuildListManagementGUI(GuildPlugin plugin, Player player) {
-        this.plugin = plugin;
-        this.player = player;
-        this.languageManager = plugin.getLanguageManager();
+        super(plugin, player, PaginationLayout.CENTER_BAR_PAGE_INFO, GuiLayoutUtils.ADMIN_GRID_ITEMS_PER_PAGE);
         loadGuilds();
     }
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-list-management.guild-list-management-title",
+        return ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                "gui.guild-list-management.guild-list-management-title",
                 "&4Guild List Management"));
     }
-    
+
     @Override
-    public int getSize() {
-        return 54;
+    protected void openBackGui(Player player) {
+        plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
     }
-    
+
     @Override
-    public void setupInventory(Inventory inventory) {
-        // 填充边框
-        fillBorder(inventory);
-        
-        // 设置公会列表
-        setupGuildList(inventory);
-        
-        // 设置分页按钮
-        setupPaginationButtons(inventory);
-        
-        // 设置操作按钮
-        setupActionButtons(inventory);
-
-        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
+    protected int slotForEntryIndex(int pageIndex) {
+        return GuiLayoutUtils.slotForGridPageIndex(pageIndex,
+                GuiLayoutUtils.ADMIN_GRID_COLS, GuiLayoutUtils.ADMIN_GRID_START_COL);
     }
-    
-    private void setupGuildList(Inventory inventory) {
-        int startIndex = currentPage * itemsPerPage;
-        int endIndex = Math.min(startIndex + itemsPerPage, allGuilds.size());
-        int cols = 3; // 三列布局，从列2开始（列 2,3,4）
 
-        for (int i = 0; i < itemsPerPage; i++) {
-            if (startIndex + i < endIndex) {
-                Guild guild = allGuilds.get(startIndex + i);
+    @Override
+    protected int listIndexFromSlot(int slot) {
+        return GuiLayoutUtils.listIndexFromGridSlot(slot, currentPage, itemsPerPage(),
+                GuiLayoutUtils.ADMIN_GRID_ROWS, GuiLayoutUtils.ADMIN_GRID_COLS,
+                GuiLayoutUtils.ADMIN_GRID_START_COL);
+    }
 
-                int row = (i / cols) + 1; // 1..4 对应 GUI 的行 2..5
-                int col = (i % cols) + 1; // 列 2,3,4 从槽位10开始
-                int slot = row * 9 + col;
+    @Override
+    protected void setupToolbar(Inventory inventory) {
+        inventory.setItem(TOOLBAR_BACK, createItem(Material.ARROW,
+                ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.common.back", "Back"))));
+        inventory.setItem(TOOLBAR_REFRESH, createItem(Material.EMERALD,
+                ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                        "gui.guild-list-management.gui-refresh", "&aRefresh List"))));
+    }
 
-                inventory.setItem(slot, createGuildItem(guild));
-            }
+    @Override
+    protected void setupNavigationButtons(Inventory inventory) {
+        if (currentPage > 0) {
+            inventory.setItem(slotForFunction(FUNC_PREV_PAGE, 48),
+                    createItem(Material.ARROW,
+                            ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                                    "gui.common.previous-page", "&e&lPrevious Page")),
+                            ColorUtils.colorize("&7" + languageManager.getGuiIndexedMessage(viewer,
+                                    "gui.common.page-info", "Page {0} of {1}",
+                                    String.valueOf(currentPage), String.valueOf(maxPageIndex() + 1)))));
+        }
+
+        int totalPages = entries.isEmpty() ? 1 : maxPageIndex() + 1;
+        inventory.setItem(SLOT_PAGE_INFO, createItem(Material.PAPER,
+                ColorUtils.colorize("&e" + languageManager.getGuiIndexedMessage(viewer,
+                        "gui.common.page-info", "Page {0} of {1}",
+                        String.valueOf(currentPage + 1), String.valueOf(totalPages)))));
+
+        if (currentPage < maxPageIndex()) {
+            inventory.setItem(slotForFunction(FUNC_NEXT_PAGE, 50),
+                    createItem(Material.ARROW,
+                            ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                                    "gui.common.next-page", "&e&lNext Page")),
+                            ColorUtils.colorize("&7" + languageManager.getGuiIndexedMessage(viewer,
+                                    "gui.common.page-info", "Page {0} of {1}",
+                                    String.valueOf(currentPage + 2), String.valueOf(totalPages)))));
         }
     }
-    
-    private ItemStack createGuildItem(Guild guild) {
+
+    @Override
+    protected boolean handleToolbarClick(Player player, int slot, ClickType clickType) {
+        if (slot == TOOLBAR_BACK) {
+            openBackGui(player);
+            return true;
+        }
+        if (slot == TOOLBAR_REFRESH) {
+            loadGuilds();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected ItemStack createEntryItem(Guild guild) {
         Material material = guild.isFrozen() ? Material.RED_WOOL : Material.GREEN_WOOL;
-
         List<String> lore = new ArrayList<>();
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.common.leader", "Leader") + ": &e" + guild.getLeaderName()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-list.level", "Level") + ": &e" + guild.getLevel() + "  &7" + languageManager.getGuiMessage(player, "gui.guild-list.balance", "Balance") + ": &a" + plugin.getEconomyManager().format(guild.getBalance())));
-        lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.guild-list.left-click-view", "Left click: View") + "  &c" + languageManager.getGuiMessage(player, "gui.guild-list.right-click-delete", "Right click: Delete") + "  &6" + languageManager.getGuiMessage(player, "gui.guild-list.shift-right-freeze", "Shift+Right click: Freeze/Unfreeze")));
-
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                "gui.common.leader", "Leader") + ": &e" + guild.getLeaderName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                "gui.guild-list.level", "Level") + ": &e" + guild.getLevel()
+                + "  &7" + languageManager.getGuiMessage(viewer, "gui.guild-list.balance", "Balance")
+                + ": &a" + plugin.getEconomyManager().format(guild.getBalance())));
+        lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(viewer,
+                "gui.guild-list.left-click-view", "Left click: View")
+                + "  &c" + languageManager.getGuiMessage(viewer,
+                "gui.guild-list.right-click-delete", "Right click: Delete")
+                + "  &6" + languageManager.getGuiMessage(viewer,
+                "gui.guild-list.shift-right-freeze", "Shift+Right click: Freeze/Unfreeze")));
         return createItem(material, ColorUtils.colorize("&6" + guild.getName()), lore.toArray(new String[0]));
     }
-    
-    private void setupPaginationButtons(Inventory inventory) {
-        int totalPages = Math.max(1, (int) Math.ceil((double) allGuilds.size() / itemsPerPage));
-        if (currentPage > totalPages - 1) {
-            currentPage = totalPages - 1;
-        }
 
-        // 上一页按钮
-        if (currentPage > 0) {
-            inventory.setItem(PREVIOUS_PAGE_SLOT, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.previous-page", "&e&lPrevious Page")),
-                ColorUtils.colorize("&7" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "Page {0} of {1}", String.valueOf(currentPage), String.valueOf(totalPages)))));
-        }
-
-        // 页码信息
-        inventory.setItem(PAGE_INFO_SLOT, createItem(Material.PAPER,
-            ColorUtils.colorize("&e" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "Page {0} of {1}", String.valueOf(currentPage + 1), String.valueOf(totalPages)))));
-
-        // 下一页按钮
-        if (currentPage < totalPages - 1) {
-            inventory.setItem(NEXT_PAGE_SLOT, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.next-page", "&e&lNext Page")),
-                ColorUtils.colorize("&7" + languageManager.getGuiIndexedMessage(player, "gui.common.page-info", "Page {0} of {1}", String.valueOf(currentPage + 2), String.valueOf(totalPages)))));
+    @Override
+    protected void onEntryClick(Player player, Guild guild, ClickType clickType) {
+        if (clickType == ClickType.LEFT) {
+            plugin.getGuiManager().openGUI(player, new GuildDetailGUI(plugin, guild, player));
+        } else if (clickType == ClickType.RIGHT) {
+            deleteGuild(player, guild);
+        } else if (clickType == ClickType.SHIFT_RIGHT) {
+            toggleGuildFreeze(player, guild);
         }
     }
 
-    private void setupActionButtons(Inventory inventory) {
-        // 返回按钮
-        inventory.setItem(46, createItem(Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "Back"))));
-
-        // 刷新按钮
-        inventory.setItem(52, createItem(Material.EMERALD,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-list-management.gui-refresh", "&aRefresh List"))));
-    }
-    
-    private void fillBorder(Inventory inventory) {
-        ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        
-        // 填充边框
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 45, border);
-        }
-        
-        for (int i = 9; i < 45; i += 9) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 8, border);
-        }
-    }
-    
     private void loadGuilds() {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
-            this.allGuilds = guilds;
-            CompatibleScheduler.runTask(plugin, player, () -> {
-                if (player.isOnline()) {
-                    refresh(player);
+            setEntries(guilds == null ? List.of() : guilds);
+            CompatibleScheduler.runTask(plugin, viewer, () -> {
+                if (viewer.isOnline()) {
+                    refresh(viewer);
                 }
             });
         });
     }
-    
-    @Override
-    public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        if (slot == BACK_SLOT) {
-            // 返回
-            plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
-        } else if (slot == REFRESH_SLOT) {
-            // 刷新
-            loadGuilds();
-        } else if (slot == PREVIOUS_PAGE_SLOT && currentPage > 0) {
-            // 上一页
-            currentPage--;
-            refresh(player);
-        } else if (slot == NEXT_PAGE_SLOT && currentPage < (int) Math.ceil((double) allGuilds.size() / itemsPerPage) - 1) {
-            // 下一页
-            currentPage++;
-            refresh(player);
-        } else if (slot >= 10 && slot <= 43) {
-            // 公会项目 - 检查是否在3列布局，列 2,3,4，行 1..4 范围内
-            int row = slot / 9;
-            int col = slot % 9;
-            if (row >= 1 && row <= 4 && col >= 1 && col <= 3) {
-                int cols = 3;
-                int relativeIndex = (row - 1) * cols + (col - 1);
-                int guildIndex = (currentPage * itemsPerPage) + relativeIndex;
-                if (guildIndex < allGuilds.size()) {
-                    Guild guild = allGuilds.get(guildIndex);
-                    handleGuildClick(player, guild, clickType);
-                }
-            }
-        }
-    }
-    
-    private void handleGuildClick(Player player, Guild guild, ClickType clickType) {
-        if (clickType == ClickType.LEFT) {
-            // 查看详情
-            openGuildDetailGUI(player, guild);
-        } else if (clickType == ClickType.RIGHT) {
-            // 删除公会
-            deleteGuild(player, guild);
-        } else if (clickType == ClickType.SHIFT_RIGHT) {
-            // 冻结/解冻公会（Shift+右键）
-            toggleGuildFreeze(player, guild);
-        }
-    }
-    
-    private void openGuildDetailGUI(Player player, Guild guild) {
-        // 打开公会详情GUI
-        plugin.getGuiManager().openGUI(player, new GuildDetailGUI(plugin, guild, player));
-    }
-    
+
     private void deleteGuild(Player player, Guild guild) {
         if (!player.hasPermission("guild.admin")) {
             player.sendMessage(ColorUtils.colorize("&c您没有权限执行此操作！"));
             return;
         }
-        // 打开统一的确认删除GUI，标记来源为 GuildListManagementGUI 以便跳过会长验证
-        plugin.getGuiManager().openGUI(player, new ConfirmDeleteGuildGUI(plugin, guild, player, "GuildListManagementGUI"));
+        plugin.getGuiManager().openGUI(player,
+                new ConfirmDeleteGuildGUI(plugin, guild, player, "GuildListManagementGUI"));
     }
-    
+
     private void toggleGuildFreeze(Player player, Guild guild) {
         if (!player.hasPermission("guild.admin")) {
             player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
@@ -235,41 +167,27 @@ public class GuildListManagementGUI implements GUI {
             return;
         }
         boolean newStatus = !guild.isFrozen();
-        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus, player.getUniqueId()).thenAccept(success -> {
-            if (success) {
-                String message = newStatus ?
-                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&aGuild {guild} has been frozen!", "{guild}", guild.getName()) :
-                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen", "&aGuild {guild} has been unfrozen!", "{guild}", guild.getName());
-                player.sendMessage(ColorUtils.colorize(message));
-                loadGuilds(); // 刷新列表
-            } else {
-                player.sendMessage(ColorUtils.colorize("&c操作失败！"));
-            }
-        });
+        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus, player.getUniqueId())
+                .thenAccept(success -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (success) {
+                        String message = newStatus
+                                ? languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen",
+                                "&aGuild {guild} has been frozen!", "{guild}", guild.getName())
+                                : languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen",
+                                "&aGuild {guild} has been unfrozen!", "{guild}", guild.getName());
+                        player.sendMessage(ColorUtils.colorize(message));
+                        loadGuilds();
+                    } else {
+                        player.sendMessage(ColorUtils.colorize("&c操作失败！"));
+                    }
+                }));
     }
-    
-    private ItemStack createItem(Material material, String name, String... lore) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-        
-        if (meta != null) {
-            meta.setDisplayName(name);
-            
-            List<String> loreList = new ArrayList<>();
-            for (String line : lore) {
-                loreList.add(line);
-            }
-            meta.setLore(loreList);
-            
-            item.setItemMeta(meta);
-        }
-        
-        return item;
-    }
-    
+
     @Override
     public boolean openBedrockForm(Player player) {
-        if (!BedrockFormSender.isAvailable()) return false;
+        if (!BedrockFormSender.isAvailable()) {
+            return false;
+        }
         sendBedrockGuildList(player, 0);
         return true;
     }
@@ -277,18 +195,25 @@ public class GuildListManagementGUI implements GUI {
     private void sendBedrockGuildList(Player player, int page) {
         plugin.getGuildService().getAllGuildsAsync().thenAccept(guilds -> {
             CompatibleScheduler.runTask(plugin, player, () -> {
-                if (!player.isOnline()) return;
+                if (!player.isOnline()) {
+                    return;
+                }
 
-                int itemsPerPage = 10;
+                int itemsPerPage = GuiLayoutUtils.BEDROCK_ITEMS_PER_PAGE;
                 int totalPages = Math.max(1, (int) Math.ceil((double) guilds.size() / itemsPerPage));
                 final int safePage = Math.max(0, Math.min(page, totalPages - 1));
                 int startIndex = safePage * itemsPerPage;
                 int endIndex = Math.min(startIndex + itemsPerPage, guilds.size());
 
                 SimpleForm.Builder builder = SimpleForm.builder()
-                    .title(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-title", "&4Guild List Management"))
-                    .content(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-page-info", "&fPage {page}/{total} | Total {count} guilds",
-                            "{page}", String.valueOf(safePage + 1), "{total}", String.valueOf(totalPages), "{count}", String.valueOf(guilds.size())));
+                        .title(languageManager.getGuiColoredMessage(player,
+                                "gui.guild-list-management.bedrock-title", "&4Guild List Management"))
+                        .content(languageManager.getGuiColoredMessage(player,
+                                "gui.guild-list-management.bedrock-page-info",
+                                "&fPage {page}/{total} | Total {count} guilds",
+                                "{page}", String.valueOf(safePage + 1),
+                                "{total}", String.valueOf(totalPages),
+                                "{count}", String.valueOf(guilds.size())));
 
                 List<Guild> pageGuilds = new ArrayList<>();
                 for (int i = startIndex; i < endIndex; i++) {
@@ -298,10 +223,14 @@ public class GuildListManagementGUI implements GUI {
                     builder.button(prefix + g.getName() + " §f[Lv." + g.getLevel() + "]");
                 }
 
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-refresh", "&aRefresh List"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-prev-page", "&ePrevious Page"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-next-page", "&eNext Page"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-back", "&cBack"));
+                builder.button(languageManager.getGuiColoredMessage(player,
+                        "gui.guild-list-management.bedrock-refresh", "&aRefresh List"));
+                builder.button(languageManager.getGuiColoredMessage(player,
+                        "gui.guild-list-management.bedrock-prev-page", "&ePrevious Page"));
+                builder.button(languageManager.getGuiColoredMessage(player,
+                        "gui.guild-list-management.bedrock-next-page", "&eNext Page"));
+                builder.button(languageManager.getGuiColoredMessage(player,
+                        "gui.guild-list-management.bedrock-back", "&cBack"));
 
                 final int navOffset = pageGuilds.size();
 
@@ -312,17 +241,16 @@ public class GuildListManagementGUI implements GUI {
                     } else if (id == navOffset) {
                         sendBedrockGuildList(player, safePage);
                     } else if (id == navOffset + 1) {
-                        if (safePage > 0) sendBedrockGuildList(player, safePage - 1);
-                        else sendBedrockGuildList(player, safePage);
+                        sendBedrockGuildList(player, safePage > 0 ? safePage - 1 : safePage);
                     } else if (id == navOffset + 2) {
-                        if (safePage < totalPages - 1) sendBedrockGuildList(player, safePage + 1);
-                        else sendBedrockGuildList(player, safePage);
+                        sendBedrockGuildList(player, safePage < totalPages - 1 ? safePage + 1 : safePage);
                     } else {
-                        plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
+                        openBackGui(player);
                     }
                 }));
 
-                builder.closedResultHandler(response -> {});
+                builder.closedResultHandler(response -> {
+                });
 
                 BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
             });
@@ -331,46 +259,50 @@ public class GuildListManagementGUI implements GUI {
 
     private void sendBedrockGuildActions(Player player, Guild guild, int page) {
         String status = guild.isFrozen()
-                ? languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-status-frozen", "&cFrozen")
-                : languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-status-normal", "&aNormal");
+                ? languageManager.getGuiColoredMessage(player,
+                "gui.guild-list-management.bedrock-status-frozen", "&cFrozen")
+                : languageManager.getGuiColoredMessage(player,
+                "gui.guild-list-management.bedrock-status-normal", "&aNormal");
         SimpleForm.Builder builder = SimpleForm.builder()
-            .title(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-actions-title", "&6Guild Actions - {guild_name}",
-                    "{guild_name}", guild.getName()))
-            .content(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-leader", "&fLeader: &e{leader}",
-                    "{leader}", guild.getLeaderName())
-                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-level", "&fLevel: &e{level}",
-                    "{level}", String.valueOf(guild.getLevel()))
-                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-balance", "&fBalance: &a{balance}",
-                    "{balance}", plugin.getEconomyManager().format(guild.getBalance()))
-                + "\n" + languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-status", "&fStatus: {status}",
-                    "{status}", status));
+                .title(languageManager.getGuiColoredMessage(player,
+                        "gui.guild-list-management.bedrock-actions-title",
+                        "&6Guild Actions - {guild_name}", "{guild_name}", guild.getName()))
+                .content(languageManager.getGuiColoredMessage(player,
+                        "gui.guild-list-management.bedrock-leader", "&fLeader: &e{leader}",
+                        "{leader}", guild.getLeaderName())
+                        + "\n" + languageManager.getGuiColoredMessage(player,
+                        "gui.guild-list-management.bedrock-level", "&fLevel: &e{level}",
+                        "{level}", String.valueOf(guild.getLevel()))
+                        + "\n" + languageManager.getGuiColoredMessage(player,
+                        "gui.guild-list-management.bedrock-balance", "&fBalance: &a{balance}",
+                        "{balance}", plugin.getEconomyManager().format(guild.getBalance()))
+                        + "\n" + languageManager.getGuiColoredMessage(player,
+                        "gui.guild-list-management.bedrock-status", "&fStatus: {status}",
+                        "{status}", status));
 
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-view-detail", "&eView Details"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-delete", "&cDelete Guild"));
+        builder.button(languageManager.getGuiColoredMessage(player,
+                "gui.guild-list-management.bedrock-view-detail", "&eView Details"));
+        builder.button(languageManager.getGuiColoredMessage(player,
+                "gui.guild-list-management.bedrock-delete", "&cDelete Guild"));
         builder.button(guild.isFrozen()
-                ? languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-unfreeze", "&aUnfreeze Guild")
-                : languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-freeze", "&cFreeze Guild"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.guild-list-management.bedrock-back-list", "&cBack to List"));
+                ? languageManager.getGuiColoredMessage(player,
+                "gui.guild-list-management.bedrock-unfreeze", "&aUnfreeze Guild")
+                : languageManager.getGuiColoredMessage(player,
+                "gui.guild-list-management.bedrock-freeze", "&cFreeze Guild"));
+        builder.button(languageManager.getGuiColoredMessage(player,
+                "gui.guild-list-management.bedrock-back-list", "&cBack to List"));
 
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             switch (response.clickedButtonId()) {
-                case 0:
-                    openGuildDetailGUI(player, guild);
-                    break;
-                case 1:
-                    deleteGuild(player, guild);
-                    break;
-                case 2:
-                    bedrockToggleFreeze(player, guild, page);
-                    break;
-                case 3:
-                    sendBedrockGuildList(player, page);
-                    break;
+                case 0 -> plugin.getGuiManager().openGUI(player, new GuildDetailGUI(plugin, guild, player));
+                case 1 -> deleteGuild(player, guild);
+                case 2 -> bedrockToggleFreeze(player, guild, page);
+                case 3 -> sendBedrockGuildList(player, page);
             }
         }));
 
-        builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
-            sendBedrockGuildList(player, page)));
+        builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player,
+                () -> sendBedrockGuildList(player, page)));
 
         BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
     }
@@ -382,32 +314,29 @@ public class GuildListManagementGUI implements GUI {
             return;
         }
         boolean newStatus = !guild.isFrozen();
-        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus, player.getUniqueId()).thenAccept(success -> {
-            CompatibleScheduler.runTask(plugin, player, () -> {
-                if (success) {
-                    String message = newStatus ?
-                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen", "&aGuild {guild} has been frozen!", "{guild}", guild.getName()) :
-                        languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen", "&aGuild {guild} has been unfrozen!", "{guild}", guild.getName());
-                    player.sendMessage(ColorUtils.colorize(message));
-                } else {
-                    player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.common.operation-failed", "&cOperation failed!"));
-                }
-                sendBedrockGuildList(player, page);
-            });
-        });
+        plugin.getGuildService().updateGuildFrozenStatusAsync(guild.getId(), newStatus, player.getUniqueId())
+                .thenAccept(success -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (success) {
+                        String message = newStatus
+                                ? languageManager.getGuiMessage(player, "gui.guild-detail.guild-frozen",
+                                "&aGuild {guild} has been frozen!", "{guild}", guild.getName())
+                                : languageManager.getGuiMessage(player, "gui.guild-detail.guild-unfrozen",
+                                "&aGuild {guild} has been unfrozen!", "{guild}", guild.getName());
+                        player.sendMessage(ColorUtils.colorize(message));
+                    } else {
+                        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                                "gui.common.operation-failed", "&cOperation failed!")));
+                    }
+                    sendBedrockGuildList(player, page);
+                }));
     }
 
     @Override
-    public void onClose(Player player) {
-        // 关闭时的处理
-    }
-    
-    @Override
     public void refresh(Player player) {
         if (player.isOnline()) {
-            // 基岩版玩家由 openBedrockForm 的异步方法自行刷新，
-            // 跳过 GUIManager.refreshGUI 避免与 Cumulus 表单冲突
-            if (PlayerConnectionService.isBedrockPlayer(player)) return;
+            if (PlayerConnectionService.isBedrockPlayer(player)) {
+                return;
+            }
             plugin.getGuiManager().refreshGUI(player);
         }
     }
