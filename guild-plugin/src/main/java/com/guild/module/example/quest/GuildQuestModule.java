@@ -17,30 +17,16 @@ import com.guild.core.module.ModuleDescriptor;
 import com.guild.core.module.ModuleState;
 import com.guild.core.module.hook.GUIExtensionHook;
 import com.guild.core.utils.ColorUtils;
-import com.guild.core.utils.CompatibleScheduler;
 import com.guild.module.example.quest.gui.ActiveQuestsGUI;
 import com.guild.module.example.quest.gui.GuildTreeGUI;
 import com.guild.module.example.quest.gui.QuestDetailGUI;
 import com.guild.module.example.quest.gui.QuestListGUI;
 import com.guild.module.example.quest.model.QuestDefinition;
-import com.guild.module.example.quest.model.QuestObjective;
 import com.guild.module.example.quest.model.QuestProgress;
-import com.guild.module.example.quest.model.QuestReward;
 import com.guild.module.example.quest.tree.GuildTreeService;
 import com.guild.sdk.GuildPluginAPI;
-import com.guild.sdk.event.EconomyEventData;
-import com.guild.sdk.event.EconomyEventHandler;
-import com.guild.sdk.event.GuildEventData;
-import com.guild.sdk.event.GuildEventHandler;
-import com.guild.sdk.event.MemberEventData;
-import com.guild.sdk.event.MemberEventHandler;
 import com.guild.sdk.gui.GUILayoutDefinition;
 import com.guild.sdk.gui.ModuleGUIRegistration;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.Bukkit;
 
 public class GuildQuestModule implements GuildModule {
     private ModuleContext context;
@@ -52,6 +38,8 @@ public class GuildQuestModule implements GuildModule {
     private QuestRewardHandler rewardHandler;
     private GuildTreeService treeService;
     private QuestTexts texts;
+    private QuestClaimService claimService;
+    private QuestScheduleService scheduleService;
 
     @Override
     public void onEnable(ModuleContext context) throws Exception {
@@ -62,8 +50,9 @@ public class GuildQuestModule implements GuildModule {
 
         this.questManager = new QuestManager(dataDir, context.getLogger());
         questManager.setContext(context);
-        questManager.setCompletionListener(this::notifyQuestCompleted);
-        registerDefaultQuests();
+        this.claimService = new QuestClaimService(this);
+        questManager.setCompletionListener(claimService::notifyQuestCompleted);
+        QuestDefaultDefinitions.register(questManager);
         questManager.loadAll();
 
         this.rewardHandler = new QuestRewardHandler(context);
@@ -74,8 +63,9 @@ public class GuildQuestModule implements GuildModule {
         GuildPluginAPI api = context.getApi();
         registerGUIButtons(api);
         registerCommands(api);
-        registerEventHandlers(api);
-        startScheduledTasks();
+        QuestEventDispatcher.register(api, this, questManager, questTracker, treeService);
+        this.scheduleService = new QuestScheduleService(this, questManager);
+        scheduleService.start(context);
 
         api.registerCustomGUI(ModuleGUIRegistration.builder("quest-detail", (player, data) -> {
             QuestDefinition def = (QuestDefinition) data.get("definition");
@@ -171,48 +161,6 @@ public class GuildQuestModule implements GuildModule {
         context.getEventBus().subscribe("guild-quest", QuestCompletedEvent.class, event -> {});
     }
 
-    private void registerDefaultQuests() {
-        // Display text comes from lang keys at render time (module.quest.<id>.*)
-        QuestDefinition daily1 = new QuestDefinition(
-            "daily_hunter", QuestDefinition.QuestType.DAILY, 1, 1, true);
-        daily1.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
-            15, "module.quest.daily_hunter.objective"));
-        daily1.addReward(new QuestReward(QuestReward.RewardType.EXP, 30));
-        daily1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 50));
-        questManager.registerDefinition(daily1);
-
-        QuestDefinition daily2 = new QuestDefinition(
-            "daily_online", QuestDefinition.QuestType.DAILY, 2, 1, true);
-        daily2.addObjective(new QuestObjective(QuestObjective.ObjectiveType.ONLINE_HOURS,
-            60, "module.quest.daily_online.objective"));
-        daily2.addReward(new QuestReward(QuestReward.RewardType.EXP, 520));
-        questManager.registerDefinition(daily2);
-
-        QuestDefinition weekly1 = new QuestDefinition(
-            "weekly_contributor", QuestDefinition.QuestType.WEEKLY, 1, 2, true);
-        weekly1.addObjective(new QuestObjective(
-            QuestObjective.ObjectiveType.DEPOSIT_MONEY, 2000,
-            "module.quest.weekly_contributor.objective"));
-        weekly1.addReward(new QuestReward(QuestReward.RewardType.EXP, 100));
-        weekly1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 300));
-        questManager.registerDefinition(weekly1);
-
-        QuestDefinition weekly2 = new QuestDefinition(
-            "weekly_slayer", QuestDefinition.QuestType.WEEKLY, 2, 3, true);
-        weekly2.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
-            100, "module.quest.weekly_slayer.objective"));
-        weekly2.addReward(new QuestReward(QuestReward.RewardType.EXP, 2080));
-        questManager.registerDefinition(weekly2);
-
-        QuestDefinition oneTime1 = new QuestDefinition(
-            "onetime_first_blood", QuestDefinition.QuestType.ONE_TIME, 1, 1, false);
-        oneTime1.addObjective(new QuestObjective(QuestObjective.ObjectiveType.KILL_MOBS,
-            5, "module.quest.onetime_first_blood.objective"));
-        oneTime1.addReward(new QuestReward(QuestReward.RewardType.EXP, 25));
-        oneTime1.addReward(new QuestReward(QuestReward.RewardType.MONEY, 100));
-        questManager.registerDefinition(oneTime1);
-    }
-
     private void registerGUIButtons(GuildPluginAPI api) {
         ItemStack questButton = new ItemStack(Material.BOOK);
         ItemMeta questMeta = questButton.getItemMeta();
@@ -280,108 +228,12 @@ public class GuildQuestModule implements GuildModule {
         }
     }
 
-    /**
-     * Chat / command entry: claim a completed quest reward by quest id.
-     */
     public void claimQuestReward(Player player, String questId) {
-        if (player == null || questId == null || questId.isEmpty()) return;
-        context.getApi().getPlayerGuild(player.getUniqueId()).thenAccept(guild -> {
-            if (guild == null) {
-                context.runSync(() -> context.sendMessage(player, "module.quest.error.no-guild",
-                    context.getMessage("module.quest.error.no-guild", "&cYou are not in any guild")));
-                return;
-            }
-            int guildId = guild.getId();
-            context.runSync(() -> doClaimQuestReward(player, guildId, questId));
-        }).exceptionally(ex -> {
-            context.runSync(() -> context.sendMessage(player, "module.quest.error.load-fail",
-                "&cFailed to query guild: " + ex.getMessage()));
-            return null;
-        });
+        claimService.claimQuestReward(player, questId);
     }
 
-    private void doClaimQuestReward(Player player, int guildId, String questId) {
-        QuestDefinition definition = questManager.getDefinition(questId);
-        QuestProgress progress = questManager.getPlayerQuest(guildId, player.getUniqueId(), questId);
-        if (definition == null || progress == null) {
-            // Also allow claim from completed-but-period record
-            progress = questManager.getPlayerQuestAny(guildId, player.getUniqueId(), questId);
-        }
-        if (definition == null || progress == null) {
-            context.sendMessage(player, "module.quest.claim.not-found",
-                "&c[Quest] No claimable progress for this quest.");
-            return;
-        }
-        if (progress.isClaimed()) {
-            context.sendMessage(player, "module.quest.claim.already",
-                "&e[Quest] Reward already claimed.");
-            return;
-        }
-        if (!progress.isCompletedMarked() && !progress.isObjectivesCompleted(definition)) {
-            context.sendMessage(player, "module.quest.claim.not-ready",
-                "&c[Quest] Quest is not completed yet.");
-            return;
-        }
-        if (!progress.isCompletedMarked()) {
-            questManager.tryMarkCompleted(progress);
-        }
-        rewardHandler.grantRewards(player, definition, progress);
-        questManager.saveGuildProgress(guildId);
-        context.getEventBus().publish(
-            new QuestCompletedEvent(player.getName(), texts().questName(definition), guildId));
-        context.sendMessage(player, "module.quest.reward-claimed", "&a[Quest] Rewards granted!");
-
-        java.util.Map<String, Object> refreshData = new java.util.HashMap<>();
-        refreshData.put("guildId", guildId);
-        refreshData.put("playerUuid", player.getUniqueId());
-        refreshData.put("questId", questId);
-        context.notifyGUIRefresh("quest-active-list", refreshData);
-        context.notifyGUIRefresh("quest-detail", refreshData);
-        context.notifyGUIRefresh("quest-list", refreshData);
-    }
-
-    /**
-     * Notify the player in chat when a quest becomes completed (clickable claim / open panel).
-     */
     void notifyQuestCompleted(QuestProgress progress, QuestDefinition definition) {
-        if (progress == null || definition == null) return;
-        Player player = Bukkit.getPlayer(progress.getPlayerUuid());
-        if (player == null || !player.isOnline()) return;
-
-        String questName = texts().questName(definition);
-        CompatibleScheduler.runTask(context.getPlugin(), player, () -> {
-            String line = texts().tf("module.quest.complete.notify",
-                "&a[Quest] Quest &e{0} &ahas been completed!", questName);
-            player.sendMessage(line);
-
-            String claimBtn = texts().t("module.quest.complete.claim-button",
-                "&e&l[Click to claim reward]");
-            String claimHover = texts().tf("module.quest.complete.claim-hover",
-                "&7Click to claim rewards for &e{0}", questName);
-            String openBtn = texts().t("module.quest.complete.open-button",
-                "&7[Open quest panel]");
-            String openHover = texts().t("module.quest.complete.open-hover",
-                "&7Run /g quest to open the quest GUI");
-
-            TextComponent claim = new TextComponent(ColorUtils.colorize(claimBtn));
-            claim.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                "/guild quest claim " + definition.getId()));
-            claim.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new Text(ColorUtils.colorize(claimHover))));
-
-            TextComponent sep = new TextComponent(ColorUtils.colorize(" &8| "));
-
-            TextComponent open = new TextComponent(ColorUtils.colorize(openBtn));
-            open.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/guild quest"));
-            open.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new Text(ColorUtils.colorize(openHover))));
-
-            TextComponent row = new TextComponent("");
-            row.addExtra(claim);
-            row.addExtra(sep);
-            row.addExtra(open);
-            player.spigot().sendMessage(row);
-        });
+        claimService.notifyQuestCompleted(progress, definition);
     }
 
     public void openGuildTree(Player player) {
@@ -459,99 +311,13 @@ public class GuildQuestModule implements GuildModule {
         });
     }
 
-    private void registerEventHandlers(GuildPluginAPI api) {
-        api.onGuildDelete(new GuildEventHandler() {
-            @Override
-            public void onEvent(GuildEventData data) {
-                questManager.saveAll();
-                if (treeService != null) {
-                    treeService.invalidate(data.getGuildId());
-                }
-            }
-            @Override
-            public Object getModuleInstance() { return GuildQuestModule.this; }
-        });
-
-        api.onMemberLeave(new MemberEventHandler() {
-            @Override
-            public void onEvent(MemberEventData data) {
-                int guildId = data.getGuildId();
-                UUID playerUuid = data.getPlayerUuid();
-                
-                questManager.clearPlayerProgress(guildId, playerUuid);
-            }
-
-            @Override
-            public Object getModuleInstance() { return GuildQuestModule.this; }
-        });
-
-        api.onEconomyDeposit(new EconomyEventHandler() {
-            @Override
-            public void onEvent(EconomyEventData data) {
-                questTracker.onPlayerDepositMoney(data.getPlayerUuid(), data.getAmount());
-            }
-            @Override
-            public Object getModuleInstance() { return GuildQuestModule.this; }
-        });
-    }
-
-    private void startScheduledTasks() {
-        // Persist progress off-thread (saveGuildProgress already async-writes)
-        context.runTimer(1200L, 600L, () ->
-            context.getApi().getAllGuilds().thenAcceptAsync(guilds -> {
-                for (var guild : guilds) questManager.saveGuildProgress(guild.getId());
-            }));
-        int resetHour = context.getConfig().getInt("settings.quest-reset-hour", 4);
-        long resetDelayTicks = calculateSecondsUntil(resetHour) * 20L;
-        context.runTimer(Math.max(1200L, resetDelayTicks), 172800000L, () ->
-            context.getApi().getAllGuilds().thenAcceptAsync(guilds ->
-                com.guild.core.utils.CompatibleScheduler.runTask(context.getPlugin(), () -> {
-                    for (var guild : guilds) {
-                        questManager.resetDailyQuests(guild.getId());
-                        notifyQuestReset(guild.getId(), "daily");
-                    }
-                })
-            ));
-        long weeklyDelayTicks = calculateSecondsUntilWeekly(resetHour) * 20L;
-        context.runTimer(Math.max(2400L, weeklyDelayTicks), 604800000L, () ->
-            context.getApi().getAllGuilds().thenAcceptAsync(guilds ->
-                com.guild.core.utils.CompatibleScheduler.runTask(context.getPlugin(), () -> {
-                    for (var guild : guilds) {
-                        questManager.resetWeeklyQuests(guild.getId());
-                        notifyQuestReset(guild.getId(), "weekly");
-                    }
-                })
-            ));
-    }
-
-    private static long calculateSecondsUntil(int targetHour) {
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        int currentHour = cal.get(java.util.Calendar.HOUR_OF_DAY);
-        int currentMinute = cal.get(java.util.Calendar.MINUTE);
-        int currentSecond = cal.get(java.util.Calendar.SECOND);
-        int diffSeconds = (targetHour - currentHour) * 3600 - currentMinute * 60 - currentSecond;
-        if (diffSeconds <= 0) diffSeconds += 86400;
-        return diffSeconds;
-    }
-
-    private static long calculateSecondsUntilWeekly(int targetHour) {
-        java.util.Calendar cal = java.util.Calendar.getInstance();
-        int dayOfWeek = cal.get(java.util.Calendar.DAY_OF_WEEK);
-        int daysUntilMonday = (java.util.Calendar.MONDAY - dayOfWeek + 7) % 7;
-        if (daysUntilMonday == 0) {
-            int currentHour = cal.get(java.util.Calendar.HOUR_OF_DAY);
-            if (currentHour >= targetHour) daysUntilMonday = 7;
-        }
-        long secondsUntilTarget = calculateSecondsUntil(targetHour);
-        return daysUntilMonday * 86400L + secondsUntilTarget;
-    }
-
     @Override
     public void onConfigReload(ModuleContext context) {
         this.context = context;
-        // 仅重启定时器（日/周重置小时等），不重复注册 GUI/命令
         context.cancelTrackedTasks();
-        startScheduledTasks();
+        if (scheduleService != null) {
+            scheduleService.start(context);
+        }
         context.logDetail("[Quest] Schedules refreshed after config reload");
     }
 
@@ -647,18 +413,6 @@ public class GuildQuestModule implements GuildModule {
             context.runSync(() -> context.sendMessage(player, "module.quest.error.load-fail", "&cFailed to query guild: " + ex.getMessage()));
             return null;
         });
-    }
-
-    private void notifyQuestReset(int guildId, String resetType) {
-        // Notify related GUIs to refresh
-        java.util.Map<String, Object> refreshData = new java.util.HashMap<>();
-        refreshData.put("guildId", guildId);
-        refreshData.put("resetType", resetType);
-        
-        // Notify quest list refresh
-        context.notifyGUIRefresh("quest-list", refreshData);
-        // Notify active quest list refresh
-        context.notifyGUIRefresh("quest-active-list", refreshData);
     }
 
     private int extractGuildId(Object... ctx) {
