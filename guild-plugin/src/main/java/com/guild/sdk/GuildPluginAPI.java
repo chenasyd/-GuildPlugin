@@ -45,6 +45,7 @@ public class GuildPluginAPI {
     private final CurrencyManager currencyManager;
     private final SdkCurrencyFacade currency;
     private final GuildQueryFacade queries;
+    private final GuildMemberCommandFacade memberCommands;
     private final ModuleEventBus events;
     private final ModuleExtensionRegistry extensions;
     private final ModuleHomeProtectCoordinator homeProtect;
@@ -55,7 +56,9 @@ public class GuildPluginAPI {
         this.logger = Logger.getLogger("GuildPlugin.API");
         this.currencyManager = plugin.getServiceContainer().get(CurrencyManager.class);
         this.currency = new SdkCurrencyFacade(currencyManager);
-        this.queries = new GuildQueryFacade(plugin);
+        GuildDataMapper dataMapper = new GuildDataMapper(plugin);
+        this.queries = new GuildQueryFacade(plugin, dataMapper);
+        this.memberCommands = new GuildMemberCommandFacade(plugin);
         this.events = new ModuleEventBus(logger);
         this.extensions = new ModuleExtensionRegistry(plugin, logger);
         this.homeProtect = new ModuleHomeProtectCoordinator(logger);
@@ -348,15 +351,15 @@ public class GuildPluginAPI {
     // ==================== 成员管理 API（v1.5 新增） ====================
 
     public CompletableFuture<Boolean> addMember(int guildId, UUID playerUuid, String playerName, String role) {
-        return queries.addMember(guildId, playerUuid, playerName, role);
+        return memberCommands.addMember(guildId, playerUuid, playerName, role);
     }
 
     public CompletableFuture<Boolean> removeMember(int guildId, UUID playerUuid) {
-        return queries.removeMember(guildId, playerUuid);
+        return memberCommands.removeMember(guildId, playerUuid);
     }
 
     public CompletableFuture<Boolean> setMemberRole(int guildId, UUID playerUuid, String role) {
-        return queries.setMemberRole(guildId, playerUuid, role);
+        return memberCommands.setMemberRole(guildId, playerUuid, role);
     }
 
     // ==================== 占位符扩展 API（v1.5 新增） ====================
