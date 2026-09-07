@@ -211,9 +211,14 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
-                    <!-- 示例模块打包进主 JAR，不计入覆盖率基线 -->
+                    <!-- 示例 Demo 模块不计入基线；territory 纳入 CI 监控 -->
                     <excludes>
-                        <exclude>com/guild/module/example/**</exclude>
+                        <exclude>com/guild/module/example/announcement/**</exclude>
+                        <exclude>com/guild/module/example/apitest/**</exclude>
+                        <exclude>com/guild/module/example/member/**</exclude>
+                        <exclude>com/guild/module/example/quest/**</exclude>
+                        <exclude>com/guild/module/example/stats/**</exclude>
+                        <exclude>com/guild/module/example/testlang/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -513,6 +518,7 @@
                 <jacoco.repository.line.minimum>0.40</jacoco.repository.line.minimum>
                 <jacoco.gui.base.line.minimum>0.35</jacoco.gui.base.line.minimum>
                 <jacoco.gui.session.line.minimum>0.50</jacoco.gui.session.line.minimum>
+                <jacoco.territory.line.minimum>0.15</jacoco.territory.line.minimum>
                 <jacoco.update.security.line.minimum>0.80</jacoco.update.security.line.minimum>
             </properties>
             <build>
@@ -617,6 +623,19 @@
                                                     <counter>LINE</counter>
                                                     <value>COVEREDRATIO</value>
                                                     <minimum>${jacoco.gui.session.line.minimum}</minimum>
+                                                </limit>
+                                            </limits>
+                                        </rule>
+                                        <rule>
+                                            <element>PACKAGE</element>
+                                            <includes>
+                                                <include>com.guild.module.example.territory</include>
+                                            </includes>
+                                            <limits>
+                                                <limit>
+                                                    <counter>LINE</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>${jacoco.territory.line.minimum}</minimum>
                                                 </limit>
                                             </limits>
                                         </rule>

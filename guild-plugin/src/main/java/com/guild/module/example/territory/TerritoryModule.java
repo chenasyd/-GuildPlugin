@@ -3,25 +3,12 @@ package com.guild.module.example.territory;
 import com.guild.core.module.GuildModule;
 import com.guild.core.module.ModuleContext;
 import com.guild.core.module.ModuleDataDirectory;
-import com.guild.core.module.ModuleDescriptor;
-import com.guild.core.module.ModuleState;
-import com.guild.core.module.hook.GUIExtensionHook;
-import com.guild.core.utils.ColorUtils;
-import com.guild.models.Guild;
-import com.guild.module.example.territory.gui.ConfirmTerritoryClaimGUI;
-import com.guild.module.example.territory.gui.ConfirmTerritoryUnclaimGUI;
-import com.guild.module.example.territory.gui.TerritoryManagementGUI;
-import com.guild.sdk.GuildPluginAPI;
-import com.guild.sdk.gui.GUILayoutDefinition;
-import com.guild.sdk.gui.ModuleGUIRegistration;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
-import java.util.List;
+import com.guild.core.module.ModuleDescriptor;
+import com.guild.core.module.ModuleState;
+import com.guild.models.Guild;
+import org.bukkit.entity.Player;
 
 /**
  * 公会领地模块（WorldGuard 软依赖）。
@@ -48,6 +35,7 @@ public final class TerritoryModule implements GuildModule {
     private TerritoryHomeProtectIntegration homeProtectIntegration;
     private TerritoryEventEmitter eventEmitter;
     private TerritoryAPIImpl territoryApi;
+    private TerritoryGuiRegistrar guiRegistrar;
 
     @Override
     public void onEnable(ModuleContext context) throws Exception {
@@ -75,7 +63,6 @@ public final class TerritoryModule implements GuildModule {
         crossServerSync.register();
 
         refreshBridgeAndAvailability();
-        logLoadStatus();
 
         this.materializer = new TerritoryMaterializer(context, repository, bridge, settings,
                 eventEmitter);
@@ -99,11 +86,14 @@ public final class TerritoryModule implements GuildModule {
                 "guild.territory.info"
         );
 
-        registerTerritoryGui(context.getApi());
-        registerHomeProtectIntegration();
+        this.guiRegistrar = new TerritoryGuiRegistrar(this, context, settings, texts);
+        guiRegistrar.register(context.getApi());
         context.getApi().registerPlaceholderProvider("guild-territory",
                 new TerritoryPlaceholderProvider(this));
-        broadcastStatusToAdmins();
+        homeProtectIntegration = TerritoryModuleBootstrap.registerHomeProtectIntegration(
+                this, context, settings, homeProtectIntegration);
+        TerritoryModuleBootstrap.logLoadStatus(context, bridge, availability);
+        TerritoryModuleBootstrap.broadcastStatusToAdmins(context, bridge, availability, texts);
     }
 
     @Override
@@ -132,13 +122,14 @@ public final class TerritoryModule implements GuildModule {
             settings.reload();
         }
         refreshBridgeAndAvailability();
-        logLoadStatus();
+        TerritoryModuleBootstrap.logLoadStatus(context, bridge, availability);
         if (materializer != null) {
             this.materializer = new TerritoryMaterializer(context, repository, bridge, settings,
                     eventEmitter);
             materializer.scheduleMaterializeOnLoad();
         }
-        registerHomeProtectIntegration();
+        homeProtectIntegration = TerritoryModuleBootstrap.registerHomeProtectIntegration(
+                this, context, settings, homeProtectIntegration);
     }
 
     private void refreshBridgeAndAvailability() {
@@ -148,201 +139,9 @@ public final class TerritoryModule implements GuildModule {
                 eventEmitter);
     }
 
-    private void registerTerritoryGui(GuildPluginAPI api) {
-        if (settings == null || !settings.isGuiEnabled()) {
-            return;
-        }
-
-        api.registerCustomGUI(ModuleGUIRegistration.builder(TerritoryManagementGUI.GUI_ID, (player, data) -> {
-            Guild guild = (Guild) data.get("guild");
-            boolean manage = Boolean.TRUE.equals(data.get("manage"));
-            if (guild == null) {
-                guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
-            }
-            if (guild == null) {
-                throw new IllegalStateException("No guild for territory GUI");
-            }
-            return new TerritoryManagementGUI(this, guild, player, manage);
-        })
-                .moduleId("guild-territory")
-                .imageBinding("territory-manage")
-                .layout(GUILayoutDefinition.builder()
-                        .function("HEADER", 4)
-                        .function("LIST", 10, 11, 12, 13, 14, 15, 16)
-                        .function("STATUS", 20, 22, 24)
-                        .function("ACTIONS", 28, 29, 30, 31, 32)
-                        .function("BACK", 49)
-                        .build())
-                .build());
-
-        api.registerCustomGUI(ModuleGUIRegistration.builder(ConfirmTerritoryClaimGUI.GUI_ID, (player, data) -> {
-            Guild guild = (Guild) data.get("guild");
-            if (guild == null) {
-                guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
-            }
-            return new ConfirmTerritoryClaimGUI(this, guild, player);
-        })
-                .moduleId("guild-territory")
-                .imageBinding("territory-confirm-claim")
-                .layout(GUILayoutDefinition.builder()
-                        .function("CONFIRM", 11)
-                        .function("INFO", 13)
-                        .function("CANCEL", 15)
-                        .build())
-                .build());
-
-        api.registerCustomGUI(ModuleGUIRegistration.builder(ConfirmTerritoryUnclaimGUI.GUI_ID, (player, data) -> {
-            Guild guild = (Guild) data.get("guild");
-            if (guild == null) {
-                guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
-            }
-            return new ConfirmTerritoryUnclaimGUI(this, guild, player);
-        })
-                .moduleId("guild-territory")
-                .imageBinding("territory-confirm-unclaim")
-                .layout(GUILayoutDefinition.builder()
-                        .function("CONFIRM", 11)
-                        .function("INFO", 13)
-                        .function("CANCEL", 15)
-                        .build())
-                .build());
-
-        if (settings.isRegisterSettingsButton()) {
-            ItemStack settingsButton = new ItemStack(Material.GRASS_BLOCK);
-            ItemMeta meta = settingsButton.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName("Guild Territory");
-                meta.setLore(List.of("Manage guild land claims"));
-                settingsButton.setItemMeta(meta);
-            }
-            api.registerGUIButton("GuildSettingsGUI", GUIExtensionHook.AUTO_SLOT,
-                    settingsButton, "guild-territory",
-                    (player, ctx) -> handleSettingsButton(player, ctx),
-                    "module.territory.gui.settings-button",
-                    "module.territory.gui.settings-button-desc");
-        }
-
-        if (settings.isRegisterInfoButton()) {
-            ItemStack infoButton = new ItemStack(Material.MAP);
-            ItemMeta meta = infoButton.getItemMeta();
-            if (meta != null) {
-                meta.setDisplayName("Territory");
-                meta.setLore(List.of("View guild territory"));
-                infoButton.setItemMeta(meta);
-            }
-            api.registerGUIButton("GuildInfoGUI", GUIExtensionHook.AUTO_SLOT,
-                    infoButton, "guild-territory",
-                    (player, ctx) -> handleInfoButton(player, ctx),
-                    "module.territory.gui.info-button",
-                    "module.territory.gui.info-button-desc");
-        }
-    }
-
-    private void handleSettingsButton(Player player, Object... ctx) {
-        Guild guild = extractGuild(ctx);
-        if (guild == null) {
-            guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
-        }
-        if (guild == null) {
-            texts.send(player, "module.territory.not-in-guild", "&c你不在任何公会中。");
-            return;
-        }
-        if (!canManageTerritory(player)) {
-            texts.send(player, "module.territory.not-manager", "&c仅公会管理可操作领地。");
-            return;
-        }
-        openTerritoryGui(player, guild, true);
-    }
-
-    private void handleInfoButton(Player player, Object... ctx) {
-        Guild guild = extractGuild(ctx);
-        if (guild == null) {
-            guild = context.getPlugin().getGuildService().getPlayerGuild(player.getUniqueId());
-        }
-        if (guild == null) {
-            texts.send(player, "module.territory.not-in-guild", "&c你不在任何公会中。");
-            return;
-        }
-        if (!context.getPlugin().getPermissionManager().hasPermission(player, "guild.territory.info")) {
-            texts.send(player, "module.territory.no-permission", "&c你没有权限执行此操作。");
-            return;
-        }
-        boolean manage = canManageTerritory(player);
-        openTerritoryGui(player, guild, manage);
-    }
-
     public void openTerritoryGui(Player player, Guild guild, boolean manageMode) {
-        if (settings != null && settings.isGuiEnabled()) {
-            context.openGUI(player, new TerritoryManagementGUI(this, guild, player, manageMode));
-        } else {
-            texts.send(player, "module.territory.gui.disabled", "&c领地 GUI 已在配置中关闭。");
-        }
-    }
-
-    private boolean canManageTerritory(Player player) {
-        return context.getPlugin().getMembershipRules().canManageGuild(player)
-                && context.getPlugin().getPermissionManager().hasPermission(player, "guild.territory.claim");
-    }
-
-    private Guild extractGuild(Object... ctx) {
-        if (ctx != null && ctx.length > 0 && ctx[0] instanceof Guild guild) {
-            return guild;
-        }
-        return null;
-    }
-
-    private void registerHomeProtectIntegration() {
-        if (context == null || settings == null) {
-            return;
-        }
-        String mode = settings.getHomeProtectMode();
-        if (TerritoryHomeProtectIntegration.MODE_OFF.equals(mode)) {
-            if (homeProtectIntegration != null) {
-                context.getApi().unregisterHomeProtectIntegration(this);
-                homeProtectIntegration = null;
-            }
-            return;
-        }
-
-        if (homeProtectIntegration == null) {
-            homeProtectIntegration = new TerritoryHomeProtectIntegration(this, context);
-            context.getApi().registerHomeProtectIntegration(this, homeProtectIntegration);
-        }
-
-        if (bridge.isOperational() && TerritoryHomeProtectIntegration.MODE_DEFER.equals(mode)) {
-            context.getLogger().info("Deferring guild.home-protect to WorldGuard (home-protect.mode=defer).");
-        } else if (bridge.isOperational()) {
-            context.getLogger().info("Home-protect merge mode active (home-protect.mode=merge).");
-        }
-    }
-
-    private void logLoadStatus() {
-        if (bridge.isOperational()) {
-            context.getLogger().info("WorldGuard territory bridge active.");
-        } else {
-            context.getLogger().warning("Guild territory module loaded in degraded mode; missing: "
-                    + availability.describeMissing()
-                    + ". Install WorldGuard + WorldEdit to enable territory features.");
-        }
-    }
-
-    private void broadcastStatusToAdmins() {
-        if (texts == null || context == null) {
-            return;
-        }
-        String message;
-        if (bridge.isOperational()) {
-            message = texts.format("module.territory.status-ready",
-                    "&a领地模块已加载（WorldGuard 可用）");
-        } else {
-            message = texts.format("module.territory.status-degraded",
-                    "&e领地模块已降级加载：缺少 {0}", availability.describeMissing());
-        }
-        context.getLogger().info(ColorUtils.stripColor(message));
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (context.getPlugin().getPermissionManager().hasPermission(player, "guild.territory.admin")) {
-                player.sendMessage(message);
-            }
+        if (guiRegistrar != null) {
+            guiRegistrar.openTerritoryGui(player, guild, manageMode);
         }
     }
 
