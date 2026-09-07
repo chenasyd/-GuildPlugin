@@ -2,7 +2,7 @@
 
 ## 当前阶段（3）
 
-- **包门禁**：`com.guild.gui.base` 行覆盖率阈值 **30%**
+- **包门禁**：`com.guild.gui.base` 行覆盖率阈值 **35%**
 - **类门禁**：`UpdateDownloadSecurity` 行覆盖率阈值 **80%**
 - **测试**：`AbstractConfirmGUITest` 等 `gui.base` 单测套件
 
@@ -32,7 +32,7 @@
 | `com.guild.world.registry` | `jacoco.world.registry.line.minimum` | 84% |
 | `com.guild.core.permissions` | `jacoco.permissions.line.minimum` | 70% |
 | `com.guild.services.repository` | `jacoco.repository.line.minimum` | 40% |
-| `com.guild.gui.base` | `jacoco.gui.base.line.minimum` | 30% |
+| `com.guild.gui.base` | `jacoco.gui.base.line.minimum` | 35% |
 | `com.guild.core.gui.session` | `jacoco.gui.session.line.minimum` | 50% |
 | `UpdateDownloadSecurity`（CLASS） | `jacoco.update.security.line.minimum` | 80% |
 

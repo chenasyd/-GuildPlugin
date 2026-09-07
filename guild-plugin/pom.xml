@@ -511,7 +511,7 @@
                 <jacoco.world.registry.line.minimum>0.84</jacoco.world.registry.line.minimum>
                 <jacoco.permissions.line.minimum>0.70</jacoco.permissions.line.minimum>
                 <jacoco.repository.line.minimum>0.40</jacoco.repository.line.minimum>
-                <jacoco.gui.base.line.minimum>0.30</jacoco.gui.base.line.minimum>
+                <jacoco.gui.base.line.minimum>0.35</jacoco.gui.base.line.minimum>
                 <jacoco.gui.session.line.minimum>0.50</jacoco.gui.session.line.minimum>
                 <jacoco.update.security.line.minimum>0.80</jacoco.update.security.line.minimum>
             </properties>
