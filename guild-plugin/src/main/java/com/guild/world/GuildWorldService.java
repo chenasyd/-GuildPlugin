@@ -5,8 +5,6 @@ import com.guild.core.language.CoreMsg;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.DebugLog;
 import com.guild.core.utils.ServerUtils;
-import com.guild.world.bridge.FoliaWorldCreator;
-import com.guild.world.generator.VoidWorldGen;
 import com.guild.world.model.GuildWorld;
 import com.guild.world.model.WorldStatus;
 import com.guild.world.model.WorldType;
@@ -20,14 +18,11 @@ import com.guild.world.schematic.SchematicExporter;
 import com.guild.world.schematic.SchematicPaster;
 import com.guild.world.schematic.Vec3i;
 import com.guild.world.selection.SelectionManager;
-import com.guild.world.util.WorldFiles;
 import com.guildplugin.util.FoliaTeleportUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.GameRule;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.WorldCreator;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -37,11 +32,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 
@@ -78,7 +70,7 @@ public class GuildWorldService {
     private final WorldRecoveryService recovery;
     private final PresetService presets;
     private final SelectionManager selections = new SelectionManager();
-    private final Set<String> loading = ConcurrentHashMap.newKeySet();
+    private final WorldLifecycle lifecycle;
     /** 自动触发恢复自检的一次性去重标志（玩家加入 / 延迟兜底二选一）。 */
     private final AtomicBoolean recoveryTriggered = new AtomicBoolean(false);
 
@@ -113,6 +105,10 @@ public class GuildWorldService {
         // Folia 需 NMS 桥接，仅支持列表内版本；非 Folia 用 Bukkit.createWorld，始终可用
         this.enabled = !ServerUtils.isFolia() || ServerUtils.isFoliaVersionSupported();
         reloadSettings();
+        this.lifecycle = new WorldLifecycle(
+                plugin, registry, journal,
+                () -> enabled, this::unsupportedMessage, this::buildWorldName,
+                this::teleportToFallback);
     }
 
     /**
@@ -217,278 +213,28 @@ public class GuildWorldService {
      * 插件 onDisable 时调用：优雅卸载所有受管世界 + 标记 cleanShutdown。
      */
     public void shutdown() {
-        for (GuildWorld gw : new ArrayList<>(registry.all())) {
-            WorldStatus status = gw.getStatus();
-            if (status == WorldStatus.REGISTERED || status == WorldStatus.UNLOADED) {
-                continue;
-            }
-            World world = Bukkit.getWorld(gw.getWorldName());
-            if (world != null) {
-                try {
-                    for (Player player : new ArrayList<>(world.getPlayers())) {
-                        teleportToFallback(player);
-                    }
-                } catch (Exception ignored) {
-                }
-                try {
-                    world.save();
-                } catch (Exception ignored) {
-                }
-            }
-            gw.setStatus(WorldStatus.UNLOADED);
-            gw.touch();
-        }
-        registry.setCleanShutdown(true);
-        registry.save();
-        journal.clear();
-        plugin.getLogger().info("[World] Graceful shutdown complete. "
-                + registry.size() + " managed world(s) marked unloaded.");
+        lifecycle.shutdown();
     }
 
     /* ── 虚空世界创建 ────────────────────────────────────── */
 
-    /**
-     * 创建虚空世界（纯 Bukkit API，在主线程/全局区域线程执行）。
-     *
-     * @param worldName   世界名（自动加 {@link #namePrefix} 前缀）
-     * @param type        世界类型
-     * @param presetName  预设名（预设系统下期实现，本期仅记录）
-     * @param ownerGuildId 关联公会 ID（可为空）
-     * @param seed        种子（可为空）
-     */
     public CompletableFuture<GuildWorld> createVoidWorld(String worldName, WorldType type,
                                                          String presetName, String ownerGuildId, Long seed) {
-        CompletableFuture<GuildWorld> future = new CompletableFuture<>();
-        if (!enabled) {
-            future.completeExceptionally(new IllegalStateException(unsupportedMessage()));
-            return future;
-        }
-        String name = buildWorldName(worldName);
-        if (name == null || !name.matches("[a-zA-Z0-9_]{1,64}")) {
-            future.completeExceptionally(new IllegalArgumentException("Invalid world name: " + worldName));
-            return future;
-        }
-        if (registry.contains(name) || Bukkit.getWorld(name) != null) {
-            future.completeExceptionally(new IllegalStateException("World already exists: " + name));
-            return future;
-        }
-        if (!loading.add(name)) {
-            future.completeExceptionally(new IllegalStateException("World is already being created: " + name));
-            return future;
-        }
-
-        GuildWorld gw = new GuildWorld(name);
-        gw.setType(type);
-        gw.setPresetName(presetName);
-        gw.setOwnerGuildId(ownerGuildId);
-        gw.setStatus(WorldStatus.LOADING);
-        registry.put(gw);
-        registry.save();
-        journal.begin(WorldJournal.Op.CREATE, name);
-
-        CompatibleScheduler.runTask(plugin, () -> {
-            try {
-                World world = doCreateWorld(name, seed);
-                applyWorldRules(world, type);
-                gw.setSpawnLocation(world.getSpawnLocation());
-                gw.setStatus(WorldStatus.READY);
-                gw.touch();
-                registry.save();
-                journal.done(WorldJournal.Op.CREATE, name);
-                plugin.getLogger().info("[World] Created void world '" + name + "' type=" + type
-                        + " preset=" + gw.getPresetName()
-                        + " path=" + WorldFiles.resolveWorldDirectory(name).getPath());
-                future.complete(gw);
-            } catch (Throwable e) {
-                gw.setStatus(WorldStatus.ERROR);
-                registry.save();
-                plugin.getLogger().log(Level.SEVERE, "[World] Failed to create world '" + name + "'", e);
-                future.completeExceptionally(e);
-            } finally {
-                loading.remove(name);
-            }
-        });
-        return future;
+        return lifecycle.createVoidWorld(worldName, type, presetName, ownerGuildId, seed);
     }
 
     /* ── 加载 / 卸载 / 删除 ──────────────────────────────── */
 
-    /**
-     * 重新加载一个已注册但未加载的世界（用于恢复 STALE 世界）。
-     */
     public CompletableFuture<GuildWorld> loadWorld(String name) {
-        CompletableFuture<GuildWorld> future = new CompletableFuture<>();
-        if (!enabled) {
-            future.completeExceptionally(new IllegalStateException(unsupportedMessage()));
-            return future;
-        }
-        GuildWorld gw = registry.get(name);
-        if (gw == null) {
-            future.completeExceptionally(new IllegalArgumentException("World is not managed: " + name));
-            return future;
-        }
-        if (Bukkit.getWorld(name) != null) {
-            gw.setStatus(WorldStatus.READY);
-            gw.touch();
-            registry.save();
-            future.complete(gw);
-            return future;
-        }
-        if (!loading.add(name)) {
-            future.completeExceptionally(new IllegalStateException("World is already being loaded: " + name));
-            return future;
-        }
-
-        journal.begin(WorldJournal.Op.LOAD, name);
-        gw.setStatus(WorldStatus.LOADING);
-        registry.save();
-
-        CompatibleScheduler.runTask(plugin, () -> {
-            try {
-                World world = doCreateWorld(name, null);
-                applyWorldRules(world, gw.getType());
-                gw.setSpawnLocation(world.getSpawnLocation());
-                gw.setStatus(WorldStatus.READY);
-                gw.touch();
-                registry.save();
-                journal.done(WorldJournal.Op.LOAD, name);
-                plugin.getLogger().info("[World] Loaded world '" + name + "'");
-                future.complete(gw);
-            } catch (Throwable e) {
-                gw.setStatus(WorldStatus.ERROR);
-                registry.save();
-                plugin.getLogger().log(Level.SEVERE, "[World] Failed to load world '" + name + "'", e);
-                future.completeExceptionally(e);
-            } finally {
-                loading.remove(name);
-            }
-        });
-        return future;
+        return lifecycle.loadWorld(name);
     }
 
-    /**
-     * 卸载一个已加载的世界（踢出玩家 → 保存 → 卸载），状态置 UNLOADED。
-     */
     public CompletableFuture<Void> unloadWorld(String name) {
-        CompletableFuture<Void> future = new CompletableFuture<>();
-        if (!enabled) {
-            future.completeExceptionally(new IllegalStateException(unsupportedMessage()));
-            return future;
-        }
-        GuildWorld gw = registry.get(name);
-        if (gw == null) {
-            future.completeExceptionally(new IllegalArgumentException("World is not managed: " + name));
-            return future;
-        }
-        World world = Bukkit.getWorld(name);
-        if (world == null) {
-            gw.setStatus(WorldStatus.UNLOADED);
-            gw.touch();
-            registry.save();
-            future.complete(null);
-            return future;
-        }
-
-        journal.begin(WorldJournal.Op.UNLOAD, name);
-        gw.setStatus(WorldStatus.UNLOADING);
-        registry.save();
-
-        CompatibleScheduler.runTask(plugin, () -> {
-            try {
-                for (Player player : new ArrayList<>(world.getPlayers())) {
-                    teleportToFallback(player);
-                }
-                if (world.isAutoSave()) {
-                    world.save();
-                }
-                Bukkit.unloadWorld(world, true);
-                gw.setStatus(WorldStatus.UNLOADED);
-                gw.touch();
-                registry.save();
-                journal.done(WorldJournal.Op.UNLOAD, name);
-                plugin.getLogger().info("[World] Unloaded world '" + name + "'");
-                future.complete(null);
-            } catch (Throwable e) {
-                gw.setStatus(WorldStatus.ERROR);
-                registry.save();
-                plugin.getLogger().log(Level.SEVERE, "[World] Failed to unload world '" + name + "'", e);
-                future.completeExceptionally(e);
-            }
-        });
-        return future;
+        return lifecycle.unloadWorld(name);
     }
 
-    /**
-     * 删除一个受管世界（卸载 → 删除文件夹 → 移除注册表记录）。
-     * 文件夹删除为 IO 密集操作，在异步线程执行。
-     *
-     * @param force 为 true 时即使世界已加载也先强制卸载再删除
-     */
     public CompletableFuture<Void> deleteWorld(String name, boolean force) {
-        CompletableFuture<Void> future = new CompletableFuture<>();
-        if (!enabled) {
-            future.completeExceptionally(new IllegalStateException(unsupportedMessage()));
-            return future;
-        }
-        GuildWorld gw = registry.get(name);
-        if (gw == null) {
-            future.completeExceptionally(new IllegalArgumentException("World is not managed: " + name));
-            return future;
-        }
-        World world = Bukkit.getWorld(name);
-        if (world != null && !force) {
-            future.completeExceptionally(new IllegalStateException(
-                    "World is loaded, unload it first or use --force: " + name));
-            return future;
-        }
-
-        journal.begin(WorldJournal.Op.DELETE, name);
-        gw.setStatus(WorldStatus.UNLOADING);
-        registry.save();
-
-        Runnable deleteTask = () -> {
-            try {
-                World loaded = Bukkit.getWorld(name);
-                if (loaded != null) {
-                    for (Player player : new ArrayList<>(loaded.getPlayers())) {
-                        teleportToFallback(player);
-                    }
-                    if (loaded.isAutoSave()) {
-                        loaded.save();
-                    }
-                    Bukkit.unloadWorld(loaded, true);
-                }
-            } catch (Throwable e) {
-                plugin.getLogger().log(Level.SEVERE, "[World] Failed to unload world '" + name
-                        + "' before deletion", e);
-            }
-            // IO 删除
-            CompatibleScheduler.runTaskAsync(plugin, () -> {
-                try {
-                    if (WorldFiles.worldDirectoryExists(name) && !WorldFiles.deleteWorldDirectory(name)) {
-                        throw new IllegalStateException("Failed to delete world directory: "
-                                + WorldFiles.resolveWorldDirectory(name));
-                    }
-                    registry.remove(name);
-                    registry.save();
-                    journal.done(WorldJournal.Op.DELETE, name);
-                    plugin.getLogger().info("[World] Deleted world '" + name + "'");
-                    future.complete(null);
-                } catch (Throwable e) {
-                    registry.get(name);
-                    GuildWorld cur = registry.get(name);
-                    if (cur != null) {
-                        cur.setStatus(WorldStatus.ERROR);
-                        registry.save();
-                    }
-                    plugin.getLogger().log(Level.SEVERE, "[World] Failed to delete world '" + name + "'", e);
-                    future.completeExceptionally(e);
-                }
-            });
-        };
-
-        CompatibleScheduler.runTask(plugin, deleteTask);
-        return future;
+        return lifecycle.deleteWorld(name, force);
     }
 
     /* ── 传送（Folia 安全）────────────────────────────────── */
@@ -627,43 +373,6 @@ public class GuildWorldService {
     }
 
     /* ── 内部工具 ────────────────────────────────────────── */
-
-    private World doCreateWorld(String name, Long seed) {
-        WorldCreator creator = new WorldCreator(name);
-        creator.generator(new VoidWorldGen());
-        creator.biomeProvider(VoidWorldGen.THE_VOID_BIOME_PROVIDER);
-        creator.environment(World.Environment.NORMAL);
-        creator.generateStructures(false);
-        if (seed != null) {
-            creator.seed(seed);
-        }
-        // Folia 的 Bukkit.createWorld 是官方 stub，必须走 NMS 反射桥接；
-        // Paper/Spigot 保持原生 API。
-        World world = ServerUtils.isFolia() ? FoliaWorldCreator.createWorld(creator) : Bukkit.createWorld(creator);
-        if (world == null) {
-            throw new IllegalStateException("createWorld returned null for '" + name + "'");
-        }
-        return world;
-    }
-
-    private void applyWorldRules(World world, WorldType type) {
-        switch (type) {
-            case EDIT:
-                world.setPVP(false);
-                world.setAutoSave(false);
-                world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
-                world.setGameRule(GameRule.DO_MOB_LOOT, false);
-                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-                world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
-                break;
-            case BATTLE:
-                world.setPVP(true);
-                world.setGameRule(GameRule.DO_MOB_SPAWNING, true);
-                break;
-            default:
-                break;
-        }
-    }
 
     private void teleportToFallback(Player player) {
         Location fallback = fallbackLocation();
