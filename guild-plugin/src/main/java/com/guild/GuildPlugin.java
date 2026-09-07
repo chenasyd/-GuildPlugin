@@ -28,6 +28,7 @@ import com.guild.core.geyser.PlayerConnectionService;
 import com.guild.core.module.ModuleManager;
 import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.utils.DebugLog;
+import com.guild.core.utils.MinecraftVersionSupport;
 import com.guild.core.utils.PluginFileLogger;
 import com.guild.core.utils.ServerUtils;
 import com.guild.core.utils.TestUtils;
@@ -103,20 +104,25 @@ public class GuildPlugin extends JavaPlugin {
         logger.info("Starting Guild Plugin...");
         logger.info("Detected server type: " + ServerUtils.getServerType());
         logger.info("Server version: " + ServerUtils.getServerVersion());
-        logger.info("Minecraft version: " + ServerUtils.getMinecraftVersion());
-        if (ServerUtils.isFolia()) {
-            logger.info("Folia world bridge supported: " + ServerUtils.isFoliaVersionSupported());
-        }
-        
+        String mcVersion = ServerUtils.getMinecraftVersion();
+        logger.info("Minecraft version: " + mcVersion);
+
         // 检查API版本兼容性
-        if (!ServerUtils.supportsApiVersion("1.20")) {
-            logger.severe("This plugin requires 1.20 or higher! Current version: " + ServerUtils.getServerVersion());
+        if (!ServerUtils.supportsApiVersion(MinecraftVersionSupport.MINIMUM_API_VERSION)
+                && !MinecraftVersionSupport.meetsMinimumVersion(mcVersion)) {
+            logger.severe("This plugin requires " + MinecraftVersionSupport.MINIMUM_API_VERSION
+                    + " or higher! Current version: " + ServerUtils.getServerVersion());
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        
-        // 运行兼容性测试（使用插件日志器）
+
+        // 运行兼容性测试（官方 / best-effort 自动声明）
         TestUtils.testCompatibility(logger);
+
+        if (ServerUtils.isFolia()) {
+            logger.info("Folia gworld bridge: " + (ServerUtils.isFoliaVersionSupported() ? "enabled" : "disabled")
+                    + (ServerUtils.isBestEffortMinecraftVersion() ? " (best-effort)" : ""));
+        }
         
         try {
             // 初始化服务容器
@@ -247,7 +253,11 @@ public class GuildPlugin extends JavaPlugin {
             if (!guildWorldService.isEnabled()) {
                 logger.warning("[World] " + guildWorldService.unsupportedMessage()
                         + " — create/load/unload/delete 与启动恢复已禁用"
-                        + "（支持: " + ServerUtils.getFoliaSupportedVersions() + "）");
+                        + "（官方目标: " + MinecraftVersionSupport.formatOfficialVersionList() + "）");
+            } else if (ServerUtils.isFolia() && ServerUtils.isBestEffortMinecraftVersion()) {
+                logger.warning("[World] Folia gworld running in best-effort mode on MC "
+                        + ServerUtils.getMinecraftVersion()
+                        + " — not in official target list");
             } else {
                 getServer().getPluginManager().registerEvents(
                         new SelectionListener(this, guildWorldService.getSelections(),

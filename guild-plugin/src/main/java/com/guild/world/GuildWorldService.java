@@ -140,7 +140,7 @@ public class GuildWorldService {
 
     public String unsupportedMessage() {
         return CoreMsg.rawDefault(plugin, "world.disabled.folia-unsupported",
-                "&c当前 Folia 版本 ({version}) 不支持 gworld",
+                "&c当前 Folia 版本 ({version}) 低于插件最低要求，gworld 不可用",
                 "{version}", ServerUtils.getMinecraftVersion());
     }
 

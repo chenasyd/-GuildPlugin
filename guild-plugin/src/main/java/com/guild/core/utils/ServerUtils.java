@@ -2,7 +2,6 @@ package com.guild.core.utils;
 
 import org.bukkit.Bukkit;
 
-import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -11,24 +10,13 @@ import java.util.Set;
 public class ServerUtils {
 
     /**
-     * Folia 多世界 NMS 桥接已对齐的版本集合（对应仓库 Plugins/Folia 下有源码的目录）。
-     * <p>刻意不包含 1.20.1（官方未提供该版本 Folia 源码，{@code gworld} 在其上保持禁用）。
-     * 形如 {@code 26.1.x} 表示该系列任意补丁版（26.1 / 26.1.2 …）。
+     * 官方兼容目标版本（插件核心与 Folia gworld 共用）。
+     *
+     * @see MinecraftVersionSupport#OFFICIAL_VERSIONS
+     * @deprecated 使用 {@link MinecraftVersionSupport#OFFICIAL_VERSIONS}
      */
-    public static final Set<String> FOLIA_SUPPORTED_VERSIONS = Set.of(
-            "1.19.4",
-            "1.20.4",
-            "1.20.6",
-            "1.21.1",
-            "1.21.3",
-            "1.21.4",
-            "1.21.5",
-            "1.21.6",
-            "1.21.7",
-            "1.21.8",
-            "1.21.11",
-            "26.1.x"
-    );
+    @Deprecated
+    public static final Set<String> FOLIA_SUPPORTED_VERSIONS = MinecraftVersionSupport.OFFICIAL_VERSIONS;
 
     public enum ServerType {
         SPIGOT,
@@ -90,36 +78,29 @@ public class ServerUtils {
     }
 
     /**
-     * 当前 Folia 版本是否在多世界 NMS 支持列表中。
+     * 当前 Folia 版本是否可启用 gworld（官方或 best-effort）。
      * 非 Folia 环境无意义，调用方应先判断 {@link #isFolia()}。
      */
     public static boolean isFoliaVersionSupported() {
-        String version = getMinecraftVersion();
-        for (String supported : FOLIA_SUPPORTED_VERSIONS) {
-            if (matchesSupportedVersion(version, supported)) {
-                return true;
-            }
-        }
-        return false;
+        return MinecraftVersionSupport.isFoliaGworldCompatible(getMinecraftVersion());
+    }
+
+    /** 当前版本是否为官方兼容目标。 */
+    public static boolean isOfficialMinecraftVersion() {
+        return MinecraftVersionSupport.isOfficialVersion(getMinecraftVersion());
+    }
+
+    /** 当前版本是否为 best-effort（如 26.1.4、25.1）。 */
+    public static boolean isBestEffortMinecraftVersion() {
+        return MinecraftVersionSupport.resolve(getMinecraftVersion())
+                == MinecraftVersionSupport.CompatibilityLevel.BEST_EFFORT;
     }
 
     /**
      * 只读视图（便于日志/诊断）。
      */
     public static Set<String> getFoliaSupportedVersions() {
-        return Collections.unmodifiableSet(FOLIA_SUPPORTED_VERSIONS);
-    }
-
-    private static boolean matchesSupportedVersion(String actual, String supported) {
-        if (supported.equals(actual)) {
-            return true;
-        }
-        // 系列通配：26.1.x → 匹配 26.1 / 26.1.2 / 26.1.x
-        if (supported.endsWith(".x")) {
-            String series = supported.substring(0, supported.length() - 2);
-            return actual.equals(series) || actual.startsWith(series + ".");
-        }
-        return false;
+        return MinecraftVersionSupport.OFFICIAL_VERSIONS;
     }
 
     /**
