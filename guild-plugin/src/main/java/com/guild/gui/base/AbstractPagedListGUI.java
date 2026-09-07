@@ -31,7 +31,9 @@ public abstract class AbstractPagedListGUI<T> implements GUI {
         /** 侧栏：上一页 18、下一页 26（返回由 {@link #setupToolbar} 处理） */
         SIDE(18, 26, -1),
         /** 底栏居中：上一页 48、返回 49、下一页 50 */
-        CENTER_BAR(48, 50, 49);
+        CENTER_BAR(48, 50, 49),
+        /** 底栏居中翻页 + 页码槽 49（返回/刷新由 {@link #setupToolbar} 处理） */
+        CENTER_BAR_PAGE_INFO(48, 50, -1);
 
         private final int prevSlot;
         private final int nextSlot;

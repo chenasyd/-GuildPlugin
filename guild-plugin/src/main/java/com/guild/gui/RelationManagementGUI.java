@@ -1,22 +1,23 @@
 package com.guild.gui;
 
 import com.guild.GuildPlugin;
-import com.guild.core.gui.GUI;
-import com.guild.core.language.LanguageManager;
-import com.guild.core.utils.ColorUtils;
-import com.guild.models.Guild;
-import com.guild.models.GuildRelation;
-import com.guild.core.utils.CompatibleScheduler;
 import com.guild.core.geyser.BedrockFormSender;
 import com.guild.core.geyser.PlayerConnectionService;
+import com.guild.core.time.TimeProvider;
+import com.guild.core.utils.ColorUtils;
+import com.guild.core.utils.CompatibleScheduler;
+import com.guild.gui.base.AbstractPagedListGUI;
+import com.guild.gui.base.GuiLayoutUtils;
+import com.guild.models.Guild;
+import com.guild.models.GuildRelation;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.geysermc.cumulus.form.SimpleForm;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,439 +26,383 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * 关系管理GUI - 管理员专用
+ * 关系管理 GUI（管理员）：全服关系分页列表 + 确认删除。
  */
-public class RelationManagementGUI implements GUI {
+public class RelationManagementGUI extends AbstractPagedListGUI<GuildRelation> {
 
-    // ── 图像模式功能常量 ──
-    public static final String FUNC_PAGE_INFO = "PAGE_INFO";
-    public static final String FUNC_PREV_PAGE = "PREV_PAGE";
-    public static final String FUNC_NEXT_PAGE = "NEXT_PAGE";
     public static final String FUNC_REFRESH = "REFRESH";
-    public static final String FUNC_BACK = "BACK";
 
-    private final GuildPlugin plugin;
-    private final Player player;
-    private final LanguageManager languageManager;
-    private int currentPage = 0;
-    private final int itemsPerPage = 28; // 7列 × 4行
-    private static final int PREVIOUS_PAGE_SLOT = 48;
-    private static final int NEXT_PAGE_SLOT = 50;
-    private static final int PAGE_INFO_SLOT = 49;
-    private static final int BACK_SLOT = 46;
-    private static final int REFRESH_SLOT = 52;
-    private List<GuildRelation> allRelations = new ArrayList<>();
+    private static final int TOOLBAR_BACK = 46;
+    private static final int SLOT_PAGE_INFO = 49;
+    private static final int TOOLBAR_REFRESH = 52;
+
+    private static final Map<UUID, GuildRelation> pendingDeletions = new HashMap<>();
+
     private boolean isLoading = false;
 
-    // 确认删除机制
-    private static final Map<UUID, GuildRelation> pendingDeletions = new HashMap<>();
-    private static final Map<UUID, Long> deletionTimers = new HashMap<>();
-    private static final long CONFIRMATION_TIMEOUT = 10000; // 10秒确认超时
-
     public RelationManagementGUI(GuildPlugin plugin, Player player) {
-        this.plugin = plugin;
-        this.player = player;
-        this.languageManager = plugin.getLanguageManager();
-        // 检查管理员权限
-        if (!player.hasPermission("guild.admin")) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.no-permission", "&cInsufficient permission")));
-            return;
+        super(plugin, player, PaginationLayout.CENTER_BAR_PAGE_INFO, GuiLayoutUtils.ITEMS_PER_PAGE);
+        if (player.hasPermission("guild.admin")) {
+            loadRelations();
         }
-        loadRelations();
     }
 
     @Override
     public String getTitle() {
-        return ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.relation-management-title", "&4Relation Management - Admin"));
+        return ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                "gui.relation-management.relation-management-title",
+                "&4Relation Management - Admin"));
     }
-    
+
     @Override
-    public int getSize() {
-        return 54;
+    protected void openBackGui(Player player) {
+        plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
     }
-    
+
+    @Override
+    protected boolean validateAccess(Player player) {
+        return player.hasPermission("guild.admin");
+    }
+
+    @Override
+    protected void onUnauthorizedAccess(Player player) {
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                "gui.common.no-permission", "&cInsufficient permission")));
+    }
+
     @Override
     public void setupInventory(Inventory inventory) {
-        // 填充边框
-        fillBorder(inventory);
-        
-        // 设置关系列表
-        setupRelationList(inventory);
-        
-        // 设置分页按钮
-        setupPaginationButtons(inventory);
-        
-        // 设置操作按钮
-        setupActionButtons(inventory);
-
-        // 应用图像模式
-        plugin.getGuiManager().applyImageModeIfNeeded(player, inventory, getGuiType());
-    }
-    
-    private void setupRelationList(Inventory inventory) {
+        if (shouldFillBorder()) {
+            GuiLayoutUtils.fillBorder54(inventory);
+        }
+        setupToolbar(inventory);
         if (isLoading) {
-            // 显示加载中
-            ItemStack loadingItem = createItem(Material.SAND,
-                ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.common.loading", "Loading...")),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.relation-management.loading-data", "Loading relation data...")));
-            inventory.setItem(22, loadingItem);
-            return;
+            inventory.setItem(22, createItem(Material.SAND,
+                    ColorUtils.colorize("&e" + languageManager.getGuiMessage(viewer,
+                            "gui.common.loading", "Loading...")),
+                    ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                            "gui.relation-management.loading-data", "Loading relation data..."))));
+        } else if (entries.isEmpty()) {
+            displayEmptyState(inventory);
+        } else {
+            displayEntries(inventory);
+        }
+        setupNavigationButtons(inventory);
+        plugin.getGuiManager().applyImageModeIfNeeded(viewer, inventory, getGuiType());
+    }
+
+    @Override
+    protected void displayEmptyState(Inventory inventory) {
+        inventory.setItem(22, createItem(Material.BARRIER,
+                ColorUtils.colorize("&c" + languageManager.getGuiMessage(viewer,
+                        "gui.relation-management.no-relations", "No relation data")),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                        "gui.relation-management.no-relations-desc", "No guild relations found"))));
+    }
+
+    @Override
+    protected void setupToolbar(Inventory inventory) {
+        inventory.setItem(TOOLBAR_BACK, createItem(Material.ARROW,
+                ColorUtils.colorize(languageManager.getGuiMessage(viewer, "gui.common.back", "Back")),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                        "gui.relation-management.relation-management-back-desc", "Back to admin menu"))));
+
+        inventory.setItem(TOOLBAR_REFRESH, createItem(Material.EMERALD,
+                ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                        "gui.guild-list-management.gui-refresh", "&aRefresh List")),
+                ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                        "gui.relation-management.relation-management-refresh-desc",
+                        "Reload relation data"))));
+    }
+
+    @Override
+    protected void setupNavigationButtons(Inventory inventory) {
+        if (currentPage > 0) {
+            inventory.setItem(slotForFunction(FUNC_PREV_PAGE, 48),
+                    createItem(Material.ARROW,
+                            ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                                    "gui.relation-management.previous-page", "&aPrevious Page")),
+                            ColorUtils.colorize(languageManager.getGuiIndexedMessage(viewer,
+                                    "gui.relation-management.previous-page.desc", "&7Page {0}",
+                                    String.valueOf(currentPage)))));
         }
 
-        if (allRelations.isEmpty()) {
-            // 显示无数据
-            ItemStack emptyItem = createItem(Material.BARRIER,
-                ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.relation-management.no-relations", "No relation data")),
-                ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.relation-management.no-relations-desc", "No guild relations found")));
-            inventory.setItem(22, emptyItem);
-            return;
-        }
-        
-        int startIndex = currentPage * itemsPerPage;
-        int endIndex = Math.min(startIndex + itemsPerPage, allRelations.size());
-        
-        for (int i = 0; i < itemsPerPage; i++) {
-            if (startIndex + i < endIndex) {
-                GuildRelation relation = allRelations.get(startIndex + i);
-                
-                // 计算在2-8列，2-5行的位置 (slots 10-43)
-                int row = (i / 7) + 1; // 2-5行
-                int col = (i % 7) + 1; // 2-8列
-                int slot = row * 9 + col;
-                
-                inventory.setItem(slot, createRelationItem(relation));
-            }
+        int totalPages = entries.isEmpty() ? 1 : maxPageIndex() + 1;
+        inventory.setItem(SLOT_PAGE_INFO, createItem(Material.PAPER,
+                ColorUtils.colorize(languageManager.getGuiIndexedMessage(viewer,
+                        "gui.relation-management.page-info", "&ePage {0} of {1}",
+                        String.valueOf(currentPage + 1), String.valueOf(totalPages))),
+                ColorUtils.colorize(languageManager.getGuiIndexedMessage(viewer,
+                        "gui.relation-management.total-relations", "&7Total {0} relations",
+                        String.valueOf(entries.size())))));
+
+        if (currentPage < maxPageIndex()) {
+            inventory.setItem(slotForFunction(FUNC_NEXT_PAGE, 50),
+                    createItem(Material.ARROW,
+                            ColorUtils.colorize(languageManager.getGuiMessage(viewer,
+                                    "gui.relation-management.next-page", "&aNext Page")),
+                            ColorUtils.colorize(languageManager.getGuiIndexedMessage(viewer,
+                                    "gui.relation-management.next-page.desc", "&7Page {0}",
+                                    String.valueOf(currentPage + 2)))));
         }
     }
-    
-    private ItemStack createRelationItem(GuildRelation relation) {
+
+    @Override
+    protected boolean handleToolbarClick(Player player, int slot, ClickType clickType) {
+        if (slot == TOOLBAR_BACK) {
+            openBackGui(player);
+            return true;
+        }
+        if (slot == TOOLBAR_REFRESH) {
+            if (!isLoading) {
+                loadRelations();
+                player.sendMessage(ColorUtils.colorize("&a" + languageManager.getGuiMessage(player,
+                        "gui.relation-management.refreshing", "Refreshing relation list...")));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected ItemStack createEntryItem(GuildRelation relation) {
         Material material = getRelationMaterial(relation.getType());
         String status = getRelationStatus(relation.getStatus());
-        
-        // 检查是否在待删除状态
-        boolean isPendingDeletion = pendingDeletions.containsKey(player.getUniqueId()) && 
-                                  pendingDeletions.get(player.getUniqueId()).getId() == relation.getId();
-        
+        boolean isPendingDeletion = pendingDeletions.containsKey(viewer.getUniqueId())
+                && pendingDeletions.get(viewer.getUniqueId()).getId() == relation.getId();
+
         List<String> lore = new ArrayList<>();
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-relations.relation-type", "Relation type") + ": " + getRelationTypeName(relation.getType())));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-relations.status", "Status") + ": " + status));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.relation-management.guild1", "Guild 1") + ": " + relation.getGuild1Name()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.relation-management.guild2", "Guild 2") + ": " + relation.getGuild2Name()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-relations.initiator", "Initiator") + ": " + relation.getInitiatorName()));
-        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.guild-relations.created-time", "Created time") + ": " + formatDateTime(relation.getCreatedAt())));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                "gui.guild-relations.relation-type", "Relation type")
+                + ": " + getRelationTypeName(relation.getType())));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                "gui.guild-relations.status", "Status") + ": " + status));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                "gui.relation-management.guild1", "Guild 1") + ": " + relation.getGuild1Name()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                "gui.relation-management.guild2", "Guild 2") + ": " + relation.getGuild2Name()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                "gui.guild-relations.initiator", "Initiator") + ": " + relation.getInitiatorName()));
+        lore.add(ColorUtils.colorize("&7" + languageManager.getGuiMessage(viewer,
+                "gui.guild-relations.created-time", "Created time")
+                + ": " + formatDateTime(relation.getCreatedAt())));
         lore.add("");
 
         if (isPendingDeletion) {
-            lore.add(ColorUtils.colorize("&4⚠ " + languageManager.getGuiMessage(player, "gui.relation-management.pending-delete", "Pending confirmation for deletion")));
-            lore.add(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.relation-management.confirm-delete", "Left click: Confirm Delete")));
-            lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.relation-management.cancel-delete", "Right click: Cancel")));
+            lore.add(ColorUtils.colorize("&4⚠ " + languageManager.getGuiMessage(viewer,
+                    "gui.relation-management.pending-delete", "Pending confirmation for deletion")));
+            lore.add(ColorUtils.colorize("&c" + languageManager.getGuiMessage(viewer,
+                    "gui.relation-management.confirm-delete", "Left click: Confirm Delete")));
+            lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(viewer,
+                    "gui.relation-management.cancel-delete", "Right click: Cancel")));
         } else {
-            lore.add(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.guild-relations.left-delete", "Left click: Delete relation")));
-            lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(player, "gui.guild-relations.right-view-details", "Right click: View details")));
+            lore.add(ColorUtils.colorize("&c" + languageManager.getGuiMessage(viewer,
+                    "gui.guild-relations.left-delete", "Left click: Delete relation")));
+            lore.add(ColorUtils.colorize("&e" + languageManager.getGuiMessage(viewer,
+                    "gui.guild-relations.right-view-details", "Right click: View details")));
         }
-        
-        String displayName = ColorUtils.colorize("&6" + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name());
-        if (isPendingDeletion) {
-            displayName = ColorUtils.colorize("&4" + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name());
-        }
-        
+
+        String displayName = isPendingDeletion
+                ? ColorUtils.colorize("&4" + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name())
+                : ColorUtils.colorize("&6" + relation.getGuild1Name() + " ↔ " + relation.getGuild2Name());
         return createItem(material, displayName, lore.toArray(new String[0]));
     }
-    
-    private Material getRelationMaterial(GuildRelation.RelationType type) {
-        switch (type) {
-            case ALLY: return Material.GREEN_WOOL;
-            case ENEMY: return Material.RED_WOOL;
-            case WAR: return Material.NETHERITE_SWORD;
-            case TRUCE: return Material.YELLOW_WOOL;
-            case NEUTRAL: return Material.GRAY_WOOL;
-            default: return Material.STONE;
-        }
-    }
-    
-    private String getRelationTypeName(GuildRelation.RelationType type) {
-        return type.getDisplayName(languageManager.getPlayerLanguage(player));
-    }
 
-    private String getRelationStatus(GuildRelation.RelationStatus status) {
-        return status.getDisplayName(languageManager.getPlayerLanguage(player));
-    }
-    
-    private String formatDateTime(java.time.LocalDateTime dateTime) {
-        if (dateTime == null) return languageManager.getGuiMessage(player, "gui.guild-relations.unknown", "Unknown");
-        return dateTime.format(com.guild.core.time.TimeProvider.FULL_FORMATTER);
-    }
-    
-    private void setupPaginationButtons(Inventory inventory) {
-        int totalPages = Math.max(1, (int) Math.ceil((double) allRelations.size() / itemsPerPage));
-        if (currentPage > totalPages - 1) {
-            currentPage = totalPages - 1;
-        }
-
-        // 上一页按钮
-        if (currentPage > 0) {
-            inventory.setItem(PREVIOUS_PAGE_SLOT, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.previous-page", "&aPrevious Page")),
-                ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.previous-page.desc", "&7Page {0}", String.valueOf(currentPage)))));
-        }
-
-        // 页码信息
-        inventory.setItem(PAGE_INFO_SLOT, createItem(Material.PAPER,
-            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.page-info", "&ePage {0} of {1}", String.valueOf(currentPage + 1), String.valueOf(totalPages))),
-            ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.total-relations", "&7Total {0} relations", String.valueOf(allRelations.size())))));
-
-        // 下一页按钮
-        if (currentPage < totalPages - 1) {
-            inventory.setItem(NEXT_PAGE_SLOT, createItem(Material.ARROW,
-                ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.next-page", "&aNext Page")),
-                ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.next-page.desc", "&7Page {0}", String.valueOf(currentPage + 2)))));
-        }
-    }
-
-    private void setupActionButtons(Inventory inventory) {
-        // 返回按钮
-        inventory.setItem(46, createItem(Material.ARROW,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.back", "Back")),
-            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.relation-management.relation-management-back-desc", "Back to admin menu"))));
-
-        // 刷新按钮
-        inventory.setItem(52, createItem(Material.EMERALD,
-            ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.guild-list-management.gui-refresh", "&aRefresh List")),
-            ColorUtils.colorize("&7" + languageManager.getGuiMessage(player, "gui.relation-management.relation-management-refresh-desc", "Reload relation data"))));
-    }
-    
-    private void fillBorder(Inventory inventory) {
-        ItemStack border = createItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-        
-        // 填充边框
-        for (int i = 0; i < 9; i++) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 45, border);
-        }
-        
-        for (int i = 9; i < 45; i += 9) {
-            inventory.setItem(i, border);
-            inventory.setItem(i + 8, border);
-        }
-    }
-    
-    private void loadRelations() {
-        if (isLoading) return; // 防止重复加载
-        
-        isLoading = true;
-        
-        // 获取所有公会的关系
-        plugin.getGuildService().getAllGuildsAsync().thenCompose(guilds -> {
-            List<CompletableFuture<List<GuildRelation>>> relationFutures = new ArrayList<>();
-            
-            for (Guild guild : guilds) {
-                relationFutures.add(plugin.getGuildService().getGuildRelationsAsync(guild.getId()));
-            }
-            
-            return CompletableFuture.allOf(relationFutures.toArray(new CompletableFuture[0]))
-                .thenApply(v -> {
-                    List<GuildRelation> allRelationsList = new ArrayList<>();
-                    for (CompletableFuture<List<GuildRelation>> future : relationFutures) {
-                        try {
-                            List<GuildRelation> part = future.join();
-                            if (part != null) {
-                                allRelationsList.addAll(part);
-                            }
-                        } catch (Exception e) {
-                            plugin.getLogger().warning("Failed to load guild relations: " + e.getMessage());
-                        }
-                    }
-                    return allRelationsList;
-                });
-        }).thenAccept(relations -> {
-            CompatibleScheduler.runTask(plugin, player, () -> {
-                allRelations.clear();
-                allRelations.addAll(relations);
-                isLoading = false;
-                
-                if (player.isOnline()) {
-                    refresh(player);
-                }
-            });
-        }).exceptionally(throwable -> {
-            CompatibleScheduler.runTask(plugin, player, () -> {
-                isLoading = false;
-                if (player.isOnline()) {
-                    player.sendMessage(ColorUtils.colorize("&c" + languageManager.getGuiMessage(player, "gui.relation-management.load-error", "Error loading relation data: {error}", "{error}", throwable.getMessage())));
-                    refresh(player);
-                }
-            });
-            return null;
-        });
-    }
-    
     @Override
-    public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
-        // 检查管理员权限
-        if (!player.hasPermission("guild.admin")) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.common.no-permission", "&cInsufficient permission")));
-            return;
-        }
-        
-        if (clickedItem == null || !clickedItem.hasItemMeta()) return;
-        
-        String itemName = clickedItem.getItemMeta().getDisplayName();
-        
-        if (slot == 46) {
-            // 返回
-            plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
-        } else if (slot == 52) {
-            // 刷新
-            if (!isLoading) {
-                loadRelations();
-                player.sendMessage(ColorUtils.colorize("&a" + languageManager.getGuiMessage(player, "gui.relation-management.refreshing", "Refreshing relation list...")));
-            }
-        } else if (slot == PREVIOUS_PAGE_SLOT && currentPage > 0) {
-            // 上一页
-            currentPage--;
-            plugin.getGuiManager().refreshGUI(player);
-        } else if (slot == NEXT_PAGE_SLOT && currentPage < (int) Math.ceil((double) allRelations.size() / itemsPerPage) - 1) {
-            // 下一页
-            currentPage++;
-            plugin.getGuiManager().refreshGUI(player);
-        } else if (slot >= 10 && slot <= 43) {
-            // 关系项目 - 检查是否在2-8列，2-5行范围内
-            int row = slot / 9;
-            int col = slot % 9;
-            if (row >= 1 && row <= 4 && col >= 1 && col <= 7) {
-                int relativeIndex = (row - 1) * 7 + (col - 1);
-                int relationIndex = (currentPage * itemsPerPage) + relativeIndex;
-                if (relationIndex < allRelations.size()) {
-                    GuildRelation relation = allRelations.get(relationIndex);
-                    handleRelationClick(player, relation, clickType);
-                }
-            }
-        }
-    }
-    
-    private void handleRelationClick(Player player, GuildRelation relation, ClickType clickType) {
+    protected void onEntryClick(Player player, GuildRelation relation, ClickType clickType) {
         if (clickType == ClickType.LEFT) {
-            // 左键处理
-            if (pendingDeletions.containsKey(player.getUniqueId()) && 
-                pendingDeletions.get(player.getUniqueId()).getId() == relation.getId()) {
-                // 确认删除
+            if (pendingDeletions.containsKey(player.getUniqueId())
+                    && pendingDeletions.get(player.getUniqueId()).getId() == relation.getId()) {
                 confirmDeleteRelation(player, relation);
             } else {
-                // 开始删除流程
                 startDeleteRelation(player, relation);
             }
         } else if (clickType == ClickType.RIGHT) {
-            // 右键处理
-            if (pendingDeletions.containsKey(player.getUniqueId()) && 
-                pendingDeletions.get(player.getUniqueId()).getId() == relation.getId()) {
-                // 取消删除
+            if (pendingDeletions.containsKey(player.getUniqueId())
+                    && pendingDeletions.get(player.getUniqueId()).getId() == relation.getId()) {
                 cancelDeleteRelation(player);
             } else {
-                // 查看详情
                 showRelationDetails(player, relation);
             }
         }
     }
-    
-    private void startDeleteRelation(Player player, GuildRelation relation) {
-        // 设置待删除状态
-        pendingDeletions.put(player.getUniqueId(), relation);
-        deletionTimers.put(player.getUniqueId(), System.currentTimeMillis());
-        
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.confirm-delete-question", "&cAre you sure you want to delete relation: {0} ↔ {1}?", relation.getGuild1Name(), relation.getGuild2Name())));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.confirm-delete-instruction", "&cLeft Click: Confirm Delete | Right Click: Cancel")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.auto-cancel", "&eAuto-cancel after 10 seconds")));
-        
-        // 刷新GUI显示待删除状态
-        plugin.getGuiManager().refreshGUI(player);
-        
-        // 设置超时任务
-        CompatibleScheduler.runTaskLater(plugin, player, () -> {
-            if (pendingDeletions.containsKey(player.getUniqueId()) && 
-                pendingDeletions.get(player.getUniqueId()).getId() == relation.getId()) {
-                cancelDeleteRelation(player);
-            }
-        }, 200L); // 10秒 = 200 ticks
-    }
-    
-    private void confirmDeleteRelation(Player player, GuildRelation relation) {
-        // 清除待删除状态
-        pendingDeletions.remove(player.getUniqueId());
-        deletionTimers.remove(player.getUniqueId());
-        
-        // 执行删除
-        plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
-            CompatibleScheduler.runTask(plugin, player, () -> {
-                if (success) {
-                    player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.delete-success", "&aDeleted relation: {0} ↔ {1}", relation.getGuild1Name(), relation.getGuild2Name())));
-                    // 从列表中移除
-                    allRelations.remove(relation);
-                    // 刷新GUI
-                    plugin.getGuiManager().refreshGUI(player);
-                } else {
-                    player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.delete-failed", "&cFailed to delete relation!")));
+
+    private void loadRelations() {
+        if (isLoading) {
+            return;
+        }
+        isLoading = true;
+        plugin.getGuiManager().refreshGUI(viewer);
+
+        plugin.getGuildService().getAllGuildsAsync().thenCompose(guilds -> {
+            List<CompletableFuture<List<GuildRelation>>> relationFutures = new ArrayList<>();
+            if (guilds != null) {
+                for (Guild guild : guilds) {
+                    relationFutures.add(plugin.getGuildService().getGuildRelationsAsync(guild.getId()));
                 }
-            });
-        }).exceptionally(throwable -> {
-            CompatibleScheduler.runTask(plugin, player, () -> {
-                player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.delete-error", "&cError deleting relation: {0}", throwable.getMessage())));
+            }
+            if (relationFutures.isEmpty()) {
+                return CompletableFuture.completedFuture(List.<GuildRelation>of());
+            }
+            return CompletableFuture.allOf(relationFutures.toArray(new CompletableFuture[0]))
+                    .thenApply(v -> {
+                        List<GuildRelation> allRelationsList = new ArrayList<>();
+                        for (CompletableFuture<List<GuildRelation>> future : relationFutures) {
+                            try {
+                                List<GuildRelation> part = future.join();
+                                if (part != null) {
+                                    allRelationsList.addAll(part);
+                                }
+                            } catch (Exception e) {
+                                plugin.getLogger().warning("Failed to load guild relations: " + e.getMessage());
+                            }
+                        }
+                        return allRelationsList;
+                    });
+        }).thenAccept(relations -> CompatibleScheduler.runTask(plugin, viewer, () -> {
+            setEntries(relations);
+            isLoading = false;
+            if (viewer.isOnline()) {
+                refresh(viewer);
+            }
+        })).exceptionally(throwable -> {
+            CompatibleScheduler.runTask(plugin, viewer, () -> {
+                isLoading = false;
+                if (viewer.isOnline()) {
+                    viewer.sendMessage(ColorUtils.colorize("&c" + languageManager.getGuiMessage(viewer,
+                            "gui.relation-management.load-error",
+                            "Error loading relation data: {error}", "{error}", throwable.getMessage())));
+                    refresh(viewer);
+                }
             });
             return null;
         });
     }
-    
+
+    private Material getRelationMaterial(GuildRelation.RelationType type) {
+        return switch (type) {
+            case ALLY -> Material.GREEN_WOOL;
+            case ENEMY -> Material.RED_WOOL;
+            case WAR -> Material.NETHERITE_SWORD;
+            case TRUCE -> Material.YELLOW_WOOL;
+            case NEUTRAL -> Material.GRAY_WOOL;
+            default -> Material.STONE;
+        };
+    }
+
+    private String getRelationTypeName(GuildRelation.RelationType type) {
+        return type.getDisplayName(languageManager.getPlayerLanguage(viewer));
+    }
+
+    private String getRelationStatus(GuildRelation.RelationStatus status) {
+        return status.getDisplayName(languageManager.getPlayerLanguage(viewer));
+    }
+
+    private String formatDateTime(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return languageManager.getGuiMessage(viewer, "gui.guild-relations.unknown", "Unknown");
+        }
+        return dateTime.format(TimeProvider.FULL_FORMATTER);
+    }
+
+    private void startDeleteRelation(Player player, GuildRelation relation) {
+        pendingDeletions.put(player.getUniqueId(), relation);
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player,
+                "gui.relation-management.confirm-delete-question",
+                "&cAre you sure you want to delete relation: {0} ↔ {1}?",
+                relation.getGuild1Name(), relation.getGuild2Name())));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                "gui.relation-management.confirm-delete-instruction",
+                "&cLeft Click: Confirm Delete | Right Click: Cancel")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                "gui.relation-management.auto-cancel", "&eAuto-cancel after 10 seconds")));
+        plugin.getGuiManager().refreshGUI(player);
+
+        CompatibleScheduler.runTaskLater(plugin, player, () -> {
+            if (pendingDeletions.containsKey(player.getUniqueId())
+                    && pendingDeletions.get(player.getUniqueId()).getId() == relation.getId()) {
+                cancelDeleteRelation(player);
+            }
+        }, 200L);
+    }
+
+    private void confirmDeleteRelation(Player player, GuildRelation relation) {
+        pendingDeletions.remove(player.getUniqueId());
+        plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
+            CompatibleScheduler.runTask(plugin, player, () -> {
+                if (success) {
+                    player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player,
+                            "gui.relation-management.delete-success",
+                            "&aDeleted relation: {0} ↔ {1}",
+                            relation.getGuild1Name(), relation.getGuild2Name())));
+                    loadRelations();
+                } else {
+                    player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                            "gui.relation-management.delete-failed", "&cFailed to delete relation!")));
+                }
+            });
+        }).exceptionally(throwable -> {
+            CompatibleScheduler.runTask(plugin, player, () -> player.sendMessage(ColorUtils.colorize(
+                    languageManager.getGuiIndexedMessage(player,
+                            "gui.relation-management.delete-error",
+                            "&cError deleting relation: {0}", throwable.getMessage()))));
+            return null;
+        });
+    }
+
     private void cancelDeleteRelation(Player player) {
         GuildRelation relation = pendingDeletions.remove(player.getUniqueId());
-        deletionTimers.remove(player.getUniqueId());
-        
         if (relation != null) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.cancel-delete", "&eCancelled deletion of relation: {0} ↔ {1}", relation.getGuild1Name(), relation.getGuild2Name())));
-            // 刷新GUI
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player,
+                    "gui.relation-management.cancel-delete",
+                    "&eCancelled deletion of relation: {0} ↔ {1}",
+                    relation.getGuild1Name(), relation.getGuild2Name())));
             plugin.getGuiManager().refreshGUI(player);
         }
     }
 
     private void showRelationDetails(Player player, GuildRelation relation) {
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.title", "&6=== Relation Details ===")));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.type", "&eRelation Type: {0}", getRelationTypeName(relation.getType()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.status", "&eStatus: {0}", getRelationStatus(relation.getStatus()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.guild1", "&eGuild 1: {0} (ID: {1})", relation.getGuild1Name(), String.valueOf(relation.getGuild1Id()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.guild2", "&eGuild 2: {0} (ID: {1})", relation.getGuild2Name(), String.valueOf(relation.getGuild2Id()))));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.initiator", "&eInitiator: {0}", relation.getInitiatorName())));
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.created", "&eCreated: {0}", formatDateTime(relation.getCreatedAt()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                "gui.relation-management.details.title", "&6=== Relation Details ===")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player,
+                "gui.relation-management.details.type", "&eRelation Type: {0}",
+                getRelationTypeName(relation.getType()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player,
+                "gui.relation-management.details.status", "&eStatus: {0}",
+                getRelationStatus(relation.getStatus()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player,
+                "gui.relation-management.details.guild1", "&eGuild 1: {0} (ID: {1})",
+                relation.getGuild1Name(), String.valueOf(relation.getGuild1Id()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player,
+                "gui.relation-management.details.guild2", "&eGuild 2: {0} (ID: {1})",
+                relation.getGuild2Name(), String.valueOf(relation.getGuild2Id()))));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player,
+                "gui.relation-management.details.initiator", "&eInitiator: {0}",
+                relation.getInitiatorName())));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player,
+                "gui.relation-management.details.created", "&eCreated: {0}",
+                formatDateTime(relation.getCreatedAt()))));
         if (relation.getUpdatedAt() != null) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.updated", "&eUpdated: {0}", formatDateTime(relation.getUpdatedAt()))));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player,
+                    "gui.relation-management.details.updated", "&eUpdated: {0}",
+                    formatDateTime(relation.getUpdatedAt()))));
         }
         if (relation.getExpiresAt() != null) {
-            player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player, "gui.relation-management.details.expires", "&eExpires: {0}", formatDateTime(relation.getExpiresAt()))));
+            player.sendMessage(ColorUtils.colorize(languageManager.getGuiIndexedMessage(player,
+                    "gui.relation-management.details.expires", "&eExpires: {0}",
+                    formatDateTime(relation.getExpiresAt()))));
         }
-        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player, "gui.relation-management.details.separator", "&6==================")));
+        player.sendMessage(ColorUtils.colorize(languageManager.getGuiMessage(player,
+                "gui.relation-management.details.separator", "&6==================")));
     }
-    
-    private ItemStack createItem(Material material, String name, String... lore) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta meta = item.getItemMeta();
-        
-        if (meta != null) {
-            meta.setDisplayName(name);
-            
-            List<String> loreList = new ArrayList<>();
-            for (String line : lore) {
-                loreList.add(line);
-            }
-            meta.setLore(loreList);
-            
-            item.setItemMeta(meta);
-        }
-        
-        return item;
-    }
-    
+
     @Override
     public boolean openBedrockForm(Player player) {
-        if (!BedrockFormSender.isAvailable()) return false;
-        if (!player.hasPermission("guild.admin")) {
-            player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-no-permission", "&cYou do not have admin permission!"));
+        if (!BedrockFormSender.isAvailable()) {
+            return false;
+        }
+        if (!validateAccess(player)) {
+            onUnauthorizedAccess(player);
             return false;
         }
         sendBedrockRelationMgmtList(player, 0);
@@ -467,164 +412,197 @@ public class RelationManagementGUI implements GUI {
     private void sendBedrockRelationMgmtList(Player player, int page) {
         plugin.getGuildService().getAllGuildsAsync().thenCompose(guilds -> {
             List<CompletableFuture<List<GuildRelation>>> futures = new ArrayList<>();
-            for (Guild g : guilds) {
-                futures.add(plugin.getGuildService().getGuildRelationsAsync(g.getId()));
+            if (guilds != null) {
+                for (Guild g : guilds) {
+                    futures.add(plugin.getGuildService().getGuildRelationsAsync(g.getId()));
+                }
+            }
+            if (futures.isEmpty()) {
+                return CompletableFuture.completedFuture(List.<GuildRelation>of());
             }
             return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-                .thenApply(v -> {
-                    List<GuildRelation> list = new ArrayList<>();
-                    for (CompletableFuture<List<GuildRelation>> f : futures) {
-                        try {
-                            List<GuildRelation> part = f.join();
-                            if (part != null) {
-                                list.addAll(part);
+                    .thenApply(v -> {
+                        List<GuildRelation> list = new ArrayList<>();
+                        for (CompletableFuture<List<GuildRelation>> f : futures) {
+                            try {
+                                List<GuildRelation> part = f.join();
+                                if (part != null) {
+                                    list.addAll(part);
+                                }
+                            } catch (Exception ignored) {
                             }
-                        } catch (Exception ignored) {}
-                    }
-                    return list;
-                });
-        }).thenAccept(relations -> {
-            CompatibleScheduler.runTask(plugin, player, () -> {
-                if (!player.isOnline()) return;
+                        }
+                        return list;
+                    });
+        }).thenAccept(relations -> CompatibleScheduler.runTask(plugin, player, () -> {
+            if (!player.isOnline()) {
+                return;
+            }
 
-                if (relations.isEmpty()) {
-                    SimpleForm form = SimpleForm.builder()
-                        .title(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-title", "&4Relation Management"))
-                        .content(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-empty", "&cNo relation data"))
-                        .button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-back", "&cBack"))
-                        .validResultHandler(r -> CompatibleScheduler.runTask(plugin, player, () ->
-                            plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player))))
-                        .closedResultHandler(r -> {})
+            if (relations.isEmpty()) {
+                SimpleForm form = SimpleForm.builder()
+                        .title(languageManager.getGuiColoredMessage(player,
+                                "gui.relation-management.bedrock-title", "&4Relation Management"))
+                        .content(languageManager.getGuiColoredMessage(player,
+                                "gui.relation-management.bedrock-empty", "&cNo relation data"))
+                        .button(languageManager.getGuiColoredMessage(player,
+                                "gui.relation-management.bedrock-back", "&cBack"))
+                        .validResultHandler(r -> CompatibleScheduler.runTask(plugin, player,
+                                () -> openBackGui(player)))
+                        .closedResultHandler(r -> {
+                        })
                         .build();
-                    BedrockFormSender.sendForm(player.getUniqueId(), form);
-                    return;
-                }
+                BedrockFormSender.sendForm(player.getUniqueId(), form);
+                return;
+            }
 
-                int itemsPerPage = 10;
-                int totalPages = Math.max(1, (int) Math.ceil((double) relations.size() / itemsPerPage));
-                final int safePage = Math.max(0, Math.min(page, totalPages - 1));
-                int startIndex = safePage * itemsPerPage;
-                int endIndex = Math.min(startIndex + itemsPerPage, relations.size());
+            int itemsPerPage = GuiLayoutUtils.BEDROCK_ITEMS_PER_PAGE;
+            int totalPages = Math.max(1, (int) Math.ceil((double) relations.size() / itemsPerPage));
+            final int safePage = Math.max(0, Math.min(page, totalPages - 1));
+            int startIndex = safePage * itemsPerPage;
+            int endIndex = Math.min(startIndex + itemsPerPage, relations.size());
 
-                SimpleForm.Builder builder = SimpleForm.builder()
-                    .title(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-title", "&4Relation Management"))
-                    .content(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-page-info", "&fPage {current}/{total} | Total {count} relations", "{current}", String.valueOf(safePage + 1), "{total}", String.valueOf(totalPages), "{count}", String.valueOf(relations.size())));
+            SimpleForm.Builder builder = SimpleForm.builder()
+                    .title(languageManager.getGuiColoredMessage(player,
+                            "gui.relation-management.bedrock-title", "&4Relation Management"))
+                    .content(languageManager.getGuiColoredMessage(player,
+                            "gui.relation-management.bedrock-page-info",
+                            "&fPage {current}/{total} | Total {count} relations",
+                            "{current}", String.valueOf(safePage + 1),
+                            "{total}", String.valueOf(totalPages),
+                            "{count}", String.valueOf(relations.size())));
 
-                List<GuildRelation> pageRelations = new ArrayList<>();
-                String lang = languageManager.getPlayerLanguage(player);
-                for (int i = startIndex; i < endIndex; i++) {
-                    GuildRelation rel = relations.get(i);
-                    pageRelations.add(rel);
-                    builder.button("§6" + rel.getGuild1Name() + " ↔ " + rel.getGuild2Name()
+            List<GuildRelation> pageRelations = new ArrayList<>();
+            String lang = languageManager.getPlayerLanguage(player);
+            for (int i = startIndex; i < endIndex; i++) {
+                GuildRelation rel = relations.get(i);
+                pageRelations.add(rel);
+                builder.button("§6" + rel.getGuild1Name() + " ↔ " + rel.getGuild2Name()
                         + " §f[" + rel.getType().getDisplayName(lang) + "]");
+            }
+
+            builder.button(languageManager.getGuiColoredMessage(player,
+                    "gui.relation-management.bedrock-refresh", "&aRefresh List"));
+            builder.button(languageManager.getGuiColoredMessage(player,
+                    "gui.relation-management.bedrock-prev-page", "&ePrevious Page"));
+            builder.button(languageManager.getGuiColoredMessage(player,
+                    "gui.relation-management.bedrock-next-page", "&eNext Page"));
+            builder.button(languageManager.getGuiColoredMessage(player,
+                    "gui.relation-management.bedrock-back", "&cBack"));
+
+            final int navOffset = pageRelations.size();
+
+            builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                int id = response.clickedButtonId();
+                if (id < navOffset) {
+                    sendBedrockRelationMgmtActions(player, pageRelations.get(id), safePage);
+                } else if (id == navOffset) {
+                    sendBedrockRelationMgmtList(player, safePage);
+                } else if (id == navOffset + 1) {
+                    sendBedrockRelationMgmtList(player, safePage > 0 ? safePage - 1 : safePage);
+                } else if (id == navOffset + 2) {
+                    sendBedrockRelationMgmtList(player, safePage < totalPages - 1 ? safePage + 1 : safePage);
+                } else {
+                    openBackGui(player);
                 }
+            }));
 
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-refresh", "&aRefresh List"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-prev-page", "&ePrevious Page"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-next-page", "&eNext Page"));
-                builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-back", "&cBack"));
-
-                final int navOffset = pageRelations.size();
-
-                builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
-                    int id = response.clickedButtonId();
-                    if (id < navOffset) {
-                        sendBedrockRelationMgmtActions(player, pageRelations.get(id), safePage);
-                    } else if (id == navOffset) {
-                        sendBedrockRelationMgmtList(player, safePage);
-                    } else if (id == navOffset + 1) {
-                        if (safePage > 0) sendBedrockRelationMgmtList(player, safePage - 1);
-                        else sendBedrockRelationMgmtList(player, safePage);
-                    } else if (id == navOffset + 2) {
-                        if (safePage < totalPages - 1) sendBedrockRelationMgmtList(player, safePage + 1);
-                        else sendBedrockRelationMgmtList(player, safePage);
-                    } else {
-                        plugin.getGuiManager().openGUI(player, new AdminGuildGUI(plugin, player));
-                    }
-                }));
-
-                builder.closedResultHandler(response -> {});
-
-                BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+            builder.closedResultHandler(response -> {
             });
-        });
+
+            BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
+        }));
     }
 
     private void sendBedrockRelationMgmtActions(Player player, GuildRelation relation, int page) {
         String lang = languageManager.getPlayerLanguage(player);
         SimpleForm.Builder builder = SimpleForm.builder()
-            .title(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-actions-title", "&6Relation Actions"))
-            .content(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-actions-content", "&f{guild1} ↔ {guild2}\n&fType: {type}\n&fStatus: {status}\n&fInitiator: {initiator}", "{guild1}", relation.getGuild1Name(), "{guild2}", relation.getGuild2Name(), "{type}", ColorUtils.colorize(relation.getType().getDisplayName(lang)), "{status}", ColorUtils.colorize(relation.getStatus().getDisplayName(lang)), "{initiator}", relation.getInitiatorName()));
+                .title(languageManager.getGuiColoredMessage(player,
+                        "gui.relation-management.bedrock-actions-title", "&6Relation Actions"))
+                .content(languageManager.getGuiColoredMessage(player,
+                        "gui.relation-management.bedrock-actions-content",
+                        "&f{guild1} ↔ {guild2}\n&fType: {type}\n&fStatus: {status}\n&fInitiator: {initiator}",
+                        "{guild1}", relation.getGuild1Name(), "{guild2}", relation.getGuild2Name(),
+                        "{type}", ColorUtils.colorize(relation.getType().getDisplayName(lang)),
+                        "{status}", ColorUtils.colorize(relation.getStatus().getDisplayName(lang)),
+                        "{initiator}", relation.getInitiatorName()));
 
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-delete-relation", "&cDelete Relation"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-view-details", "&eView Details"));
-        builder.button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-back-to-list", "&cBack to List"));
+        builder.button(languageManager.getGuiColoredMessage(player,
+                "gui.relation-management.bedrock-delete-relation", "&cDelete Relation"));
+        builder.button(languageManager.getGuiColoredMessage(player,
+                "gui.relation-management.bedrock-view-details", "&eView Details"));
+        builder.button(languageManager.getGuiColoredMessage(player,
+                "gui.relation-management.bedrock-back-to-list", "&cBack to List"));
 
         builder.validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
             switch (response.clickedButtonId()) {
-                case 0:
-                    sendBedrockConfirmDeleteRelation(player, relation, page);
-                    break;
-                case 1:
+                case 0 -> sendBedrockConfirmDeleteRelation(player, relation, page);
+                case 1 -> {
                     showRelationDetails(player, relation);
                     sendBedrockRelationMgmtActions(player, relation, page);
-                    break;
-                case 2:
-                    sendBedrockRelationMgmtList(player, page);
-                    break;
+                }
+                case 2 -> sendBedrockRelationMgmtList(player, page);
             }
         }));
 
-        builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
-            sendBedrockRelationMgmtList(player, page)));
+        builder.closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player,
+                () -> sendBedrockRelationMgmtList(player, page)));
 
         BedrockFormSender.sendForm(player.getUniqueId(), builder.build());
     }
 
     private void sendBedrockConfirmDeleteRelation(Player player, GuildRelation relation, int page) {
         SimpleForm form = SimpleForm.builder()
-            .title(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-confirm-title", "&cConfirm Delete"))
-            .content(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-confirm-content", "&fAre you sure you want to delete relation:\n&e{guild1} ↔ {guild2}&f?", "{guild1}", relation.getGuild1Name(), "{guild2}", relation.getGuild2Name()))
-            .button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-confirm-delete", "&cConfirm Delete"))
-            .button(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-cancel", "&fCancel"))
-            .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
-                if (response.clickedButtonId() == 0) {
-                    plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
-                        CompatibleScheduler.runTask(plugin, player, () -> {
-                            if (success) {
-                                player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-delete-success", "&aDeleted relation: {guild1} ↔ {guild2}", "{guild1}", relation.getGuild1Name(), "{guild2}", relation.getGuild2Name()));
-                            } else {
-                                player.sendMessage(languageManager.getGuiColoredMessage(player, "gui.relation-management.bedrock-delete-failed", "&cFailed to delete relation!"));
-                            }
-                            sendBedrockRelationMgmtList(player, page);
+                .title(languageManager.getGuiColoredMessage(player,
+                        "gui.relation-management.bedrock-confirm-title", "&cConfirm Delete"))
+                .content(languageManager.getGuiColoredMessage(player,
+                        "gui.relation-management.bedrock-confirm-content",
+                        "&fAre you sure you want to delete relation:\n&e{guild1} ↔ {guild2}&f?",
+                        "{guild1}", relation.getGuild1Name(), "{guild2}", relation.getGuild2Name()))
+                .button(languageManager.getGuiColoredMessage(player,
+                        "gui.relation-management.bedrock-confirm-delete", "&cConfirm Delete"))
+                .button(languageManager.getGuiColoredMessage(player,
+                        "gui.relation-management.bedrock-cancel", "&fCancel"))
+                .validResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () -> {
+                    if (response.clickedButtonId() == 0) {
+                        plugin.getGuildService().deleteGuildRelationAsync(relation.getId()).thenAccept(success -> {
+                            CompatibleScheduler.runTask(plugin, player, () -> {
+                                if (success) {
+                                    player.sendMessage(languageManager.getGuiColoredMessage(player,
+                                            "gui.relation-management.bedrock-delete-success",
+                                            "&aDeleted relation: {guild1} ↔ {guild2}",
+                                            "{guild1}", relation.getGuild1Name(),
+                                            "{guild2}", relation.getGuild2Name()));
+                                } else {
+                                    player.sendMessage(languageManager.getGuiColoredMessage(player,
+                                            "gui.relation-management.bedrock-delete-failed",
+                                            "&cFailed to delete relation!"));
+                                }
+                                sendBedrockRelationMgmtList(player, page);
+                            });
                         });
-                    });
-                } else {
-                    sendBedrockRelationMgmtActions(player, relation, page);
-                }
-            }))
-            .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player, () ->
-                sendBedrockRelationMgmtActions(player, relation, page)))
-            .build();
+                    } else {
+                        sendBedrockRelationMgmtActions(player, relation, page);
+                    }
+                }))
+                .closedResultHandler(response -> CompatibleScheduler.runTask(plugin, player,
+                        () -> sendBedrockRelationMgmtActions(player, relation, page)))
+                .build();
 
         BedrockFormSender.sendForm(player.getUniqueId(), form);
     }
 
     @Override
     public void onClose(Player player) {
-        // 清理资源
-        allRelations.clear();
-        // 清除待删除状态
         pendingDeletions.remove(player.getUniqueId());
-        deletionTimers.remove(player.getUniqueId());
     }
-    
+
     @Override
     public void refresh(Player player) {
-        // 基岩版玩家由 openBedrockForm 的异步方法自行刷新，
-        // 跳过 GUIManager.refreshGUI 避免与 Cumulus 表单冲突
         if (player.isOnline()) {
-            if (PlayerConnectionService.isBedrockPlayer(player)) return;
+            if (PlayerConnectionService.isBedrockPlayer(player)) {
+                return;
+            }
             plugin.getGuiManager().refreshGUI(player);
         }
     }
