@@ -43,6 +43,7 @@ public class GuildPluginAPI {
     private final GuildPlugin plugin;
     private final Logger logger;
     private final CurrencyManager currencyManager;
+    private final SdkCurrencyFacade currency;
     private final GuildQueryFacade queries;
     private final ModuleEventBus events;
     private final ModuleExtensionRegistry extensions;
@@ -53,6 +54,7 @@ public class GuildPluginAPI {
         this.plugin = plugin;
         this.logger = Logger.getLogger("GuildPlugin.API");
         this.currencyManager = plugin.getServiceContainer().get(CurrencyManager.class);
+        this.currency = new SdkCurrencyFacade(currencyManager);
         this.queries = new GuildQueryFacade(plugin);
         this.events = new ModuleEventBus(logger);
         this.extensions = new ModuleExtensionRegistry(plugin, logger);
@@ -285,92 +287,62 @@ public class GuildPluginAPI {
     // ==================== 货币 API ====================
 
     public CurrencyManager getCurrencyManager() {
-        return currencyManager;
+        return currency.getCurrencyManager();
     }
 
     public double getCurrencyBalance(int guildId, UUID playerUuid, CurrencyManager.CurrencyType currencyType) {
-        return currencyManager.getBalance(guildId, playerUuid, currencyType);
+        return currency.getCurrencyBalance(guildId, playerUuid, currencyType);
     }
 
     public CompletableFuture<Double> getCurrencyBalanceAsync(int guildId, UUID playerUuid,
                                                              CurrencyManager.CurrencyType currencyType) {
-        return currencyManager.getBalanceAsync(guildId, playerUuid, currencyType);
+        return currency.getCurrencyBalanceAsync(guildId, playerUuid, currencyType);
     }
 
     public boolean depositCurrency(int guildId, UUID playerUuid, String playerName,
                                    CurrencyManager.CurrencyType currencyType, double amount) {
-        return currencyManager.deposit(guildId, playerUuid, playerName, currencyType, amount);
+        return currency.depositCurrency(guildId, playerUuid, playerName, currencyType, amount);
     }
 
     public CompletableFuture<Boolean> depositCurrencyAsync(int guildId, UUID playerUuid, String playerName,
                                                            CurrencyManager.CurrencyType currencyType, double amount) {
-        return currencyManager.depositAsync(guildId, playerUuid, playerName, currencyType, amount);
+        return currency.depositCurrencyAsync(guildId, playerUuid, playerName, currencyType, amount);
     }
 
     public boolean withdrawCurrency(int guildId, UUID playerUuid,
                                     CurrencyManager.CurrencyType currencyType, double amount) {
-        return currencyManager.withdraw(guildId, playerUuid, currencyType, amount);
+        return currency.withdrawCurrency(guildId, playerUuid, currencyType, amount);
     }
 
     public CompletableFuture<Boolean> withdrawCurrencyAsync(int guildId, UUID playerUuid,
                                                             CurrencyManager.CurrencyType currencyType, double amount) {
-        return currencyManager.withdrawAsync(guildId, playerUuid, currencyType, amount);
+        return currency.withdrawCurrencyAsync(guildId, playerUuid, currencyType, amount);
     }
 
     public double getCurrencyBalance(int guildId, UUID playerUuid, String currencyType) {
-        try {
-            return currencyManager.getBalance(guildId, playerUuid,
-                    CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()));
-        } catch (IllegalArgumentException e) {
-            return 0.0;
-        }
+        return currency.getCurrencyBalance(guildId, playerUuid, currencyType);
     }
 
     public CompletableFuture<Double> getCurrencyBalanceAsync(int guildId, UUID playerUuid, String currencyType) {
-        try {
-            return currencyManager.getBalanceAsync(guildId, playerUuid,
-                    CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()));
-        } catch (IllegalArgumentException e) {
-            return CompletableFuture.completedFuture(0.0);
-        }
+        return currency.getCurrencyBalanceAsync(guildId, playerUuid, currencyType);
     }
 
     public boolean depositCurrency(int guildId, UUID playerUuid, String playerName, String currencyType, double amount) {
-        try {
-            return currencyManager.deposit(guildId, playerUuid, playerName,
-                    CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()), amount);
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
+        return currency.depositCurrency(guildId, playerUuid, playerName, currencyType, amount);
     }
 
     public CompletableFuture<Boolean> depositCurrencyAsync(int guildId, UUID playerUuid, String playerName,
                                                            String currencyType, double amount) {
-        try {
-            return currencyManager.depositAsync(guildId, playerUuid, playerName,
-                    CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()), amount);
-        } catch (IllegalArgumentException e) {
-            return CompletableFuture.completedFuture(false);
-        }
+        return currency.depositCurrencyAsync(guildId, playerUuid, playerName, currencyType, amount);
     }
 
     public boolean withdrawCurrency(int guildId, UUID playerUuid, String currencyType, double amount) {
-        try {
-            return currencyManager.withdraw(guildId, playerUuid,
-                    CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()), amount);
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
+        return currency.withdrawCurrency(guildId, playerUuid, currencyType, amount);
     }
 
     public CompletableFuture<Boolean> withdrawCurrencyAsync(int guildId, UUID playerUuid,
                                                             String currencyType, double amount) {
-        try {
-            return currencyManager.withdrawAsync(guildId, playerUuid,
-                    CurrencyManager.CurrencyType.valueOf(currencyType.toUpperCase()), amount);
-        } catch (IllegalArgumentException e) {
-            return CompletableFuture.completedFuture(false);
-        }
+        return currency.withdrawCurrencyAsync(guildId, playerUuid, currencyType, amount);
     }
 
     // ==================== 成员管理 API（v1.5 新增） ====================
