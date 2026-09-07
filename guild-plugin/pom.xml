@@ -520,8 +520,8 @@
                 <jacoco.gui.session.line.minimum>0.50</jacoco.gui.session.line.minimum>
                 <jacoco.territory.line.minimum>0.15</jacoco.territory.line.minimum>
                 <jacoco.activity.line.minimum>0.20</jacoco.activity.line.minimum>
-                <jacoco.warehouse.line.minimum>0.18</jacoco.warehouse.line.minimum>
-                <jacoco.war.line.minimum>0.27</jacoco.war.line.minimum>
+                <jacoco.warehouse.line.minimum>0.20</jacoco.warehouse.line.minimum>
+                <jacoco.war.line.minimum>0.28</jacoco.war.line.minimum>
                 <jacoco.update.security.line.minimum>0.80</jacoco.update.security.line.minimum>
             </properties>
             <build>
