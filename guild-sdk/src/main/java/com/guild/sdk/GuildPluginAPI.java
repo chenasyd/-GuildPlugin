@@ -19,6 +19,13 @@ import com.guild.sdk.gui.ModuleGUIConfig;
 import com.guild.sdk.home.HomeProtectIntegration;
 import com.guild.sdk.http.HttpClientProvider;
 import com.guild.sdk.placeholder.PlaceholderProvider;
+import com.guild.sdk.api.GuildMemberAPI;
+import com.guild.sdk.api.GuildQueryAPI;
+import com.guild.sdk.api.ModuleEventAPI;
+import com.guild.sdk.api.ModuleExtensionAPI;
+import com.guild.sdk.api.ModuleHomeProtectAPI;
+import com.guild.sdk.api.ModuleRuntimeAPI;
+import com.guild.sdk.api.SdkCurrencyAPI;
 import com.guild.sdk.territory.TerritoryAPI;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -34,8 +41,18 @@ import java.util.concurrent.CompletableFuture;
 /**
  * 编译期 SDK 门面。
  * 运行时由主插件中的同名类提供真实实现。
+ * <p>
+ * 实现 {@link GuildQueryAPI} 等域接口；模块可经 {@link com.guild.core.module.ModuleContext}
+ * 或下方 {@code guildQuery()} 等访问器按域依赖。
  */
-public class GuildPluginAPI {
+public class GuildPluginAPI implements
+        GuildQueryAPI,
+        GuildMemberAPI,
+        ModuleExtensionAPI,
+        ModuleEventAPI,
+        SdkCurrencyAPI,
+        ModuleRuntimeAPI,
+        ModuleHomeProtectAPI {
     /** SDK API 版本号，与插件版本保持一致 */
     public static final String API_VERSION = "1.6.7";
 
@@ -398,4 +415,34 @@ public class GuildPluginAPI {
 
     /** 移除指定模块注册的所有资源（占位符、子命令、自定义 GUI） */
     public void clearModuleRegistrations(String moduleId) { }
+
+    // ==================== 域 API 访问器（SDK 1.6.7+） ====================
+
+    public GuildQueryAPI guildQuery() {
+        return this;
+    }
+
+    public GuildMemberAPI guildMember() {
+        return this;
+    }
+
+    public ModuleExtensionAPI moduleExtensions() {
+        return this;
+    }
+
+    public ModuleEventAPI moduleEvents() {
+        return this;
+    }
+
+    public SdkCurrencyAPI currency() {
+        return this;
+    }
+
+    public ModuleRuntimeAPI moduleRuntime() {
+        return this;
+    }
+
+    public ModuleHomeProtectAPI homeProtect() {
+        return this;
+    }
 }

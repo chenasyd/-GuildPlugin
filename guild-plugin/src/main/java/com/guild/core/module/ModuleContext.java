@@ -11,6 +11,13 @@ import com.guild.core.utils.ColorUtils;
 import com.guild.core.utils.QuietLog;
 import com.guild.core.utils.ScheduledTaskHandle;
 import com.guild.sdk.GuildPluginAPI;
+import com.guild.sdk.api.GuildMemberAPI;
+import com.guild.sdk.api.GuildQueryAPI;
+import com.guild.sdk.api.ModuleEventAPI;
+import com.guild.sdk.api.ModuleExtensionAPI;
+import com.guild.sdk.api.ModuleHomeProtectAPI;
+import com.guild.sdk.api.ModuleRuntimeAPI;
+import com.guild.sdk.api.SdkCurrencyAPI;
 import com.guild.sdk.config.ModuleConfigSection;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -54,6 +61,27 @@ public class ModuleContext {
 
     /** 获取统一 API 门面（推荐方式） */
     public GuildPluginAPI getApi() { return api; }
+
+    /** 公会只读查询域 API（与 {@link #getApi()} 同一实例）。 */
+    public GuildQueryAPI getGuildQueryApi() { return api; }
+
+    /** 成员写操作域 API。 */
+    public GuildMemberAPI getGuildMemberApi() { return api; }
+
+    /** GUI / 命令 / 占位符注册域 API。 */
+    public ModuleExtensionAPI getModuleExtensionApi() { return api; }
+
+    /** 事件订阅域 API。 */
+    public ModuleEventAPI getModuleEventApi() { return api; }
+
+    /** 模块货币域 API（字符串类型）。 */
+    public SdkCurrencyAPI getSdkCurrencyApi() { return api; }
+
+    /** HTTP / 时间 / 控制台 / 语言资源域 API。 */
+    public ModuleRuntimeAPI getModuleRuntimeApi() { return api; }
+
+    /** Home 保护协调域 API。 */
+    public ModuleHomeProtectAPI getModuleHomeProtectApi() { return api; }
 
     /** 获取服务容器 */
     public ServiceContainer getServiceContainer() { return plugin.getServiceContainer(); }

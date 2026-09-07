@@ -28,6 +28,13 @@ import com.guild.sdk.gui.ModuleGUIFactory;
 import com.guild.sdk.gui.ModuleGUIRegistration;
 import com.guild.sdk.home.HomeProtectIntegration;
 import com.guild.sdk.http.HttpClientProvider;
+import com.guild.sdk.api.GuildMemberAPI;
+import com.guild.sdk.api.GuildQueryAPI;
+import com.guild.sdk.api.ModuleEventAPI;
+import com.guild.sdk.api.ModuleExtensionAPI;
+import com.guild.sdk.api.ModuleHomeProtectAPI;
+import com.guild.sdk.api.ModuleRuntimeAPI;
+import com.guild.sdk.api.SdkCurrencyAPI;
 import com.guild.sdk.placeholder.PlaceholderProvider;
 
 import java.io.File;
@@ -37,8 +44,18 @@ import java.io.File;
  * <p>
  * 所有模块共享同一个 API 实例（由 ModuleManager 管理），
  * 确保事件处理器和 GUI 注册的集中分发。
+ * <p>
+ * 实现 {@link GuildQueryAPI} 等域接口；模块可经 {@link com.guild.core.module.ModuleContext}
+ * 或 {@link #guildQuery()} 等访问器按域依赖。
  */
-public class GuildPluginAPI {
+public class GuildPluginAPI implements
+        GuildQueryAPI,
+        GuildMemberAPI,
+        ModuleExtensionAPI,
+        ModuleEventAPI,
+        SdkCurrencyAPI,
+        ModuleRuntimeAPI,
+        ModuleHomeProtectAPI {
 
     private final GuildPlugin plugin;
     private final Logger logger;
@@ -475,5 +492,35 @@ public class GuildPluginAPI {
 
     public File getModuleLanguageFile(String moduleId, String lang) {
         return runtime.getModuleLanguageFile(moduleId, lang);
+    }
+
+    // ==================== 域 API 访问器（SDK 1.6.7+） ====================
+
+    public GuildQueryAPI guildQuery() {
+        return this;
+    }
+
+    public GuildMemberAPI guildMember() {
+        return this;
+    }
+
+    public ModuleExtensionAPI moduleExtensions() {
+        return this;
+    }
+
+    public ModuleEventAPI moduleEvents() {
+        return this;
+    }
+
+    public SdkCurrencyAPI currency() {
+        return this;
+    }
+
+    public ModuleRuntimeAPI moduleRuntime() {
+        return this;
+    }
+
+    public ModuleHomeProtectAPI homeProtect() {
+        return this;
     }
 }
