@@ -224,13 +224,21 @@ public class UpdateManager {
         public final String fileName;
         public final String source;
         public final PluginVersion parsedVersion;
+        /** Modrinth 提供的 SHA-512（hex）；GitHub 来源为 null */
+        public final String expectedSha512;
 
         public VersionInfo(String version, String changelog, String downloadUrl, String fileName, String source) {
+            this(version, changelog, downloadUrl, fileName, source, null);
+        }
+
+        public VersionInfo(String version, String changelog, String downloadUrl, String fileName, String source,
+                           String expectedSha512) {
             this.version = version;
             this.changelog = changelog;
             this.downloadUrl = downloadUrl;
             this.fileName = fileName;
             this.source = source;
+            this.expectedSha512 = expectedSha512;
             this.parsedVersion = parseVersion(version);
         }
 
@@ -338,6 +346,10 @@ public class UpdateManager {
                 }
 
                 if (downloadUrl == null) continue;
+                if (!UpdateDownloadSecurity.isAllowedDownloadUrl(downloadUrl)) {
+                    logger.warning("[UpdateManager] Skipping GitHub asset with disallowed URL: " + downloadUrl);
+                    continue;
+                }
 
                 // Track the highest version
                 if (bestVersion == null || parsed.compareTo(bestVersion) > 0) {
@@ -416,12 +428,19 @@ public class UpdateManager {
                 // Only consider plugin JARs (skip bungee JARs)
                 if (!fileName.startsWith("guild-plugin-")) continue;
 
+                String downloadUrl = primaryFile.get("url").getAsString();
+                if (!UpdateDownloadSecurity.isAllowedDownloadUrl(downloadUrl)) {
+                    logger.warning("[UpdateManager] Skipping Modrinth file with disallowed URL: " + downloadUrl);
+                    continue;
+                }
+
+                String expectedSha512 = extractModrinthSha512(primaryFile);
+
                 // Track the highest version
                 if (bestVersion == null || parsed.compareTo(bestVersion) > 0) {
                     String changelog = v.has("changelog") && !v.get("changelog").isJsonNull()
                             ? v.get("changelog").getAsString() : "";
-                    String downloadUrl = primaryFile.get("url").getAsString();
-                    best = new VersionInfo(version, changelog, downloadUrl, fileName, "Modrinth");
+                    best = new VersionInfo(version, changelog, downloadUrl, fileName, "Modrinth", expectedSha512);
                     bestVersion = parsed;
                 }
             }
@@ -439,6 +458,17 @@ public class UpdateManager {
             if (conn != null) conn.disconnect();
         }
         return null;
+    }
+
+    private static String extractModrinthSha512(JsonObject primaryFile) {
+        if (!primaryFile.has("hashes") || primaryFile.get("hashes").isJsonNull()) {
+            return null;
+        }
+        JsonObject hashes = primaryFile.getAsJsonObject("hashes");
+        if (!hashes.has("sha512") || hashes.get("sha512").isJsonNull()) {
+            return null;
+        }
+        return hashes.get("sha512").getAsString();
     }
 
     // ==================== Download ====================
@@ -460,7 +490,16 @@ public class UpdateManager {
             sender.sendMessage("[GuildPlugin] File: " + info.fileName);
         }
 
+        if (!UpdateDownloadSecurity.isAllowedDownloadUrl(info.downloadUrl)) {
+            logger.warning("[UpdateManager] Download blocked: disallowed URL " + info.downloadUrl);
+            if (sender != null) {
+                sender.sendMessage("[GuildPlugin] Download blocked: URL not on allowlist.");
+            }
+            return null;
+        }
+
         HttpURLConnection conn = null;
+        Path tempFile = null;
         try {
             URL url = new URL(info.downloadUrl);
             conn = openConnection(url, CONNECT_TIMEOUT, DOWNLOAD_TIMEOUT);
@@ -479,15 +518,30 @@ public class UpdateManager {
             }
 
             // Download to temp file, then move to destination
-            Path tempFile = Files.createTempFile("guild-update-", ".jar");
+            tempFile = Files.createTempFile("guild-update-", ".jar");
             try (InputStream in = conn.getInputStream()) {
                 Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
             }
 
             long actualSize = Files.size(tempFile);
             if (contentLength > 0 && actualSize != contentLength) {
-                Files.delete(tempFile);
                 if (sender != null) sender.sendMessage("[GuildPlugin] Download incomplete, aborting.");
+                return null;
+            }
+
+            if (!UpdateDownloadSecurity.looksLikeJar(tempFile)) {
+                logger.warning("[UpdateManager] Download rejected: file is not a valid JAR");
+                if (sender != null) {
+                    sender.sendMessage("[GuildPlugin] Download rejected: file is not a valid JAR.");
+                }
+                return null;
+            }
+
+            if (!UpdateDownloadSecurity.verifySha512(tempFile, info.expectedSha512)) {
+                logger.warning("[UpdateManager] Download rejected: SHA-512 mismatch");
+                if (sender != null) {
+                    sender.sendMessage("[GuildPlugin] Download rejected: checksum verification failed.");
+                }
                 return null;
             }
 
@@ -496,6 +550,7 @@ public class UpdateManager {
 
             // Move to plugins folder
             Files.move(tempFile, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            tempFile = null;
 
             logger.info("[UpdateManager] Downloaded " + targetName + " (" + formatSize(actualSize) + ")");
             if (sender != null) {
@@ -517,6 +572,13 @@ public class UpdateManager {
             logger.severe("[UpdateManager] Download failed: " + e.getMessage());
             return null;
         } finally {
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException ignored) {
+                    // best effort
+                }
+            }
             if (conn != null) conn.disconnect();
         }
     }
