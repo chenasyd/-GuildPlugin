@@ -141,7 +141,7 @@ public class GuildQuestModule implements GuildModule {
             int guildId = toInt(data.get("guildId"), 0);
             UUID playerUuid = player.getUniqueId();
             List<QuestProgress> active = questManager.getPlayerActiveQuests(guildId, playerUuid);
-            return new ActiveQuestsGUI(this, active, guildId, playerUuid);
+            return new ActiveQuestsGUI(this, active, guildId, player);
         })
             .moduleId("guild-quest")
             .imageBinding("quest-active-list")
@@ -391,14 +391,14 @@ public class GuildQuestModule implements GuildModule {
                     return;
                 }
                 int resolvedGuildId = guildData.getId();
-                context.runSync(() -> context.openGUI(player, new QuestListGUI(this, resolvedGuildId, player.getUniqueId())));
+                context.runSync(() -> context.openGUI(player, new QuestListGUI(this, resolvedGuildId, player)));
             }).exceptionally(ex -> {
                 context.runSync(() -> context.sendMessage(player, "module.quest.error.load-fail", "&cFailed to query guild: " + ex.getMessage()));
                 return null;
             });
             return;
         }
-        context.openGUI(player, new QuestListGUI(this, guildId, player.getUniqueId()));
+        context.openGUI(player, new QuestListGUI(this, guildId, player));
     }
 
     private void openActiveQuests(Player player) {
@@ -408,7 +408,7 @@ public class GuildQuestModule implements GuildModule {
                 return;
             }
             List<QuestProgress> active = questManager.getPlayerActiveQuests(guild.getId(), player.getUniqueId());
-            context.runSync(() -> context.openGUI(player, new ActiveQuestsGUI(this, active, guild.getId(), player.getUniqueId())));
+            context.runSync(() -> context.openGUI(player, new ActiveQuestsGUI(this, active, guild.getId(), player)));
         }).exceptionally(ex -> {
             context.runSync(() -> context.sendMessage(player, "module.quest.error.load-fail", "&cFailed to query guild: " + ex.getMessage()));
             return null;

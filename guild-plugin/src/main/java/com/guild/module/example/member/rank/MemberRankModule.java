@@ -1,6 +1,7 @@
 package com.guild.module.example.member.rank;
 
 import com.guild.GuildPlugin;
+import com.guild.core.module.CoreActivityBridge;
 import com.guild.core.module.GuildModule;
 import com.guild.core.module.ModuleContext;
 import com.guild.core.module.ModuleDescriptor;
@@ -51,8 +52,7 @@ public class MemberRankModule implements GuildModule {
         // Initialize rank manager (uses database storage)
         this.rankManager = new MemberRankManager(context.getPlugin());
         rankManager.loadAll();
-        this.onlineActivityTracker = new OnlineActivityTracker(this);
-        onlineActivityTracker.start();
+        startOnlineActivityTrackerIfNeeded(context);
 
         GuildPluginAPI api = context.getApi();
 
@@ -190,12 +190,7 @@ public class MemberRankModule implements GuildModule {
             return;
         }
         this.context = context;
-        // OnlineActivityTracker freezes interval/points at construction — recreate to apply new config.
-        if (onlineActivityTracker != null) {
-            onlineActivityTracker.stop();
-        }
-        onlineActivityTracker = new OnlineActivityTracker(this);
-        onlineActivityTracker.start();
+        restartOnlineActivityTrackerIfNeeded(context);
         context.logDetail("[MemberRank] Config reloaded; online activity tracker restarted");
     }
 
@@ -375,4 +370,21 @@ public class MemberRankModule implements GuildModule {
 
     public ModuleContext getContext() { return context; }
     public MemberRankManager getRankManager() { return rankManager; }
+
+    private void startOnlineActivityTrackerIfNeeded(ModuleContext ctx) {
+        if (CoreActivityBridge.isCoreActivityEnabled(ctx)) {
+            ctx.getLogger().info("[MemberRank] Core activity enabled — OnlineActivityTracker disabled (use getMemberActivityScores)");
+            return;
+        }
+        this.onlineActivityTracker = new OnlineActivityTracker(this);
+        onlineActivityTracker.start();
+    }
+
+    private void restartOnlineActivityTrackerIfNeeded(ModuleContext ctx) {
+        if (onlineActivityTracker != null) {
+            onlineActivityTracker.stop();
+            onlineActivityTracker = null;
+        }
+        startOnlineActivityTrackerIfNeeded(ctx);
+    }
 }

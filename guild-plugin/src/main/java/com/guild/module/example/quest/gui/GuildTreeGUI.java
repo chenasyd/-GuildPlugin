@@ -135,7 +135,7 @@ public class GuildTreeGUI extends AbstractModuleGUI {
     @Override
     public void onClick(Player player, int slot, ItemStack clickedItem, ClickType clickType) {
         if (slot == SLOT_BACK) {
-            context.openGUI(player, new QuestListGUI(module, guildId, player.getUniqueId()));
+            context.openGUI(player, new QuestListGUI(module, guildId, player));
             return;
         }
 

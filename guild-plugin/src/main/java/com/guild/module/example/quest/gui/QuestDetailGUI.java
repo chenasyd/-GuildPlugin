@@ -349,9 +349,9 @@ public class QuestDetailGUI extends AbstractModuleGUI {
             List<QuestProgress> active = module.getQuestManager()
                 .getPlayerActiveQuests(guildId, playerUuid);
             module.getContext().openGUI(player,
-                new ActiveQuestsGUI(module, active, guildId, playerUuid));
+                new ActiveQuestsGUI(module, active, guildId, player));
         } else {
-            module.getContext().openGUI(player, new QuestListGUI(module, guildId, playerUuid));
+            module.getContext().openGUI(player, new QuestListGUI(module, guildId, player));
         }
     }
     
