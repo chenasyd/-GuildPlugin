@@ -158,7 +158,7 @@ public class MemberManagementGUI extends AbstractPagedListGUI<GuildMember> {
     }
 
     @Override
-    protected boolean handleToolbarClick(Player player, int slot) {
+    protected boolean handleToolbarClick(Player player, int slot, ClickType clickType) {
         switch (slot) {
             case TOOLBAR_INVITE -> {
                 handleInviteMember(player);

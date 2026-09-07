@@ -77,7 +77,7 @@ class AbstractPagedListGUITest {
         gui.setEntries(List.of("only"));
         gui.toolbarSlot = 45;
 
-        boolean handled = gui.handleToolbarClick(viewer, 45);
+        boolean handled = gui.handleToolbarClick(viewer, 45, ClickType.LEFT);
 
         assertTrue(handled);
         assertTrue(gui.toolbarClicked);
@@ -149,7 +149,7 @@ class AbstractPagedListGUITest {
         }
 
         @Override
-        protected boolean handleToolbarClick(Player player, int slot) {
+        protected boolean handleToolbarClick(Player player, int slot, ClickType clickType) {
             if (slot == toolbarSlot) {
                 toolbarClicked = true;
                 return true;

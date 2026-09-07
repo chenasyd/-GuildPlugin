@@ -209,7 +209,7 @@ public abstract class AbstractPagedListGUI<T> implements GUI {
             return;
         }
 
-        if (handleToolbarClick(player, slot)) {
+        if (handleToolbarClick(player, slot, clickType)) {
             return;
         }
 
@@ -230,7 +230,7 @@ public abstract class AbstractPagedListGUI<T> implements GUI {
     }
 
     /** 子类可覆盖以处理底栏功能按钮；返回 true 表示已消费点击 */
-    protected boolean handleToolbarClick(Player player, int slot) {
+    protected boolean handleToolbarClick(Player player, int slot, ClickType clickType) {
         return false;
     }
 
