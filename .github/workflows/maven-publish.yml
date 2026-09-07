@@ -23,8 +23,8 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Verify (tests + enforcer + package)
-      run: mvn -B verify -pl guild-sdk,guild-comm,guild-plugin,guild-bungee -am
+    - name: Verify (tests + enforcer + package + coverage gate)
+      run: mvn -B verify -Pcoverage-gate -pl guild-sdk,guild-comm,guild-plugin,guild-bungee -am
 
     - name: Upload JaCoCo coverage report
       if: always()

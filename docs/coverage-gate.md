@@ -1,18 +1,21 @@
 # JaCoCo 覆盖率门禁
 
-## 当前阶段（0）
+## 当前阶段（1）
 
-- **默认构建**：`mvn verify` — 采集覆盖率并生成报告，**不**因覆盖率不足而失败
+- **默认构建 / CI**：`mvn verify -Pcoverage-gate` — 对上述 7 包执行行覆盖率门禁，不达标则构建失败
 - **CI**：每次构建上传 `guild-plugin/target/site/jacoco/` 为 artifact（保留 14 天）
 - **本地报告**：`guild-plugin/target/site/jacoco/index.html`
 
-## 手动启用门禁（预置，阶段 1 起接入 CI）
+## 阶段 0（已完成）
 
+- 预置 `coverage-gate` profile、上传 JaCoCo 报告 artifact
+
+## 启用门禁
 ```bash
 mvn verify -Pcoverage-gate -pl guild-plugin -am
 ```
 
-`-Pcoverage-gate` 在 `verify` 阶段额外执行 `jacoco:check`，仅检查下列包的**行覆盖率**（阈值为当前基线 − 3%，只升不降）：
+`-Pcoverage-gate` 在 `verify` 阶段执行 `jacoco:check`，检查下列包的**行覆盖率**（阈值为基线 − 3%，只升不降）：
 
 | 包 | 属性 | 阈值 |
 |----|------|------|
@@ -38,6 +41,5 @@ JaCoCo 采集已排除：`com/guild/module/example/**`（示例模块）
 
 ## 后续阶段
 
-1. **阶段 1**：CI 改为 `mvn verify -Pcoverage-gate ...`，正式启用上述 7 包门禁
-2. **阶段 2**：补 `gui.base` 测试至 ~30%，将 `jacoco.gui.base.line.minimum` 提到 25%
-3. **阶段 3**：按需增加 CLASS 级规则（如 `UpdateDownloadSecurity`）
+1. **阶段 2**：补 `gui.base` 测试至 ~30%，将 `jacoco.gui.base.line.minimum` 提到 25%
+2. **阶段 3**：按需增加 CLASS 级规则（如 `UpdateDownloadSecurity`）
