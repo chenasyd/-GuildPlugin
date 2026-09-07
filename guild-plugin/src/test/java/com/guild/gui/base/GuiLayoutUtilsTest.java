@@ -1,5 +1,6 @@
 package com.guild.gui.base;
 
+import org.bukkit.Material;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -78,6 +79,25 @@ class GuiLayoutUtilsTest {
     @Test
     void adminGridLayout_rejectsOutsideColumns() {
         assertEquals(-1, GuiLayoutUtils.listIndexFromGridSlot(13, 0,
+                GuiLayoutUtils.ADMIN_GRID_ITEMS_PER_PAGE,
+                GuiLayoutUtils.ADMIN_GRID_ROWS, GuiLayoutUtils.ADMIN_GRID_COLS,
+                GuiLayoutUtils.ADMIN_GRID_START_COL));
+    }
+
+    @Test
+    void adminGridLayout_appliesPageOffset() {
+        int slot = GuiLayoutUtils.slotForGridPageIndex(0,
+                GuiLayoutUtils.ADMIN_GRID_COLS, GuiLayoutUtils.ADMIN_GRID_START_COL);
+        assertEquals(GuiLayoutUtils.ADMIN_GRID_ITEMS_PER_PAGE,
+                GuiLayoutUtils.listIndexFromGridSlot(slot, 1,
+                        GuiLayoutUtils.ADMIN_GRID_ITEMS_PER_PAGE,
+                        GuiLayoutUtils.ADMIN_GRID_ROWS, GuiLayoutUtils.ADMIN_GRID_COLS,
+                        GuiLayoutUtils.ADMIN_GRID_START_COL));
+    }
+
+    @Test
+    void listIndexFromGridSlot_rejectsRowOutsideGrid() {
+        assertEquals(-1, GuiLayoutUtils.listIndexFromGridSlot(46, 0,
                 GuiLayoutUtils.ADMIN_GRID_ITEMS_PER_PAGE,
                 GuiLayoutUtils.ADMIN_GRID_ROWS, GuiLayoutUtils.ADMIN_GRID_COLS,
                 GuiLayoutUtils.ADMIN_GRID_START_COL));
