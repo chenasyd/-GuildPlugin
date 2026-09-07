@@ -23,6 +23,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -31,6 +32,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -151,17 +153,21 @@ class GuildWarehouseServiceTest {
     }
 
     @Test
-    void releaseSessionByPlayerIfIdle_keepsSessionWhileSavePending() {
+    void releaseSessionByPlayerIfIdle_keepsSessionWhileSavePending() throws Exception {
         service.tryAcquireSession(1, PLAYER_A);
 
-        Inventory inventory = mock(Inventory.class);
-        when(inventory.getContents()).thenReturn(new ItemStack[54]);
-        CompletableFuture<Boolean> pending = service.savePage(1, inventory, 0, 54);
+        CompletableFuture<Boolean> pending = new CompletableFuture<>();
+        Field pendingSavesField = GuildWarehouseService.class.getDeclaredField("pendingSaves");
+        pendingSavesField.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        ConcurrentHashMap<Integer, CompletableFuture<Boolean>> pendingSaves =
+                (ConcurrentHashMap<Integer, CompletableFuture<Boolean>>) pendingSavesField.get(service);
+        pendingSaves.put(1, pending);
 
         service.releaseSessionByPlayerIfIdle(PLAYER_A);
         assertEquals(PLAYER_A, service.getSessionHolder(1));
 
-        pending.join();
+        pending.complete(true);
         service.releaseSessionByPlayerIfIdle(PLAYER_A);
         assertNull(service.getSessionHolder(1));
     }
