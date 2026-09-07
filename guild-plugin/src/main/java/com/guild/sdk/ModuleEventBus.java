@@ -12,6 +12,7 @@ import com.guild.sdk.event.MemberRoleChangeEventHandler;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,101 +63,55 @@ public final class ModuleEventBus {
     }
 
     public void fireGuildCreate(int guildId, String guildName, String leaderName) {
-        if (onGuildCreateHandlers.isEmpty()) {
-            return;
-        }
-        GuildEventData data = new GuildEventData(guildId, guildName, leaderName);
-        for (GuildEventHandler handler : onGuildCreateHandlers) {
-            try {
-                handler.onEvent(data);
-            } catch (Exception e) {
-                logger.log(Level.WARNING, "Exception in onGuildCreate handler: " + e.getMessage(), e);
-            }
-        }
+        dispatch(onGuildCreateHandlers, new GuildEventData(guildId, guildName, leaderName),
+                "onGuildCreate", GuildEventHandler::onEvent);
     }
 
     public void fireGuildDelete(int guildId, String guildName, String leaderName) {
-        if (onGuildDeleteHandlers.isEmpty()) {
-            return;
-        }
-        GuildEventData data = new GuildEventData(guildId, guildName, leaderName);
-        for (GuildEventHandler handler : onGuildDeleteHandlers) {
-            try {
-                handler.onEvent(data);
-            } catch (Exception e) {
-                logger.log(Level.WARNING, "Exception in onGuildDelete handler: " + e.getMessage(), e);
-            }
-        }
+        dispatch(onGuildDeleteHandlers, new GuildEventData(guildId, guildName, leaderName),
+                "onGuildDelete", GuildEventHandler::onEvent);
     }
 
     public void fireMemberJoin(int guildId, String guildName, UUID playerUuid, String playerName) {
-        if (onMemberJoinHandlers.isEmpty()) {
-            return;
-        }
-        MemberEventData data = new MemberEventData(guildId, guildName, playerUuid, playerName, "JOIN");
-        for (MemberEventHandler handler : onMemberJoinHandlers) {
-            try {
-                handler.onEvent(data);
-            } catch (Exception e) {
-                logger.log(Level.WARNING, "Exception in onMemberJoin handler: " + e.getMessage(), e);
-            }
-        }
+        dispatch(onMemberJoinHandlers,
+                new MemberEventData(guildId, guildName, playerUuid, playerName, "JOIN"),
+                "onMemberJoin", MemberEventHandler::onEvent);
     }
 
     public void fireMemberLeave(int guildId, String guildName, UUID playerUuid, String playerName, String eventType) {
-        if (onMemberLeaveHandlers.isEmpty()) {
-            return;
-        }
-        MemberEventData data = new MemberEventData(guildId, guildName, playerUuid, playerName, eventType);
-        for (MemberEventHandler handler : onMemberLeaveHandlers) {
-            try {
-                handler.onEvent(data);
-            } catch (Exception e) {
-                logger.log(Level.WARNING, "Exception in onMemberLeave handler: " + e.getMessage(), e);
-            }
-        }
+        dispatch(onMemberLeaveHandlers,
+                new MemberEventData(guildId, guildName, playerUuid, playerName, eventType),
+                "onMemberLeave", MemberEventHandler::onEvent);
     }
 
     public void fireEconomyDeposit(int guildId, String guildName, UUID playerUuid, String playerName, double amount) {
-        if (onEconomyDepositHandlers.isEmpty()) {
-            return;
-        }
-        EconomyEventData data = new EconomyEventData(guildId, guildName, playerUuid, playerName, amount, "DEPOSIT");
-        for (EconomyEventHandler handler : onEconomyDepositHandlers) {
-            try {
-                handler.onEvent(data);
-            } catch (Exception e) {
-                logger.log(Level.WARNING, "Exception in onEconomyDeposit handler: " + e.getMessage(), e);
-            }
-        }
+        dispatch(onEconomyDepositHandlers,
+                new EconomyEventData(guildId, guildName, playerUuid, playerName, amount, "DEPOSIT"),
+                "onEconomyDeposit", EconomyEventHandler::onEvent);
     }
 
     public void fireEconomyWithdraw(int guildId, String guildName, UUID playerUuid, String playerName, double amount) {
-        if (onEconomyWithdrawHandlers.isEmpty()) {
-            return;
-        }
-        EconomyEventData data = new EconomyEventData(guildId, guildName, playerUuid, playerName, amount, "WITHDRAW");
-        for (EconomyEventHandler handler : onEconomyWithdrawHandlers) {
-            try {
-                handler.onEvent(data);
-            } catch (Exception e) {
-                logger.log(Level.WARNING, "Exception in onEconomyWithdraw handler: " + e.getMessage(), e);
-            }
-        }
+        dispatch(onEconomyWithdrawHandlers,
+                new EconomyEventData(guildId, guildName, playerUuid, playerName, amount, "WITHDRAW"),
+                "onEconomyWithdraw", EconomyEventHandler::onEvent);
     }
 
     public void fireMemberRoleChange(int guildId, String guildName, UUID playerUuid, String playerName,
                                      String oldRole, String newRole) {
-        if (onMemberRoleChangeHandlers.isEmpty()) {
+        dispatch(onMemberRoleChangeHandlers,
+                new MemberRoleChangeEventData(guildId, guildName, playerUuid, playerName, oldRole, newRole),
+                "onMemberRoleChange", MemberRoleChangeEventHandler::onEvent);
+    }
+
+    private <H, D> void dispatch(List<H> handlers, D data, String eventLabel, BiConsumer<H, D> invoker) {
+        if (handlers.isEmpty()) {
             return;
         }
-        MemberRoleChangeEventData data = new MemberRoleChangeEventData(
-                guildId, guildName, playerUuid, playerName, oldRole, newRole);
-        for (MemberRoleChangeEventHandler handler : onMemberRoleChangeHandlers) {
+        for (H handler : handlers) {
             try {
-                handler.onEvent(data);
+                invoker.accept(handler, data);
             } catch (Exception e) {
-                logger.log(Level.WARNING, "Exception in onMemberRoleChange handler: " + e.getMessage(), e);
+                logger.log(Level.WARNING, "Exception in " + eventLabel + " handler: " + e.getMessage(), e);
             }
         }
     }

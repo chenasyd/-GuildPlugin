@@ -336,8 +336,7 @@ public class ModuleManager {
 
         try {
             registry.unregister(moduleId);
-            sharedApi.clearModuleHandlers(module);
-            sharedApi.clearModuleRegistrations(moduleId);
+            sharedApi.clearModuleOnUnload(moduleId, module);
             plugin.getEventBus().unsubscribeByModule(moduleId);
 
             // Auto-cleanup tracked listeners and tasks BEFORE onDisable

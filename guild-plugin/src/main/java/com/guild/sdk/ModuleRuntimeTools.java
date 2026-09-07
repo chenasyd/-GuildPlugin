@@ -11,16 +11,21 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * HTTP、服务器时间、控制台输出与模块语言资源工具。
+ * HTTP、服务器时间与控制台输出工具。
  */
 public final class ModuleRuntimeTools {
 
-    private final GuildPlugin plugin;
     private final HttpClientProvider httpClient;
+    private final ModuleLanguageSupport language;
 
     public ModuleRuntimeTools(GuildPlugin plugin, HttpClientProvider httpClient) {
-        this.plugin = plugin;
         this.httpClient = httpClient;
+        this.language = new ModuleLanguageSupport(plugin);
+    }
+
+    ModuleRuntimeTools(HttpClientProvider httpClient, ModuleLanguageSupport language) {
+        this.httpClient = httpClient;
+        this.language = language;
     }
 
     public CompletableFuture<String> httpGet(String url, Map<String, String> headers) {
@@ -88,48 +93,14 @@ public final class ModuleRuntimeTools {
     }
 
     public boolean loadModuleLanguageResource(String moduleId, String lang) {
-        if (moduleId == null || moduleId.trim().isEmpty()) {
-            return false;
-        }
-        if (lang == null || lang.trim().isEmpty()) {
-            return plugin.getLanguageManager().loadModuleLanguageResourcesForModule(moduleId);
-        }
-        return plugin.getLanguageManager().loadModuleLanguageResourcesForModule(moduleId, lang.toLowerCase());
+        return language.loadModuleLanguageResource(moduleId, lang);
     }
 
     public boolean releaseModuleLanguageResource(String moduleId, String lang) {
-        if (moduleId == null || moduleId.trim().isEmpty() || lang == null || lang.trim().isEmpty()) {
-            return false;
-        }
-        String moduleDirName = moduleId.toLowerCase();
-        String language = lang.toLowerCase();
-        String resourcePath = "lang/modules/" + moduleDirName + "/" + language + ".yml";
-        if (plugin.getResource(resourcePath) == null) {
-            return false;
-        }
-        File file = new File(plugin.getDataFolder(), resourcePath);
-        if (file.exists()) {
-            return false;
-        }
-        try {
-            plugin.saveResource(resourcePath, false);
-            plugin.getLogger().info("Extracted bundled module language file: " + resourcePath);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        } catch (Exception e) {
-            plugin.getLogger().warning("Failed to extract bundled module language file "
-                    + resourcePath + ": " + e.getMessage());
-            return false;
-        }
+        return language.releaseModuleLanguageResource(moduleId, lang);
     }
 
     public File getModuleLanguageFile(String moduleId, String lang) {
-        if (moduleId == null || moduleId.trim().isEmpty() || lang == null || lang.trim().isEmpty()) {
-            return null;
-        }
-        String moduleDirName = moduleId.toLowerCase();
-        String language = lang.toLowerCase();
-        return new File(plugin.getDataFolder(), "lang/modules/" + moduleDirName + "/" + language + ".yml");
+        return language.getModuleLanguageFile(moduleId, lang);
     }
 }

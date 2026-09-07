@@ -49,6 +49,7 @@ public class GuildPluginAPI {
     private final ModuleEventBus events;
     private final ModuleExtensionRegistry extensions;
     private final ModuleHomeProtectCoordinator homeProtect;
+    private final ModuleLifecycleCleanup lifecycle;
     private final ModuleRuntimeTools runtime;
 
     public GuildPluginAPI(GuildPlugin plugin) {
@@ -62,6 +63,7 @@ public class GuildPluginAPI {
         this.events = new ModuleEventBus(logger);
         this.extensions = new ModuleExtensionRegistry(plugin, logger);
         this.homeProtect = new ModuleHomeProtectCoordinator(logger);
+        this.lifecycle = new ModuleLifecycleCleanup(events, homeProtect, extensions);
         this.runtime = new ModuleRuntimeTools(plugin, new HttpClientProvider());
     }
 
@@ -249,6 +251,14 @@ public class GuildPluginAPI {
         homeProtect.clearModuleHandlers(moduleInstance);
     }
 
+    /**
+     * 模块卸载时清理 SDK 侧全部注册（事件、Home 保护、扩展注册表）。
+     * 由 {@link com.guild.core.module.ModuleManager} 调用。
+     */
+    public void clearModuleOnUnload(String moduleId, Object moduleInstance) {
+        lifecycle.clearOnUnload(moduleId, moduleInstance);
+    }
+
     // ==================== Home 保护协调 ====================
 
     public void registerHomeProtectIntegration(Object moduleInstance, HomeProtectIntegration integration) {
@@ -283,8 +293,7 @@ public class GuildPluginAPI {
     }
 
     public void clearAll() {
-        events.clearAll();
-        extensions.clearAll();
+        lifecycle.clearAll();
     }
 
     // ==================== 货币 API ====================
