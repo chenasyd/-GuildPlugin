@@ -28,6 +28,7 @@
         <folia.version>1.20.1-R0.1-SNAPSHOT</folia.version>
         <worldedit.version>7.2.15</worldedit.version>
         <worldguard.version>7.0.9</worldguard.version>
+        <jacoco.version>0.8.12</jacoco.version>
     </properties>
 
     <repositories>
@@ -196,6 +197,11 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>3.4.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
